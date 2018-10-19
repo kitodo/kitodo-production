@@ -240,8 +240,6 @@ public class AddingST extends BaseTestSelenium {
 
         userGroupEditPage.setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
                 .assignAllClientAuthorities();
-        userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(1).getName());
-        userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(2).getName());
         userGroupEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
         List<String> userGroupTitles = usersPage.getUserGroupTitles();

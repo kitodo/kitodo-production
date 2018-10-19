@@ -146,9 +146,9 @@ public class MockDatabase {
     public static void insertProcessesFull() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
+        insertClients();
         insertUserGroups();
         insertUsers();
-        insertClients();
         insertDockets();
         insertRulesets();
         insertProjects();
@@ -168,9 +168,9 @@ public class MockDatabase {
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
+        insertClients();
         insertUserGroups();
         insertUsers();
-        insertClients();
         insertDockets();
         insertRulesets();
         insertProjects();
@@ -187,6 +187,7 @@ public class MockDatabase {
 
     public static void insertUserGroupsFull() throws DAOException, DataException {
         insertAuthorities();
+        insertClients();
         insertLdapGroups();
         insertUserGroups();
         insertUsers();
@@ -195,9 +196,9 @@ public class MockDatabase {
     public static void insertForAuthenticationTesting() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
+        insertClients();
         insertUserGroups();
         insertUsers();
-        insertClients();
         insertProjects();
     }
 
@@ -683,34 +684,14 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    public static void insertClients() throws DataException, DAOException {
-        boolean usersAvailable = serviceManager.getUserService().getAll().size() > 0;
+    public static void insertClients() throws DataException {
         Client client = new Client();
         client.setName("First client");
-
-        if (usersAvailable) {
-            User firstUser = serviceManager.getUserService().getById(1);
-            User secondUser = serviceManager.getUserService().getById(2);
-            client.getUsers().add(firstUser);
-            client.getUsers().add(secondUser);
-            firstUser.getClients().add(client);
-            serviceManager.getClientService().save(client);
-            serviceManager.getUserService().save(firstUser);
-        } else {
-            serviceManager.getClientService().save(client);
-        }
+        serviceManager.getClientService().save(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
-        if (usersAvailable) {
-            User secondUser = serviceManager.getUserService().getById(2);
-            secondClient.getUsers().add(secondUser);
-            secondUser.getClients().add(secondClient);
-            serviceManager.getClientService().save(secondClient);
-            serviceManager.getUserService().save(secondUser);
-        } else {
-            serviceManager.getClientService().save(secondClient);
-        }
+        serviceManager.getClientService().save(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
@@ -1139,6 +1120,8 @@ public class MockDatabase {
 
     private static void insertUsers() throws DAOException, DataException {
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        Client firstClient = serviceManager.getClientService().getById(1);
+        Client secondClient = serviceManager.getClientService().getById(2);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1151,6 +1134,7 @@ public class MockDatabase {
         firstUser.setLanguage("de");
         firstUser.setMetadataLanguage("de");
         firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
@@ -1162,6 +1146,8 @@ public class MockDatabase {
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
         secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        secondUser.getClients().add(firstClient);
+        secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
 
         User thirdUser = new User();
@@ -1189,14 +1175,17 @@ public class MockDatabase {
 
     private static void insertUserGroups() throws DAOException, DataException {
         List<Authority> allAuthorities = serviceManager.getAuthorityService().getAll();
+        Client client = serviceManager.getClientService().getById(1);
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
+        firstUserGroup.setClient(client);
         firstUserGroup.setAuthorities(allAuthorities);
         serviceManager.getUserGroupService().save(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
+        secondUserGroup.setClient(client);
 
         List<Authority> userAuthorities = new ArrayList<>();
         userAuthorities.add(serviceManager.getAuthorityService().getById(2));
@@ -1210,6 +1199,7 @@ public class MockDatabase {
 
         UserGroup thirdUserGroup = new UserGroup();
         thirdUserGroup.setTitle("Without authorities");
+        thirdUserGroup.setClient(client);
         serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
@@ -1313,8 +1303,7 @@ public class MockDatabase {
     }
 
 
-    private static void insertRemovableObjects() throws DataException {
-
+    private static void insertRemovableObjects() throws DataException, DAOException {
         removableObjectIDs = new HashMap<>();
 
         Client client = new Client();
@@ -1322,13 +1311,17 @@ public class MockDatabase {
         serviceManager.getClientService().save(client);
         removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
 
+        Client assignableClient = serviceManager.getClientService().getById(1);
+
         Docket docket = new Docket();
         docket.setTitle("Removable docket");
+        docket.setClient(assignableClient);
         serviceManager.getDocketService().save(docket);
         removableObjectIDs.put(ObjectType.DOCKET.name(), docket.getId());
 
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("Removable ruleset");
+        ruleset.setClient(assignableClient);
         serviceManager.getRulesetService().save(ruleset);
         removableObjectIDs.put(ObjectType.RULESET.name(), ruleset.getId());
 
@@ -1339,6 +1332,7 @@ public class MockDatabase {
 
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("Removable user group");
+        userGroup.setClient(assignableClient);
         serviceManager.getUserGroupService().save(userGroup);
         removableObjectIDs.put(ObjectType.USER_GROUP.name(), userGroup.getId());
 
@@ -1353,7 +1347,7 @@ public class MockDatabase {
         if (removableObjectIDs.isEmpty()) {
             try {
                 insertRemovableObjects();
-            } catch (DataException e) {
+            } catch (DataException | DAOException e) {
                 logger.error("Unable to save removable objects to test database!");
             }
         }
