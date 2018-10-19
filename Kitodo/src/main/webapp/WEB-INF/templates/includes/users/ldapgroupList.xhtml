@@ -31,13 +31,17 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link outcome="ldapgroupEdit">
+                <h:link outcome="ldapgroupEdit"
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" immediate="true"
-                               title="#{msgs.duplicateLdapGroup}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" title="#{msgs.duplicateLdapGroup}"
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}">
+                    <i class="fa fa-clone fa-lg"/>
+                </h:commandLink>
                 <p:commandLink id="deleteLdapgroup" action="#{LdapGroupForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>
