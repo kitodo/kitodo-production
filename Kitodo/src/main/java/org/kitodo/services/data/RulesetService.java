@@ -35,6 +35,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.RulesetDTO;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -170,6 +171,12 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
         rulesetDTO.setOrderMetadataByRuleset(
             RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(rulesetJSONObject));
+        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(rulesetJSONObject));
+
+        rulesetDTO.setClientDTO(clientDTO);
         return rulesetDTO;
     }
 

@@ -21,6 +21,7 @@ public class RulesetDTO extends BaseDTO {
     private String fileContent;
     private Boolean orderMetadataByRuleset = false;
     private Boolean active = true;
+    private ClientDTO client;
 
     /**
      * Get file.
@@ -115,5 +116,24 @@ public class RulesetDTO extends BaseDTO {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Get client object.
+     *
+     * @return value of clientDTO
+     */
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    /**
+     * Set client object.
+     *
+     * @param client
+     *            as org.kitodo.dto.ClientDTO
+     */
+    public void setClientDTO(ClientDTO client) {
+        this.client = client;
     }
 }
