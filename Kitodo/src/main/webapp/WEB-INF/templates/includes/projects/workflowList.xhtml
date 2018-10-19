@@ -44,7 +44,8 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
-                    <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}">
+                    <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editWorkflow')}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -53,8 +54,9 @@
                         <i class="fa fa-clone fa-lg"/>
                     </h:commandLink>
 
-                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}"
-                                   title="#{msgs.delete}" update="projectsTabView:workflowTable">
+                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('deleteWorkflow')}"
+                                   update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                         <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteWorkflow}"

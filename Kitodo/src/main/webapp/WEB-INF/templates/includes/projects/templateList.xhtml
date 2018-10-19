@@ -28,7 +28,8 @@
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 16px;">
+        <p:column style="width: 16px;"
+                  rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewTemplate')}">
             <p:rowToggler/>
         </p:column>
 
@@ -39,7 +40,8 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
-                    <h:link id="editTemplate" outcome="/pages/templateEdit" title="#{msgs.editTemplate}">
+                    <h:link id="editTemplate" outcome="/pages/templateEdit" title="#{msgs.editTemplate}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editTemplate')}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -47,9 +49,8 @@
                                    title="#{msgs.duplicateTemplate}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
-                    <p:commandLink id="deleteTemplate"
-                                   action="#{TemplateForm.delete}"
-                                   title="#{msgs.delete}"
+                    <p:commandLink id="deleteTemplate" action="#{TemplateForm.delete}" title="#{msgs.delete}"
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('deleteTemplate')}"
                                    update="projectsTabView:templateTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
