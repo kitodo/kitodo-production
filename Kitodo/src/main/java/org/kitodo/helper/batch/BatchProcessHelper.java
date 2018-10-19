@@ -95,70 +95,23 @@ public class BatchProcessHelper extends BatchHelper {
     }
 
     /**
-     * Save current property.
+     * Save property for chosen process.
      */
-    public void saveCurrentProperty() {
-        List<Property> ppList = getProperties();
-        for (Property pp : ppList) {
-            this.property = pp;
-
-            Process currentProcess = this.currentProcess;
-            List<Property> propertyList = currentProcess.getProperties();
-            for (Property processProperty : propertyList) {
-                if (processProperty.getTitle() == null) {
-                    currentProcess.getProperties().remove(processProperty);
-                }
-            }
-            for (Process process : this.property.getProcesses()) {
-                if (!process.getProperties().contains(this.property)) {
-                    process.getProperties().add(this.property);
-                }
-            }
-        }
+    public void saveForChosenProcess() {
         try {
             serviceManager.getProcessService().save(this.currentProcess);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
-                    logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
+                e);
         }
     }
 
     /**
-     * Save current property for all.
+     * Save property for all processes belonging to the batch.
      */
-    public void saveCurrentPropertyForAll() {
-        List<Property> ppList = getProperties();
-        List<Process> processesToUpdate = new ArrayList<>();
-
-        for (Property pp : ppList) {
-            this.property = pp;
-
-            Property processProperty = new Property();
-            processProperty.setTitle(this.property.getTitle());
-            processProperty.setValue(this.property.getValue());
-
-            for (Process process : this.processes) {
-                if (!process.equals(this.currentProcess)) {
-                    process = prepareProcessWithProperty(process, processProperty);
-                } else {
-                    if (!process.getProperties().contains(this.property)) {
-                        process.getProperties().add(this.property);
-                    }
-                }
-
-                List<Property> propertyList = process.getProperties();
-                for (Property nextProcessProperty : propertyList) {
-                    if (nextProcessProperty.getTitle() == null) {
-                        process.getProperties().remove(nextProcessProperty);
-                    }
-                }
-
-                processesToUpdate.add(process);
-            }
-        }
-
-        for (Process process : processesToUpdate) {
+    public void saveForAllProcesses() {
+        for (Process process : this.processes) {
             try {
                 serviceManager.getProcessService().save(process);
                 Helper.setMessage("propertiesSaved");
@@ -171,8 +124,89 @@ public class BatchProcessHelper extends BatchHelper {
         }
     }
 
+    /**
+     * Edit current property for chosen process.
+     */
+    public void editPropertyForOneProcess() {
+        List<Property> ppList = getProperties();
+        for (Property pp : ppList) {
+            this.property = pp;
+
+            List<Property> propertyList = this.currentProcess.getProperties();
+            for (Property processProperty : propertyList) {
+                if (processProperty.getTitle() == null) {
+                    this.currentProcess.getProperties().remove(processProperty);
+                }
+            }
+            for (Process process : this.property.getProcesses()) {
+                if (!process.getProperties().contains(this.property)) {
+                    process.getProperties().add(this.property);
+                }
+            }
+        }
+    }
+
+    /**
+     * Edit current property for all processes belonging to the batch.
+     */
+    public void editPropertyForAllProcesses() {
+        List<Property> ppList = getProperties();
+
+        for (Property pp : ppList) {
+            this.property = pp;
+
+            Property processProperty = new Property();
+            processProperty.setTitle(this.property.getTitle());
+            processProperty.setValue(this.property.getValue());
+
+            for (Process process : this.processes) {
+                if (!process.equals(this.currentProcess)) {
+                    process = prepareProcessWithProperty(process, processProperty);
+                } else if (!process.getProperties().contains(this.property)) {
+                    process.getProperties().add(this.property);
+                }
+
+                List<Property> propertyList = process.getProperties();
+                for (Property nextProcessProperty : propertyList) {
+                    if (nextProcessProperty.getTitle() == null) {
+                        process.getProperties().remove(nextProcessProperty);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete property for one process.
+     */
+    public void deletePropertyForOneProcess() {
+        this.property.getProcesses().clear();
+        this.currentProcess.getProperties().remove(this.property);
+
+        loadProcessProperties();
+    }
+
+    /**
+     * Delete property for all processes belonging to the batch.
+     */
+    public void deletePropertyForAllProcesses() {
+        this.property.getProcesses().clear();
+        this.currentProcess.getProperties().remove(this.property);
+
+        for (Process process : this.processes) {
+            for (Property property : process.getProperties()) {
+                if (property.getTitle().equals(this.property.getTitle())
+                        && property.getValue().equals(this.property.getValue())) {
+                    property.getProcesses().clear();
+                    process.getProperties().remove(property);
+                }
+            }
+        }
+
+        loadProcessProperties();
+    }
+
     private void loadProcessProperties() {
-        serviceManager.getProcessService().refresh(this.currentProcess);
         this.properties = this.currentProcess.getProperties();
 
         for (Process process : this.processes) {
