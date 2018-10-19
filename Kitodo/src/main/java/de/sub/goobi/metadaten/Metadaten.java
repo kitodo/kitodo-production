@@ -915,7 +915,7 @@ public class Metadaten {
 
             this.ajaxPageStart = this.pagesStart;
             this.ajaxPageEnd = this.pagesEnd;
-            ajaxSeitenStartUndEndeSetzen(docStruct);
+            setFirstAndLastPageViaAjax(docStruct);
 
         }
         readMetadataAsFirstTree();
@@ -1458,10 +1458,10 @@ public class Metadaten {
             .factory(ConfigCore.getParameterOrDefaultValue(ParameterCore.PAGE_SEPARATORS)));
 
     /**
-     * die Seiten über die Ajax-Felder festlegen.
+     * Set the first and the last page via AJAX request.
      * @param docStruct the doc structure for which the pages are set
      */
-    public void ajaxSeitenStartUndEndeSetzen(DocStructInterface docStruct) {
+    public void setFirstAndLastPageViaAjax(DocStructInterface docStruct) {
         boolean startPageOk = false;
         boolean endPageOk = false;
 
