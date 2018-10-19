@@ -46,6 +46,7 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -192,58 +193,56 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(createUserTemplatesQuery(filters).toString(), sort, offset, size), false);
 
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
-        }
-
-        query = readFilters(filterMap);
-
-        String queryString = "";
-        if (!Objects.equals(query, null)) {
-            queryString = query.toString();
-        }
-        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public String createCountQuery(Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
-
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            query = new BoolQueryBuilder();
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            query.must(getQueryProjectActive(true));
-        } else {
-            query = readFilters(filterMap);
-        }
-
-        if (Objects.nonNull(query)) {
-            return query.toString();
-        }
-        return "";
+        return createUserTemplatesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        BoolQueryBuilder query = null;
+        BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false);
-            if (!showInactiveTemplates) {
-                query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            }
-            if (!showInactiveProjects) {
-                query.must(getQueryProjectActive(true));
-            }
+            query.must(serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
         }
+        return query;
+    }
+
+    /**
+     * Creates and returns a query to retrieve templates for which the currently
+     * logged in user is eligible.
+     *
+     * @param filters
+     *            map of applicable filters
+     * @return query to retrieve templates for which the user eligible
+     */
+    @SuppressWarnings("unchecked")
+    private BoolQueryBuilder createUserTemplatesQuery(Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        if (Objects.nonNull(filters) && !filters.isEmpty()) {
+            Map<String, String> filterMap = (Map<String, String>) filters;
+            query.must(readFilters(filterMap));
+        }
+
+        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
+            query.must(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()));
+        }
+
+        if (!showInactiveTemplates) {
+            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+        }
+
+        if (!this.showInactiveProjects) {
+            query.must(getQueryProjectActive(true));
+        }
+
         return query;
     }
 
@@ -263,7 +262,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         // tasks don't need to be duplicated - will be created out of copied workflow
         duplicatedTemplate.setWorkflow(baseTemplate.getWorkflow());
 
-        //TODO: make sure if copy should be assigned automatically to all projects
+        // TODO: make sure if copy should be assigned automatically to all projects
         for (Project project : baseTemplate.getProjects()) {
             duplicatedTemplate.getProjects().add(project);
             project.getTemplates().add(duplicatedTemplate);
@@ -290,7 +289,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
         templateDTO.setWorkflow(workflowDTO);
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
-                serviceManager.getTaskService()));
+            serviceManager.getTaskService()));
         templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
@@ -303,14 +302,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
         templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
             serviceManager.getProjectService()));
-    }
-
-    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
     /**
@@ -402,21 +393,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Find templates of active projects, sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<TemplateDTO> findTemplatesOfActiveProjects(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
-    }
-
-    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
-    }
-
-    /**
      * Get query for active projects.
      *
      * @param active
@@ -425,6 +401,18 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     private QueryBuilder getQueryProjectActive(boolean active) {
         return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.ACTIVE, active, true);
+    }
+
+    /**
+     * Get query for projects assigned to selected client.
+     *
+     * @param id
+     *            of selected client
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
+        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id,
+            true);
     }
 
     /**

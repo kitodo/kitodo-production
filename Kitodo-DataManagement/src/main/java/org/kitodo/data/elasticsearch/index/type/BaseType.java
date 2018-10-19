@@ -76,40 +76,20 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      * 
      * @param objects
      *            list
-     * @param title
-     *            true or false, if true also title information is included
+     * @param addAdditionalProperties
+     *            true or false, if true also additional information are included,
+     *            type of information depends on the bean which is added as related
+     *            object
      * @return JSONArray
      */
-    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects, boolean title) {
+    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
         JsonArrayBuilder result = Json.createArrayBuilder();
         if (objects != null) {
             for (F property : objects) {
                 JsonObjectBuilder jsonObject = Json.createObjectBuilder();
                 jsonObject.add(AuthorityTypeField.ID.getKey(), property.getId());
-                if (title) {
-                    if (property instanceof Batch) {
-                        Batch batch = (Batch) property;
-                        jsonObject.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
-                        String type = batch.getType() != null ? batch.getType().toString() : "";
-                        jsonObject.add(BatchTypeField.TYPE.getKey(), type);
-                    } else if (property instanceof BaseTemplateBean) {
-                        jsonObject.add(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
-                    } else if (property instanceof Project) {
-                        jsonObject.add(ProjectTypeField.TITLE.getKey(), preventNull(((Project) property).getTitle()));
-                        jsonObject.add(ProjectTypeField.ACTIVE.getKey(), ((Project) property).isActive());
-                    } else if (property instanceof User) {
-                        jsonObject.add(UserTypeField.LOGIN.getKey(), preventNull(((User) property).getLogin()));
-                        jsonObject.add(UserTypeField.NAME.getKey(), preventNull(((User) property).getName()));
-                        jsonObject.add(UserTypeField.SURNAME.getKey(), preventNull(((User) property).getSurname()));
-                    } else if (property instanceof UserGroup) {
-                        jsonObject.add(UserGroupTypeField.TITLE.getKey(), preventNull(((UserGroup) property).getTitle()));
-                    } else if (property instanceof Task) {
-                        jsonObject.add(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
-                    } else if (property instanceof Filter) {
-                        jsonObject.add(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
-                    } else if (property instanceof Authority) {
-                        jsonObject.add(AuthorityTypeField.TITLE.getKey(), preventNull(((Authority) property).getTitle()));
-                    }
+                if (addAdditionalProperties) {
+                    getAdditionalProperties(jsonObject, property);
                 }
                 result.add(jsonObject.build());
             }
@@ -129,9 +109,43 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         return addObjectRelation(objects, false);
     }
 
+    private void getAdditionalProperties(JsonObjectBuilder jsonObject, BaseIndexedBean property) {
+        if (property instanceof Batch) {
+            Batch batch = (Batch) property;
+            jsonObject.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
+            String type = batch.getType() != null ? batch.getType().toString() : "";
+            jsonObject.add(BatchTypeField.TYPE.getKey(), type);
+        } else if (property instanceof BaseTemplateBean) {
+            jsonObject.add(ProcessTypeField.TITLE.getKey(),
+                    preventNull(((BaseTemplateBean) property).getTitle()));
+        } else if (property instanceof Project) {
+            Project project = (Project) property;
+            jsonObject.add(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
+            jsonObject.add(ProjectTypeField.ACTIVE.getKey(), project.isActive());
+            if (Objects.nonNull(project.getClient())) {
+                jsonObject.add(ProjectTypeField.CLIENT_ID.getKey(), project.getClient().getId());
+            }
+        } else if (property instanceof User) {
+            User user = (User) property;
+            jsonObject.add(UserTypeField.LOGIN.getKey(), preventNull(user.getLogin()));
+            jsonObject.add(UserTypeField.NAME.getKey(), preventNull(user.getName()));
+            jsonObject.add(UserTypeField.SURNAME.getKey(), preventNull(user.getSurname()));
+        } else if (property instanceof UserGroup) {
+            jsonObject.add(UserGroupTypeField.TITLE.getKey(),
+                    preventNull(((UserGroup) property).getTitle()));
+        } else if (property instanceof Task) {
+            jsonObject.add(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
+        } else if (property instanceof Filter) {
+            jsonObject.add(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
+        } else if (property instanceof Authority) {
+            jsonObject.add(AuthorityTypeField.TITLE.getKey(),
+                    preventNull(((Authority) property).getTitle()));
+        }
+    }
+
     /**
-     * Method used for formatting Date as JsonValue. It will help to change fast a way
-     * of Date formatting or expected String format.
+     * Method used for formatting Date as JsonValue. It will help to change fast a
+     * way of Date formatting or expected String format.
      * 
      * @param date
      *            as Date
