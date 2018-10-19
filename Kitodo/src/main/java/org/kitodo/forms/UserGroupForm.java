@@ -17,19 +17,20 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.primefaces.model.DualListModel;
 
@@ -168,48 +169,12 @@ public class UserGroupForm extends BaseForm {
     }
 
     /**
-     * Add client to user group.
+     * Get all available clients.
      *
-     * @return null
+     * @return list of Client objects
      */
-    public String addToClient() {
-        int clientId = 0;
-        try {
-            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Client client = serviceManager.getClientService().getById(clientId);
-            for (Client assignedClient : this.userGroup.getClients()) {
-                if (assignedClient.equals(client)) {
-                    return null;
-                }
-            }
-            this.userGroup.getClients().add(client);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return null;
-    }
-
-    /**
-     * Remove user from client.
-     *
-     * @return empty String
-     */
-    public String deleteFromClient() {
-        int clientId = 0;
-        try {
-            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Client client = serviceManager.getClientService().getById(clientId);
-            this.userGroup.getClients().remove(client);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
-        } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return null;
+    public List<SelectItem> getClients() {
+        return SelectItemList.getClients();
     }
 
     /**

@@ -37,7 +37,7 @@ public class Client extends BaseIndexedBean {
     @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
     private List<UserGroup> userGroups;
 
     /**

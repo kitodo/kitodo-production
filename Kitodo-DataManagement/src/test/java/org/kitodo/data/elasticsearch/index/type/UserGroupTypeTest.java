@@ -26,6 +26,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
@@ -38,9 +39,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 public class UserGroupTypeTest {
 
     private static List<UserGroup> prepareData() {
-
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
 
         User firstUser = new User();
         firstUser.setId(1);
@@ -56,9 +55,9 @@ public class UserGroupTypeTest {
         secondUser.setSurname("Barney");
         users.add(secondUser);
 
-        UserGroup firstUserGroup = new UserGroup();
-        firstUserGroup.setId(1);
-        firstUserGroup.setTitle("Administrator");
+        Client client = new Client();
+        client.setId(1);
+        client.setName("Client");
 
         List<Authority> adminAuthorities = new ArrayList<>();
         Authority adminAuthority = new Authority();
@@ -77,15 +76,22 @@ public class UserGroupTypeTest {
         adminAuthorities.add(managerAuthority);
         adminAuthorities.add(userAuthority);
 
+        UserGroup firstUserGroup = new UserGroup();
+        firstUserGroup.setId(1);
+        firstUserGroup.setTitle("Administrator");
+        firstUserGroup.setClient(client);
         firstUserGroup.setAuthorities(adminAuthorities);
-
         firstUserGroup.setUsers(users);
-        userGroups.add(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Random");
         secondUserGroup.setAuthorities(adminAuthorities);
+        secondUserGroup.setClient(client);
+
+        List<UserGroup> userGroups = new ArrayList<>();
+
+        userGroups.add(firstUserGroup);
         userGroups.add(secondUserGroup);
 
         return userGroups;
@@ -102,6 +108,10 @@ public class UserGroupTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Administrator",
             UserGroupTypeField.TITLE.getStringValue(actual));
+        assertEquals("Key client.id doesn't match to given value!", 1,
+                UserGroupTypeField.CLIENT_ID.getIntValue(actual));
+        assertEquals("Key client.name doesn't match to given value!", "Client",
+                UserGroupTypeField.CLIENT_NAME.getStringValue(actual));
 
         JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
@@ -155,6 +165,10 @@ public class UserGroupTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Random",
             UserGroupTypeField.TITLE.getStringValue(actual));
+        assertEquals("Key client.id doesn't match to given value!", 1,
+                UserGroupTypeField.CLIENT_ID.getIntValue(actual));
+        assertEquals("Key client.name doesn't match to given value!", "Client",
+                UserGroupTypeField.CLIENT_NAME.getStringValue(actual));
 
         JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
@@ -189,7 +203,7 @@ public class UserGroupTypeTest {
         HttpEntity document = userGroupType.createDocument(userGroup);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 4, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
 
         JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         JsonObject authority = authorities.getJsonObject(0);
