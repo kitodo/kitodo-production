@@ -23,7 +23,7 @@
         <institutionFilterParameter value="ead.repository.isil" />
         <identifierParameter value="ead.id" />
         <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
-        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
+        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" type="reference" />
         <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
         <maximumChildRecords>50</maximumChildRecords>
         <searchFields>
@@ -71,8 +71,8 @@
         <!-- aDis SRU interface not yet available! -->
         <!--
         <config address="" description="adis Katalog"/>
-        <identifierParameter value="ead.id" />
-        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
+        <identifierParameter value="SATZNR" />
+        <parentElement xpath="//mods:mods/mods:relatedItem[@type='host']" />
         <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
         -->
         <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
@@ -98,6 +98,7 @@
                 <mandatoryElement>//mods:mods/mods:relatedItem[@type='host']</mandatoryElement>
             </type>
             <type rulesetType="MultiVolumeWork">
+                <forbiddenElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</forbiddenElement>
                 <forbiddenElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</forbiddenElement>
                 <forbiddenElement>//mods:mods/mods:relatedItem[@type='host']</forbiddenElement>
             </type>
