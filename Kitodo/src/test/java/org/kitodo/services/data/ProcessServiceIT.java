@@ -397,14 +397,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetCreationDateAsString() throws Exception {
-        Process process = processService.getById(1);
-        String expected = "2017-01-20 00:00:00";
-        String actual = processService.getCreationDateAsString(process);
-        assertEquals("Creation date doesn't match to given plain text!", expected, actual);
-    }
-
-    @Test
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(1);
 
@@ -587,29 +579,5 @@ public class ProcessServiceIT {
     public void shouldNotBeProcessAssignedToOnlyOneLogisticBatch() throws Exception {
         ProcessDTO processDTO = processService.findById(2);
         assertFalse(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
-    }
-
-    @Test
-    public void shouldFindProcessesOfActiveProjects() {
-        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
-            processService.findProcessesOfActiveProjects(null).size()));
-    }
-
-    @Test
-    public void shouldFindNotClosedProcessesWithoutTemplates() {
-        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 3,
-            processService.findNotClosedProcessesWithoutTemplates(null).size()));
-    }
-
-    @Test
-    public void shouldFindProcessesOfOpenAndActiveProjectsWithoutTemplates() {
-        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
-            processService.findOpenAndActiveProcessesWithoutTemplates(null).size()));
-    }
-
-    @Test
-    public void shouldFindAllActiveWithoutTemplates() {
-        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
-            processService.findAllActiveWithoutTemplates(null).size()));
     }
 }
