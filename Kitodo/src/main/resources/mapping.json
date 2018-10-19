@@ -859,12 +859,12 @@
                         }
                     }
                 },
-                "clients": {
+                "client": {
                     "properties": {
                         "id": {
                             "type": "long"
                         },
-                        "clientName": {
+                        "name": {
                             "type": "text",
                             "fields": {
                                 "keyword": {
