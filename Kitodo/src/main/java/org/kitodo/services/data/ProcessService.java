@@ -404,6 +404,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Process> getAllNotIndexed() {
+        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
     public void refresh(Process process) {
         dao.refresh(process);
     }

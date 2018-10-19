@@ -40,6 +40,12 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     }
 
     @Override
+    public List<Authority> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Authority save(Authority authority) throws DAOException {
         storeObject(authority);
         return retrieveObject(Authority.class, authority.getId());

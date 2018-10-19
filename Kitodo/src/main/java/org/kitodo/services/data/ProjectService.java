@@ -151,6 +151,16 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Project> getAllNotIndexed() {
+        return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         Integer currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();

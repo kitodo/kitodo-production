@@ -40,6 +40,12 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     @Override
+    public List<Process> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Process save(Process process) throws DAOException {
         storeObject(process);
         return retrieveObject(Process.class, process.getId());
@@ -96,6 +102,7 @@ public class ProcessDAO extends BaseDAO<Process> {
      * @return list of all active processes as Process objects
      */
     public List<Process> getActiveProcesses() {
-        return getByQuery("SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE project.active = 1");
+        return getByQuery(
+            "SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE project.active = 1");
     }
 }

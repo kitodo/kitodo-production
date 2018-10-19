@@ -63,6 +63,16 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         return countDatabaseRows("SELECT COUNT(*) FROM Docket");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Docket> getAllNotIndexed() {
+        return getByQuery("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Get list of dockets for given title.
      * 

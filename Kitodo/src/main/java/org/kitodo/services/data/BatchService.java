@@ -89,6 +89,16 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         return countDatabaseRows("SELECT COUNT(*) FROM Batch");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Batch> getAllNotIndexed() {
+        return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Remove all passed batches.
      * 

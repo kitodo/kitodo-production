@@ -18,6 +18,7 @@ import java.util.Objects;
 import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
@@ -37,11 +38,6 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static ClientService instance = null;
-
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Client");
-    }
 
     /**
      * Return singleton variable of type AuthorityService.
@@ -65,6 +61,22 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     private ClientService() {
         super(new ClientDAO(), new ClientType(), new Indexer<>(Client.class), new Searcher(Client.class));
         this.indexer = new Indexer<>(Client.class);
+    }
+
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Client");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Client WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+
+    @Override
+    public List<Client> getAllNotIndexed() {
+        return getByQuery("FROM Client WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     @Override

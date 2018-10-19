@@ -91,6 +91,16 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return countDatabaseRows("SELECT COUNT(*) FROM Filter");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Filter> getAllNotIndexed() {
+        return getByQuery("FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Find filters with exact value.
      *

@@ -130,6 +130,16 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return countDatabaseRows("SELECT COUNT(*) FROM UserGroup");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<UserGroup> getAllNotIndexed() {
+        return getByQuery("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Method saves users and tasks related to modified user group.
      *

@@ -43,6 +43,12 @@ public class FilterDAO extends BaseDAO<Filter> {
     }
 
     @Override
+    public List<Filter> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+                size);
+    }
+
+    @Override
     public Filter save(Filter filter) throws DAOException {
         storeObject(filter);
         return retrieveObject(Filter.class, filter.getId());
