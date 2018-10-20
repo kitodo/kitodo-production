@@ -1,8 +1,8 @@
 # Create VirtualBox appliance for Kitodo 3.x
 
-## Download Debian 9.4 ISO file
+## Download Debian 9.5 ISO file
 
-Download `debian-9.4.0-amd64-netinst.iso` from <https://cdimage.debian.org/debian-cd/9.4.0/amd64/iso-cd/>
+Download `debian-9.5.0-amd64-netinst.iso` from <https://cdimage.debian.org/debian-cd/9.5.0/amd64/iso-cd/>
 
 ## Create Virtual Machine
 
@@ -54,6 +54,28 @@ su -c 'echo "deb http://ftp.debian.org/debian stretch-backports main contrib" > 
 ## Install Kitodo
 
 Follow the installation instructions in <https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung-f%C3%BCr-Kitodo.Production-3.x>
+
+## Create shortcuts
+
+* Website link
+```
+echo '[Desktop Entry]
+Encoding=UTF-8
+Name=Kitodo.Production
+Type=Link
+URL=http://localhost:8080/kitodo/
+Icon=text-html' >> ~/Desktop/Kitodo.Production.desktop
+```
+* Symlink to folders
+```
+ln -s /usr/local/kitodo ~/Desktop/kitodo-config
+ln -s /var/lib/tomcat8/webapps/ ~/Desktop/kitodo-app
+```
+
+## Save password in Firefox
+
+* Login at <http://localhost:8080/kitodo/> with user `testAdmin` and password `test
+* Click `save` in popup dialog to let Firefox save this login
 
 ## Export Appliance
 
