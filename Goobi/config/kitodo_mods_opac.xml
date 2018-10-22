@@ -7,13 +7,15 @@
             <label language="en">Inventory</label>
             <mapping>text</mapping>
         </type>
-        <type rulesetType="MultiVolumeWork" title="multivolumework">
+        <type rulesetType="MultiVolumeWork" title="multivolume" isMultiVolume="true">
             <label language="de">Mehrbändiges Werk</label>
             <label language="en">Multivolume Work</label>
+            <mapping/>
         </type>
         <type rulesetType="Monograph" title="monograph">
             <label language="de">Monographie</label>
             <label language="en">Monograph</label>
+            <mapping/>
         </type>
     </doctypes>
 
@@ -69,8 +71,8 @@
     <catalogue title="adis">
         <mappingFile>mods2kitodo.xsl</mappingFile>
         <!-- aDis SRU interface not yet available! -->
+        <config address="aDis.info" description="adis Katalog"/>
         <!--
-        <config address="" description="adis Katalog"/>
         <identifierParameter value="SATZNR" />
         <parentElement xpath="//mods:mods/mods:relatedItem[@type='host']" />
         <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
