@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -1468,7 +1469,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, getNormalizedTitle(process.getTitle()) + ".pdf");
-            file.delete();
+            Files.deleteIfExists(file.toPath());
         }
     }
 
@@ -1491,7 +1492,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
-            file.delete();
+            Files.deleteIfExists(file.toPath());
         }
     }
 

@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,7 @@ public class FileManagement implements FileManagementInterface {
         File file = new File(uri);
         if (file.exists()) {
             if (file.isFile()) {
-                return file.delete();
+                return Files.deleteIfExists(file.toPath());
             }
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
