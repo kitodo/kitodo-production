@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -81,6 +82,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
     private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
+    private static final String LOGIN_NOT_VALID = "loginNotValid";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
@@ -595,9 +597,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getProjectService()));
         userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
             serviceManager.getClientService()));
-        userDTO.setProcessingTasks(
-                convertRelatedJSONObjectToDTO(
-                        jsonObject, UserTypeField.PROCESSING_TASKS.getKey(), serviceManager.getTaskService()));
+        userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
+            serviceManager.getTaskService()));
         userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
     }
@@ -672,26 +673,51 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(login);
         if (!matcher.matches()) {
-            Helper.setErrorMessage("loginNotValid", new Object[] {login});
+            Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
             return false;
         }
 
-        // Go through the file line by line and compare to invalid characters
-        try (FileInputStream fis = new FileInputStream(KitodoConfigFile.LOGIN_BLACKLIST.getFile());
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr)) {
-            String str;
-            while ((str = in.readLine()) != null) {
-                if (str.length() > 0 && login.equalsIgnoreCase(str)) {
-                    Helper.setErrorMessage("loginNotValid", new Object[] {login});
+        return isLoginAllowed(login);
+    }
+
+    private boolean isLoginAllowed(String login) {
+        // If user defined blacklist doesn't exists, use default one
+        if (!KitodoConfigFile.LOGIN_BLACKLIST.exists()) {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            try (InputStream inputStream = classloader.getResourceAsStream(KitodoConfigFile.LOGIN_BLACKLIST.getName());
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                    BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                if (isLoginFoundOnBlackList(reader, login)) {
                     return false;
                 }
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                return false;
+            }
+        }
+        // Go through the user defined blacklist file line by line and compare with login
+        try (FileInputStream inputStream = new FileInputStream(KitodoConfigFile.LOGIN_BLACKLIST.getFile());
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            if (isLoginFoundOnBlackList(reader, login)) {
+                return false;
             }
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return false;
         }
         return true;
+    }
+
+    private boolean isLoginFoundOnBlackList(BufferedReader reader, String login) throws IOException {
+        String notAllowedLogin;
+        while ((notAllowedLogin = reader.readLine()) != null) {
+            if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {
+                Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getFullName(User user) {
