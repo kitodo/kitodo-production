@@ -126,6 +126,31 @@ public class ListingST extends BaseTestSelenium {
     }
 
     @Test
+    public void listProjectsForUserWithSessionClientTest() throws Exception {
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLogin(serviceManager.getUserService().getById(2));
+        Pages.getTopNavigation().selectSessionClient();
+
+        projectsPage.goTo();
+        int projectsInDatabase = serviceManager.getProjectService()
+                .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 1").size();
+        int projectsDisplayed = projectsPage.countListedProjects();
+        assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
+
+        int templatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
+        int templatesDisplayed = projectsPage.countListedTemplates();
+        assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
+
+        int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
+        int workflowsDisplayed = projectsPage.countListedWorkflows();
+        assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
+
+        int docketsInDatabase = serviceManager.getDocketService().getByQuery("FROM Docket AS d INNER JOIN d.client AS c WITH c.id = 1").size();
+        int docketsDisplayed = projectsPage.countListedDockets();
+        assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
+    }
+
+    @Test
     public void listProcessesTest() throws Exception {
         processesPage.goTo();
         int processesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
