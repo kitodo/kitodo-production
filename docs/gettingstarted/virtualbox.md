@@ -6,7 +6,7 @@ Download `debian-9.5.0-amd64-netinst.iso` from <https://cdimage.debian.org/debia
 
 ## Create Virtual Machine
 
-* Name: `kitodo 3.0.0-alpha.2`
+* Name: `kitodo 3.0.0-beta.1`
 * Type: `Linux`
 * Version: `Debian (64-bit)`
 * Memory size: `4096 MB`
@@ -24,7 +24,7 @@ Download `debian-9.5.0-amd64-netinst.iso` from <https://cdimage.debian.org/debia
 
 ## Start Virtual Machine
 
-Select downloaded file `debian-9.4.0-amd64-netinst.iso`
+Select downloaded file `debian-9.5.0-amd64-netinst.iso`
 
 ## Debian install screen
 
@@ -81,10 +81,10 @@ ln -s /var/lib/tomcat8/webapps/ ~/Desktop/kitodo-app
 
 VirtualBox Manager / File / Export Appliance
 
-* File: `kitodo-production-3.0.0-alpha.2.ova`
+* File: `kitodo-production-3.0.0-beta.1.ova`
 * Product: `Kitodo Production`
 * Product-URL: `http://www.kitodo.org`
-* Version: `3.0.0-alpha.2`
+* Version: `3.0.0-beta.1`
 * Description:
 ```
 This VirtualBox appliance is intended for development and tests in local networks. Do not use it in production mode!
