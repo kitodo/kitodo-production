@@ -42,8 +42,8 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
-    private final String globalAuthoritySuffix = "_globalAssignable";
-    private final String clientAuthoritySuffix = "_clientAssignable";
+    private static final String GLOBAL_AUTHORITY_SUFFIX = "_globalAssignable";
+    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -70,21 +70,21 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Gets globalAuthoritySuffix.
+     * Get global authority suffix.
      *
-     * @return The globalAuthoritySuffix.
+     * @return the global authority suffix
      */
     public String getGlobalAuthoritySuffix() {
-        return globalAuthoritySuffix;
+        return GLOBAL_AUTHORITY_SUFFIX;
     }
 
     /**
-     * Gets clientAuthoritySuffix.
+     * Get client authority suffix.
      *
-     * @return The clientAuthoritySuffix.
+     * @return the client authority suffix.
      */
     public String getClientAuthoritySuffix() {
-        return clientAuthoritySuffix;
+        return CLIENT_AUTHORITY_SUFFIX;
     }
 
     /**
@@ -189,7 +189,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> getAllAssignableGlobal() throws DAOException {
-        return filterAuthorities(getAll(), globalAuthoritySuffix);
+        return filterAuthorities(getAll(), GLOBAL_AUTHORITY_SUFFIX);
     }
 
     /**
@@ -198,7 +198,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> getAllAssignableToClients() throws DAOException {
-        return filterAuthorities(getAll(), clientAuthoritySuffix);
+        return filterAuthorities(getAll(), CLIENT_AUTHORITY_SUFFIX);
     }
 
     /**
@@ -207,7 +207,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> filterAssignableGlobal(List<Authority> authoritiesToFilter) {
-        return filterAuthorities(authoritiesToFilter, globalAuthoritySuffix);
+        return filterAuthorities(authoritiesToFilter, GLOBAL_AUTHORITY_SUFFIX);
     }
 
     /**
@@ -216,7 +216,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> filterAssignableToClients(List<Authority> authoritiesToFilter) {
-        return filterAuthorities(authoritiesToFilter, clientAuthoritySuffix);
+        return filterAuthorities(authoritiesToFilter, CLIENT_AUTHORITY_SUFFIX);
     }
 
     /**
