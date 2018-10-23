@@ -27,7 +27,8 @@
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 16px;">
+        <p:column style="width: 16px;"
+                  rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewProject',item.client.id)}">
             <p:rowToggler/>
         </p:column>
 

@@ -30,13 +30,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="usergroupEdit" title="#{msgs.userGroupEdit}"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUserGroup')}">
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editUserGroup', item.client.id)}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteUsergroup"
-                               action="#{UserGroupForm.delete}"
-                               title="#{msgs.delete}"
+                <p:commandLink id="deleteUsergroup" action="#{UserGroupForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteUserGroup', item.client.id)}"
                                update="usersTabView:userGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{UserGroupForm.userGroupById}"/>

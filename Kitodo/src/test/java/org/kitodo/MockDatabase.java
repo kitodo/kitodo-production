@@ -1327,6 +1327,7 @@ public class MockDatabase {
 
         User user = new User();
         user.setName("Removable user");
+        user.getClients().add(assignableClient);
         serviceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 

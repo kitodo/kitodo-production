@@ -46,19 +46,24 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
-            <p:tab title="#{msgs.projectList}" id="projectTab">
+            <p:tab title="#{msgs.projectList}" id="projectTab"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllProjects')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.templates}" id="templateTab">
+            <p:tab title="#{msgs.templates}" id="templateTab"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllTemplates')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.workflows}" id="workflowTab">
+            <p:tab title="#{msgs.workflows}" id="workflowTab"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllWorkflows')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.dockets}" id="docketTab">
+            <p:tab title="#{msgs.dockets}" id="docketTab"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllDockets')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.rulesets}" id="rulesetTab">
+            <p:tab title="#{msgs.rulesets}" id="rulesetTab"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllRulesets')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
         </p:tabView>

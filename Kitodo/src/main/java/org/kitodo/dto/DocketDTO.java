@@ -19,6 +19,7 @@ public class DocketDTO extends BaseDTO {
     private String file;
     private String title;
     private Boolean active = true;
+    private ClientDTO client;
 
     /**
      * Get file.
@@ -75,5 +76,24 @@ public class DocketDTO extends BaseDTO {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Get client object.
+     *
+     * @return value of clientDTO
+     */
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    /**
+     * Set client object.
+     *
+     * @param client
+     *            as org.kitodo.dto.ClientDTO
+     */
+    public void setClientDTO(ClientDTO client) {
+        this.client = client;
     }
 }

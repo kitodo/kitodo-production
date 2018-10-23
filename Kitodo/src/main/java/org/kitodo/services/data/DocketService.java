@@ -28,6 +28,7 @@ import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.DocketDTO;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -147,6 +148,12 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
         docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
         docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(docketJSONObject));
+        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(docketJSONObject));
+
+        docketDTO.setClientDTO(clientDTO);
         return docketDTO;
     }
 }
