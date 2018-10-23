@@ -13,11 +13,9 @@ package org.kitodo.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -239,13 +237,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of JSON objects with projects for specific process title
      */
     List<JsonObject> findByProcessTitle(String title) throws DataException {
-        Set<Integer> processIds = new HashSet<>();
-
         List<JsonObject> processes = serviceManager.getProcessService().findByTitle(title, true);
-        for (JsonObject process : processes) {
-            processIds.add(getIdFromJSONObject(process));
-        }
-        return searcher.findDocuments(createSetQuery("processes.id", processIds, true).toString());
+
+        return searcher.findDocuments(createSetQuery("processes.id", processes, true).toString());
     }
 
     /**

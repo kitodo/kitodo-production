@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -420,6 +419,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         dao.refresh(process);
     }
 
+    List<JsonObject> findForCurrentSessionClient() throws DataException {
+        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
+            return searcher.findDocuments(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()).toString());
+        }
+        return new ArrayList<>();
+    }
+
     /**
      * Find processes by id of project.
      *
@@ -575,8 +582,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private List<JsonObject> findByProperty(String title, String value, String type, String key, boolean contains)
             throws DataException {
-        Set<Integer> propertyIds = new HashSet<>();
-
         List<JsonObject> properties;
         if (value == null) {
             properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
@@ -586,10 +591,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
-        for (JsonObject property : properties) {
-            propertyIds.add(getIdFromJSONObject(property));
-        }
-        return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
+        return searcher.findDocuments(createSetQuery(key, properties, true).toString());
     }
 
     private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active, String sort)

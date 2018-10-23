@@ -22,6 +22,7 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -670,6 +671,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         } else {
             return matchQuery(key, 0);
         }
+    }
+
+    protected QueryBuilder createSetQuery(String key, List<JsonObject> values, boolean contains) {
+        Set<Integer> valuesIds = new HashSet<>();
+        for (JsonObject value : values) {
+            valuesIds.add(getIdFromJSONObject(value));
+        }
+
+        return createSetQuery(key, valuesIds, contains);
     }
 
     /**
