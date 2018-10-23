@@ -24,6 +24,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -68,6 +69,12 @@ public class UserGroupForm extends BaseForm {
      */
     public String newUserGroup() {
         this.userGroup = new UserGroup();
+
+        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        if (Objects.nonNull(sessionClient)) {
+            this.userGroup.setClient(sessionClient);
+        }
+
         return usergroupEditPath;
     }
 

@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -75,6 +76,12 @@ public class DocketForm extends BaseForm {
      */
     public String newDocket() {
         this.myDocket = new Docket();
+
+        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        if (Objects.nonNull(sessionClient)) {
+            this.myDocket.setClient(sessionClient);
+        }
+
         return docketEditPath;
     }
 
