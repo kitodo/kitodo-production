@@ -73,9 +73,6 @@
             <p:tab id="usergroupTab" title="#{msgs.details}">
                 <ui:include src="/WEB-INF/templates/includes/usergroupEdit/details.xhtml"/>
             </p:tab>
-            <p:tab id="clientTab" title="#{msgs.clientList}">
-                <ui:include src="/WEB-INF/templates/includes/usergroupEdit/clients.xhtml"/>
-            </p:tab>
         </p:tabView>
     </ui:define>
 
@@ -95,9 +92,5 @@
                 </ui:fragment>
             </a>
         </li>
-    </ui:define>
-    <!-- add clients dialog -->
-    <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/usergroupEdit/clientsPopup.xhtml"/>
     </ui:define>
 </ui:composition>

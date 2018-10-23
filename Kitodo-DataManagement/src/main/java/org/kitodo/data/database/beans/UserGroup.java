@@ -21,6 +21,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -44,11 +45,9 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
                     foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<Authority> authorities;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_client", joinColumns = {@JoinColumn(name = "userGroup_id",
-            foreignKey = @ForeignKey(name = "FK_userGroup_x_client_userGroup_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_client_id")) })
-    private List<Client> clients;
+    @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_client_id"))
+    private Client client;
 
     /**
      * The Constructor.
@@ -143,24 +142,22 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     /**
-     * Gets clients.
+     * Get client.
      *
-     * @return The clients.
+     * @return the client bean
      */
-    public List<Client> getClients() {
-        if (this.clients == null) {
-            this.clients = new ArrayList<>();
-        }
-        return clients;
+    public Client getClient() {
+        return client;
     }
 
     /**
-     * Sets clients.
+     * Set client.
      *
-     * @param clients The clients.
+     * @param client
+     *            bean
      */
-    public void setClients(List<Client> clients) {
-        this.clients = clients;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override

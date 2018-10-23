@@ -36,6 +36,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
@@ -275,6 +276,12 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             addBasicAuthorizationsRelation(userGroupDTO, userGroupJSONObject);
             addBasicUsersRelation(userGroupDTO, userGroupJSONObject);
         }
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(UserGroupTypeField.CLIENT_ID.getIntValue(userGroupJSONObject));
+        clientDTO.setName(UserGroupTypeField.CLIENT_NAME.getStringValue(userGroupJSONObject));
+
+        userGroupDTO.setClient(clientDTO);
         return userGroupDTO;
     }
 

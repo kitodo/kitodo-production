@@ -11,6 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.Objects;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -29,7 +31,10 @@ public class UserGroupType extends BaseType<UserGroup> {
         jsonObjectBuilder.add(UserGroupTypeField.TITLE.getKey(), preventNull(userGroup.getTitle()));
         jsonObjectBuilder.add(UserGroupTypeField.AUTHORITIES.getKey(), addObjectRelation(userGroup.getAuthorities(), true));
         jsonObjectBuilder.add(UserGroupTypeField.USERS.getKey(), addObjectRelation(userGroup.getUsers(), true));
-        jsonObjectBuilder.add(UserGroupTypeField.CLIENTS.getKey(), addObjectRelation(userGroup.getClients(), true));
+        if (Objects.nonNull(userGroup.getClient())) {
+            jsonObjectBuilder.add(UserGroupTypeField.CLIENT_ID.getKey(), userGroup.getClient().getId());
+            jsonObjectBuilder.add(UserGroupTypeField.CLIENT_NAME.getKey(), preventNull(userGroup.getClient().getName()));
+        }
         return jsonObjectBuilder.build();
     }
 }
