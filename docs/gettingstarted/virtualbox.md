@@ -1,12 +1,12 @@
 # Create VirtualBox appliance for Kitodo 3.x
 
-## Download Debian 9.4 ISO file
+## Download Debian 9.5 ISO file
 
-Download `debian-9.4.0-amd64-netinst.iso` from <https://cdimage.debian.org/debian-cd/9.4.0/amd64/iso-cd/>
+Download `debian-9.5.0-amd64-netinst.iso` from <https://cdimage.debian.org/debian-cd/9.5.0/amd64/iso-cd/>
 
 ## Create Virtual Machine
 
-* Name: `kitodo 3.0.0-alpha.2`
+* Name: `kitodo 3.0.0-beta.1`
 * Type: `Linux`
 * Version: `Debian (64-bit)`
 * Memory size: `4096 MB`
@@ -24,7 +24,7 @@ Download `debian-9.4.0-amd64-netinst.iso` from <https://cdimage.debian.org/debia
 
 ## Start Virtual Machine
 
-Select downloaded file `debian-9.4.0-amd64-netinst.iso`
+Select downloaded file `debian-9.5.0-amd64-netinst.iso`
 
 ## Debian install screen
 
@@ -55,14 +55,36 @@ su -c 'echo "deb http://ftp.debian.org/debian stretch-backports main contrib" > 
 
 Follow the installation instructions in <https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung-f%C3%BCr-Kitodo.Production-3.x>
 
+## Create shortcuts
+
+* Website link
+```
+echo '[Desktop Entry]
+Encoding=UTF-8
+Name=Kitodo.Production
+Type=Link
+URL=http://localhost:8080/kitodo/
+Icon=text-html' >> ~/Desktop/Kitodo.Production.desktop
+```
+* Symlink to folders
+```
+ln -s /usr/local/kitodo ~/Desktop/kitodo-config
+ln -s /var/lib/tomcat8/webapps/ ~/Desktop/kitodo-app
+```
+
+## Save password in Firefox
+
+* Login at <http://localhost:8080/kitodo/> with user `testAdmin` and password `test
+* Click `save` in popup dialog to let Firefox save this login
+
 ## Export Appliance
 
 VirtualBox Manager / File / Export Appliance
 
-* File: `kitodo-production-3.0.0-alpha.2.ova`
+* File: `kitodo-production-3.0.0-beta.1.ova`
 * Product: `Kitodo Production`
 * Product-URL: `http://www.kitodo.org`
-* Version: `3.0.0-alpha.2`
+* Version: `3.0.0-beta.1`
 * Description:
 ```
 This VirtualBox appliance is intended for development and tests in local networks. Do not use it in production mode!
