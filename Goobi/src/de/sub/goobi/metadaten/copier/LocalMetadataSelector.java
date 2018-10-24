@@ -112,7 +112,7 @@ public class LocalMetadataSelector extends MetadataSelector {
     @Override
     protected Iterable<MetadataSelector> findAll(DocStruct node) {
         ArrayList<MetadataSelector> result = new ArrayList<MetadataSelector>(1);
-        List<MetadataType> addableTypes = node.getAddableMetadataTypes();
+        List<MetadataType> addableTypes = node.getType().getAllMetadataTypes();
         if (addableTypes != null) {
             for (MetadataType addable : addableTypes) {
                 if (selector.getName().equals(addable.getName())) {
