@@ -29,6 +29,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
@@ -70,7 +71,7 @@ public class UserServiceIT {
         fileService.delete(URI.create("users"));
     }
 
-    @org.junit.Rule
+    @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
@@ -104,7 +105,7 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
+    public void shouldCountAllDatabaseRowsForUsers() throws Exception {
         Long amount = userService.countDatabaseRows();
         assertEquals("Users were not counted correctly!", Long.valueOf(6), amount);
     }
@@ -154,17 +155,17 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldRemoveUserButNotUserGroup() throws Exception {
-        RoleService userGroupService = new ServiceManager().getUserGroupService();
+    public void shouldRemoveUserButNotRole() throws Exception {
+        RoleService roleService = new ServiceManager().getRoleService();
 
-        Role userGroup = new Role();
-        userGroup.setTitle("Cascade Group");
-        userGroupService.saveToDatabase(userGroup);
+        Role role = new Role();
+        role.setTitle("Cascade Group");
+        roleService.saveToDatabase(role);
 
         User user = new User();
         user.setLogin("Cascade");
         user.getRoles().add(
-            userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+            roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
@@ -173,11 +174,11 @@ public class UserServiceIT {
         int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").size();
-        assertEquals("User Group was removed from database!", 1, size);
+        size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
+        assertEquals("Role was removed from database!", 1, size);
 
-        userGroupService
-                .removeFromDatabase(userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").get(0));
+        roleService
+                .removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test
@@ -281,27 +282,27 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindByUserGroupId() {
+    public void shouldFindByRoleId() {
         await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 2, userService.findByUserGroupId(1).size()));
+            () -> assertEquals("Users were not found in index!", 2, userService.findByRoleId(1).size()));
     }
 
     @Test
-    public void shouldNotFindByUserGroupId() {
+    public void shouldNotFindByRoleId() {
         await().untilAsserted(
-            () -> assertEquals("User was found in index!", 1, userService.findByUserGroupId(3).size()));
+            () -> assertEquals("User was found in index!", 1, userService.findByRoleId(3).size()));
     }
 
     @Test
-    public void shouldFindByUserGroupTitle() {
+    public void shouldFindByRoleTitle() {
         await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 2, userService.findByUserGroupTitle("Admin").size()));
+            () -> assertEquals("User was not found in index!", 2, userService.findByRoleTitle("Admin").size()));
     }
 
     @Test
-    public void shouldNotFindByUserGroupTitle() {
+    public void shouldNotFindByRoleTitle() {
         await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByUserGroupTitle("None").size()));
+            () -> assertEquals("User was found in index!", 0, userService.findByRoleTitle("None").size()));
     }
 
     @Test
@@ -328,15 +329,15 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetUserGroupSize() {
+    public void shouldGetRolesSize() {
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getUserGroupSize()));
+            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getRolesSize()));
 
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1, true).getUserGroupSize()));
+            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1, true).getRolesSize()));
 
         await().untilAsserted(() -> assertEquals("User group's title is incorrect!", "Admin",
-            userService.findById(1, true).getUserGroups().get(0).getTitle()));
+            userService.findById(1, true).getRoles().get(0).getTitle()));
     }
 
     @Test

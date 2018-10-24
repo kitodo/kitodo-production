@@ -128,10 +128,10 @@ public class EditingST extends BaseTestSelenium {
     }
 
     @Test
-    public void editUserGroupTest() throws Exception {
-        usersPage.editUserGroup();
-        assertEquals("Header for edit user group is incorrect", "Benutzergruppe bearbeiten (Admin)",
-            Pages.getClientEditPage().getHeaderText());
+    public void editRoleTest() throws Exception {
+        usersPage.editRole();
+        assertEquals("Header for edit role is incorrect", "Benutzergruppe bearbeiten (Admin)",
+            Pages.getRoleEditPage().getHeaderText());
     }
 
     @Test

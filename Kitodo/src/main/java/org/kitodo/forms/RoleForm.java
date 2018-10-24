@@ -25,8 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
@@ -35,18 +35,18 @@ import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.primefaces.model.DualListModel;
 
-@Named("UserGroupForm")
+@Named("RoleForm")
 @SessionScoped
 public class RoleForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(RoleForm.class);
-    private Role userGroup = new Role();
+    private Role role = new Role();
 
     @Named("UserForm")
     private UserForm userForm;
 
-    private String usergroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String usergroupEditPath = MessageFormat.format(REDIRECT_PATH, "usergroupEdit");
+    private String roleListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
 
     /**
      * Default constructor with inject user form that also sets the LazyDTOModel
@@ -58,24 +58,24 @@ public class RoleForm extends BaseForm {
     @Inject
     public RoleForm(UserForm userForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRoleService()));
         this.userForm = userForm;
     }
 
     /**
-     * Create new user group.
+     * Create new role.
      *
      * @return page address
      */
-    public String newUserGroup() {
-        this.userGroup = new Role();
+    public String newRole() {
+        this.role = new Role();
 
         Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
         if (Objects.nonNull(sessionClient)) {
-            this.userGroup.setClient(sessionClient);
+            this.role.setClient(sessionClient);
         }
 
-        return usergroupEditPath;
+        return roleEditPath;
     }
 
     /**
@@ -85,10 +85,10 @@ public class RoleForm extends BaseForm {
      */
     public String save() {
         try {
-            this.serviceManager.getUserGroupService().save(this.userGroup);
-            return usergroupListPath;
+            this.serviceManager.getRoleService().save(this.role);
+            return roleListPath;
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() }, logger,
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;
         }
@@ -99,25 +99,25 @@ public class RoleForm extends BaseForm {
      */
     public void delete() {
         try {
-            this.serviceManager.getUserGroupService().refresh(this.userGroup);
-            if (!this.userGroup.getUsers().isEmpty()) {
-                for (User b : this.userGroup.getUsers()) {
-                    b.getRoles().remove(this.userGroup);
+            this.serviceManager.getRoleService().refresh(this.role);
+            if (!this.role.getUsers().isEmpty()) {
+                for (User user : this.role.getUsers()) {
+                    user.getRoles().remove(this.role);
                 }
-                this.userGroup.setUsers(new ArrayList<>());
-                this.serviceManager.getUserGroupService().save(this.userGroup);
+                this.role.setUsers(new ArrayList<>());
+                this.serviceManager.getRoleService().save(this.role);
             }
-            if (!this.userGroup.getTasks().isEmpty()) {
-                Helper.setErrorMessage("userGroupAssignedError");
+            if (!this.role.getTasks().isEmpty()) {
+                Helper.setErrorMessage("roleAssignedError");
                 return;
             }
-            if (!this.userGroup.getAuthorities().isEmpty()) {
-                this.userGroup.setAuthorities(new ArrayList<>());
-                this.serviceManager.getUserGroupService().save(this.userGroup);
+            if (!this.role.getAuthorities().isEmpty()) {
+                this.role.setAuthorities(new ArrayList<>());
+                this.serviceManager.getRoleService().save(this.role);
             }
-            this.serviceManager.getUserGroupService().remove(this.userGroup);
+            this.serviceManager.getRoleService().remove(this.role);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() },
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() },
                 logger, e);
         }
     }
@@ -132,46 +132,46 @@ public class RoleForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setUserGroup(this.serviceManager.getUserGroupService().getById(id));
+                setRole(this.serviceManager.getRoleService().getById(id));
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), id }, logger, e);
+                new Object[] {ObjectType.ROLE.getTranslationSingular(), id }, logger, e);
         }
         setSaveDisabled(true);
     }
 
     /**
-     * Gets the user group.
+     * Get the role.
      *
-     * @return The user group.
+     * @return the role
      */
-    public Role getUserGroup() {
-        return this.userGroup;
+    public Role getRole() {
+        return this.role;
     }
 
     /**
-     * Sets the user group.
+     * Set the role.
      *
-     * @param userGroup
-     *            The user group.
+     * @param role
+     *            the role
      */
-    public void setUserGroup(Role userGroup) {
-        this.userGroup = userGroup;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     /**
-     * Set user group by ID.
+     * Set role by ID.
      *
-     * @param userGroupID
+     * @param roleID
      *            ID of user group to set.
      */
-    public void setUserGroupById(int userGroupID) {
+    public void setRoleById(int roleID) {
         try {
-            setUserGroup(serviceManager.getUserGroupService().getById(userGroupID));
+            setRole(serviceManager.getRoleService().getById(roleID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupID }, logger, e);
+                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleID }, logger, e);
         }
     }
 
@@ -186,7 +186,7 @@ public class RoleForm extends BaseForm {
 
     /**
      * Return the list of available authorization levels and the list of authority
-     * levels currently assigned to 'userGroup' as a combined 'DualListModel' that
+     * levels currently assigned to 'role' as a combined 'DualListModel' that
      * is used by the frontend for authority management of user groups utilizing a
      * PrimeFaces PickList object.
      *
@@ -194,7 +194,7 @@ public class RoleForm extends BaseForm {
      */
     public DualListModel<Authority> getGlobalAssignableAuthorities() {
         List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
-                .filterAssignableGlobal(userGroup.getAuthorities());
+                .filterAssignableGlobal(this.role.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
@@ -207,18 +207,18 @@ public class RoleForm extends BaseForm {
 
     /**
      * Assign the target property of given DualListModel of authorities to
-     * 'userGroup' using a PrimeFaces PickList object.
+     * 'role' using a PrimeFaces PickList object.
      *
      * @param globalAuthoritiesModel
-     *            list of authority assigned to 'userGroup'
+     *            list of authority assigned to 'role'
      */
     public void setGlobalAssignableAuthorities(DualListModel<Authority> globalAuthoritiesModel) {
         for (Authority authority : globalAuthoritiesModel.getSource()) {
-            userGroup.getAuthorities().remove(authority);
+            this.role.getAuthorities().remove(authority);
         }
         for (Authority authority : globalAuthoritiesModel.getTarget()) {
-            if (!userGroup.getAuthorities().contains(authority)) {
-                userGroup.getAuthorities().add(authority);
+            if (!this.role.getAuthorities().contains(authority)) {
+                this.role.getAuthorities().add(authority);
             }
         }
     }
@@ -226,7 +226,7 @@ public class RoleForm extends BaseForm {
     /**
      * Return the list of available authorization levels which can be assigned
      * client specific and the list of authority levels currently client specific
-     * assigned to 'userGroup' as a combined 'DualListModel' that is used by the
+     * assigned to 'role' as a combined 'DualListModel' that is used by the
      * frontend for authority management of user groups utilizing a PrimeFaces
      * PickList object.
      *
@@ -234,7 +234,7 @@ public class RoleForm extends BaseForm {
      */
     public DualListModel<Authority> getClientAssignableAuthorities() {
         List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
-                .filterAssignableToClients(userGroup.getAuthorities());
+                .filterAssignableToClients(this.role.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
@@ -247,18 +247,18 @@ public class RoleForm extends BaseForm {
 
     /**
      * Assign the target property of given DualListModel of authorities to
-     * 'userGroup' using a PrimeFaces PickList object.
+     * 'role' using a PrimeFaces PickList object.
      *
      * @param clientAuthoritiesModel
-     *            list of authority assigned to 'userGroup'
+     *            list of authority assigned to 'role'
      */
     public void setClientAssignableAuthorities(DualListModel<Authority> clientAuthoritiesModel) {
         for (Authority authority : clientAuthoritiesModel.getSource()) {
-            userGroup.getAuthorities().remove(authority);
+            this.role.getAuthorities().remove(authority);
         }
         for (Authority authority : clientAuthoritiesModel.getTarget()) {
-            if (!userGroup.getAuthorities().contains(authority)) {
-                userGroup.getAuthorities().add(authority);
+            if (!this.role.getAuthorities().contains(authority)) {
+                this.role.getAuthorities().add(authority);
             }
         }
     }

@@ -36,8 +36,8 @@ public class TaskDTO extends BaseDTO {
     private String processingEnd;
     private ProcessDTO process;
     private TemplateDTO template;
-    private List<RoleDTO> userGroups = new ArrayList<>();
-    private int userGroupsSize;
+    private List<RoleDTO> roles = new ArrayList<>();
+    private int rolesSize;
     private boolean typeAutomatic;
     private boolean typeMetadata;
     private boolean typeImagesRead;
@@ -313,41 +313,41 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get list of user's groups.
-     * 
-     * @return list of user's groups as UserGroupDTO.
-     */
-    public List<RoleDTO> getUserGroups() {
-        return this.userGroups;
-    }
-
-    /**
-     * Set list of user's groups.
-     * 
-     * @param userGroups
-     *            as List of UserGroupDTO
-     */
-    public void setUserGroups(List<RoleDTO> userGroups) {
-        this.userGroups = userGroups;
-    }
-
-    /**
-     * Get user group size.
+     * Get list of roles.
      *
-     * @return the size of the userGroup list
+     * @return list of roles as RoleDTO
      */
-    public int getUserGroupsSize() {
-        return this.userGroupsSize;
+    public List<RoleDTO> getRoles() {
+        return roles;
     }
 
     /**
-     * Set user groups size.
+     * Set list of roles.
      *
-     * @param userGroupsSize
+     * @param roles
+     *            list of roles as RoleDTO
+     */
+    public void setRoles(List<RoleDTO> roles) {
+        this.roles = roles;
+    }
+
+    /**
+     * Get roles size.
+     *
+     * @return the size of the roles list
+     */
+    public int getRolesSize() {
+        return this.rolesSize;
+    }
+
+    /**
+     * Set roles size.
+     *
+     * @param rolesSize
      *            as int
      */
-    public void setUserGroupsSize(int userGroupsSize) {
-        this.userGroupsSize = userGroupsSize;
+    public void setRolesSize(int rolesSize) {
+        this.rolesSize = rolesSize;
     }
 
     /**

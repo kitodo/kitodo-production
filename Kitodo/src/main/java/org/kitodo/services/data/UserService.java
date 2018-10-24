@@ -44,9 +44,9 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -62,8 +62,8 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.RoleDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.security.SecurityUserDetails;
@@ -117,7 +117,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         manageFiltersDependenciesForIndex(user);
         manageProjectsDependenciesForIndex(user);
         manageTasksDependenciesForIndex(user);
-        manageUserGroupsDependenciesForIndex(user);
+        manageRolesDependenciesForIndex(user);
     }
 
     @Override
@@ -193,20 +193,20 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     /**
      * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save group, if false only re-save group object.
+     * users and re-save role, if false only re-save role object.
      *
      * @param user
      *            object
      */
-    private void manageUserGroupsDependenciesForIndex(User user) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Role userGroup : user.getRoles()) {
-                userGroup.getUsers().remove(user);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : user.getRoles()) {
+                role.getUsers().remove(user);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (Role userGroup : user.getRoles()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : user.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -453,26 +453,26 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Find users by id of user group.
+     * Find users by id of role.
      *
      * @param id
-     *            of user group
-     * @return list of JSON objects with users for specific user group id
+     *            of role
+     * @return list of JSON objects with users for specific role id
      */
-    List<JsonObject> findByUserGroupId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
+    List<JsonObject> findByRoleId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".id", id, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find users by title of user group.
+     * Find users by title of role.
      *
      * @param title
-     *            of user group
-     * @return list of JSON objects with users for specific user group title
+     *            of role
+     * @return list of JSON objects with users for specific role title
      */
-    List<JsonObject> findByUserGroupTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery("userGroups.title", title, true, Operator.AND);
+    List<JsonObject> findByRoleTitle(String title) throws DataException {
+        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".title", title, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
 
@@ -570,14 +570,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
         userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
         userDTO.setClientsSize(UserTypeField.CLIENTS.getSizeOfProperty(userJSONObject));
-        userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
+        userDTO.setRolesSize(UserTypeField.ROLES.getSizeOfProperty(userJSONObject));
 
         if (!related) {
             convertRelatedJSONObjects(userJSONObject, userDTO);
         } else {
             addBasicFilterRelation(userDTO, userJSONObject);
             addBasicProjectRelation(userDTO, userJSONObject);
-            addBasicUserGroupRelation(userDTO, userJSONObject);
+            addBasicRoleRelation(userDTO, userJSONObject);
         }
 
         return userDTO;
@@ -592,8 +592,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getClientService()));
         userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
             serviceManager.getTaskService()));
-        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        userDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(),
+            serviceManager.getRoleService()));
     }
 
     private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
@@ -635,22 +635,22 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         }
     }
 
-    private void addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
-        if (userDTO.getUserGroupSize() > 0) {
-            List<RoleDTO> userGroups = new ArrayList<>();
+    private void addBasicRoleRelation(UserDTO userDTO, JsonObject jsonObject) {
+        if (userDTO.getRolesSize() > 0) {
+            List<RoleDTO> roles = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(RoleTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserTypeField.USER_GROUPS.getKey(), subKeys);
+                UserTypeField.ROLES.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
-                RoleDTO userGroup = new RoleDTO();
-                userGroup.setId(relatedProperty.getId());
+                RoleDTO role = new RoleDTO();
+                role.setId(relatedProperty.getId());
                 if (!relatedProperty.getValues().isEmpty()) {
-                    userGroup.setTitle(relatedProperty.getValues().get(0));
+                    role.setTitle(relatedProperty.getValues().get(0));
                 }
-                userGroups.add(userGroup);
+                roles.add(role);
             }
-            userDTO.setUserGroups(userGroups);
+            userDTO.setRoles(roles);
         }
     }
 

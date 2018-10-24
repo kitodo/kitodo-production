@@ -32,7 +32,7 @@ public class UsersPage extends Page<UsersPage> {
 
     private static final String USERS_TAB_VIEW = "usersTabView";
     private static final String USERS_TABLE = USERS_TAB_VIEW + ":usersTable";
-    private static final String USER_GROUPS_TABLE = USERS_TAB_VIEW + ":userGroupsTable";
+    private static final String ROLES_TABLE = USERS_TAB_VIEW + ":rolesTable";
     private static final String CLIENTS_TABLE = USERS_TAB_VIEW + ":clientsTable";
     private static final String LDAP_GROUPS_TABLE = USERS_TAB_VIEW + ":ldapGroupsTable";
 
@@ -45,8 +45,8 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement usersTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUPS_TABLE + "_data")
-    private WebElement userGroupsTable;
+    @FindBy(id = ROLES_TABLE + "_data")
+    private WebElement rolesTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = CLIENTS_TABLE + "_data")
@@ -65,8 +65,8 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement newUserButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "newElementForm:newUserGroupButton")
-    private WebElement newUserGroupButton;
+    @FindBy(id = "newElementForm:newRoleButton")
+    private WebElement newRoleButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newClientButton")
@@ -81,8 +81,8 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement editUserLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/usergroupEdit.jsf?id=1']")
-    private WebElement editUserGroupLink;
+    @FindBy(xpath = "//a[@href='/kitodo/pages/roleEdit.jsf?id=1']")
+    private WebElement editRoleLink;
 
     @SuppressWarnings("unused")
     @FindBy(xpath = "//a[@href='/kitodo/pages/clientEdit.jsf?id=1']")
@@ -97,8 +97,8 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement deleteFirstUserButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUPS_TABLE + ":0:actionForm:deleteUsergroup")
-    private WebElement deleteFirstUserGroupButton;
+    @FindBy(id = ROLES_TABLE + ":0:actionForm:deleteRole")
+    private WebElement deleteFirstRoleButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = CLIENTS_TABLE + ":0:actionForm:deleteClient")
@@ -138,13 +138,13 @@ public class UsersPage extends Page<UsersPage> {
     }
 
     /**
-     * Counts rows of user groups table.
+     * Counts rows of roles table.
      *
-     * @return The number of rows of user groups table.
+     * @return The number of rows of roles table.
      */
-    public int countListedUserGroups() throws Exception {
-        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        return getRowsOfTable(userGroupsTable).size();
+    public int countListedRoles() throws Exception {
+        switchToTabByIndex(TabIndex.ROLES.getIndex());
+        return getRowsOfTable(rolesTable).size();
     }
 
     /**
@@ -222,13 +222,13 @@ public class UsersPage extends Page<UsersPage> {
      *
      * @return The user group edit page.
      */
-    public UserGroupEditPage createNewUserGroup() throws Exception {
+    public RoleEditPage createNewRole() throws Exception {
         if (isNotAt()) {
             goTo();
         }
         newElementButton.click();
-        clickButtonAndWaitForRedirect(newUserGroupButton, Pages.getUserGroupEditPage().getUrl());
-        return Pages.getUserGroupEditPage();
+        clickButtonAndWaitForRedirect(newRoleButton, Pages.getRoleEditPage().getUrl());
+        return Pages.getRoleEditPage();
     }
 
     /**
@@ -248,32 +248,32 @@ public class UsersPage extends Page<UsersPage> {
      *
      * @return the user group edit page
      */
-    public UserGroupEditPage editUserGroup() throws Exception {
-        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
+    public RoleEditPage editRole() throws Exception {
+        switchToTabByIndex(TabIndex.ROLES.getIndex());
 
-        clickButtonAndWaitForRedirect(editUserGroupLink, Pages.getUserGroupEditPage().getUrl());
-        return Pages.getUserGroupEditPage();
+        clickButtonAndWaitForRedirect(editRoleLink, Pages.getRoleEditPage().getUrl());
+        return Pages.getRoleEditPage();
     }
 
     /**
-     * Goes to edit page for editing a given user group, specified by title.
+     * Goes to edit page for editing a given role, specified by title.
      *
-     * @param userGroupTitle
-     *            The user group title.
-     * @return The user group edit page.
+     * @param roleTitle
+     *            the role title
+     * @return the role edit page
      */
-    public UserGroupEditPage editUserGroup(String userGroupTitle) throws Exception {
-        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
+    public RoleEditPage editRole(String roleTitle) throws Exception {
+        switchToTabByIndex(TabIndex.ROLES.getIndex());
 
-        List<WebElement> tableRows = getRowsOfTable(userGroupsTable);
+        List<WebElement> tableRows = getRowsOfTable(rolesTable);
 
         for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(roleTitle)) {
                 clickEditLinkOfTableRow(tableRow);
-                return Pages.getUserGroupEditPage();
+                return Pages.getRoleEditPage();
             }
         }
-        throw new NoSuchElementException("No user group with given title was not found: " + userGroupTitle);
+        throw new NoSuchElementException("No user group with given title was not found: " + roleTitle);
     }
 
     /**
@@ -328,14 +328,14 @@ public class UsersPage extends Page<UsersPage> {
     }
 
     /**
-     * Returns a list of all user group titles which were displayed on user groups
+     * Returns a list of all role titles which were displayed on roles
      * page.
      * 
-     * @return The list of user group titles
+     * @return the list of role titles
      */
-    public List<String> getUserGroupTitles() throws Exception {
-        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        return getTableDataByColumn(userGroupsTable, 0);
+    public List<String> getRoleTitles() throws Exception {
+        switchToTabByIndex(TabIndex.ROLES.getIndex());
+        return getTableDataByColumn(rolesTable, 0);
     }
 
     /**
@@ -373,12 +373,12 @@ public class UsersPage extends Page<UsersPage> {
     }
 
     /**
-     * Remove user group from corresponding list on user page.
+     * Remove role from corresponding list on user page.
      */
-    public void deleteRemovableUserGroup() throws Exception {
-        deleteElement("Usergroup",
-                MockDatabase.getRemovableObjectIDs().get(ObjectType.USER_GROUP.name()),
-                TabIndex.USER_GROUPS.getIndex(),
+    public void deleteRemovableRole() throws Exception {
+        deleteElement("Role",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.ROLE.name()),
+                TabIndex.ROLES.getIndex(),
                 usersTabView);
     }
 

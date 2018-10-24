@@ -19,32 +19,32 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
+public class RoleEditPage extends EditPage<RoleEditPage> {
 
-    private static final String USER_GROUP_TAB_VIEW = EDIT_FORM + ":usergroupTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUP_TAB_VIEW)
-    private WebElement userGroupTabView;
+    private static final String ROLE_TAB_VIEW = EDIT_FORM + ":roleTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUP_TAB_VIEW + ":titleInput")
+    @FindBy(id = ROLE_TAB_VIEW)
+    private WebElement roleTabView;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = ROLE_TAB_VIEW + ":titleInput")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUP_TAB_VIEW + ":authoritiesGlobalPick")
+    @FindBy(id = ROLE_TAB_VIEW + ":authoritiesGlobalPick")
     private WebElement globalAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUP_TAB_VIEW + ":authoritiesClientPick")
+    @FindBy(id = ROLE_TAB_VIEW + ":authoritiesClientPick")
     private WebElement clientAuthoritiesPickList;
 
-    public UserGroupEditPage() {
-        super("pages/usergroupEdit.jsf");
+    public RoleEditPage() {
+        super("pages/roleEdit.jsf");
     }
 
     @Override
-    public UserGroupEditPage goTo() {
+    public RoleEditPage goTo() {
         return null;
     }
 
@@ -74,24 +74,24 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return source.findElements(By.className("ui-picklist-item"));
     }
 
-    public UserGroupEditPage removeAllGlobalAuthorities() throws InterruptedException {
+    public RoleEditPage removeAllGlobalAuthorities() throws InterruptedException {
         getRemoveAllElementsButtonByPickList(globalAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
-    public UserGroupEditPage assignAllGlobalAuthorities() throws InterruptedException {
+    public RoleEditPage assignAllGlobalAuthorities() throws InterruptedException {
         getAddAllElementsButtonByPickList(globalAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
 
-    public UserGroupEditPage assignAllClientAuthorities() throws InterruptedException {
+    public RoleEditPage assignAllClientAuthorities() throws InterruptedException {
         getAddAllElementsButtonByPickList(clientAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
 
-    public UserGroupEditPage removeAllClientAuthorities() throws InterruptedException {
+    public RoleEditPage removeAllClientAuthorities() throws InterruptedException {
         getRemoveAllElementsButtonByPickList(clientAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
@@ -118,13 +118,13 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return getSourceItemsFromPickList(clientAuthoritiesPickList).size();
     }
 
-    public UserGroupEditPage setUserGroupTitle(String newTitle) {
+    public RoleEditPage setRoleTitle(String newTitle) {
         titleInput.clear();
         titleInput.sendKeys(newTitle);
         return this;
     }
 
-    public String getUserGroupTitle() {
+    public String getRoleTitle() {
         return titleInput.getAttribute("value");
     }
 }

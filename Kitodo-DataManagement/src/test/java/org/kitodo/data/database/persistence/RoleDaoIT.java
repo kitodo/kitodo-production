@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Role;
@@ -24,7 +25,7 @@ import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class RoleDaoIT {
 
-    @org.junit.Rule
+    @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test

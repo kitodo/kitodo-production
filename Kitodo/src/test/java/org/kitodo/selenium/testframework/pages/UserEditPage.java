@@ -53,8 +53,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement metaDataLanguageInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_TAB_VIEW + ":addUserGroupButton")
-    private WebElement addUserToGroupButton;
+    @FindBy(id = USER_TAB_VIEW + ":addRoleButton")
+    private WebElement addUserToRoleButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":addProjectButton")
@@ -65,8 +65,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement addUserToClientButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userGroupForm:selectUserGroupTable_data")
-    private WebElement selectUserGroupTable;
+    @FindBy(id = "roleForm:selectRoleTable_data")
+    private WebElement selectRoleTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "userProjectForm:selectProjectTable_data")
@@ -77,8 +77,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement selectClientTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "addUserGroupDialog")
-    private WebElement addToUserGroupDialog;
+    @FindBy(id = "addRoleDialog")
+    private WebElement addToRoleDialog;
 
     @SuppressWarnings("unused")
     @FindBy(id = "addProjectDialog")
@@ -112,11 +112,11 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return Pages.getUsersPage();
     }
 
-    public void addUserToUserGroup(String userGroupTitle) throws Exception {
-        switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
-        addUserToGroupButton.click();
-        List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
-        addRow(tableRows, userGroupTitle, addToUserGroupDialog);
+    public void addUserToRole(String roleTitle) throws Exception {
+        switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
+        addUserToRoleButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
+        addRow(tableRows, roleTitle, addToRoleDialog);
     }
 
     public void addUserToClient(String clientName) throws Exception {

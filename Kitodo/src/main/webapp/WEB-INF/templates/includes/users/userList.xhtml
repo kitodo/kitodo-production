@@ -30,9 +30,9 @@
         <p:column headerText="#{msgs.location}">
             <h:outputText value="#{item.location}"/>
         </p:column>
-        <p:column headerText="#{msgs.userGroups}">
-            <ui:repeat var="usergroup" value="#{item.userGroups}" varStatus="status">
-                <h:outputText value="#{usergroup.title}"/>
+        <p:column headerText="#{msgs.roles}">
+            <ui:repeat var="role" value="#{item.roles}" varStatus="status">
+                <h:outputText value="#{role.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>

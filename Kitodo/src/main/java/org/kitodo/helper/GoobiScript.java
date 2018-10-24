@@ -35,9 +35,9 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
@@ -62,7 +62,7 @@ public class GoobiScript {
     private static final String SWAP_1_NR = "swap1nr";
     private static final String SWAP_2_NR = "swap2nr";
     private static final String TASK_TITLE = "steptitle";
-    private static final String USER_GROUP = "group";
+    private static final String ROLE = "role";
 
     /**
      * Start the script execution.
@@ -90,7 +90,7 @@ public class GoobiScript {
         // pass the appropriate method with the correct parameters
         if (this.parameters.get("action") == null) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
-                " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
+                " - possible: 'action:swapsteps, action:adduser, action:addrole, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                         + "action:importFromFileSystem'");
             return;
@@ -104,8 +104,8 @@ public class GoobiScript {
             case "importFromFileSystem":
                 importFromFileSystem(processes);
                 break;
-            case "addUserGroup":
-                addUserGroup(processes);
+            case "addRole":
+                addRole(processes);
                 break;
             case "setTaskProperty":
                 setTaskProperty(processes);
@@ -169,7 +169,7 @@ public class GoobiScript {
                 break;
             default:
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
+                    " - use: 'action:swapsteps, action:adduser, action:addrole, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
                 return;
@@ -610,38 +610,38 @@ public class GoobiScript {
      * @param processes
      *            list of Process objects
      */
-    private void addUserGroup(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_GROUP)) {
+    private void addRole(List<Process> processes) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(ROLE)) {
             return;
         }
 
         // check if user group exists
-        Role userGroup;
-        List<Role> foundUserGroups = serviceManager.getUserGroupService()
-                .getByQuery("from UserGroup where title='" + this.parameters.get(USER_GROUP) + "'");
-        if (!foundUserGroups.isEmpty()) {
-            userGroup = foundUserGroups.get(0);
+        Role role;
+        List<Role> foundRoles = serviceManager.getRoleService()
+                .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");
+        if (!foundRoles.isEmpty()) {
+            role = foundRoles.get(0);
         } else {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown role: ", this.parameters.get(ROLE));
             return;
         }
 
-        executeActionForAddUserGroup(processes, userGroup);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addusergroup finished");
+        executeActionForAddRole(processes, role);
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addRole finished");
     }
 
-    private void executeActionForAddUserGroup(List<Process> processes, Role userGroup) {
+    private void executeActionForAddRole(List<Process> processes, Role role) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<Role> userGroups = task.getRoles();
-                    if (!userGroups.contains(userGroup)) {
-                        userGroups.add(userGroup);
+                    List<Role> roles = task.getRoles();
+                    if (!roles.contains(role)) {
+                        roles.add(role);
                         saveTask(process.getTitle(), task);
                     }
                 }
             }
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "added usergroup to step: ", process.getTitle());
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "added role to task: ", process.getTitle());
         }
     }
 

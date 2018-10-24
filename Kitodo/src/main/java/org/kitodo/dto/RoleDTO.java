@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * UserGroup DTO object.
+ * Role DTO object.
  */
 public class RoleDTO extends BaseDTO {
 

@@ -35,7 +35,7 @@ public class AuthorityServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertUserGroupsFull();
+        MockDatabase.insertRolesFull();
         MockDatabase.setUpAwaitility();
     }
 
@@ -77,7 +77,7 @@ public class AuthorityServiceIT {
     public void shouldFindByTitle() {
         int expected = 1;
         await().untilAsserted(() -> assertEquals("Authority was not found in index!", expected,
-            authorityService.findByTitle("viewAllUserGroups_globalAssignable", true).size()));
+            authorityService.findByTitle("viewAllRoles_globalAssignable", true).size()));
     }
 
     @Test

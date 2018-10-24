@@ -41,10 +41,10 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -134,8 +134,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            for (Role userGroup : user.getRoles()) {
-                subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+            for (Role role : user.getRoles()) {
+                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
             query.must(subQuery);
         }
@@ -184,7 +184,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
-        manageUserGroupsDependenciesForIndex(task);
+        manageRolesDependenciesForIndex(task);
     }
 
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
@@ -239,15 +239,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
-            for (Role userGroup : task.getRoles()) {
-                userGroup.getTasks().remove(task);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : task.getRoles()) {
+                role.getTasks().remove(task);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (Role userGroup : task.getRoles()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : task.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -434,7 +434,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
-        taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
+        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(taskJSONObject));
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
@@ -459,8 +459,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        taskDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(),
+            serviceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {
@@ -542,13 +542,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get user groups' list size.
+     * Get roles list size.
      *
      * @param task
      *            object
-     * @return size
+     * @return size of roles assigned to task
      */
-    public int getUserGroupsSize(Task task) {
+    public int getRolesSize(Task task) {
         if (task.getRoles() == null) {
             return 0;
         } else {
@@ -796,6 +796,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open tasks without correction for current user sorted according to
      * sort query.
@@ -809,6 +810,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open not automatic tasks for current user sorted according to sort
      * query.
@@ -823,6 +825,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open not automatic tasks without correction for current user sorted
      * according to sort query.
@@ -987,7 +990,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Helper.setErrorMessage("noStepsInWorkflow");
         }
         for (Task task : tasks) {
-            if (getUserGroupsSize(task) == 0) {
+            if (getRolesSize(task) == 0) {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }

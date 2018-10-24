@@ -72,14 +72,14 @@ public class RemovingST extends BaseTestSelenium {
     }
 
     @Test
-    public void removeUserGroupTest() throws Exception {
-        int userGroupsDisplayed = usersPage.countListedUserGroups();
-        long userGroupsInDatabase = serviceManager.getUserGroupService().countDatabaseRows();
-        assertTrue("User group list is empty", userGroupsDisplayed > 0 && userGroupsInDatabase > 0);
-        usersPage.deleteRemovableUserGroup();
-        assertTrue("Removal of first user group was not successful!",
-            usersPage.countListedUserGroups() == userGroupsDisplayed - 1
-                    && serviceManager.getUserGroupService().countDatabaseRows() == userGroupsInDatabase - 1);
+    public void removeRoleTest() throws Exception {
+        int rolesDisplayed = usersPage.countListedRoles();
+        long rolesInDatabase = serviceManager.getRoleService().countDatabaseRows();
+        assertTrue("Role list is empty", rolesDisplayed > 0 && rolesInDatabase > 0);
+        usersPage.deleteRemovableRole();
+        assertTrue("Removal of first role was not successful!",
+            usersPage.countListedRoles() == rolesDisplayed - 1
+                    && serviceManager.getRoleService().countDatabaseRows() == rolesInDatabase - 1);
     }
 
     @Test

@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class AuthorityDTO extends BaseDTO {
     private String title;
-    private List<RoleDTO> userGroups = new ArrayList<>();
-    private int userGroupsSize;
+    private List<RoleDTO> roles = new ArrayList<>();
+    private int rolesSize;
 
     /**
      * Get title.
@@ -42,40 +42,40 @@ public class AuthorityDTO extends BaseDTO {
     }
 
     /**
-     * Get list of user groups.
+     * Get list of roles.
      *
-     * @return list of user groups as userGroupDTO
+     * @return list of roles as RoleDTO
      */
-    public List<RoleDTO> getUserGroups() {
-        return userGroups;
+    public List<RoleDTO> getRoles() {
+        return roles;
     }
 
     /**
-     * Set list of user groups.
+     * Set list of roles.
      *
-     * @param userGroups
-     *            list of users as UserGroupDTO
+     * @param roles
+     *            list of roles as RoleDTO
      */
-    public void setUserGroups(List<RoleDTO> userGroups) {
-        this.userGroups = userGroups;
+    public void setRoles(List<RoleDTO> roles) {
+        this.roles = roles;
     }
 
     /**
-     * Get size of user groups.
+     * Get size of roles.
      *
-     * @return size of user groups as int
+     * @return size of roles as int
      */
-    public int getUserGroupsSize() {
-        return userGroupsSize;
+    public int getRolesSize() {
+        return rolesSize;
     }
 
     /**
-     * Set size of user groups.
+     * Set size of roles.
      *
-     * @param usersSize
+     * @param rolesSize
      *            as int
      */
-    public void setUserGroupsSize(int usersSize) {
-        this.userGroupsSize = usersSize;
+    public void setRolesSize(int rolesSize) {
+        this.rolesSize = rolesSize;
     }
 }

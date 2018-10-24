@@ -21,9 +21,9 @@ import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.RoleDAO;
@@ -37,8 +37,8 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.dto.ClientDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.RoleDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -47,7 +47,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static RoleService instance = null;
-    private static String AUTHORITY_TITLE_VIEW_ALL = "viewAllUserGroups";
+    private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllRoles";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -58,9 +58,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Return singleton variable of type UserGroupService.
+     * Return singleton variable of type RoleService.
      *
-     * @return unique instance of UserGroupService
+     * @return unique instance of RoleService
      */
     public static RoleService getInstance() {
         if (Objects.equals(instance, null)) {
@@ -74,10 +74,10 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Get all user groups from index and covert results to format accepted by
+     * Find all roles from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
-     * @return list of UserGroupDTO objects
+     * @return list of RoleDTO objects
      */
     @Override
     public List<RoleDTO> findAll() throws DataException {
@@ -85,7 +85,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Get all user groups from index and covert results to format accepted by
+     * Get all roles from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
      * @param sort
@@ -94,7 +94,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      *            start point for get results
      * @param size
      *            amount of requested results
-     * @return list of UserGroupDTO objects
+     * @return list of RoleDTO objects
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
@@ -102,7 +102,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Get all user groups from index and covert results to format accepted by
+     * Get all roles from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
      * @param sort
@@ -112,8 +112,8 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      * @param size
      *            amount of requested results
      * @param filters
-     *            filter for requestes results
-     * @return list of UserGroupDTO objects
+     *            filter for requested results
+     * @return list of RoleDTO objects
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
@@ -121,177 +121,177 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
             return findAll(sort, offset, size, true);
         }
         if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
-            return getAllUserGroupsVisibleForCurrentUser();
+            return getAllRolesVisibleForCurrentUser();
         }
         return new ArrayList<>();
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM UserGroup");
+        return countDatabaseRows("SELECT COUNT(*) FROM Role");
     }
 
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return countDatabaseRows("SELECT COUNT(*) FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     @Override
     public List<Role> getAllNotIndexed() {
-        return getByQuery("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return getByQuery("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     /**
-     * Method saves users and tasks related to modified user group.
+     * Method saves users and tasks related to modified role.
      *
-     * @param userGroup
+     * @param role
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
-        manageAuthorizationsDependenciesForIndex(userGroup);
-        manageTasksDependenciesForIndex(userGroup);
-        manageUsersDependenciesForIndex(userGroup);
+    protected void manageDependenciesForIndex(Role role) throws CustomResponseException, IOException {
+        manageAuthorizationsDependenciesForIndex(role);
+        manageTasksDependenciesForIndex(role);
+        manageUsersDependenciesForIndex(role);
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user group from list of
-     * user groups and re-save authorization, if false only re-save authorization
+     * Check if IndexAction flag is delete. If true remove role from list of
+     * roles and re-save authorization, if false only re-save authorization
      * object.
      *
-     * @param userGroup
+     * @param role
      *            object
      */
-    private void manageAuthorizationsDependenciesForIndex(Role userGroup)
+    private void manageAuthorizationsDependenciesForIndex(Role role)
             throws CustomResponseException, IOException {
-        if (userGroup.getIndexAction() == IndexAction.DELETE) {
-            for (Authority authority : userGroup.getAuthorities()) {
-                authority.getRoles().remove(userGroup);
+        if (role.getIndexAction() == IndexAction.DELETE) {
+            for (Authority authority : role.getAuthorities()) {
+                authority.getRoles().remove(role);
                 serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         } else {
-            for (Authority authority : userGroup.getAuthorities()) {
+            for (Authority authority : role.getAuthorities()) {
                 serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         }
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user group from list of
-     * user groups and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove role from list of
+     * roles and re-save task, if false only re-save task object.
      *
-     * @param userGroup
+     * @param role
      *            object
      */
-    private void manageTasksDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
-        if (userGroup.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : userGroup.getTasks()) {
-                task.getRoles().remove(userGroup);
+    private void manageTasksDependenciesForIndex(Role role) throws CustomResponseException, IOException {
+        if (role.getIndexAction() == IndexAction.DELETE) {
+            for (Task task : role.getTasks()) {
+                task.getRoles().remove(role);
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
-            for (Task task : userGroup.getTasks()) {
+            for (Task task : role.getTasks()) {
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
         }
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user group from list of
-     * user groups and re-save user, if false only re-save user object.
+     * Check if IndexAction flag is delete. If true remove role from list of
+     * roles and re-save user, if false only re-save user object.
      *
-     * @param userGroup
+     * @param role
      *            object
      */
-    private void manageUsersDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
-        if (userGroup.getIndexAction() == IndexAction.DELETE) {
-            for (User user : userGroup.getUsers()) {
-                user.getRoles().remove(userGroup);
+    private void manageUsersDependenciesForIndex(Role role) throws CustomResponseException, IOException {
+        if (role.getIndexAction() == IndexAction.DELETE) {
+            for (User user : role.getUsers()) {
+                user.getRoles().remove(role);
                 serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
-            for (User user : userGroup.getUsers()) {
+            for (User user : role.getUsers()) {
                 serviceManager.getUserService().saveToIndex(user, false);
             }
         }
     }
 
     /**
-     * Refresh user's group object after update.
+     * Refresh user's role object after update.
      *
-     * @param userGroup
+     * @param role
      *            object
      */
-    public void refresh(Role userGroup) {
-        dao.refresh(userGroup);
+    public void refresh(Role role) {
+        dao.refresh(role);
     }
 
     /**
-     * Find user groups with authorization title.
+     * Find roles with authorization title.
      *
      * @param authorizationTitle
-     *            of the searched user group
+     *            of the searched role
      * @return list of JSON objects
      */
     List<JsonObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
-        QueryBuilder query = createSimpleQuery("authorities.title", authorizationTitle, true);
+        QueryBuilder query = createSimpleQuery(RoleTypeField.AUTHORITIES + ".title", authorizationTitle, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find user groups by id of user.
+     * Find roles by id of user.
      *
      * @param id
      *            of user
-     * @return list of JSON objects with user groups for specific user id.
+     * @return list of JSON objects with roles for specific user id.
      */
     List<JsonObject> findByUserId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("users.id", id, true);
+        QueryBuilder query = createSimpleQuery(RoleTypeField.USERS + ".id", id, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find user groups by login of user.
+     * Find roles by login of user.
      *
      * @param login
      *            of user
-     * @return list of search result with user groups for specific user login
+     * @return list of search result with roles for specific user login
      */
     List<JsonObject> findByUserLogin(String login) throws DataException {
-        QueryBuilder query = createSimpleQuery("users.login", login, true);
+        QueryBuilder query = createSimpleQuery(RoleTypeField.USERS + ".login", login, true);
         return searcher.findDocuments(query.toString());
     }
 
     @Override
     public RoleDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        RoleDTO userGroupDTO = new RoleDTO();
-        userGroupDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
-        userGroupDTO.setTitle(RoleTypeField.TITLE.getStringValue(userGroupJSONObject));
-        userGroupDTO.setUsersSize(RoleTypeField.USERS.getSizeOfProperty(userGroupJSONObject));
-        userGroupDTO.setAuthorizationsSize(RoleTypeField.AUTHORITIES.getSizeOfProperty(userGroupJSONObject));
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject roleJsonObject = jsonObject.getJsonObject("_source");
+        roleDTO.setTitle(RoleTypeField.TITLE.getStringValue(roleJsonObject));
+        roleDTO.setUsersSize(RoleTypeField.USERS.getSizeOfProperty(roleJsonObject));
+        roleDTO.setAuthorizationsSize(RoleTypeField.AUTHORITIES.getSizeOfProperty(roleJsonObject));
         if (!related) {
-            convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
+            convertRelatedJSONObjects(roleJsonObject, roleDTO);
         } else {
-            addBasicAuthorizationsRelation(userGroupDTO, userGroupJSONObject);
-            addBasicUsersRelation(userGroupDTO, userGroupJSONObject);
+            addBasicAuthorizationsRelation(roleDTO, roleJsonObject);
+            addBasicUsersRelation(roleDTO, roleJsonObject);
         }
 
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(RoleTypeField.CLIENT_ID.getIntValue(userGroupJSONObject));
-        clientDTO.setName(RoleTypeField.CLIENT_NAME.getStringValue(userGroupJSONObject));
+        clientDTO.setId(RoleTypeField.CLIENT_ID.getIntValue(roleJsonObject));
+        clientDTO.setName(RoleTypeField.CLIENT_NAME.getStringValue(roleJsonObject));
 
-        userGroupDTO.setClient(clientDTO);
-        return userGroupDTO;
+        roleDTO.setClient(clientDTO);
+        return roleDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO userGroupDTO) throws DataException {
-        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(),
+    private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO roleDTO) throws DataException {
+        roleDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(),
             serviceManager.getUserService()));
     }
 
-    private void addBasicAuthorizationsRelation(RoleDTO userGroupDTO, JsonObject jsonObject) {
-        if (userGroupDTO.getAuthorizationsSize() > 0) {
+    private void addBasicAuthorizationsRelation(RoleDTO roleDTO, JsonObject jsonObject) {
+        if (roleDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(AuthorityTypeField.TITLE.getKey());
@@ -305,12 +305,12 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
                 }
                 authorizations.add(authorization);
             }
-            userGroupDTO.setAuthorities(authorizations);
+            roleDTO.setAuthorities(authorizations);
         }
     }
 
-    private void addBasicUsersRelation(RoleDTO userGroupDTO, JsonObject jsonObject) {
-        if (userGroupDTO.getUsersSize() > 0) {
+    private void addBasicUsersRelation(RoleDTO roleDTO, JsonObject jsonObject) {
+        if (roleDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(UserTypeField.NAME.getKey());
@@ -327,19 +327,19 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
                 user.setFullName(serviceManager.getUserService().getFullName(user));
                 users.add(user);
             }
-            userGroupDTO.setUsers(users);
+            roleDTO.setUsers(users);
         }
     }
 
     /**
-     * Get authorizations for given user group.
+     * Get authorizations for given role.
      *
-     * @param userGroup
+     * @param role
      *            object
      * @return authorizations as list of Strings
      */
-    public List<String> getAuthorizationsAsString(Role userGroup) {
-        List<Authority> authorities = userGroup.getAuthorities();
+    public List<String> getAuthorizationsAsString(Role role) {
+        List<Authority> authorities = role.getAuthorities();
         List<String> stringAuthorizations = new ArrayList<>();
         for (Authority authority : authorities) {
             stringAuthorizations.add(authority.getTitle());
@@ -348,15 +348,15 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Get all active user groups visible for current user - user assigned to
+     * Get all roles visible for current user - user assigned to
      * projects with certain clients.
      *
-     * @return list of user groups
+     * @return list of roles
      */
-    public List<RoleDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
+    public List<RoleDTO> getAllRolesVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
                 .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
-        return convertListIdToDTO(getAllUserGroupIdsByClientIds(clientIdList), this);
+        return convertListIdToDTO(getAllRolesIdsByClientIds(clientIdList), this);
     }
     
     /**
@@ -367,24 +367,24 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      *
      * @return The list of all user roles for the given client IDs
      */
-    public List<Role> getAllUserGroupsByClientIds(List<Integer> clientIds) {
+    public List<Role> getAllRolesByClientIds(List<Integer> clientIds) {
         return dao.getAllRolesByClientIds(clientIds);
     }
 
     /**
-     * Get ids of all user groups which hold users which are assigned to projects of
+     * Get ids of all roles which hold users which are assigned to projects of
      * the given clients.
      * 
      * @param clientIdList
      *            The list of client ids.
      * @return The list of user ids.
      */
-    public List<Integer> getAllUserGroupIdsByClientIds(List<Integer> clientIdList) {
-        List<Role> users = getAllUserGroupsByClientIds(clientIdList);
-        List<Integer> userIdList = new ArrayList<>();
-        for (Role userGroup : users) {
-            userIdList.add(userGroup.getId());
+    public List<Integer> getAllRolesIdsByClientIds(List<Integer> clientIdList) {
+        List<Role> roles = getAllRolesByClientIds(clientIdList);
+        List<Integer> rolesIdList = new ArrayList<>();
+        for (Role role : roles) {
+            rolesIdList.add(role.getId());
         }
-        return userIdList;
+        return rolesIdList;
     }
 }

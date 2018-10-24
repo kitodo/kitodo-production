@@ -63,16 +63,16 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.RoleDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
@@ -409,18 +409,18 @@ public class ProcessForm extends TemplateBaseForm {
     public void removeTask() {
         this.process.getTasks().remove(this.task);
 
-        List<Role> userGroups = this.task.getRoles();
-        for (Role userGroup : userGroups) {
-            userGroup.getTasks().remove(this.task);
+        List<Role> roles = this.task.getRoles();
+        for (Role role : roles) {
+            role.getTasks().remove(this.task);
         }
         deleteSymlinksFromUserHomes();
     }
 
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
-        /* alle Benutzergruppen mit ihren Benutzern */
-        for (Role userGroup : this.task.getRoles()) {
-            for (User user : userGroup.getUsers()) {
+
+        for (Role role : this.task.getRoles()) {
+            for (User user : role.getUsers()) {
                 try {
                     webDav.uploadFromHome(user, this.task.getProcess());
                 } catch (RuntimeException e) {
@@ -431,16 +431,16 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Remove user group from the task.
+     * Remove role from the task.
      *
      * @return stay on the same page
      */
-    public String deleteUserGroup() {
+    public String deleteRole() {
         try {
-            int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role userGroup : this.task.getRoles()) {
-                if (userGroup.getId().equals(userGroupId)) {
-                    this.task.getRoles().remove(userGroup);
+            int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Role role : this.task.getRoles()) {
+                if (role.getId().equals(roleId)) {
+                    this.task.getRoles().remove(role);
                 }
             }
         } catch (NumberFormatException e) {
@@ -450,22 +450,22 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Add user group to the task.
+     * Add role to the task.
      *
      * @return stay on the same page
      */
-    public String addUserGroup() {
-        int userGroupId = 0;
+    public String addRole() {
+        int roleId = 0;
         try {
-            userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Role role = serviceManager.getRoleService().getById(roleId);
 
-            if (!this.task.getRoles().contains(userGroup)) {
-                this.task.getRoles().add(userGroup);
+            if (!this.task.getRoles().contains(role)) {
+                this.task.getRoles().add(role);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
+                    new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1544,15 +1544,15 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Return list of user groups.
+     * Return list of roles.
      *
-     * @return list of user groups
+     * @return list of roles
      */
-    public List<RoleDTO> getUserGroups() {
+    public List<RoleDTO> getRoles() {
         try {
-            return serviceManager.getUserGroupService().findAll();
+            return serviceManager.getRoleService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() },
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
         }

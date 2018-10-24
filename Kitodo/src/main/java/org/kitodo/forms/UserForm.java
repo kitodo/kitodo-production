@@ -27,13 +27,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.RoleDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
@@ -148,16 +148,16 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Remove from user group.
+     * Remove from role.
      *
      * @return empty String
      */
-    public String deleteFromUserGroup() {
+    public String deleteFromRole() {
         try {
-            int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role userGroup : this.userObject.getRoles()) {
-                if (userGroup.getId().equals(userGroupId)) {
-                    this.userObject.getRoles().remove(userGroup);
+            int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Role role : this.userObject.getRoles()) {
+                if (role.getId().equals(roleId)) {
+                    this.userObject.getRoles().remove(role);
                 }
             }
         } catch (NumberFormatException e) {
@@ -167,22 +167,22 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Add to user group.
+     * Add to role.
      *
-     * @return empty String or null
+     * @return stay on the same page
      */
-    public String addToUserGroup() {
-        int userGroupId = 0;
+    public String addToRole() {
+        int roleId = 0;
         try {
-            userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Role role = serviceManager.getRoleService().getById(roleId);
 
-            if (!this.userObject.getRoles().contains(userGroup)) {
-                this.userObject.getRoles().add(userGroup);
+            if (!this.userObject.getRoles().contains(role)) {
+                this.userObject.getRoles().add(role);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
+                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -367,15 +367,15 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Return list of user groups.
+     * Return list of roles.
      *
-     * @return list of user groups
+     * @return list of roles
      */
-    public List<RoleDTO> getUserGroups() {
+    public List<RoleDTO> getRoles() {
         try {
-            return serviceManager.getUserGroupService().findAll();
+            return serviceManager.getRoleService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() },
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
         }

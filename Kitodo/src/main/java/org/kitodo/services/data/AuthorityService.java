@@ -126,14 +126,14 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Find authorities by id of user group.
+     * Find authorities by id of role.
      *
      * @param id
-     *            of user group
-     * @return list of JSON objects with authorities for specific user group id
+     *            of role
+     * @return list of JSON objects with authorities for specific role id
      */
-    List<JsonObject> findByUserGroupId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
+    List<JsonObject> findByRoleId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery(AuthorityTypeField.ROLES + ".id", id, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -153,32 +153,32 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Method saves user groups related to modified authority.
+     * Method saves roles related to modified authority.
      *
      * @param authority
      *            object
      */
     @Override
     protected void manageDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
-        manageUserGroupsDependenciesForIndex(authority);
+        manageRolesDependenciesForIndex(authority);
     }
 
     /**
      * Check if IndexAction flag is delete. If true remove authority from list of
-     * authorities and re-save user group, if false only re-save authority object.
+     * authorities and re-save role, if false only re-save role object.
      *
      * @param authority
      *            object
      */
-    private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
         if (authority.getIndexAction() == IndexAction.DELETE) {
-            for (Role userGroup : authority.getRoles()) {
-                userGroup.getAuthorities().remove(authority);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : authority.getRoles()) {
+                role.getAuthorities().remove(authority);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (Role userGroup : authority.getRoles()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : authority.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -244,37 +244,36 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         authorityDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject authorizationJSONObject = jsonObject.getJsonObject("_source");
         authorityDTO.setTitle(AuthorityTypeField.TITLE.getStringValue(authorizationJSONObject));
-        authorityDTO.setUserGroupsSize(
-            AuthorityTypeField.USER_GROUPS.getSizeOfProperty(authorizationJSONObject));
+        authorityDTO.setRolesSize(AuthorityTypeField.ROLES.getSizeOfProperty(authorizationJSONObject));
         if (!related) {
             convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
         } else {
-            addBasicUserGroupRelation(authorityDTO, authorizationJSONObject);
+            addBasicRoleRelation(authorityDTO, authorizationJSONObject);
         }
         return authorityDTO;
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO) throws DataException {
-        authorityDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        authorityDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.ROLES.getKey(),
+            serviceManager.getRoleService()));
     }
 
-    private void addBasicUserGroupRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
-        if (authorityDTO.getUserGroupsSize() > 0) {
-            List<RoleDTO> userGroups = new ArrayList<>();
+    private void addBasicRoleRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
+        if (authorityDTO.getRolesSize() > 0) {
+            List<RoleDTO> roles = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(RoleTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                AuthorityTypeField.USER_GROUPS.getKey(), subKeys);
+                AuthorityTypeField.ROLES.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
-                RoleDTO userGroup = new RoleDTO();
-                userGroup.setId(relatedProperty.getId());
+                RoleDTO role = new RoleDTO();
+                role.setId(relatedProperty.getId());
                 if (!relatedProperty.getValues().isEmpty()) {
-                    userGroup.setTitle(relatedProperty.getValues().get(0));
+                    role.setTitle(relatedProperty.getValues().get(0));
                 }
-                userGroups.add(userGroup);
+                roles.add(role);
             }
-            authorityDTO.setUserGroups(userGroups);
+            authorityDTO.setRoles(roles);
         }
     }
 }

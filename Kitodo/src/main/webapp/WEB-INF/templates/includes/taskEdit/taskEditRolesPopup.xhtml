@@ -19,26 +19,26 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view locale="#{SpracheForm.locale}">
         <!-- edit dialog -->
-        <p:dialog widgetVar="addUsergroupDialog"
-                  header="#{msgs.userGroupsAdd}"
+        <p:dialog widgetVar="addRoleDialog"
+                  header="#{msgs.rolesAdd}"
                   width="700px"
                   modal="true"
                   dynamic="true">
-            <h:form id="usergroupForm">
-                <p:dataTable id="usergroupTable"
-                             var="usergroup"
-                             value="#{UserGroupForm.lazyDTOModel}"
+            <h:form id="roleForm">
+                <p:dataTable id="roleTable"
+                             var="role"
+                             value="#{RoleForm.lazyDTOModel}"
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
                              paginator="true">
-                    <p:column headerText="#{msgs.userGroup}">
-                        <h:outputText value="#{usergroup.title}"/>
+                    <p:column headerText="#{msgs.role}">
+                        <h:outputText value="#{role.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.actions}">
-                        <p:commandLink id="addUsergroup" action="#{ProcessForm.addUserGroup}"
-                                       oncomplete="toggleSave()" update="editForm:tabs:usergroupTable">
+                        <p:commandLink id="addRule" action="#{ProcessForm.addRole}"
+                                       oncomplete="toggleSave()" update="editForm:tabs:roleTable">
                             <i class="fa fa-user-plus"/>
-                            <f:param name="ID" value="#{usergroup.id}"/>
+                            <f:param name="ID" value="#{role.id}"/>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
