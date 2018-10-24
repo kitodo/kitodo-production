@@ -30,6 +30,10 @@ public class Pages {
         return getPage(CurrentTasksEditPage.class);
     }
 
+    public static DesktopPage getDesktopPage() throws InstantiationException, IllegalAccessException {
+        return getPage(DesktopPage.class);
+    }
+
     public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
         return getPage(HelpPage.class);
     }

@@ -177,7 +177,7 @@ public abstract class Page<T> {
         WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
         for (int attempt = 1; attempt < 4; attempt++) {
             try {
-                await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
+                await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                         .ignoreExceptions().until(() -> isButtonClicked.matches(button));
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
@@ -186,7 +186,7 @@ public abstract class Page<T> {
                     "Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
             }
         }
-        throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));
+        throw new TimeoutException("Could not access button: " + button.getAttribute("id") + "!");
     }
 
     protected void clickElement(WebElement element) {
