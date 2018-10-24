@@ -134,7 +134,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            for (Role userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getRoles()) {
                 subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
             }
             query.must(subQuery);
@@ -241,12 +241,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
-            for (Role userGroup : task.getUserGroups()) {
+            for (Role userGroup : task.getRoles()) {
                 userGroup.getTasks().remove(task);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
-            for (Role userGroup : task.getUserGroups()) {
+            for (Role userGroup : task.getRoles()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
@@ -549,10 +549,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return size
      */
     public int getUserGroupsSize(Task task) {
-        if (task.getUserGroups() == null) {
+        if (task.getRoles() == null) {
             return 0;
         } else {
-            return task.getUserGroups().size();
+            return task.getRoles().size();
         }
     }
 

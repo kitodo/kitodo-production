@@ -102,7 +102,7 @@ public class RoleForm extends BaseForm {
             this.serviceManager.getUserGroupService().refresh(this.userGroup);
             if (!this.userGroup.getUsers().isEmpty()) {
                 for (User b : this.userGroup.getUsers()) {
-                    b.getUserGroups().remove(this.userGroup);
+                    b.getRoles().remove(this.userGroup);
                 }
                 this.userGroup.setUsers(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.userGroup);

@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class RoleDAO extends BaseDAO<Role> {
@@ -40,19 +40,19 @@ public class RoleDAO extends BaseDAO<Role> {
 
     @Override
     public List<Role> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM UserGroup ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM Role ORDER BY id ASC", offset, size);
     }
 
     @Override
     public List<Role> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
     @Override
-    public Role save(Role userGroup) throws DAOException {
-        storeObject(userGroup);
-        return retrieveObject(Role.class, userGroup.getId());
+    public Role save(Role role) throws DAOException {
+        storeObject(role);
+        return retrieveObject(Role.class, role.getId());
     }
 
     @Override
@@ -61,14 +61,14 @@ public class RoleDAO extends BaseDAO<Role> {
     }
 
     /**
-     * Get all user groups visible for current user - user groups of users assigned
+     * Get all user roles visible for current user - user roles of users assigned
      * to projects with certain clients.
      *
      * @param clientIdList
      *            list of client ids assigned to which current user is assigned
-     * @return list of user groups
+     * @return list of user roles
      */
-    public List<Role> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
+    public List<Role> getAllRolesByClientIds(List<Integer> clientIdList) {
         UserDAO userDAO = new UserDAO();
         List<User> users = userDAO.getAllActiveUsersByClientIds(clientIdList);
         List<Integer> userIdList = new ArrayList<>();
@@ -77,7 +77,7 @@ public class RoleDAO extends BaseDAO<Role> {
         }
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("userIdList", userIdList);
-        return getByQuery("SELECT ug FROM UserGroup AS ug JOIN ug.users AS u WHERE u.id IN :userIdList GROUP BY ug.id",
+        return getByQuery("SELECT r FROM Role AS r JOIN r.users AS u WHERE u.id IN :userIdList GROUP BY r.id",
             parameters);
     }
 }

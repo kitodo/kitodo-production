@@ -35,17 +35,17 @@ import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**

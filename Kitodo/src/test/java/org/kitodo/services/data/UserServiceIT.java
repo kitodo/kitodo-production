@@ -163,7 +163,7 @@ public class UserServiceIT {
 
         User user = new User();
         user.setLogin("Cascade");
-        user.getUserGroups().add(
+        user.getRoles().add(
             userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
@@ -422,7 +422,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAuthorityOfUser() throws Exception {
-        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(1);
+        Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
         assertEquals("Authority title is incorrect!", "viewAllClients_globalAssignable", authority.getTitle());
     }
 

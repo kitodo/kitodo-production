@@ -634,7 +634,7 @@ public class GoobiScript {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<Role> userGroups = task.getUserGroups();
+                    List<Role> userGroups = task.getRoles();
                     if (!userGroups.contains(userGroup)) {
                         userGroups.add(userGroup);
                         saveTask(process.getTitle(), task);

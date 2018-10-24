@@ -114,14 +114,14 @@ public class Task extends BaseIndexedBean {
     private Process process;
 
     /**
-     * This field contains information about user's groups, which are allowed to
+     * This field contains information about user's roles, which are allowed to
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "task_x_userGroup", joinColumns = {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
-    private List<Role> userGroups;
+    private List<Role> roles;
 
     /**
      * This field contains information about folders whose contents are to be
@@ -153,7 +153,7 @@ public class Task extends BaseIndexedBean {
      */
     public Task() {
         this.title = "";
-        this.userGroups = new ArrayList<>();
+        this.roles = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
     }
@@ -184,7 +184,7 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = templateTask.getWorkflowCondition();
 
         // necessary to create new ArrayList in other case session problem!
-        this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+        this.roles = new ArrayList<>(templateTask.getRoles());
 
         // necessary to create new ArrayList in other case session problem!
         this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
@@ -364,25 +364,25 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of user groups.
+     * Get list of roles.
      *
-     * @return list of UserGroup objects or empty list
+     * @return list of Role objects or empty list
      */
-    public List<Role> getUserGroups() {
-        if (this.userGroups == null) {
-            this.userGroups = new ArrayList<>();
+    public List<Role> getRoles() {
+        if (this.roles == null) {
+            this.roles = new ArrayList<>();
         }
-        return this.userGroups;
+        return this.roles;
     }
 
     /**
-     * Set list of user groups.
+     * Set list of roles.
      *
-     * @param userGroups
-     *            as list
+     * @param roles
+     *            as list of Role objects
      */
-    public void setUserGroups(List<Role> userGroups) {
-        this.userGroups = userGroups;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     /**

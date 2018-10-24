@@ -200,12 +200,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     private void manageUserGroupsDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Role userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getRoles()) {
                 userGroup.getUsers().remove(user);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
-            for (Role userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getRoles()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }

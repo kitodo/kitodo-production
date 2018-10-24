@@ -26,7 +26,7 @@ public class ClientType extends BaseType<Client> {
         jsonObjectBuilder.add(ClientTypeField.NAME.getKey(), preventNull(client.getName()));
         jsonObjectBuilder.add(ClientTypeField.PROJECTS.getKey(), addObjectRelation(client.getProjects(), true));
         jsonObjectBuilder.add(ClientTypeField.USERS.getKey(), addObjectRelation(client.getUsers(), true));
-        jsonObjectBuilder.add(ClientTypeField.USER_GROUPS.getKey(), addObjectRelation(client.getUserGroups(), true));
+        jsonObjectBuilder.add(ClientTypeField.ROLES.getKey(), addObjectRelation(client.getRoles(), true));
         return jsonObjectBuilder.build();
     }
 

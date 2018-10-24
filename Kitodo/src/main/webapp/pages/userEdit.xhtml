@@ -157,7 +157,7 @@
             </p:tab>
             <!-- user groups -->
             <p:tab id="usergroupTab" title="#{msgs.userGroups}">
-                <p:dataTable id="usergroupDatatable" var="item" value="#{UserForm.userObject.userGroups}">
+                <p:dataTable id="usergroupDatatable" var="item" value="#{UserForm.userObject.roles}">
                     <p:column headerText="#{msgs.userGroup}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>

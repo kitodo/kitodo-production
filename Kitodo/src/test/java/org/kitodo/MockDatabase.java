@@ -883,7 +883,7 @@ public class MockDatabase {
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setTemplate(firstTemplate);
         firstTemplate.getTasks().add(firstTask);
-        firstTask.getUserGroups().add(userGroup);
+        firstTask.getRoles().add(userGroup);
         firstUser.getProcessingTasks().add(firstTask);
         serviceManager.getTaskService().save(firstTask);
 
@@ -900,7 +900,7 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
         secondTask.setProcess(firstProcess);
-        secondTask.getUserGroups().add(userGroup);
+        secondTask.getRoles().add(userGroup);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(secondTask);
@@ -925,7 +925,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        fourthTask.getUserGroups().add(userGroup);
+        fourthTask.getRoles().add(userGroup);
         fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(firstProcess);
         serviceManager.getTaskService().save(fourthTask);
@@ -952,7 +952,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 27);
         sixthTask.setProcessingBegin(localDate.toDate());
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setUserGroups(serviceManager.getUserGroupService().getAll());
+        sixthTask.setRoles(serviceManager.getUserGroupService().getAll());
         sixthTask.setProcessingUser(secondUser);
         sixthTask.setTemplate(secondTemplate);
         serviceManager.getTaskService().save(sixthTask);
@@ -968,7 +968,7 @@ public class MockDatabase {
         seventhTask.setProcessingUser(blockedUser);
         seventhTask.setProcessingStatusEnum(TaskStatus.OPEN);
         seventhTask.setProcess(secondProcess);
-        seventhTask.getUserGroups().add(userGroup);
+        seventhTask.getRoles().add(userGroup);
         seventhTask.setScriptName("scriptName");
         seventhTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(seventhTask);
@@ -982,7 +982,7 @@ public class MockDatabase {
         eightTask.setProcessingUser(firstUser);
         eightTask.setProcessingStatusEnum(TaskStatus.INWORK);
         eightTask.setProcess(secondProcess);
-        eightTask.getUserGroups().add(userGroup);
+        eightTask.getRoles().add(userGroup);
         serviceManager.getTaskService().save(eightTask);
     }
 
@@ -1005,7 +1005,7 @@ public class MockDatabase {
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
         firstTask.setTemplate(template);
-        firstTask.getUserGroups().add(userGroup);
+        firstTask.getRoles().add(userGroup);
         serviceManager.getTaskService().save(firstTask);
         serviceManager.getTemplateService().save(template);
         firstUser.getProcessingTasks().add(firstTask);
@@ -1023,7 +1023,7 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.DONE);
         secondTask.setTemplate(template);
-        secondTask.getUserGroups().add(userGroup);
+        secondTask.getRoles().add(userGroup);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(secondTask);
@@ -1136,7 +1136,7 @@ public class MockDatabase {
         Client firstClient = serviceManager.getClientService().getById(1);
         Client secondClient = serviceManager.getClientService().getById(2);
 
-        UserGroup adminUserGroup = serviceManager.getUserGroupService().getById(1);
+        Role adminUserGroup = serviceManager.getUserGroupService().getById(1);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1148,7 +1148,7 @@ public class MockDatabase {
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
         firstUser.setMetadataLanguage("de");
-        firstUser.getUserGroups().add(adminUserGroup);
+        firstUser.getRoles().add(adminUserGroup);
         firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
@@ -1161,7 +1161,7 @@ public class MockDatabase {
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(2));
+        secondUser.getRoles().add(serviceManager.getUserGroupService().getById(2));
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
@@ -1174,7 +1174,7 @@ public class MockDatabase {
         thirdUser.setLocation("Leipzig");
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
-        thirdUser.getUserGroups().add(adminUserGroup);
+        thirdUser.getRoles().add(adminUserGroup);
         serviceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
@@ -1186,7 +1186,7 @@ public class MockDatabase {
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
-        fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        fourthUser.getRoles().add(serviceManager.getUserGroupService().getById(3));
         serviceManager.getUserService().save(fourthUser);
 
         User fifthUser = new User();

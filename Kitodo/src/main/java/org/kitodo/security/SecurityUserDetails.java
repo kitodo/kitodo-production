@@ -49,7 +49,7 @@ public class SecurityUserDetails extends User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        List<Role> userGroups = super.getUserGroups();
+        List<Role> userGroups = super.getRoles();
         List<Client> clients = super.getClients();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 

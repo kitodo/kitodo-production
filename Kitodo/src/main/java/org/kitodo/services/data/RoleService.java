@@ -166,7 +166,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
             throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Authority authority : userGroup.getAuthorities()) {
-                authority.getUserGroups().remove(userGroup);
+                authority.getRoles().remove(userGroup);
                 serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         } else {
@@ -186,7 +186,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     private void manageTasksDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Task task : userGroup.getTasks()) {
-                task.getUserGroups().remove(userGroup);
+                task.getRoles().remove(userGroup);
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
@@ -206,7 +206,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     private void manageUsersDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (User user : userGroup.getUsers()) {
-                user.getUserGroups().remove(userGroup);
+                user.getRoles().remove(userGroup);
                 serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
@@ -368,7 +368,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      * @return The list of all user roles for the given client IDs
      */
     public List<Role> getAllUserGroupsByClientIds(List<Integer> clientIds) {
-        return dao.getAllUserGroupsByClientIds(clientIds);
+        return dao.getAllRolesByClientIds(clientIds);
     }
 
     /**

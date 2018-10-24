@@ -34,9 +34,9 @@ import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
- * Test class for UserGroupType.
+ * Test class for RoleType.
  */
-public class UserGroupTypeTest {
+public class RoleTypeTest {
 
     private static List<Role> prepareData() {
         List<User> users = new ArrayList<>();
@@ -76,33 +76,33 @@ public class UserGroupTypeTest {
         adminAuthorities.add(managerAuthority);
         adminAuthorities.add(userAuthority);
 
-        Role firstUserGroup = new Role();
-        firstUserGroup.setId(1);
-        firstUserGroup.setTitle("Administrator");
-        firstUserGroup.setClient(client);
-        firstUserGroup.setAuthorities(adminAuthorities);
-        firstUserGroup.setUsers(users);
+        Role firstRole = new Role();
+        firstRole.setId(1);
+        firstRole.setTitle("Administrator");
+        firstRole.setClient(client);
+        firstRole.setAuthorities(adminAuthorities);
+        firstRole.setUsers(users);
 
-        Role secondUserGroup = new Role();
-        secondUserGroup.setId(2);
-        secondUserGroup.setTitle("Random");
-        secondUserGroup.setAuthorities(adminAuthorities);
-        secondUserGroup.setClient(client);
+        Role secondRole = new Role();
+        secondRole.setId(2);
+        secondRole.setTitle("Random");
+        secondRole.setAuthorities(adminAuthorities);
+        secondRole.setClient(client);
 
-        List<Role> userGroups = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
 
-        userGroups.add(firstUserGroup);
-        userGroups.add(secondUserGroup);
+        roles.add(firstRole);
+        roles.add(secondRole);
 
-        return userGroups;
+        return roles;
     }
 
     @Test
     public void shouldCreateFirstDocument() throws Exception {
-        RoleType userGroupType = new RoleType();
+        RoleType roleType = new RoleType();
 
-        Role userGroup = prepareData().get(0);
-        HttpEntity document = userGroupType.createDocument(userGroup);
+        Role role = prepareData().get(0);
+        HttpEntity document = roleType.createDocument(role);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
@@ -156,10 +156,10 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateSecondDocument() throws Exception {
-        RoleType userGroupType = new RoleType();
+        RoleType roleType = new RoleType();
 
-        Role userGroup = prepareData().get(1);
-        HttpEntity document = userGroupType.createDocument(userGroup);
+        Role role = prepareData().get(1);
+        HttpEntity document = roleType.createDocument(role);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
@@ -197,10 +197,10 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
-        RoleType userGroupType = new RoleType();
+        RoleType roleType = new RoleType();
 
-        Role userGroup = prepareData().get(0);
-        HttpEntity document = userGroupType.createDocument(userGroup);
+        Role role = prepareData().get(0);
+        HttpEntity document = roleType.createDocument(role);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
@@ -216,10 +216,10 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateDocuments() {
-        RoleType UserGroupType = new RoleType();
+        RoleType roleType = new RoleType();
 
-        List<Role> batches = prepareData();
-        Map<Integer, HttpEntity> documents = UserGroupType.createDocuments(batches);
+        List<Role> roles = prepareData();
+        Map<Integer, HttpEntity> documents = roleType.createDocuments(roles);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

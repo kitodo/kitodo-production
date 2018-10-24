@@ -155,9 +155,9 @@ public class UserForm extends BaseForm {
     public String deleteFromUserGroup() {
         try {
             int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role userGroup : this.userObject.getUserGroups()) {
+            for (Role userGroup : this.userObject.getRoles()) {
                 if (userGroup.getId().equals(userGroupId)) {
-                    this.userObject.getUserGroups().remove(userGroup);
+                    this.userObject.getRoles().remove(userGroup);
                 }
             }
         } catch (NumberFormatException e) {
@@ -177,8 +177,8 @@ public class UserForm extends BaseForm {
             userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
 
-            if (!this.userObject.getUserGroups().contains(userGroup)) {
-                this.userObject.getUserGroups().add(userGroup);
+            if (!this.userObject.getRoles().contains(userGroup)) {
+                this.userObject.getRoles().add(userGroup);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,

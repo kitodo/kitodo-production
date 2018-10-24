@@ -124,7 +124,7 @@ public class Reader {
         task.setWorkflowCondition(taskInfo.getCondition());
         Integer userRoleId = kitodoTask.getUserRole();
         if (userRoleId > 0) {
-            task.getUserGroups().add(serviceManager.getUserGroupService().getById(userRoleId));
+            task.getRoles().add(serviceManager.getUserGroupService().getById(userRoleId));
         }
 
         if (workflowTask instanceof ScriptTask) {

@@ -21,19 +21,19 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 
 /**
- * Implementation of UserGroup Type.
+ * Implementation of Role Type.
  */
 public class RoleType extends BaseType<Role> {
 
     @Override
-    JsonObject getJsonObject(Role userGroup) {
+    JsonObject getJsonObject(Role role) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(RoleTypeField.TITLE.getKey(), preventNull(userGroup.getTitle()));
-        jsonObjectBuilder.add(RoleTypeField.AUTHORITIES.getKey(), addObjectRelation(userGroup.getAuthorities(), true));
-        jsonObjectBuilder.add(RoleTypeField.USERS.getKey(), addObjectRelation(userGroup.getUsers(), true));
-        if (Objects.nonNull(userGroup.getClient())) {
-            jsonObjectBuilder.add(RoleTypeField.CLIENT_ID.getKey(), userGroup.getClient().getId());
-            jsonObjectBuilder.add(RoleTypeField.CLIENT_NAME.getKey(), preventNull(userGroup.getClient().getName()));
+        jsonObjectBuilder.add(RoleTypeField.TITLE.getKey(), preventNull(role.getTitle()));
+        jsonObjectBuilder.add(RoleTypeField.AUTHORITIES.getKey(), addObjectRelation(role.getAuthorities(), true));
+        jsonObjectBuilder.add(RoleTypeField.USERS.getKey(), addObjectRelation(role.getUsers(), true));
+        if (Objects.nonNull(role.getClient())) {
+            jsonObjectBuilder.add(RoleTypeField.CLIENT_ID.getKey(), role.getClient().getId());
+            jsonObjectBuilder.add(RoleTypeField.CLIENT_NAME.getKey(), preventNull(role.getClient().getName()));
         }
         return jsonObjectBuilder.build();
     }

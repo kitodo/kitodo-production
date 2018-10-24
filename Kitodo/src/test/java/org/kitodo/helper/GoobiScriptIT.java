@@ -48,7 +48,7 @@ public class GoobiScriptIT {
         GoobiScript goobiScript = new GoobiScript();
 
         Task task = serviceManager.getTaskService().getById(3);
-        int amountOfUserGroups = task.getUserGroups().size();
+        int amountOfUserGroups = task.getRoles().size();
 
         String script = "action:addUserGroup \"steptitle:Testing and Blocking\" group:Random";
         List<Process> processes = new ArrayList<>();
@@ -56,7 +56,7 @@ public class GoobiScriptIT {
         goobiScript.execute(processes, script);
 
         task = serviceManager.getTaskService().getById(3);
-        assertEquals("User group was not correctly added to task!", amountOfUserGroups + 1, task.getUserGroups().size());
+        assertEquals("User group was not correctly added to task!", amountOfUserGroups + 1, task.getRoles().size());
     }
 
     @Test

@@ -33,7 +33,7 @@ public class UserType extends BaseType<User> {
         jsonObjectBuilder.add(UserTypeField.ACTIVE.getKey(), user.isActive());
         jsonObjectBuilder.add(UserTypeField.LOCATION.getKey(), preventNull(user.getLocation()));
         jsonObjectBuilder.add(UserTypeField.METADATA_LANGUAGE.getKey(), preventNull(user.getMetadataLanguage()));
-        jsonObjectBuilder.add(UserTypeField.USER_GROUPS.getKey(), addObjectRelation(user.getUserGroups(), true));
+        jsonObjectBuilder.add(UserTypeField.ROLES.getKey(), addObjectRelation(user.getRoles(), true));
         jsonObjectBuilder.add(UserTypeField.FILTERS.getKey(), addObjectRelation(user.getFilters(), true));
         jsonObjectBuilder.add(UserTypeField.PROJECTS.getKey(), addObjectRelation(user.getProjects(), true));
         jsonObjectBuilder.add(UserTypeField.CLIENTS.getKey(), addObjectRelation(user.getClients(), true));

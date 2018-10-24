@@ -34,17 +34,17 @@ public class AuthorityTypeTest {
     private static List<Authority> prepareData() {
 
         List<Authority> authorities = new ArrayList<>();
-        List<Role> userGroups = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
 
-        Role userGroup = new Role();
-        userGroup.setId(1);
-        userGroup.setTitle("First");
-        userGroups.add(userGroup);
+        Role role = new Role();
+        role.setId(1);
+        role.setTitle("First");
+        roles.add(role);
 
         Authority firstAuthority = new Authority();
         firstAuthority.setId(1);
         firstAuthority.setTitle("First");
-        firstAuthority.setUserGroups(userGroups);
+        firstAuthority.setRoles(roles);
         authorities.add(firstAuthority);
 
         Authority secondAuthority = new Authority();
@@ -67,14 +67,14 @@ public class AuthorityTypeTest {
         assertEquals("Key title doesn't match to given value!", "First",
             AuthorityTypeField.TITLE.getStringValue(actual));
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getKey());
-        assertEquals("Size userGroups doesn't match to given value!", 1, userGroups.size());
+        JsonArray roles = actual.getJsonArray(AuthorityTypeField.ROLES.getKey());
+        assertEquals("Size roles doesn't match to given value!", 1, roles.size());
 
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key userGroups.id doesn't match to given value!", 1,
-            RoleTypeField.ID.getIntValue(userGroup));
-        assertEquals("Key userGroups.title doesn't match to given value!", "First",
-            RoleTypeField.TITLE.getStringValue(userGroup));
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Key roles.id doesn't match to given value!", 1,
+            RoleTypeField.ID.getIntValue(role));
+        assertEquals("Key roles.title doesn't match to given value!", "First",
+            RoleTypeField.TITLE.getStringValue(role));
     }
 
     @Test
@@ -89,8 +89,8 @@ public class AuthorityTypeTest {
         assertEquals("Key title doesn't match to given value!", "Second",
             AuthorityTypeField.TITLE.getStringValue(actual));
 
-        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
+        JsonArray roles = AuthorityTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 0, roles.size());
     }
 
     @Test
@@ -103,9 +103,9 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
 
-        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Amount of keys in userGroups is incorrect!", 2, userGroup.keySet().size());
+        JsonArray roles = AuthorityTypeField.ROLES.getJsonArray(actual);
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Amount of keys in roles is incorrect!", 2, role.keySet().size());
     }
 
     @Test

@@ -409,7 +409,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void removeTask() {
         this.process.getTasks().remove(this.task);
 
-        List<Role> userGroups = this.task.getUserGroups();
+        List<Role> userGroups = this.task.getRoles();
         for (Role userGroup : userGroups) {
             userGroup.getTasks().remove(this.task);
         }
@@ -419,7 +419,7 @@ public class ProcessForm extends TemplateBaseForm {
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
         /* alle Benutzergruppen mit ihren Benutzern */
-        for (Role userGroup : this.task.getUserGroups()) {
+        for (Role userGroup : this.task.getRoles()) {
             for (User user : userGroup.getUsers()) {
                 try {
                     webDav.uploadFromHome(user, this.task.getProcess());
@@ -438,9 +438,9 @@ public class ProcessForm extends TemplateBaseForm {
     public String deleteUserGroup() {
         try {
             int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (Role userGroup : this.task.getUserGroups()) {
+            for (Role userGroup : this.task.getRoles()) {
                 if (userGroup.getId().equals(userGroupId)) {
-                    this.task.getUserGroups().remove(userGroup);
+                    this.task.getRoles().remove(userGroup);
                 }
             }
         } catch (NumberFormatException e) {
@@ -460,8 +460,8 @@ public class ProcessForm extends TemplateBaseForm {
             userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
 
-            if (!this.task.getUserGroups().contains(userGroup)) {
-                this.task.getUserGroups().add(userGroup);
+            if (!this.task.getRoles().contains(userGroup)) {
+                this.task.getRoles().add(userGroup);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,

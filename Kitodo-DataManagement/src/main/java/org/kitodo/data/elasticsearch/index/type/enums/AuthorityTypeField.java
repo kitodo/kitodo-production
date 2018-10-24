@@ -15,7 +15,7 @@ public enum AuthorityTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    USER_GROUPS("userGroups");
+    ROLES("roles");
 
     private String name;
 

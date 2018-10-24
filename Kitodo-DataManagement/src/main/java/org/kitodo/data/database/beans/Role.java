@@ -32,10 +32,10 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
