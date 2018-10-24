@@ -16,23 +16,26 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <p:panelGrid columns="2" layout="grid">
-        <p:row>
-            <div>
-                <p:outputLabel for="titleInput" value="#{msgs.title}"/>
-                <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
-                             value="#{UserGroupForm.userGroup.title}" placeholder="#{msgs.title}"
-                             required="#{empty param['editForm:saveButtonToggler']}"/>
-            </div>
-            <div>
-                <p:outputLabel for="client" value="#{msgs.client}"/>
-                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{UserGroupForm.userGroup.client}">
-                    <f:selectItems value="#{DocketForm.clients}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
-            </div>
-        </p:row>
-        <p:row>
+    <p:panelGrid columns="1" layout="grid">
+        <p:panelGrid columns="2" layout="grid">
+            <p:row>
+                <div>
+                    <p:outputLabel for="titleInput" value="#{msgs.title}"/>
+                    <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
+                                 value="#{UserGroupForm.userGroup.title}" placeholder="#{msgs.title}"
+                                 required="#{empty param['editForm:saveButtonToggler']}"/>
+                </div>
+            </p:row>
+            <p:row>
+                <div>
+                    <p:outputLabel for="client" value="#{msgs.client}"/>
+                    <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{UserGroupForm.userGroup.client}">
+                        <f:selectItems value="#{UserGroupForm.clients}"/>
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectOneMenu>
+                </div>
+            </p:row>
+        </p:panelGrid>
             <div>
                 <p:panelGrid columns="2" layout="grid">
                     <!--global authorities-->
@@ -83,7 +86,6 @@
                     </h:panelGroup>
                 </p:panelGrid>
             </div>
-        </p:row>
         <p:row/>
     </p:panelGrid>
 
