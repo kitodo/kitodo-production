@@ -65,14 +65,14 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
@@ -409,8 +409,8 @@ public class ProcessForm extends TemplateBaseForm {
     public void removeTask() {
         this.process.getTasks().remove(this.task);
 
-        List<UserGroup> userGroups = this.task.getUserGroups();
-        for (UserGroup userGroup : userGroups) {
+        List<Role> userGroups = this.task.getUserGroups();
+        for (Role userGroup : userGroups) {
             userGroup.getTasks().remove(this.task);
         }
         deleteSymlinksFromUserHomes();
@@ -419,7 +419,7 @@ public class ProcessForm extends TemplateBaseForm {
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
         /* alle Benutzergruppen mit ihren Benutzern */
-        for (UserGroup userGroup : this.task.getUserGroups()) {
+        for (Role userGroup : this.task.getUserGroups()) {
             for (User user : userGroup.getUsers()) {
                 try {
                     webDav.uploadFromHome(user, this.task.getProcess());
@@ -438,7 +438,7 @@ public class ProcessForm extends TemplateBaseForm {
     public String deleteUserGroup() {
         try {
             int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (UserGroup userGroup : this.task.getUserGroups()) {
+            for (Role userGroup : this.task.getUserGroups()) {
                 if (userGroup.getId().equals(userGroupId)) {
                     this.task.getUserGroups().remove(userGroup);
                 }
@@ -458,7 +458,7 @@ public class ProcessForm extends TemplateBaseForm {
         int userGroupId = 0;
         try {
             userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
 
             if (!this.task.getUserGroups().contains(userGroup)) {
                 this.task.getUserGroups().add(userGroup);
@@ -1548,7 +1548,7 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @return list of user groups
      */
-    public List<UserGroupDTO> getUserGroups() {
+    public List<RoleDTO> getUserGroups() {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {

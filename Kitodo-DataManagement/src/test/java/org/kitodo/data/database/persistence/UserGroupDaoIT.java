@@ -16,23 +16,22 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class UserGroupDaoIT {
 
-    @Rule
+    @org.junit.Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
-        List<UserGroup> userGroups = getAuthorities();
+        List<Role> userGroups = getAuthorities();
 
-        UserGroupDAO userGroupDAO = new UserGroupDAO();
+        RoleDAO userGroupDAO = new RoleDAO();
         userGroupDAO.save(userGroups.get(0));
         userGroupDAO.save(userGroups.get(1));
         userGroupDAO.save(userGroups.get(2));
@@ -50,19 +49,19 @@ public class UserGroupDaoIT {
         userGroupDAO.getById(1);
     }
 
-    private List<UserGroup> getAuthorities() {
-        UserGroup firstUserGroup = new UserGroup();
+    private List<Role> getAuthorities() {
+        Role firstUserGroup = new Role();
         firstUserGroup.setTitle("first_userGroup");
         firstUserGroup.setIndexAction(IndexAction.DONE);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setTitle("second_userGroup");
         secondUserGroup.setIndexAction(IndexAction.INDEX);
 
-        UserGroup thirdUserGroup = new UserGroup();
+        Role thirdUserGroup = new Role();
         thirdUserGroup.setTitle("third_userGroup");
 
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
         userGroups.add(firstUserGroup);
         userGroups.add(secondUserGroup);
         userGroups.add(thirdUserGroup);

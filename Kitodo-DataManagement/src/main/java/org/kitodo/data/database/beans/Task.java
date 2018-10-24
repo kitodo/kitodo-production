@@ -121,7 +121,7 @@ public class Task extends BaseIndexedBean {
     @JoinTable(name = "task_x_userGroup", joinColumns = {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
-    private List<UserGroup> userGroups;
+    private List<Role> userGroups;
 
     /**
      * This field contains information about folders whose contents are to be
@@ -368,7 +368,7 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of UserGroup objects or empty list
      */
-    public List<UserGroup> getUserGroups() {
+    public List<Role> getUserGroups() {
         if (this.userGroups == null) {
             this.userGroups = new ArrayList<>();
         }
@@ -381,7 +381,7 @@ public class Task extends BaseIndexedBean {
      * @param userGroups
      *            as list
      */
-    public void setUserGroups(List<UserGroup> userGroups) {
+    public void setUserGroups(List<Role> userGroups) {
         this.userGroups = userGroups;
     }
 

@@ -23,9 +23,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,9 +34,9 @@ public class AuthorityTypeTest {
     private static List<Authority> prepareData() {
 
         List<Authority> authorities = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
 
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setId(1);
         userGroup.setTitle("First");
         userGroups.add(userGroup);
@@ -72,9 +72,9 @@ public class AuthorityTypeTest {
 
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Key userGroups.id doesn't match to given value!", 1,
-            UserGroupTypeField.ID.getIntValue(userGroup));
+            RoleTypeField.ID.getIntValue(userGroup));
         assertEquals("Key userGroups.title doesn't match to given value!", "First",
-            UserGroupTypeField.TITLE.getStringValue(userGroup));
+            RoleTypeField.TITLE.getStringValue(userGroup));
     }
 
     @Test

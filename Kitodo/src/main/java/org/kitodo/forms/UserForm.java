@@ -28,12 +28,12 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
@@ -155,7 +155,7 @@ public class UserForm extends BaseForm {
     public String deleteFromUserGroup() {
         try {
             int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            for (UserGroup userGroup : this.userObject.getUserGroups()) {
+            for (Role userGroup : this.userObject.getUserGroups()) {
                 if (userGroup.getId().equals(userGroupId)) {
                     this.userObject.getUserGroups().remove(userGroup);
                 }
@@ -175,7 +175,7 @@ public class UserForm extends BaseForm {
         int userGroupId = 0;
         try {
             userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            Role userGroup = serviceManager.getUserGroupService().getById(userGroupId);
 
             if (!this.userObject.getUserGroups().contains(userGroup)) {
                 this.userObject.getUserGroups().add(userGroup);
@@ -371,7 +371,7 @@ public class UserForm extends BaseForm {
      *
      * @return list of user groups
      */
-    public List<UserGroupDTO> getUserGroups() {
+    public List<RoleDTO> getUserGroups() {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {

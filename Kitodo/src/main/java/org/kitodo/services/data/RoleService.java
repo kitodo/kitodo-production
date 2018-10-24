@@ -23,38 +23,38 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
-import org.kitodo.data.database.persistence.UserGroupDAO;
+import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.UserGroupType;
+import org.kitodo.data.elasticsearch.index.type.RoleType;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO, UserGroupDAO> {
+public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static UserGroupService instance = null;
+    private static RoleService instance = null;
     private static String AUTHORITY_TITLE_VIEW_ALL = "viewAllUserGroups";
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    private UserGroupService() {
-        super(new UserGroupDAO(), new UserGroupType(), new Indexer<>(UserGroup.class), new Searcher(UserGroup.class));
-        this.indexer = new Indexer<>(UserGroup.class);
+    private RoleService() {
+        super(new RoleDAO(), new RoleType(), new Indexer<>(Role.class), new Searcher(Role.class));
+        this.indexer = new Indexer<>(Role.class);
     }
 
     /**
@@ -62,11 +62,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *
      * @return unique instance of UserGroupService
      */
-    public static UserGroupService getInstance() {
+    public static RoleService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (UserGroupService.class) {
+            synchronized (RoleService.class) {
                 if (Objects.equals(instance, null)) {
-                    instance = new UserGroupService();
+                    instance = new RoleService();
                 }
             }
         }
@@ -80,7 +80,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return list of UserGroupDTO objects
      */
     @Override
-    public List<UserGroupDTO> findAll() throws DataException {
+    public List<RoleDTO> findAll() throws DataException {
         return findAll(true);
     }
 
@@ -97,7 +97,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return list of UserGroupDTO objects
      */
     @Override
-    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+    public List<RoleDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return findAll(sort, offset, size, true);
     }
 
@@ -116,7 +116,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return list of UserGroupDTO objects
      */
     @Override
-    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+    public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return findAll(sort, offset, size, true);
         }
@@ -137,7 +137,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public List<UserGroup> getAllNotIndexed() {
+    public List<Role> getAllNotIndexed() {
         return getByQuery("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
@@ -148,7 +148,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
         manageAuthorizationsDependenciesForIndex(userGroup);
         manageTasksDependenciesForIndex(userGroup);
         manageUsersDependenciesForIndex(userGroup);
@@ -162,7 +162,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @param userGroup
      *            object
      */
-    private void manageAuthorizationsDependenciesForIndex(UserGroup userGroup)
+    private void manageAuthorizationsDependenciesForIndex(Role userGroup)
             throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Authority authority : userGroup.getAuthorities()) {
@@ -183,7 +183,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @param userGroup
      *            object
      */
-    private void manageTasksDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+    private void manageTasksDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Task task : userGroup.getTasks()) {
                 task.getUserGroups().remove(userGroup);
@@ -203,7 +203,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @param userGroup
      *            object
      */
-    private void manageUsersDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+    private void manageUsersDependenciesForIndex(Role userGroup) throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (User user : userGroup.getUsers()) {
                 user.getUserGroups().remove(userGroup);
@@ -222,7 +222,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @param userGroup
      *            object
      */
-    public void refresh(UserGroup userGroup) {
+    public void refresh(Role userGroup) {
         dao.refresh(userGroup);
     }
 
@@ -263,13 +263,13 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public UserGroupDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        UserGroupDTO userGroupDTO = new UserGroupDTO();
+    public RoleDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        RoleDTO userGroupDTO = new RoleDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
-        userGroupDTO.setTitle(UserGroupTypeField.TITLE.getStringValue(userGroupJSONObject));
-        userGroupDTO.setUsersSize(UserGroupTypeField.USERS.getSizeOfProperty(userGroupJSONObject));
-        userGroupDTO.setAuthorizationsSize(UserGroupTypeField.AUTHORITIES.getSizeOfProperty(userGroupJSONObject));
+        userGroupDTO.setTitle(RoleTypeField.TITLE.getStringValue(userGroupJSONObject));
+        userGroupDTO.setUsersSize(RoleTypeField.USERS.getSizeOfProperty(userGroupJSONObject));
+        userGroupDTO.setAuthorizationsSize(RoleTypeField.AUTHORITIES.getSizeOfProperty(userGroupJSONObject));
         if (!related) {
             convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
@@ -278,25 +278,25 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         }
 
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(UserGroupTypeField.CLIENT_ID.getIntValue(userGroupJSONObject));
-        clientDTO.setName(UserGroupTypeField.CLIENT_NAME.getStringValue(userGroupJSONObject));
+        clientDTO.setId(RoleTypeField.CLIENT_ID.getIntValue(userGroupJSONObject));
+        clientDTO.setName(RoleTypeField.CLIENT_NAME.getStringValue(userGroupJSONObject));
 
         userGroupDTO.setClient(clientDTO);
         return userGroupDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
-        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getKey(),
+    private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO userGroupDTO) throws DataException {
+        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(),
             serviceManager.getUserService()));
     }
 
-    private void addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
+    private void addBasicAuthorizationsRelation(RoleDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(AuthorityTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserGroupTypeField.AUTHORITIES.getKey(), subKeys);
+                RoleTypeField.AUTHORITIES.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
@@ -309,14 +309,14 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         }
     }
 
-    private void addBasicUsersRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
+    private void addBasicUsersRelation(RoleDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(UserTypeField.NAME.getKey());
             subKeys.add(UserTypeField.SURNAME.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserGroupTypeField.USERS.getKey(), subKeys);
+                RoleTypeField.USERS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());
@@ -338,7 +338,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            object
      * @return authorizations as list of Strings
      */
-    public List<String> getAuthorizationsAsString(UserGroup userGroup) {
+    public List<String> getAuthorizationsAsString(Role userGroup) {
         List<Authority> authorities = userGroup.getAuthorities();
         List<String> stringAuthorizations = new ArrayList<>();
         for (Authority authority : authorities) {
@@ -353,7 +353,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *
      * @return list of user groups
      */
-    public List<UserGroupDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
+    public List<RoleDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
                 .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
         return convertListIdToDTO(getAllUserGroupIdsByClientIds(clientIdList), this);
@@ -367,7 +367,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *
      * @return The list of all user roles for the given client IDs
      */
-    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIds) {
+    public List<Role> getAllUserGroupsByClientIds(List<Integer> clientIds) {
         return dao.getAllUserGroupsByClientIds(clientIds);
     }
 
@@ -380,9 +380,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return The list of user ids.
      */
     public List<Integer> getAllUserGroupIdsByClientIds(List<Integer> clientIdList) {
-        List<UserGroup> users = getAllUserGroupsByClientIds(clientIdList);
+        List<Role> users = getAllUserGroupsByClientIds(clientIdList);
         List<Integer> userIdList = new ArrayList<>();
-        for (UserGroup userGroup : users) {
+        for (Role userGroup : users) {
             userIdList.add(userGroup.getId());
         }
         return userIdList;

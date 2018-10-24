@@ -30,7 +30,7 @@ public class Authority extends BaseIndexedBean {
     private String title;
 
     @ManyToMany(mappedBy = "authorities", cascade = CascadeType.PERSIST)
-    private List<UserGroup> userGroups;
+    private List<Role> userGroups;
 
     /**
      * The constructor for setting title and assignables.
@@ -80,7 +80,7 @@ public class Authority extends BaseIndexedBean {
      *
      * @return The user groups.
      */
-    public List<UserGroup> getUserGroups() {
+    public List<Role> getUserGroups() {
         if (this.userGroups == null) {
             this.userGroups = new ArrayList<>();
         }
@@ -93,7 +93,7 @@ public class Authority extends BaseIndexedBean {
      * @param userGroups
      *            The user groups.
      */
-    public void setUserGroups(List<UserGroup> userGroups) {
+    public void setUserGroups(List<Role> userGroups) {
         this.userGroups = userGroups;
     }
 

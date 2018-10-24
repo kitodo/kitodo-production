@@ -46,7 +46,7 @@ import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -56,14 +56,14 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.security.SecurityUserDetails;
@@ -200,12 +200,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     private void manageUserGroupsDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getUserGroups()) {
                 userGroup.getUsers().remove(user);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
-            for (UserGroup userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getUserGroups()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
@@ -637,13 +637,13 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     private void addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getUserGroupSize() > 0) {
-            List<UserGroupDTO> userGroups = new ArrayList<>();
+            List<RoleDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserGroupTypeField.TITLE.getKey());
+            subKeys.add(RoleTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
                 UserTypeField.USER_GROUPS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
-                UserGroupDTO userGroup = new UserGroupDTO();
+                RoleDTO userGroup = new RoleDTO();
                 userGroup.setId(relatedProperty.getId());
                 if (!relatedProperty.getValues().isEmpty()) {
                     userGroup.setTitle(relatedProperty.getValues().get(0));

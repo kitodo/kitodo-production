@@ -26,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "userGroup")
-public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
+public class Role extends BaseIndexedBean implements Comparable<Role> {
     private static final long serialVersionUID = -5924845694417474352L;
 
     @Column(name = "title", nullable = false, unique = true)
@@ -52,7 +52,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     /**
      * The Constructor.
      */
-    public UserGroup() {
+    public Role() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
         this.authorities = new ArrayList<>();
@@ -161,16 +161,16 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     @Override
-    public int compareTo(UserGroup o) {
+    public int compareTo(Role o) {
         return this.getTitle().compareTo(o.getTitle());
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UserGroup)) {
+        if (!(obj instanceof Role)) {
             return false;
         }
-        UserGroup other = (UserGroup) obj;
+        Role other = (Role) obj;
         return this.getTitle().equals(other.getTitle());
     }
 

@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
@@ -37,10 +37,10 @@ import org.primefaces.model.DualListModel;
 
 @Named("UserGroupForm")
 @SessionScoped
-public class UserGroupForm extends BaseForm {
+public class RoleForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
-    private static final Logger logger = LogManager.getLogger(UserGroupForm.class);
-    private UserGroup userGroup = new UserGroup();
+    private static final Logger logger = LogManager.getLogger(RoleForm.class);
+    private Role userGroup = new Role();
 
     @Named("UserForm")
     private UserForm userForm;
@@ -56,7 +56,7 @@ public class UserGroupForm extends BaseForm {
      *            UserForm managed bean
      */
     @Inject
-    public UserGroupForm(UserForm userForm) {
+    public RoleForm(UserForm userForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
         this.userForm = userForm;
@@ -68,7 +68,7 @@ public class UserGroupForm extends BaseForm {
      * @return page address
      */
     public String newUserGroup() {
-        this.userGroup = new UserGroup();
+        this.userGroup = new Role();
 
         Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
         if (Objects.nonNull(sessionClient)) {
@@ -146,7 +146,7 @@ public class UserGroupForm extends BaseForm {
      *
      * @return The user group.
      */
-    public UserGroup getUserGroup() {
+    public Role getUserGroup() {
         return this.userGroup;
     }
 
@@ -156,7 +156,7 @@ public class UserGroupForm extends BaseForm {
      * @param userGroup
      *            The user group.
      */
-    public void setUserGroup(UserGroup userGroup) {
+    public void setUserGroup(Role userGroup) {
         this.userGroup = userGroup;
     }
 

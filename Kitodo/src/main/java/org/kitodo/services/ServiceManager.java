@@ -26,7 +26,7 @@ import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.data.TemplateService;
-import org.kitodo.services.data.UserGroupService;
+import org.kitodo.services.data.RoleService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
@@ -56,7 +56,7 @@ public class ServiceManager {
     private RulesetService rulesetService;
     private TaskService taskService;
     private TemplateService templateService;
-    private UserGroupService userGroupService;
+    private RoleService userGroupService;
     private UserService userService;
     private WorkflowService workflowService;
     private FileService fileService;
@@ -173,7 +173,7 @@ public class ServiceManager {
 
     private void initializeUserGroupService() {
         if (userGroupService == null) {
-            userGroupService = UserGroupService.getInstance();
+            userGroupService = RoleService.getInstance();
         }
     }
 
@@ -418,7 +418,7 @@ public class ServiceManager {
      *
      * @return UserGroupService object
      */
-    public UserGroupService getUserGroupService() {
+    public RoleService getUserGroupService() {
         initializeUserGroupService();
         return userGroupService;
     }

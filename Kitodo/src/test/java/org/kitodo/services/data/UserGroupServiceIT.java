@@ -20,17 +20,16 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -38,7 +37,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class UserGroupServiceIT {
 
-    private static final UserGroupService userGroupService = new ServiceManager().getUserGroupService();
+    private static final RoleService userGroupService = new ServiceManager().getUserGroupService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -53,7 +52,7 @@ public class UserGroupServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
+    @org.junit.Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
@@ -76,7 +75,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetUserGroup() throws Exception {
-        UserGroup userGroup = userGroupService.getById(1);
+        Role userGroup = userGroupService.getById(1);
         assertEquals("User group title is not matching", "Admin", userGroup.getTitle());
         assertEquals("User group first authorities title is not matching", "viewAllClients_globalAssignable",
             userGroup.getAuthorities().get(1).getTitle());
@@ -84,16 +83,16 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAllUserGroupsInGivenRange() throws Exception {
-        List<UserGroup> userGroups = userGroupService.getAll(1, 10);
+        List<Role> userGroups = userGroupService.getAll(1, 10);
         assertEquals("Not all user's groups were found in database!", 3, userGroups.size());
     }
 
     @Test
     public void shouldRemoveUserGroup() throws Exception {
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("To Remove");
         userGroupService.save(userGroup);
-        UserGroup foundUserGroup = userGroupService
+        Role foundUserGroup = userGroupService
                 .convertJSONObjectToBean(userGroupService.findByTitle("To Remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
 
@@ -101,7 +100,7 @@ public class UserGroupServiceIT {
         exception.expect(DAOException.class);
         userGroupService.getById(foundUserGroup.getId());
 
-        userGroup = new UserGroup();
+        userGroup = new Role();
         userGroup.setTitle("To remove");
         userGroupService.save(userGroup);
         foundUserGroup = userGroupService
@@ -121,12 +120,12 @@ public class UserGroupServiceIT {
         user.setLogin("Cascados");
         userService.saveToDatabase(user);
 
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("Cascados Group");
         userGroup.getUsers().add(userService.getByQuery("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
         userGroupService.saveToDatabase(userGroup);
 
-        UserGroup foundUserGroup = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
+        Role foundUserGroup = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascados Group", foundUserGroup.getTitle());
 
         userGroupService.removeFromDatabase(foundUserGroup);
@@ -206,7 +205,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAuthorizationsAsString() throws Exception {
-        UserGroup userGroup = userGroupService.getById(1);
+        Role userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
         int expected = 109;
         assertEquals("Number of authority strings doesn't match!", expected, actual);
@@ -214,7 +213,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAuthorities() throws Exception {
-        UserGroup userGroup = userGroupService.getById(1);
+        Role userGroup = userGroupService.getById(1);
         List<Authority> actual = userGroup.getAuthorities();
         assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients_globalAssignable",
             actual.get(1).getTitle());
@@ -222,7 +221,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldNotSaveUsergroupWithAlreadyExistingTitle() throws DataException {
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("Admin");
         exception.expect(DataException.class);
         userGroupService.save(userGroup);
@@ -234,7 +233,7 @@ public class UserGroupServiceIT {
                 () -> assertEquals("Incorrect amount of found user groups", 1, userGroupService
                         .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true).size()));
 
-        List<UserGroupDTO> userGroupDTOS = userGroupService
+        List<RoleDTO> userGroupDTOS = userGroupService
                 .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
         assertEquals("Incorrect authority!", "admin_globalAssignable", authorityDTO.getTitle());
@@ -242,7 +241,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldSaveAndRemoveAuthorizationForUserGroup() throws Exception {
-        UserGroup userGroup = userGroupService.getById(1);
+        Role userGroup = userGroupService.getById(1);
         List<Authority> authorities = userGroup.getAuthorities();
 
         Authority authority = new Authority();
@@ -265,7 +264,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAllUserGroupsByClientIds() {
         List<Integer> clientIds = Collections.singletonList(1);
-        List<UserGroup> userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);
+        List<Role> userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);
         assertEquals("Amount of user groups assigned to client is incorrect!", 2, userGroups.size());
 
         clientIds = Collections.singletonList(2);

@@ -31,7 +31,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -233,7 +233,7 @@ public class AddingST extends BaseTestSelenium {
 
     @Test
     public void addUserGroupTest() throws Exception {
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("MockUserGroup");
 
         usersPage.createNewUserGroup();

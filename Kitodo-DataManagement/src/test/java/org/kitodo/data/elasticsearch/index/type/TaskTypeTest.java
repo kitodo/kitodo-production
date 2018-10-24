@@ -32,12 +32,11 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 
 /**
  * Test class for TaskType.
@@ -48,7 +47,7 @@ public class TaskTypeTest {
 
         List<Task> tasks = new ArrayList<>();
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
 
         Process process = new Process();
         process.setTitle("First");
@@ -62,11 +61,11 @@ public class TaskTypeTest {
         secondUser.setId(2);
         users.add(secondUser);
 
-        UserGroup firstUserGroup = new UserGroup();
+        Role firstUserGroup = new Role();
         firstUserGroup.setId(1);
         userGroups.add(firstUserGroup);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setId(2);
         userGroups.add(secondUserGroup);
 
@@ -158,10 +157,10 @@ public class TaskTypeTest {
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserGroupTypeField.ID.getIntValue(userGroup));
+        assertEquals("Key users.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(userGroup));
 
         userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserGroupTypeField.ID.getIntValue(userGroup));
+        assertEquals("Key users.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(userGroup));
     }
 
     @Test
@@ -208,10 +207,10 @@ public class TaskTypeTest {
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserGroupTypeField.ID.getIntValue(userGroup));
+        assertEquals("Key users.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(userGroup));
 
         userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserGroupTypeField.ID.getIntValue(userGroup));
+        assertEquals("Key users.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(userGroup));
     }
 
     @Test

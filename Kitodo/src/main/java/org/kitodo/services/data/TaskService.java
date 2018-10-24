@@ -44,7 +44,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -134,7 +134,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            for (UserGroup userGroup : user.getUserGroups()) {
+            for (Role userGroup : user.getUserGroups()) {
                 subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
             }
             query.must(subQuery);
@@ -241,12 +241,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : task.getUserGroups()) {
+            for (Role userGroup : task.getUserGroups()) {
                 userGroup.getTasks().remove(task);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
-            for (UserGroup userGroup : task.getUserGroups()) {
+            for (Role userGroup : task.getUserGroups()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }

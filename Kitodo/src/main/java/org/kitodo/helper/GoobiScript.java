@@ -37,7 +37,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
@@ -616,8 +616,8 @@ public class GoobiScript {
         }
 
         // check if user group exists
-        UserGroup userGroup;
-        List<UserGroup> foundUserGroups = serviceManager.getUserGroupService()
+        Role userGroup;
+        List<Role> foundUserGroups = serviceManager.getUserGroupService()
                 .getByQuery("from UserGroup where title='" + this.parameters.get(USER_GROUP) + "'");
         if (!foundUserGroups.isEmpty()) {
             userGroup = foundUserGroups.get(0);
@@ -630,11 +630,11 @@ public class GoobiScript {
         Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addusergroup finished");
     }
 
-    private void executeActionForAddUserGroup(List<Process> processes, UserGroup userGroup) {
+    private void executeActionForAddUserGroup(List<Process> processes, Role userGroup) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<UserGroup> userGroups = task.getUserGroups();
+                    List<Role> userGroups = task.getUserGroups();
                     if (!userGroups.contains(userGroup)) {
                         userGroups.add(userGroup);
                         saveTask(process.getTitle(), task);

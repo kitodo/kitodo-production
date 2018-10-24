@@ -66,7 +66,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -864,7 +864,7 @@ public class MockDatabase {
 
     private static void insertTasks() throws DAOException, DataException {
         Template firstTemplate = serviceManager.getTemplateService().getById(1);
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Role userGroup = serviceManager.getUserGroupService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
         Task firstTask = new Task();
@@ -990,7 +990,7 @@ public class MockDatabase {
         Template template = serviceManager.getTemplateService().getById(1);
 
         Task firstTask = new Task();
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Role userGroup = serviceManager.getUserGroupService().getById(1);
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
@@ -1205,13 +1205,13 @@ public class MockDatabase {
         List<Authority> allAuthorities = serviceManager.getAuthorityService().getAll();
         Client client = serviceManager.getClientService().getById(1);
 
-        UserGroup firstUserGroup = new UserGroup();
+        Role firstUserGroup = new Role();
         firstUserGroup.setTitle("Admin");
         firstUserGroup.setClient(client);
         firstUserGroup.setAuthorities(allAuthorities);
         serviceManager.getUserGroupService().save(firstUserGroup);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setTitle("Random");
         secondUserGroup.setClient(client);
 
@@ -1232,7 +1232,7 @@ public class MockDatabase {
         secondUserGroup.setAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 
-        UserGroup thirdUserGroup = new UserGroup();
+        Role thirdUserGroup = new Role();
         thirdUserGroup.setTitle("Without authorities");
         thirdUserGroup.setClient(client);
         serviceManager.getUserGroupService().save(thirdUserGroup);
@@ -1366,7 +1366,7 @@ public class MockDatabase {
         serviceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("Removable user group");
         userGroup.setClient(assignableClient);
         serviceManager.getUserGroupService().save(userGroup);

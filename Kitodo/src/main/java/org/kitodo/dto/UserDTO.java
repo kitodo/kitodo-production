@@ -28,7 +28,7 @@ public class UserDTO extends BaseDTO {
     private boolean active = true;
     private List<FilterDTO> filters = new ArrayList<>();
     private Integer filtersSize;
-    private List<UserGroupDTO> userGroups = new ArrayList<>();
+    private List<RoleDTO> userGroups = new ArrayList<>();
     private Integer userGroupSize;
     private List<ClientDTO> clients = new ArrayList<>();
     private int clientsSize;
@@ -212,7 +212,7 @@ public class UserDTO extends BaseDTO {
      *
      * @return list of user's groups as UserGroupDTO
      */
-    public List<UserGroupDTO> getUserGroups() {
+    public List<RoleDTO> getUserGroups() {
         return userGroups;
     }
 
@@ -222,7 +222,7 @@ public class UserDTO extends BaseDTO {
      * @param userGroups
      *            list of user's groups as UserGroupDTO
      */
-    public void setUserGroups(List<UserGroupDTO> userGroups) {
+    public void setUserGroups(List<RoleDTO> userGroups) {
         this.userGroups = userGroups;
     }
 

@@ -20,7 +20,7 @@ import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.AuthorityDAO;
@@ -28,11 +28,11 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.AuthorityType;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
-import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -172,12 +172,12 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      */
     private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
         if (authority.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : authority.getUserGroups()) {
+            for (Role userGroup : authority.getUserGroups()) {
                 userGroup.getAuthorities().remove(authority);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
-            for (UserGroup userGroup : authority.getUserGroups()) {
+            for (Role userGroup : authority.getUserGroups()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
@@ -261,13 +261,13 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     private void addBasicUserGroupRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
         if (authorityDTO.getUserGroupsSize() > 0) {
-            List<UserGroupDTO> userGroups = new ArrayList<>();
+            List<RoleDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserGroupTypeField.TITLE.getKey());
+            subKeys.add(RoleTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
                 AuthorityTypeField.USER_GROUPS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
-                UserGroupDTO userGroup = new UserGroupDTO();
+                RoleDTO userGroup = new RoleDTO();
                 userGroup.setId(relatedProperty.getId());
                 if (!relatedProperty.getValues().isEmpty()) {
                     userGroup.setTitle(relatedProperty.getValues().get(0));

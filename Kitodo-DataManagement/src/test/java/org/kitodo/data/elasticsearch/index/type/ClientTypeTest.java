@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
@@ -37,14 +37,14 @@ public class ClientTypeTest {
     private static List<Client> prepareData() {
         List<Client> clients = new ArrayList<>();
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
 
-        UserGroup firstUserGroup = new UserGroup();
+        Role firstUserGroup = new Role();
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
         userGroups.add(firstUserGroup);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Basic");
         userGroups.add(secondUserGroup);

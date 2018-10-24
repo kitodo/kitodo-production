@@ -78,7 +78,7 @@ public class User extends BaseIndexedBean {
     @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id",
         foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id",
             foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
-    private List<UserGroup> userGroups;
+    private List<Role> userGroups;
 
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
     private List<Task> processingTasks;
@@ -256,14 +256,14 @@ public class User extends BaseIndexedBean {
      *
      * @return list of UserGroup objects
      */
-    public List<UserGroup> getUserGroups() {
+    public List<Role> getUserGroups() {
         if (Objects.isNull(this.userGroups)) {
             this.userGroups = new ArrayList<>();
         }
         return this.userGroups;
     }
 
-    public void setUserGroups(List<UserGroup> userGroups) {
+    public void setUserGroups(List<Role> userGroups) {
         this.userGroups = userGroups;
     }
 

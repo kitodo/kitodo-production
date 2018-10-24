@@ -29,7 +29,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
@@ -40,7 +39,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -71,7 +70,7 @@ public class UserServiceIT {
         fileService.delete(URI.create("users"));
     }
 
-    @Rule
+    @org.junit.Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
@@ -156,9 +155,9 @@ public class UserServiceIT {
 
     @Test
     public void shouldRemoveUserButNotUserGroup() throws Exception {
-        UserGroupService userGroupService = new ServiceManager().getUserGroupService();
+        RoleService userGroupService = new ServiceManager().getUserGroupService();
 
-        UserGroup userGroup = new UserGroup();
+        Role userGroup = new Role();
         userGroup.setTitle("Cascade Group");
         userGroupService.saveToDatabase(userGroup);
 

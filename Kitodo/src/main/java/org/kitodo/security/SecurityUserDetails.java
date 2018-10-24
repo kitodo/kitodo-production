@@ -18,7 +18,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,11 +49,11 @@ public class SecurityUserDetails extends User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        List<UserGroup> userGroups = super.getUserGroups();
+        List<Role> userGroups = super.getUserGroups();
         List<Client> clients = super.getClients();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
-        for (UserGroup userGroup : userGroups) {
+        for (Role userGroup : userGroups) {
             List<Authority> authorities = userGroup.getAuthorities();
             for (Authority authority : authorities) {
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getGlobalAuthoritySuffix())) {

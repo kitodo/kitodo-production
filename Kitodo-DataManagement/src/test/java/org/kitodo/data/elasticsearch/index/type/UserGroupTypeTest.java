@@ -28,9 +28,9 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
@@ -38,7 +38,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
  */
 public class UserGroupTypeTest {
 
-    private static List<UserGroup> prepareData() {
+    private static List<Role> prepareData() {
         List<User> users = new ArrayList<>();
 
         User firstUser = new User();
@@ -76,20 +76,20 @@ public class UserGroupTypeTest {
         adminAuthorities.add(managerAuthority);
         adminAuthorities.add(userAuthority);
 
-        UserGroup firstUserGroup = new UserGroup();
+        Role firstUserGroup = new Role();
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
         firstUserGroup.setClient(client);
         firstUserGroup.setAuthorities(adminAuthorities);
         firstUserGroup.setUsers(users);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Random");
         secondUserGroup.setAuthorities(adminAuthorities);
         secondUserGroup.setClient(client);
 
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
 
         userGroups.add(firstUserGroup);
         userGroups.add(secondUserGroup);
@@ -99,21 +99,21 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateFirstDocument() throws Exception {
-        UserGroupType userGroupType = new UserGroupType();
+        RoleType userGroupType = new RoleType();
 
-        UserGroup userGroup = prepareData().get(0);
+        Role userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Administrator",
-            UserGroupTypeField.TITLE.getStringValue(actual));
+            RoleTypeField.TITLE.getStringValue(actual));
         assertEquals("Key client.id doesn't match to given value!", 1,
-                UserGroupTypeField.CLIENT_ID.getIntValue(actual));
+                RoleTypeField.CLIENT_ID.getIntValue(actual));
         assertEquals("Key client.name doesn't match to given value!", "Client",
-                UserGroupTypeField.CLIENT_NAME.getStringValue(actual));
+                RoleTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
+        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
@@ -134,7 +134,7 @@ public class UserGroupTypeTest {
         assertEquals("Key authorities.title doesn't match to given value!", "user",
             AuthorityTypeField.TITLE.getStringValue(authority));
 
-        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
+        JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
@@ -156,24 +156,24 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateSecondDocument() throws Exception {
-        UserGroupType userGroupType = new UserGroupType();
+        RoleType userGroupType = new RoleType();
 
-        UserGroup userGroup = prepareData().get(1);
+        Role userGroup = prepareData().get(1);
         HttpEntity document = userGroupType.createDocument(userGroup);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Random",
-            UserGroupTypeField.TITLE.getStringValue(actual));
+            RoleTypeField.TITLE.getStringValue(actual));
         assertEquals("Key client.id doesn't match to given value!", 1,
-                UserGroupTypeField.CLIENT_ID.getIntValue(actual));
+                RoleTypeField.CLIENT_ID.getIntValue(actual));
         assertEquals("Key client.name doesn't match to given value!", "Client",
-                UserGroupTypeField.CLIENT_NAME.getStringValue(actual));
+                RoleTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
+        JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
+        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
@@ -197,28 +197,28 @@ public class UserGroupTypeTest {
 
     @Test
     public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
-        UserGroupType userGroupType = new UserGroupType();
+        RoleType userGroupType = new RoleType();
 
-        UserGroup userGroup = prepareData().get(0);
+        Role userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
 
-        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
+        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
         JsonObject authority = authorities.getJsonObject(0);
         assertEquals("Amount of keys in authorities is incorrect!", 2, authority.keySet().size());
 
-        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
+        JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }
 
     @Test
     public void shouldCreateDocuments() {
-        UserGroupType UserGroupType = new UserGroupType();
+        RoleType UserGroupType = new RoleType();
 
-        List<UserGroup> batches = prepareData();
+        List<Role> batches = prepareData();
         Map<Integer, HttpEntity> documents = UserGroupType.createDocuments(batches);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }

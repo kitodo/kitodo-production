@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class AuthorityDTO extends BaseDTO {
     private String title;
-    private List<UserGroupDTO> userGroups = new ArrayList<>();
+    private List<RoleDTO> userGroups = new ArrayList<>();
     private int userGroupsSize;
 
     /**
@@ -46,7 +46,7 @@ public class AuthorityDTO extends BaseDTO {
      *
      * @return list of user groups as userGroupDTO
      */
-    public List<UserGroupDTO> getUserGroups() {
+    public List<RoleDTO> getUserGroups() {
         return userGroups;
     }
 
@@ -56,7 +56,7 @@ public class AuthorityDTO extends BaseDTO {
      * @param userGroups
      *            list of users as UserGroupDTO
      */
-    public void setUserGroups(List<UserGroupDTO> userGroups) {
+    public void setUserGroups(List<RoleDTO> userGroups) {
         this.userGroups = userGroups;
     }
 

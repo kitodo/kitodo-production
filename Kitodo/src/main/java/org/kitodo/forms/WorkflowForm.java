@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -342,8 +342,8 @@ public class WorkflowForm extends BaseForm {
      */
     public List<SelectItem> getUserGroups() {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<UserGroup> userGroups = serviceManager.getUserGroupService().getAllUserGroupsByClientIds(Arrays.asList(1));
-        for (UserGroup userGroup : userGroups) {
+        List<Role> userGroups = serviceManager.getUserGroupService().getAllUserGroupsByClientIds(Arrays.asList(1));
+        for (Role userGroup : userGroups) {
             selectItems.add(new SelectItem(userGroup.getId(), userGroup.getTitle(), null));
         }
         return selectItems;

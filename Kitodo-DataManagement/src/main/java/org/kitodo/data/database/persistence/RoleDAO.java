@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class UserGroupDAO extends BaseDAO<UserGroup> {
+public class RoleDAO extends BaseDAO<Role> {
 
     private static final long serialVersionUID = 4987176626562271217L;
 
     @Override
-    public UserGroup getById(Integer id) throws DAOException {
-        UserGroup result = retrieveObject(UserGroup.class, id);
+    public Role getById(Integer id) throws DAOException {
+        Role result = retrieveObject(Role.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -34,30 +34,30 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
     }
 
     @Override
-    public List<UserGroup> getAll() throws DAOException {
-        return retrieveAllObjects(UserGroup.class);
+    public List<Role> getAll() throws DAOException {
+        return retrieveAllObjects(Role.class);
     }
 
     @Override
-    public List<UserGroup> getAll(int offset, int size) throws DAOException {
+    public List<Role> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM UserGroup ORDER BY id ASC", offset, size);
     }
 
     @Override
-    public List<UserGroup> getAllNotIndexed(int offset, int size) throws DAOException {
+    public List<Role> getAllNotIndexed(int offset, int size) throws DAOException {
         return retrieveObjects("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
     @Override
-    public UserGroup save(UserGroup userGroup) throws DAOException {
+    public Role save(Role userGroup) throws DAOException {
         storeObject(userGroup);
-        return retrieveObject(UserGroup.class, userGroup.getId());
+        return retrieveObject(Role.class, userGroup.getId());
     }
 
     @Override
     public void remove(Integer id) throws DAOException {
-        removeObject(UserGroup.class, id);
+        removeObject(Role.class, id);
     }
 
     /**
@@ -68,7 +68,7 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
      *            list of client ids assigned to which current user is assigned
      * @return list of user groups
      */
-    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
+    public List<Role> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
         UserDAO userDAO = new UserDAO();
         List<User> users = userDAO.getAllActiveUsersByClientIds(clientIdList);
         List<Integer> userIdList = new ArrayList<>();

@@ -38,7 +38,7 @@ public class Client extends BaseIndexedBean {
     private List<User> users;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
-    private List<UserGroup> userGroups;
+    private List<Role> userGroups;
 
     /**
      * Gets name.
@@ -107,7 +107,7 @@ public class Client extends BaseIndexedBean {
      *
      * @return list of UserGroup objects
      */
-    public List<UserGroup> getUserGroups() {
+    public List<Role> getUserGroups() {
         if (Objects.isNull(this.userGroups)) {
             this.userGroups = new ArrayList<>();
         }
@@ -119,7 +119,7 @@ public class Client extends BaseIndexedBean {
      *
      * @param userGroups as List of UserGroup objects
      */
-    public void setUserGroups(List<UserGroup> userGroups) {
+    public void setUserGroups(List<Role> userGroups) {
         this.userGroups = userGroups;
     }
 

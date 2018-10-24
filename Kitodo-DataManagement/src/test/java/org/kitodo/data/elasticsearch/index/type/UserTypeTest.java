@@ -28,7 +28,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
@@ -40,15 +40,15 @@ public class UserTypeTest {
     private static List<User> prepareData() {
 
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> userGroups = new ArrayList<>();
         List<Filter> filters = new ArrayList<>();
 
-        UserGroup firstUserGroup = new UserGroup();
+        Role firstUserGroup = new Role();
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
         userGroups.add(firstUserGroup);
 
-        UserGroup secondUserGroup = new UserGroup();
+        Role secondUserGroup = new Role();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Basic");
         userGroups.add(secondUserGroup);
