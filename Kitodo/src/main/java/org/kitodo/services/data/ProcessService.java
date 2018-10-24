@@ -592,24 +592,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
-    private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active, String sort)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort);
-    }
-
-    private List<JsonObject> findBySortHelperStatus(boolean closed, String sort) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        return searcher.findDocuments(query.toString(), sort);
-    }
-
-    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
-    }
-
     List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
         QueryBuilder query = createSetQuery("project.id", projectIds, true);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
