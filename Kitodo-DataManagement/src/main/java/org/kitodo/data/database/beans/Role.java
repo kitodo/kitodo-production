@@ -25,7 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "userGroup")
+@Table(name = "role")
 public class Role extends BaseIndexedBean implements Comparable<Role> {
     private static final long serialVersionUID = -5924845694417474352L;
 
@@ -39,14 +39,14 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
     private List<Task> tasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id",
-            foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) },
+    @JoinTable(name = "role_x_authority", joinColumns = {@JoinColumn(name = "role_id",
+            foreignKey = @ForeignKey(name = "FK_role_x_authority_role_id")) },
             inverseJoinColumns = {@JoinColumn(name = "authority_id",
-                    foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+                    foreignKey = @ForeignKey(name = "FK_role_x_authority_authority_id")) })
     private List<Authority> authorities;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_client_id"))
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_role_client_id"))
     private Client client;
 
     /**

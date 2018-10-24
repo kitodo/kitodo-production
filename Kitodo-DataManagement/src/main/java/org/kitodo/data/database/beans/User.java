@@ -75,9 +75,9 @@ public class User extends BaseIndexedBean {
     private LdapGroup ldapGroup;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id",
-        foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id",
-            foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
+    @JoinTable(name = "user_x_role", joinColumns = {@JoinColumn(name = "user_id",
+        foreignKey = @ForeignKey(name = "FK_user_x_role_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "role_id",
+            foreignKey = @ForeignKey(name = "FK_user_x_role_role_id")) })
     private List<Role> roles;
 
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
