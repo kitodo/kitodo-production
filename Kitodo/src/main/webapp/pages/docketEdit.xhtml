@@ -77,7 +77,7 @@
                             </p:selectOneMenu>
                         </div>
                     </p:row>
-                    <p:row>
+                    <p:row rendered="#{SessionClientController.currentSessionClient eq null}">
                         <div>
                             <p:outputLabel for="client" value="#{msgs.client}"/>
                             <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{DocketForm.myDocket.client}">
@@ -86,6 +86,7 @@
                             </p:selectOneMenu>
                         </div>
                     </p:row>
+                    <p:row rendered="#{SessionClientController.currentSessionClient ne null}" />
                 </p:panelGrid>
             </p:tab>
         </p:tabView>
