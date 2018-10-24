@@ -321,12 +321,13 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws NumberFormatException
      *             if the value cannot be parsed to int
      */
-    private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
+    private static Pair<Boolean, Integer> getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
             throws NoSuchElementException, NumberFormatException {
 
         String value = getMetadataValueByName(structureTypeName, metaDataTypeName);
         int lastDash = value.lastIndexOf('-');
-        return Integer.parseInt(lastDash < 1 ? value : value.substring(lastDash + 1));
+        boolean format = lastDash < 1;
+        return Pair.of(format, Integer.parseInt(format ? value : value.substring(lastDash + 1)));
 
     }
 
@@ -437,7 +438,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 year = getMetadataValueByName(annualNode, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
             }
             for (DocStruct monthNode : skipIfNull(annualNode.getAllChildren())) {
-                int monthOfYear = getMetadataIntValueByName(monthNode,
+                Pair<Boolean, Integer> monthOfYear = getMetadataIntValueByName(monthNode,
                         MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE);
                 int intYear;
                 try {
@@ -449,11 +450,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 }
                 for (DocStruct dayNode : skipIfNull(monthNode.getAllChildren())) {
                     LocallyDefinedDate appeared = new LocallyDefinedDate(intYear, year, monthOfYear,
-                            getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
+                            getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE).getRight());
                     for (DocStruct issueNode : skipIfNull(dayNode.getAllChildren())) {
                         Integer index;
                         try {
-                            index = getMetadataIntValueByName(issueNode, IndividualIssue.RULESET_ORDER_NAME);
+                            index = getMetadataIntValueByName(issueNode, IndividualIssue.RULESET_ORDER_NAME).getRight();
                         } catch (NoSuchElementException e) {
                             index = null;
                         }
