@@ -12,7 +12,9 @@
 package org.kitodo;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.security.SecurityUserDetails;
+import org.kitodo.services.ServiceManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,9 +27,12 @@ public class SecurityTestUtils {
      * @param user
      *            user object
      */
-    public static void addUserDataToSecurityContext(User user) {
+    public static void addUserDataToSecurityContext(User user) throws DAOException {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
         Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null, securityUserDetails.getAuthorities());
+        if (!user.getClients().isEmpty()) {
+            securityUserDetails .setSessionClient(new ServiceManager().getClientService().getById(1));
+        }
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

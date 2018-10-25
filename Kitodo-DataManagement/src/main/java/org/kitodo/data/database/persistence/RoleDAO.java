@@ -64,13 +64,13 @@ public class RoleDAO extends BaseDAO<Role> {
      * Get all user roles visible for current user - user roles of users assigned
      * to projects with certain clients.
      *
-     * @param clientIdList
-     *            list of client ids assigned to which current user is assigned
+     * @param clientId
+     *            selected client id for current user
      * @return list of user roles
      */
-    public List<Role> getAllRolesByClientIds(List<Integer> clientIdList) {
+    public List<Role> getAllRolesByClientIds(int clientId) {
         UserDAO userDAO = new UserDAO();
-        List<User> users = userDAO.getAllActiveUsersByClientIds(clientIdList);
+        List<User> users = userDAO.getAllActiveUsersByClientId(clientId);
         List<Integer> userIdList = new ArrayList<>();
         for (User user : users) {
             userIdList.add(user.getId());

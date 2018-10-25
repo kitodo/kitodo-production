@@ -328,7 +328,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
         }
-        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return getAllActiveUsersVisibleForCurrentUser();
         }
         return new ArrayList<>();
@@ -876,21 +876,19 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of users
      */
     private List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
-        List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
-        return convertListIdToDTO(getAllActiveUserIdsByClientIds(clientIdList), this);
+        return convertListIdToDTO(getAllActiveUserIdsByClientId(getSessionClientOfAuthenticatedUser().getId()), this);
     }
 
     /**
      * Get ids of all active users which are assigned to project of the given
-     * clients.
+     * selected client.
      * 
-     * @param clientIdList
-     *            The list of client ids.
+     * @param clientId
+     *            selected client id
      * @return list of user ids
      */
-    public List<Integer> getAllActiveUserIdsByClientIds(List<Integer> clientIdList) {
-        List<User> users = getAllActiveUsersByClientIds(clientIdList);
+    public List<Integer> getAllActiveUserIdsByClientId(Integer clientId) {
+        List<User> users = getAllActiveUsersByClientId(clientId);
         List<Integer> userIdList = new ArrayList<>();
         for (User user : users) {
             userIdList.add(user.getId());
@@ -901,13 +899,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     /**
      * Get all active users which are assigned to project of the given clients.
      * 
-     * @param clientIdList
-     *            The list of client ids.
-     *
+     * @param clientId
+     *            selected client id
      * @return list of users
      */
-    public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
-        return dao.getAllActiveUsersByClientIds(clientIdList);
+    public List<User> getAllActiveUsersByClientId(Integer clientId) {
+        return dao.getAllActiveUsersByClientId(clientId);
     }
 
     /**

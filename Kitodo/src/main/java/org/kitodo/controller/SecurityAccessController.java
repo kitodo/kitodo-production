@@ -31,26 +31,10 @@ public class SecurityAccessController {
      *
      * @param authorityTitle
      *            The authority title.
-     * @param clientId
-     *            The client id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
-        return securityAccessService.hasAuthorityGlobalOrForClient(authorityTitle, clientId);
-    }
-
-    /**
-     * Checks if the current user is admin or has a specified authority globally or
-     * for a client.
-     *
-     * @param authorityTitle
-     *            The authority title.
-     * @param clientId
-     *            The client id.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
-        return securityAccessService.isAdminOrHasAuthorityGlobalOrForClient(authorityTitle, clientId);
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle) {
+        return securityAccessService.hasAuthorityGlobalOrForClient(authorityTitle);
     }
 
     /**
@@ -61,20 +45,8 @@ public class SecurityAccessController {
      *            The authority title.
      * @return True if the current user has the specified authority.
      */
-    public boolean isAdminOrHasAuthorityGlobalOrForAnyClient(String authorityTitle) {
-        return securityAccessService.isAdminOrHasAuthorityGlobalOrForAnyClient(authorityTitle);
-    }
-
-    /**
-     * Checks if the current user has a specified authority globally or
-     * for a client.
-     *
-     * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean hasAuthorityGlobalOrForAnyClient(String authorityTitle) {
-        return securityAccessService.hasAuthorityGlobalOrForAnyClient(authorityTitle);
+    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForClient(authorityTitle);
     }
 
     /**
@@ -110,18 +82,12 @@ public class SecurityAccessController {
         return securityAccessService.isAdminOrHasAnyAuthorityGlobal(authorityTitles);
     }
 
-    /**
-     * Checks if the current user is admin or has one of the specified authorities
-     * globally, for any client or for any project.
-     *
-     * @param authorityTitles
-     *            The authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return True if the current user has one of the specified authorities or is
-     *         admin.
-     */
-    public boolean isAdminOrHasAnyAuthorityGlobalOrForAnyClient(String authorityTitles) {
-        return securityAccessService.isAdminOrHasAnyAuthorityGlobalOrForAnyClient(authorityTitles);
+    public boolean isAdminOrHasAnyAuthorityGlobalOrForClient(String authorityTitles) {
+        return securityAccessService.isAdminOrHasAnyAuthorityGlobalOrForClient(authorityTitles);
+    }
+
+    public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles) {
+        return securityAccessService.hasAnyAuthorityGlobalOrForClient(authorityTitles);
     }
 
     /**
@@ -133,20 +99,6 @@ public class SecurityAccessController {
      */
     public boolean hasAnyAuthorityGlobal(String authorityTitles) {
         return securityAccessService.hasAnyAuthorityGlobal(authorityTitles);
-    }
-
-    /**
-     * Checks if the current user has one of the specified authorities globally or for
-     * any client.
-     *
-     * @param authorityTitlesComplete
-     *            The authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return True if the current user is admin or has any of the specified
-     *         authorities for any client or project.
-     */
-    public boolean hasAnyAuthorityGlobalOrForAnyClient(String authorityTitlesComplete) {
-        return securityAccessService.hasAnyAuthorityGlobalOrForAnyClient(authorityTitlesComplete);
     }
 
     /**

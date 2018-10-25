@@ -15,7 +15,6 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -261,12 +260,10 @@ public class RoleServiceIT {
 
     @Test
     public void shouldGetAllRolesByClientIds() {
-        List<Integer> clientIds = Collections.singletonList(1);
-        List<Role> roles = roleService.getAllRolesByClientIds(clientIds);
+        List<Role> roles = roleService.getAllRolesByClientId(1);
         assertEquals("Amount of roles assigned to client is incorrect!", 2, roles.size());
 
-        clientIds = Collections.singletonList(2);
-        roles = roleService.getAllRolesByClientIds(clientIds);
+        roles = roleService.getAllRolesByClientId(2);
         assertEquals("Amount of roles assigned to client is incorrect!", 1, roles.size());
     }
 }
