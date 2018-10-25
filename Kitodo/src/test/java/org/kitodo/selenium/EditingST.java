@@ -130,7 +130,7 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editRoleTest() throws Exception {
         usersPage.editRole();
-        assertEquals("Header for edit role is incorrect", "Benutzergruppe bearbeiten (Admin)",
+        assertEquals("Header for edit role is incorrect", "Rolle bearbeiten (Admin)",
             Pages.getRoleEditPage().getHeaderText());
     }
 

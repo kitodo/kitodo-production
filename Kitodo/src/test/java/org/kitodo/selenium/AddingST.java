@@ -237,7 +237,7 @@ public class AddingST extends BaseTestSelenium {
         role.setTitle("MockRole");
 
         usersPage.createNewRole();
-        assertEquals("Header for create new role is incorrect", "Neue Benutzergruppe anlegen",
+        assertEquals("Header for create new role is incorrect", "Neue Rolle anlegen",
                 roleEditPage.getHeaderText());
 
         roleEditPage.setRoleTitle(role.getTitle()).assignAllGlobalAuthorities()
