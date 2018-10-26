@@ -21,11 +21,9 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -486,14 +484,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of JSON objects with users for specific filter
      */
     List<JsonObject> findByFilter(String value) throws DataException {
-        Set<Integer> filterIds = new HashSet<>();
-
         List<JsonObject> filters = serviceManager.getFilterService().findByValue(value, true);
 
-        for (JsonObject filter : filters) {
-            filterIds.add(getIdFromJSONObject(filter));
-        }
-        return searcher.findDocuments(createSetQuery("filters.id", filterIds, true).toString());
+        return searcher.findDocuments(createSetQuery("filters.id", filters, true).toString());
     }
 
     /**

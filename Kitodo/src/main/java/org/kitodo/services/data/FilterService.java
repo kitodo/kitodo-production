@@ -927,16 +927,16 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterProcessProperty(String filter, boolean negate, ObjectType objectType)
             throws DataException {
         /* Filtering by signature */
-        List<JsonObject> jsonObjects;
+        List<JsonObject> processes;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
+            processes = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
                 !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
+            processes = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
         }
-        List<ProcessDTO> processes = serviceManager.getProcessService().convertJSONObjectsToDTOs(jsonObjects, true);
-        QueryBuilder projectQuery = createSetQuery("_id", collectIds(processes), true);
+
+        QueryBuilder projectQuery = createSetQuery("_id", processes, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
 
@@ -971,18 +971,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
         // Filtering by signature
-        List<JsonObject> jsonObjects;
+        List<JsonObject> templates;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
+            templates = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
                 templateProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
+            templates = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
                 !negate);
         }
-        List<PropertyDTO> templateDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-            true);
-        QueryBuilder templateQuery = createSetQuery("template", collectIds(templateDTOS), true);
+
+        QueryBuilder templateQuery = createSetQuery("template", templates, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
     }
 
@@ -1004,19 +1003,18 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
         // filter according signature
-        List<JsonObject> jsonObjects;
+        List<JsonObject> workpieces;
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
             FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
+            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
                 workpieceProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
+            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
                 !negate);
         }
-        List<PropertyDTO> workpieceDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-            true);
-        QueryBuilder workpieceQuery = createSetQuery("workpieces.id", collectIds(workpieceDTOS), true);
+
+        QueryBuilder workpieceQuery = createSetQuery("workpieces.id", workpieces, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, workpieceQuery);
     }
 
