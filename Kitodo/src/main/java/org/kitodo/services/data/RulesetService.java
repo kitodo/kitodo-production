@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -38,11 +39,14 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.RulesetDTO;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.security.SecurityUserDetails;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
+    private final ServiceManager serviceManager = new ServiceManager();
     private static RulesetService instance = null;
 
     /**
@@ -76,6 +80,19 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<RulesetDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
+            query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
+                authenticatedUser.getSessionClient().getId(), true));
+            return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        }
+
+        return findAll(sort, offset, size);
     }
 
     @Override

@@ -306,6 +306,32 @@ public class MockDatabase {
         authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
 
+        //Template
+        authorities.add(new Authority("viewAllTemplates" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewTemplate" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTemplate" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTemplate" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTemplate" + globalAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewTemplate" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllTemplates" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTemplate" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTemplate" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTemplate" + clientAssignableAuthoritySuffix));
+
+        //Workflow
+        authorities.add(new Authority("viewAllWorkflows" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteWorkflow" + globalAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
+
         //process
         authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
@@ -375,19 +401,6 @@ public class MockDatabase {
         authorities.add(new Authority("editUser" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
-
-        //Workflow
-        authorities.add(new Authority("viewAllWorkflows" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + globalAssignableAuthoritySuffix));
-
-        authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
 
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
@@ -1123,6 +1136,8 @@ public class MockDatabase {
         Client firstClient = serviceManager.getClientService().getById(1);
         Client secondClient = serviceManager.getClientService().getById(2);
 
+        UserGroup adminUserGroup = serviceManager.getUserGroupService().getById(1);
+
         User firstUser = new User();
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
@@ -1133,7 +1148,7 @@ public class MockDatabase {
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
         firstUser.setMetadataLanguage("de");
-        firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        firstUser.getUserGroups().add(adminUserGroup);
         firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
@@ -1141,11 +1156,12 @@ public class MockDatabase {
         secondUser.setName("Adam");
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
+        secondUser.setPassword(passwordEncoder.encrypt("test"));
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(2));
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
@@ -1158,6 +1174,7 @@ public class MockDatabase {
         thirdUser.setLocation("Leipzig");
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
+        thirdUser.getUserGroups().add(adminUserGroup);
         serviceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
@@ -1171,6 +1188,17 @@ public class MockDatabase {
         fourthUser.setLanguage("de");
         fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
         serviceManager.getUserService().save(fourthUser);
+
+        User fifthUser = new User();
+        fifthUser.setName("Last");
+        fifthUser.setSurname("User");
+        fifthUser.setLogin("user");
+        fifthUser.setPassword(passwordEncoder.encrypt("test"));
+        fifthUser.setLdapLogin("user");
+        fifthUser.setLocation("Dresden");
+        fifthUser.setTableSize(20);
+        fifthUser.setLanguage("de");
+        serviceManager.getUserService().save(fifthUser);
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
@@ -1189,11 +1217,18 @@ public class MockDatabase {
 
         List<Authority> userAuthorities = new ArrayList<>();
         userAuthorities.add(serviceManager.getAuthorityService().getById(2));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(10));
         userAuthorities.add(serviceManager.getAuthorityService().getById(12));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(15));
         userAuthorities.add(serviceManager.getAuthorityService().getById(16));
         userAuthorities.add(serviceManager.getAuthorityService().getById(4));
         userAuthorities.add(serviceManager.getAuthorityService().getById(20));
         userAuthorities.add(serviceManager.getAuthorityService().getById(19));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(25));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(34));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(40));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(44));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(50));
         secondUserGroup.setAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 

@@ -189,7 +189,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldNotFindByUserId() {
         await().untilAsserted(
-            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserId(3).size()));
+            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserId(5).size()));
     }
 
     @Test
@@ -201,14 +201,14 @@ public class UserGroupServiceIT {
     @Test
     public void shouldNotFindByUserLogin() {
         await().untilAsserted(
-            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserLogin("dora").size()));
+            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserLogin("user").size()));
     }
 
     @Test
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
-        int expected = 99;
+        int expected = 109;
         assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
@@ -266,7 +266,7 @@ public class UserGroupServiceIT {
     public void shouldGetAllUserGroupsByClientIds() {
         List<Integer> clientIds = Collections.singletonList(1);
         List<UserGroup> userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);
-        assertEquals("Amount of user groups assigned to client is incorrect!", 1, userGroups.size());
+        assertEquals("Amount of user groups assigned to client is incorrect!", 2, userGroups.size());
 
         clientIds = Collections.singletonList(2);
         userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);

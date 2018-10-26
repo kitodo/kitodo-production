@@ -18,23 +18,22 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.dto.DocketDTO;
+import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.DocketService;
+import org.kitodo.services.data.WorkflowService;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
 
     private static final ServiceManager serviceManager = new ServiceManager();
-    private static DocketService docketService = serviceManager.getDocketService();
+    private static WorkflowService workflowService = serviceManager.getWorkflowService();
     private static LazyDTOModel lazyDTOModel = null;
 
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertClients();
-        MockDatabase.insertDockets();
-        lazyDTOModel = new LazyDTOModel(docketService);
+        MockDatabase.insertWorkflows();
+        lazyDTOModel = new LazyDTOModel(workflowService);
     }
 
     @AfterClass
@@ -45,16 +44,16 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List dockets = docketService.findAll();
-        DocketDTO firstDocket = (DocketDTO) dockets.get(0);
-        DocketDTO lazyDocket = (DocketDTO) lazyDTOModel.getRowData(String.valueOf(firstDocket.getId()));
-        Assert.assertEquals(firstDocket.getTitle(), lazyDocket.getTitle());
+        List dockets = workflowService.findAll();
+        WorkflowDTO firstWorkflow = (WorkflowDTO) dockets.get(0);
+        WorkflowDTO lazyWorkflow = (WorkflowDTO) lazyDTOModel.getRowData(String.valueOf(firstWorkflow.getId()));
+        Assert.assertEquals(firstWorkflow.getTitle(), lazyWorkflow.getTitle());
     }
 
     @Test
     public void shouldLoad() {
-        List dockets = lazyDTOModel.load(0, 2, "title", SortOrder.ASCENDING, null);
-        DocketDTO docket = (DocketDTO) dockets.get(0);
-        Assert.assertEquals("default", docket.getTitle());
+        List workflows = lazyDTOModel.load(0, 2, "title", SortOrder.ASCENDING, null);
+        WorkflowDTO workflow = (WorkflowDTO) workflows.get(0);
+        Assert.assertEquals("gateway", workflow.getTitle());
     }
 }

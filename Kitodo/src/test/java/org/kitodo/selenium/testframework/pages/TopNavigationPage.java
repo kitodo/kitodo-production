@@ -74,6 +74,10 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private WebElement linkSystem;
 
     @SuppressWarnings("unused")
+    @FindBy(className = "ui-selectonemenu-trigger")
+    private WebElement clientSelectTrigger;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "select-session-client-form:setSessionClientButton")
     private WebElement acceptClientSelectionButton;
 
@@ -116,8 +120,20 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         return element.getText();
     }
 
-    public void acceptClientSelection() throws Exception {
+    public void acceptClientSelection() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(acceptClientSelectionButton, Pages.getDesktopPage().getUrl());
+    }
+
+    public void selectSessionClient()throws Exception {
+        chooseFirstClient();
+        acceptClientSelection();
+        Thread.sleep(Browser.getDelayAfterLogin());
+    }
+
+    private void chooseFirstClient() throws InterruptedException {
+        clientSelectTrigger.click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        Browser.getDriver().findElement(By.id("select-session-client-form:client_0")).click();
     }
 
     public void cancelClientSelection() {

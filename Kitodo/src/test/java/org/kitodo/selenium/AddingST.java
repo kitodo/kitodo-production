@@ -190,8 +190,10 @@ public class AddingST extends BaseTestSelenium {
         userEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
 
+        User insertedUser = serviceManager.getUserService().getByLogin(user.getLogin());
+
         Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(user);
+        Pages.getLoginPage().performLogin(insertedUser);
         Pages.getTopNavigation().acceptClientSelection();
         assertEquals(serviceManager.getClientService().getById(1).getName(),
             Pages.getTopNavigation().getSessionClient());
