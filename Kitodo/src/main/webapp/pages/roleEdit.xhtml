@@ -25,7 +25,7 @@
     <ui:param name="isEditMode"
               value="#{RoleForm.role.id ne null and SecurityAccessController.isAdminOrHasAuthorityToEditRole(id)}"/>
     <ui:param name="isCreateMode"
-              value="#{RoleForm.role.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addRole')}"/>
+              value="#{RoleForm.role.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addRole')}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 

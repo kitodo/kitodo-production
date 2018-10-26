@@ -55,11 +55,11 @@
         <p:tabView id="processesTabView" activeIndex="#{ProcessForm.activeTabIndex}">
             <p:ajax event="tabChange" listener="#{ProcessForm.onTabChange}"/>
             <p:tab title="#{msgs.processList}" id="processTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllProcesses')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllProcesses')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.batches}" id="batchTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllBatches')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllBatches')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/batchList.xhtml"/>
             </p:tab>
         </p:tabView>

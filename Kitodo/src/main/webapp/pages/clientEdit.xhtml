@@ -21,7 +21,7 @@
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{ClientForm.client.id ne null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editClient',ClientForm.client.id)}"/>
+              value="#{ClientForm.client.id ne null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editClient')}"/>
     <ui:param name="isCreateMode"
               value="#{ClientForm.client.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"/>
     <ui:param name="isViewMode"

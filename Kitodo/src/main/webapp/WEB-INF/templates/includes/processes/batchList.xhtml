@@ -76,13 +76,13 @@
                     </h:commandLink>
 
                     <h:link outcome="batchProperties" title="#{msgs.propertyEdit}"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editBatch')}">
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editBatch')}">
                         <f:param name="id" value="#{BatchForm.selectedBatchId}"/>
                         <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
                     </h:link>
 
                     <h:commandLink id="deleteBatch" action="#{BatchForm.delete}"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('deleteBatch')}">
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteBatch')}">
                         <h:outputText><i class="fa fa-trash-o"/> #{msgs.deleteBatch}</h:outputText>
                     </h:commandLink>
                 </h:panelGrid>
@@ -114,24 +114,24 @@
                     </h:commandLink>
 
                     <h:commandLink id="addProcessesToBatch" action="#{BatchForm.addProcessesToBatch}"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editBatch')}">
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editBatch')}">
                         <h:outputText><i class="fa fa-check-circle-o"/> #{msgs.addToSelectedBatch}</h:outputText>
                     </h:commandLink>
 
                     <h:commandLink id="removeProcessesFromBatch" action="#{BatchForm.removeProcessesFromBatch}"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editBatch')}">
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editBatch')}">
                         <h:outputText><i class="fa fa-times-circle-o"/> #{msgs.removeFromAssociatedBatch}</h:outputText>
                     </h:commandLink>
 
                     <p:commandLink id="renameBatch" title="#{msgs.renameBatch}"
                                    oncomplete="PF('renameBatchDialog').show()" update="@(.editDialog)"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editBatch')}">
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editBatch')}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/> #{msgs.renameBatch}</h:outputText>
                     </p:commandLink>
 
                     <p:commandLink id="createBatch" title="#{msgs.createNewBatchFromSelectedProcesses}"
                                    oncomplete="PF('createBatchDialog').show()" update="@(.editDialog)"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addBatch')}">
+                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addBatch')}">
                         <h:outputText><i class="fa fa-plus"/> #{msgs.createNewBatchFromSelectedProcesses}</h:outputText>
                     </p:commandLink>
                 </h:panelGrid>

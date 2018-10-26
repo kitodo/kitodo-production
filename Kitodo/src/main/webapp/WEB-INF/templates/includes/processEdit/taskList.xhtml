@@ -36,7 +36,7 @@
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
                                 title="#{item.processingStatusEnum.title}"
                                 alt="status"/>
-                <p:panel rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editTask',item.process.project.client.id)}">
+                <p:panel rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editTask')}">
                     <!-- Set workflow state to previous step -->
                     <p:commandButton action="#{ProcessForm.setTaskStatusDown}"
                                      id="taskStatusDown"
@@ -62,17 +62,17 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editTask, deleteTask')}"
+        <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
-                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editTask',item.process.project.client.id)}"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editTask')}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <f:param name="referer" value="processEdit?id=#{item.process.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
-                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteTask',item.process.project.client.id)}"
+                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteTask')}"
                            title="#{msgs.delete}"
                            action="#{ProcessForm.removeTask}"
                            immediate="true"

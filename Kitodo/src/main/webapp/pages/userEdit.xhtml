@@ -25,7 +25,7 @@
     <ui:param name="isEditMode"
               value="#{UserForm.userObject.id ne null and SecurityAccessController.isAdminOrHasAuthorityToEditUser(id)}"/>
     <ui:param name="isCreateMode"
-              value="#{UserForm.userObject.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser')}"/>
+              value="#{UserForm.userObject.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addUser')}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 
