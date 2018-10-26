@@ -107,7 +107,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Method saves user groups, properties and tasks related to modified user.
+     * Method saves roles, properties and tasks related to modified user.
      *
      * @param user
      *            object

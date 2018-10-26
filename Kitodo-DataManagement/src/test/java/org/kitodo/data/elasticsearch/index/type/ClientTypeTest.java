@@ -24,8 +24,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 

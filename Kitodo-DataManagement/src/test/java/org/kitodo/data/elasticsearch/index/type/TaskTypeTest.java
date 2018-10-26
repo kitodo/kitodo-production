@@ -30,13 +30,13 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
  * Test class for TaskType.

@@ -605,7 +605,7 @@ public class GoobiScript {
     }
 
     /**
-     * Add user group to the task of given processes.
+     * Add role to the task of given processes.
      *
      * @param processes
      *            list of Process objects
@@ -615,7 +615,7 @@ public class GoobiScript {
             return;
         }
 
-        // check if user group exists
+        // check if role exists
         Role role;
         List<Role> foundRoles = serviceManager.getRoleService()
                 .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");

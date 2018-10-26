@@ -79,7 +79,7 @@ public class RoleForm extends BaseForm {
     }
 
     /**
-     * Save user group.
+     * Save role.
      *
      * @return page or empty String
      */
@@ -95,7 +95,7 @@ public class RoleForm extends BaseForm {
     }
 
     /**
-     * Remove user group.
+     * Remove role.
      */
     public void delete() {
         try {
@@ -123,11 +123,11 @@ public class RoleForm extends BaseForm {
     }
 
     /**
-     * Method being used as viewAction for user group edit form. Selectable clients
+     * Method being used as viewAction for role edit form. Selectable clients
      * and projects are initialized as well.
      *
      * @param id
-     *            ID of the user group to load
+     *            ID of the role to load
      */
     public void load(int id) {
         try {
@@ -164,7 +164,7 @@ public class RoleForm extends BaseForm {
      * Set role by ID.
      *
      * @param roleID
-     *            ID of user group to set.
+     *            ID of role to set.
      */
     public void setRoleById(int roleID) {
         try {
@@ -187,7 +187,7 @@ public class RoleForm extends BaseForm {
     /**
      * Return the list of available authorization levels and the list of authority
      * levels currently assigned to 'role' as a combined 'DualListModel' that
-     * is used by the frontend for authority management of user groups utilizing a
+     * is used by the frontend for authority management of roles utilizing a
      * PrimeFaces PickList object.
      *
      * @return DualListModel of available and assigned authority levels

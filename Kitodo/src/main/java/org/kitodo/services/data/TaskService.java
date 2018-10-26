@@ -398,8 +398,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-            Integer priority, boolean typeAutomatic, String sort) throws DataException {
+    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
+            Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
@@ -459,8 +459,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(),
-            serviceManager.getRoleService()));
+        taskDTO.setRoles(
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), serviceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {
@@ -726,8 +726,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
+        boolean automaticExportWithImages = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
+        boolean automaticExportWithOcr = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
@@ -822,7 +824,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
-                sort);
+            sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -837,7 +839,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
-                10, false, sort);
+            10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -978,9 +980,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Set up matching error messages for unreachable tasks. Unreachable task is
-     * this one which has no user / user groups assigned to itself. Other
-     * possibility is that given list is empty. It means that whole workflow is
-     * unreachable.
+     * this one which has no roles assigned to itself. Other possibility is that
+     * given list is empty. It means that whole workflow is unreachable.
      *
      * @param tasks
      *            list of tasks for check

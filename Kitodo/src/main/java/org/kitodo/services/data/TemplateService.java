@@ -332,8 +332,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Check whether the template contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the template contains tasks that are not assigned to a role.
      *
      * @param tasks
      *            list of tasks for testing

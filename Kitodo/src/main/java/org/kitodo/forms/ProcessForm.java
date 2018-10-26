@@ -1531,7 +1531,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Return list of users.
      *
-     * @return list of user groups
+     * @return list of active user
      */
     public List<UserDTO> getActiveUsers() {
         try {
