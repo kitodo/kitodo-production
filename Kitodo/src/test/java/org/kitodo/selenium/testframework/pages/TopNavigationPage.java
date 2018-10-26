@@ -108,7 +108,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     }
 
     public String getSessionClient() throws InterruptedException {
-        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+        await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
             .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
         hoverWebElement(userMenuButton);
@@ -124,16 +124,16 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         clickButtonAndWaitForRedirect(acceptClientSelectionButton, Pages.getDesktopPage().getUrl());
     }
 
-    public void selectSessionClient()throws Exception {
-        chooseFirstClient();
+    public void selectSessionClient(int id)throws Exception {
+        chooseClient(id);
         acceptClientSelection();
         Thread.sleep(Browser.getDelayAfterLogin());
     }
 
-    private void chooseFirstClient() throws InterruptedException {
+    private void chooseClient(int id) throws InterruptedException {
         clientSelectTrigger.click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
-        Browser.getDriver().findElement(By.id("select-session-client-form:client_0")).click();
+        Browser.getDriver().findElement(By.id("select-session-client-form:client_" + id)).click();
     }
 
     public void cancelClientSelection() {

@@ -177,6 +177,17 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
+     * Get authority by title.
+     * 
+     * @param title
+     *            of the searched authority
+     * @return matching authority
+     */
+    public Authority getByTitle(String title) throws DAOException {
+        return dao.getByTitle(title);
+    }
+
+    /**
      * Gets all authorities which are assignable globally.
      *
      * @return The list of authorities.

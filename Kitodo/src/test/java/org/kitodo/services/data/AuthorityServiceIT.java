@@ -30,7 +30,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int EXPECTED_AUTHORITIES_COUNT = 94;
+    private final int EXPECTED_AUTHORITIES_COUNT = 110;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -68,7 +68,7 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldFindById() {
-        String expected = "viewAllClients_globalAssignable";
+        String expected = "viewClient_globalAssignable";
         await().untilAsserted(
             () -> assertEquals("Authority was not found in index!", expected, authorityService.findById(2).getTitle()));
     }
@@ -94,6 +94,19 @@ public class AuthorityServiceIT {
     }
 
     @Test
+    public void shouldGetByTitle() throws Exception {
+        Authority authority = authorityService.getByTitle("viewAllRoles_globalAssignable");
+        assertEquals("Authorizations were not found database!", 10, authority.getId().intValue());
+    }
+
+    @Test
+    public void shouldNotGetByTitle() throws Exception {
+        exception.expect(DAOException.class);
+        exception.expectMessage("Object can not be found in database");
+        authorityService.getByTitle("viewAllStuff_globalAssignable");
+    }
+
+    @Test
     public void shouldNotSaveAlreadyExistingAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("viewAllClients_globalAssignable");
@@ -104,6 +117,6 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetAllClientAssignableAuthorities() throws DAOException {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals("Client assignable authorities were not found database!", 55, authorities.size());
+        assertEquals("Client assignable authorities were not found database!", 60, authorities.size());
     }
 }

@@ -88,7 +88,7 @@ public class ListingST extends BaseTestSelenium {
     public void listProjectsTest() throws Exception {
         projectsPage.goTo();
         int projectsInDatabase = serviceManager.getProjectService()
-                .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 1").size();
+                .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 1 INNER JOIN p.client AS c WITH c.id = 1").size();
         int projectsDisplayed = projectsPage.countListedProjects();
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
@@ -116,38 +116,13 @@ public class ListingST extends BaseTestSelenium {
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 
-        int docketsInDatabase = serviceManager.getDocketService().getAll().size();
+        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient(1).size();
         int docketsDisplayed = projectsPage.countListedDockets();
         assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
 
-        int rulesetsInDatabase = serviceManager.getRulesetService().getAll().size();
+        int rulesetsInDatabase = serviceManager.getRulesetService().getAllForSelectedClient(1).size();
         int rulesetsDisplayed = projectsPage.countListedRulesets();
         assertEquals("Displayed wrong number of rulesets", rulesetsInDatabase, rulesetsDisplayed);
-    }
-
-    @Test
-    public void listProjectsForUserWithSessionClientTest() throws Exception {
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(serviceManager.getUserService().getById(2));
-        Pages.getTopNavigation().selectSessionClient();
-
-        projectsPage.goTo();
-        int projectsInDatabase = serviceManager.getProjectService()
-                .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 1").size();
-        int projectsDisplayed = projectsPage.countListedProjects();
-        assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
-
-        int templatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
-        int templatesDisplayed = projectsPage.countListedTemplates();
-        assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
-
-        int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
-        int workflowsDisplayed = projectsPage.countListedWorkflows();
-        assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
-
-        int docketsInDatabase = serviceManager.getDocketService().getByQuery("FROM Docket AS d INNER JOIN d.client AS c WITH c.id = 1").size();
-        int docketsDisplayed = projectsPage.countListedDockets();
-        assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
     }
 
     @Test

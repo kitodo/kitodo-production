@@ -330,10 +330,10 @@ public class UserServiceIT {
     @Test
     public void shouldGetRolesSize() {
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getRolesSize()));
+            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1).getRolesSize()));
 
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1, true).getRolesSize()));
+            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1, true).getRolesSize()));
 
         await().untilAsserted(() -> assertEquals("User group's title is incorrect!", "Admin",
             userService.findById(1, true).getRoles().get(0).getTitle()));
@@ -423,7 +423,7 @@ public class UserServiceIT {
     @Test
     public void shouldGetAuthorityOfUser() throws Exception {
         Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
-        assertEquals("Authority title is incorrect!", "viewAllClients_globalAssignable", authority.getTitle());
+        assertEquals("Authority title is incorrect!", "viewClient_globalAssignable", authority.getTitle());
     }
 
     @Test
