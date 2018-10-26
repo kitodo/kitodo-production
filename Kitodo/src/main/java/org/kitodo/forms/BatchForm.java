@@ -80,11 +80,6 @@ public class BatchForm extends BaseForm {
         filterAll();
     }
 
-    // TODO; for what is it needed - right now it is used only in new tests
-    public List<Process> getCurrentProcesses() {
-        return this.currentProcesses;
-    }
-
     /**
      * Load Batch data.
      */
