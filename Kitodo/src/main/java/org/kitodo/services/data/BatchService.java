@@ -99,6 +99,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
+    @Override
+    public List<Batch> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Remove all passed batches.
      * 

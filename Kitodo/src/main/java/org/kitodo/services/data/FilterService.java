@@ -45,7 +45,6 @@ import org.kitodo.dto.BaseDTO;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
@@ -99,6 +98,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     @Override
     public List<Filter> getAllNotIndexed() {
         return getByQuery("FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Filter> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
     }
 
     /**

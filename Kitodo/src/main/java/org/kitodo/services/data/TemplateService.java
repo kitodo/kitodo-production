@@ -96,6 +96,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return getByQuery("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
+    @Override
+    public List<Template> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Method saves or removes tasks and project related to modified template.
      *

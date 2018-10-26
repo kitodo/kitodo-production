@@ -305,6 +305,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
+    @Override
+    public List<Task> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Get query for processing statuses.
      *

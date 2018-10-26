@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -320,6 +321,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     @Override
     public List<User> getAllNotIndexed() {
         return getByQuery("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<User> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
     }
 
     @Override

@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -156,6 +157,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     public List<Project> getAllNotIndexed() {
         return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Project> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
     }
 
     @Override

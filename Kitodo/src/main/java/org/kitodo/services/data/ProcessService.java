@@ -415,6 +415,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
+    public List<Process> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void refresh(Process process) {
         dao.refresh(process);
     }

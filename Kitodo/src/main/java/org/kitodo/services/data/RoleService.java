@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,6 +141,12 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     @Override
     public List<Role> getAllNotIndexed() {
         return getByQuery("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Role> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
     }
 
     /**
