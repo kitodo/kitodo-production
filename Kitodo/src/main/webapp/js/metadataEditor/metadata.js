@@ -138,8 +138,8 @@ function addableTypenAnzeigen() {
     }
 
     alert("hallo " + document.getElementById("secretElement").value);
-    wert = 1;
-    element = document.getElementById("secretElement");
+    var wert = 1;
+    var element = document.getElementById("secretElement");
     if (element != null) {
         if (element.value != null && element.value != "")
             wert = element.value;
@@ -180,7 +180,7 @@ function focusForPicture() {
     //alert(document.getElementById("hiddenBildNummer").value);
     //alert(document.getElementById("formular1:BildNummer").value);
     //alert(document.getElementsByName("formular2:myCheckboxes").length);
-    for (i = 0; i < document.getElementsByName("formular2:myCheckboxes").length; i++) {
+    for (var i = 0; i < document.getElementsByName("formular2:myCheckboxes").length; i++) {
         if (i == document.getElementById("hiddenBildNummer").value - 1) {
             if (i + 1 < document
                     .getElementsByName("formular2:myCheckboxes").length) {
@@ -210,7 +210,7 @@ function submitEnter(commandId, e) {
 
 document.documentElement.onkeypress = function (event) {
     //alert("Sie haben die Taste mit dem Wert " + event.which + " gedrueckt");
-    myButton = null;
+    var myButton = null;
     event = event || window.event; // IE sucks
     var key = event.which || event.keyCode; // IE uses .keyCode, Moz uses .which
 
