@@ -34,7 +34,7 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
+        <p:column rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskTemplateEdit" id="editTask" title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
