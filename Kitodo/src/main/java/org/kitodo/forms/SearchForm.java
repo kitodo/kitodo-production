@@ -115,15 +115,10 @@ public class SearchForm {
      * Initialise drop down list of projects.
      */
     protected void initProjects() {
-        List<Project> projects;
-        // TODO Change to check the corresponding authority
-        if (serviceManager.getSecurityAccessService().isAdmin()) {
-            projects = serviceManager.getProjectService().getAllActiveProjectsSortedByTitle();
-        } else {
-            projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
-        }
-        for (Project project : projects) {
-            this.projects.add(project.getTitle());
+        List<Project> projectsSortedByTitle  = serviceManager.getProjectService().getAllProjectsSortedByTitle();
+
+        for (Project projectSortedByTitle : projectsSortedByTitle) {
+            this.projects.add(projectSortedByTitle.getTitle());
         }
     }
 

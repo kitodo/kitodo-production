@@ -118,7 +118,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return findAll(sort, offset, size, true);
         }
         if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {

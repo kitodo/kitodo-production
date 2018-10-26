@@ -418,8 +418,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
-        // TODO Change to check the corresponding authority
-        if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
+
+        if (Objects.nonNull(currentUser)) {
             List<ProjectDTO> projects = currentUser.getProjects();
             query.must(createSetQuery(ProcessTypeField.PROJECT_ID.getKey(), collectIds(projects), true));
         }

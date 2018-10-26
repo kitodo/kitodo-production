@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -30,12 +28,10 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 public class SelectItemList {
 
-    private static final Logger logger = LogManager.getLogger(SelectItemList.class);
     private static ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -111,19 +107,10 @@ public class SelectItemList {
     // templates
     public static List<SelectItem> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        // TODO Change to check the corresponding authority
-        if (serviceManager.getSecurityAccessService().isAdmin()) {
-            try {
-                processes = serviceManager.getProcessService().getAll();
-            } catch (DAOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        } else {
-            User currentUser = serviceManager.getUserService().getAuthenticatedUser();
-            if (Objects.nonNull(currentUser)) {
-                for (Project project : currentUser.getProjects()) {
-                    processes.addAll(project.getProcesses());
-                }
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(currentUser)) {
+            for (Project project : currentUser.getProjects()) {
+                processes.addAll(project.getProcesses());
             }
         }
         processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());

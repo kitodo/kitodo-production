@@ -66,14 +66,6 @@ public class SecurityAccessServiceIT {
     }
 
     @Test
-    public void isAdminTest() throws DAOException {
-        User user = serviceManager.getUserService().getByLogin("kowal");
-        SecurityTestUtils.addUserDataToSecurityContext(user);
-        Assert.assertTrue("Checking if user is admin returned wrong value",
-            serviceManager.getSecurityAccessService().isAdmin());
-    }
-
-    @Test
     public void hasAuthorityForClientTest() throws DAOException {
         User user = serviceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user);

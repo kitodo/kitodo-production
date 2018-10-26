@@ -111,7 +111,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).get(0).getId()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"id:2 3\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 2,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 1,
             processService.findByQuery(thirdQuery, true).size()));
     }
 
@@ -188,7 +188,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 3,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 2,
             processService.findByQuery(thirdQuery, true).size()));
     }
 

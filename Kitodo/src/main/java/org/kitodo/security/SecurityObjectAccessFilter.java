@@ -30,8 +30,8 @@ import org.springframework.web.filter.GenericFilterBean;
 
 /**
  * This filter handles the accessibility of urls which contains the parameter
- * "id". The access is denied if the user does not have the
- * corresponding authority for the current id.
+ * "id". The access is denied if the user does not have the corresponding
+ * authority for the current id.
  */
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
@@ -50,7 +50,8 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             try {
                 idInt = Integer.parseInt(id);
             } catch (NumberFormatException e) {
-                if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")) {
+                if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
+                        && securityAccessService.hasAuthorityGlobalOrForClient("viewWorkflow")) {
                     chain.doFilter(request, response);
                 } else {
                     denyAccess(httpServletRequest, httpServletResponse);
@@ -59,25 +60,25 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
-                    && !securityAccessService.isAdminOrHasAuthorityGlobalOrForClient("viewClient")) {
+                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewClient")) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
-                    && !securityAccessService.isAdminOrHasAuthorityGlobalOrForClient("viewProject")) {
+                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewProject")) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/userEdit")
-                    && !securityAccessService.isAdminOrHasAuthorityToViewUser(idInt)) {
+                    && !securityAccessService.hasAuthorityToViewUser(idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/roleEdit")
-                    && !securityAccessService.isAdminOrHasAuthorityToViewRole(idInt)) {
+                    && !securityAccessService.hasAuthorityToViewRole(idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
