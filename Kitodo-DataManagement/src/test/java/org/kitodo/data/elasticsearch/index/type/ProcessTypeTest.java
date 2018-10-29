@@ -32,6 +32,7 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -60,8 +61,12 @@ public class ProcessTypeTest {
         batch.setTitle("First");
         batches.add(batch);
 
+        Client client = new Client();
+        client.setId(1);
+
         Project project = new Project();
         project.setTitle("Project");
+        project.setClient(client);
         project.setId(1);
 
         Ruleset ruleset = new Ruleset();
@@ -318,7 +323,7 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
 
         JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         JsonObject batch = batches.getJsonObject(0);
