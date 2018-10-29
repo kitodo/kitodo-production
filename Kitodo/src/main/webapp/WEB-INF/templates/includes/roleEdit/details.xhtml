@@ -22,15 +22,15 @@
                 <div>
                     <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                     <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
-                                 value="#{UserGroupForm.userGroup.title}" placeholder="#{msgs.title}"
+                                 value="#{RoleForm.role.title}" placeholder="#{msgs.title}"
                                  required="#{empty param['editForm:saveButtonToggler']}"/>
                 </div>
             </p:row>
             <p:row rendered="#{SessionClientController.currentSessionClient eq null}">
                 <div>
                     <p:outputLabel for="client" value="#{msgs.client}"/>
-                    <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{UserGroupForm.userGroup.client}">
-                        <f:selectItems value="#{UserGroupForm.clients}"/>
+                    <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
+                        <f:selectItems value="#{RoleForm.clients}"/>
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectOneMenu>
                 </div>
@@ -50,7 +50,7 @@
                                     filterMatchMode="contains"
                                     responsive="true"
                                     disabled="#{isViewMode}"
-                                    value="#{UserGroupForm.globalAssignableAuthorities}"
+                                    value="#{RoleForm.globalAssignableAuthorities}"
                                     converter="#{authorityConverter}"
                                     var="authority"
                                     itemLabel="#{authority.getTitleWithoutSuffix()}"
@@ -69,7 +69,7 @@
                             <h:outputText value="#{msgs.authoritiesClient}"/>
                         </h3>
                         <p:pickList id="authoritiesClientPick"
-                                    value="#{UserGroupForm.clientAssignableAuthorities}"
+                                    value="#{RoleForm.clientAssignableAuthorities}"
                                     converter="#{authorityConverter}"
                                     var="authority"
                                     disabled="#{isViewMode}"

@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum UserGroupTypeField implements TypeInterface {
+public enum RoleTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -22,7 +22,7 @@ public enum UserGroupTypeField implements TypeInterface {
 
     private String name;
 
-    UserGroupTypeField(String name) {
+    RoleTypeField(String name) {
         this.name = name;
     }
 

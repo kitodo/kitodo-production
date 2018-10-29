@@ -46,7 +46,7 @@ public class ClientForm extends BaseForm {
     }
 
     /**
-     * Save user group.
+     * Save client.
      *
      * @return page or empty String
      */

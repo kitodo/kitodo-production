@@ -615,8 +615,8 @@ public class IndexingForm {
                 case USER:
                     searchServices.put(objectType, serviceManager.getUserService());
                     break;
-                case USER_GROUP:
-                    searchServices.put(objectType, serviceManager.getUserGroupService());
+                case ROLE:
+                    searchServices.put(objectType, serviceManager.getRoleService());
                     break;
                 case WORKFLOW:
                     searchServices.put(objectType, serviceManager.getWorkflowService());

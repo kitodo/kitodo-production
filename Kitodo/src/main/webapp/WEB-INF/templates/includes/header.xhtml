@@ -90,7 +90,7 @@
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForAnyClient('viewAllUsers, viewAllUserGroups, viewAllClients, viewAllLdapGroups')}">
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForAnyClient('viewAllUsers, viewAllRoles, viewAllClients, viewAllLdapGroups')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.user}" id="linkUsers" outcome="users"><i
                                     class="fa fa-user fa-lg"/></h:link></li>
                             </h:panelGroup>

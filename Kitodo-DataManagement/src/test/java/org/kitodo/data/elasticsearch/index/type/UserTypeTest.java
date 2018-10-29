@@ -27,8 +27,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
@@ -40,18 +40,18 @@ public class UserTypeTest {
     private static List<User> prepareData() {
 
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
         List<Filter> filters = new ArrayList<>();
 
-        UserGroup firstUserGroup = new UserGroup();
-        firstUserGroup.setId(1);
-        firstUserGroup.setTitle("Administrator");
-        userGroups.add(firstUserGroup);
+        Role firstRole = new Role();
+        firstRole.setId(1);
+        firstRole.setTitle("Administrator");
+        roles.add(firstRole);
 
-        UserGroup secondUserGroup = new UserGroup();
-        secondUserGroup.setId(2);
-        secondUserGroup.setTitle("Basic");
-        userGroups.add(secondUserGroup);
+        Role secondRole = new Role();
+        secondRole.setId(2);
+        secondRole.setTitle("Basic");
+        roles.add(secondRole);
 
         Filter firstFilter = new Filter();
         firstFilter.setId(1);
@@ -79,7 +79,7 @@ public class UserTypeTest {
         secondUser.setLogin("anowak");
         secondUser.setActive(true);
         secondUser.setLocation("Berlin");
-        secondUser.setUserGroups(userGroups);
+        secondUser.setRoles(roles);
         secondUser.setFilters(filters);
         users.add(secondUser);
 
@@ -119,8 +119,8 @@ public class UserTypeTest {
         JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         assertEquals("Size filters doesn't match to given value!", 0, filters.size());
 
-        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
+        JsonArray roles = UserTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 0, roles.size());
 
         JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
@@ -161,17 +161,17 @@ public class UserTypeTest {
         assertEquals("Key filters.id doesn't match to given value!", 2, filter.getInt("id"));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:2\"", filter.getString("value"));
 
-        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 2, userGroups.size());
+        JsonArray roles = UserTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 2, roles.size());
 
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key userGroups.id doesn't match to given value!", 1, userGroup.getInt("id"));
-        assertEquals("Key userGroups.title doesn't match to given value!", "Administrator",
-            userGroup.getString("title"));
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Key roles.id doesn't match to given value!", 1, role.getInt("id"));
+        assertEquals("Key roles.title doesn't match to given value!", "Administrator",
+                role.getString("title"));
 
-        userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key userGroups.id doesn't match to given value!", 2, userGroup.getInt("id"));
-        assertEquals("Key userGroups.title doesn't match to given value!", "Basic", userGroup.getString("title"));
+        role = roles.getJsonObject(1);
+        assertEquals("Key roles.id doesn't match to given value!", 2, role.getInt("id"));
+        assertEquals("Key roles.title doesn't match to given value!", "Basic", role.getString("title"));
 
         JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
@@ -213,8 +213,8 @@ public class UserTypeTest {
         assertEquals("Key filters.value doesn't match to given value!", "\"id:2\"",
             FilterTypeField.VALUE.getStringValue(filter));
 
-        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
+        JsonArray roles = UserTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 0, roles.size());
 
         JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
@@ -237,9 +237,9 @@ public class UserTypeTest {
         JsonObject filter = filters.getJsonObject(0);
         assertEquals("Amount of keys in filters is incorrect!", 2, filter.keySet().size());
 
-        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Amount of keys in filters is incorrect!", 2, userGroup.keySet().size());
+        JsonArray roles = UserTypeField.ROLES.getJsonArray(actual);
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Amount of keys in filters is incorrect!", 2, role.keySet().size());
     }
 
     @Test

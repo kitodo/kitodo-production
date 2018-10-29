@@ -58,8 +58,8 @@ public class ListingST extends BaseTestSelenium {
     public void listTasksTest() throws Exception {
         tasksPage.goTo();
 
-        String query = "SELECT t FROM Task AS t INNER JOIN t.userGroups AS ug WITH ug.id = 1"
-        + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR ug.id = 1)"
+        String query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
+        + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1)"
         + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
 
         int tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
@@ -76,8 +76,8 @@ public class ListingST extends BaseTestSelenium {
 
         tasksPage.applyFilterShowOnlyOpenTasks();
 
-        query = "SELECT t FROM Task AS t INNER JOIN t.userGroups AS ug WITH ug.id = 1"
-                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR ug.id = 1) AND "
+        query = "SELECT t FROM Task AS t INNER JOIN t.roles AS r WITH r.id = 1"
+                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR r.id = 1) AND "
                 + "t.processingStatus = 1 AND t.typeAutomatic = 0";
         tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
         tasksDisplayed = tasksPage.countListedTasks();
@@ -169,9 +169,9 @@ public class ListingST extends BaseTestSelenium {
         int usersDisplayed = usersPage.countListedUsers();
         assertEquals("Displayed wrong number of users", usersInDatabase, usersDisplayed);
 
-        int userGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
-        int userGroupsDisplayed = usersPage.countListedUserGroups();
-        assertEquals("Displayed wrong number of user groups", userGroupsInDatabase, userGroupsDisplayed);
+        int rolesInDatabase = serviceManager.getRoleService().getAll().size();
+        int rolesDisplayed = usersPage.countListedRoles();
+        assertEquals("Displayed wrong number of roles", rolesInDatabase, rolesDisplayed);
 
         int clientsInDatabase = serviceManager.getClientService().getAll().size();
         int clientsDisplayed = usersPage.countListedClients();

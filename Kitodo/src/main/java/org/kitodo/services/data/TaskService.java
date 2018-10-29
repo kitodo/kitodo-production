@@ -41,10 +41,10 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -134,8 +134,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            for (UserGroup userGroup : user.getUserGroups()) {
-                subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+            for (Role role : user.getRoles()) {
+                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
             query.must(subQuery);
         }
@@ -184,7 +184,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
-        manageUserGroupsDependenciesForIndex(task);
+        manageRolesDependenciesForIndex(task);
     }
 
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
@@ -239,15 +239,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : task.getUserGroups()) {
-                userGroup.getTasks().remove(task);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : task.getRoles()) {
+                role.getTasks().remove(task);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (UserGroup userGroup : task.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : task.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -398,8 +398,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-            Integer priority, boolean typeAutomatic, String sort) throws DataException {
+    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
+            Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
@@ -434,7 +434,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
-        taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
+        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(taskJSONObject));
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
@@ -459,8 +459,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        taskDTO.setRoles(
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), serviceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {
@@ -542,17 +542,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get user groups' list size.
+     * Get roles list size.
      *
      * @param task
      *            object
-     * @return size
+     * @return size of roles assigned to task
      */
-    public int getUserGroupsSize(Task task) {
-        if (task.getUserGroups() == null) {
+    public int getRolesSize(Task task) {
+        if (task.getRoles() == null) {
             return 0;
         } else {
-            return task.getUserGroups().size();
+            return task.getRoles().size();
         }
     }
 
@@ -726,8 +726,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
+        boolean automaticExportWithImages = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
+        boolean automaticExportWithOcr = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
@@ -796,6 +798,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open tasks without correction for current user sorted according to
      * sort query.
@@ -809,6 +812,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open not automatic tasks for current user sorted according to sort
      * query.
@@ -820,9 +824,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
-                sort);
+            sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
     /**
      * Find open not automatic tasks without correction for current user sorted
      * according to sort query.
@@ -834,7 +839,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
-                10, false, sort);
+            10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -975,9 +980,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Set up matching error messages for unreachable tasks. Unreachable task is
-     * this one which has no user / user groups assigned to itself. Other
-     * possibility is that given list is empty. It means that whole workflow is
-     * unreachable.
+     * this one which has no roles assigned to itself. Other possibility is that
+     * given list is empty. It means that whole workflow is unreachable.
      *
      * @param tasks
      *            list of tasks for check
@@ -987,7 +991,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Helper.setErrorMessage("noStepsInWorkflow");
         }
         for (Task task : tasks) {
-            if (getUserGroupsSize(task) == 0) {
+            if (getRolesSize(task) == 0) {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }

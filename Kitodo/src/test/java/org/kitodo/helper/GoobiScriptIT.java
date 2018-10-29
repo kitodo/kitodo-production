@@ -44,19 +44,19 @@ public class GoobiScriptIT {
     }
 
     @Test
-    public void shouldExecuteAddUserGroupScript() throws Exception {
+    public void shouldExecuteAddRuleScript() throws Exception {
         GoobiScript goobiScript = new GoobiScript();
 
         Task task = serviceManager.getTaskService().getById(3);
-        int amountOfUserGroups = task.getUserGroups().size();
+        int amountOfRoles = task.getRoles().size();
 
-        String script = "action:addUserGroup \"steptitle:Testing and Blocking\" group:Random";
+        String script = "action:addRole \"steptitle:Testing and Blocking\" role:Random";
         List<Process> processes = new ArrayList<>();
         processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         task = serviceManager.getTaskService().getById(3);
-        assertEquals("User group was not correctly added to task!", amountOfUserGroups + 1, task.getUserGroups().size());
+        assertEquals("Role was not correctly added to task!", amountOfRoles + 1, task.getRoles().size());
     }
 
     @Test

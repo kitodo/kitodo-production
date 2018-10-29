@@ -16,25 +16,25 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable var="usergroup" id="usergroupTable" value="#{ProcessForm.task.userGroups}">
+    <p:dataTable var="role" id="roleTable" value="#{ProcessForm.task.roles}">
         <p:column headerText="#{msgs.title}">
-            <h:outputText value="#{usergroup.title}"/>
+            <h:outputText value="#{role.title}"/>
         </p:column>
         <p:column headerText="#{msgs.delete}">
-            <p:commandLink action="#{ProcessForm.deleteUserGroup}"
-                           id="deleteUsergroup"
+            <p:commandLink action="#{ProcessForm.deleteRole}"
+                           id="deleteRole"
                            immediate="true"
                            oncomplete="toggleSave()"
-                           update="editForm:tabs:usergroupTable"
-                           title="#{msgs.removeUsergroup}">
+                           update="editForm:tabs:roleTable"
+                           title="#{msgs.removeRole}">
                 <i class="fa fa-trash-o fa-lg"/>
-                <f:param name="ID" value="#{usergroup.id}"/>
+                <f:param name="ID" value="#{role.id}"/>
             </p:commandLink>
         </p:column>
     </p:dataTable>
-    <p:commandButton id="addUsergroup"
-                     onclick="PF('addUsergroupDialog').show()"
-                     value="#{msgs.userGroupsAdd}"
+    <p:commandButton id="addRole"
+                     onclick="PF('addRoleDialog').show()"
+                     value="#{msgs.rolesAdd}"
                      type="button"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"

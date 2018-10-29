@@ -25,7 +25,7 @@ public enum ObjectType {
     TASK("task", "tasks"),
     TEMPLATE("template", "template"),
     USER("user", "users"),
-    USER_GROUP("userGroup", "userGroups"),
+    ROLE("role", "roles"),
     WORKFLOW("workflow", "workflows"),
     FILTER("filter", "filters"),
     NONE("", "");

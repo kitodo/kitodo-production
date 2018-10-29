@@ -384,45 +384,45 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user is admin or has the authority to edit the user group
+     * Checks if the current user is admin or has the authority to edit the role
      * with the specified id.
      *
-     * @param userGroupId
-     *            The user group id.
+     * @param roleId
+     *            the role id
      * @return True if the current user is admin or has the authority to edit the
-     *         user group with the specified id.
+     *         role with the specified id.
      */
-    public boolean isAdminOrHasAuthorityToEditUserGroup(int userGroupId) {
-        String authorityTitle = "editUserGroup";
+    public boolean isAdminOrHasAuthorityToEditRole(int roleId) {
+        String authorityTitle = "editRole";
         if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
             return true;
         }
-        return hasAuthorityForUserGroup(authorityTitle, userGroupId);
+        return hasAuthorityForRole(authorityTitle, roleId);
     }
 
     /**
-     * Checks if the current user is admin or has the authority to view the user group
+     * Checks if the current user is admin or has the authority to view the role
      * with the specified id.
      *
-     * @param userGroupId
-     *            The user group id.
+     * @param roleId
+     *            the role id
      * @return True if the current user is admin or has the authority to view the
-     *         user group with the specified id.
+     *         role with the specified id.
      */
-    public boolean isAdminOrHasAuthorityToViewUserGroup(int userGroupId) {
-        String authorityTitle = "viewUserGroup";
+    public boolean isAdminOrHasAuthorityToViewRole(int roleId) {
+        String authorityTitle = "viewRole";
         if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
             return true;
         }
-        return hasAuthorityForUserGroup(authorityTitle, userGroupId);
+        return hasAuthorityForRole(authorityTitle, roleId);
     }
 
-    private boolean hasAuthorityForUserGroup(String authorityTitle, int userId) {
+    private boolean hasAuthorityForRole(String authorityTitle, int userId) {
         List<Integer> clientIdListForAuthority = getClientIdListForAuthority(authorityTitle);
         if (!clientIdListForAuthority.isEmpty()) {
-            List<Integer> allActiveUserGroupIdsVisibleForCurrentUser = serviceManager.getUserGroupService()
-                .getAllUserGroupIdsByClientIds(clientIdListForAuthority);
-            return allActiveUserGroupIdsVisibleForCurrentUser.contains(userId);
+            List<Integer> allRolesIdsVisibleForCurrentUser = serviceManager.getRoleService()
+                .getAllRolesIdsByClientIds(clientIdListForAuthority);
+            return allRolesIdsVisibleForCurrentUser.contains(userId);
         }
         return false;
     }

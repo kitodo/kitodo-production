@@ -25,34 +25,34 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "userGroup")
-public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
+@Table(name = "role")
+public class Role extends BaseIndexedBean implements Comparable<Role> {
     private static final long serialVersionUID = -5924845694417474352L;
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id",
-            foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) },
+    @JoinTable(name = "role_x_authority", joinColumns = {@JoinColumn(name = "role_id",
+            foreignKey = @ForeignKey(name = "FK_role_x_authority_role_id")) },
             inverseJoinColumns = {@JoinColumn(name = "authority_id",
-                    foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+                    foreignKey = @ForeignKey(name = "FK_role_x_authority_authority_id")) })
     private List<Authority> authorities;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_client_id"))
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_role_client_id"))
     private Client client;
 
     /**
      * The Constructor.
      */
-    public UserGroup() {
+    public Role() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
         this.authorities = new ArrayList<>();
@@ -161,16 +161,16 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     @Override
-    public int compareTo(UserGroup o) {
+    public int compareTo(Role o) {
         return this.getTitle().compareTo(o.getTitle());
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UserGroup)) {
+        if (!(obj instanceof Role)) {
             return false;
         }
-        UserGroup other = (UserGroup) obj;
+        Role other = (Role) obj;
         return this.getTitle().equals(other.getTitle());
     }
 

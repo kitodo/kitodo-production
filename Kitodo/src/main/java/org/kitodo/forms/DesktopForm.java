@@ -142,8 +142,8 @@ public class DesktopForm extends BaseForm {
                     return serviceManager.getPropertyService().count();
                 case TEMPLATE:
                     return serviceManager.getTemplateService().count();
-                case USER_GROUP:
-                    return serviceManager.getUserGroupService().count();
+                case ROLE:
+                    return serviceManager.getRoleService().count();
                 default:
                     return 0L;
             }

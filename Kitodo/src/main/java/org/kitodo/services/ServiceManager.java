@@ -23,10 +23,10 @@ import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
+import org.kitodo.services.data.RoleService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.data.TemplateService;
-import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
@@ -56,7 +56,7 @@ public class ServiceManager {
     private RulesetService rulesetService;
     private TaskService taskService;
     private TemplateService templateService;
-    private UserGroupService userGroupService;
+    private RoleService roleService;
     private UserService userService;
     private WorkflowService workflowService;
     private FileService fileService;
@@ -171,9 +171,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeUserGroupService() {
-        if (userGroupService == null) {
-            userGroupService = UserGroupService.getInstance();
+    private void initializeRoleService() {
+        if (roleService == null) {
+            roleService = RoleService.getInstance();
         }
     }
 
@@ -413,14 +413,13 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize UserGroupService if it is not yet initialized and next return
-     * it.
+     * Initialize RoleService if it is not yet initialized and next return it.
      *
-     * @return UserGroupService object
+     * @return RoleService object
      */
-    public UserGroupService getUserGroupService() {
-        initializeUserGroupService();
-        return userGroupService;
+    public RoleService getRoleService() {
+        initializeRoleService();
+        return roleService;
     }
 
     /**

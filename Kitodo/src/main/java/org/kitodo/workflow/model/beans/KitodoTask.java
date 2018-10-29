@@ -31,8 +31,6 @@ public class KitodoTask {
     private Boolean typeAcceptClose;
     private Boolean typeCloseVerify;
     private Boolean batchStep;
-    // TODO: user group needs to be rename everywhere to user role
-    // TODO: necessary to change it to list
     private Integer userRole;
 
     static final String NAMESPACE = "http://www.kitodo.org/template";

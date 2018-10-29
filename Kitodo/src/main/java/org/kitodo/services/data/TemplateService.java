@@ -332,8 +332,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Check whether the template contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the template contains tasks that are not assigned to a role.
      *
      * @param tasks
      *            list of tasks for testing
@@ -345,7 +344,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return true;
         }
         for (Task task : tasks) {
-            if (taskService.getUserGroupsSize(task) == 0) {
+            if (taskService.getRolesSize(task) == 0) {
                 return true;
             }
         }
@@ -365,7 +364,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return false;
         }
         for (TaskDTO task : tasks) {
-            if (task.getUserGroupsSize() == 0) {
+            if (task.getRolesSize() == 0) {
                 return false;
             }
         }

@@ -24,8 +24,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
@@ -37,17 +37,17 @@ public class ClientTypeTest {
     private static List<Client> prepareData() {
         List<Client> clients = new ArrayList<>();
         List<User> users = new ArrayList<>();
-        List<UserGroup> userGroups = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
 
-        UserGroup firstUserGroup = new UserGroup();
-        firstUserGroup.setId(1);
-        firstUserGroup.setTitle("Administrator");
-        userGroups.add(firstUserGroup);
+        Role firstRole = new Role();
+        firstRole.setId(1);
+        firstRole.setTitle("Administrator");
+        roles.add(firstRole);
 
-        UserGroup secondUserGroup = new UserGroup();
-        secondUserGroup.setId(2);
-        secondUserGroup.setTitle("Basic");
-        userGroups.add(secondUserGroup);
+        Role secondRole = new Role();
+        secondRole.setId(2);
+        secondRole.setTitle("Basic");
+        roles.add(secondRole);
 
         User firstUser = new User();
         firstUser.setId(1);
@@ -56,7 +56,7 @@ public class ClientTypeTest {
         firstUser.setLogin("jkowalski");
         firstUser.setActive(true);
         firstUser.setLocation("Dresden");
-        firstUser.getUserGroups().add(firstUserGroup);
+        firstUser.getRoles().add(firstRole);
         users.add(firstUser);
 
         User secondUser = new User();
@@ -66,7 +66,7 @@ public class ClientTypeTest {
         secondUser.setLogin("anowak");
         secondUser.setActive(true);
         secondUser.setLocation("Berlin");
-        secondUser.setUserGroups(userGroups);
+        secondUser.setRoles(roles);
         users.add(secondUser);
 
         User thirdUser = new User();
@@ -85,7 +85,7 @@ public class ClientTypeTest {
         firstClient.setId(1);
         firstClient.setName("First client");
         firstClient.getProjects().add(project);
-        firstClient.setUserGroups(userGroups);
+        firstClient.setRoles(roles);
         firstClient.setUsers(users);
 
         Client secondClient = new Client();
@@ -145,17 +145,17 @@ public class ClientTypeTest {
         assertEquals("Key users.login doesn't match to given value!", "pmueller",
             UserTypeField.LOGIN.getStringValue(user));
 
-        JsonArray userGroups = ClientTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 2, userGroups.size());
+        JsonArray roles = ClientTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 2, roles.size());
 
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key userGroups.id doesn't match to given value!", 1, userGroup.getInt("id"));
-        assertEquals("Key userGroups.title doesn't match to given value!", "Administrator",
-            userGroup.getString("title"));
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Key roles.id doesn't match to given value!", 1, role.getInt("id"));
+        assertEquals("Key roles.title doesn't match to given value!", "Administrator",
+            role.getString("title"));
 
-        userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key userGroups.id doesn't match to given value!", 2, userGroup.getInt("id"));
-        assertEquals("Key userGroups.title doesn't match to given value!", "Basic", userGroup.getString("title"));
+        role = roles.getJsonObject(1);
+        assertEquals("Key roles.id doesn't match to given value!", 2, role.getInt("id"));
+        assertEquals("Key roles.title doesn't match to given value!", "Basic", role.getString("title"));
     }
 
     @Test
@@ -176,8 +176,8 @@ public class ClientTypeTest {
         JsonArray users = ClientTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray userGroups = ClientTypeField.USER_GROUPS.getJsonArray(actual);
-        assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
+        JsonArray roles = ClientTypeField.ROLES.getJsonArray(actual);
+        assertEquals("Size roles doesn't match to given value!", 0, roles.size());
     }
 
     @Test
@@ -198,9 +198,9 @@ public class ClientTypeTest {
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
 
-        JsonArray userGroups = ClientTypeField.USER_GROUPS.getJsonArray(actual);
-        JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Amount of keys in user groups is incorrect!", 2, userGroup.keySet().size());
+        JsonArray roles = ClientTypeField.ROLES.getJsonArray(actual);
+        JsonObject role = roles.getJsonObject(0);
+        assertEquals("Amount of keys in roles is incorrect!", 2, role.keySet().size());
     }
 
     @Test

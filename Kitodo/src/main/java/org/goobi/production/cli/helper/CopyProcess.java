@@ -129,7 +129,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
         if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0) {
+                if (serviceManager.getTaskService().getRolesSize(s) == 0) {
                     Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
                 }
             }

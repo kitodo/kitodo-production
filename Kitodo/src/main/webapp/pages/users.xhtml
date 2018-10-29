@@ -20,7 +20,7 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
         <h:form id="newElementForm"
-                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser, addUserGroup')}">
+                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser, addRole')}">
             <p:menuButton value="#{msgs.newElement}"
                           id="newElementButton"
                           icon="fa fa-plus-circle fa-lg"
@@ -29,9 +29,9 @@
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser')}"
                             action="#{UserForm.newUser}" icon="ui-icon-plusthick"/>
-                <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUserGroup')}"
-                            action="#{UserGroupForm.newUserGroup}" icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addRole')}"
+                            action="#{RoleForm.newRole}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
                             action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
@@ -52,9 +52,9 @@
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllUsers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.userGroups}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllUserGroups')}">
-                <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
+            <p:tab title="#{msgs.roles}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllRoles')}">
+                <ui:include src="/WEB-INF/templates/includes/users/roleList.xhtml"/>
             </p:tab>
             <p:tab id="clientsTab" title="#{msgs.clients}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllClients')}">

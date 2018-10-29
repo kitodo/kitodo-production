@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String EDIT_PROCESS = "editProcess_";
     private static final String EDIT_PROJECT = "editProject_";
     private static final String EDIT_USER = "editUser_";
-    private static final String EDIT_USER_GROUP = "editUserGroup_";
+    private static final String EDIT_ROLE = "editRole_";
     private static final String EDIT_WORKFLOW = "editWorkflow_";
     private static final String VIEW_ALL_DOCKETS = "viewAllDockets_";
     private static final String VIEW_ALL_PROCESSES = "viewAllProcesses_";
@@ -51,11 +51,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String VIEW_ALL_TASKS = "viewAllTasks_";
     private static final String VIEW_ALL_TEMPLATES = "viewAllTemplates_";
     private static final String VIEW_ALL_USERS = "viewAllUsers_";
-    private static final String VIEW_ALL_USER_GROUPS = "viewAllUserGroups_";
+    private static final String VIEW_ALL_ROLES = "viewAllRoles_";
     private static final String VIEW_ALL_WORKFLOWS = "viewAllWorkflows_";
     private static final String VIEW_PROJECT = "viewProject_";
     private static final String VIEW_USER = "viewUser_";
-    private static final String VIEW_USER_GROUP = "viewUserGroup_";
+    private static final String VIEW_ROLE = "viewRole_";
     private static final String LOGIN_PAGE = "/pages/login.jsf";
 
     /**
@@ -149,8 +149,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ADMIN_GLOBAL,
                 VIEW_ALL_USERS + GLOBAL,
                 VIEW_ALL_USERS + CLIENT_ANY,
-                VIEW_ALL_USER_GROUPS + GLOBAL,
-                VIEW_ALL_USER_GROUPS + CLIENT_ANY,
+                VIEW_ALL_ROLES + GLOBAL,
+                VIEW_ALL_ROLES + CLIENT_ANY,
                 "viewAllClients_" + GLOBAL,
                 "viewAllLdapGroups_" + GLOBAL)
             .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
@@ -160,12 +160,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_USER + GLOBAL,
                 VIEW_USER + CLIENT_ANY)
 
-            .antMatchers("/pages/usergroupEdit.jsf*").hasAnyAuthority(
+            .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
-                EDIT_USER_GROUP + GLOBAL,
-                EDIT_USER_GROUP + CLIENT_ANY,
-                VIEW_USER_GROUP + GLOBAL,
-                VIEW_USER_GROUP + CLIENT_ANY)
+                EDIT_ROLE + GLOBAL,
+                EDIT_ROLE + CLIENT_ANY,
+                VIEW_ROLE + GLOBAL,
+                VIEW_ROLE + CLIENT_ANY)
 
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,

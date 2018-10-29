@@ -106,8 +106,8 @@ public class Pages {
         return getPage(UserEditPage.class);
     }
 
-    public static UserGroupEditPage getUserGroupEditPage() throws InstantiationException, IllegalAccessException {
-        return getPage(UserGroupEditPage.class);
+    public static RoleEditPage getRoleEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(RoleEditPage.class);
     }
 
     public static LdapGroupEditPage getLdapGroupEditPage() throws InstantiationException, IllegalAccessException {

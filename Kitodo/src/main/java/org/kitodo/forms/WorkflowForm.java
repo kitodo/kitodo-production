@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -66,7 +66,7 @@ public class WorkflowForm extends BaseForm {
     private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
-    private Integer userGroupId;
+    private Integer roleId;
 
     /**
      * Constructor.
@@ -317,34 +317,34 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Get userGroupId.
+     * Get role id.
      *
-     * @return value of userGroupId
+     * @return value of roleId
      */
-    public Integer getUserGroupId() {
-        return userGroupId;
+    public Integer getRoleId() {
+        return roleId;
     }
 
     /**
-     * Set userGroupId.
+     * Set role idd.
      * 
-     * @param userGroupId
+     * @param roleId
      *            as Integer.
      */
-    public void setUserGroupId(Integer userGroupId) {
-        this.userGroupId = userGroupId;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
     /**
-     * Get hidden list of user groups.
+     * Get hidden list of roles.
      *
-     * @return hidden list of user groups
+     * @return hidden list of roles
      */
-    public List<SelectItem> getUserGroups() {
+    public List<SelectItem> getRoles() {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<UserGroup> userGroups = serviceManager.getUserGroupService().getAllUserGroupsByClientIds(Arrays.asList(1));
-        for (UserGroup userGroup : userGroups) {
-            selectItems.add(new SelectItem(userGroup.getId(), userGroup.getTitle(), null));
+        List<Role> roles = serviceManager.getRoleService().getAllRolesByClientIds(Arrays.asList(1));
+        for (Role role : roles) {
+            selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
         }
         return selectItems;
     }

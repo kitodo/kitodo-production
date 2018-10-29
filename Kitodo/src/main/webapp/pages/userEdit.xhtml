@@ -156,15 +156,15 @@
                 </div>
             </p:tab>
             <!-- user groups -->
-            <p:tab id="usergroupTab" title="#{msgs.userGroups}">
-                <p:dataTable id="usergroupDatatable" var="item" value="#{UserForm.userObject.userGroups}">
-                    <p:column headerText="#{msgs.userGroup}">
+            <p:tab id="roleTab" title="#{msgs.roles}">
+                <p:dataTable id="roleDatatable" var="item" value="#{UserForm.userObject.roles}">
+                    <p:column headerText="#{msgs.role}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
                     <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromUserGroup"
+                        <p:commandLink id="deleteFromRole"
                                        rendered="#{isEditMode || isCreateMode}"
-                                       action="#{UserForm.deleteFromUserGroup}"
+                                       action="#{UserForm.deleteFromRole}"
                                        title="#{msgs.ausGruppeLoeschen}"
                                        immediate="true"
                                        oncomplete="toggleSave()"
@@ -174,9 +174,9 @@
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <p:commandButton onclick="PF('addUserGroupDialog').show()"
-                                 id="addUserGroupButton"
-                                 value="#{msgs.userGroupsAdd}"
+                <p:commandButton onclick="PF('addRoleDialog').show()"
+                                 id="addRoleButton"
+                                 value="#{msgs.rolesAdd}"
                                  icon="fa fa-plus-circle fa-lg"
                                  iconPos="right"
                                  immediate="true"

@@ -66,7 +66,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -147,7 +147,7 @@ public class MockDatabase {
         insertAuthorities();
         insertLdapGroups();
         insertClients();
-        insertUserGroups();
+        insertRoles();
         insertUsers();
         insertDockets();
         insertRulesets();
@@ -169,7 +169,7 @@ public class MockDatabase {
         insertAuthorities();
         insertLdapGroups();
         insertClients();
-        insertUserGroups();
+        insertRoles();
         insertUsers();
         insertDockets();
         insertRulesets();
@@ -185,11 +185,11 @@ public class MockDatabase {
         insertTasksForWorkflow();
     }
 
-    public static void insertUserGroupsFull() throws DAOException, DataException {
+    public static void insertRolesFull() throws DAOException, DataException {
         insertAuthorities();
         insertClients();
         insertLdapGroups();
-        insertUserGroups();
+        insertRoles();
         insertUsers();
     }
 
@@ -197,7 +197,7 @@ public class MockDatabase {
         insertAuthorities();
         insertLdapGroups();
         insertClients();
-        insertUserGroups();
+        insertRoles();
         insertUsers();
         insertProjects();
     }
@@ -376,18 +376,18 @@ public class MockDatabase {
         authorities.add(new Authority("deleteTask" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addTask" + clientAssignableAuthoritySuffix));
 
-        //UserGroup
-        authorities.add(new Authority("viewAllUserGroups" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUserGroup" + globalAssignableAuthoritySuffix));
+        //Role
+        authorities.add(new Authority("viewAllRoles" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewRole" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addRole" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editRole" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteRole" + globalAssignableAuthoritySuffix));
         
-        authorities.add(new Authority("viewUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUserGroups" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewRole" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllRoles" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editRole" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteRole" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addRole" + clientAssignableAuthoritySuffix));
 
         //User
         authorities.add(new Authority("viewAllUsers" + globalAssignableAuthoritySuffix));
@@ -864,7 +864,7 @@ public class MockDatabase {
 
     private static void insertTasks() throws DAOException, DataException {
         Template firstTemplate = serviceManager.getTemplateService().getById(1);
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Role role = serviceManager.getRoleService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
         Task firstTask = new Task();
@@ -883,7 +883,7 @@ public class MockDatabase {
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setTemplate(firstTemplate);
         firstTemplate.getTasks().add(firstTask);
-        firstTask.getUserGroups().add(userGroup);
+        firstTask.getRoles().add(role);
         firstUser.getProcessingTasks().add(firstTask);
         serviceManager.getTaskService().save(firstTask);
 
@@ -900,7 +900,7 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
         secondTask.setProcess(firstProcess);
-        secondTask.getUserGroups().add(userGroup);
+        secondTask.getRoles().add(role);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(secondTask);
@@ -925,7 +925,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        fourthTask.getUserGroups().add(userGroup);
+        fourthTask.getRoles().add(role);
         fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(firstProcess);
         serviceManager.getTaskService().save(fourthTask);
@@ -952,7 +952,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 27);
         sixthTask.setProcessingBegin(localDate.toDate());
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setUserGroups(serviceManager.getUserGroupService().getAll());
+        sixthTask.setRoles(serviceManager.getRoleService().getAll());
         sixthTask.setProcessingUser(secondUser);
         sixthTask.setTemplate(secondTemplate);
         serviceManager.getTaskService().save(sixthTask);
@@ -968,7 +968,7 @@ public class MockDatabase {
         seventhTask.setProcessingUser(blockedUser);
         seventhTask.setProcessingStatusEnum(TaskStatus.OPEN);
         seventhTask.setProcess(secondProcess);
-        seventhTask.getUserGroups().add(userGroup);
+        seventhTask.getRoles().add(role);
         seventhTask.setScriptName("scriptName");
         seventhTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(seventhTask);
@@ -982,7 +982,7 @@ public class MockDatabase {
         eightTask.setProcessingUser(firstUser);
         eightTask.setProcessingStatusEnum(TaskStatus.INWORK);
         eightTask.setProcess(secondProcess);
-        eightTask.getUserGroups().add(userGroup);
+        eightTask.getRoles().add(role);
         serviceManager.getTaskService().save(eightTask);
     }
 
@@ -990,7 +990,7 @@ public class MockDatabase {
         Template template = serviceManager.getTemplateService().getById(1);
 
         Task firstTask = new Task();
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Role role = serviceManager.getRoleService().getById(1);
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
@@ -1005,7 +1005,7 @@ public class MockDatabase {
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
         firstTask.setTemplate(template);
-        firstTask.getUserGroups().add(userGroup);
+        firstTask.getRoles().add(role);
         serviceManager.getTaskService().save(firstTask);
         serviceManager.getTemplateService().save(template);
         firstUser.getProcessingTasks().add(firstTask);
@@ -1023,7 +1023,7 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.DONE);
         secondTask.setTemplate(template);
-        secondTask.getUserGroups().add(userGroup);
+        secondTask.getRoles().add(role);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(secondTask);
@@ -1057,9 +1057,9 @@ public class MockDatabase {
         serviceManager.getUserService().save(blockedUser);
         serviceManager.getUserService().save(secondUser);
 
-        userGroup.getTasks().add(firstTask);
-        userGroup.getTasks().add(secondTask);
-        serviceManager.getUserGroupService().save(userGroup);
+        role.getTasks().add(firstTask);
+        role.getTasks().add(secondTask);
+        serviceManager.getRoleService().save(role);
 
         Process process = serviceManager.getProcessService().getById(1);
 
@@ -1136,7 +1136,7 @@ public class MockDatabase {
         Client firstClient = serviceManager.getClientService().getById(1);
         Client secondClient = serviceManager.getClientService().getById(2);
 
-        UserGroup adminUserGroup = serviceManager.getUserGroupService().getById(1);
+        Role adminRole = serviceManager.getRoleService().getById(1);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1148,7 +1148,7 @@ public class MockDatabase {
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
         firstUser.setMetadataLanguage("de");
-        firstUser.getUserGroups().add(adminUserGroup);
+        firstUser.getRoles().add(adminRole);
         firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
@@ -1161,7 +1161,7 @@ public class MockDatabase {
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(2));
+        secondUser.getRoles().add(serviceManager.getRoleService().getById(2));
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
@@ -1174,7 +1174,7 @@ public class MockDatabase {
         thirdUser.setLocation("Leipzig");
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
-        thirdUser.getUserGroups().add(adminUserGroup);
+        thirdUser.getRoles().add(adminRole);
         serviceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
@@ -1186,7 +1186,7 @@ public class MockDatabase {
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
-        fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        fourthUser.getRoles().add(serviceManager.getRoleService().getById(3));
         serviceManager.getUserService().save(fourthUser);
 
         User fifthUser = new User();
@@ -1201,19 +1201,19 @@ public class MockDatabase {
         serviceManager.getUserService().save(fifthUser);
     }
 
-    private static void insertUserGroups() throws DAOException, DataException {
+    private static void insertRoles() throws DAOException, DataException {
         List<Authority> allAuthorities = serviceManager.getAuthorityService().getAll();
         Client client = serviceManager.getClientService().getById(1);
 
-        UserGroup firstUserGroup = new UserGroup();
-        firstUserGroup.setTitle("Admin");
-        firstUserGroup.setClient(client);
-        firstUserGroup.setAuthorities(allAuthorities);
-        serviceManager.getUserGroupService().save(firstUserGroup);
+        Role firstRole = new Role();
+        firstRole.setTitle("Admin");
+        firstRole.setClient(client);
+        firstRole.setAuthorities(allAuthorities);
+        serviceManager.getRoleService().save(firstRole);
 
-        UserGroup secondUserGroup = new UserGroup();
-        secondUserGroup.setTitle("Random");
-        secondUserGroup.setClient(client);
+        Role secondRole = new Role();
+        secondRole.setTitle("Random");
+        secondRole.setClient(client);
 
         List<Authority> userAuthorities = new ArrayList<>();
         userAuthorities.add(serviceManager.getAuthorityService().getById(2));
@@ -1229,13 +1229,13 @@ public class MockDatabase {
         userAuthorities.add(serviceManager.getAuthorityService().getById(40));
         userAuthorities.add(serviceManager.getAuthorityService().getById(44));
         userAuthorities.add(serviceManager.getAuthorityService().getById(50));
-        secondUserGroup.setAuthorities(userAuthorities);
-        serviceManager.getUserGroupService().save(secondUserGroup);
+        secondRole.setAuthorities(userAuthorities);
+        serviceManager.getRoleService().save(secondRole);
 
-        UserGroup thirdUserGroup = new UserGroup();
-        thirdUserGroup.setTitle("Without authorities");
-        thirdUserGroup.setClient(client);
-        serviceManager.getUserGroupService().save(thirdUserGroup);
+        Role thirdRole = new Role();
+        thirdRole.setTitle("Without authorities");
+        thirdRole.setClient(client);
+        serviceManager.getRoleService().save(thirdRole);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1366,11 +1366,11 @@ public class MockDatabase {
         serviceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
-        UserGroup userGroup = new UserGroup();
-        userGroup.setTitle("Removable user group");
-        userGroup.setClient(assignableClient);
-        serviceManager.getUserGroupService().save(userGroup);
-        removableObjectIDs.put(ObjectType.USER_GROUP.name(), userGroup.getId());
+        Role role = new Role();
+        role.setTitle("Removable role");
+        role.setClient(assignableClient);
+        serviceManager.getRoleService().save(role);
+        removableObjectIDs.put(ObjectType.ROLE.name(), role.getId());
 
     }
 

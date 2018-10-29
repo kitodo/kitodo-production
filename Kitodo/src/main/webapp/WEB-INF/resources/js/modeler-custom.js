@@ -20,7 +20,7 @@ $(window).on("load", function () {
 		}
 
 
-		var userRoles = $("#editForm\\:workflowTabView\\:userGroupId_input").children();
+		var userRoles = $("#editForm\\:workflowTabView\\:roleId_input").children();
 
 		userRoles.each(function( index ) {
 			var role = { name: $(this).text(), value: $(this).val() };

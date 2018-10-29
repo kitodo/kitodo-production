@@ -20,28 +20,28 @@
     <f:view locale="#{SpracheForm.locale}">
         <h:body>
             <!-- edit dialog -->
-            <p:dialog widgetVar="addUserGroupDialog"
-                      id="addUserGroupDialog"
-                      header="#{msgs.userGroupsAdd}"
+            <p:dialog widgetVar="addRoleDialog"
+                      id="addRoleDialog"
+                      header="#{msgs.rolesAdd}"
                       width="700px"
                       modal="true"
                       dynamic="true">
-                <h:form id="userGroupForm">
+                <h:form id="roleForm">
                     <p:dataTable var="item"
-                                 id="selectUserGroupTable"
-                                 value="#{UserGroupForm.lazyDTOModel}"
+                                 id="selectRoleTable"
+                                 value="#{RoleForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"
                                  rows="#{LoginForm.myBenutzer.tableSize}"
                                  paginatorPosition="bottom">
-                        <p:column headerText="#{msgs.userGroup}">
+                        <p:column headerText="#{msgs.role}">
                             <h:outputText value="#{item.title}"/>
                         </p:column>
                         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-                            <p:commandLink id="addUserGroup"
-                                           action="#{UserForm.addToUserGroup}"
+                            <p:commandLink id="addRole"
+                                           action="#{UserForm.addToRole}"
                                            title="add to user group"
-                                           update="editForm:userTabView:usergroupDatatable"
+                                           update="editForm:userTabView:roleDatatable"
                                            oncomplete="toggleSave()">
                                 <i class="fa fa-user-plus fa-lg"/>
                                 <f:param name="ID" value="#{item.id}"/>

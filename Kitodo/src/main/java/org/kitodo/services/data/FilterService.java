@@ -46,9 +46,9 @@ import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.FilterString;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
@@ -476,8 +476,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
 
         // only tasks assigned to the user groups the current user is member of
-        List<UserGroupDTO> userUserGroups = userDTO.getUserGroups();
-        taskQuery.must(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
+        List<RoleDTO> userRoles = userDTO.getRoles();
+        taskQuery.must(createSetQuery(TaskTypeField.ROLES + ".id", collectIds(userRoles), true));
 
         return taskQuery;
     }
