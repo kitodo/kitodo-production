@@ -33,9 +33,6 @@ class ConfigOpac {
      * @return config the XMLConfiguration of the plugin
      */
     protected static XMLConfiguration getConfig() {
-        if (config != null) {
-            return config;
-        }
         String configPfad = FilenameUtils.concat(ModsPlugin.getConfigDir(), ModsPlugin.OPAC_CONFIGURATION_FILE);
         if (!new File(configPfad).exists()) {
             String message = "File not found: ".concat(configPfad);
