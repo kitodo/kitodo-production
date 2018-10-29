@@ -92,8 +92,8 @@ var activationDelay = function() {
         return (b.y - a.y) / (b.x - a.x);
     };
 
-    decreasingCorner = lowerRight;
-    increasingCorner = upperLeft;
+    var decreasingCorner = lowerRight;
+    var increasingCorner = upperLeft;
 
     var decreasingSlope = slope(lastLocation, decreasingCorner),
         increasingSlope = slope(lastLocation, increasingCorner),
