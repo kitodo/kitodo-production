@@ -53,7 +53,7 @@ public class SecurityAccessServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(user);
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities();
-        Assert.assertEquals("Security context holder does not hold the corresponding authorities", 164,
+        Assert.assertEquals("Security context holder does not hold the corresponding authorities", 149,
             authorities.size());
     }
 

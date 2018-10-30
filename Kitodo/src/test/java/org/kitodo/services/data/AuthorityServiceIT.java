@@ -30,7 +30,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int EXPECTED_AUTHORITIES_COUNT = 109;
+    private final int EXPECTED_AUTHORITIES_COUNT = 94;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
