@@ -21,6 +21,7 @@ import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -120,7 +121,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return findAll(sort, offset, size, true);
         }
-        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return getAllRolesVisibleForCurrentUser();
         }
         return new ArrayList<>();
@@ -162,8 +163,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      * @param role
      *            object
      */
-    private void manageAuthorizationsDependenciesForIndex(Role role)
-            throws CustomResponseException, IOException {
+    private void manageAuthorizationsDependenciesForIndex(Role role) throws CustomResponseException, IOException {
         if (role.getIndexAction() == IndexAction.DELETE) {
             for (Authority authority : role.getAuthorities()) {
                 authority.getRoles().remove(role);
@@ -286,8 +286,8 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO roleDTO) throws DataException {
-        roleDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(),
-            serviceManager.getUserService()));
+        roleDTO.setUsers(
+            convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(), serviceManager.getUserService()));
     }
 
     private void addBasicAuthorizationsRelation(RoleDTO roleDTO, JsonObject jsonObject) {
@@ -348,42 +348,41 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Get all roles visible for current user - user assigned to
-     * projects with certain clients.
+     * Get all roles visible for current user - user assigned to projects with the
+     * selected client.
      *
      * @return list of roles
      */
     public List<RoleDTO> getAllRolesVisibleForCurrentUser() throws DataException {
-        List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
-        return convertListIdToDTO(getAllRolesIdsByClientIds(clientIdList), this);
-    }
-    
-    /**
-     * Get all user roles for a list of clients.
-     *
-     * @param clientIds
-     *              The list of client IDs
-     *
-     * @return The list of all user roles for the given client IDs
-     */
-    public List<Role> getAllRolesByClientIds(List<Integer> clientIds) {
-        return dao.getAllRolesByClientIds(clientIds);
+        return convertListIdToDTO(getAllRolesIdsByClientId(), this);
     }
 
     /**
-     * Get ids of all roles which hold users which are assigned to projects of
-     * the given clients.
-     * 
-     * @param clientIdList
-     *            The list of client ids.
+     * Get all user roles for the selected client.
+     *
+     * @param clientId
+     *            the selected client id
+     * @return The list of all user roles for the given client IDs
+     */
+    public List<Role> getAllRolesByClientId(int clientId) {
+        return dao.getAllRolesByClientIds(clientId);
+    }
+
+    /**
+     * Get ids of all roles which hold users which are assigned to projects of the
+     * selected client.
+     *
      * @return The list of user ids.
      */
-    public List<Integer> getAllRolesIdsByClientIds(List<Integer> clientIdList) {
-        List<Role> roles = getAllRolesByClientIds(clientIdList);
+    public List<Integer> getAllRolesIdsByClientId() {
         List<Integer> rolesIdList = new ArrayList<>();
-        for (Role role : roles) {
-            rolesIdList.add(role.getId());
+
+        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        if (Objects.nonNull(selectedClient)) {
+            List<Role> roles = getAllRolesByClientId(selectedClient.getId());
+            for (Role role : roles) {
+                rolesIdList.add(role.getId());
+            }
         }
         return rolesIdList;
     }

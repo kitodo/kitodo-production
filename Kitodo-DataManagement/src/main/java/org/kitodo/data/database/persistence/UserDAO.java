@@ -98,17 +98,17 @@ public class UserDAO extends BaseDAO<User> {
 
     /**
      * Get all active users visible for current user - user assigned to projects
-     * with certain clients.
+     * with selected client.
      * 
-     * @param clientIdList
-     *            list of client ids assigned to which current user is assigned
+     * @param clientId
+     *            selected client id for current user
      * @return list of users
      */
-    public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
+    public List<User> getAllActiveUsersByClientId(Integer clientId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("clientIdList", clientIdList);
+        parameters.put("clientId", clientId);
         return getByQuery("SELECT u FROM User AS u JOIN u.projects AS p JOIN p.client AS c WHERE u.active = 1 AND "
-                + "u.deleted = 0 AND c.id IN :clientIdList GROUP BY u.id",
+                + "u.deleted = 0 AND c.id = :clientId GROUP BY u.id",
             parameters);
     }
 }

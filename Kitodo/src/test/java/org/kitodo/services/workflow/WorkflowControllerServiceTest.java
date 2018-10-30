@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -27,7 +28,7 @@ public class WorkflowControllerServiceTest {
     private static WorkflowControllerService workflowControllerService;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws DAOException {
         workflowControllerService = new ServiceManager().getWorkflowControllerService();
         SecurityTestUtils.addUserDataToSecurityContext(new User());
     }

@@ -20,24 +20,24 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
-                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addProject, addTemplate, addDocket, addRuleset')}">
+                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForClient('addProject, addTemplate, addDocket, addRuleset')}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addProject')}"/>
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject')}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
                             id="newTemplateButton" immediate="true" style="width: inherit;"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addTemplate')}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addTemplate')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
                         immediate="true" icon="ui-icon-plusthick"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addWorkflow')}"/>
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addWorkflow')}"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
                             id="newDocketButton" immediate="true"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addDocket')}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addDocket')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addRuleset')}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addRuleset')}"
                             id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
@@ -47,23 +47,23 @@
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllProjects')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllProjects')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templates}" id="templateTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllTemplates')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllTemplates')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.workflows}" id="workflowTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllWorkflows')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllWorkflows')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.dockets}" id="docketTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllDockets')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllDockets')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllRulesets')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllRulesets')}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
         </p:tabView>

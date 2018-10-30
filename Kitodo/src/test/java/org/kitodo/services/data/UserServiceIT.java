@@ -20,7 +20,6 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 import javax.json.JsonObject;
@@ -458,12 +457,10 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAllActiveUsersByClientIds() {
-        List<Integer> clientIds = Collections.singletonList(1);
-        List<User> users = userService.getAllActiveUsersByClientIds(clientIds);
+        List<User> users = userService.getAllActiveUsersByClientId(1);
         assertEquals("Amount of users assigned to client is incorrect!", 2, users.size());
 
-        clientIds = Collections.singletonList(2);
-        users = userService.getAllActiveUsersByClientIds(clientIds);
+        users = userService.getAllActiveUsersByClientId(2);
         assertEquals("Amount of users assigned to client is incorrect!", 1, users.size());
     }
 

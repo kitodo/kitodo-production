@@ -23,7 +23,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -173,7 +173,8 @@ public class WorkflowForm extends BaseForm {
 
     private Map<String, URI> getDiagramUris(Workflow workflow) {
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
-        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + SVG_EXTENSION).toURI();
+        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + SVG_EXTENSION)
+                .toURI();
         URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(workflow.getFileName())).toURI();
 
         Map<String, URI> diagramUris = new HashMap<>();
@@ -342,9 +343,13 @@ public class WorkflowForm extends BaseForm {
      */
     public List<SelectItem> getRoles() {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Role> roles = serviceManager.getRoleService().getAllRolesByClientIds(Arrays.asList(1));
-        for (Role role : roles) {
-            selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
+
+        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        if (Objects.nonNull(selectedClient)) {
+            List<Role> roles = serviceManager.getRoleService().getAllRolesByClientId(selectedClient.getId());
+            for (Role role : roles) {
+                selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
+            }
         }
         return selectItems;
     }

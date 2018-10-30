@@ -36,12 +36,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="/pages/docketEdit" title="#{msgs.editDocket}"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editDocket',item.client.id)}">
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editDocket')}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteDocket" action="#{DocketForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteDocket',item.client.id)}"
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteDocket')}"
                                update="projectsTabView:docketTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{DocketForm.docketById}"/>
