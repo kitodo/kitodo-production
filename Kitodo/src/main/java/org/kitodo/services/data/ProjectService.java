@@ -168,15 +168,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        Integer currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
-        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
+        int sessionClientId = serviceManager.getUserService().getSessionClientId();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(currentUserId));
-        if (Objects.nonNull(sessionClient)) {
-            query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClient.getId(), true));
-        }
-
+        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
@@ -190,21 +187,15 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of all matching projects
      */
     public List<ProjectDTO> findAllAvailableForAssignToUser(Integer userId) throws DataException {
-        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-
-        if (Objects.nonNull(userId) || Objects.nonNull(sessionClient)) {
-            return findAvailableForAssignToUser(userId, sessionClient);
-        } else {
-            return findAll(true);
-        }
+        return findAvailableForAssignToUser(userId);
     }
 
-    private List<ProjectDTO> findAvailableForAssignToUser(Integer userId, Client sessionClient) throws DataException {
+    private List<ProjectDTO> findAvailableForAssignToUser(Integer userId) throws DataException {
+        int sessionClientId = serviceManager.getUserService().getSessionClientId();
+
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(userId, false));
-        if (Objects.nonNull(sessionClient)) {
-            query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClient.getId(), true));
-        }
+        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
     }
 

@@ -32,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -75,12 +74,7 @@ public class RulesetForm extends BaseForm {
      */
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
-
-        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(sessionClient)) {
-            this.ruleset.setClient(sessionClient);
-        }
-
+        this.ruleset.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return rulesetEditPath;
     }
 

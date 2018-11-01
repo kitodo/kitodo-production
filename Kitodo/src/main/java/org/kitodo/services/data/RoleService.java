@@ -22,7 +22,6 @@ import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -146,7 +145,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     @Override
     public List<Role> getAllForSelectedClient(int clientId) {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", clientId));
     }
 
     /**
@@ -384,12 +383,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     public List<Integer> getAllRolesIdsByClientId() {
         List<Integer> rolesIdList = new ArrayList<>();
 
-        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(selectedClient)) {
-            List<Role> roles = getAllRolesByClientId(selectedClient.getId());
-            for (Role role : roles) {
-                rolesIdList.add(role.getId());
-            }
+        List<Role> roles = getAllRolesByClientId(serviceManager.getUserService().getSessionClientId());
+        for (Role role : roles) {
+            rolesIdList.add(role.getId());
         }
         return rolesIdList;
     }
