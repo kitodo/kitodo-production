@@ -26,8 +26,7 @@ public class SecurityAccessController {
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
 
     /**
-     * Checks if the current user has a specified authority globally or for a client
-     * id.
+     * Check if the current user has a specified authority globally or for a client.
      *
      * @param authorityTitle
      *            The authority title.
@@ -46,6 +45,17 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityGlobal(String authorityTitle) {
         return securityAccessService.hasAuthorityGlobal(authorityTitle);
+    }
+
+    /**
+     * Check if the current user has a specified authority for a client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return true if the current user has the specified authority
+     */
+    public boolean hasAuthorityForClient(String authorityTitle) {
+        return securityAccessService.hasAuthorityForClient(authorityTitle);
     }
 
     /**
@@ -72,13 +82,24 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if the current user has the authority to edit the user
-     * with the specified id.
+     * Check if the current user has any of the specified authorities for client.
+     *
+     * @param authorityTitles
+     *            the authority title
+     * @return true if the current user has the specified authority
+     */
+    public boolean hasAnyAuthorityForClient(String authorityTitles) {
+        return securityAccessService.hasAnyAuthorityForClient(authorityTitles);
+    }
+
+    /**
+     * Checks if the current user has the authority to edit the user with the
+     * specified id.
      *
      * @param userId
      *            The user id.
-     * @return True if the current user has the authority to edit the
-     *         user with the specified id.
+     * @return True if the current user has the authority to edit the user with the
+     *         specified id.
      */
     public boolean hasAuthorityToEditUser(int userId) {
         return securityAccessService.hasAuthorityToEditUser(userId);
