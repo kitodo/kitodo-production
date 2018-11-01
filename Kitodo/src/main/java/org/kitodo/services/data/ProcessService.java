@@ -566,7 +566,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return query as QueryBuilder
      */
     private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
-        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id, true);
+        return createSimpleQuery(ProcessTypeField.PROJECT_CLIENT_ID.getKey(), id, true);
     }
 
     /**
