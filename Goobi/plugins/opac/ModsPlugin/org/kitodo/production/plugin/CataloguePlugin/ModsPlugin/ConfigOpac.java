@@ -22,9 +22,11 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 class ConfigOpac {
     private static XMLConfiguration config;
+    private static final Logger logger = Logger.getLogger(ConfigOpac.class);
 
     /**
      * Returns the XMLConfiguration of the plugin containing docType names and
@@ -35,6 +37,7 @@ class ConfigOpac {
     protected static XMLConfiguration getConfig() {
 
         if (config != null) {
+            logger.trace("Using already loaded configuration.");
             return config;
         }
 
@@ -47,7 +50,7 @@ class ConfigOpac {
         try {
             config = new XMLConfiguration(configPfad);
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            logger.error("Configuration error inside file " + configPfad + ". Will continue with empty configuration. Errors may appear.");
             config = new XMLConfiguration();
         }
         config.setListDelimiter('&');
