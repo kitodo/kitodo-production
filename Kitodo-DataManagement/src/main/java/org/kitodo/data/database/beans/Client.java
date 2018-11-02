@@ -18,9 +18,12 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.Hibernate;
 
 @Entity
 @Table(name = "client")
@@ -31,13 +34,13 @@ public class Client extends BaseIndexedBean {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
-    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "clients", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.PERSIST)
     private List<Role> roles;
 
     /**
@@ -65,6 +68,7 @@ public class Client extends BaseIndexedBean {
      * @return The projects.
      */
     public List<Project> getProjects() {
+        Hibernate.initialize(this.projects);
         if (this.projects == null) {
             this.projects = new ArrayList<>();
         }
@@ -87,6 +91,7 @@ public class Client extends BaseIndexedBean {
      * @return The users.
      */
     public List<User> getUsers() {
+        Hibernate.initialize(this.users);
         if (this.users == null) {
             this.users = new ArrayList<>();
         }
@@ -109,6 +114,7 @@ public class Client extends BaseIndexedBean {
      * @return list of Role objects
      */
     public List<Role> getRoles() {
+        Hibernate.initialize(this.roles);
         if (Objects.isNull(this.roles)) {
             this.roles = new ArrayList<>();
         }
