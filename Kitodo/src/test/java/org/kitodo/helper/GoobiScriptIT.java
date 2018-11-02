@@ -50,7 +50,7 @@ public class GoobiScriptIT {
         Task task = serviceManager.getTaskService().getById(3);
         int amountOfRoles = task.getRoles().size();
 
-        String script = "action:addRole \"steptitle:Testing and Blocking\" role:Random";
+        String script = "action:addRole \"steptitle:Testing and Blocking\" role:General";
         List<Process> processes = new ArrayList<>();
         processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
