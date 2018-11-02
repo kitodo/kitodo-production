@@ -44,7 +44,13 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
-                    <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}"
+                    <h:link id="viewWorkflow" outcome="workflowEdit" title="#{msgs.workflowView}"
+                            rendered="#{SecurityAccessController.hasAuthorityToViewWorkflow()}">
+                        <i class="fa fa-eye fa-lg"/>
+                        <f:param name="id" value="#{item.id}"/>
+                    </h:link>
+
+                    <h:link id="editWorkflow" outcome="workflowEdit" title="#{msgs.editWorkflow}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
