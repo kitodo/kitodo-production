@@ -286,33 +286,7 @@ public class MockDatabase {
         authorities.add(new Authority("deleteProject" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addProject" + clientAssignableAuthoritySuffix));
 
-        //Docket
-        authorities.add(new Authority("viewAllDockets" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
-
-        //ruleset
-        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
-
         //Template
-        authorities.add(new Authority("viewAllTemplates" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewTemplate" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTemplate" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTemplate" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTemplate" + globalAssignableAuthoritySuffix));
-
         authorities.add(new Authority("viewTemplate" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllTemplates" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("editTemplate" + clientAssignableAuthoritySuffix));
@@ -320,17 +294,25 @@ public class MockDatabase {
         authorities.add(new Authority("addTemplate" + clientAssignableAuthoritySuffix));
 
         //Workflow
-        authorities.add(new Authority("viewAllWorkflows" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + globalAssignableAuthoritySuffix));
-
         authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
+
+        //Docket
+        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
+
+        //Ruleset
+        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
 
         //process
         authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
@@ -1222,13 +1204,15 @@ public class MockDatabase {
         userAuthorities.add(serviceManager.getAuthorityService().getById(15));
         userAuthorities.add(serviceManager.getAuthorityService().getById(16));
         userAuthorities.add(serviceManager.getAuthorityService().getById(4));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(20));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(9));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(14));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(15));
         userAuthorities.add(serviceManager.getAuthorityService().getById(19));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(20));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(24));
         userAuthorities.add(serviceManager.getAuthorityService().getById(25));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(34));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(40));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(44));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(50));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(29));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(30));
         secondRole.setAuthorities(userAuthorities);
         serviceManager.getRoleService().save(secondRole);
 

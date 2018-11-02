@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static SecurityConfig instance = null;
     private SessionRegistry sessionRegistry;
     private static final String CLIENT_ANY = "CLIENT_ANY";
+    private static final String CLIENT = "CLIENT";
     private static final String GLOBAL = "GLOBAL";
     private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
     private static final String EDIT_CLIENT = "editClient_";

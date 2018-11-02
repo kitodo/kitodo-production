@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * The implementation of Spring Security's UserDetails interface which is used
- * to population the current authentication with security information
- * (e.g. authorities, account expired or locked, ...).
+ * to population the current authentication with security information (e.g.
+ * authorities, account expired or locked, ...).
  */
 @Service
 public class SecurityUserDetails extends User implements UserDetails {
@@ -40,7 +40,7 @@ public class SecurityUserDetails extends User implements UserDetails {
      */
     private Client sessionClient;
 
-    private ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     public SecurityUserDetails(final User user) {
         super(user);
@@ -48,19 +48,18 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         List<Role> roles = super.getRoles();
-        List<Client> clients = super.getClients();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
         for (Role role : roles) {
             List<Authority> authorities = role.getAuthorities();
+            int clientId = role.getClient().getId();
             for (Authority authority : authorities) {
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getGlobalAuthoritySuffix())) {
                     insertGlobalAuthorities(userAuthorities, authority);
                 }
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getClientAuthoritySuffix())) {
-                    insertClientAuthorities(userAuthorities, authority, clients);
+                    insertClientAuthorities(userAuthorities, authority, clientId);
                 }
             }
         }
@@ -77,20 +76,19 @@ public class SecurityUserDetails extends User implements UserDetails {
     }
 
     private void insertClientAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
-            List<Client> clients) {
-        for (Client client : clients) {
-            String authorityTitle = authority.getTitle()
-                    .replace(serviceManager.getAuthorityService().getClientAuthoritySuffix(), "");
+            int clientId) {
+        String authorityTitle = authority.getTitle()
+                .replace(serviceManager.getAuthorityService().getClientAuthoritySuffix(), "");
 
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
-            if (!userAuthorities.contains(simpleGrantedAuthority)) {
-                userAuthorities.add(simpleGrantedAuthority);
-            }
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                    authorityTitle + "_CLIENT_" + client.getId());
-            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                userAuthorities.add(simpleGrantedAuthorityWithId);
-            }
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
+        if (!userAuthorities.contains(simpleGrantedAuthority)) {
+            userAuthorities.add(simpleGrantedAuthority);
+        }
+
+        SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+                authorityTitle + "_CLIENT_" + clientId);
+        if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
+            userAuthorities.add(simpleGrantedAuthorityWithId);
         }
     }
 
@@ -136,5 +134,15 @@ public class SecurityUserDetails extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return super.isActive();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return super.equals(object);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
