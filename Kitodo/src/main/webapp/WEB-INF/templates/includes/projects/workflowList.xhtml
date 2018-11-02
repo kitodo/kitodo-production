@@ -45,17 +45,18 @@
             <h:outputText>
                 <h:form>
                     <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editWorkflow')}">
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}">
+                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <i class="fa fa-clone fa-lg"/>
                     </h:commandLink>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
-                                   rendered="#{SecurityAccessController.hasAuthorityForClient('deleteWorkflow')}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
                                    update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>

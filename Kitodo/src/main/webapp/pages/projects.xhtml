@@ -20,24 +20,24 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
-                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
+                rendered="#{SecurityAccessController.hasAnyAuthorityForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addProject')}"/>
+                            rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
                             id="newTemplateButton" immediate="true" style="width: inherit;"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addTemplate')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
                         immediate="true" icon="ui-icon-plusthick"
-                        rendered="#{SecurityAccessController.hasAuthorityForClient('addWorkflow')}"/>
+                        rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
                             id="newDocketButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addDocket')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addRuleset')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>

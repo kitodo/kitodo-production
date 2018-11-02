@@ -71,17 +71,6 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if the current user has any of the specified authorities globally.
-     *
-     * @param authorityTitles
-     *            The authority title.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean hasAnyAuthorityGlobal(String authorityTitles) {
-        return securityAccessService.hasAnyAuthorityGlobal(authorityTitles);
-    }
-
-    /**
      * Check if the current user has any of the specified authorities for client.
      *
      * @param authorityTitles
@@ -93,7 +82,241 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if the current user has the authority to edit the user.
+     * Check if the current user has the authority to add the batch.
+     *
+     * @return true if the current user has the authority to add the batch
+     */
+    public boolean hasAuthorityToAddBatch() {
+        return securityAccessService.hasAuthorityToAddBatch();
+    }
+
+    /**
+     * Check if the current user has the authority to add the process.
+     *
+     * @return true if the current user has the authority to add the process
+     */
+    public boolean hasAuthorityToAddProcess() {
+        return securityAccessService.hasAuthorityToAddProcess();
+    }
+
+    /**
+     * Check if the current user has the authority to add the project.
+     *
+     * @return true if the current user has the authority to add the project
+     */
+    public boolean hasAuthorityToAddProject() {
+        return securityAccessService.hasAuthorityToAddProject();
+    }
+
+    /**
+     * Check if the current user has the authority to add the template.
+     *
+     * @return true if the current user has the authority to add the template
+     */
+    public boolean hasAuthorityToAddTemplate() {
+        return securityAccessService.hasAuthorityToAddTemplate();
+    }
+
+    /**
+     * Check if the current user has the authority to add the workflow.
+     *
+     * @return true if the current user has the authority to add the workflow
+     */
+    public boolean hasAuthorityToAddWorkflow() {
+        return securityAccessService.hasAuthorityToAddWorkflow();
+    }
+
+    /**
+     * Checks if the current user has the authority to add the docket.
+     *
+     * @return true if the current user has the authority to add the docket
+     */
+    public boolean hasAuthorityToAddDocket() {
+        return securityAccessService.hasAuthorityToAddDocket();
+    }
+
+    /**
+     * Check if the current user has the authority to add the ruleset.
+     *
+     * @return true if the current user has the authority to add the ruleset
+     */
+    public boolean hasAuthorityToAddRuleset() {
+        return securityAccessService.hasAuthorityToAddRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to add the user.
+     *
+     * @return True if the current user has the authority to add the user
+     */
+    public boolean hasAuthorityToAddUser() {
+        return securityAccessService.hasAuthorityToAddUser();
+    }
+
+    /**
+     * Check if the current user has the authority to add the role.
+     *
+     * @return true if the current user has the authority to add the role
+     */
+    public boolean hasAuthorityToAddRole() {
+        return securityAccessService.hasAuthorityToAddRole();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the batch.
+     *
+     * @return true if the current user has the authority to delete the batch
+     */
+    public boolean hasAuthorityToDeleteBatch() {
+        return securityAccessService.hasAuthorityToDeleteBatch();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the process.
+     *
+     * @return true if the current user has the authority to delete the process
+     */
+    public boolean hasAuthorityToDeleteProcess() {
+        return securityAccessService.hasAuthorityToDeleteProcess();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the project.
+     *
+     * @return true if the current user has the authority to delete the project
+     */
+    public boolean hasAuthorityToDeleteProject() {
+        return securityAccessService.hasAuthorityToDeleteProject();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the template.
+     *
+     * @return true if the current user has the authority to delete the template
+     */
+    public boolean hasAuthorityToDeleteTemplate() {
+        return securityAccessService.hasAuthorityToDeleteTemplate();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the workflow.
+     *
+     * @return true if the current user has the authority to edit the workflow
+     */
+    public boolean hasAuthorityToDeleteWorkflow() {
+        return securityAccessService.hasAuthorityToDeleteWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the docket.
+     *
+     * @return true if the current user has the authority to delete the docket
+     */
+    public boolean hasAuthorityToDeleteDocket() {
+        return securityAccessService.hasAuthorityToDeleteDocket();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the ruleset.
+     *
+     * @return true if the current user has the authority to delete the ruleset
+     */
+    public boolean hasAuthorityToDeleteRuleset() {
+        return securityAccessService.hasAuthorityToDeleteRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the user.
+     *
+     * @return true if the current user has the authority to delete the user
+     */
+    public boolean hasAuthorityToDeleteUser() {
+        return securityAccessService.hasAuthorityToDeleteUser();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the role.
+     *
+     * @return true if the current user has the authority to delete the role
+     */
+    public boolean hasAuthorityToDeleteRole() {
+        return securityAccessService.hasAuthorityToDeleteRole();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask() {
+        return securityAccessService.hasAuthorityToEditTask();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the batch.
+     *
+     * @return true if the current user has the authority to edit the batch
+     */
+    public boolean hasAuthorityToEditBatch() {
+        return securityAccessService.hasAuthorityToEditBatch();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess() {
+        return securityAccessService.hasAuthorityToEditProcess();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject() {
+        return securityAccessService.hasAuthorityToEditProject();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the template.
+     *
+     * @return true if the current user has the authority to edit the template
+     */
+    public boolean hasAuthorityToEditTemplate() {
+        return securityAccessService.hasAuthorityToEditTemplate();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the workflow.
+     *
+     * @return true if the current user has the authority to edit the workflow
+     */
+    public boolean hasAuthorityToEditWorkflow() {
+        return securityAccessService.hasAuthorityToEditWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the docket.
+     *
+     * @return true if the current user has the authority to edit the docket
+     */
+    public boolean hasAuthorityToEditDocket() {
+        return securityAccessService.hasAuthorityToEditDocket();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the ruleset.
+     *
+     * @return true if the current user has the authority to edit the ruleset
+     */
+    public boolean hasAuthorityToEditRuleset() {
+        return securityAccessService.hasAuthorityToEditRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the user.
      *
      * @return True if the current user has the authority to edit the user
      */
@@ -108,6 +331,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToEditRole() {
         return securityAccessService.hasAuthorityToEditRole();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the index.
+     *
+     * @return true if the current user has the authority to edit the index
+     */
+    public boolean hasAuthorityToEditIndex() {
+        return securityAccessService.hasAuthorityToEditIndex();
     }
 
     /**

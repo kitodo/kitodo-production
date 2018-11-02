@@ -189,12 +189,237 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has the authority to view the user.
+     * Check if the current user has the authority to add the batch.
      *
-     * @return true if the current user has the authority to view the user
+     * @return true if the current user has the authority to add the batch
      */
-    public boolean hasAuthorityToViewUser() {
-        return hasAuthorityGlobalOrForClient("viewUser");
+    public boolean hasAuthorityToAddBatch() {
+        return hasAuthorityForClient("addBatch");
+    }
+
+    /**
+     * Check if the current user has the authority to add the process.
+     *
+     * @return true if the current user has the authority to add the process
+     */
+    public boolean hasAuthorityToAddProcess() {
+        return hasAuthorityForClient("addProcess");
+    }
+
+    /**
+     * Check if the current user has the authority to add the project.
+     *
+     * @return true if the current user has the authority to add the project
+     */
+    public boolean hasAuthorityToAddProject() {
+        return hasAuthorityForClient("addProject");
+    }
+
+    /**
+     * Check if the current user has the authority to add the template.
+     *
+     * @return true if the current user has the authority to add the template
+     */
+    public boolean hasAuthorityToAddTemplate() {
+        return hasAuthorityForClient("addTemplate");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the workflow.
+     *
+     * @return true if the current user has the authority to edit the workflow
+     */
+    public boolean hasAuthorityToAddWorkflow() {
+        return hasAuthorityForClient("addWorkflow");
+    }
+
+    /**
+     * Check if the current user has the authority to add the docket.
+     *
+     * @return true if the current user has the authority to add the docket
+     */
+    public boolean hasAuthorityToAddDocket() {
+        return hasAuthorityForClient("addDocket");
+    }
+
+    /**
+     * Check if the current user has the authority to add the ruleset.
+     *
+     * @return true if the current user has the authority to add the ruleset
+     */
+    public boolean hasAuthorityToAddRuleset() {
+        return hasAuthorityForClient("addRuleset");
+    }
+
+    /**
+     * Check if the current user has the authority to add the user.
+     *
+     * @return true if the current user has the authority to add the user
+     */
+    public boolean hasAuthorityToAddUser() {
+        return hasAuthorityGlobalOrForClient("addUser");
+    }
+
+    /**
+     * Check if the current user has the authority to add the role.
+     *
+     * @return true if the current user has the authority to add the role
+     */
+    public boolean hasAuthorityToAddRole() {
+        return hasAuthorityGlobalOrForClient("addRole");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the batch.
+     *
+     * @return true if the current user has the authority to delete the batch
+     */
+    public boolean hasAuthorityToDeleteBatch() {
+        return hasAuthorityForClient("deleteBatch");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the process.
+     *
+     * @return true if the current user has the authority to delete the process
+     */
+    public boolean hasAuthorityToDeleteProcess() {
+        return hasAuthorityForClient("deleteProcess");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the project.
+     *
+     * @return true if the current user has the authority to delete the project
+     */
+    public boolean hasAuthorityToDeleteProject() {
+        return hasAuthorityForClient("deleteProject");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the template.
+     *
+     * @return true if the current user has the authority to delete the template
+     */
+    public boolean hasAuthorityToDeleteTemplate() {
+        return hasAuthorityForClient("deleteTemplate");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the workflow.
+     *
+     * @return true if the current user has the authority to edit the workflow
+     */
+    public boolean hasAuthorityToDeleteWorkflow() {
+        return hasAuthorityForClient("deleteWorkflow");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the docket.
+     *
+     * @return true if the current user has the authority to delete the docket
+     */
+    public boolean hasAuthorityToDeleteDocket() {
+        return hasAuthorityForClient("deleteDocket");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the ruleset.
+     *
+     * @return true if the current user has the authority to delete the ruleset
+     */
+    public boolean hasAuthorityToDeleteRuleset() {
+        return hasAuthorityForClient("deleteRuleset");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the user.
+     *
+     * @return true if the current user has the authority to delete the user
+     */
+    public boolean hasAuthorityToDeleteUser() {
+        return hasAuthorityGlobalOrForClient("deleteUser");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the role.
+     *
+     * @return true if the current user has the authority to delete the role
+     */
+    public boolean hasAuthorityToDeleteRole() {
+        return hasAuthorityGlobalOrForClient("deleteRole");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the task.
+     *
+     * @return true if the current user has the authority to edit the task
+     */
+    public boolean hasAuthorityToEditTask() {
+        return hasAuthorityForClient("editTask");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the batch.
+     *
+     * @return true if the current user has the authority to edit the batch
+     */
+    public boolean hasAuthorityToEditBatch() {
+        return hasAuthorityForClient("editBatch");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process.
+     *
+     * @return true if the current user has the authority to edit the process
+     */
+    public boolean hasAuthorityToEditProcess() {
+        return hasAuthorityForClient("editProcess");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the project.
+     *
+     * @return true if the current user has the authority to edit the project
+     */
+    public boolean hasAuthorityToEditProject() {
+        return hasAuthorityForClient("editProject");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the template.
+     *
+     * @return true if the current user has the authority to edit the template
+     */
+    public boolean hasAuthorityToEditTemplate() {
+        return hasAuthorityForClient("editTemplate");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the workflow.
+     *
+     * @return true if the current user has the authority to edit the workflow
+     */
+    public boolean hasAuthorityToEditWorkflow() {
+        return hasAuthorityForClient("editWorkflow");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the docket.
+     *
+     * @return true if the current user has the authority to edit the docket
+     */
+    public boolean hasAuthorityToEditDocket() {
+        return hasAuthorityForClient("editDocket");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the ruleset.
+     *
+     * @return true if the current user has the authority to edit the ruleset
+     */
+    public boolean hasAuthorityToEditRuleset() {
+        return hasAuthorityForClient("editRuleset");
     }
 
     /**
@@ -213,6 +438,24 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToEditRole() {
         return hasAuthorityGlobalOrForClient("editRole");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the index.
+     *
+     * @return true if the current user has the authority to edit the index
+     */
+    public boolean hasAuthorityToEditIndex() {
+        return hasAuthorityGlobal("editIndex");
+    }
+
+    /**
+     * Check if the current user has the authority to view the user.
+     *
+     * @return true if the current user has the authority to view the user
+     */
+    public boolean hasAuthorityToViewUser() {
+        return hasAuthorityGlobalOrForClient("viewUser");
     }
 
     /**

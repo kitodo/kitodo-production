@@ -27,10 +27,10 @@
                           iconPos="right"
                           styleClass="callto">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addUser')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddUser()}"
                             action="#{UserForm.newUser}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addRole')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
                             action="#{RoleForm.newRole}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityGlobal('addClient')}"
