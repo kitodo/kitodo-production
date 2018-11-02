@@ -93,29 +93,21 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if the current user has the authority to edit the user with the
-     * specified id.
+     * Checks if the current user has the authority to edit the user.
      *
-     * @param userId
-     *            The user id.
-     * @return True if the current user has the authority to edit the user with the
-     *         specified id.
+     * @return True if the current user has the authority to edit the user
      */
-    public boolean hasAuthorityToEditUser(int userId) {
-        return securityAccessService.hasAuthorityToEditUser(userId);
+    public boolean hasAuthorityToEditUser() {
+        return securityAccessService.hasAuthorityToEditUser();
     }
 
     /**
-     * Check if the current user has the authority to edit the role with the
-     * specified id.
+     * Check if the current user has the authority to edit the role.
      *
-     * @param roleId
-     *            the role id
-     * @return true if the current user has the authority to edit the role with the
-     *         specified id
+     * @return true if the current user has the authority to edit the role
      */
-    public boolean hasAuthorityToEditRole(int roleId) {
-        return securityAccessService.hasAuthorityToEditRole(roleId);
+    public boolean hasAuthorityToEditRole() {
+        return securityAccessService.hasAuthorityToEditRole();
     }
 
     /**

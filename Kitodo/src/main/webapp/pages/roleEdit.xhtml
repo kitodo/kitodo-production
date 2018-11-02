@@ -23,7 +23,7 @@
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole(id)}"/>
+              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
     <ui:param name="isCreateMode"
               value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityGlobalOrForClient('addRole')}"/>
     <ui:param name="isViewMode"

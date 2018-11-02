@@ -13,7 +13,6 @@ package org.kitodo.services.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.security.SecurityUserDetails;
@@ -190,89 +189,39 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has the authority to view the user with the
-     * specified id.
-     * 
-     * @param userId
-     *            The user id.
-     * @return true if the current user has the authority to view the user with the
-     *         specified id.
+     * Checks if the current user has the authority to view the user.
+     *
+     * @return true if the current user has the authority to view the user
      */
-    public boolean hasAuthorityToViewUser(int userId) {
-        String authorityTitle = "viewUser";
-        if (hasAuthorityGlobal(authorityTitle)) {
-            return true;
-        }
-        return hasAuthorityForUser(authorityTitle, userId);
+    public boolean hasAuthorityToViewUser() {
+        return hasAuthorityGlobalOrForClient("viewUser");
     }
 
     /**
-     * Checks if the current user has the authority to edit the user with the
-     * specified id.
+     * Checks if the current user has the authority to edit the user.
      *
-     * @param userId
-     *            The user id.
-     * @return true if the current user has the authority to edit the user with the
-     *         specified id.
+     * @return true if the current user has the authority to edit the user
      */
-    public boolean hasAuthorityToEditUser(int userId) {
-        String authorityTitle = "editUser";
-        if (hasAuthorityGlobal(authorityTitle)) {
-            return true;
-        }
-        return hasAuthorityForUser(authorityTitle, userId);
-    }
-
-    private boolean hasAuthorityForUser(String authorityTitle, int userId) {
-        if (hasAuthorityForClient(authorityTitle)) {
-            List<Integer> allActiveUserIdsVisibleForCurrentUser = serviceManager.getUserService()
-                    .getAllActiveUserIdsByClientId(serviceManager.getUserService().getSessionClientId());
-            return allActiveUserIdsVisibleForCurrentUser.contains(userId);
-        }
-        return false;
+    public boolean hasAuthorityToEditUser() {
+        return hasAuthorityGlobalOrForClient("editUser");
     }
 
     /**
-     * Checks if the current user has the authority to edit the role with the
-     * specified id.
+     * Checks if the current user has the authority to edit the role.
      *
-     * @param roleId
-     *            the role id
-     * @return true if the current user has the authority to edit the role with the
-     *         specified id.
+     * @return true if the current user has the authority to edit the role
      */
-    public boolean hasAuthorityToEditRole(int roleId) {
-        String authorityTitle = "editRole";
-        if (hasAuthorityGlobal(authorityTitle)) {
-            return true;
-        }
-        return hasAuthorityForRole(authorityTitle, roleId);
+    public boolean hasAuthorityToEditRole() {
+        return hasAuthorityGlobalOrForClient("editRole");
     }
 
     /**
-     * Checks if the current user has the authority to view the role with the
-     * specified id.
+     * Checks if the current user has the authority to view the role.
      *
-     * @param roleId
-     *            the role id
-     * @return true if the current user has the authority to view the role with the
-     *         specified id.
+     * @return true if the current user has the authority to view the role
      */
-    public boolean hasAuthorityToViewRole(int roleId) {
-        String authorityTitle = "viewRole";
-        if (hasAuthorityGlobal(authorityTitle)) {
-            return true;
-        }
-        return hasAuthorityForRole(authorityTitle, roleId);
-    }
-
-    private boolean hasAuthorityForRole(String authorityTitle, int userId) {
-        if (hasAuthorityForClient(authorityTitle)) {
-            List<Integer> allActiveUserGroupIdsVisibleForCurrentUser = serviceManager.getRoleService()
-                    .getAllRolesIdsByClientId();
-            return allActiveUserGroupIdsVisibleForCurrentUser.contains(userId);
-        }
-        return false;
+    public boolean hasAuthorityToViewRole() {
+        return hasAuthorityGlobalOrForClient("viewRole");
     }
 
     /**
@@ -376,8 +325,8 @@ public class SecurityAccessService {
     }
 
     /**
-     * Check if current user has authority to view LDAP group list. It returns true if
-     * user has "viewAllLdapGroups" authority for client.
+     * Check if current user has authority to view LDAP group list. It returns true
+     * if user has "viewAllLdapGroups" authority for client.
      *
      * @return true if user has authority 'viewAllLdapGroups' globally
      */
@@ -386,8 +335,8 @@ public class SecurityAccessService {
     }
 
     /**
-     * Check if current user has authority to view LDAP server list. It returns true if
-     * user has "viewAllLdapServers" authority for client.
+     * Check if current user has authority to view LDAP server list. It returns true
+     * if user has "viewAllLdapServers" authority for client.
      *
      * @return true if user has authority 'viewAllLdapServers' globally
      */

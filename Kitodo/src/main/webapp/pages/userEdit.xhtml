@@ -23,7 +23,7 @@
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser(id)}"/>
+              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
     <ui:param name="isCreateMode"
               value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityGlobalOrForClient('addUser')}"/>
     <ui:param name="isViewMode"
