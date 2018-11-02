@@ -47,23 +47,23 @@
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllProjects')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templates}" id="templateTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllTemplates')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewTemplateList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.workflows}" id="workflowTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllWorkflows')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewWorkflowList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.dockets}" id="docketTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllDockets')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewDocketList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllRulesets')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
         </p:tabView>

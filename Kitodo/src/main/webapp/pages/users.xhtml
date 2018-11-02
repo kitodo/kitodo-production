@@ -49,23 +49,23 @@
         <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView">
             <p:ajax event="tabChange" listener="#{UserForm.onTabChange}"/>
             <p:tab title="#{msgs.users}"
-                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllUsers')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewUserList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.roles}"
-                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllRoles')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewRoleList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/roleList.xhtml"/>
             </p:tab>
             <p:tab id="clientsTab" title="#{msgs.clients}"
-                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllClients')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewClientList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
             <p:tab title="#{msgs.ldapGroups}"
-                   rendered="#{SecurityAccessController.hasAuthorityGlobal('viewAllLdapGroups')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewLdapGroupList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.ldapServers}"
-                   rendered="#{SecurityAccessController.hasAuthorityGlobal('viewAllLdapServers')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewLdapServerList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
         </p:tabView>

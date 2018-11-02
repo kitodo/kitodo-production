@@ -274,4 +274,124 @@ public class SecurityAccessService {
         }
         return false;
     }
+
+    /**
+     * Check if current user has authority to view batch list. It returns true if
+     * user has "viewAllBatches" authority for client.
+     *
+     * @return true if user has authority 'viewAllBatches' for client
+     */
+    public boolean hasAuthorityToViewBatchList() {
+        return hasAuthorityForClient("viewAllBatches");
+    }
+
+    /**
+     * Check if current user has authority to view process list. It returns true if
+     * user has "viewAllProcesses" authority for client.
+     *
+     * @return true if user has authority 'viewAllProcesses' for client
+     */
+    public boolean hasAuthorityToViewProcessList() {
+        return hasAuthorityForClient("viewAllProcesses");
+    }
+
+    /**
+     * Check if current user has authority to view project list. It returns true if
+     * user has "viewAllProjects" authority for client.
+     *
+     * @return true if user has authority 'viewAllProjects' for client
+     */
+    public boolean hasAuthorityToViewProjectList() {
+        return hasAuthorityForClient("viewAllProjects");
+    }
+
+    /**
+     * Check if current user has authority to view template list. It returns true if
+     * user has "viewAllTemplates" authority for client.
+     *
+     * @return true if user has authority 'viewAllTemplates' for client
+     */
+    public boolean hasAuthorityToViewTemplateList() {
+        return hasAuthorityForClient("viewAllTemplates");
+    }
+
+    /**
+     * Check if current user has authority to view workflow list. It returns true if
+     * user has "viewAllWorkflows" authority for client.
+     *
+     * @return true if user has authority 'viewAllWorkflows' for client
+     */
+    public boolean hasAuthorityToViewWorkflowList() {
+        return hasAuthorityForClient("viewAllWorkflows");
+    }
+
+    /**
+     * Check if current user has authority to view docket list. It returns true if
+     * user has "viewAllDockets" authority for client.
+     *
+     * @return true if user has authority 'viewAllDockets' for client
+     */
+    public boolean hasAuthorityToViewDocketList() {
+        return hasAuthorityForClient("viewAllDockets");
+    }
+
+    /**
+     * Check if current user has authority to view ruleset list. It returns true if
+     * user has "viewAllRulesets" authority for client.
+     *
+     * @return true if user has authority 'viewAllRulesets' for client
+     */
+    public boolean hasAuthorityToViewRulesetList() {
+        return hasAuthorityForClient("viewAllRulesets");
+    }
+
+    /**
+     * Check if current user has authority to view user list. It returns true if
+     * user has "viewAllUsers" authority for client.
+     *
+     * @return true if user has authority 'viewAllUsers' globally or for client
+     */
+    public boolean hasAuthorityToViewUserList() {
+        return hasAuthorityGlobalOrForClient("viewAllUsers");
+    }
+
+    /**
+     * Check if current user has authority to view role list. It returns true if
+     * user has "viewAllRoles" authority for client.
+     *
+     * @return true if user has authority 'viewAllRoles' globally or for client
+     */
+    public boolean hasAuthorityToViewRoleList() {
+        return hasAuthorityGlobalOrForClient("viewAllRoles");
+    }
+
+    /**
+     * Check if current user has authority to view client list. It returns true if
+     * user has "viewAllClients" authority for client.
+     *
+     * @return true if user has authority 'viewAllClients' globally or for client
+     */
+    public boolean hasAuthorityToViewClientList() {
+        return hasAuthorityGlobalOrForClient("viewAllClients");
+    }
+
+    /**
+     * Check if current user has authority to view LDAP group list. It returns true if
+     * user has "viewAllLdapGroups" authority for client.
+     *
+     * @return true if user has authority 'viewAllLdapGroups' globally
+     */
+    public boolean hasAuthorityToViewLdapGroupList() {
+        return hasAuthorityGlobal("viewAllLdapGroups");
+    }
+
+    /**
+     * Check if current user has authority to view LDAP server list. It returns true if
+     * user has "viewAllLdapServers" authority for client.
+     *
+     * @return true if user has authority 'viewAllLdapServers' globally
+     */
+    public boolean hasAuthorityToViewLdapServerList() {
+        return hasAuthorityForClient("viewAllLdapServers");
+    }
 }
