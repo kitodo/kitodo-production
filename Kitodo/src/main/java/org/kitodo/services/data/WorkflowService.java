@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,6 +69,12 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     @Override
     public List<Workflow> getAllNotIndexed() {
         return getByQuery("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Workflow> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
     }
 
     @Override

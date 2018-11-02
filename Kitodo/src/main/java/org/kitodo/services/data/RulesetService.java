@@ -100,6 +100,12 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         return getByQuery("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
+    @Override
+    public List<Ruleset> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
+    }
+
     /**
      * Get list of rulesets for given title.
      *

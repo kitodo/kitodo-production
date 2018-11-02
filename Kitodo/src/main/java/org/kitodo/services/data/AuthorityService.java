@@ -18,7 +18,6 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -121,20 +120,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @param authority
      *            object
      */
+    @Override
     public void refresh(Authority authority) {
         dao.refresh(authority);
-    }
-
-    /**
-     * Find authorities by id of role.
-     *
-     * @param id
-     *            of role
-     * @return list of JSON objects with authorities for specific role id
-     */
-    List<JsonObject> findByRoleId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery(AuthorityTypeField.ROLES + ".id", id, true);
-        return searcher.findDocuments(query.toString());
     }
 
     @Override
@@ -150,6 +138,11 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     @Override
     public List<Authority> getAllNotIndexed() {
         return getByQuery("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Authority> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -181,6 +174,17 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
                 serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
+    }
+
+    /**
+     * Get authority by title.
+     * 
+     * @param title
+     *            of the searched authority
+     * @return matching authority
+     */
+    public Authority getByTitle(String title) throws DAOException {
+        return dao.getByTitle(title);
     }
 
     /**

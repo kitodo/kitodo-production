@@ -36,7 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String CLIENT_ANY = "CLIENT_ANY";
     private static final String CLIENT = "CLIENT";
     private static final String GLOBAL = "GLOBAL";
-    private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
     private static final String EDIT_CLIENT = "editClient_";
     private static final String EDIT_DOCKET = "editDocket_";
     private static final String EDIT_RULESET = "editRuleset_";
@@ -98,12 +97,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // edit...... Authority to change and save entities at edit page
         http.authorizeRequests()
             .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_CLIENT + GLOBAL,
                 EDIT_CLIENT + CLIENT_ANY)
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 "editIndex_" + GLOBAL,
                 "viewIndex_" + GLOBAL)
 
@@ -147,7 +144,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_TASKS + CLIENT_ANY)
 
             .antMatchers("/pages/users.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 VIEW_ALL_USERS + GLOBAL,
                 VIEW_ALL_USERS + CLIENT_ANY,
                 VIEW_ALL_ROLES + GLOBAL,
@@ -155,21 +151,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "viewAllClients_" + GLOBAL,
                 "viewAllLdapGroups_" + GLOBAL)
             .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_USER + GLOBAL,
                 EDIT_USER + CLIENT_ANY,
                 VIEW_USER + GLOBAL,
                 VIEW_USER + CLIENT_ANY)
 
             .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_ROLE + GLOBAL,
                 EDIT_ROLE + CLIENT_ANY,
                 VIEW_ROLE + GLOBAL,
                 VIEW_ROLE + CLIENT_ANY)
 
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 "editLdapGroup_" + GLOBAL,
                 "viewLdapGroup_" + GLOBAL)
 

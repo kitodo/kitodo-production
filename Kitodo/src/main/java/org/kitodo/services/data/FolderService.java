@@ -11,6 +11,8 @@
 
 package org.kitodo.services.data;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FolderDAO;
@@ -28,5 +30,10 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Process");
+    }
+
+    @Override
+    public List<Folder> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
     }
 }

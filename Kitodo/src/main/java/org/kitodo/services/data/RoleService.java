@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -118,7 +119,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return findAll(sort, offset, size, true);
         }
         if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
@@ -140,6 +141,12 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     @Override
     public List<Role> getAllNotIndexed() {
         return getByQuery("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Role> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
     }
 
     /**

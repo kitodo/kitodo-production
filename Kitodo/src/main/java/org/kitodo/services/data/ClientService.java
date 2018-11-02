@@ -18,7 +18,6 @@ import java.util.Objects;
 import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
@@ -77,6 +76,11 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     @Override
     public List<Client> getAllNotIndexed() {
         return getByQuery("FROM Client WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Client> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

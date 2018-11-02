@@ -20,7 +20,7 @@
             <td>#{objectType.translationPlural}</td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
-                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editIndex')}"
+                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexing(objectType)}"
@@ -29,7 +29,7 @@
             </td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
-                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editIndex')}"
+                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexingRemaining(objectType)}"

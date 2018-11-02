@@ -20,26 +20,26 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
         <h:form id="newElementForm"
-                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForClient('addUser, addRole, addClient, addLdapGroup, addLdapServer')}">
+                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('addUser, addRole, addClient, addLdapGroup, addLdapServer')}">
             <p:menuButton value="#{msgs.newElement}"
                           id="newElementButton"
                           icon="fa fa-plus-circle fa-lg"
                           iconPos="right"
                           styleClass="callto">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addUser')}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addUser')}"
                             action="#{UserForm.newUser}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addRole')}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addRole')}"
                             action="#{RoleForm.newRole}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addClient')}"
                             action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupForm.newLdapGroup}"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapServer')}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
@@ -49,23 +49,23 @@
         <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView">
             <p:ajax event="tabChange" listener="#{UserForm.onTabChange}"/>
             <p:tab title="#{msgs.users}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllUsers')}">
+                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllUsers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.roles}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllRoles')}">
+                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllRoles')}">
                 <ui:include src="/WEB-INF/templates/includes/users/roleList.xhtml"/>
             </p:tab>
             <p:tab id="clientsTab" title="#{msgs.clients}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewAllClients')}">
+                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewAllClients')}">
                 <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
             <p:tab title="#{msgs.ldapGroups}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">
+                   rendered="#{SecurityAccessController.hasAuthorityGlobal('viewAllLdapGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.ldapServers}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapServers')}">
+                   rendered="#{SecurityAccessController.hasAuthorityGlobal('viewAllLdapServers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
         </p:tabView>

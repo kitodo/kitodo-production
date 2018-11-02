@@ -89,6 +89,8 @@ public class MockDatabase {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
+    private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
+    private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
@@ -119,7 +121,7 @@ public class MockDatabase {
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         indexRestClient = initializeIndexRestClient();
 
-        Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
+        Map settingsMap = prepareNodeSettings(port, nodeName);
         Settings settings = Settings.builder().put(settingsMap).build();
 
         removeOldDataDirectories("target/" + nodeName);
@@ -203,7 +205,7 @@ public class MockDatabase {
     }
 
     private static class ExtendedNode extends Node {
-        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
+        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
         }
     }
@@ -237,7 +239,7 @@ public class MockDatabase {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map prepareNodeSettings(String httpPort, String httpTransportPort, String nodeName) {
+    private static Map prepareNodeSettings(String httpPort, String nodeName) {
         Map settingsMap = new HashMap();
         settingsMap.put("node.name", nodeName);
         // create all data directories under Maven build directory
@@ -248,141 +250,159 @@ public class MockDatabase {
         // set ports used by Elastic Search to something different than default
         settingsMap.put("http.type", "netty4");
         settingsMap.put("http.port", httpPort);
-        settingsMap.put("transport.tcp.port", httpTransportPort);
+        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
         settingsMap.put("transport.type", "netty4");
         // disable automatic index creation
         settingsMap.put("action.auto_create_index", "false");
         return settingsMap;
     }
 
-
     private static void insertAuthorities() throws DataException {
-        String globalAssignableAuthoritySuffix = "_globalAssignable";
-        String clientAssignableAuthoritySuffix = "_clientAssignable";
         List<Authority> authorities = new ArrayList<>();
 
-        authorities.add(new Authority("admin" + globalAssignableAuthoritySuffix));
+        // Client
+        authorities.add(new Authority("viewAllClients" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addClient" + GLOBAL_ASSIGNABLE));
 
-        //Client
-        authorities.add(new Authority("viewAllClients" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addClient" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewClient" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editClient" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewClient" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editClient" + CLIENT_ASSIGNABLE));
 
-        //Project
-        authorities.add(new Authority("viewProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProjects" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProject" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProjects" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProject" + clientAssignableAuthoritySuffix));
-
-        //Template
-        authorities.add(new Authority("viewTemplate" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTemplates" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTemplate" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTemplate" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTemplate" + clientAssignableAuthoritySuffix));
-
-        //Workflow
-        authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
-
-        //Docket
-        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
-
-        //Ruleset
-        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
-
-        //process
-        authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + globalAssignableAuthoritySuffix));
-
-        authorities.add(new Authority("editProcessMetaData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + globalAssignableAuthoritySuffix));
-
-        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
-
-        authorities.add(new Authority("editProcessMetaData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages" + clientAssignableAuthoritySuffix));
-
-        //Task
-        authorities.add(new Authority("viewAllTasks" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTasks" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewIndex" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editIndex" + GLOBAL_ASSIGNABLE));
 
         //Role
-        authorities.add(new Authority("viewAllRoles" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewRole" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRole" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRole" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRole" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewRole" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllRoles" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRole" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRole" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRole" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllRoles" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteRole" + GLOBAL_ASSIGNABLE));
 
-        //User
-        authorities.add(new Authority("viewAllUsers" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUser" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUsers" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllRoles" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addRole" + CLIENT_ASSIGNABLE));
+
+        // User
+        authorities.add(new Authority("viewAllUsers" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteUser" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("viewUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllUsers" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addUser" + CLIENT_ASSIGNABLE));
+
+        // LDAP Group
+        authorities.add(new Authority("viewAllLdapGroups" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteLdapGroup" + GLOBAL_ASSIGNABLE));
+
+        // Project
+        authorities.add(new Authority("viewProject" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewAllProjects" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editProject" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteProject" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addProject" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("viewProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllProjects" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addProject" + CLIENT_ASSIGNABLE));
+
+        // Template
+        authorities.add(new Authority("viewTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllTemplates" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addTemplate" + CLIENT_ASSIGNABLE));
+
+        // Workflow
+        authorities.add(new Authority("viewWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllWorkflows" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addWorkflow" + CLIENT_ASSIGNABLE));
+
+        // Docket
+        authorities.add(new Authority("viewDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllDockets" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addDocket" + CLIENT_ASSIGNABLE));
+
+        // Ruleset
+        authorities.add(new Authority("viewRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllRulesets" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
+
+        // Process
+        authorities.add(new Authority("viewAllProcesses" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewProcess" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addProcess" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editProcess" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("editProcessMetaData" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editProcessStructureData" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editProcessPagination" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editProcessImages" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessMetaData" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessStructureData" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessPagination" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessImages" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteProcess" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllProcesses" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addProcess" + CLIENT_ASSIGNABLE));
+
+        authorities.add(new Authority("editProcessMetaData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessStructureData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessPagination" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessImages" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessStructureData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessPagination" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessImages" + CLIENT_ASSIGNABLE));
+
+        // Batch
+        authorities.add(new Authority("viewAllBatches" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewBatch" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addBatch" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editBatch" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteBatch" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("viewBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllBatches" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addBatch" + CLIENT_ASSIGNABLE));
+
+        // Task
+        authorities.add(new Authority("viewAllTasks" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewTask" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addTask" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editTask" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteTask" + GLOBAL_ASSIGNABLE));
+
+        authorities.add(new Authority("viewTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllTasks" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addTask" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
@@ -1119,6 +1139,9 @@ public class MockDatabase {
         Client secondClient = serviceManager.getClientService().getById(2);
 
         Role adminRole = serviceManager.getRoleService().getById(1);
+        Role generalRole = serviceManager.getRoleService().getById(2);
+        Role projectRole = serviceManager.getRoleService().getById(3);
+        Role withoutAuthoritiesRole = serviceManager.getRoleService().getById(4);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1131,6 +1154,7 @@ public class MockDatabase {
         firstUser.setLanguage("de");
         firstUser.setMetadataLanguage("de");
         firstUser.getRoles().add(adminRole);
+        firstUser.getRoles().add(generalRole);
         firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
@@ -1143,7 +1167,7 @@ public class MockDatabase {
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getRoles().add(serviceManager.getRoleService().getById(2));
+        secondUser.getRoles().add(projectRole);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
@@ -1168,7 +1192,7 @@ public class MockDatabase {
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
-        fourthUser.getRoles().add(serviceManager.getRoleService().getById(3));
+        fourthUser.getRoles().add(withoutAuthoritiesRole);
         serviceManager.getUserService().save(fourthUser);
 
         User fifthUser = new User();
@@ -1190,36 +1214,49 @@ public class MockDatabase {
         Role firstRole = new Role();
         firstRole.setTitle("Admin");
         firstRole.setClient(client);
-        firstRole.setAuthorities(allAuthorities);
+
+        // insert administration authorities
+        for (int i = 0; i < 34; i++) {
+            firstRole.getAuthorities().add(allAuthorities.get(i));
+        }
+
         serviceManager.getRoleService().save(firstRole);
 
         Role secondRole = new Role();
-        secondRole.setTitle("Random");
+        secondRole.setTitle("General");
         secondRole.setClient(client);
 
-        List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(serviceManager.getAuthorityService().getById(2));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(10));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(12));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(15));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(16));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(4));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(9));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(14));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(15));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(19));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(20));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(24));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(25));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(29));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(30));
-        secondRole.setAuthorities(userAuthorities);
+        // insert general authorities
+        for (int i = 34; i < allAuthorities.size(); i++) {
+            secondRole.getAuthorities().add(allAuthorities.get(i));
+        }
+
         serviceManager.getRoleService().save(secondRole);
 
         Role thirdRole = new Role();
-        thirdRole.setTitle("Without authorities");
-        thirdRole.setClient(client);
+        thirdRole.setTitle("Random");
+        thirdRole.setClient(serviceManager.getClientService().getById(2));
+
+        // insert authorities for view on projects page
+        List<Authority> userAuthorities = new ArrayList<>();
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewProject" + GLOBAL_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + GLOBAL_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewTemplate" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllTemplates" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewWorkflow" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllWorkflows" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewDocket" + CLIENT_ASSIGNABLE));
+        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
+        thirdRole.setAuthorities(userAuthorities);
+
         serviceManager.getRoleService().save(thirdRole);
+
+        Role fourthUserGroup = new Role();
+        fourthUserGroup.setTitle("Without authorities");
+        fourthUserGroup.setClient(client);
+        serviceManager.getRoleService().save(fourthUserGroup);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1286,8 +1323,8 @@ public class MockDatabase {
     }
 
     /**
-     * Clean database after class. Truncate all tables, reset id sequences and
-     * clear session.
+     * Clean database after class. Truncate all tables, reset id sequences and clear
+     * session.
      */
     public static void cleanDatabase() {
         Session session = HibernateUtil.getSession();
@@ -1320,7 +1357,6 @@ public class MockDatabase {
         session.clear();
         transaction.commit();
     }
-
 
     private static void insertRemovableObjects() throws DataException, DAOException {
         removableObjectIDs = new HashMap<>();
@@ -1359,9 +1395,10 @@ public class MockDatabase {
     }
 
     /**
-     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of removable database objects as values.
-     * @return
-     *      HashMap containing IDs of removable instances of ObjectsTypes
+     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of
+     * removable database objects as values.
+     * 
+     * @return HashMap containing IDs of removable instances of ObjectsTypes
      */
     public static HashMap<String, Integer> getRemovableObjectIDs() {
         if (removableObjectIDs.isEmpty()) {

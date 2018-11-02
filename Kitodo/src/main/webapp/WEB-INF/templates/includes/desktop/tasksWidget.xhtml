@@ -29,7 +29,7 @@
         <p:column headerText="#{msgs.actions}" id="taskActions" styleClass="actionsColumn task-table-column">
             <h:form id="actionForm">
                 <h:link outcome="taskEdit" id="editTask"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editTask')}"
+                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editTask')}"
                         title="#{msgs.detailsDesSchritts}">
                     <f:param name="referer" value="desktop"/>
                     <f:param name="id" value="#{task.id}"/>

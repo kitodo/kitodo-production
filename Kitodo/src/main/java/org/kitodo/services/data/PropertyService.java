@@ -97,6 +97,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         return getByQuery("FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
+    @Override
+    public List<Property> getAllForSelectedClient(int clientId) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Find all distinct titles from workpiece properties.
      *

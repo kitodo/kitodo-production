@@ -60,12 +60,7 @@
                         <a href="#" id="dashboard-menu"><i class="fa fa-th fa-lg"/></a>
                         <ul>
                             <li id="dashboard-menu-header">
-                                <h3>#{msgs.dashboard}
-                                    <h:outputText
-                                        rendered="#{SecurityAccessController.isAdmin()}">
-                                        <i>(Admin)</i>
-                                    </h:outputText>
-                                </h3>
+                                <h3>#{msgs.dashboard}</h3>
                             </li>
 
                             <h:panelGroup
@@ -90,12 +85,12 @@
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobalOrForClient('viewAllUsers, viewAllRoles, viewAllClients, viewAllLdapGroups')}">
+                                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('viewAllUsers, viewAllRoles, viewAllClients, viewAllLdapGroups')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.user}" id="linkUsers" outcome="users"><i
                                     class="fa fa-user fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobal('viewIndex, editIndex')}">
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAnyAuthorityGlobal('viewIndex, editIndex')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.system}" id="linkSystem"
                                                                  outcome="system"><i
                                     class="fa fa-wrench fa-lg"/></h:link></li>
@@ -112,11 +107,9 @@
                         <a href="#" id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></a>
                         <h:form id="logout-form">
                             <ul id="nav-user">
-                                <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}
-                                    <h:outputText rendered="#{SecurityAccessController.isAdmin()}">
-                                        <i>(Admin)</i>
-                                    </h:outputText>
-                                </h3></li>
+                                <li>
+                                    <h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}</h3>
+                                </li>
 
                                 <li>
                                     <div id="sessionClient">

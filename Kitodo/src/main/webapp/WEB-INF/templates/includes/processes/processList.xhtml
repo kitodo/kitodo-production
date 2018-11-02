@@ -34,14 +34,14 @@
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                 <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editProcess')}">
+                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editProcess')}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
 
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editProcessMetaData')}">
+                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editProcessMetaData')}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
@@ -93,7 +93,7 @@
                 </h:commandLink>
 
                 <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteProcess')}"
+                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteProcess')}"
                                update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>

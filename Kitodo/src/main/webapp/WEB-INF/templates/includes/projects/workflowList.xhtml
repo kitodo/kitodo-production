@@ -45,7 +45,7 @@
             <h:outputText>
                 <h:form>
                     <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editWorkflow')}">
+                            rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editWorkflow')}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -55,7 +55,7 @@
                     </h:commandLink>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
-                                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteWorkflow')}"
+                                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteWorkflow')}"
                                    update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>

@@ -79,7 +79,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
         if (Objects.nonNull(authenticatedUser.getSessionClient())) {
             query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-                    authenticatedUser.getSessionClient().getId(), true));
+                authenticatedUser.getSessionClient().getId(), true));
             return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
         }
 
@@ -89,6 +89,12 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     @Override
     public List<Docket> getAllNotIndexed() {
         return getByQuery("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Docket> getAllForSelectedClient(int clientId) {
+        return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
+            Collections.singletonMap("clientId", clientId));
     }
 
     /**

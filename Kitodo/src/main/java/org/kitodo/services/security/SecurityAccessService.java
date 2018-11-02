@@ -154,27 +154,6 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user is admin or has a specified authority globally or
-     * for a client.
-     *
-     * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle) {
-        return isAdmin() || hasAuthorityGlobalOrForClient(authorityTitle);
-    }
-
-    /**
-     * Checks if the current user is admin.
-     * 
-     * @return True if the current user has the admin authority
-     */
-    public boolean isAdmin() {
-        return hasAuthorityGlobal("admin");
-    }
-
-    /**
      * Checks if the current user has a specified authority globally.
      *
      * @param authorityTitle
@@ -205,79 +184,48 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user is admin or has a specified authority globally.
-     *
-     * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user is admin or has the specified authority
-     *         globally.
-     */
-    public boolean isAdminOrHasAuthorityGlobal(String authorityTitle) {
-        return isAdmin() || hasAuthorityGlobal(authorityTitle);
-    }
-
-    /**
-     * Checks if the current user is admin or has any of the specified authorities
-     * globally.
+     * Checks if the current user has any of the specified authorities globally or
+     * for client.
      *
      * @param authorityTitles
      *            The authority titles separated with commas e.g. "authority1,
      *            authority2, authority3".
-     * @return True if the current user is admin or has any of the specified
-     *         authorities globally
+     * @return true if the current user has any of the specified authorities
+     *         globally or for client
      */
-    public boolean isAdminOrHasAnyAuthorityGlobal(String authorityTitles) {
-        return isAdmin() || hasAnyAuthorityGlobal(authorityTitles);
-    }
-
-    /**
-     * Checks if the current user is admin or has any of the specified authorities
-     * globally.
-     *
-     * @param authorityTitles
-     *            The authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return True if the current user is admin or has any of the specified
-     *         authorities globally
-     */
-    public boolean isAdminOrHasAnyAuthorityGlobalOrForClient(String authorityTitles) {
-        return isAdmin() || hasAnyAuthorityGlobal(authorityTitles);
-    }
-
-
     public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles) {
         return hasAnyAuthorityGlobal(authorityTitles) || hasAnyAuthorityForClient(authorityTitles);
     }
 
     /**
-     * Checks if the current user is admin or has the authority to view the user
-     * with the specified id.
+     * Checks if the current user has the authority to view the user with the
+     * specified id.
      * 
      * @param userId
      *            The user id.
-     * @return True if the current user is admin or has the authority to view the
-     *         user with the specified id.
+     * @return true if the current user has the authority to view the user with the
+     *         specified id.
      */
-    public boolean isAdminOrHasAuthorityToViewUser(int userId) {
+    public boolean hasAuthorityToViewUser(int userId) {
         String authorityTitle = "viewUser";
-        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+        if (hasAuthorityGlobal(authorityTitle)) {
             return true;
         }
         return hasAuthorityForUser(authorityTitle, userId);
     }
 
     /**
-     * Checks if the current user is admin or has the authority to edit the user
-     * with the specified id.
+     * Checks if the current user has the authority to edit the user with the
+     * specified id.
      *
      * @param userId
      *            The user id.
-     * @return True if the current user is admin or has the authority to edit the
-     *         user with the specified id.
+     * @return true if the current user has the authority to edit the user with the
+     *         specified id.
      */
-    public boolean isAdminOrHasAuthorityToEditUser(int userId) {
+    public boolean hasAuthorityToEditUser(int userId) {
         String authorityTitle = "editUser";
-        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+        if (hasAuthorityGlobal(authorityTitle)) {
             return true;
         }
         return hasAuthorityForUser(authorityTitle, userId);
@@ -286,41 +234,42 @@ public class SecurityAccessService {
     private boolean hasAuthorityForUser(String authorityTitle, int userId) {
         if (hasAuthorityForClient(authorityTitle)) {
             List<Integer> allActiveUserIdsVisibleForCurrentUser = serviceManager.getUserService()
-                    .getAllActiveUserIdsByClientId(serviceManager.getUserService().getSessionClientOfAuthenticatedUser().getId());
+                    .getAllActiveUserIdsByClientId(
+                        serviceManager.getUserService().getSessionClientOfAuthenticatedUser().getId());
             return allActiveUserIdsVisibleForCurrentUser.contains(userId);
         }
         return false;
     }
 
     /**
-     * Checks if the current user is admin or has the authority to edit the role
-     * with the specified id.
+     * Checks if the current user has the authority to edit the role with the
+     * specified id.
      *
      * @param roleId
      *            the role id
-     * @return True if the current user is admin or has the authority to edit the
-     *         role with the specified id.
+     * @return true if the current user has the authority to edit the role with the
+     *         specified id.
      */
-    public boolean isAdminOrHasAuthorityToEditRole(int roleId) {
+    public boolean hasAuthorityToEditRole(int roleId) {
         String authorityTitle = "editRole";
-        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+        if (hasAuthorityGlobal(authorityTitle)) {
             return true;
         }
         return hasAuthorityForRole(authorityTitle, roleId);
     }
 
     /**
-     * Checks if the current user is admin or has the authority to view the role
-     * with the specified id.
+     * Checks if the current user has the authority to view the role with the
+     * specified id.
      *
      * @param roleId
      *            the role id
-     * @return True if the current user is admin or has the authority to view the
-     *         role with the specified id.
+     * @return true if the current user has the authority to view the role with the
+     *         specified id.
      */
-    public boolean isAdminOrHasAuthorityToViewRole(int roleId) {
+    public boolean hasAuthorityToViewRole(int roleId) {
         String authorityTitle = "viewRole";
-        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+        if (hasAuthorityGlobal(authorityTitle)) {
             return true;
         }
         return hasAuthorityForRole(authorityTitle, roleId);
