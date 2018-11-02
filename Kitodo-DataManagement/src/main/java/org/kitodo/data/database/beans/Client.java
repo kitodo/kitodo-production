@@ -37,6 +37,9 @@ public class Client extends BaseIndexedBean {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.PERSIST)
+    private List<Workflow> workflows;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "clients", cascade = CascadeType.PERSIST)
     private List<User> users;
 
@@ -83,6 +86,29 @@ public class Client extends BaseIndexedBean {
      */
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    /**
+     * Get workflows.
+     *
+     * @return list of Workflow objects
+     */
+    public List<Workflow> getWorkflows() {
+        Hibernate.initialize(this.workflows);
+        if (Objects.isNull(this.workflows)) {
+            this.workflows = new ArrayList<>();
+        }
+        return this.workflows;
+    }
+
+    /**
+     * Set workflows.
+     *
+     * @param workflows
+     *            as List of Workflow objects
+     */
+    public void setWorkflows(List<Workflow> workflows) {
+        this.workflows = workflows;
     }
 
     /**
