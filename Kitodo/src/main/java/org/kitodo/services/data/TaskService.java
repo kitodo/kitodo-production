@@ -63,7 +63,6 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.model.Subfolder;
-import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -148,11 +147,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
 
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            List<JsonObject> processes = serviceManager.getProcessService().findForCurrentSessionClient();
-            query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
-        }
+        List<JsonObject> processes = serviceManager.getProcessService().findForCurrentSessionClient();
+        query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
 
         return query;
     }

@@ -39,7 +39,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.RulesetDTO;
 import org.kitodo.legacy.UghImplementation;
-import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -85,14 +84,9 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public List<RulesetDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-                authenticatedUser.getSessionClient().getId(), true));
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
-        }
-
-        return findAll(sort, offset, size);
+        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
     @Override
@@ -103,7 +97,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public List<Ruleset> getAllForSelectedClient(int clientId) {
         return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", clientId));
     }
 
     /**

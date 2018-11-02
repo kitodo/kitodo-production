@@ -46,7 +46,6 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -234,11 +233,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             Map<String, String> filterMap = (Map<String, String>) filters;
             query.must(readFilters(filterMap));
         }
-
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            query.must(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()));
-        }
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
 
         if (!showInactiveTemplates) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
