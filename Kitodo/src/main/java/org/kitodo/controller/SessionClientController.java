@@ -77,8 +77,10 @@ public class SessionClientController {
      * Display client selection dialog if user is logged in and has multiple clients.
      */
     public void showClientSelectDialog() {
-        if (!Objects.nonNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
+        if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
             PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
+        } else if (userHasOnlyOneClient()) {
+            setSessionClient(getFirstClientOfCurrentUser());
         }
     }
 
