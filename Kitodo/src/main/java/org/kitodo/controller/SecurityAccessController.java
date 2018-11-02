@@ -343,6 +343,96 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to view the process.
+     *
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess() {
+        return securityAccessService.hasAuthorityToViewProcess();
+    }
+
+    /**
+     * Check if the current user has the authority to view the project.
+     *
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject() {
+        return securityAccessService.hasAuthorityToViewProject();
+    }
+
+    /**
+     * Check if the current user has the authority to view the template.
+     *
+     * @return true if the current user has the authority to view the template
+     */
+    public boolean hasAuthorityToViewTemplate() {
+        return securityAccessService.hasAuthorityToViewTemplate();
+    }
+
+    /**
+     * Check if the current user has the authority to view the workflow.
+     *
+     * @return true if the current user has the authority to view the workflow
+     */
+    public boolean hasAuthorityToViewWorkflow() {
+        return securityAccessService.hasAuthorityToViewWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to view the docket.
+     *
+     * @return true if the current user has the authority to view the docket
+     */
+    public boolean hasAuthorityToViewDocket() {
+        return securityAccessService.hasAuthorityToViewDocket();
+    }
+
+    /**
+     * Check if the current user has the authority to view the ruleset.
+     *
+     * @return true if the current user has the authority to view the ruleset
+     */
+    public boolean hasAuthorityToViewRuleset() {
+        return securityAccessService.hasAuthorityToViewRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to view the user.
+     *
+     * @return true if the current user has the authority to view the user
+     */
+    public boolean hasAuthorityToViewUser() {
+        return securityAccessService.hasAuthorityToViewUser();
+    }
+
+    /**
+     * Check if the current user has the authority to view the role.
+     *
+     * @return true if the current user has the authority to view the role
+     */
+    public boolean hasAuthorityToViewRole() {
+        return securityAccessService.hasAuthorityToViewRole();
+    }
+
+    /**
+     * Check if the current user has the authority to view the client.
+     *
+     * @return true if the current user has the authority to view the client
+     */
+    public boolean hasAuthorityToViewClient() {
+        return securityAccessService.hasAuthorityToViewClient();
+    }
+
+    /**
+     * Check if the current user has the authority to view the index.
+     *
+     * @return true if the current user has the authority to view the index
+     */
+    public boolean hasAuthorityToViewIndex() {
+        return securityAccessService.hasAuthorityToViewIndex();
+    }
+
+    /**
      * Check if current user has authority to view process page. It returns true if
      * user has at least one of below given authorities.
      * 

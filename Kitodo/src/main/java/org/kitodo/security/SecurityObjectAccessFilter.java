@@ -50,7 +50,7 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 Integer.parseInt(id);
             } catch (NumberFormatException e) {
                 if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
-                        && securityAccessService.hasAuthorityGlobalOrForClient("viewWorkflow")) {
+                        && securityAccessService.hasAuthorityToViewWorkflow()) {
                     chain.doFilter(request, response);
                 } else {
                     denyAccess(httpServletRequest, httpServletResponse);
@@ -58,14 +58,32 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 return;
             }
 
-            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
-                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewClient")) {
+            if (httpServletRequest.getRequestURI().contains("pages/processEdit")
+                    && !securityAccessService.hasAuthorityToViewProcess()) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
-                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewProject")) {
+                    && !securityAccessService.hasAuthorityToViewProject()) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
+            if (httpServletRequest.getRequestURI().contains("pages/templateEdit")
+                    && !securityAccessService.hasAuthorityToViewTemplate()) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
+            if (httpServletRequest.getRequestURI().contains("pages/docketEdit")
+                    && !securityAccessService.hasAuthorityToViewDocket()) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
+            if (httpServletRequest.getRequestURI().contains("pages/rulesetEdit")
+                    && !securityAccessService.hasAuthorityToViewRuleset()) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
@@ -78,6 +96,12 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
 
             if (httpServletRequest.getRequestURI().contains("pages/roleEdit")
                     && !securityAccessService.hasAuthorityToViewRole()) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
+            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
+                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewClient")) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }

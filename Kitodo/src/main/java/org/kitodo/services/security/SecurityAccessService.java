@@ -450,21 +450,103 @@ public class SecurityAccessService {
     }
 
     /**
-     * Check if the current user has the authority to view the user.
+     * Check if the current user has the authority to view the process. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the process
+     */
+    public boolean hasAuthorityToViewProcess() {
+        return hasAnyAuthorityForClient("viewProcess, addProcess, editProcess");
+    }
+
+    /**
+     * Check if the current user has the authority to view the project. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the project
+     */
+    public boolean hasAuthorityToViewProject() {
+        return hasAnyAuthorityForClient("viewProject, addProject, editProject");
+    }
+
+    /**
+     * Check if the current user has the authority to view the template. Add and
+     * edit authorities include also view.
+     *
+     * @return true if the current user has the authority to view the template
+     */
+    public boolean hasAuthorityToViewTemplate() {
+        return hasAnyAuthorityForClient("viewTemplate, addTemplate, editTemplate");
+    }
+
+    /**
+     * Check if the current user has the authority to view the workflow. Add and
+     * edit authorities include also view.
+     *
+     * @return true if the current user has the authority to view the workflow
+     */
+    public boolean hasAuthorityToViewWorkflow() {
+        return hasAnyAuthorityForClient("viewWorkflow, addWorkflow, editWorkflow");
+    }
+
+    /**
+     * Check if the current user has the authority to view the docket. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the docket
+     */
+    public boolean hasAuthorityToViewDocket() {
+        return hasAnyAuthorityForClient("viewDocket, addWorkflow, editDocket");
+    }
+
+    /**
+     * Check if the current user has the authority to view the ruleset. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the ruleset
+     */
+    public boolean hasAuthorityToViewRuleset() {
+        return hasAnyAuthorityForClient("viewRuleset, addRuleset, editRuleset");
+    }
+
+    /**
+     * Check if the current user has the authority to view the user. Add and edit
+     * authorities include also view.
      *
      * @return true if the current user has the authority to view the user
      */
     public boolean hasAuthorityToViewUser() {
-        return hasAuthorityGlobalOrForClient("viewUser");
+        return hasAnyAuthorityGlobalOrForClient("viewUser, addUser, editUser");
     }
 
     /**
-     * Checks if the current user has the authority to view the role.
+     * Check if the current user has the authority to view the role. Add and edit
+     * authorities include also view.
      *
      * @return true if the current user has the authority to view the role
      */
     public boolean hasAuthorityToViewRole() {
-        return hasAuthorityGlobalOrForClient("viewRole");
+        return hasAnyAuthorityGlobalOrForClient("viewRole, addRole, editRole");
+    }
+
+    /**
+     * Check if the current user has the authority to view the client. Add and edit
+     * authorities include also view.
+     *
+     * @return true if the current user has the authority to view the client
+     */
+    public boolean hasAuthorityToViewClient() {
+        return hasAnyAuthorityGlobalOrForClient("viewClient, addClient, editClient");
+    }
+
+    /**
+     * Check if the current user has the authority to view the index. Edit authority
+     * includes also view.
+     *
+     * @return true if the current user has the authority to view the index
+     */
+    public boolean hasAuthorityToViewIndex() {
+        return hasAnyAuthorityGlobal("viewIndex, editIndex");
     }
 
     /**
