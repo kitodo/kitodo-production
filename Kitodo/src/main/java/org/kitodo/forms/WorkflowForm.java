@@ -38,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -57,7 +56,7 @@ public class WorkflowForm extends BaseForm {
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private FileService fileService = serviceManager.getFileService();
+    private transient FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
@@ -344,12 +343,10 @@ public class WorkflowForm extends BaseForm {
     public List<SelectItem> getRoles() {
         List<SelectItem> selectItems = new ArrayList<>();
 
-        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(selectedClient)) {
-            List<Role> roles = serviceManager.getRoleService().getAllRolesByClientId(selectedClient.getId());
-            for (Role role : roles) {
-                selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
-            }
+        List<Role> roles = serviceManager.getRoleService()
+                .getAllRolesByClientId(serviceManager.getUserService().getSessionClientId());
+        for (Role role : roles) {
+            selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
         }
         return selectItems;
     }

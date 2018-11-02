@@ -371,7 +371,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      * @return The list of all user roles for the given client IDs
      */
     public List<Role> getAllRolesByClientId(int clientId) {
-        return dao.getAllRolesByClientIds(clientId);
+        return dao.getAllRolesByClientId(clientId);
     }
 
     /**

@@ -11,13 +11,11 @@
 
 package org.kitodo.data.database.persistence;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class RoleDAO extends BaseDAO<Role> {
@@ -61,23 +59,16 @@ public class RoleDAO extends BaseDAO<Role> {
     }
 
     /**
-     * Get all user roles visible for current user - user roles of users assigned
-     * to projects with certain clients.
+     * Get all user roles assigned to selected client for current user.
      *
      * @param clientId
      *            selected client id for current user
      * @return list of user roles
      */
-    public List<Role> getAllRolesByClientIds(int clientId) {
-        UserDAO userDAO = new UserDAO();
-        List<User> users = userDAO.getAllActiveUsersByClientId(clientId);
-        List<Integer> userIdList = new ArrayList<>();
-        for (User user : users) {
-            userIdList.add(user.getId());
-        }
+    public List<Role> getAllRolesByClientId(int clientId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("userIdList", userIdList);
-        return getByQuery("SELECT r FROM Role AS r JOIN r.users AS u WHERE u.id IN :userIdList GROUP BY r.id",
+        parameters.put("clientId", clientId);
+        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientId GROUP BY r.id",
             parameters);
     }
 }
