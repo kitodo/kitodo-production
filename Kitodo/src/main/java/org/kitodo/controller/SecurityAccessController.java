@@ -106,15 +106,72 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if the current user is admin or has the authority to edit the role
-     * with the specified id.
+     * Check if the current user has the authority to edit the role with the
+     * specified id.
      *
      * @param roleId
      *            the role id
-     * @return True if the current user is admin or has the authority to edit the
-     *         role with the specified id.
+     * @return true if the current user has the authority to edit the role with the
+     *         specified id
      */
     public boolean hasAuthorityToEditRole(int roleId) {
         return securityAccessService.hasAuthorityToEditRole(roleId);
+    }
+
+    /**
+     * Check if current user has authority to view process page. It returns true if
+     * user has at least one of below given authorities.
+     * 
+     * @return true if user has authority 'viewAllProcesses' or 'viewAllBatches' for
+     *         client
+     */
+    public boolean hasAuthorityToViewProcessPage() {
+        return securityAccessService.hasAnyAuthorityForClient("viewAllProcesses, viewAllBatches");
+    }
+
+    /**
+     * Check if current user has authority to view project page. It returns true if
+     * user has at least one of below given authorities.
+     * 
+     * @return true if user has authority 'viewAllProjects' or 'viewAllTemplates' or
+     *         'viewAllWorkflows' or 'viewAllDockets' or 'viewAllRulestes' for
+     *         client
+     */
+    public boolean hasAuthorityToViewProjectPage() {
+        return securityAccessService.hasAnyAuthorityForClient(
+            "viewAllProjects, viewAllTemplates, viewAllWorkflows, viewAllDockets, viewAllRulestes");
+    }
+
+    /**
+     * Check if current user has authority to view system page. It returns true if
+     * user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'viewIndex' or 'viewIndex' globally
+     */
+    public boolean hasAuthorityToViewSystemPage() {
+        return securityAccessService.hasAnyAuthorityGlobal("viewIndex, viewIndex");
+    }
+
+    /**
+     * Check if current user has authority to view task page. It returns true if
+     * user has "viewAllTasks" authority for client.
+     *
+     * @return true if user has authority 'viewAllTasks' for client
+     */
+    public boolean hasAuthorityToViewTaskPage() {
+        return securityAccessService.hasAuthorityForClient("viewAllTasks");
+    }
+
+    /**
+     * Check if current user has authority to view user page. It returns true if
+     * user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'viewAllUsers' or 'viewAllUsers' or
+     *         'viewAllClients' or 'viewAllLdapGroups' or 'viewAllLdapServers'
+     *         globally or for client
+     */
+    public boolean hasAuthorityToViewUserPage() {
+        return securityAccessService.hasAnyAuthorityGlobalOrForClient(
+            "viewAllUsers, viewAllUsers, viewAllClients, viewAllLdapGroups, viewAllLdapServers");
     }
 }
