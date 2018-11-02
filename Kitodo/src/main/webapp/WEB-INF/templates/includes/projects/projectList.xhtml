@@ -28,7 +28,7 @@
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
         <p:column style="width: 16px;"
-                  rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('viewProject')}">
+                  rendered="#{SecurityAccessController.hasAuthorityForClient('viewProject')}">
             <p:rowToggler/>
         </p:column>
 
@@ -53,13 +53,13 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:link rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editProject')}"
+                <h:link rendered="#{SecurityAccessController.hasAuthorityForClient('editProject')}"
                         outcome="projectEdit" title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addProject')}"
+                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityForClient('addProject')}"
                                action="#{ProjectForm.duplicate(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
@@ -67,7 +67,7 @@
                                action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
                                update="projectsTabView:projectsTable"
-                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteProject')}">
+                               rendered="#{SecurityAccessController.hasAuthorityForClient('deleteProject')}">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
@@ -95,7 +95,7 @@
                             <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
                                 <h:outputText value="#{template.title} "/>
 
-                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('addProcess')}">
+                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityForClient('addProcess')}">
                                     <h:commandLink action="#{ProzesskopieForm.prepare(template.id,item.id)}" id="createProcess"
                                                    title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
                                         <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
