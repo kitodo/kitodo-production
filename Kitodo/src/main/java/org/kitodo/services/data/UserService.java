@@ -291,6 +291,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
+     * Gets the selected session client id of the current authenticated user.
+     *
+     * @return session client id
+     */
+    public int getSessionClientId() {
+        if (Objects.nonNull(getSessionClientOfAuthenticatedUser())) {
+            return getSessionClientOfAuthenticatedUser().getId();
+        }
+        return 0;
+    }
+
+    /**
      * Finds the current authenticated user and loads object dto from index.
      *
      * @return The user dto or null if no user is authenticated.
@@ -883,7 +895,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of users
      */
     private List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
-        return convertListIdToDTO(getAllActiveUserIdsByClientId(getSessionClientOfAuthenticatedUser().getId()), this);
+        return convertListIdToDTO(getAllActiveUserIdsByClientId(getSessionClientId()), this);
     }
 
     /**

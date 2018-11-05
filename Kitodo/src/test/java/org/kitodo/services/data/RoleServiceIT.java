@@ -37,7 +37,7 @@ public class RoleServiceIT {
 
     private static final RoleService roleService = new ServiceManager().getRoleService();
 
-    private final int EXPECTED_ROLES_COUNT = 5;
+    private final int EXPECTED_ROLES_COUNT = 6;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -90,7 +90,7 @@ public class RoleServiceIT {
     @Test
     public void shouldGetAllRolesInGivenRange() throws Exception {
         List<Role> roles = roleService.getAll(1, 10);
-        assertEquals("Not all user's roles were found in database!", 4, roles.size());
+        assertEquals("Not all user's roles were found in database!", 5, roles.size());
     }
 
     @Test
@@ -169,8 +169,8 @@ public class RoleServiceIT {
 
     @Test
     public void shouldFindManyByAuthorization() {
-        await().untilAsserted(() -> assertEquals("Role was not found in index!", 2,
-            roleService.findByAuthorizationTitle("viewAllProjects_globalAssignable").size()));
+        await().untilAsserted(() -> assertEquals("Role was not found in index!", 3,
+            roleService.findByAuthorizationTitle("viewAllProjects_clientAssignable").size()));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class RoleServiceIT {
     @Test
     public void shouldFindOneByUserId() {
         await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserId(2).size()));
+            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserId(3).size()));
     }
 
     @Test
@@ -211,7 +211,7 @@ public class RoleServiceIT {
     @Test
     public void shouldFindOneByUserLogin() {
         await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserLogin("nowak").size()));
+            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserLogin("dora").size()));
     }
 
     @Test
@@ -269,7 +269,7 @@ public class RoleServiceIT {
     @Test
     public void shouldGetAllRolesByClientIds() {
         List<Role> roles = roleService.getAllRolesByClientId(1);
-        assertEquals("Amount of roles assigned to client is incorrect!", 3, roles.size());
+        assertEquals("Amount of roles assigned to client is incorrect!", 5, roles.size());
 
         roles = roleService.getAllRolesByClientId(2);
         assertEquals("Amount of roles assigned to client is incorrect!", 1, roles.size());

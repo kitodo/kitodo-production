@@ -55,7 +55,7 @@
                     </h:commandLink>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
-                                   rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteWorkflow')}"
+                                   rendered="#{SecurityAccessController.hasAuthorityForClient('deleteWorkflow')}"
                                    update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>

@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.Authentication;
@@ -124,15 +123,11 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAnyAuthorityForClient(String authorityTitles) {
-        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(selectedClient)) {
-            String[] authorityTitlesArray = getStringArray(authorityTitles);
-            for (String authorityTitle : authorityTitlesArray) {
-                if (hasAuthorityForClient(authorityTitle)) {
-                    return true;
-                }
+        String[] authorityTitlesArray = getStringArray(authorityTitles);
+        for (String authorityTitle : authorityTitlesArray) {
+            if (hasAuthorityForClient(authorityTitle)) {
+                return true;
             }
-            return false;
         }
         return false;
     }
@@ -145,12 +140,9 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityForClient(String authorityTitle) {
-        Client selectedClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(selectedClient)) {
-            String titleOfRequiredAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_" + selectedClient.getId();
-            return hasAuthority(titleOfRequiredAuthority);
-        }
-        return false;
+        String clientAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_"
+                + serviceManager.getUserService().getSessionClientId();
+        return hasAuthority(clientAuthority);
     }
 
     /**
@@ -234,8 +226,7 @@ public class SecurityAccessService {
     private boolean hasAuthorityForUser(String authorityTitle, int userId) {
         if (hasAuthorityForClient(authorityTitle)) {
             List<Integer> allActiveUserIdsVisibleForCurrentUser = serviceManager.getUserService()
-                    .getAllActiveUserIdsByClientId(
-                        serviceManager.getUserService().getSessionClientOfAuthenticatedUser().getId());
+                    .getAllActiveUserIdsByClientId(serviceManager.getUserService().getSessionClientId());
             return allActiveUserIdsVisibleForCurrentUser.contains(userId);
         }
         return false;

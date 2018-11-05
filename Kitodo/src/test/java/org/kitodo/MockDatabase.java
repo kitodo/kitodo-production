@@ -307,12 +307,6 @@ public class MockDatabase {
         authorities.add(new Authority("deleteLdapGroup" + GLOBAL_ASSIGNABLE));
 
         // Project
-        authorities.add(new Authority("viewProject" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewAllProjects" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editProject" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("deleteProject" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("addProject" + GLOBAL_ASSIGNABLE));
-
         authorities.add(new Authority("viewProject" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllProjects" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editProject" + CLIENT_ASSIGNABLE));
@@ -348,21 +342,6 @@ public class MockDatabase {
         authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
 
         // Process
-        authorities.add(new Authority("viewAllProcesses" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewProcess" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("addProcess" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editProcess" + GLOBAL_ASSIGNABLE));
-
-        authorities.add(new Authority("editProcessMetaData" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editProcessStructureData" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editProcessPagination" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editProcessImages" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewProcessMetaData" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewProcessStructureData" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewProcessPagination" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewProcessImages" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("deleteProcess" + GLOBAL_ASSIGNABLE));
-
         authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllProcesses" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editProcess" + CLIENT_ASSIGNABLE));
@@ -379,12 +358,6 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessImages" + CLIENT_ASSIGNABLE));
 
         // Batch
-        authorities.add(new Authority("viewAllBatches" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewBatch" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("addBatch" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editBatch" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("deleteBatch" + GLOBAL_ASSIGNABLE));
-
         authorities.add(new Authority("viewBatch" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllBatches" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editBatch" + CLIENT_ASSIGNABLE));
@@ -392,12 +365,6 @@ public class MockDatabase {
         authorities.add(new Authority("addBatch" + CLIENT_ASSIGNABLE));
 
         // Task
-        authorities.add(new Authority("viewAllTasks" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("viewTask" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("addTask" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("editTask" + GLOBAL_ASSIGNABLE));
-        authorities.add(new Authority("deleteTask" + GLOBAL_ASSIGNABLE));
-
         authorities.add(new Authority("viewTask" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllTasks" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editTask" + CLIENT_ASSIGNABLE));
@@ -1140,8 +1107,9 @@ public class MockDatabase {
 
         Role adminRole = serviceManager.getRoleService().getById(1);
         Role generalRole = serviceManager.getRoleService().getById(2);
-        Role projectRole = serviceManager.getRoleService().getById(3);
-        Role withoutAuthoritiesRole = serviceManager.getRoleService().getById(4);
+        Role projectRoleForFirstClient = serviceManager.getRoleService().getById(3);
+        Role projectRoleForSecondClient = serviceManager.getRoleService().getById(4);
+        Role withoutAuthoritiesRole = serviceManager.getRoleService().getById(5);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1167,7 +1135,8 @@ public class MockDatabase {
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getRoles().add(projectRole);
+        secondUser.getRoles().add(projectRoleForFirstClient);
+        secondUser.getRoles().add(projectRoleForSecondClient);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
@@ -1234,29 +1203,39 @@ public class MockDatabase {
         serviceManager.getRoleService().save(secondRole);
 
         Role thirdRole = new Role();
-        thirdRole.setTitle("Random");
-        thirdRole.setClient(serviceManager.getClientService().getById(2));
+        thirdRole.setTitle("Random for first");
+        thirdRole.setClient(client);
 
         // insert authorities for view on projects page
-        List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewProject" + GLOBAL_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + GLOBAL_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewTemplate" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllTemplates" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewWorkflow" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllWorkflows" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewDocket" + CLIENT_ASSIGNABLE));
-        userAuthorities.add(serviceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
-        thirdRole.setAuthorities(userAuthorities);
+        List<Authority> userAuthoritiesForFirst = new ArrayList<>();
+        userAuthoritiesForFirst.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForFirst.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
+        thirdRole.setAuthorities(userAuthoritiesForFirst);
 
         serviceManager.getRoleService().save(thirdRole);
 
-        Role fourthUserGroup = new Role();
-        fourthUserGroup.setTitle("Without authorities");
-        fourthUserGroup.setClient(client);
-        serviceManager.getRoleService().save(fourthUserGroup);
+        Role fourthRole = new Role();
+        fourthRole.setTitle("Random for second");
+        fourthRole.setClient(serviceManager.getClientService().getById(2));
+
+        // insert authorities for view on projects page
+        List<Authority> userAuthoritiesForSecond = new ArrayList<>();
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewTemplate" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllTemplates" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewWorkflow" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllWorkflows" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewDocket" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
+        fourthRole.setAuthorities(userAuthoritiesForSecond);
+
+        serviceManager.getRoleService().save(fourthRole);
+
+        Role fifthUserGroup = new Role();
+        fifthUserGroup.setTitle("Without authorities");
+        fifthUserGroup.setClient(client);
+        serviceManager.getRoleService().save(fifthUserGroup);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {

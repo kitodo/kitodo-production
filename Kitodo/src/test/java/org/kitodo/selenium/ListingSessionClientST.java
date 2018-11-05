@@ -13,11 +13,14 @@ package org.kitodo.selenium;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.services.ServiceManager;
@@ -36,18 +39,24 @@ public class ListingSessionClientST extends BaseTestSelenium {
         projectsPage = Pages.getProjectsPage();
     }
 
-    @BeforeClass
-    public static void login() throws Exception {
-        Pages.getLoginPage().goTo().performLoginAsAdmin();
+    @Before
+    public void login() throws Exception {
+        Pages.getLoginPage().goTo().performLogin(serviceManager.getUserService().getById(2));
+    }
+
+    @After
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+        if (Browser.isAlertPresent()) {
+            Browser.getDriver().switchTo().alert().accept();
+        }
     }
 
     @Test
     public void listProjectsForUserWithFirstSessionClientTest() throws Exception {
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(serviceManager.getUserService().getById(2));
         Pages.getTopNavigation().selectSessionClient(0);
 
-        // user will see only projects page as this one is global
+        // user will see only projects page as this one right he has for First client
         projectsPage.goTo();
         int projectsInDatabase = serviceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 1").size();
@@ -60,11 +69,9 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @Test
     public void listProjectsForUserWithSecondSessionClientTest() throws Exception {
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(serviceManager.getUserService().getById(2));
         Pages.getTopNavigation().selectSessionClient(1);
 
-        // user will see first four tabs
+        // user will see first four tabs as this rights he has for Second client
         projectsPage.goTo();
         int projectsInDatabase = serviceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 2").size();

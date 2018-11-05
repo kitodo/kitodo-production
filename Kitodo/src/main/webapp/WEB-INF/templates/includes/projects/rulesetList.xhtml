@@ -45,12 +45,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="rulesetEdit" title="#{msgs.rulesetEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editRuleset')}">
+                        rendered="#{SecurityAccessController.hasAuthorityForClient('editRuleset')}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteRuleset" action="#{RulesetForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteRuleset')}"
+                               rendered="#{SecurityAccessController.hasAuthorityForClient('deleteRuleset')}"
                                update="projectsTabView:rulesetTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{RulesetForm.rulesetById}"/>
