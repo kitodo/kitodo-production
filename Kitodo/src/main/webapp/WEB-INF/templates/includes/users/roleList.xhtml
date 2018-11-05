@@ -27,6 +27,9 @@
         <p:column headerText="#{msgs.role}">
             <h:outputText value="#{item.title}"/>
         </p:column>
+        <p:column headerText="#{msgs.client}">
+            <h:outputText value="#{item.client.name}"/>
+        </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewRole" outcome="roleEdit" title="#{msgs.roleView}"
