@@ -23,11 +23,11 @@
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole(id)}"/>
+              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
     <ui:param name="isCreateMode"
-              value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityGlobalOrForClient('addRole')}"/>
+              value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRole()}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />

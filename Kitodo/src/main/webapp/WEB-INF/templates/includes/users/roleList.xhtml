@@ -30,12 +30,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="roleEdit" title="#{msgs.roleEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editRole')}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditRole()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteRole" action="#{RoleForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteRole')}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteRole()}"
                                update="usersTabView:rolesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{RoleForm.roleById}"/>

@@ -36,7 +36,7 @@
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
                                 title="#{item.processingStatusEnum.title}"
                                 alt="status"/>
-                <p:panel rendered="#{SecurityAccessController.hasAuthorityForClient('editTask')}">
+                <p:panel rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">
                     <!-- Set workflow state to previous step -->
                     <p:commandButton action="#{ProcessForm.setTaskStatusDown}"
                                      id="taskStatusDown"
@@ -65,7 +65,7 @@
         <p:column rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
-                    rendered="#{SecurityAccessController.hasAuthorityForClient('editTask')}"
+                    rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <f:param name="referer" value="processEdit?id=#{item.process.id}"/>

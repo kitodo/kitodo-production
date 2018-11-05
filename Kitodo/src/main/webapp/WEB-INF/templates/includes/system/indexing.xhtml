@@ -37,7 +37,7 @@
                             <td colspan="2">
                                 <p:commandButton widgetVar="createMapping"
                                                  id="createMappingButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
+                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                                  value="#{msgs.createMapping}"
                                                  style="width: 100%;"
                                                  action="#{indexingForm.createMapping(true)}"
@@ -56,7 +56,7 @@
                             <td colspan="2">
                                 <p:commandButton widgetVar="deleteIndex"
                                                  id="deleteIndexButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
+                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                                  value="#{msgs.deleteIndex}"
                                                  style="width: 100%;"
                                                  action="#{indexingForm.deleteIndex(true)}"
@@ -101,7 +101,7 @@
                             <td>
                                 <p:commandButton widgetVar="startIndexingAll"
                                                  id="startIndexingAllButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
+                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                                  onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                  value="#{msgs.startIndexing}"
                                                  action="#{indexingForm.startAllIndexing()}"
@@ -110,7 +110,7 @@
                             <td>
                                 <p:commandButton widgetVar="startIndexingAll"
                                                  id="startIndexingAllRemainingButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityGlobal('editIndex')}"
+                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                                  onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                  value="#{msgs.startIndexing}"
                                                  action="#{indexingForm.startAllIndexingRemaining()}"

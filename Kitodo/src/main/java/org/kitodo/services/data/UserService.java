@@ -338,7 +338,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     @Override
     public List<User> getAllForSelectedClient(int clientId) {
         return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", clientId));
     }
 
     @Override
@@ -348,7 +348,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
         }
         if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
-            return getAllActiveUsersVisibleForCurrentUser();
+            return convertJSONObjectsToDTOs(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
+                sortByLogin(), offset, size), false);
         }
         return new ArrayList<>();
     }
@@ -451,12 +452,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * Find active or inactive users.
      *
      * @param active
-     *            true -active user or false - inactive user
+     *            true - active user or false - inactive user
      * @return list of JSON objects
      */
     List<JsonObject> findByActive(boolean active) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true);
-        return searcher.findDocuments(query.toString(), sortByLogin());
+        return searcher.findDocuments(getQueryForActive(active).toString(), sortByLogin());
+    }
+
+    private QueryBuilder getQueryForActive(boolean active) {
+        return createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true);
     }
 
     /**
@@ -611,8 +615,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getClientService()));
         userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
             serviceManager.getTaskService()));
-        userDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(),
-            serviceManager.getRoleService()));
+        userDTO.setRoles(
+            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(), serviceManager.getRoleService()));
     }
 
     private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
@@ -888,42 +892,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get all active users visible for current user - user assigned to projects
-     * with certain clients.
-     *
-     * @return list of users
-     */
-    private List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
-        return convertListIdToDTO(getAllActiveUserIdsByClientId(getSessionClientId()), this);
-    }
-
-    /**
-     * Get ids of all active users which are assigned to project of the given
-     * selected client.
-     * 
-     * @param clientId
-     *            selected client id
-     * @return list of user ids
-     */
-    public List<Integer> getAllActiveUserIdsByClientId(Integer clientId) {
-        List<User> users = getAllActiveUsersByClientId(clientId);
-        List<Integer> userIdList = new ArrayList<>();
-        for (User user : users) {
-            userIdList.add(user.getId());
-        }
-        return userIdList;
-    }
-
-    /**
-     * Get all active users which are assigned to project of the given clients.
-     * 
-     * @param clientId
-     *            selected client id
-     * @return list of users
-     */
-    public List<User> getAllActiveUsersByClientId(Integer clientId) {
-        return dao.getAllActiveUsersByClientId(clientId);
+    private QueryBuilder createQueryAllActiveUsersForCurrentUser() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForActive(true));
+        query.must(createSimpleQuery(UserTypeField.CLIENTS + ".id", getSessionClientId(), true));
+        return query;
     }
 
     /**

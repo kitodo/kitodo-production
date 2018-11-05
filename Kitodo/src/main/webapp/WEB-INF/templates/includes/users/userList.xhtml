@@ -58,12 +58,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="userEdit" title="#{msgs.userEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editUser')}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteUser" action="#{UserForm.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteUser')}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteUser()}"
                                update="usersTabView:usersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{UserForm.userById}"/>

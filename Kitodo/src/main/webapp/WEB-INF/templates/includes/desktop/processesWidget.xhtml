@@ -32,7 +32,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">
                 <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityForClient('editProcess')}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="desktop"/>
@@ -50,7 +50,7 @@
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
                 <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityForClient('deleteProcess')}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                update="processTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>

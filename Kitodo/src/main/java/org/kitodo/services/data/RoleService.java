@@ -119,10 +119,11 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
-            return findAll(sort, offset, size, true);
+            return findAll(sort, offset, size, false);
         }
         if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
-            return getAllRolesVisibleForCurrentUser();
+            return convertJSONObjectsToDTOs(
+                    searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
         }
         return new ArrayList<>();
     }
@@ -353,14 +354,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         return stringAuthorizations;
     }
 
-    /**
-     * Get all roles visible for current user - user assigned to projects with the
-     * selected client.
-     *
-     * @return list of roles
-     */
-    public List<RoleDTO> getAllRolesVisibleForCurrentUser() throws DataException {
-        return convertListIdToDTO(getAllRolesIdsByClientId(), this);
+    // TODO: filtering functionality
+    private QueryBuilder createQueryRolesForCurrentUser(Map filters) {
+        return createSimpleQuery(RoleTypeField.CLIENT_ID + ".id", serviceManager.getUserService().getSessionClientId(), true);
     }
 
     /**
@@ -372,21 +368,5 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     public List<Role> getAllRolesByClientId(int clientId) {
         return dao.getAllRolesByClientId(clientId);
-    }
-
-    /**
-     * Get ids of all roles which hold users which are assigned to projects of the
-     * selected client.
-     *
-     * @return The list of user ids.
-     */
-    public List<Integer> getAllRolesIdsByClientId() {
-        List<Integer> rolesIdList = new ArrayList<>();
-
-        List<Role> roles = getAllRolesByClientId(serviceManager.getUserService().getSessionClientId());
-        for (Role role : roles) {
-            rolesIdList.add(role.getId());
-        }
-        return rolesIdList;
     }
 }

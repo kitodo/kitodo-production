@@ -41,16 +41,17 @@
             <h:outputText>
                 <h:form id="templateActionForm">
                     <h:link id="editTemplate" outcome="/pages/templateEdit" title="#{msgs.editTemplate}"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('editTemplate')}">
+                            rendered="#{SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
                     <h:commandLink action="#{TemplateForm.duplicate(item.id)}" immediate="true"
-                                   title="#{msgs.duplicateTemplate}">
+                                   title="#{msgs.duplicateTemplate}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
                     <p:commandLink id="deleteTemplate" action="#{TemplateForm.delete}" title="#{msgs.delete}"
-                                   rendered="#{SecurityAccessController.hasAuthorityForClient('deleteTemplate')}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteTemplate()}"
                                    update="projectsTabView:templateTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
@@ -81,12 +82,14 @@
                                 <h:outputText value="#{project.title} "/>
 
                                 <h:commandLink action="#{ProzesskopieForm.prepare(item.id,project.id)}" id="createProcess"
-                                               title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                               title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}"
+                                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                                     <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                                 </h:commandLink>
 
                                 <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
-                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}"
+                                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                                     <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
                                 </h:commandLink>
                             </p:repeat>

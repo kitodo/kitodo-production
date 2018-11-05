@@ -20,24 +20,24 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
-                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
+                rendered="#{SecurityAccessController.hasAnyAuthorityForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addProject')}"/>
+                            rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
                             id="newTemplateButton" immediate="true" style="width: inherit;"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addTemplate')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
                         immediate="true" icon="ui-icon-plusthick"
-                        rendered="#{SecurityAccessController.hasAuthorityForClient('addWorkflow')}"/>
+                        rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
                             id="newDocketButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addDocket')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityForClient('addRuleset')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
@@ -47,23 +47,23 @@
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllProjects')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templates}" id="templateTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllTemplates')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewTemplateList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.workflows}" id="workflowTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllWorkflows')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewWorkflowList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.dockets}" id="docketTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllDockets')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewDocketList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
-                   rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllRulesets')}">
+                   rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
         </p:tabView>

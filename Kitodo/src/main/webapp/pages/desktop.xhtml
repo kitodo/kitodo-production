@@ -27,7 +27,7 @@
         <ui:fragment rendered="#{SessionClientController.currentSessionClient ne null or not SessionClientController.shouldUserChangeSessionClient()}">
             <div id="desktopGrid">
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllTasks')}">
+                         rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.tasks}</h3>
@@ -42,7 +42,7 @@
                     <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
                 </p:panel>
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllProcesses')}">
+                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.processes}</h3>
@@ -57,7 +57,7 @@
                     <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
                 </p:panel>
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllProjects')}">
+                         rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.projects}</h3>

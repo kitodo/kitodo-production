@@ -456,15 +456,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetAllActiveUsersByClientIds() {
-        List<User> users = userService.getAllActiveUsersByClientId(1);
-        assertEquals("Amount of users assigned to client is incorrect!", 2, users.size());
-
-        users = userService.getAllActiveUsersByClientId(2);
-        assertEquals("Amount of users assigned to client is incorrect!", 1, users.size());
-    }
-
-    @Test
     public void shouldGetAuthenticatedUser() throws DAOException {
         SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1));
         User authenticatedUser = userService.getAuthenticatedUser();

@@ -31,7 +31,6 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.DocketDTO;
-import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -76,14 +75,9 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     @Override
     public List<DocketDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-                authenticatedUser.getSessionClient().getId(), true));
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
-        }
-
-        return findAll(sort, offset, size);
+        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
     @Override

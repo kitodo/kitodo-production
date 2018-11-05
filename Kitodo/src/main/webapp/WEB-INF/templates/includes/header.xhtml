@@ -14,7 +14,6 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <div class="wrapper">
@@ -63,42 +62,52 @@
                                 <h3>#{msgs.dashboard}</h3>
                             </li>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAuthorityForClient('viewAllTasks')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.tasks}" id="linkTasks"
-                                                                 outcome="tasks"><i
-                                    class="fa fa-bell fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewTaskPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.tasks}" id="linkTasks" outcome="tasks">
+                                        <i class="fa fa-bell fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAnyAuthorityForClient('viewAllProcesses, viewAllBatches')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.processes}" id="linkProcesses"
-                                                                 outcome="processes"><i
-                                    class="fa fa-hourglass-3 fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes">
+                                        <i class="fa fa-hourglass-3 fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAnyAuthorityForClient('viewAllProjects, viewAllTemplates, viewAllWorkflows, viewAllDockets, viewAllRulestes')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.projects}" id="linkProjects"
-                                                                 outcome="projects"><i
-                                    class="fa fa-folder-open fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProjectPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects">
+                                        <i class="fa fa-folder-open fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('viewAllUsers, viewAllRoles, viewAllClients, viewAllLdapGroups')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.user}" id="linkUsers" outcome="users"><i
-                                    class="fa fa-user fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewUserPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.user}" id="linkUsers" outcome="users">
+                                        <i class="fa fa-user fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAnyAuthorityGlobal('viewIndex, editIndex')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.system}" id="linkSystem"
-                                                                 outcome="system"><i
-                                    class="fa fa-wrench fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewSystemPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.system}" id="linkSystem" outcome="system">
+                                        <i class="fa fa-wrench fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
                             <h:panelGroup rendered="true">
-                                <li class="nav-pic-text"><h:link value="#{msgs.help}" id="linkHelp" outcome="help"><i
-                                    class="fa fa-life-ring fa-lg"/></h:link></li>
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.help}" id="linkHelp" outcome="help">
+                                        <i class="fa fa-life-ring fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
                         </ul>
                     </li>

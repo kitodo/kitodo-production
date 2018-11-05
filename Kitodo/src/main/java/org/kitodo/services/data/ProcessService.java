@@ -92,8 +92,6 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
@@ -110,7 +108,6 @@ import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
-import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -137,7 +134,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
             .getBooleanParameter(ParameterCore.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
-    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore
+            .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -165,7 +163,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         return convertJSONObjectsToDTOs(
-                searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
+            searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
 
     }
 
@@ -178,7 +176,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query.must(serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
+            query.must(
+                serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
         }
         return query;
     }
@@ -200,10 +199,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             query.must(readFilters(filterMap));
         }
 
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            query.must(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()));
-        }
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
 
         if (!this.showClosedProcesses) {
             query.must(getQuerySortHelperStatus(false));
@@ -425,11 +421,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     List<JsonObject> findForCurrentSessionClient() throws DataException {
-        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
-            return searcher.findDocuments(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()).toString());
-        }
-        return new ArrayList<>();
+        return searcher.findDocuments(
+            getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()).toString());
     }
 
     /**
@@ -1813,8 +1806,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                File successFile = new File(project.getDmsImportSuccessPath() + File.separator
-                        + getNormalizedTitle(process.getTitle()));
+                File successFile = new File(
+                        project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
         }
@@ -1859,16 +1852,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return false;
         }
         // remove old success folder
-        File successFile = new File(project.getDmsImportSuccessPath() + File.separator
-                + getNormalizedTitle(process.getTitle()));
+        File successFile = new File(
+                project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(successFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
-        File errorFile = new File(project.getDmsImportErrorPath() + File.separator
-                + getNormalizedTitle(process.getTitle()));
+        File errorFile = new File(
+                project.getDmsImportErrorPath() + File.separator + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(errorFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
