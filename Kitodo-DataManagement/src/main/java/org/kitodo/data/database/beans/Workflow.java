@@ -18,6 +18,9 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -37,6 +40,10 @@ public class Workflow extends BaseIndexedBean {
 
     @Column(name = "ready")
     private Boolean ready = false;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
+    private Client client;
 
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Template> templates;
@@ -138,6 +145,25 @@ public class Workflow extends BaseIndexedBean {
      */
     public void setReady(boolean ready) {
         this.ready = ready;
+    }
+
+    /**
+     * Get client.
+     *
+     * @return the client bean
+     */
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * Set client.
+     *
+     * @param client
+     *            bean
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     /**

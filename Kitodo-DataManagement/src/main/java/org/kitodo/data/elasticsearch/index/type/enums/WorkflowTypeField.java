@@ -17,7 +17,9 @@ public enum WorkflowTypeField implements TypeInterface {
     TITLE("title"),
     FILE_NAME("fileName"),
     READY("ready"),
-    ACTIVE("active");
+    ACTIVE("active"),
+    CLIENT_ID("client.id"),
+    CLIENT_NAME("client.name");
 
     private String name;
 

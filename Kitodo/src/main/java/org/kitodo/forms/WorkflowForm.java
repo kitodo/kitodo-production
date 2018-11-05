@@ -236,6 +236,7 @@ public class WorkflowForm extends BaseForm {
      */
     public String newWorkflow() {
         this.workflow = new Workflow();
+        this.workflow.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
     }
 

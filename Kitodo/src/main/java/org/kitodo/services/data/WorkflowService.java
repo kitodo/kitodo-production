@@ -103,6 +103,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_" + Helper.generateRandomString(3));
         duplicatedWorkflow.setActive(baseWorkflow.isActive());
         duplicatedWorkflow.setReady(false);
+        duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
         return duplicatedWorkflow;
     }
