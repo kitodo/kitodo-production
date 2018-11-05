@@ -374,7 +374,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                 addMetadatum(newMonth, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                         ISODateTimeFormat.yearMonth().print(individualIssue.getDate()), true);
                 addMetadatum(newMonth, year.getType().getName(), theYear, false);
-                addMetadatum(newMonth, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
+                if (!seasonBegin.isEqual(Course.FIRST_OF_JANUARY) || !seasonLabel.isEmpty()) {
+                    addMetadatum(newMonth, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
+                }
                 months.put(monthNo, newMonth);
             }
             DocStruct month = months.get(monthNo);
@@ -386,8 +388,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                         ISODateTimeFormat.yearMonthDay().print(individualIssue.getDate()), true);
                 addMetadatum(newDay, year.getType().getName(), theYear, false);
                 addMetadatum(newDay, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
-                addMetadatum(newDay, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
-                        Integer.toString(date.getDayOfMonth()), false);
+                if (!seasonBegin.isEqual(Course.FIRST_OF_JANUARY) || !seasonLabel.isEmpty()) {
+                    addMetadatum(newDay, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
+                            Integer.toString(date.getDayOfMonth()), false);
+                }
                 days.put(date, newDay);
             }
             DocStruct day = days.get(date);
