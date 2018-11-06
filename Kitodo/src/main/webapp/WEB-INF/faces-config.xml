@@ -23,6 +23,10 @@
             <supported-locale>en</supported-locale>
         </locale-config>
         <resource-bundle>
+            <base-name>messages.errors</base-name>
+            <var>err</var>
+        </resource-bundle>
+        <resource-bundle>
             <base-name>messages.messages</base-name>
             <var>msgs</var>
         </resource-bundle>
