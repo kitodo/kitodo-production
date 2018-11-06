@@ -11,16 +11,10 @@
 
 package org.kitodo.helper;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -47,6 +41,8 @@ import org.goobi.mq.WebServiceResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.enums.ReportLevel;
+import org.kitodo.helper.messages.Error;
+import org.kitodo.helper.messages.Message;
 
 /**
  * Extends Helper from Kitodo Data Management module.
@@ -58,7 +54,6 @@ public class Helper implements Observer, Serializable {
     private static final long serialVersionUID = -7449236652821237059L;
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> errorMessages = null;
-    private static Map<Locale, ResourceBundle> localMessages = null;
     private static String compoundMessage;
 
     /**
@@ -327,11 +322,10 @@ public class Helper implements Observer, Serializable {
     public static String getString(Locale language, String key) {
         if ((Objects.isNull(commonMessages) || commonMessages.size() <= 1)
                 && (Objects.isNull(errorMessages) || errorMessages.size() <= 1)) {
-            loadMsgs();
+            loadMessages();
         }
 
         List<Map<Locale, ResourceBundle>> messages = new ArrayList<>();
-        messages.add(localMessages);
         messages.add(commonMessages);
         messages.add(errorMessages);
 
@@ -391,41 +385,20 @@ public class Helper implements Observer, Serializable {
         }
     }
 
-    private static void loadMsgs() {
+    private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        localMessages = new HashMap<>();
         if (FacesContext.getCurrentInstance() != null) {
-            @SuppressWarnings("unchecked")
             Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
-                commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                errorMessages.put(language, ResourceBundle.getBundle("messages.errors", language));
-                File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
-                if (file.exists()) {
-                    /*
-                     * Load local message bundle from file system only if file exists,if value not
-                     * exists in bundle, use default bundle from classpath
-                     */
-                    try {
-                        final URL resourceURL = file.toURI().toURL();
-                        URLClassLoader urlLoader = AccessController.doPrivileged(
-                            (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
-                        ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
-                        if (localBundle != null) {
-                            localMessages.put(language, localBundle);
-                        }
-
-                    } catch (RuntimeException | MalformedURLException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
+                commonMessages.put(language, Message.getBundle("messages.messages", language));
+                errorMessages.put(language, Error.getBundle("messages.errors", language));
             }
         } else {
             Locale defaultLocale = new Locale("EN");
-            commonMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
-            errorMessages.put(defaultLocale, ResourceBundle.getBundle("messages.errors", defaultLocale));
+            commonMessages.put(defaultLocale, Message.getBundle("messages.messages", defaultLocale));
+            errorMessages.put(defaultLocale, Error.getBundle("messages.errors", defaultLocale));
         }
     }
 
