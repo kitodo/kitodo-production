@@ -44,7 +44,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
+import org.apache.commons.configuration.tree.DefaultExpressionEngine;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -995,28 +995,31 @@ public class ModsPlugin implements Plugin {
     private void initializeStructureElementTypeConditions() throws JDOMException {
 
         if (structureTypeMandatoryElements.keySet().size() < 1 && structureTypeForbiddenElements.keySet().size() < 1) {
-
+            Integer i = 0;
             HierarchicalConfiguration opacConfig = ConfigOpac.getConfig();
-            opacConfig.setExpressionEngine(new XPathExpressionEngine());
+            opacConfig.setExpressionEngine(new DefaultExpressionEngine());
 
-            SubnodeConfiguration pluginConfiguration = opacConfig.configurationAt(
-                    CONF_CATALOGUE + "[@title='" + configuration.getTitle() + "']");
+            SubnodeConfiguration pluginConfiguration = null;
+            for(Object catalogue : opacConfig.getList("catalogue[@title]")) {
+                if (catalogue.toString() == configuration.getTitle()) {
+                    pluginConfiguration = opacConfig.configurationAt(CONF_CATALOGUE + "(" + i + ")");
+                    break;
+                }
+                i++;
+            }
 
-            for (Object structureTypeObject : pluginConfiguration.configurationsAt("structuretypes/type")) {
-                SubnodeConfiguration structureType = (SubnodeConfiguration) structureTypeObject;
-
+            i = 0;
+            for (Object structureTypeObject : pluginConfiguration.configurationsAt("structuretypes.type[@rulesetType]")) {
                 String structureTypeName = "";
 
-                ConfigurationNode structureNode = structureType.getRootNode();
-                for (Object rulesetObject : structureNode.getAttributes("rulesetType")) {
-                    ConfigurationNode rulesetNode = (ConfigurationNode) rulesetObject;
-                    structureTypeName = (String) rulesetNode.getValue();
+                for (Object rulesetObject : pluginConfiguration.getList("structuretypes.type(" + i + ")[@rulesetType]")) {
+                    structureTypeName = rulesetObject.toString();
                 }
 
                 if (!structureTypeMandatoryElements.containsKey(structureTypeName)) {
                     structureTypeMandatoryElements.put(structureTypeName, new LinkedList<XPath>());
                 }
-                for (Object mandatoryElement : structureType.getList("mandatoryElement")) {
+                for (Object mandatoryElement : pluginConfiguration.getList("structuretypes.type(" + i + ").mandatoryElement")) {
                     String mustHave = (String) mandatoryElement;
                     structureTypeMandatoryElements.get(structureTypeName).add(XPath.newInstance(mustHave));
                 }
@@ -1024,10 +1027,11 @@ public class ModsPlugin implements Plugin {
                 if (!structureTypeForbiddenElements.containsKey(structureTypeName)) {
                     structureTypeForbiddenElements.put(structureTypeName, new LinkedList<XPath>());
                 }
-                for (Object forbiddenElement : structureType.getList("forbiddenElement")) {
+                for (Object forbiddenElement : pluginConfiguration.getList("structuretypes.type(" + i + ").forbiddenElement")) {
                     String maynot = (String) forbiddenElement;
                     structureTypeForbiddenElements.get(structureTypeName).add(XPath.newInstance(maynot));
                 }
+                i++;
             }
         }
     }
