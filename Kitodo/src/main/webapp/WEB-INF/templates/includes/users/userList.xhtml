@@ -24,7 +24,7 @@
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.user}">
+        <p:column headerText="#{msgs.username}">
             <h:outputText value="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}">
