@@ -44,9 +44,9 @@ script_deleteSymLink.bat     | `rmdir %1`
 Copy `*.xsl` from `Kitodo\src\main\resources\` to the folder `xslt`.
 
 
-Create your `local-config`
+Create your `config-local`
 --------------------------
-In the source directory that you just cloned, create a folder named `local-config`. Copy the following files there:
+In the source directory that you just cloned, create a folder named `config-local`. Copy the following files there:
 
 *From `Kitodo\src\main\resources\`:*
 * `contentServerConfig.xml`
