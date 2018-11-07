@@ -995,7 +995,7 @@ public class ModsPlugin implements Plugin {
     private void initializeStructureElementTypeConditions() throws JDOMException {
 
         if (structureTypeMandatoryElements.keySet().size() < 1 && structureTypeForbiddenElements.keySet().size() < 1) {
-            Integer i = 0;
+            int i = 0;
             HierarchicalConfiguration opacConfig = ConfigOpac.getConfig();
             opacConfig.setExpressionEngine(new DefaultExpressionEngine());
 
