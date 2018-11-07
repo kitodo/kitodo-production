@@ -22,7 +22,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.jxpath.JXPathException;
 import org.apache.log4j.Logger;
 
 class ConfigOpac {
@@ -79,18 +78,14 @@ class ConfigOpac {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
         for (int i = 0; i <= countCatalogues; i++) {
-            try {
-                String title = conf.getString("catalogue(" + i + ")[@title]");
-                if (title.equals(inTitle)) {
-                    String description = conf.getString("catalogue(" + i + ").config[@description]");
-                    String address = conf.getString("catalogue(" + i + ").config[@address]");
-                    String opacType = conf.getString("catalogue(" + i + ").config[@opacType]", ModsPlugin.MODS_STRING);
+            String title = conf.getString("catalogue(" + i + ")[@title]");
+            if (title.equals(inTitle)) {
+                String description = conf.getString("catalogue(" + i + ").config[@description]");
+                String address = conf.getString("catalogue(" + i + ").config[@address]");
+                String opacType = conf.getString("catalogue(" + i + ").config[@opacType]", ModsPlugin.MODS_STRING);
 
-                    ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType);
-                    return coc;
-                }
-            } catch (JXPathException e) {
-                logger.debug("Could not get data from catalogue.");
+                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType);
+                return coc;
             }
         }
         return null;
