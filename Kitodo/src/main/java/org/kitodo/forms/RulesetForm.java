@@ -104,6 +104,22 @@ public class RulesetForm extends BaseForm {
     }
 
     /**
+     * Delete ruleset.
+     */
+    public void delete() {
+        try {
+            if (hasAssignedProcessesOrTemplates(this.ruleset.getId())) {
+                Helper.setErrorMessage("rulesetInUse");
+            } else {
+                this.serviceManager.getRulesetService().remove(this.ruleset);
+            }
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                    e);
+        }
+    }
+
+    /**
      * Checks that ruleset file exists.
      *
      * @param ruleset
@@ -134,8 +150,9 @@ public class RulesetForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
-        return !serviceManager.getProcessService().findByRuleset(ruleset).isEmpty();
+    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DataException {
+        return !serviceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
+                || !serviceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
     }
 
     /**
@@ -206,22 +223,6 @@ public class RulesetForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
                 logger, e);
             return new ArrayList();
-        }
-    }
-
-    /**
-     * Delete ruleset.
-     */
-    public void delete() {
-        try {
-            if (hasAssignedProcesses(ruleset)) {
-                Helper.setErrorMessage("rulesetInUse");
-            } else {
-                this.serviceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
         }
     }
 }
