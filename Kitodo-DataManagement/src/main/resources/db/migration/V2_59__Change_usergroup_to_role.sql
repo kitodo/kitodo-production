@@ -69,32 +69,32 @@ ALTER TABLE user_x_role
 
 -- 4. Update entries in authority table
 --
-UPDATE authority SET title = 'viewAllUserGroups_globalAssignable'
-WHERE title = 'viewAllRoles_globalAssignable';
+UPDATE authority SET title = 'viewAllRoles_globalAssignable'
+WHERE title = 'viewAllUserGroups_globalAssignable';
 
-UPDATE authority SET title = 'viewUserGroup_globalAssignable'
-WHERE title = 'viewRole_globalAssignable';
+UPDATE authority SET title = 'viewRole_globalAssignable'
+WHERE title = 'viewUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'addUserGroup_globalAssignable'
-WHERE title = 'addRole_globalAssignable';
+UPDATE authority SET title = 'addRole_UserGroup_globalAssignable'
+WHERE title = 'addUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'editUserGroup_globalAssignable'
-WHERE title = 'editRole_globalAssignable';
+UPDATE authority SET title = 'editRole_UserGroup_globalAssignable'
+WHERE title = 'editUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'deleteUserGroup_globalAssignable'
-WHERE title = 'deleteRole_globalAssignable';
+UPDATE authority SET title = 'deleteRole_globalAssignable'
+WHERE title = 'deleteUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'viewAllUserGroups_clientAssignable'
-WHERE title = 'viewAllRoles_clientAssignable';
+UPDATE authority SET title = 'viewAllRoles_clientAssignable'
+WHERE title = 'viewAllUserGroups_clientAssignable';
 
-UPDATE authority SET title = 'viewUserGroup_clientAssignable'
-WHERE title = 'viewRole_clientAssignable';
+UPDATE authority SET title = 'viewRole_clientAssignable'
+WHERE title = 'viewUserGroup_clientAssignable';
 
-UPDATE authority SET title = 'addUserGroup_clientAssignable'
-WHERE title = 'addRole_clientAssignable';
+UPDATE authority SET title = 'addRole_clientAssignable'
+WHERE title = 'addUserGroup_clientAssignable';
 
-UPDATE authority SET title = 'editUserGroup_clientAssignable'
-WHERE title = 'editRole_clientAssignable';
+UPDATE authority SET title = 'editRole_clientAssignable'
+WHERE title = 'editUserGroup_clientAssignable';
 
-UPDATE authority SET title = 'deleteUserGroup_clientAssignable'
-WHERE title = 'deleteRole_clientAssignable';
+UPDATE authority SET title = 'deleteRole_clientAssignable'
+WHERE title = 'deleteUserGroup_clientAssignable';
