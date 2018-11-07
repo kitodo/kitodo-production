@@ -997,7 +997,6 @@ public class ModsPlugin implements Plugin {
         if (structureTypeMandatoryElements.keySet().size() < 1 && structureTypeForbiddenElements.keySet().size() < 1) {
             int i = 0;
             HierarchicalConfiguration opacConfig = ConfigOpac.getConfig();
-            opacConfig.setExpressionEngine(new DefaultExpressionEngine());
 
             SubnodeConfiguration pluginConfiguration = null;
             for(Object catalogue : opacConfig.getList("catalogue[@title]")) {
