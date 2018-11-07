@@ -44,7 +44,12 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link outcome="rulesetEdit" title="#{msgs.rulesetEdit}"
+                <h:link id="viewRuleset" outcome="rulesetEdit" title="#{msgs.rulesetView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewRuleset()}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
+                <h:link id="editRuleset" outcome="rulesetEdit" title="#{msgs.rulesetEdit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditRuleset()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>

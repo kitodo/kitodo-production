@@ -53,16 +53,28 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
+                <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject()}"
+                        outcome="projectEdit" title="#{msgs.projectView}">
+                    <f:param name="id" value="#{item.id}" />
+                    <f:param name="referer" value="projects"/>
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
+
+                <h:link id="editProject" rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
+
                 <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(item.id)}" immediate="true"
-                               title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                               title="#{msgs.duplicateProject}">
+                    <i class="fa fa-clone fa-lg"/>
+                </h:commandLink>
+
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
+
                 <p:commandLink id="deleteProject"
                                action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
