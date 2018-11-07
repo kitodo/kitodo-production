@@ -71,7 +71,7 @@
                                 value="#{Metadaten.allStructureElements}"
                                 type="definition"
                                 binding="#{currentElement}">
-                        <h:outputText value="#{structureElement.getDocStructType().getNameByLanguage(SpracheForm.locale)}" style="font-weight: bold;"/>
+                        <h:outputText value="#{structureElement.getDocStructType().getNameByLanguage(LanguageForm.locale)}" style="font-weight: bold;"/>
                         <p:dataList styleClass="structureElementDataList"
                                     id="structureElementDataList"
                                     var="page"

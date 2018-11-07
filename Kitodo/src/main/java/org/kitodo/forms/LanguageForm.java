@@ -42,22 +42,22 @@ import org.kitodo.helper.LegalTexts;
 import org.kitodo.services.ServiceManager;
 
 /**
- * The SpracheForm class serves to switch the displayed language for the current
+ * The LanguageForm class serves to switch the displayed language for the current
  * user in the running application.
  */
-@Named("SpracheForm")
+@Named("LanguageForm")
 @SessionScoped
-public class SpracheForm implements Serializable {
+public class LanguageForm implements Serializable {
 
     private static final String SESSION_LOCALE_FIELD_ID = "lang";
     private static final long serialVersionUID = -8766724454080390450L;
-    private static final Logger logger = LogManager.getLogger(SpracheForm.class);
+    private static final Logger logger = LogManager.getLogger(LanguageForm.class);
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The constructor of this class loads the required MessageBundle.
      */
-    public SpracheForm() {
+    public LanguageForm() {
         setSessionLocaleFieldId();
     }
 
