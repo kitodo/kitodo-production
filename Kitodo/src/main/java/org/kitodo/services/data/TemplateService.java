@@ -305,6 +305,30 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
+     * Find templates by docket id.
+     *
+     * @param docketId
+     *            id of docket for search
+     * @return list of JSON objects with templates for specific docket id
+     */
+    public List<JsonObject> findByDocket(int docketId) throws DataException {
+        QueryBuilder query = createSimpleQuery(TemplateTypeField.DOCKET.getKey(), docketId, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find templates by ruleset id.
+     *
+     * @param rulesetId
+     *            id of ruleset for search
+     * @return list of JSON objects with templates for specific ruleset id
+     */
+    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+        QueryBuilder query = createSimpleQuery(TemplateTypeField.RULESET.getKey(), rulesetId, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
      * Get diagram image for current template.
      *
      * @return diagram image file

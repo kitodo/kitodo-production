@@ -73,13 +73,11 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
-import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -453,26 +451,26 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find processes by docket.
+     * Find processes by docket id.
      *
-     * @param docket
-     *            of project
-     * @return list of JSON objects with processes for specific docket
+     * @param docketId
+     *            id of dockett for search
+     * @return list of JSON objects with processes for specific docket id
      */
-    public List<JsonObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docket.getId(), true);
+    public List<JsonObject> findByDocket(int docketId) throws DataException {
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docketId, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find processes by ruleset.
+     * Find processes by ruleset id.
      *
-     * @param ruleset
-     *            of project
-     * @return list of JSON objects with processes for specific ruleset
+     * @param rulesetId
+     *            id of ruleset for search
+     * @return list of JSON objects with processes for specific ruleset id
      */
-    public List<JsonObject> findByRuleset(Ruleset ruleset) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), ruleset.getId(), true);
+    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
         return searcher.findDocuments(query.toString());
     }
 

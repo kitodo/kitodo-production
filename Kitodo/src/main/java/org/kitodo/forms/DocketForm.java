@@ -39,7 +39,6 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.data.ProcessService;
 
 @Named("DocketForm")
 @SessionScoped
@@ -113,7 +112,7 @@ public class DocketForm extends BaseForm {
      */
     public void delete() {
         try {
-            if (hasAssignedProcesses(myDocket)) {
+            if (hasAssignedProcessesOrTemplates(this.myDocket.getId())) {
                 Helper.setErrorMessage("docketInUse");
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
@@ -141,9 +140,9 @@ public class DocketForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcesses(Docket d) throws DataException {
-        ProcessService processService = serviceManager.getProcessService();
-        return !processService.findByDocket(d).isEmpty();
+    private boolean hasAssignedProcessesOrTemplates(int docketId) throws DataException {
+        return !serviceManager.getProcessService().findByDocket(docketId).isEmpty()
+                || !serviceManager.getTemplateService().findByDocket(docketId).isEmpty();
     }
 
     /**
