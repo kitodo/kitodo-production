@@ -1,0 +1,123 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:param name="isEditMode"
+              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
+    <ui:param name="isCreateMode"
+              value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser()}"/>
+
+    <p:panelGrid id="useredit-grid" columns="2" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="surname" value="#{msgs.surname}"/>
+                <p:inputText id="surname" class="input" disabled="#{isViewMode}"
+                             placeholder="#{msgs.surname}" value="#{UserForm.userObject.surname}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
+                <p:inputText id="firstName" class="input" disabled="#{isViewMode}"
+                             placeholder="#{msgs.firstName}" value="#{UserForm.userObject.name}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="location" value="#{msgs.location}"/>
+                <p:inputText id="location" class="input" disabled="#{isViewMode}"
+                             placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
+                <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode}"
+                             placeholder="#{msgs.ldaplogin}" onchange="toggleSave()"
+                             value="#{UserForm.userObject.ldapLogin}"/>
+            </div>
+            <div>
+                <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
+                <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
+                                 disabled="#{isViewMode}" converter="#{ldapGroupConverter}">
+                    <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
+                                   itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <p:commandButton id="writUserToLdapButton"
+                                 action="#{UserForm.writeUserAtLdapServer}"
+                                 value="#{msgs.ldapKonfigurationSchreiben}"
+                                 icon="fa fa-user-plus fa-lg"
+                                 immediate="true"
+                                 disabled="#{isViewMode}"
+                                 rendered="#{AuthenticationController.ldapAuthentication}"
+                                 class="button-filled-green">
+                </p:commandButton>
+                <p:commandButton onclick="PF('changePasswordDialog').show()"
+                                 id="changePasswordButton"
+                                 value="#{msgs.passwordChange}"
+                                 icon="fa fa-pencil fa-lg"
+                                 immediate="true"
+                                 rendered="#{isEditMode}"
+                                 class="button-filled-green">
+                </p:commandButton>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="login" value="#{msgs.login}"/>
+                <p:inputText id="login" class="input" disabled="#{isViewMode}" placeholder="#{msgs.login}"
+                             value="#{UserForm.userObject.login}" readonly="#{UserForm.userObject.id ne null}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
+                <p:password id="password" class="input" rendered="#{isCreateMode}"
+                            placeholder="#{msgs.password}" value="#{UserForm.passwordToEncrypt}"
+                            onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
+                            redisplay="true"/>
+            </div>
+            <div>
+                <p:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
+                <p:selectOneMenu id="languages" value="#{UserForm.userObject.language}" disabled="#{isViewMode}"
+                                 required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItems value="#{LanguageForm.supportedLocales}" var="language"
+                                   itemLabel="#{language.displayLanguageSelf}" itemValue="#{language.id}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <p:outputLabel for="metaDataLanguage" value="#{msgs.metadataLanguage}"/>
+                <p:inputText id="metaDataLanguage" class="input" disabled="#{isViewMode}"
+                             placeholder="#{msgs.metadataLanguage}" value="#{UserForm.userObject.metadataLanguage}"
+                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
+                <p:selectBooleanCheckbox id="withMassDownload" styleClass="input" disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.withMassDownload}"
+                                         onchange="toggleSave()"/>
+            </div>
+            <div>
+                <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
+                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>
