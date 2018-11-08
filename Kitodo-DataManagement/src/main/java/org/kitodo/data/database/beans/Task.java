@@ -98,6 +98,15 @@ public class Task extends BaseIndexedBean {
     @Column(name = "workflowCondition")
     private String workflowCondition;
 
+    @Column(name = "previousTasks")
+    private String previousTasks;
+
+    @Column(name = "concurrentTasks")
+    private String concurrentTasks;
+
+    @Column(name = "nextTasks")
+    private String nextTasks;
+
     /**
      * This field contains information about user, which works on this task.
      */
@@ -182,6 +191,9 @@ public class Task extends BaseIndexedBean {
         this.homeDirectory = templateTask.getHomeDirectory();
         this.workflowId = templateTask.getWorkflowId();
         this.workflowCondition = templateTask.getWorkflowCondition();
+        this.previousTasks = templateTask.getPreviousTasks();
+        this.concurrentTasks = templateTask.getConcurrentTasks();
+        this.nextTasks = templateTask.getNextTasks();
 
         // necessary to create new ArrayList in other case session problem!
         this.roles = new ArrayList<>(templateTask.getRoles());
@@ -551,6 +563,78 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = workflowCondition;
     }
 
+    /**
+     * Get workflow ids of previous tasks separated by commas. There are three
+     * possible states for this field. First, task has zero previous tasks - it
+     * means that it is first task. Second, task has one previous tasks - it means
+     * that they are going to be executed right one after another. Third, task has
+     * many previous tasks - it means that first all previous tasks must be executed
+     * before this is available to take by user.
+     *
+     * @return workflow ids of previous tasks separated by commas
+     */
+    public String getPreviousTasks() {
+        return previousTasks;
+    }
+
+    /**
+     * Set workflow ids of previous tasks separated by commas.
+     *
+     * @param previousTasks
+     *            workflow ids of previous tasks separated by commas as one String
+     */
+    public void setPreviousTasks(String previousTasks) {
+        this.previousTasks = previousTasks;
+    }
+
+    /**
+     * Get workflow ids of concurrent tasks separated by commas. There are three
+     * possible states for this field. First, task has zero concurrent tasks - it
+     * means that it is only task which is going to be executed. Second and third
+     * are similar, task has concurrent tasks - they all are going to be available
+     * for execution after previous one is ready and all needed to be finished
+     * before next one is set up to available to take by user.
+     *
+     * @return workflow ids of previous tasks separated by commas
+     */
+    public String getConcurrentTasks() {
+        return concurrentTasks;
+    }
+
+    /**
+     * Set workflow ids of concurrent tasks separated by commas.
+     *
+     * @param concurrentTasks
+     *            workflow ids of concurrent tasks separated by commas as one String
+     */
+    public void setConcurrentTasks(String concurrentTasks) {
+        this.concurrentTasks = concurrentTasks;
+    }
+
+    /**
+     * Get workflow ids of next tasks separated by commas. There are three possible
+     * states for this field. First, task has zero next tasks - it means that it is
+     * last task. Second, task has one next tasks - it means that they are going to
+     * be executed right one after another. Third, task has many next tasks - it
+     * means that after this task is executed those next tasks will be set up to
+     * available to take by user.
+     *
+     * @return workflow ids of next tasks separated by commas
+     */
+    public String getNextTasks() {
+        return nextTasks;
+    }
+
+    /**
+     * Set workflow ids of next tasks separated by commas.
+     *
+     * @param nextTasks
+     *            workflow ids of next tasks separated by commas as one String
+     */
+    public void setNextTasks(String nextTasks) {
+        this.nextTasks = nextTasks;
+    }
+
     public Boolean getBatchStep() {
         if (this.batchStep == null) {
             this.batchStep = Boolean.FALSE;
@@ -668,8 +752,8 @@ public class Task extends BaseIndexedBean {
     @Override
     public int hashCode() {
         return Objects.hash(title, priority, ordering, processingStatus, processingTime, processingBegin, processingEnd,
-            editType, homeDirectory, typeMetadata, typeAutomatic,
-            typeImagesRead, typeImagesWrite, typeExportDMS, typeAcceptClose, scriptName, scriptPath, typeCloseVerify,
-            batchStep, workflowId, workflowCondition, processingUser, template, localizedTitle);
+            editType, homeDirectory, typeMetadata, typeAutomatic, typeImagesRead, typeImagesWrite, typeExportDMS,
+            typeAcceptClose, scriptName, scriptPath, typeCloseVerify, batchStep, workflowId, processingUser, template,
+            localizedTitle);
     }
 }

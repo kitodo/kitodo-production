@@ -122,6 +122,9 @@ public class Reader {
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
+        task.setPreviousTasks(taskInfo.getCondition());
+        task.setConcurrentTasks(taskInfo.getCondition());
+        task.setNextTasks(taskInfo.getCondition());
         Integer userRoleId = kitodoTask.getUserRole();
         if (userRoleId > 0) {
             task.getRoles().add(serviceManager.getRoleService().getById(userRoleId));
