@@ -19,13 +19,13 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:o="http://omnifaces.org/ui">
 
-    <f:view locale="#{SpracheForm.locale}">
+    <f:view locale="#{LanguageForm.locale}">
         <h:head>
             <ui:insert name="head">
                 <ui:include src="/WEB-INF/templates/includes/head.xhtml" />
             </ui:insert>
         </h:head>
-        <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}" lang="#{SpracheForm.locale}">
+        <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}" lang="#{LanguageForm.locale}">
             <h:outputStylesheet name="css/kitodo.css"/>
             <h:outputStylesheet name="css/pattern-library.css"/>
             <h:outputStylesheet name="css/bpmn-js/bpmn-font/css/bpmn.css"/>

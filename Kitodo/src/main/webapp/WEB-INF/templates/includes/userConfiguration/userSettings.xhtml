@@ -41,8 +41,8 @@
                 <div>
                     <!-- language -->
                     <h:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
-                    <p:selectOneMenu id="languages" value="#{SpracheForm.language}" style="margin-bottom: 0">
-                        <f:selectItems value="#{SpracheForm.supportedLocales}" var="entry"
+                    <p:selectOneMenu id="languages" value="#{LanguageForm.language}" style="margin-bottom: 0">
+                        <f:selectItems value="#{LanguageForm.supportedLocales}" var="entry"
                                        itemLabel="#{entry['displayLanguageSelf']}"
                                        itemValue="#{entry['id']}"/>
                     </p:selectOneMenu>
