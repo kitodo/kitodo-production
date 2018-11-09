@@ -122,9 +122,6 @@ public abstract class BaseDAO implements Serializable {
         Session session = null;
         try {
             session = Helper.getHibernateSession();
-            if (session == null) {
-                session = HibernateUtil.getSessionFactory().openSession();
-            }
             return session.get(c, id);
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -254,9 +251,6 @@ public abstract class BaseDAO implements Serializable {
 
     protected void refresh(Object o) {
         Session session = Helper.getHibernateSession();
-        if (session == null) {
-            session = HibernateUtil.getSessionFactory().openSession();
-        }
         session.refresh(o);
         session.close();
     }
@@ -266,9 +260,6 @@ public abstract class BaseDAO implements Serializable {
         Session session = null;
         try {
             session = Helper.getHibernateSession();
-            if (session == null) {
-                session = HibernateUtil.getSessionFactory().openSession();
-            }
             return session.load(c, id);
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -281,9 +272,6 @@ public abstract class BaseDAO implements Serializable {
 
     protected void updateObj(Object o) {
         Session session = Helper.getHibernateSession();
-        if (session == null) {
-            session = HibernateUtil.getSessionFactory().openSession();
-        }
         session.update(o);
         session.close();
     }
