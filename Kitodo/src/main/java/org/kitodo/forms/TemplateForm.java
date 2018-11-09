@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
@@ -162,7 +163,7 @@ public class TemplateForm extends TemplateBaseForm {
                     Reader reader = new Reader(this.template.getWorkflow().getFileName());
                     this.template = reader.convertWorkflowToTemplate(this.template);
                 }
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | WorkflowException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
                 return this.stayOnCurrentPage;
             }
