@@ -12,7 +12,6 @@
 package org.kitodo.workflow.model;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -22,8 +21,6 @@ import org.junit.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
 
 import static org.junit.Assert.assertEquals;
@@ -32,20 +29,14 @@ import static org.junit.Assert.assertTrue;
 
 public class ReaderTest {
 
-    private static FileService fileService = new ServiceManager().getFileService();
-
     @BeforeClass
     public static void setUp() throws Exception {
-        fileService.createDirectory(URI.create(""), "diagrams");
-
         FileLoader.createExtendedDiagramTestFile();
     }
 
     @AfterClass
     public static void tearDown() throws IOException {
         FileLoader.deleteExtendedDiagramTestFile();
-
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
@@ -71,16 +62,14 @@ public class ReaderTest {
         Template template = new Template();
         template.setTitle("Title");
         template = reader.convertWorkflowToTemplate(template);
-        template.getTasks().sort(Comparator.comparing(Task::getOrdering));
+        template.getTasks().sort(Comparator.comparing(Task::getTitle));
 
-        Task task = template.getTasks().get(0);
+        Task task = template.getTasks().get(1);
         assertEquals("Process definition - workflow's task was read incorrectly!", "Say hello", task.getTitle());
         assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getPriority().intValue());
-        assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getOrdering().intValue());
 
-        task = template.getTasks().get(1);
+        task = template.getTasks().get(0);
         assertEquals("Process definition - workflow's task was read incorrectly!", "Test script", task.getScriptName());
         assertNull("Process definition - workflow's task was read incorrectly!", task.getScriptPath());
-        assertEquals("Process definition - workflow's task was read incorrectly!", 2, task.getOrdering().intValue());
     }
 }

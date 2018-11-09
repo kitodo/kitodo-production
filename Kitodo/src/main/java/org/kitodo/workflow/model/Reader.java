@@ -204,7 +204,6 @@ public class Reader {
      */
     private void addConditionalTasksBranch(List<FlowNode> nextNodes, String previousTasks) throws WorkflowException {
         for (FlowNode node : nextNodes) {
-            System.out.println(node.getId());
             ConditionExpression conditionExpression = node.getIncoming().iterator().next().getConditionExpression();
             String workflowCondition = "default";
             if (Objects.nonNull(conditionExpression)) {
