@@ -98,7 +98,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     @Override
-    public List<Property> getAllForSelectedClient(int clientId) {
+    public List<Property> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

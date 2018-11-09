@@ -336,9 +336,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
-    public List<User> getAllForSelectedClient(int clientId) {
+    public List<User> getAllForSelectedClient() {
         return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     @Override

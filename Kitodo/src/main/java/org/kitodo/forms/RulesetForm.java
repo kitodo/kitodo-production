@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,7 +36,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("RulesetForm")
@@ -199,15 +197,6 @@ public class RulesetForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);
         }
-    }
-
-    /**
-     * Get all available clients.
-     *
-     * @return list of Client objects
-     */
-    public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
     }
 
     /**

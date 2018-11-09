@@ -75,16 +75,7 @@
                             </p:selectOneMenu>
                         </div>
                     </p:row>
-                    <p:row rendered="#{SessionClientController.currentSessionClient eq null}">
-                        <ui:fragment rendered="#{SessionClientController.currentSessionClient eq null}">
-                            <div>
-                                <p:outputLabel for="client" value="#{msgs.client}"/>
-                                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RulesetForm.ruleset.client}">
-                                    <f:selectItems value="#{RulesetForm.clients}"/>
-                                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                                </p:selectOneMenu>
-                            </div>
-                        </ui:fragment>
+                    <p:row>
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadataSortByRuleset}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset"

@@ -95,9 +95,9 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public List<Ruleset> getAllForSelectedClient(int clientId) {
+    public List<Ruleset> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     /**

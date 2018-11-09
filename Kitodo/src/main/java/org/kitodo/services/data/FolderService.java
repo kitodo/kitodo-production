@@ -33,7 +33,7 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
-    public List<Folder> getAllForSelectedClient(int clientId) {
+    public List<Folder> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 }

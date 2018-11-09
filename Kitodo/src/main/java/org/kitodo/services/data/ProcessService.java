@@ -409,7 +409,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public List<Process> getAllForSelectedClient(int clientId) {
+    public List<Process> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

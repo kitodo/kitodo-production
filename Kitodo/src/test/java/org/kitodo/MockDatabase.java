@@ -1290,14 +1290,16 @@ public class MockDatabase {
         serviceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DataException {
+    public static void insertWorkflows() throws DAOException, DataException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
+        firstWorkflow.setClient(serviceManager.getClientService().getById(1));
         serviceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
         secondWorkflow.setReady(false);
+        secondWorkflow.setClient(serviceManager.getClientService().getById(2));
         serviceManager.getWorkflowService().save(secondWorkflow);
     }
 

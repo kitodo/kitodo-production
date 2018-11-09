@@ -160,9 +160,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public List<Project> getAllForSelectedClient(int clientId) {
+    public List<Project> getAllForSelectedClient() {
         return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", clientId));
+                Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     @Override

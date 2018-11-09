@@ -1472,7 +1472,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of dockets as SelectItem objects
      */
     public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets();
+        return SelectItemList.getDockets(serviceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -1481,7 +1481,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of projects as SelectItem objects
      */
     public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects();
+        return SelectItemList.getProjects(serviceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -1490,7 +1490,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of rulesets as SelectItem objects
      */
     public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets();
+        return SelectItemList.getRulesets(serviceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**

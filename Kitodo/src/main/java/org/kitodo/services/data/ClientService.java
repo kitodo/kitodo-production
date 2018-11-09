@@ -79,7 +79,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     @Override
-    public List<Client> getAllForSelectedClient(int clientId) {
+    public List<Client> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

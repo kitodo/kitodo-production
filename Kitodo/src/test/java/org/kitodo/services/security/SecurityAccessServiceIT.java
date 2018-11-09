@@ -50,7 +50,7 @@ public class SecurityAccessServiceIT {
     @Test
     public void shouldGetAuthorities() throws DAOException {
         User user = serviceManager.getUserService().getByLogin("kowal");
-        SecurityTestUtils.addUserDataToSecurityContext(user);
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities();
         Assert.assertEquals("Security context holder does not hold the corresponding authorities", 142,
@@ -60,7 +60,7 @@ public class SecurityAccessServiceIT {
     @Test
     public void hasAuthorityTest() throws DAOException {
         User user = serviceManager.getUserService().getByLogin("kowal");
-        SecurityTestUtils.addUserDataToSecurityContext(user);
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         Assert.assertTrue("The authority \"editClient\" was not found for authenticated user",
             serviceManager.getSecurityAccessService().hasAuthorityGlobal("editClient"));
     }
@@ -68,7 +68,7 @@ public class SecurityAccessServiceIT {
     @Test
     public void hasAuthorityForClientTest() throws DAOException {
         User user = serviceManager.getUserService().getByLogin("kowal");
-        SecurityTestUtils.addUserDataToSecurityContext(user);
+        SecurityTestUtils.addUserDataToSecurityContext(user,1);
         Assert.assertTrue("Checking if user has edit project authority for first client returned wrong value",
             serviceManager.getSecurityAccessService().hasAuthorityForClient("editProject"));
     }

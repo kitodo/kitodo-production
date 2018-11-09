@@ -96,7 +96,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    public List<Template> getAllForSelectedClient(int clientId) {
+    public List<Template> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

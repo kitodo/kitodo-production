@@ -52,7 +52,7 @@ public class WorkflowControllerServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
-        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(serviceManager.getUserService().getById(1), 1);
 
         fileService.createDirectory(URI.create(""), "users");
 
