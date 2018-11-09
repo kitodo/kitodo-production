@@ -38,7 +38,6 @@ public class BaseTestSelenium {
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
 
-        fileService.createDirectory(URI.create(""), "diagrams");
         fileService.createDirectory(URI.create(""), "users");
         FileLoader.createDiagramTestFile();
         FileLoader.createConfigProjectsFile();
@@ -68,7 +67,6 @@ public class BaseTestSelenium {
         FileLoader.deleteDigitalCollectionsFile();
         FileLoader.deleteConfigProjectsFile();
         FileLoader.deleteDiagramTestFile();
-        fileService.delete(URI.create("diagrams"));
         fileService.delete(URI.create("users"));
 
         MockDatabase.stopNode();
