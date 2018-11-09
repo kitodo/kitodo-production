@@ -53,8 +53,6 @@
 /**
 * Gateways
 */
-.bpmn-icon-gateway-none {display: none !important;}
-.bpmn-icon-gateway-parallel {display: none !important;}
 .bpmn-icon-gateway-or {display: none !important;}
 .bpmn-icon-gateway-complex {display: none !important;}
 .bpmn-icon-gateway-eventbased {display: none !important;}
