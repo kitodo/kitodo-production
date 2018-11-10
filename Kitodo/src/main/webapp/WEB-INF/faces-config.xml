@@ -23,11 +23,11 @@
             <supported-locale>en</supported-locale>
         </locale-config>
         <resource-bundle>
-            <base-name>messages.errors</base-name>
+            <base-name>org.kitodo.helper.messages.Error</base-name>
             <var>err</var>
         </resource-bundle>
         <resource-bundle>
-            <base-name>messages.messages</base-name>
+            <base-name>org.kitodo.helper.messages.Message</base-name>
             <var>msgs</var>
         </resource-bundle>
     </application>

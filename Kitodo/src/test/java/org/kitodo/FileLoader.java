@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.config.enums.ParameterCore;
 
 public class FileLoader {
 
@@ -31,6 +32,8 @@ public class FileLoader {
     private static String metadataDisplayRulesPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.METADATA_DISPLAY_RULES;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
+    private static String errorsCustomBundle = ConfigCore.getParameter(ParameterCore.DIR_LOCAL_MESSAGES) + "errors_en.properties";
+    private static String messagesCustomBundle = ConfigCore.getParameter(ParameterCore.DIR_LOCAL_MESSAGES) + "messages_en.properties";
 
     public static void createConfigProjectsFile() throws IOException {
         List<String> content = new ArrayList<>();
@@ -240,6 +243,22 @@ public class FileLoader {
         Files.write(Paths.get(metadataTemplatePath), getMetadataTemplate());
     }
 
+    public static void createCustomErrors() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("custom=Test custom error");
+        content.add("error=Test custom error");
+
+        Files.write(Paths.get(errorsCustomBundle), content);
+    }
+
+    public static void createCustomMessages() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("custom=Test custom message");
+        content.add("ready=Test custom message");
+
+        Files.write(Paths.get(messagesCustomBundle), content);
+    }
+
     public static void deleteConfigProjectsFile() throws IOException {
         Files.deleteIfExists(Paths.get(configProjectsPath));
     }
@@ -274,6 +293,14 @@ public class FileLoader {
 
     public static void deleteMetadataTemplateFile() throws IOException {
         Files.deleteIfExists(Paths.get(metadataTemplatePath));
+    }
+
+    public static void deleteCustomErrors() throws IOException {
+        Files.deleteIfExists(Paths.get(errorsCustomBundle));
+    }
+
+    public static void deleteCustomMessages() throws IOException {
+        Files.deleteIfExists(Paths.get(messagesCustomBundle));
     }
 
     private static List<String> getMetadataTemplate() {
