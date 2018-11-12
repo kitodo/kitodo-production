@@ -36,7 +36,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link id="viewDocket" outcome="docketEdit" title="#{msgs.docketView}"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToViewDocket() and not SecurityAccessController.hasAuthorityToEditDocket()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>

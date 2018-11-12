@@ -34,7 +34,7 @@
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                 <h:link id="viewProcess" outcome="processEdit" title="#{msgs.processView}"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-eye fa-lg"/>
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
