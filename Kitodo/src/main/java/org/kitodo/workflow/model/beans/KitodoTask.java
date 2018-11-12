@@ -20,7 +20,6 @@ public class KitodoTask {
     private String workflowId;
     private String title;
     private Integer priority;
-    private Integer ordering;
     private Integer editType;
     private Integer processingStatus;
     private Boolean typeMetadata;
@@ -40,14 +39,11 @@ public class KitodoTask {
      * 
      * @param task
      *            BPMN model task
-     * @param ordering
-     *            determined out of sequence flow
      */
-    public KitodoTask(Task task, int ordering) {
+    public KitodoTask(Task task) {
         this.workflowId = task.getId();
         this.title = task.getName();
         this.priority = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "priority"));
-        this.ordering = ordering;
         this.editType = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "editType"));
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
@@ -130,25 +126,6 @@ public class KitodoTask {
      */
     public void setPriority(Integer priority) {
         this.priority = priority;
-    }
-
-    /**
-     * Get ordering.
-     *
-     * @return value of ordering
-     */
-    public Integer getOrdering() {
-        return ordering;
-    }
-
-    /**
-     * Set ordering.
-     *
-     * @param ordering
-     *            as Integer
-     */
-    public void setOrdering(Integer ordering) {
-        this.ordering = ordering;
     }
 
     /**

@@ -23,11 +23,9 @@ public class KitodoScriptTask extends KitodoTask {
      * 
      * @param scriptTask
      *            BPMN model task
-     * @param ordering
-     *            determined out of sequence flow
      */
-    public KitodoScriptTask(ScriptTask scriptTask, int ordering) {
-        super(scriptTask, ordering);
+    public KitodoScriptTask(ScriptTask scriptTask) {
+        super(scriptTask);
         this.scriptName = scriptTask.getAttributeValueNs(NAMESPACE, "scriptName");
         this.scriptPath = scriptTask.getAttributeValueNs(NAMESPACE, "scriptPath");
     }

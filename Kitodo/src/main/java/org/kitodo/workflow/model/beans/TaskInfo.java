@@ -13,34 +13,22 @@ package org.kitodo.workflow.model.beans;
 
 public class TaskInfo {
 
-    private Integer ordering;
     private String condition;
+    private String previousTasks;
+    private String concurrentTasks;
+    private String nextTasks;
 
-    public TaskInfo(Integer ordering) {
-        this.ordering = ordering;
-    }
-
-    public TaskInfo(Integer ordering, String condition) {
-        this.ordering = ordering;
+    /**
+     * Constructor for workflow specific task information.
+     * 
+     * @param condition
+     *            for conditional tasks
+     * @param previousTasks
+     *            workflow id of previous task(s)
+     */
+    public TaskInfo(String condition, String previousTasks) {
         this.condition = condition;
-    }
-
-    /**
-     * Get ordering.
-     *
-     * @return value of ordering
-     */
-    public Integer getOrdering() {
-        return ordering;
-    }
-
-    /**
-     * Set ordering.
-     *
-     * @param ordering as java.lang.Integer
-     */
-    public void setOrdering(Integer ordering) {
-        this.ordering = ordering;
+        this.previousTasks = previousTasks;
     }
 
     /**
@@ -55,9 +43,67 @@ public class TaskInfo {
     /**
      * Set condition.
      *
-     * @param condition as java.lang.String
+     * @param condition
+     *            as java.lang.String
      */
     public void setCondition(String condition) {
         this.condition = condition;
+    }
+
+    /**
+     * Get previousTasks.
+     *
+     * @return value of previousTasks
+     */
+    public String getPreviousTasks() {
+        return previousTasks;
+    }
+
+    /**
+     * Set previousTasks.
+     *
+     * @param previousTasks
+     *            as java.lang.String
+     */
+    public void setPreviousTasks(String previousTasks) {
+        this.previousTasks = previousTasks;
+    }
+
+    /**
+     * Get concurrentTasks.
+     *
+     * @return value of concurrentTasks
+     */
+    public String getConcurrentTasks() {
+        return concurrentTasks;
+    }
+
+    /**
+     * Set concurrentTasks.
+     *
+     * @param concurrentTasks
+     *            as java.lang.String
+     */
+    public void setConcurrentTasks(String concurrentTasks) {
+        this.concurrentTasks = concurrentTasks;
+    }
+
+    /**
+     * Get nextTasks.
+     *
+     * @return value of nextTasks
+     */
+    public String getNextTasks() {
+        return nextTasks;
+    }
+
+    /**
+     * Set nextTasks.
+     *
+     * @param nextTasks
+     *            as java.lang.String
+     */
+    public void setNextTasks(String nextTasks) {
+        this.nextTasks = nextTasks;
     }
 }
