@@ -53,7 +53,7 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject()}"
+                <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.projectView}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
