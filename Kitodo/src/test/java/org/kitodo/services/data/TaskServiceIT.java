@@ -37,6 +37,7 @@ import org.kitodo.services.ServiceManager;
 public class TaskServiceIT {
 
     private static final TaskService taskService = new ServiceManager().getTaskService();
+    private static final int AMOUNT_TASKS = 13;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -57,38 +58,38 @@ public class TaskServiceIT {
     @Test
     public void shouldCountAllTasks() {
         await().untilAsserted(
-            () -> assertEquals("Tasks were not counted correctly!", Long.valueOf(8), taskService.count()));
+            () -> assertEquals("Tasks were not counted correctly!", Long.valueOf(AMOUNT_TASKS), taskService.count()));
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
         Long amount = taskService.countDatabaseRows();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(8), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(AMOUNT_TASKS), amount);
     }
 
     @Test
     public void shouldFindTask() {
         await().untilAsserted(() -> assertTrue("Task was not found in index!",
-            taskService.findById(1).getTitle().equals("Testing") && taskService.findById(1).getPriority().equals(1)));
+            taskService.findById(1).getTitle().equals("Finished") && taskService.findById(1).getPriority().equals(1)));
     }
 
     @Test
     public void shouldFindAllTasks() {
         await().untilAsserted(
-            () -> assertEquals("Not all tasks were found in index!", 8, taskService.findAll().size()));
+            () -> assertEquals("Not all tasks were found in index!", AMOUNT_TASKS, taskService.findAll().size()));
     }
 
     @Test
     public void shouldGetTask() throws Exception {
         Task task = taskService.getById(1);
-        boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
+        boolean condition = task.getTitle().equals("Finished") && task.getPriority().equals(1);
         assertTrue("Task was not found in database!", condition);
     }
 
     @Test
     public void shouldGetAllTasks() throws Exception {
         List<Task> tasks = taskService.getAll();
-        assertEquals("Not all tasks were found in database!", 8, tasks.size());
+        assertEquals("Not all tasks were found in database!", AMOUNT_TASKS, tasks.size());
     }
 
     @Test
@@ -100,13 +101,13 @@ public class TaskServiceIT {
     @Test
     public void shouldFindManyByProcessingStatusAndUser() {
         await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 2,
-            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
+            taskService.findByProcessingStatusAndUser(TaskStatus.DONE, 1, null).size()));
     }
 
     @Test
     public void shouldFindOneByProcessingStatusAndUser() {
         await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 1,
-            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null).size()));
+            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
     }
 
     @Test
@@ -122,34 +123,34 @@ public class TaskServiceIT {
         int size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
 
-        Task task = taskService.getById(6);
+        Task task = taskService.getById(7);
         taskService.replaceProcessingUser(task, null);
         taskService.save(task);
 
         await().pollDelay(3, TimeUnit.SECONDS).atMost(9, TimeUnit.SECONDS).untilAsserted(
-            () -> assertNull("Processing user is not null!", taskService.findById(6, false).getProcessingUser()));
-        size = userService.findByProcessingTask(6, false).size();
+            () -> assertNull("Processing user is not null!", taskService.findById(7, false).getProcessingUser()));
+        size = userService.findByProcessingTask(7, false).size();
         assertEquals("Incorrect amount of processing users!", 0, size);
 
-        task = taskService.getById(6);
+        task = taskService.getById(7);
         User user = userService.getById(1);
         taskService.replaceProcessingUser(task, user);
         taskService.save(task);
 
-        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", Integer.valueOf(1),
-            taskService.findById(6, false).getProcessingUser().getId()));
-        size = userService.findByProcessingTask(6, false).size();
+        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", 1,
+            taskService.findById(7, false).getProcessingUser().getId().intValue()));
+        size = userService.findByProcessingTask(7, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
 
-        task = taskService.getById(6);
+        task = taskService.getById(7);
         user = userService.getById(2);
         taskService.replaceProcessingUser(task, user);
         taskService.save(task);
 
-        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", Integer.valueOf(2),
-            taskService.findById(6, false).getProcessingUser().getId()));
+        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", 2,
+            taskService.findById(7, false).getProcessingUser().getId().intValue()));
         await().untilAsserted(() -> assertEquals("Incorrect amount of processing users!", 1,
-            userService.findByProcessingTask(6, false).size()));
+            userService.findByProcessingTask(7, false).size()));
     }
 
     @Test
@@ -158,29 +159,29 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.getById(9);
+        Task foundTask = taskService.getById(14);
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
         exception.expect(DAOException.class);
-        taskService.getById(8);
+        taskService.getById(14);
 
         task = new Task();
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.getById(10);
+        foundTask = taskService.getById(15);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
-        taskService.remove(10);
+        taskService.remove(15);
         exception.expect(DAOException.class);
-        taskService.getById(10);
+        taskService.getById(14);
     }
 
     @Test
     public void shouldGetProcessingBeginAsFormattedString() throws Exception {
         Task task = taskService.getById(1);
-        String expected = "2016-10-20 00:00:00";
+        String expected = "2016-08-20 00:00:00";
         String actual = taskService.getProcessingBeginAsFormattedString(task);
         assertEquals("Processing time date is incorrect!", expected, actual);
     }
@@ -188,7 +189,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetProcessingTimeAsFormattedString() throws Exception {
         Task task = taskService.getById(1);
-        String expected = "2016-12-24 00:00:00";
+        String expected = "2016-09-24 00:00:00";
         String actual = taskService.getProcessingTimeAsFormattedString(task);
         assertEquals("Processing time date is incorrect!", expected, actual);
 
@@ -201,35 +202,35 @@ public class TaskServiceIT {
     @Test
     public void shouldGetProcessingEndAsFormattedString() throws Exception {
         Task task = taskService.getById(1);
-        String expected = "2016-12-24 00:00:00";
+        String expected = "2016-09-24 00:00:00";
         String actual = taskService.getProcessingEndAsFormattedString(task);
         assertEquals("Processing end date is incorrect!", expected, actual);
     }
 
     @Test
     public void shouldGetCorrectionStep() throws Exception {
-        Task task = taskService.getById(2);
+        Task task = taskService.getById(8);
         boolean result = new ServiceManager().getWorkflowControllerService().isCorrectionTask(task);
         assertTrue("Task is not correction task!", result);
     }
 
     @Test
     public void shouldGetNormalizedTitle() throws Exception {
-        Task task = taskService.getById(3);
-        String expected = "Testing_and_Blocking";
+        Task task = taskService.getById(12);
+        String expected = "Processed_and_Some";
         String actual = taskService.getNormalizedTitle(task.getTitle());
         assertEquals("Normalized title of task doesn't match given plain text!", expected, actual);
     }
 
     @Test
     public void shouldGetTitleWithUserName() throws Exception {
-        Task task = taskService.getById(1);
-        String expected = "Testing (Kowalski, Jan)";
+        Task task = taskService.getById(6);
+        String expected = "Finished (Kowalski, Jan)";
         String actual = taskService.getTitleWithUserName(task);
         assertEquals("Task's title with user name doesn't match given plain text!", expected, actual);
 
         task = taskService.getById(3);
-        expected = "Testing and Blocking";
+        expected = "Progress";
         actual = taskService.getTitleWithUserName(task);
         assertEquals("Task's title with user name doesn't match given plain text!", expected, actual);
     }
@@ -246,14 +247,23 @@ public class TaskServiceIT {
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
+
+        Task task = tasks.get(0);
+        assertEquals("",8, task.getId().intValue());
+        assertEquals("","Progress", task.getTitle());
+        assertEquals("",3, task.getOrdering().intValue());
     }
 
     @Test
     public void shouldGetNextTasksForProblemSolution() {
         List<Task> tasks = taskService.getNextTasksForProblemSolution(2, 1);
         int actual = tasks.size();
-        int expected = 1;
-        assertEquals("Task's list size is incorrect!", expected, actual);
+        assertEquals("Task's list size is incorrect!", 3, actual);
+
+        Task task = tasks.get(0);
+        assertEquals("",8, task.getId().intValue());
+        assertEquals("","Progress", task.getTitle());
+        assertEquals("",3, task.getOrdering().intValue());
     }
 
     @Test
@@ -262,106 +272,18 @@ public class TaskServiceIT {
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
-    }
 
-    @Test
-    public void shouldGetTasksForProjectHelper() {
-        List<Task> tasks = taskService.getTasksForProjectHelper(1);
-        int actual = tasks.size();
-        int expected = 5;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        for (int i = 0; i < tasks.size(); i++) {
-            if (i < tasks.size() - 1) {
-                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i + 1).getOrdering();
-                assertTrue("Ordering of tasks is incorrect!", condition);
-            } else {
-                boolean condition = tasks.get(i - 1).getOrdering() <= tasks.get(i).getOrdering();
-                assertTrue("Ordering of tasks is incorrect!", condition);
-            }
-        }
-
-        tasks = taskService.getTasksForProjectHelper(2);
-        actual = tasks.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetSizeOfTasksForProjectHelper() {
-        List<Long> tasksSize = taskService.getSizeOfTasksForProjectHelper(1);
-        int actual = tasksSize.size();
-        int expected = 5;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        tasksSize = taskService.getSizeOfTasksForProjectHelper(2);
-        actual = tasksSize.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetAverageOrderingOfTasksForProjectHelper() {
-        List<Double> tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(1);
-        int actual = tasksSize.size();
-        int expected = 5;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(2);
-        actual = tasksSize.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetTasksWithProcessingStatusForProjectHelper() {
-        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 1);
-        int actual = tasks.size();
-        int expected = 2;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 2);
-        actual = tasks.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
-        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 1);
-        int actual = tasksSize.size();
-        int expected = 2;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(2, 1);
-        actual = tasksSize.size();
-        expected = 2;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 2);
-        actual = tasksSize.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetAmountOfImagesForTasksWithProcessingStatusForProjectHelper() {
-        List<Long> amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 1);
-        int actual = amountOfImages.size();
-        int expected = 2;
-        assertEquals("Task's list size is incorrect!", expected, actual);
-
-        amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 2);
-        actual = amountOfImages.size();
-        expected = 0;
-        assertEquals("Task's list size is incorrect!", expected, actual);
+        Task task = tasks.get(0);
+        assertEquals("",6, task.getId().intValue());
+        assertEquals("","Finished", task.getTitle());
+        assertEquals("",1, task.getOrdering().intValue());
     }
 
     @Test
     public void shouldFindDistinctTitles() throws Exception {
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
         int size = taskTitlesDistinct.size();
-        assertEquals("Incorrect size of distinct titles for tasks!", 7, size);
+        assertEquals("Incorrect size of distinct titles for tasks!", 9, size);
 
         String title = taskTitlesDistinct.get(0);
         assertEquals("Incorrect sorting of distinct titles for tasks!", "Additional", title);

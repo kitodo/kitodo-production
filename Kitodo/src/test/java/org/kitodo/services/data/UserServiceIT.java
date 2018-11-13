@@ -115,7 +115,7 @@ public class UserServiceIT {
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
         assertTrue("User was not found in database!", condition);
 
-        assertEquals("User was found but tasks were not inserted!", 2, user.getProcessingTasks().size());
+        assertEquals("User was found but tasks were not inserted!", 3, user.getProcessingTasks().size());
     }
 
     @Test
@@ -341,7 +341,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetProcessingTasksSize() {
-        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 2,
+        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 3,
             userService.findById(1).getProcessingTasks().size()));
     }
 
@@ -449,10 +449,10 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
-        User user = userService.getByLdapLogin("kowalLDP");
+        User user = userService.getByLdapLogin("nowakLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
-        assertEquals("Title of task is incorrect!", "Processed", tasks.get(0).getTitle());
+        assertEquals("Title of task is incorrect!", "Progress", tasks.get(0).getTitle());
     }
 
     @Test

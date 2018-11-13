@@ -78,7 +78,7 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldSetTaskStatusUp() throws Exception {
-        Task task = taskService.getById(4);
+        Task task = taskService.getById(10);
 
         task = workflowService.setTaskStatusUp(task);
         assertEquals("Task status was not set up!", TaskStatus.OPEN, task.getProcessingStatusEnum());
@@ -92,8 +92,10 @@ public class WorkflowControllerServiceIT {
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
-            if (Objects.equals(task.getId(), 7)) {
+            if (Objects.equals(task.getId(), 9)) {
                 assertEquals("Task status was not set up!", TaskStatus.INWORK, task.getProcessingStatusEnum());
+            } else if (Objects.equals(task.getId(), 10)) {
+                assertEquals("Task status was not set up!", TaskStatus.OPEN, task.getProcessingStatusEnum());
             } else {
                 assertEquals("Task status was not set up!", TaskStatus.DONE, task.getProcessingStatusEnum());
             }
@@ -112,21 +114,21 @@ public class WorkflowControllerServiceIT {
         // TODO: shouldn't be changed this status from done to in work?
         // assertEquals("Task status was not set down for first task!",
         // TaskStatus.INWORK, tasks.get(0).getProcessingStatusEnum());
-        assertEquals("Task status was not set down!", TaskStatus.OPEN, tasks.get(1).getProcessingStatusEnum());
+        assertEquals("Task status was not set down!", TaskStatus.OPEN, tasks.get(3).getProcessingStatusEnum());
 
         // set up task to previous state
-        taskService.save(workflowService.setTaskStatusUp(taskService.getById(6)));
+        taskService.save(workflowService.setTaskStatusUp(taskService.getById(8)));
     }
 
     @Test
     public void shouldClose() throws Exception {
-        Task task = taskService.getById(6);
+        Task task = taskService.getById(9);
 
         workflowService.close(task);
-        task = serviceManager.getTaskService().getById(6);
+        task = serviceManager.getTaskService().getById(9);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(7);
+        Task nextTask = serviceManager.getTaskService().getById(10);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
@@ -150,7 +152,7 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldUnassignTaskFromUser() throws Exception {
-        Task task = taskService.getById(5);
+        Task task = taskService.getById(6);
 
         workflowService.unassignTaskFromUser(task);
         assertNull("User was not unassigned from the task!", task.getProcessingUser());
@@ -161,14 +163,14 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldReportProblem() throws Exception {
         Problem problem = new Problem();
-        problem.setId(5);
+        problem.setId(6);
         problem.setMessage("Fix it!");
         workflowService.setProblem(problem);
 
-        Task currentTask = taskService.getById(7);
+        Task currentTask = taskService.getById(8);
         workflowService.reportProblem(currentTask);
 
-        Task correctionTask = taskService.getById(5);
+        Task correctionTask = taskService.getById(6);
         assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN,
             correctionTask.getProcessingStatusEnum());
 
@@ -191,22 +193,22 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldSolveProblem() throws Exception {
         Problem problem = new Problem();
-        problem.setId(5);
+        problem.setId(6);
         problem.setMessage("Fix it!");
 
         Solution solution = new Solution();
-        solution.setId(7);
+        solution.setId(8);
         solution.setMessage("Fixed");
 
         workflowService.setProblem(problem);
         workflowService.setSolution(solution);
 
-        Task currentTask = taskService.getById(7);
+        Task currentTask = taskService.getById(8);
         workflowService.reportProblem(currentTask);
-        currentTask = taskService.getById(5);
+        currentTask = taskService.getById(6);
         workflowService.solveProblem(currentTask);
 
-        Task correctionTask = taskService.getById(7);
+        Task correctionTask = taskService.getById(8);
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
