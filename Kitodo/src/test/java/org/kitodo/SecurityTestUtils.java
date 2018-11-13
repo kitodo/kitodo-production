@@ -22,17 +22,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityTestUtils {
 
     /**
-     * Adds a given user as SecurityUserDetails object to security context. Can be used for unit testing.
+     * Adds a given user as SecurityUserDetails object to security context. Can be
+     * used for unit testing.
      * 
      * @param user
      *            user object
+     * @param clientId
+     *            id of client dor session client
      */
-    public static void addUserDataToSecurityContext(User user) throws DAOException {
+    public static void addUserDataToSecurityContext(User user, int clientId) throws DAOException {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null, securityUserDetails.getAuthorities());
-        if (!user.getClients().isEmpty()) {
-            securityUserDetails .setSessionClient(new ServiceManager().getClientService().getById(1));
-        }
+        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
+                securityUserDetails.getAuthorities());
+        securityUserDetails.setSessionClient(new ServiceManager().getClientService().getById(clientId));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

@@ -101,7 +101,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public List<Filter> getAllForSelectedClient(int clientId) {
+    public List<Filter> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -43,7 +42,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("ProjectForm")
@@ -468,15 +466,6 @@ public class ProjectForm extends BaseForm {
                 logger, e);
             return new LinkedList<>();
         }
-    }
-
-    /**
-     * Gets all available clients.
-     *
-     * @return The list of clients.
-     */
-    public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
     }
 
     /**

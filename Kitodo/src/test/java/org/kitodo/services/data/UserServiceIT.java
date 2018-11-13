@@ -457,7 +457,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAuthenticatedUser() throws DAOException {
-        SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1), 1);
         User authenticatedUser = userService.getAuthenticatedUser();
         assertEquals("Returned authenticated user was wrong", "kowal", authenticatedUser.getLogin());
         SecurityTestUtils.cleanSecurityContext();

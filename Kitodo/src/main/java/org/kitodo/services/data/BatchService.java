@@ -100,7 +100,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public List<Batch> getAllForSelectedClient(int clientId) {
+    public List<Batch> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

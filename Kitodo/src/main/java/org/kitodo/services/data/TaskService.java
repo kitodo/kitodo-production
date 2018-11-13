@@ -302,7 +302,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public List<Task> getAllForSelectedClient(int clientId) {
+    public List<Task> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

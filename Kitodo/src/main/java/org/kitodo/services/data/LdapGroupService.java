@@ -30,7 +30,7 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     }
 
     @Override
-    public List<LdapGroup> getAllForSelectedClient(int clientId) {
+    public List<LdapGroup> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

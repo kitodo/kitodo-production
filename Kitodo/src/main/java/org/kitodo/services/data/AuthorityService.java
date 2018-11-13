@@ -141,7 +141,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     @Override
-    public List<Authority> getAllForSelectedClient(int clientId) {
+    public List<Authority> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

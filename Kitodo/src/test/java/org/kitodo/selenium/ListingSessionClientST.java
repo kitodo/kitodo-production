@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -54,6 +56,9 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @Test
     public void listProjectsForUserWithFirstSessionClientTest() throws Exception {
+        User user = serviceManager.getUserService().getById(2);
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+
         Pages.getTopNavigation().selectSessionClient(0);
 
         // user will see only projects page as this one right he has for First client
@@ -65,10 +70,15 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
         exception.expect(IndexOutOfBoundsException.class);
         projectsPage.countListedTemplates();
+
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
     public void listProjectsForUserWithSecondSessionClientTest() throws Exception {
+        User user = serviceManager.getUserService().getById(2);
+        SecurityTestUtils.addUserDataToSecurityContext(user, 2);
+
         Pages.getTopNavigation().selectSessionClient(1);
 
         // user will see first four tabs as this rights he has for Second client
@@ -82,15 +92,17 @@ public class ListingSessionClientST extends BaseTestSelenium {
         int templatesDisplayed = projectsPage.countListedTemplates();
         assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
-        int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
+        int workflowsInDatabase = serviceManager.getWorkflowService().getAllForSelectedClient().size();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 
-        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient(2).size();
+        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient().size();
         int docketsDisplayed = projectsPage.countListedDockets();
         assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
 
         exception.expect(IndexOutOfBoundsException.class);
         projectsPage.countListedRulesets();
+
+        SecurityTestUtils.cleanSecurityContext();
     }
 }

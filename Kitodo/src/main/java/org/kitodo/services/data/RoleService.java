@@ -144,9 +144,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     @Override
-    public List<Role> getAllForSelectedClient(int clientId) {
+    public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     /**

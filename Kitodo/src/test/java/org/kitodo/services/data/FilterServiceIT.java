@@ -43,7 +43,7 @@ public class FilterServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1), 1);
     }
 
     @AfterClass

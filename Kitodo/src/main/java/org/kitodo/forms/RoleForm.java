@@ -181,7 +181,11 @@ public class RoleForm extends BaseForm {
      * @return list of Client objects
      */
     public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
+        try {
+            return SelectItemList.getClients(serviceManager.getClientService().getAll());
+        } catch (DAOException e) {
+            return SelectItemList.getClients(new ArrayList<>());
+        }
     }
 
     /**

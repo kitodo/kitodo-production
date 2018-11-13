@@ -100,7 +100,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
-    public List<LdapServer> getAllForSelectedClient(int clientId) {
+    public List<LdapServer> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 

@@ -16,8 +16,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
@@ -28,7 +31,7 @@ import org.kitodo.services.ServiceManager;
 
 public class ListingST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
+    private static ServiceManager serviceManager = new ServiceManager();
 
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
@@ -46,6 +49,14 @@ public class ListingST extends BaseTestSelenium {
     @BeforeClass
     public static void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
+
+        User user = serviceManager.getUserService().getByLogin("kowal");
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
+    }
+
+    @AfterClass
+    public static void cleanSecurityContext() {
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
@@ -112,15 +123,15 @@ public class ListingST extends BaseTestSelenium {
         //assertEquals("Displayed wrong template's docket", "second", detailsTemplate.get(2));
         //assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
 
-        int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
+        int workflowsInDatabase = serviceManager.getWorkflowService().getAllForSelectedClient().size();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 
-        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient(1).size();
+        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient().size();
         int docketsDisplayed = projectsPage.countListedDockets();
         assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
 
-        int rulesetsInDatabase = serviceManager.getRulesetService().getAllForSelectedClient(1).size();
+        int rulesetsInDatabase = serviceManager.getRulesetService().getAllForSelectedClient().size();
         int rulesetsDisplayed = projectsPage.countListedRulesets();
         assertEquals("Displayed wrong number of rulesets", rulesetsInDatabase, rulesetsDisplayed);
     }

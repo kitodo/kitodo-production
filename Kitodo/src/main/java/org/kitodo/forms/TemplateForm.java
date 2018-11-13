@@ -237,7 +237,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets();
+        return SelectItemList.getDockets(serviceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -246,7 +246,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects();
+        return SelectItemList.getProjects(serviceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -255,7 +255,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets();
+        return SelectItemList.getRulesets(serviceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**
@@ -264,7 +264,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getWorkflows() {
-        return SelectItemList.getWorkflows();
+        return SelectItemList.getWorkflows(serviceManager.getWorkflowService().getAvailableWorkflows());
     }
 
     /**

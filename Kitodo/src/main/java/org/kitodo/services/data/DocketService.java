@@ -86,9 +86,9 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
-    public List<Docket> getAllForSelectedClient(int clientId) {
+    public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     /**

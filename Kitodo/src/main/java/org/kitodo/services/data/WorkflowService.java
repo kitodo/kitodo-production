@@ -13,10 +13,12 @@ package org.kitodo.services.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
@@ -27,11 +29,13 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
     private static WorkflowService instance = null;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Private constructor with Searcher and Indexer assigning.
@@ -67,14 +71,22 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
+    public List<WorkflowDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
+                serviceManager.getUserService().getSessionClientId(), true));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+    }
+
+    @Override
     public List<Workflow> getAllNotIndexed() {
         return getByQuery("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     @Override
-    public List<Workflow> getAllForSelectedClient(int clientId) {
+    public List<Workflow> getAllForSelectedClient() {
         return dao.getByQuery("SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", clientId));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -123,11 +135,12 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     /**
-     * Get available workflows - available means that workflow is active and ready.
+     * Get available workflows - available means that workflow is active, ready and
+     * assigned to selected session client.
      *
      * @return list of available Workflow objects
      */
     public List<Workflow> getAvailableWorkflows() {
-        return dao.getAvailableWorkflows();
+        return dao.getAvailableWorkflows(serviceManager.getUserService().getSessionClientId());
     }
 }
