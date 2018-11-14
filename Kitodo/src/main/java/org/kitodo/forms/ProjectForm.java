@@ -184,14 +184,15 @@ public class ProjectForm extends BaseForm {
             return this.stayOnCurrentPage;
         } else {
             try {
+                serviceManager.getProjectService().save(this.project);
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
                         template.getProjects().add(this.project);
                         this.project.getTemplates().add(template);
+                        serviceManager.getTemplateService().save(template);
                     }
                     setCopyTemplates(false);
                 }
-                serviceManager.getProjectService().save(this.project);
                 return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
