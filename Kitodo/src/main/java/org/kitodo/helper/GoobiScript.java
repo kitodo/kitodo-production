@@ -98,9 +98,6 @@ public class GoobiScript {
 
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
-            case "swapSteps":
-                swapTasks(processes);
-                break;
             case "importFromFileSystem":
                 importFromFileSystem(processes);
                 break;
@@ -109,15 +106,6 @@ public class GoobiScript {
                 break;
             case "setTaskProperty":
                 setTaskProperty(processes);
-                break;
-            case "deleteStep":
-                deleteTask(processes);
-                break;
-            case "addStep":
-                addTask(processes);
-                break;
-            case "setStepNumber":
-                setTaskNumber(processes);
                 break;
             case "setStepStatus":
                 setTaskStatus(processes);
@@ -319,125 +307,6 @@ public class GoobiScript {
     }
 
     /**
-     * Swap two tasks against each other.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void swapTasks(List<Process> processes) {
-        if (isActionParameterInvalid(SWAP_1_NR) || isActionParameterInvalid(SWAP_2_NR)
-                || isActionParameterInvalid("swap1title") || isActionParameterInvalid("swap2title")) {
-            return;
-        }
-
-        int firstOrder;
-        int secondOrder;
-        try {
-            firstOrder = Integer.parseInt(this.parameters.get(SWAP_1_NR));
-            secondOrder = Integer.parseInt(this.parameters.get(SWAP_2_NR));
-        } catch (NumberFormatException e1) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Invalid order number used: ",
-                this.parameters.get(SWAP_1_NR) + " - " + this.parameters.get(SWAP_2_NR));
-            return;
-        }
-
-        executeActionForSwapTasks(processes, firstOrder, secondOrder);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "swapsteps finished: ");
-    }
-
-    private void executeActionForSwapTasks(List<Process> processes, int firstOrder, int secondOrder) {
-        for (Process process : processes) {
-            Task firstTask = null;
-            Task secondTask = null;
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("swap1title")) && task.getOrdering() == firstOrder) {
-                    firstTask = task;
-                }
-                if (task.getTitle().equals(this.parameters.get("swap2title")) && task.getOrdering() == secondOrder) {
-                    secondTask = task;
-                }
-            }
-            if (firstTask != null && secondTask != null) {
-                TaskStatus statusTemp = firstTask.getProcessingStatusEnum();
-                firstTask.setProcessingStatusEnum(secondTask.getProcessingStatusEnum());
-                secondTask.setProcessingStatusEnum(statusTemp);
-                firstTask.setOrdering(secondOrder);
-                secondTask.setOrdering(firstOrder);
-                try {
-                    serviceManager.getTaskService().save(firstTask);
-                    serviceManager.getTaskService().save(secondTask);
-                } catch (DataException e) {
-                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error on save while swapping tasks in process: ",
-                        process.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
-                    logger.error("Error on save while swapping process: " + process.getTitle() + " - "
-                            + firstTask.getTitle() + " : " + secondTask.getTitle(),
-                        e);
-                }
-                Helper.setMessage(KITODO_SCRIPT_FIELD, "Swapped tasks in: ", process.getTitle());
-            }
-
-        }
-    }
-
-    /**
-     * Delete task for the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void deleteTask(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE)) {
-            return;
-        }
-
-        executeActionForDeleteTask(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteStep finished: ");
-    }
-
-    private void executeActionForDeleteTask(List<Process> processes) {
-        for (Process process : processes) {
-            if (process.getTasks() != null) {
-                for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                        process.getTasks().remove(task);
-                        saveProcess(process);
-                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Removed step from process: ", process.getTitle());
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Add tasks to the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void addTask(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
-                || isActionParameterInvalidNumber()) {
-            return;
-        }
-
-        executeActionForAddTask(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addStep finished: ");
-    }
-
-    private void executeActionForAddTask(List<Process> processes) {
-        for (Process process : processes) {
-            Task task = new Task();
-            task.setTitle(this.parameters.get(TASK_TITLE));
-            task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
-            task.setProcess(process);
-            process.getTasks().add(task);
-            saveProcess(process);
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added task to process: ", process.getTitle());
-        }
-    }
-
-    /**
      * Add ShellScript to task of the given processes.
      *
      * @param processes
@@ -569,35 +438,6 @@ public class GoobiScript {
                         serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
                     saveTask(process.getTitle(), task);
                     Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Schritte auf bestimmten Reihenfolge setzen.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void setTaskNumber(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
-                || isActionParameterInvalidNumber()) {
-            return;
-        }
-
-        executeActionForSetTaskNumber(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setStepNumber finished ");
-    }
-
-    private void executeActionForSetTaskNumber(List<Process> processes) {
-        for (Process process : processes) {
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
-                    saveTask(process.getTitle(), task);
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "step order changed in process: ", process.getTitle());
                     break;
                 }
             }
