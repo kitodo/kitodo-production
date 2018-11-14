@@ -242,7 +242,7 @@ public class Reader {
      * @param concurrentTasks
      *            workflow id of concurrent task(s)
      */
-    private void addTask(FlowNode node, TaskInfo taskInfo, String concurrentTasks) {
+    private void addTask(FlowNode node, TaskInfo taskInfo, String concurrentTasks) throws WorkflowException {
         taskInfo.setConcurrentTasks(concurrentTasks);
 
         String nextTasks = "";
@@ -261,7 +261,20 @@ public class Reader {
 
         taskInfo.setNextTasks(nextTasks);
 
-        tasks.put((Task) node, taskInfo);
+        if (isTaskNotInserted(node.getId())) {
+            tasks.put((Task) node, taskInfo);
+        } else {
+            throw new WorkflowException("Task is already inserted - probably workflow contains not allowed loop.");
+        }
+    }
+
+    private boolean isTaskNotInserted(String workflowId) {
+        for (Task task : tasks.keySet()) {
+            if (task.getId().equals(workflowId)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String getTaskSequence(List<FlowNode> nodes) {
