@@ -277,6 +277,20 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
+     * Get the current authenticated user as User bean.
+     *
+     * @return the User object or null if no user is authenticated.
+     */
+    public User getCurrentUser() {
+        try {
+            return getById(getAuthenticatedUser().getId());
+        } catch (DAOException e) {
+            logger.error("No authenticated user!");
+            return null;
+        }
+    }
+
+    /**
      * Gets the session client of the current authenticated user.
      * 
      * @return The client object or null if no session client is set or no user is

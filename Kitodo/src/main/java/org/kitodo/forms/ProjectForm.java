@@ -37,6 +37,7 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
@@ -176,7 +177,6 @@ public class ProjectForm extends BaseForm {
      * @return page or null
      */
     public String save() {
-        serviceManager.getProjectService().evict(this.project);
         // call this to make saving and deleting permanent
         this.commitFolders();
         if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
@@ -191,7 +191,16 @@ public class ProjectForm extends BaseForm {
                     }
                     setCopyTemplates(false);
                 }
-                serviceManager.getProjectService().save(this.project);
+
+                if (Objects.isNull(this.project.getId())) {
+                    User user = serviceManager.getUserService().getCurrentUser();
+                    user.getProjects().add(this.project);
+                    this.project.getUsers().add(user);
+                    serviceManager.getProjectService().save(this.project);
+                    serviceManager.getUserService().save(user);
+                } else {
+                    serviceManager.getProjectService().save(this.project);
+                }
                 return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
