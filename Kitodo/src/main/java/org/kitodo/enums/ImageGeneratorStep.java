@@ -50,14 +50,17 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
         @Override
         public void accept(ImageGenerator imageGenerator) {
             Pair<String, URI> source = imageGenerator.getSources().get(imageGenerator.getPosition());
+            String canonical = source.getKey();
             if (!imageGenerator.getMode().equals(GenerationMode.ALL)) {
                 imageGenerator.letTheSupervisor(lambda -> lambda.setWorkDetail(
-                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Arrays.asList(source.getKey()))));
+                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Arrays.asList(canonical))));
             }
 
-            List<Subfolder> generations = imageGenerator.determineFoldersThatNeedDerivatives(source.getKey());
-            if (!generations.isEmpty()) {
-                imageGenerator.addToContentToBeGenerated(source, generations);
+            List<Subfolder> subfoldersWhoseContentsAreToBeGenerated = imageGenerator
+                    .determineFoldersThatNeedDerivatives(canonical);
+            if (!subfoldersWhoseContentsAreToBeGenerated.isEmpty()) {
+                imageGenerator.addToContentToBeGenerated(canonical, source.getValue(),
+                    subfoldersWhoseContentsAreToBeGenerated);
             }
             if (imageGenerator.getPosition() == imageGenerator.getSources().size() - 1) {
                 imageGenerator.setState(GENERATE_IMAGES);

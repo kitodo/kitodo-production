@@ -14,7 +14,6 @@ package org.kitodo.services.image;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.model.Subfolder;
 
 /**
@@ -25,27 +24,36 @@ import org.kitodo.model.Subfolder;
  */
 public class ContentToBeGenerated {
     /**
-     * Description of the data source.
+     * The canonical part of the file name.
      */
-    private Pair<String, URI> source;
+    private String canonical;
+
+    /**
+     * The source URI of the content to be generated.
+     */
+    private URI sourceURI;
+
     /**
      * Specifies the subfolders for which content is to be generated. What
      * content is specified in the subfolder.
      */
-    private List<Subfolder> generations;
-
-    public ContentToBeGenerated(Pair<String, URI> source, List<Subfolder> generations) {
-        this.source = source;
-        this.generations = generations;
-    }
+    private List<Subfolder> subfoldersWhoseContentsAreToBeGenerated;
 
     /**
-     * Returns the source of the content to be generated.
+     * Creates a new content to generate.
      * 
-     * @return the source
+     * @param canonical
+     *            the canonical part of the file name
+     * @param sourceURI
+     *            the source URI of the content to be generated
+     * @param subfoldersWhoseContentsAreToBeGenerated
+     *            the subfolders for which content is to be generated
      */
-    public Pair<String, URI> getSource() {
-        return source;
+    public ContentToBeGenerated(String canonical, URI sourceURI,
+            List<Subfolder> subfoldersWhoseContentsAreToBeGenerated) {
+        this.canonical = canonical;
+        this.sourceURI = sourceURI;
+        this.subfoldersWhoseContentsAreToBeGenerated = subfoldersWhoseContentsAreToBeGenerated;
     }
 
     /**
@@ -55,7 +63,7 @@ public class ContentToBeGenerated {
      * @return the canonical part of the file name
      */
     public String getCanonical() {
-        return source.getKey();
+        return canonical;
     }
 
     /**
@@ -64,8 +72,8 @@ public class ContentToBeGenerated {
      * 
      * @return the subfolders for which content is to be generated
      */
-    public List<Subfolder> getGenerations() {
-        return generations;
+    public List<Subfolder> getSubfoldersWhoseContentsAreToBeGenerated() {
+        return subfoldersWhoseContentsAreToBeGenerated;
     }
 
     /**
@@ -74,7 +82,7 @@ public class ContentToBeGenerated {
      * @return the source URI
      */
     public URI getSourceURI() {
-        return source.getValue();
+        return sourceURI;
     }
 
 }
