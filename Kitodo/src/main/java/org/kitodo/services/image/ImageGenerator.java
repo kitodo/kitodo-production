@@ -344,16 +344,13 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
-
-        ImageService imageManagementServiceProvider = new ImageService();
-
+    private Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
         if (imageProperties.getDpi().isPresent()) {
-            return imageManagementServiceProvider.changeDpi(sourceImage, imageProperties.getDpi().get());
+            return imageService.changeDpi(sourceImage, imageProperties.getDpi().get());
         } else if (imageProperties.getImageScale().isPresent()) {
-            return imageManagementServiceProvider.getScaledWebImage(sourceImage, imageProperties.getImageScale().get());
+            return imageService.getScaledWebImage(sourceImage, imageProperties.getImageScale().get());
         } else if (imageProperties.getImageSize().isPresent()) {
-            return imageManagementServiceProvider.getSizedWebImage(sourceImage, imageProperties.getImageSize().get());
+            return imageService.getSizedWebImage(sourceImage, imageProperties.getImageSize().get());
         }
         throw new IllegalArgumentException(imageProperties + " does not give any method to create a java image");
     }
