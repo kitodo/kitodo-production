@@ -27,8 +27,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -52,7 +50,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Template template;
     private Task task;
     private boolean showInactiveTemplates = false;
-    private String title;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
 
@@ -121,7 +118,7 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String newTemplate() {
         this.template = new Template();
-        this.title = "";
+        this.template.setTitle("");
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -151,12 +148,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String save() {
-        if (this.template != null && this.template.getTitle() != null) {
-            if (!this.template.getTitle().equals(this.title) && this.title != null
-                    && !renameAfterProcessTitleChanged()) {
-                return this.stayOnCurrentPage;
-            }
-
+        if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
             try {
                 if (this.template.getTasks().isEmpty()) {
                     Reader reader = new Reader(this.template.getWorkflow().getFileName());
@@ -206,17 +198,6 @@ public class TemplateForm extends TemplateBaseForm {
         saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
             serviceManager.getTemplateService());
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
-    }
-
-    private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
-        if (!this.title.matches(validateRegEx)) {
-            Helper.setErrorMessage("processTitleInvalid");
-            return false;
-        } else {
-            this.template.setTitle(this.title);
-        }
-        return true;
     }
 
     /**
@@ -338,7 +319,6 @@ public class TemplateForm extends TemplateBaseForm {
      *            as Template
      */
     public void setTemplate(Template template) {
-        this.title = template.getTitle();
         this.template = template;
     }
 
@@ -402,24 +382,5 @@ public class TemplateForm extends TemplateBaseForm {
         Stream<Folder> validatableFolders = template.getProjects().stream()
                 .flatMap(project -> project.getFolders().stream());
         return getSwitches(validatableFolders, task.getValidationFolders());
-    }
-
-    /**
-     * Get title.
-     *
-     * @return value of title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set title.
-     *
-     * @param title
-     *            as String
-     */
-    public void setTitle(String title) {
-        this.title = title;
     }
 }
