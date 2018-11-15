@@ -116,12 +116,19 @@ public class ImageGenerator implements Runnable {
 
     /**
      * Appends the element to the list of elements to be generated.
-     *
-     * @param elementToAppend
-     *            element to be appended to the list
+     * 
+     * @param canonical
+     *            the canonical part of the file name
+     * @param sourceURI
+     *            the source URI of the content to be generated
+     * @param subfoldersWhoseContentsAreToBeGenerated
+     *            subfolders whose contents are to be generated
      */
-    public void addToContentToBeGenerated(Pair<String, URI> source, List<Subfolder> generations) {
-        contentToBeGenerated.add(new ContentToBeGenerated(source, generations));
+    public void addToContentToBeGenerated(String canonical, URI sourceURI,
+            List<Subfolder> subfoldersWhoseContentsAreToBeGenerated) {
+
+        contentToBeGenerated
+                .add(new ContentToBeGenerated(canonical, sourceURI, subfoldersWhoseContentsAreToBeGenerated));
     }
 
     /**
@@ -163,7 +170,7 @@ public class ImageGenerator implements Runnable {
      */
     public void createDerivatives(ContentToBeGenerated instruction) {
         try {
-            for (Subfolder destinationFolder : instruction.getGenerations()) {
+            for (Subfolder destinationFolder : instruction.getSubfoldersWhoseContentsAreToBeGenerated()) {
                 generateDerivative(instruction.getSourceURI(), destinationFolder, instruction.getCanonical());
             }
         } catch (IOException e) {
