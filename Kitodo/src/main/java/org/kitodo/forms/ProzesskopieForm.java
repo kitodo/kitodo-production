@@ -714,7 +714,7 @@ public class ProzesskopieForm implements Serializable {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
-            Helper.setErrorMessage("processTitleInvalid");
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
         }
 
         if (process.getTitle() != null) {
