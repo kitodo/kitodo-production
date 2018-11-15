@@ -19,7 +19,7 @@
  
             - optional attribute 'fileType':
                     Member of
-                    org.kitodo.api.validation.longtimepreservation.FileType -
+                    org.kitodo.api.validation.longtermpreservation.FileType -
                     if defined, allows running the validator on this file group
  
             - optional attribute 'formatName':
