@@ -75,10 +75,10 @@ WHERE title = 'viewAllUserGroups_globalAssignable';
 UPDATE authority SET title = 'viewRole_globalAssignable'
 WHERE title = 'viewUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'addRole_UserGroup_globalAssignable'
+UPDATE authority SET title = 'addRole_globalAssignable'
 WHERE title = 'addUserGroup_globalAssignable';
 
-UPDATE authority SET title = 'editRole_UserGroup_globalAssignable'
+UPDATE authority SET title = 'editRole_globalAssignable'
 WHERE title = 'editUserGroup_globalAssignable';
 
 UPDATE authority SET title = 'deleteRole_globalAssignable'
