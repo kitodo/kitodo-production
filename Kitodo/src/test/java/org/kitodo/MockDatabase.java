@@ -499,7 +499,7 @@ public class MockDatabase {
         firstTemplate.setInChoiceListShown(true);
         firstTemplate.setDocket(serviceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
-        firstTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
+        firstTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         serviceManager.getTemplateService().save(firstTemplate);
 
         Project thirdProject = serviceManager.getProjectService().getById(3);
@@ -511,7 +511,7 @@ public class MockDatabase {
         secondTemplate.setDocket(serviceManager.getDocketService().getById(1));
         secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
-        secondTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
+        secondTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
         secondTemplate.setInChoiceListShown(true);
         serviceManager.getTemplateService().save(secondTemplate);
 
@@ -815,8 +815,8 @@ public class MockDatabase {
         serviceManager.getRulesetService().save(firstRuleset);
 
         Ruleset secondRuleset = new Ruleset();
-        secondRuleset.setTitle("SLUBHH");
-        secondRuleset.setFile("ruleset_slubhh.xml");
+        secondRuleset.setTitle("SUBHH");
+        secondRuleset.setFile("ruleset_subhh.xml");
         secondRuleset.setOrderMetadataByRuleset(false);
         secondRuleset.setClient(client);
         serviceManager.getRulesetService().save(secondRuleset);
@@ -824,8 +824,8 @@ public class MockDatabase {
         Client secondClient = serviceManager.getClientService().getById(2);
 
         Ruleset thirdRuleset = new Ruleset();
-        thirdRuleset.setTitle("SLUBBB");
-        thirdRuleset.setFile("ruleset_slubbb.xml");
+        thirdRuleset.setTitle("SUBBB");
+        thirdRuleset.setFile("ruleset_subbb.xml");
         thirdRuleset.setOrderMetadataByRuleset(false);
         thirdRuleset.setClient(secondClient);
         serviceManager.getRulesetService().save(thirdRuleset);

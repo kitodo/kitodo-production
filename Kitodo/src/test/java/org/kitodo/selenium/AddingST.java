@@ -22,7 +22,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -112,13 +111,12 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }
 
-    @Ignore("buttons invisible for tests")
     @Test
     public void addProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         projectsPage.createNewProcess();
-        assertEquals("Header for create new process is incorrect", "createNewProcess",
+        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
             Pages.getProcessFromTemplatePage().getHeaderText());
 
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
