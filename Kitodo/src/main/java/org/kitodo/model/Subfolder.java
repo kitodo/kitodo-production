@@ -101,7 +101,10 @@ public class Subfolder {
             @Override
             public String apply(URI uri) {
                 Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
-                matcher.matches();
+                if (!matcher.matches()) {
+                    throw new IllegalStateException(
+                            "At this point may only arrive files where the pattern had already matched.");
+                }
                 return matcher.group(1);
             }
         };
