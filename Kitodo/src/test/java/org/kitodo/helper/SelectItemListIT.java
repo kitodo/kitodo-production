@@ -183,7 +183,7 @@ public class SelectItemListIT {
         List<SelectItem> selectItems = SelectItemList.getWorkflows(workflowService.getAll());
 
         assertEquals("First item is not sorted correctly!", "gateway", selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "say-hello", selectItems.get(1).getLabel());
+        assertEquals("Second item is not sorted correctly!", "test", selectItems.get(1).getLabel());
 
         assertThat("First item is not a Workflow type!", selectItems.get(0).getValue(), instanceOf(Workflow.class));
     }
