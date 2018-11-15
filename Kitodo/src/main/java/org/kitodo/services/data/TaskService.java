@@ -38,10 +38,10 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -1024,10 +1024,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            whose contents can be auto-generated
      * @return an object stream of generable folders
      */
-    public static Stream<Folder> generatableFoldersFromProjects(Stream<Project> projects) {
+    public static Stream<SubfolderType> generatableFoldersFromProjects(Stream<Project> projects) {
         Stream<Project> projectsWithSourceFolder = skipProjectsWithoutSourceFolder(projects);
-        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
-        Stream<Folder> generatableFolders = removeFoldersThatCannotBeGenerated(allowedFolders);
+        Stream<SubfolderType> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
+        Stream<SubfolderType> generatableFolders = removeFoldersThatCannotBeGenerated(allowedFolders);
         return generatableFolders;
     }
 
@@ -1050,12 +1050,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            determined
      * @return a stream of folders that are allowed to be generated
      */
-    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
-        Stream<Pair<Folder, Folder>> withSources = projects.flatMap(
+    private static Stream<SubfolderType> dropOwnSourceFolders(Stream<Project> projects) {
+        Stream<Pair<SubfolderType, SubfolderType>> withSources = projects.flatMap(
             project -> project.getFolders().stream().map(folder -> Pair.of(folder, project.getGeneratorSource())));
-        Stream<Pair<Folder, Folder>> filteredWithSources = withSources.filter(
+        Stream<Pair<SubfolderType, SubfolderType>> filteredWithSources = withSources.filter(
             destinationAndSource -> !destinationAndSource.getLeft().equals(destinationAndSource.getRight()));
-        Stream<Folder> filteredFolders = filteredWithSources
+        Stream<SubfolderType> filteredFolders = filteredWithSources
                 .map(destinationAndSource -> destinationAndSource.getLeft());
         return filteredFolders;
     }
@@ -1064,13 +1064,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * Removes all folders to generate which do not have anything to generate
      * configured.
      * 
-     * @param folders
+     * @param subfolderTypes
      *            a stream of folders
      * @return a stream only of those folders where an image generation module
      *         has been selected
      */
-    private static Stream<Folder> removeFoldersThatCannotBeGenerated(Stream<Folder> folders) {
-        return folders.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
+    private static Stream<SubfolderType> removeFoldersThatCannotBeGenerated(Stream<SubfolderType> subfolderTypes) {
+        return subfolderTypes.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
                 || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
     }
 }

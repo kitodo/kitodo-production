@@ -19,7 +19,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 
@@ -32,13 +32,13 @@ public class ProjectType extends BaseType<Project> {
     JsonObject getJsonObject(Project project) {
 
         JsonArrayBuilder folders = Json.createArrayBuilder();
-        List<Folder> projectFolders = project.getFolders();
-        for (Folder folder : projectFolders) {
+        List<SubfolderType> projectFolders = project.getFolders();
+        for (SubfolderType subfolderType : projectFolders) {
             JsonObject folderObject = Json.createObjectBuilder()
-                    .add(ProjectTypeField.FOLDER_FILE_GROUP.getKey(), preventNull(folder.getFileGroup()))
-                    .add(ProjectTypeField.FOLDER_URL_STRUCTURE.getKey(), preventNull(folder.getUrlStructure()))
-                    .add(ProjectTypeField.FOLDER_MIME_TYPE.getKey(), preventNull(folder.getMimeType()))
-                    .add(ProjectTypeField.FOLDER_PATH.getKey(), preventNull(folder.getPath())).build();
+                    .add(ProjectTypeField.FOLDER_FILE_GROUP.getKey(), preventNull(subfolderType.getFileGroup()))
+                    .add(ProjectTypeField.FOLDER_URL_STRUCTURE.getKey(), preventNull(subfolderType.getUrlStructure()))
+                    .add(ProjectTypeField.FOLDER_MIME_TYPE.getKey(), preventNull(subfolderType.getMimeType()))
+                    .add(ProjectTypeField.FOLDER_PATH.getKey(), preventNull(subfolderType.getPath())).build();
             folders.add(folderObject);
         }
 

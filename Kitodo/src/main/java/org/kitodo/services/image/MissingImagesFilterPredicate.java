@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.model.Subfolder;
 
 public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
@@ -42,7 +42,7 @@ public class MissingImagesFilterPredicate implements Predicate<Subfolder> {
     /**
      * Creates a filter predicate that checks if the file exists in the folder.
      * The name of the file results from the settings of the folder passed into
-     * the {@link #test(Folder)} function, and the canonical name part and the
+     * the {@link #test(SubfolderType)} function, and the canonical name part and the
      * variables.
      * 
      * @param canonical

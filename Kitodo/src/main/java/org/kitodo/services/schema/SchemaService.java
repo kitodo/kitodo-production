@@ -37,10 +37,10 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exporter.dms.ExportDms;
@@ -200,35 +200,35 @@ public class SchemaService {
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer)
             throws PreferencesException, JAXBException {
-        List<Folder> folders = process.getProject().getFolders();
-        for (Folder folder : folders) {
+        List<SubfolderType> subfolderTypes = process.getProject().getFolders();
+        for (SubfolderType subfolderType : subfolderTypes) {
             // check if source files exists
-            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
+            if (subfolderType.getLinkingMode().equals(LinkingMode.EXISTING)) {
+                URI folderUri = serviceManager.getProcessService().getMethodFromName(subfolderType.getRelativePath(), process);
                 if (serviceManager.getFileService().fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
-                            .addVirtualFileGroup(setVirtualFileGroup(folder, variableReplacer));
+                            .addVirtualFileGroup(setVirtualFileGroup(subfolderType, variableReplacer));
                 }
-            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
+            } else if (!subfolderType.getLinkingMode().equals(LinkingMode.NO)) {
                 metsMods.getDigitalDocument().getFileSet()
-                        .addVirtualFileGroup(setVirtualFileGroup(folder, variableReplacer));
+                        .addVirtualFileGroup(setVirtualFileGroup(subfolderType, variableReplacer));
             }
         }
         return metsMods;
     }
 
-    private VirtualFileGroupInterface setVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
+    private VirtualFileGroupInterface setVirtualFileGroup(SubfolderType subfolderType, VariableReplacer variableReplacer)
             throws JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
-        virtualFileGroup.setName(folder.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
-        virtualFileGroup.setMimetype(folder.getMimeType());
-        if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
-            virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+        virtualFileGroup.setName(subfolderType.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(subfolderType.getUrlStructure()));
+        virtualFileGroup.setMimetype(subfolderType.getMimeType());
+        if (FileFormatsConfig.getFileFormat(subfolderType.getMimeType()).isPresent()) {
+            virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(subfolderType.getMimeType()).get().getExtension(false));
         }
-        virtualFileGroup.setOrdinary(!folder.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
+        virtualFileGroup.setOrdinary(!subfolderType.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
 
         return virtualFileGroup;
     }

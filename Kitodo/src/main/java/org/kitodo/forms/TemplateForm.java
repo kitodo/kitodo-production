@@ -29,8 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -369,14 +369,14 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public List<FolderProcessingSwitch> getGeneratableFolderSwitches() {
         Stream<Project> projectsStream = template.getProjects().stream();
-        Stream<Folder> generatableFolders = TaskService.generatableFoldersFromProjects(projectsStream);
+        Stream<SubfolderType> generatableFolders = TaskService.generatableFoldersFromProjects(projectsStream);
         return getSwitches(generatableFolders, task.getContentFolders());
     }
 
     /**
      * Convert the stream of folders to a list of switch objects.
      * 
-     * @param folders
+     * @param subfolderTypes
      *            folders for which generation or validation can be switched on
      *            or off
      * @param activated
@@ -386,8 +386,8 @@ public class TemplateForm extends TemplateBaseForm {
      *            template is stored in the database.
      * @return a list of switch objects to be rendered by JSF
      */
-    private List<FolderProcessingSwitch> getSwitches(Stream<Folder> folders, List<Folder> activated) {
-        Stream<FolderProcessingSwitch> validatorSwitches = folders
+    private List<FolderProcessingSwitch> getSwitches(Stream<SubfolderType> subfolderTypes, List<SubfolderType> activated) {
+        Stream<FolderProcessingSwitch> validatorSwitches = subfolderTypes
                 .map(folder -> new FolderProcessingSwitch(folder, activated));
         return validatorSwitches.collect(Collectors.toCollection(LinkedList::new));
     }
@@ -399,7 +399,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of FolderProcessingSwitch objects or empty list
      */
     public List<FolderProcessingSwitch> getValidatableFolderSwitches() {
-        Stream<Folder> validatableFolders = template.getProjects().stream()
+        Stream<SubfolderType> validatableFolders = template.getProjects().stream()
                 .flatMap(project -> project.getFolders().stream());
         return getSwitches(validatableFolders, task.getValidationFolders());
     }

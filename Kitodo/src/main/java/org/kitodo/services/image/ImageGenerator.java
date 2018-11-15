@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.config.xml.fileformats.FileFormat;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.enums.GenerationMode;
 import org.kitodo.enums.ImageGeneratorStep;
 import org.kitodo.helper.tasks.EmptyTask;
@@ -141,7 +141,7 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
+    private static void createDerivative(URI sourceImage, SubfolderType imageProperties, ImageFileFormat imageFileFormat,
             URI destinationImage) throws IOException {
 
         ImageService imageGenerator = new ImageService();
@@ -190,7 +190,7 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static void createImageWithImageIO(URI sourceImage, Folder imageProperties, FileFormat fileFormat,
+    private static void createImageWithImageIO(URI sourceImage, SubfolderType imageProperties, FileFormat fileFormat,
             URI destinationImage) throws IOException {
 
         try (OutputStream outputStream = new FileService().write(destinationImage)) {
@@ -246,7 +246,7 @@ public class ImageGenerator implements Runnable {
     private static void generateDerivative(URI sourceImage, Subfolder destinationImage, String canonical)
             throws IOException {
 
-        Folder imageProperties = destinationImage.getFolder();
+        SubfolderType imageProperties = destinationImage.getType();
         boolean isCreatingDerivative = imageProperties.getDerivative().isPresent();
         boolean isChangingDpi = imageProperties.getDpi().isPresent();
         boolean isGettingScaledWebImage = imageProperties.getImageScale().isPresent();
@@ -335,7 +335,7 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
+    private static Image retrieveJavaImage(URI sourceImage, SubfolderType imageProperties) throws IOException {
 
         ImageService imageManagementServiceProvider = new ImageService();
 

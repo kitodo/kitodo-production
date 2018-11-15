@@ -132,7 +132,7 @@ public class Task extends BaseIndexedBean {
         joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
-    private List<Folder> contentFolders;
+    private List<SubfolderType> contentFolders;
 
     /**
      * This field contains information about folders whose contents are to be
@@ -143,7 +143,7 @@ public class Task extends BaseIndexedBean {
         joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_validationFolders_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
-    private List<Folder> validationFolders;
+    private List<SubfolderType> validationFolders;
 
     @Transient
     private String localizedTitle;
@@ -390,7 +390,7 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getContentFolders() {
+    public List<SubfolderType> getContentFolders() {
         if (this.contentFolders == null) {
             this.contentFolders = new ArrayList<>();
         }
@@ -403,7 +403,7 @@ public class Task extends BaseIndexedBean {
      * @param contentFolders
      *            as list
      */
-    public void setContentFolders(List<Folder> contentFolders) {
+    public void setContentFolders(List<SubfolderType> contentFolders) {
         this.contentFolders = contentFolders;
     }
 
@@ -412,7 +412,7 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getValidationFolders() {
+    public List<SubfolderType> getValidationFolders() {
         if (this.validationFolders == null) {
             this.validationFolders = new ArrayList<>();
         }
@@ -425,7 +425,7 @@ public class Task extends BaseIndexedBean {
      * @param validationFolders
      *            as list
      */
-    public void setValidationFolders(List<Folder> validationFolders) {
+    public void setValidationFolders(List<SubfolderType> validationFolders) {
         this.validationFolders = validationFolders;
     }
 

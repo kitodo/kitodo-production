@@ -55,7 +55,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.LinkingMode;
@@ -747,7 +747,7 @@ public class MockDatabase {
     private static void insertFolders() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
 
-        Folder firstFolder = new Folder();
+        SubfolderType firstFolder = new SubfolderType();
         firstFolder.setFileGroup("MAX");
         firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstFolder.setMimeType("image/jpeg");
@@ -757,7 +757,7 @@ public class MockDatabase {
         firstFolder.setDerivative(1.0);
         firstFolder.setLinkingMode(LinkingMode.ALL);
 
-        Folder secondFolder = new Folder();
+        SubfolderType secondFolder = new SubfolderType();
         secondFolder.setFileGroup("DEFAULT");
         secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondFolder.setMimeType("image/jpeg");
@@ -767,7 +767,7 @@ public class MockDatabase {
         secondFolder.setDerivative(0.8);
         secondFolder.setLinkingMode(LinkingMode.ALL);
 
-        Folder thirdFolder = new Folder();
+        SubfolderType thirdFolder = new SubfolderType();
         thirdFolder.setFileGroup("THUMBS");
         thirdFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdFolder.setMimeType("image/jpeg");
@@ -777,7 +777,7 @@ public class MockDatabase {
         thirdFolder.setImageSize(150);
         thirdFolder.setLinkingMode(LinkingMode.ALL);
 
-        Folder fourthFolder = new Folder();
+        SubfolderType fourthFolder = new SubfolderType();
         fourthFolder.setFileGroup("FULLTEXT");
         fourthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthFolder.setMimeType("text/xml");
@@ -786,7 +786,7 @@ public class MockDatabase {
         fourthFolder.setCreateFolder(true);
         fourthFolder.setLinkingMode(LinkingMode.ALL);
 
-        Folder fifthFolder = new Folder();
+        SubfolderType fifthFolder = new SubfolderType();
         fifthFolder.setFileGroup("DOWNLOAD");
         fifthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthFolder.setMimeType("application/pdf");

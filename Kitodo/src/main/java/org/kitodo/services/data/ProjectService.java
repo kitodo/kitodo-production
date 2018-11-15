@@ -26,9 +26,9 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -392,22 +392,22 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
-        ArrayList<Folder> duplicatedFolders = new ArrayList<>();
-        for (Folder folder : baseProject.getFolders()) {
-            Folder duplicatedFolder = new Folder();
-            duplicatedFolder.setMimeType(folder.getMimeType());
-            duplicatedFolder.setFileGroup(folder.getFileGroup());
-            duplicatedFolder.setUrlStructure(folder.getUrlStructure());
-            duplicatedFolder.setPath(folder.getPath());
+        ArrayList<SubfolderType> duplicatedFolders = new ArrayList<>();
+        for (SubfolderType subfolderType : baseProject.getFolders()) {
+            SubfolderType duplicatedFolder = new SubfolderType();
+            duplicatedFolder.setMimeType(subfolderType.getMimeType());
+            duplicatedFolder.setFileGroup(subfolderType.getFileGroup());
+            duplicatedFolder.setUrlStructure(subfolderType.getUrlStructure());
+            duplicatedFolder.setPath(subfolderType.getPath());
 
             duplicatedFolder.setProject(duplicatedProject);
-            duplicatedFolder.setCopyFolder(folder.isCopyFolder());
-            duplicatedFolder.setCreateFolder(folder.isCreateFolder());
-            duplicatedFolder.setDerivative(folder.getDerivative().orElse(null));
-            duplicatedFolder.setDpi(folder.getDpi().orElse(null));
-            duplicatedFolder.setImageScale(folder.getImageScale().orElse(null));
-            duplicatedFolder.setImageSize(folder.getImageSize().orElse(null));
-            duplicatedFolder.setLinkingMode(folder.getLinkingMode());
+            duplicatedFolder.setCopyFolder(subfolderType.isCopyFolder());
+            duplicatedFolder.setCreateFolder(subfolderType.isCreateFolder());
+            duplicatedFolder.setDerivative(subfolderType.getDerivative().orElse(null));
+            duplicatedFolder.setDpi(subfolderType.getDpi().orElse(null));
+            duplicatedFolder.setImageScale(subfolderType.getImageScale().orElse(null));
+            duplicatedFolder.setImageSize(subfolderType.getImageSize().orElse(null));
+            duplicatedFolder.setLinkingMode(subfolderType.getLinkingMode());
             duplicatedFolders.add(duplicatedFolder);
         }
         duplicatedProject.setFolders(duplicatedFolders);

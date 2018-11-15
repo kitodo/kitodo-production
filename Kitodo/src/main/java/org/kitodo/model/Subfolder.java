@@ -32,8 +32,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.file.FileService;
@@ -61,7 +61,7 @@ public class Subfolder {
     /**
      * The general metrics of this kind of subfolder. So to say its type.
      */
-    private final Folder folder;
+    private final SubfolderType type;
 
     /**
      * The process this subfolder belongs to. That is the process whose process
@@ -80,12 +80,12 @@ public class Subfolder {
      * 
      * @param process
      *            the process this subfolder belongs to
-     * @param folder
+     * @param subfolderType
      *            the general metrics of this kind of subfolder
      */
-    public Subfolder(Process process, Folder folder) {
+    public Subfolder(Process process, SubfolderType subfolderType) {
         this.process = process;
-        this.folder = folder;
+        this.type = subfolderType;
         this.variableReplacer = new VariableReplacer(null, null, process, null);
     }
 
@@ -124,7 +124,7 @@ public class Subfolder {
      */
     private Pair<URI, Pattern> determineComplicatedSearchParameters(int lastSeparator, String lastSegment,
             int firstStar) {
-        String realPath = variableReplacer.replace(folder.getPath().substring(0, lastSeparator));
+        String realPath = variableReplacer.replace(type.getPath().substring(0, lastSeparator));
         String processId = process.getId().toString();
         final URI directory = (realPath.isEmpty() ? Paths.get(ConfigCore.getKitodoDataDirectory(), processId)
                 : Paths.get(ConfigCore.getKitodoDataDirectory(), processId, realPath)).toUri();
@@ -150,7 +150,7 @@ public class Subfolder {
     private Pair<URI, Pattern> determineCommonSearchParameters() {
         String processId = process.getId().toString();
         URI directory = Paths
-                .get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(folder.getPath()))
+                .get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(type.getPath()))
                 .toUri();
         String pattern = "(.*)\\." + Pattern.quote(getFileFormat().getExtension(false));
         return Pair.of(directory, Pattern.compile(pattern));
@@ -163,8 +163,8 @@ public class Subfolder {
      *         searched and a pattern to which the file names must correspond
      */
     private Pair<URI, Pattern> determineDirectoryAndFileNamePattern() {
-        int lastSeparator = folder.getPath().lastIndexOf(File.separatorChar);
-        String lastSegment = folder.getPath().substring(lastSeparator + 1);
+        int lastSeparator = type.getPath().lastIndexOf(File.separatorChar);
+        String lastSegment = type.getPath().substring(lastSeparator + 1);
         int firstStar = lastSegment.indexOf('*');
         if (firstStar == -1) {
             return determineCommonSearchParameters();
@@ -178,19 +178,20 @@ public class Subfolder {
      */
     public FileFormat getFileFormat() {
         try {
-            return FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
+            return FileFormatsConfig.getFileFormat(type.getMimeType()).get();
         } catch (JAXBException e) {
             throw new UndeclaredThrowableException(e);
         }
     }
 
     /**
-     * Returns the settings of the subfolder configured in the project.
+     * Returns the type of the subfolder configured in the project, which
+     * contains the settings.
      * 
-     * @return the folder
+     * @return the subfolder type
      */
-    public Folder getFolder() {
-        return folder;
+    public SubfolderType getType() {
+        return type;
     }
 
     /**
@@ -205,15 +206,15 @@ public class Subfolder {
      * @return composed URI
      */
     public URI getUri(String canonical) {
-        int lastSeparator = folder.getPath().lastIndexOf(File.separatorChar);
-        String lastSegment = folder.getPath().substring(lastSeparator + 1);
+        int lastSeparator = type.getPath().lastIndexOf(File.separatorChar);
+        String lastSegment = type.getPath().substring(lastSeparator + 1);
         String processId = process.getId().toString();
         if (lastSegment.indexOf('*') == -1) {
             String localName = canonical + getFileFormat().getExtension(true);
-            return Paths.get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(folder.getPath()),
+            return Paths.get(ConfigCore.getKitodoDataDirectory(), processId, variableReplacer.replace(type.getPath()),
                 localName).toUri();
         } else {
-            String realPath = folder.getPath().substring(0, lastSeparator);
+            String realPath = type.getPath().substring(0, lastSeparator);
             String localName = lastSegment.replaceFirst("\\*", canonical).replaceFirst("\\*$",
                 getFileFormat().getExtension(false));
             if (realPath.isEmpty()) {
@@ -278,6 +279,6 @@ public class Subfolder {
      */
     @Override
     public String toString() {
-        return "UseFolder [process=" + process + ", folder=" + folder + "]";
+        return "UseFolder [process=" + process + ", folder=" + type + "]";
     }
 }

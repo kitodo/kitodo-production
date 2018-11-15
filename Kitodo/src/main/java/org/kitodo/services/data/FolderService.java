@@ -13,12 +13,12 @@ package org.kitodo.services.data;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
+public class FolderService extends SearchDatabaseService<SubfolderType, FolderDAO> {
 
     /**
      * Creates a new folder service.
@@ -33,7 +33,7 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
-    public List<Folder> getAllForSelectedClient() {
+    public List<SubfolderType> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
 }

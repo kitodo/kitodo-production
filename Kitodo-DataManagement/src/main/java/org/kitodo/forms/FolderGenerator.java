@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 
 /**
  * An encapsulation to access the generator properties of the folder.
@@ -55,7 +55,7 @@ public class FolderGenerator {
     /**
      * {@code Folder.this}.
      */
-    private final Folder folder;
+    private final SubfolderType subfolderType;
 
     /**
      * Image width in pixels.
@@ -65,11 +65,11 @@ public class FolderGenerator {
     /**
      * Creates a new generator for this folder.
      *
-     * @param folder
+     * @param subfolderType
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
-        this.folder = folder;
+    public FolderGenerator(SubfolderType subfolderType) {
+        this.subfolderType = subfolderType;
     }
 
     /**
@@ -96,13 +96,13 @@ public class FolderGenerator {
      * @return the generator methodd
      */
     public String getMethod() {
-        if (folder.getDerivative().isPresent()) {
+        if (subfolderType.getDerivative().isPresent()) {
             return CREATE_DERIVATIVE;
-        } else if (folder.getDpi().isPresent()) {
+        } else if (subfolderType.getDpi().isPresent()) {
             return CHANGE_DPI;
-        } else if (folder.getImageScale().isPresent()) {
+        } else if (subfolderType.getImageScale().isPresent()) {
             return GET_SCALED_WEB_IMAGE;
-        } else if (folder.getImageSize().isPresent()) {
+        } else if (subfolderType.getImageSize().isPresent()) {
             return GET_SIZED_WEB_IMAGE;
         } else {
             return "";
@@ -147,10 +147,10 @@ public class FolderGenerator {
      *            method to set
      */
     public void setMethod(String method) {
-        folder.setDerivative(method.equals(CREATE_DERIVATIVE) ? factor : null);
-        folder.setDpi(method.equals(CHANGE_DPI) ? dpi : null);
-        folder.setImageScale(method.equals(GET_SCALED_WEB_IMAGE) ? factor : null);
-        folder.setImageSize(method.equals(GET_SIZED_WEB_IMAGE) ? width : null);
+        subfolderType.setDerivative(method.equals(CREATE_DERIVATIVE) ? factor : null);
+        subfolderType.setDpi(method.equals(CHANGE_DPI) ? dpi : null);
+        subfolderType.setImageScale(method.equals(GET_SCALED_WEB_IMAGE) ? factor : null);
+        subfolderType.setImageSize(method.equals(GET_SIZED_WEB_IMAGE) ? width : null);
     }
 
     /**

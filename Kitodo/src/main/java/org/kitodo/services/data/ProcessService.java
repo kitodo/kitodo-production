@@ -73,11 +73,11 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -2118,18 +2118,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // group paths!
         Project project = process.getProject();
         VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
-        List<Folder> folders = project.getFolders();
-        for (Folder folder : folders) {
+        List<SubfolderType> subfolderTypes = project.getFolders();
+        for (SubfolderType subfolderType : subfolderTypes) {
             // check if source files exists
-            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getRelativePath()).toURI();
+            if (subfolderType.getLinkingMode().equals(LinkingMode.EXISTING)) {
+                URI folderUri = new File(subfolderType.getRelativePath()).toURI();
                 if (fileService.fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()
-                            .addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
+                            .addVirtualFileGroup(prepareVirtualFileGroup(subfolderType, variables));
                 }
-            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
-                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
+            } else if (!subfolderType.getLinkingMode().equals(LinkingMode.NO)) {
+                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(subfolderType, variables));
             }
         }
 
@@ -2189,15 +2189,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
+    private VirtualFileGroupInterface prepareVirtualFileGroup(SubfolderType subfolderType, VariableReplacer variableReplacer)
             throws JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(folder.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
-        virtualFileGroup.setMimetype(folder.getMimeType());
-        if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
+        virtualFileGroup.setName(subfolderType.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(subfolderType.getUrlStructure()));
+        virtualFileGroup.setMimetype(subfolderType.getMimeType());
+        if (FileFormatsConfig.getFileFormat(subfolderType.getMimeType()).isPresent()) {
             virtualFileGroup.setFileSuffix(
-                folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
+                subfolderType.getUGHTail(FileFormatsConfig.getFileFormat(subfolderType.getMimeType()).get().getExtension(false)));
         }
         return virtualFileGroup;
     }

@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 
 public class FolderProcessingSwitchTest {
     @Test
     public void getLabelTest() {
-        Folder folderToBeGenerated = new Folder();
+        SubfolderType folderToBeGenerated = new SubfolderType();
         folderToBeGenerated.setPath("folderToBeGenerated");
         FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folderToBeGenerated,
                 new ArrayList<>());
@@ -35,25 +35,25 @@ public class FolderProcessingSwitchTest {
 
     @Test
     public void isValueTest() {
-        Folder folder = new Folder();
-        List<Folder> activatedFolders = new ArrayList<>();
-        FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folder, activatedFolders);
+        SubfolderType subfolderType = new SubfolderType();
+        List<SubfolderType> activatedFolders = new ArrayList<>();
+        FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(subfolderType, activatedFolders);
         assertThat(folderProcessingSwitch.isValue(), is(equalTo((false))));
-        activatedFolders.add(folder);
+        activatedFolders.add(subfolderType);
         assertThat(folderProcessingSwitch.isValue(), is(equalTo((true))));
-        activatedFolders.remove(folder);
+        activatedFolders.remove(subfolderType);
         assertThat(folderProcessingSwitch.isValue(), is(equalTo((false))));
     }
 
     @Test
     public void setValueTest() {
-        Folder folder = new Folder();
-        List<Folder> activatedFolders = new ArrayList<>();
-        FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folder, activatedFolders);
-        assertThat(activatedFolders, not(contains(folder)));
+        SubfolderType subfolderType = new SubfolderType();
+        List<SubfolderType> activatedFolders = new ArrayList<>();
+        FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(subfolderType, activatedFolders);
+        assertThat(activatedFolders, not(contains(subfolderType)));
         folderProcessingSwitch.setValue(true);
-        assertThat(activatedFolders, contains(folder));
+        assertThat(activatedFolders, contains(subfolderType));
         folderProcessingSwitch.setValue(false);
-        assertThat(activatedFolders, not(contains(folder)));
+        assertThat(activatedFolders, not(contains(subfolderType)));
     }
 }

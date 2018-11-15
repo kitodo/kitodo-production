@@ -153,7 +153,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<Template> templates;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Folder> folders;
+    private List<SubfolderType> subfolderTypes;
 
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
@@ -164,21 +164,21 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     @ManyToOne
     @JoinColumn(name = "generatorSource_folder_id", foreignKey = @ForeignKey(name = "FK_project_generatorSource_folder_id"))
-    private Folder generatorSource;
+    private SubfolderType generatorSource;
 
     /**
      * Folder with media to use for the viewer.
      */
     @ManyToOne
     @JoinColumn(name = "mediaView_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
-    private Folder mediaView;
+    private SubfolderType mediaView;
 
     /**
      * Folder with media to use for the preview.
      */
     @ManyToOne
     @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
-    private Folder preview;
+    private SubfolderType preview;
 
     /**
      * The variable {@code template} is populated from
@@ -345,21 +345,21 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      *
      * @return the folders
      */
-    public List<Folder> getFolders() {
-        if (this.folders == null) {
-            this.folders = new ArrayList<>();
+    public List<SubfolderType> getFolders() {
+        if (this.subfolderTypes == null) {
+            this.subfolderTypes = new ArrayList<>();
         }
-        return this.folders;
+        return this.subfolderTypes;
     }
 
     /**
      * Sets the list of folders of this project.
      *
-     * @param folders
+     * @param subfolderTypes
      *            list of folders to set
      */
-    public void setFolders(List<Folder> folders) {
-        this.folders = folders;
+    public void setFolders(List<SubfolderType> subfolderTypes) {
+        this.subfolderTypes = subfolderTypes;
     }
 
     public String getMetsRightsOwner() {
@@ -596,7 +596,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      *
      * @return the source folder for generation
      */
-    public Folder getGeneratorSource() {
+    public SubfolderType getGeneratorSource() {
         return generatorSource;
     }
 
@@ -607,7 +607,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @param generatorSource
      *            source folder for generation to set
      */
-    public void setGeneratorSource(Folder generatorSource) {
+    public void setGeneratorSource(SubfolderType generatorSource) {
         this.generatorSource = generatorSource;
     }
 
@@ -616,7 +616,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      *
      * @return media view folder
      */
-    public Folder getMediaView() {
+    public SubfolderType getMediaView() {
         return mediaView;
     }
 
@@ -626,7 +626,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @param mediaView
      *            media view folder
      */
-    public void setMediaView(Folder mediaView) {
+    public void setMediaView(SubfolderType mediaView) {
         this.mediaView = mediaView;
     }
 
@@ -635,7 +635,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      *
      * @return preview folder
      */
-    public Folder getPreview() {
+    public SubfolderType getPreview() {
         return preview;
     }
 
@@ -645,7 +645,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @param preview
      *            preview folder
      */
-    public void setPreview(Folder preview) {
+    public void setPreview(SubfolderType preview) {
         this.preview = preview;
     }
 

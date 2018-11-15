@@ -13,7 +13,7 @@ package org.kitodo.forms;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Task;
 
 /**
@@ -34,24 +34,24 @@ public class FolderProcessingSwitch {
     /**
      * Folder represented by this generator switch.
      */
-    private Folder folder;
+    private SubfolderType subfolderType;
 
     /**
      * Modifyable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
-    private List<Folder> contentFolders;
+    private List<SubfolderType> contentFolders;
 
     /**
      * Creates a new generator for this task.
      *
-     * @param folder
+     * @param subfolderType
      *            folder represented by this toggle switch
      * @param contentFolders
      *            modifiable list of enabled toggle switches
      */
-    public FolderProcessingSwitch(Folder folder, List<Folder> contentFolders) {
-        this.folder = folder;
+    public FolderProcessingSwitch(SubfolderType subfolderType, List<SubfolderType> contentFolders) {
+        this.subfolderType = subfolderType;
         this.contentFolders = contentFolders;
     }
 
@@ -61,7 +61,7 @@ public class FolderProcessingSwitch {
      * @return a label for the folder
      */
     public String getLabel() {
-        return folder.toString();
+        return subfolderType.toString();
     }
 
     /**
@@ -71,7 +71,7 @@ public class FolderProcessingSwitch {
      * @return the value for the toggle switch
      */
     public boolean isValue() {
-        return contentFolders.contains(folder);
+        return contentFolders.contains(subfolderType);
     }
 
     /**
@@ -82,9 +82,9 @@ public class FolderProcessingSwitch {
      */
     public void setValue(boolean value) {
         if (!value) {
-            contentFolders.remove(folder);
-        } else if (!contentFolders.contains(folder)) {
-            contentFolders.add(folder);
+            contentFolders.remove(subfolderType);
+        } else if (!contentFolders.contains(subfolderType)) {
+            contentFolders.add(subfolderType);
         }
     }
 }

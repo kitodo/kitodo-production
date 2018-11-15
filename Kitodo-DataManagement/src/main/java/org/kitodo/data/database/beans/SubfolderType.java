@@ -58,8 +58,8 @@ import org.kitodo.forms.FolderGenerator;
  * drive, just to produce the METS {@code <fileGrp>} structure.
  */
 @Entity
-@Table(name = "folder")
-public class Folder extends BaseBean {
+@Table(name = "subfolder_type")
+public class SubfolderType extends BaseBean {
     /**
      * Default {@code fileGrp}s supported by the DFG viewer. The list is used to
      * populate a combo box in the edit dialog.
@@ -178,7 +178,7 @@ public class Folder extends BaseBean {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Folder that = (Folder) o;
+        SubfolderType that = (SubfolderType) o;
         return Objects.equals(fileGroup, that.fileGroup) && Objects.equals(urlStructure, that.urlStructure)
                 && Objects.equals(mimeType, that.mimeType) && Objects.equals(path, that.path)
                 && Objects.equals(project, that.project) && copyFolder == that.copyFolder

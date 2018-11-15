@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.model.Subfolder;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
 
@@ -66,7 +66,7 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
     /**
      * Creates a filter predicate that checks if the file exists in the folder
      * and can be validated. The name of the file results from the settings of
-     * the folder passed into the {@link #test(Folder)} function, and the
+     * the folder passed into the {@link #test(SubfolderType)} function, and the
      * canonical name part and the variables.
      * 
      * @param canonical

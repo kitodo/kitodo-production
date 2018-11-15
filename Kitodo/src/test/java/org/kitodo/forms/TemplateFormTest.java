@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -29,7 +29,7 @@ public class TemplateFormTest {
     @Test
     public void testGettingGeneratableFolderSwitches() {
         Project projectWithoutSourceFolder = new Project();
-        Folder folderInProjectWithoutSourceFolder = new Folder();
+        SubfolderType folderInProjectWithoutSourceFolder = new SubfolderType();
         folderInProjectWithoutSourceFolder.setPath("folderInProjectWithoutSourceFolder");
         folderInProjectWithoutSourceFolder.setImageScale(1.0);
         projectWithoutSourceFolder.getFolders().add(folderInProjectWithoutSourceFolder);
@@ -37,16 +37,16 @@ public class TemplateFormTest {
         projects.add(projectWithoutSourceFolder);
 
         Project project = new Project();
-        List<Folder> projectFolders = project.getFolders();
-        Folder sourceFolder = new Folder();
+        List<SubfolderType> projectFolders = project.getFolders();
+        SubfolderType sourceFolder = new SubfolderType();
         sourceFolder.setPath("sourceFolder");
         sourceFolder.setImageScale(1.0);
         projectFolders.add(sourceFolder);
         project.setGeneratorSource(sourceFolder);
-        Folder folderWhichHasNothingToBeGenerated = new Folder();
+        SubfolderType folderWhichHasNothingToBeGenerated = new SubfolderType();
         folderWhichHasNothingToBeGenerated.setPath("folderWhichHasNothingToBeGenerated");
         projectFolders.add(folderWhichHasNothingToBeGenerated);
-        Folder folderToBeGenerated = new Folder();
+        SubfolderType folderToBeGenerated = new SubfolderType();
         folderToBeGenerated.setPath("folderToBeGenerated");
         folderToBeGenerated.setImageScale(1.0);
         projectFolders.add(folderToBeGenerated);
@@ -74,8 +74,8 @@ public class TemplateFormTest {
     public void testGettingValidatableFolderSwitches() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
-        List<Folder> projectFolders = project.getFolders();
-        Folder folderToBeValidated = new Folder();
+        List<SubfolderType> projectFolders = project.getFolders();
+        SubfolderType folderToBeValidated = new SubfolderType();
         folderToBeValidated.setPath("folderToBeValidated");
         projectFolders.add(folderToBeValidated);
         projects.add(project);

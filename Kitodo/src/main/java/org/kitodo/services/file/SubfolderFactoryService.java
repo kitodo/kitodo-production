@@ -15,8 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.model.Subfolder;
 
 /**
@@ -32,12 +32,12 @@ public class SubfolderFactoryService {
      * 
      * @param process
      *            the process this subfolder belongs to
-     * @param folders
+     * @param subfolderTypes
      *            The general metrics of the kinds of subfolders to create
      * @return subfolders
      */
-    public static List<Subfolder> createAll(Process process, Collection<Folder> folders) {
-        return folders.parallelStream().map(folder -> new Subfolder(process, folder)).collect(Collectors.toList());
+    public static List<Subfolder> createAll(Process process, Collection<SubfolderType> subfolderTypes) {
+        return subfolderTypes.parallelStream().map(folder -> new Subfolder(process, folder)).collect(Collectors.toList());
     }
 
 }

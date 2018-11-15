@@ -34,8 +34,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -59,7 +59,7 @@ public class ProjectForm extends BaseForm {
      * for the data table row an dialog, but this approach was introduced
      * decades ago and has been maintained until today.
      */
-    private Folder myFolder;
+    private SubfolderType myFolder;
     private Project baseProject;
 
     // lists accepting the preliminary actions of adding and delting folders
@@ -99,7 +99,7 @@ public class ProjectForm extends BaseForm {
     private void deleteFolders(List<Integer> folderIds) {
         if (Objects.nonNull(this.project)) {
             for (Integer id : folderIds) {
-                for (Folder f : this.project.getFolders()) {
+                for (SubfolderType f : this.project.getFolders()) {
                     if (f.getId() == null ? id == null : f.getId().equals(id)) {
                         this.project.getFolders().remove(f);
                         break;
@@ -223,7 +223,7 @@ public class ProjectForm extends BaseForm {
      * @return String
      */
     public String addFolder() {
-        this.myFolder = new Folder();
+        this.myFolder = new SubfolderType();
         this.myFolder.setProject(this.project);
         this.newFolders.add(this.myFolder.getId());
         return this.stayOnCurrentPage;
@@ -314,11 +314,11 @@ public class ProjectForm extends BaseForm {
      *
      * @return modified ArrayList
      */
-    public List<Folder> getFolderList() {
-        List<Folder> filteredFolderList = new ArrayList<>(this.project.getFolders());
+    public List<SubfolderType> getFolderList() {
+        List<SubfolderType> filteredFolderList = new ArrayList<>(this.project.getFolders());
 
         for (Integer id : this.deletedFolders) {
-            for (Folder f : this.project.getFolders()) {
+            for (SubfolderType f : this.project.getFolders()) {
                 if (f.getId() == null ? id == null : f.getId().equals(id)) {
                     filteredFolderList.remove(f);
                     break;
@@ -328,8 +328,8 @@ public class ProjectForm extends BaseForm {
         return filteredFolderList;
     }
 
-    private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::toString, Function.identity()));
+    private Map<String, SubfolderType> getFolderMap() {
+        return getFolderList().parallelStream().collect(Collectors.toMap(SubfolderType::toString, Function.identity()));
     }
 
     /**
@@ -337,7 +337,7 @@ public class ProjectForm extends BaseForm {
      *
      * @return the folder currently under edit
      */
-    public Folder getMyFolder() {
+    public SubfolderType getMyFolder() {
         return this.myFolder;
     }
 
@@ -347,7 +347,7 @@ public class ProjectForm extends BaseForm {
      * @param myFolder
      *            folder to set to be under edit now
      */
-    public void setMyFolder(Folder myFolder) {
+    public void setMyFolder(SubfolderType myFolder) {
         this.myFolder = myFolder;
     }
 
@@ -379,7 +379,7 @@ public class ProjectForm extends BaseForm {
      * @return the source folder for generation
      */
     public String getGeneratorSource() {
-        Folder source = project.getGeneratorSource();
+        SubfolderType source = project.getGeneratorSource();
         return source == null ? null : source.toString();
     }
 
@@ -400,7 +400,7 @@ public class ProjectForm extends BaseForm {
      * @return media view folder
      */
     public String getMediaView() {
-        Folder mediaView = project.getMediaView();
+        SubfolderType mediaView = project.getMediaView();
         return mediaView == null ? null : mediaView.toString();
     }
 
@@ -420,7 +420,7 @@ public class ProjectForm extends BaseForm {
      * @return preview folder
      */
     public String getPreview() {
-        Folder preview = project.getPreview();
+        SubfolderType preview = project.getPreview();
         return preview == null ? null : preview.toString();
     }
 

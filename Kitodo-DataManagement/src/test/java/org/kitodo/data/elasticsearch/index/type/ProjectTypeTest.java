@@ -30,7 +30,7 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -49,12 +49,12 @@ public class ProjectTypeTest {
     private static List<Project> prepareData() {
 
         List<Project> projects = new ArrayList<>();
-        List<Folder> folders = new ArrayList<>();
+        List<SubfolderType> subfolderTypes = new ArrayList<>();
         List<Process> processes = new ArrayList<>();
         List<Template> templates = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
-        Folder firstFolder = new Folder();
+        SubfolderType firstFolder = new SubfolderType();
         firstFolder.setFileGroup("MAX");
         firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstFolder.setMimeType("image/jpeg");
@@ -63,9 +63,9 @@ public class ProjectTypeTest {
         firstFolder.setCreateFolder(true);
         firstFolder.setDerivative(1.0);
         firstFolder.setLinkingMode(LinkingMode.ALL);
-        folders.add(firstFolder);
+        subfolderTypes.add(firstFolder);
 
-        Folder secondFolder = new Folder();
+        SubfolderType secondFolder = new SubfolderType();
         secondFolder.setFileGroup("DEFAULT");
         secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondFolder.setMimeType("image/jpeg");
@@ -75,9 +75,9 @@ public class ProjectTypeTest {
         secondFolder.setDerivative(0.8);
         secondFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(secondFolder);
+        subfolderTypes.add(secondFolder);
 
-        Folder thirdFolder = new Folder();
+        SubfolderType thirdFolder = new SubfolderType();
         thirdFolder.setFileGroup("THUMBS");
         thirdFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdFolder.setMimeType("image/jpeg");
@@ -87,9 +87,9 @@ public class ProjectTypeTest {
         thirdFolder.setImageSize(150);
         thirdFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(thirdFolder);
+        subfolderTypes.add(thirdFolder);
 
-        Folder fourthFolder = new Folder();
+        SubfolderType fourthFolder = new SubfolderType();
         fourthFolder.setFileGroup("FULLTEXT");
         fourthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthFolder.setMimeType("text/xml");
@@ -98,9 +98,9 @@ public class ProjectTypeTest {
         fourthFolder.setCreateFolder(true);
         fourthFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(fourthFolder);
+        subfolderTypes.add(fourthFolder);
 
-        Folder fifthFolder = new Folder();
+        SubfolderType fifthFolder = new SubfolderType();
         fifthFolder.setFileGroup("DOWNLOAD");
         fifthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthFolder.setMimeType("application/pdf");
@@ -109,7 +109,7 @@ public class ProjectTypeTest {
         fifthFolder.setCreateFolder(true);
         fifthFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(fifthFolder);
+        subfolderTypes.add(fifthFolder);
 
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
@@ -150,7 +150,7 @@ public class ProjectTypeTest {
         firstProject.setNumberOfVolumes(10);
         firstProject.setTemplates(templates);
         firstProject.setProcesses(processes);
-        firstProject.setFolders(folders);
+        firstProject.setFolders(subfolderTypes);
         firstProject.setUsers(users);
         firstProject.setClient(client);
         projects.add(firstProject);
@@ -166,7 +166,7 @@ public class ProjectTypeTest {
         secondProject.setNumberOfVolumes(20);
         secondProject.setTemplates(templates);
         secondProject.setProcesses(processes);
-        secondProject.setFolders(folders);
+        secondProject.setFolders(subfolderTypes);
         secondProject.setUsers(users);
         projects.add(secondProject);
 

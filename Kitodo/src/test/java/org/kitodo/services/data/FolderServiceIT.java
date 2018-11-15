@@ -20,7 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.SubfolderType;
 
 /**
  * Tests for TaskService class.
@@ -43,8 +43,8 @@ public class FolderServiceIT {
     public void shouldFindFolder() throws Exception {
         FolderService folderService = new FolderService();
 
-        Folder folder = folderService.getById(1);
-        boolean condition = folder.getFileGroup().equals("MAX") && folder.getMimeType().equals("image/jpeg");
+        SubfolderType subfolderType = folderService.getById(1);
+        boolean condition = subfolderType.getFileGroup().equals("MAX") && subfolderType.getMimeType().equals("image/jpeg");
         assertTrue("Folder was not found in database!", condition);
     }
 
@@ -52,7 +52,7 @@ public class FolderServiceIT {
     public void shouldGetAllFolders() throws Exception {
         FolderService folderService = new FolderService();
 
-        List<Folder> folders = folderService.getAll();
-        assertEquals("Folder was not found in database!", 5, folders.size());
+        List<SubfolderType> subfolderTypes = folderService.getAll();
+        assertEquals("Folder was not found in database!", 5, subfolderTypes.size());
     }
 }
