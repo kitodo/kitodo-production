@@ -315,17 +315,16 @@ public class ImageGenerator implements Runnable {
     }
 
     /**
-     * Lets the supervisor do something, if there is one. Otherwise nothing
+     * If there is a supervisor, lets him take an action. Otherwise nothing
      * happens.
      *
      * @param action
      *            what the supervisor should do
      */
-    public void letTheSupervisor(Consumer<EmptyTask> action) {
+    public void letTheSupervisorDo(Consumer<EmptyTask> action) {
         if (supervisor.isPresent()) {
             action.accept(supervisor.get());
         }
-
     }
 
     /**
