@@ -21,42 +21,40 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ProcessFromTemplatePage extends Page<ProcessFromTemplatePage> {
+public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
+
+    private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveButton")
-    private WebElement saveProcessButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView")
+    @FindBy(id = TAB_VIEW)
     private WebElement processFromTemplateTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:processTitle")
+    @FindBy(id = TAB_VIEW + ":processTitle")
     private WebElement processTitleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:guessImages")
+    @FindBy(id = TAB_VIEW + ":guessImages")
     private WebElement guessImagesInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:fieldList:2:additionalInputField")
+    @FindBy(id = TAB_VIEW + ":fieldList:2:additionalInputField")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:fieldList:3:additionalInputField")
+    @FindBy(id = TAB_VIEW + ":fieldList:3:additionalInputField")
     private WebElement titleSortInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:fieldList:6:additionalInputField")
+    @FindBy(id = TAB_VIEW + ":fieldList:6:additionalInputField")
     private WebElement ppnAnalogInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:fieldList:7:additionalInputField")
+    @FindBy(id = TAB_VIEW + ":fieldList:7:additionalInputField")
     private WebElement ppnDigitalInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:processFromTemplateTabView:generateTitleButton")
+    @FindBy(id = TAB_VIEW + ":generateTitleButton")
     private WebElement generateTitleButton;
 
     public ProcessFromTemplatePage() {
@@ -71,7 +69,7 @@ public class ProcessFromTemplatePage extends Page<ProcessFromTemplatePage> {
     public String createProcess() throws Exception {
         guessImagesInput.sendKeys("299");
         Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(1).click();
-        Browser.getDriver().findElement(By.id("editForm:processFromTemplateTabView:Regelsatz_2")).click();
+        Browser.getDriver().findElement(By.id(TAB_VIEW + ":Regelsatz_2")).click();
         switchToTabByIndex(1);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
@@ -91,7 +89,7 @@ public class ProcessFromTemplatePage extends Page<ProcessFromTemplatePage> {
     }
 
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveProcessButton, Pages.getProcessesPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
 }

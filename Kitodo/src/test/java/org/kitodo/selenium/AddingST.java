@@ -114,13 +114,12 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }
 
-    @Ignore("buttons invisible for tests")
     @Test
     public void addProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         projectsPage.createNewProcess();
-        assertEquals("Header for create new process is incorrect", "createNewProcess",
+        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
             Pages.getProcessFromTemplatePage().getHeaderText());
 
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
