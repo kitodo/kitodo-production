@@ -37,6 +37,7 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
@@ -184,6 +185,8 @@ public class ProjectForm extends BaseForm {
             return this.stayOnCurrentPage;
         } else {
             try {
+                addFirstUserToNewProject();
+
                 serviceManager.getProjectService().save(this.project);
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
@@ -193,12 +196,27 @@ public class ProjectForm extends BaseForm {
                     }
                     setCopyTemplates(false);
                 }
+
                 return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular() },
+                        logger, e);
+                return this.stayOnCurrentPage;
             }
+        }
+    }
+
+    private void addFirstUserToNewProject() throws DAOException, DataException {
+        if (this.project.getUsers().isEmpty()) {
+            User user = serviceManager.getUserService().getCurrentUser();
+            user.getProjects().add(this.project);
+            this.project.getUsers().add(user);
+            serviceManager.getProjectService().save(this.project);
+            serviceManager.getUserService().save(user);
         }
     }
 
