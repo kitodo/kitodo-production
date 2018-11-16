@@ -44,7 +44,7 @@ public class GoobiScriptIT {
     }
 
     @Test
-    public void shouldExecuteAddRuleScript() throws Exception {
+    public void shouldExecuteAddRoleScript() throws Exception {
         GoobiScript goobiScript = new GoobiScript();
 
         Task task = serviceManager.getTaskService().getById(3);
@@ -73,58 +73,6 @@ public class GoobiScriptIT {
 
         Task task = serviceManager.getTaskService().getById(3);
         assertEquals("Processing status was not correctly changed!", TaskStatus.DONE, task.getProcessingStatusEnum());
-    }
-
-    @Test
-    public void shouldExecuteSwapTasksScript() throws Exception {
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesFull();
-
-        GoobiScript goobiScript = new GoobiScript();
-
-        String script = "action:swapSteps swap1nr:1 \"swap1title:Blocking\" swap2nr:3 \"swap2title:Progress\"";
-        List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
-
-        Task task = serviceManager.getTaskService().getById(2);
-        assertEquals("Task was not swapped correctly!", Integer.valueOf(3), task.getOrdering());
-        assertEquals("Task was not swapped correctly!", TaskStatus.INWORK, task.getProcessingStatusEnum());
-
-        task = serviceManager.getTaskService().getById(4);
-        assertEquals("Task was not swapped correctly!", Integer.valueOf(1), task.getOrdering());
-        assertEquals("Task was not swapped correctly!", TaskStatus.OPEN, task.getProcessingStatusEnum());
-    }
-
-    @Test
-    public void shouldExecuteAddTaskScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
-
-        String script = "action:addStep \"steptitle:Added\" number:4";
-        List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
-
-        List<Task> tasks = serviceManager.getTaskService().getByQuery("FROM Task WHERE title = 'Added'");
-        assertEquals("Task was not added!", 1, tasks.size());
-
-        assertEquals("Task was added but with incorrect value!", Integer.valueOf(4), tasks.get(0).getOrdering());
-    }
-
-    @Test
-    public void shouldExecuteDeleteTaskScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
-
-        String script = "action:deleteStep \"steptitle:Blocking\"";
-        List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
-
-        List<Task> tasks = serviceManager.getTaskService().getByQuery("FROM Task WHERE title = 'Blocking'");
-        assertEquals("Task was not removed!", 0, tasks.size());
-
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesFull();
     }
 
     @Test
