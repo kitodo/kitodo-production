@@ -237,7 +237,7 @@ public class ProcessForm extends TemplateBaseForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            Helper.setErrorMessage("processTitleInvalid");
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());
