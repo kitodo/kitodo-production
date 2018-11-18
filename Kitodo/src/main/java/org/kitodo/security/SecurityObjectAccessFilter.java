@@ -58,6 +58,12 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 return;
             }
 
+            if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
+                    && !securityAccessService.hasAuthorityToViewWorkflow()) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
             if (httpServletRequest.getRequestURI().contains("pages/processEdit")
                     && !securityAccessService.hasAuthorityToViewProcess()) {
                 denyAccess(httpServletRequest, httpServletResponse);
