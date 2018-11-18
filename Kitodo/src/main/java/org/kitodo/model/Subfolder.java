@@ -188,7 +188,8 @@ public class Subfolder {
     }
 
     /**
-     * Returns the settings of the subfolder configured in the project.
+     * Returns the folder database bean. The folder bean contains the settings
+     * for the subfolder.
      * 
      * @return the folder
      */
