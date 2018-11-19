@@ -772,6 +772,48 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
+     * Returns the index of the issue to insert between its siblings depending
+     * on its rank. A return value of {@code null} will indicate that no
+     * position could be determined which will cause
+     * {@link DocStruct#addChild(Integer, DocStruct)} to simply append the new
+     * child at the end.
+     *
+     * @param siblings
+     *            brothers and sisters of the child to add
+     * @param rank
+     *            rank of the child to insert
+     * @return the index position to insert the child
+     */
+    private static Integer positionByRank(List<DocStruct> siblings, Integer rank) {
+        if (siblings != null && rank != null) {
+            SIBLINGS: for (int i = 0; i < siblings.size(); i++) {
+                DocStruct aforeborn = siblings.get(i);
+                List<Metadata> allMetadata = aforeborn.getAllMetadata();
+                if (allMetadata != null) {
+                    for (Metadata metadataElement : allMetadata) {
+                        if (metadataElement.getType().getName().equals(IndividualIssue.RULESET_ORDER_NAME)) {
+                            try {
+                                if (Integer.parseInt(metadataElement.getValue()) > rank) {
+                                    return i;
+                                } else {
+                                    continue SIBLINGS;
+                                }
+                            } catch (NumberFormatException e) {
+                                if (metadataElement.getValue().compareTo(rank.toString()) > 0) {
+                                    return i;
+                                } else {
+                                    continue SIBLINGS;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * The function insertReferencesToOtherIssuesInThisYear() inserts METS
      * pointer references to other issues which have been published in the same
      * year as this process contains data for, but which are contained in other
@@ -807,7 +849,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             LocallyDefinedDate locallyDefinedDate = issue.getKey().getLeft();
             if ((locallyDefinedDate.getYear().equals(ownYear))
                     && !issue.getValue().getRight().equals(ownMetsPointerURL)) {
-                insertIssueReference(act, ruleSet, locallyDefinedDate, issue.getValue());
+                insertIssueReference(act, ruleSet, issue.getKey(), issue.getValue());
             }
         }
         return;
@@ -821,8 +863,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            act in whose logical structure the pointer is to create
      * @param ruleset
      *            rule set the act is based on
-     * @param date
-     *            date of the issue to create a pointer to
+     * @param issueInformation
+     *            issue to create a pointer to
      * @param data
      *            URL of the issue
      * @throws TypeNotAllowedForParentException
@@ -835,9 +877,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private void insertIssueReference(DigitalDocument act, Prefs ruleset, LocallyDefinedDate date,
+    private void insertIssueReference(DigitalDocument act, Prefs ruleset, Pair<LocallyDefinedDate, Integer> issueInformation,
             Pair<Pair<String, String>, String> data)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+        LocallyDefinedDate date = issueInformation.getLeft();
         DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
                 MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, date.getYear(),
                 MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
@@ -845,7 +888,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 date.getYearMonth(), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
         DocStruct day = getOrCreateChild(month, dayLevelName, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                 date.getYearMonthDay(), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-        DocStruct issue = day.createChild(issueLevelName, act, ruleset);
+        DocStruct issue = act.createDocStruct(ruleset.getDocStrctTypeByName(issueLevelName));
+        day.addChild(positionByRank(day.getAllChildren(), issueInformation.getRight()), issue);
         Pair<String, String> labels = data.getLeft();
         if (labels.getLeft() != null) {
             issue.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, labels.getLeft());
