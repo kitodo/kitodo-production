@@ -76,7 +76,7 @@ public class ImportForm implements Serializable {
      * Get list of search fields.
      * @return list of search fields
      */
-    public LinkedList<String> getSearchFields() {
+    public List<String> getSearchFields() {
         try {
             return serviceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
         } catch (IllegalArgumentException e) {

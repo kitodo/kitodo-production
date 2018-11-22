@@ -11,9 +11,11 @@
 
 package org.kitodo.services.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
@@ -26,6 +28,7 @@ public class ImportService {
     private static final Logger logger = LogManager.getLogger(ImportService.class);
 
     private static ImportService instance = null;
+    ExternalDataImportInterface importModule;
 
     /**
      * Return singleton variable of type ImportService.
@@ -46,14 +49,15 @@ public class ImportService {
     /**
      * Load ExternalDataImportInterface implementation with KitodoServiceLoader and perform given query string
      * with loaded module.
+     *
      * @param searchField field to query
-     * @param searchTerm given search term
+     * @param searchTerm  given search term
      * @param catalogName catalog to search
      * @return search result
      */
     public SearchResult performSearch(String searchField, String searchTerm, String catalogName)
             throws IllegalArgumentException {
-        ExternalDataImportInterface importModule = initializeImportModule();
+        importModule = initializeImportModule();
         try {
             OPACConfig.getOPACConfiguration(catalogName);
         } catch (IllegalArgumentException e) {
@@ -73,14 +77,20 @@ public class ImportService {
     /**
      * Load search fields of catalog with given name 'opac' from OPAC configuration file and return them as a list
      * of Strings.
+     *
      * @param opac name of catalog whose search fields are loaded
      * @return list containing search fields
      * @throws IllegalArgumentException thrown when configuration for catalog with name 'opac' cannot be found in
-     *      opac configuration file
+     *                                  opac configuration file
      */
-    public LinkedList<String> getAvailableSearchFields(String opac) throws IllegalArgumentException {
+    public List<String> getAvailableSearchFields(String opac) throws IllegalArgumentException {
         try {
-            return OPACConfig.getSearchFields(opac);
+            HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
+            List<String> fields = new ArrayList<>();
+            for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
+                fields.add(searchField.getString("[@label]"));
+            }
+            return fields;
         } catch (IllegalArgumentException e) {
             logger.error(e.getLocalizedMessage());
             throw new IllegalArgumentException("Error: OPAC '" + opac + "' is not supported!");
@@ -89,10 +99,11 @@ public class ImportService {
 
     /**
      * Load catalog names from OPAC configuration file and return them as a list of Strings.
+     *
      * @return list of catalog names
      * @throws IllegalArgumentException thrown if no catalogs are configured in OPAC configuration file
      */
-    public LinkedList<String> getAvailableCatalogs() throws IllegalArgumentException {
+    public List<String> getAvailableCatalogs() throws IllegalArgumentException {
         try {
             return OPACConfig.getCatalogs();
         } catch (IllegalArgumentException e) {

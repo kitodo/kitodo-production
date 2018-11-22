@@ -15,6 +15,7 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid layout="grid" columns="1" cellpadding="10">
@@ -27,9 +28,11 @@
                 <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                 <f:selectItems value="#{ImportForm.catalogs}" var="step" itemLabel="#{step}"
                                itemValue="#{step}"/>
-                <p:ajax update="editForm:processFromTemplateTabView:fieldSelectMenu"/>
+                <p:ajax update="editForm:processFromTemplateTabView:selectedCatalog"/>
             </p:selectOneMenu>
         </div>
+        <h:panelGrid id="selectedCatalog">
+            <p:panel rendered="#{ImportForm.selectedCatalog ne null}">
         <div>
             <p:outputLabel for="fieldSelectMenu" value="#{msgs.field}"/>
             <p:selectOneMenu id="fieldSelectMenu"
@@ -50,5 +53,7 @@
                          title="#{msgs.searchOPAC}"
                          icon="fa fa-search" iconPos="right"
                          update="editForm hitlist"/>
+            </p:panel>
+        </h:panelGrid>
     </p:panelGrid>
 </ui:composition>

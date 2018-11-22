@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -144,20 +145,29 @@ public class SRUImport implements ExternalDataImportInterface {
         try {
             // XML configuration of OPAC
             HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
-            opacConfig.setExpressionEngine(new XPathExpressionEngine());
 
-            protocol = opacConfig.getString("config/param[@name='scheme']/@value");
-            host = opacConfig.getString("config/param[@name='host']/@value");
-            path = opacConfig.getString("config/param[@name='path']/@value");
-
-            for (HierarchicalConfiguration searchField : opacConfig.configurationsAt("searchFields/searchField")) {
-                searchFieldMapping.put(searchField.getString("@label"), searchField.getString("@value"));
+            for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt("param")) {
+                if (queryConfigParam.getString("[@name]").equals("scheme")) {
+                    protocol = queryConfigParam.getString("[@value]");
+                } else if (queryConfigParam.getString("[@name]").equals("host")) {
+                    host = queryConfigParam.getString("[@value]");
+                } else if (queryConfigParam.getString("[@name]").equals("path")) {
+                    path = queryConfigParam.getString("[@value]");
+                }
             }
 
-            for (HierarchicalConfiguration queryParam : opacConfig.configurationsAt("urlParameters/param")) {
-                parameters.put(queryParam.getString("@name"), queryParam.getString("@value"));
+
+            HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
+
+            for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
+                searchFieldMapping.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
             }
 
+            HierarchicalConfiguration urlParameters = OPACConfig.getUrlParameters(opacName);
+
+            for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt("param")) {
+                parameters.put(queryParam.getString("[@name]"), queryParam.getString("[@value]"));
+            }
         } catch (IllegalArgumentException e) {
             logger.error(e.getLocalizedMessage());
         }
