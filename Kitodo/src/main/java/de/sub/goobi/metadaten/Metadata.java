@@ -66,14 +66,6 @@ public interface Metadata {
 
     /**
      * New function for use of display configuration within xml files. This one gets
-     * output type.
-     * 
-     * @return output type as string
-     */
-    String getOutputType();
-
-    /**
-     * New function for use of display configuration within xml files. This one gets
      * items.
      *
      * @return items as List of SelectItem objects

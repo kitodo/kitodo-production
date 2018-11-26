@@ -42,10 +42,6 @@ class MockMetadata implements Metadata {
         return null;
     }
 
-    public String getOutputType() {
-        return null;
-    }
-
     public String getSelectedItem() {
         return null;
     }

@@ -92,11 +92,6 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public String getOutputType() {
-        return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
-    }
-
-    @Override
     public List<SelectItem> getItems() {
         this.items = new ArrayList<>();
         this.selectedItems = new ArrayList<>();
