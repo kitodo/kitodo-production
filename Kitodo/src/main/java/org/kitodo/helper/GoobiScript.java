@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +37,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UghHelperException;
@@ -54,13 +52,10 @@ public class GoobiScript {
     private final FileService fileService = serviceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
-    private static final String NUMBER = "number";
     private static final String RULESET = "ruleset";
     private static final String SCRIPT = "script";
     private static final String SOURCE_FOLDER = "sourcefolder";
     private static final String STATUS = "status";
-    private static final String SWAP_1_NR = "swap1nr";
-    private static final String SWAP_2_NR = "swap2nr";
     private static final String TASK_TITLE = "steptitle";
     private static final String ROLE = "role";
 
@@ -562,14 +557,6 @@ public class GoobiScript {
     private boolean isActionParameterInvalid(String parameter) {
         if (Objects.isNull(this.parameters.get(parameter)) || Objects.equals(this.parameters.get(parameter), "")) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing parameter: ", parameter);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isActionParameterInvalidNumber() {
-        if (!StringUtils.isNumeric(this.parameters.get(NUMBER))) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Wrong number parameter", "(only numbers allowed)");
             return true;
         }
         return false;
