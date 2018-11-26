@@ -97,7 +97,7 @@
                                      tabindex="-1"
                                      title="#{msgs.metadataCopy}"
                                      action="#{Metadaten.copy}">
-                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.currentMetadata}"/>
                     </p:commandButton>
 
                     <p:commandButton update="metadata:metadataTable"
@@ -106,7 +106,7 @@
                                      tabindex="-1"
                                      title="#{msgs.metadataDelete}"
                                      action="#{Metadaten.delete}">
-                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.currentMetadata}"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
@@ -122,7 +122,7 @@
                     </p:selectOneMenu>
                 </p:row>
                 <p:row>
-                    <p:inputTextarea value="#{Metadaten.metadatum.value}" rows="2" style="width:83%;"/>
+                    <p:inputTextarea value="#{Metadaten.metadata.value}" rows="2" style="width:83%;"/>
                     <p:commandButton update="metadata:metadataTable" icon="fa fa-plus"
                                      style="vertical-align: top; margin-left: 10px"
                                      title="#{msgs.neueMetadatenHinzufuegen}" action="#{Metadaten.save}">

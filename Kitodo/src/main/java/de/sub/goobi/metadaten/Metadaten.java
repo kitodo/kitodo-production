@@ -119,9 +119,9 @@ public class Metadaten {
     private MetadataHelper metaHelper;
     private FileformatInterface gdzfile;
     private DocStructInterface docStruct;
-    private List<MetadatumImpl> myMetadaten = new LinkedList<>();
+    private List<MetadataImpl> myMetadaten = new LinkedList<>();
     private List<MetaPerson> metaPersonList = new LinkedList<>();
-    private MetadatumImpl curMetadatum;
+    private MetadataImpl currentMetadata;
     private MetaPerson curPerson;
     private DigitalDocumentInterface digitalDocument;
     private Process process;
@@ -140,9 +140,9 @@ public class Metadaten {
     private String[] allPagesSelection;
     private String[] structSeitenAuswahl;
     private String[] allPages;
-    private MetadatumImpl[] allPagesNew;
-    private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
-    private MetadatumImpl selectedMetadatum;
+    private MetadataImpl[] allPagesNew;
+    private List<MetadataImpl> tempMetadataList = new ArrayList<>();
+    private MetadataImpl selectedMetadata;
     private String currentRepresentativePage = "";
     private boolean showPagination = false;
 
@@ -161,7 +161,7 @@ public class Metadaten {
     // Seitennummer
     private boolean fictitious = false;
     private SelectItem[] structSeiten;
-    private MetadatumImpl[] structSeitenNeu;
+    private MetadataImpl[] structurePageNew;
     private DocStructInterface logicalTopstruct;
     private TreeNodeStruct3 treeNodeStruct;
     private URI image;
@@ -171,7 +171,7 @@ public class Metadaten {
     private int imageRotation = 0;
     private boolean displayImage = true;
     private boolean imageToStructuralElement = false;
-    private final MetadataLock sperrung = new MetadataLock();
+    private final MetadataLock metadataLock = new MetadataLock();
     private String ajaxPageStart = "";
     private String ajaxPageEnd = "";
     private String pagesStart = "";
@@ -208,10 +208,8 @@ public class Metadaten {
             "galleryWrapperPanel");
     private String referringView = "desktop";
 
-
-
     /**
-     * Konstruktor.
+     * Public constructor.
      */
     public Metadaten() {
         this.treeProperties = new HashMap<>();
@@ -227,7 +225,7 @@ public class Metadaten {
      */
     public void add() {
         Modes.setBindState(BindState.CREATE);
-        getMetadatum().setValue("");
+        getMetadata().setValue("");
     }
 
     /**
@@ -244,7 +242,7 @@ public class Metadaten {
      */
     public void cancel() {
         Modes.setBindState(BindState.EDIT);
-        getMetadatum().setValue("");
+        getMetadata().setValue("");
     }
 
     /**
@@ -268,9 +266,9 @@ public class Metadaten {
     public void copy() {
         MetadataInterface md;
         try {
-            md = UghImplementation.INSTANCE.createMetadata(this.curMetadatum.getMd().getMetadataType());
+            md = UghImplementation.INSTANCE.createMetadata(this.currentMetadata.getMd().getMetadataType());
 
-            md.setStringValue(this.curMetadatum.getMd().getValue());
+            md.setStringValue(this.currentMetadata.getMd().getValue());
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setErrorMessage(e.getMessage());
@@ -308,7 +306,7 @@ public class Metadaten {
         try {
             MetadataInterface md = UghImplementation.INSTANCE
                     .createMetadata(this.myPrefs.getMetadataTypeByName(this.tempTyp));
-            md.setStringValue(this.selectedMetadatum.getValue());
+            md.setStringValue(this.selectedMetadata.getValue());
 
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
@@ -320,7 +318,7 @@ public class Metadaten {
             try {
                 MetadataInterface secondMetadata = UghImplementation.INSTANCE
                         .createMetadata(this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
-                secondMetadata.setStringValue(this.selectedMetadatum.getValue());
+                secondMetadata.setStringValue(this.selectedMetadata.getValue());
                 this.docStruct.addMetadata(secondMetadata);
             } catch (MetadataTypeNotAllowedException e) {
                 logger.error("Error while adding title (MetadataTypeNotAllowedException): " + e.getMessage());
@@ -328,7 +326,7 @@ public class Metadaten {
         }
 
         Modes.setBindState(BindState.EDIT);
-        this.selectedMetadatum.setValue("");
+        this.selectedMetadata.setValue("");
         saveMetadataAsBean(this.docStruct);
     }
 
@@ -394,7 +392,7 @@ public class Metadaten {
      *
      */
     public void delete() {
-        this.docStruct.removeMetadata(this.curMetadatum.getMd());
+        this.docStruct.removeMetadata(this.currentMetadata.getMd());
         saveMetadataAsBean(this.docStruct);
     }
 
@@ -422,11 +420,11 @@ public class Metadaten {
      * @return The metadata types.
      */
     public List<SelectItem> getAddableMetadataTypes() {
-        return getAddableMetadataTypes(docStruct, tempMetadatumList);
+        return getAddableMetadataTypes(docStruct, this.tempMetadataList);
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStructInterface myDocStruct,
-                                                          ArrayList<MetadatumImpl> tempMetadatumList) {
+                                                          List<MetadataImpl> tempMetadataList) {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // determine all addable metadata types
@@ -454,10 +452,10 @@ public class Metadaten {
             selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
             try {
                 MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
-                MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
+                MetadataImpl mdum = new MetadataImpl(md, counter, this.myPrefs, this.process);
                 counter++;
-                if (tempMetadatumList != null) {
-                    tempMetadatumList.add(mdum);
+                if (tempMetadataList != null) {
+                    tempMetadataList.add(mdum);
                 }
 
             } catch (MetadataTypeNotAllowedException e) {
@@ -476,7 +474,7 @@ public class Metadaten {
         DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
 
-        return getAddableMetadataTypes(ds, this.tempMetadatumList);
+        return getAddableMetadataTypes(ds, this.tempMetadataList);
     }
 
     /**
@@ -525,7 +523,7 @@ public class Metadaten {
         }
 
         expandTree();
-        this.sperrung.setLocked(this.process.getId(), this.userId);
+        this.metadataLock.setLocked(this.process.getId(), this.userId);
     }
 
     /**
@@ -674,7 +672,7 @@ public class Metadaten {
      */
     private void saveMetadataAsBean(DocStructInterface inStrukturelement) {
         this.docStruct = inStrukturelement;
-        LinkedList<MetadatumImpl> lsMeta = new LinkedList<>();
+        LinkedList<MetadataImpl> lsMeta = new LinkedList<>();
         LinkedList<MetaPerson> lsPers = new LinkedList<>();
 
         /*
@@ -685,7 +683,7 @@ public class Metadaten {
             this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
-                MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.process);
+                MetadataImpl meta = new MetadataImpl(metadata, 0, this.myPrefs, this.process);
                 meta.getSelectedItem();
                 lsMeta.add(meta);
             }
@@ -1090,13 +1088,13 @@ public class Metadaten {
         }
         int zaehler = meineListe.size();
         this.allPages = new String[zaehler];
-        this.allPagesNew = new MetadatumImpl[zaehler];
+        this.allPagesNew = new MetadataImpl[zaehler];
         zaehler = 0;
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         for (DocStructInterface mySeitenDocStruct : meineListe) {
             List<? extends MetadataInterface> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
             for (MetadataInterface page : mySeitenDocStructMetadaten) {
-                this.allPagesNew[zaehler] = new MetadatumImpl(page, zaehler, this.myPrefs, this.process);
+                this.allPagesNew[zaehler] = new MetadataImpl(page, zaehler, this.myPrefs, this.process);
                 this.allPages[zaehler] = determineMetadata(page.getDocStruct(), "physPageNumber").trim() + ": "
                         + page.getValue();
             }
@@ -1135,7 +1133,7 @@ public class Metadaten {
 
             /* die Größe der Arrays festlegen */
             this.structSeiten = new SelectItem[references.size()];
-            this.structSeitenNeu = new MetadatumImpl[references.size()];
+            this.structurePageNew = new MetadataImpl[references.size()];
 
             /* alle Referenzen durchlaufen und deren Metadaten ermitteln */
             for (ReferenceInterface ref : references) {
@@ -1168,7 +1166,7 @@ public class Metadaten {
             return;
         }
         for (MetadataInterface meineSeite : listMetadaten) {
-            this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.process);
+            this.structurePageNew[inZaehler] = new MetadataImpl(meineSeite, inZaehler, this.myPrefs, this.process);
             this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler),
                     determineMetadata(meineSeite.getDocStruct(), "physPageNumber") + ": " + meineSeite.getValue());
         }
@@ -1409,8 +1407,8 @@ public class Metadaten {
          * gilt, Sperrung aktualisieren
          */
         if (MetadataLock.isLocked(this.process.getId())
-                && this.sperrung.getLockUser(this.process.getId()).equals(this.userId)) {
-            this.sperrung.setLocked(this.process.getId(), this.userId);
+                && this.metadataLock.getLockUser(this.process.getId()).equals(this.userId)) {
+            this.metadataLock.setLocked(this.process.getId(), this.userId);
             return true;
         } else {
             return false;
@@ -1596,7 +1594,7 @@ public class Metadaten {
     public String removePages() {
         for (String structurePage : this.structSeitenAuswahl) {
             int currentId = Integer.parseInt(structurePage);
-            this.docStruct.removeReferenceTo(this.structSeitenNeu[currentId].getMd().getDocStruct());
+            this.docStruct.removeReferenceTo(this.structurePageNew[currentId].getMd().getDocStruct());
         }
         determinePagesStructure(this.docStruct);
         this.structSeitenAuswahl = null;
@@ -1612,15 +1610,15 @@ public class Metadaten {
      * @return String
      */
     public String getTempTyp() {
-        if (this.selectedMetadatum == null) {
+        if (this.selectedMetadata == null) {
             getAddableMetadataTypes();
-            if (!this.tempMetadatumList.isEmpty()) {
-                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadataList.isEmpty()) {
+                this.selectedMetadata = this.tempMetadataList.get(0);
             } else {
                 return "";
             }
         }
-        return this.selectedMetadatum.getMd().getMetadataType().getName();
+        return this.selectedMetadata.getMd().getMetadataType().getName();
     }
 
     /**
@@ -1636,21 +1634,21 @@ public class Metadaten {
     /**
      * Get metadata.
      *
-     * @return MetadatumImpl object
+     * @return MetadataImpl object
      */
-    public MetadatumImpl getMetadatum() {
+    public MetadataImpl getMetadata() {
 
-        if (this.selectedMetadatum == null) {
+        if (this.selectedMetadata == null) {
             getAddableMetadataTypes();
-            if (!this.tempMetadatumList.isEmpty()) {
-                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadataList.isEmpty()) {
+                this.selectedMetadata = this.tempMetadataList.get(0);
             }
         }
-        return this.selectedMetadatum;
+        return this.selectedMetadata;
     }
 
-    public void setMetadatum(MetadatumImpl meta) {
-        this.selectedMetadatum = meta;
+    public void setMetadatum(MetadataImpl meta) {
+        this.selectedMetadata = meta;
     }
 
     public String getTempPersonNachname() {
@@ -1874,11 +1872,11 @@ public class Metadaten {
         }
     }
 
-    public List<MetadatumImpl> getMyMetadaten() {
+    public List<MetadataImpl> getMyMetadaten() {
         return this.myMetadaten;
     }
 
-    public void setMyMetadaten(List<MetadatumImpl> myMetadaten) {
+    public void setMyMetadaten(List<MetadataImpl> myMetadaten) {
         this.myMetadaten = myMetadaten;
     }
 
@@ -1890,12 +1888,12 @@ public class Metadaten {
         this.metaPersonList = metaPersonList;
     }
 
-    public MetadatumImpl getCurMetadatum() {
-        return this.curMetadatum;
+    public MetadataImpl getCurrentMetadata() {
+        return this.currentMetadata;
     }
 
-    public void setCurMetadatum(MetadatumImpl curMetadatum) {
-        this.curMetadatum = curMetadatum;
+    public void setCurrentMetadata(MetadataImpl currentMetadata) {
+        this.currentMetadata = currentMetadata;
     }
 
     public MetaPerson getCurPerson() {

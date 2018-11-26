@@ -18,7 +18,7 @@ import javax.faces.model.SelectItem;
 import org.goobi.api.display.Item;
 import org.kitodo.api.ugh.MetadataInterface;
 
-public interface Metadatum {
+public interface Metadata {
 
     String getTyp();
 

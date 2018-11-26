@@ -11,7 +11,7 @@
 
 package org.kitodo.metadata.pagination;
 
-import de.sub.goobi.metadaten.Metadatum;
+import de.sub.goobi.metadaten.Metadata;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.MetadataInterface;
 
-class MockMetadata implements Metadatum {
+class MockMetadata implements Metadata {
 
     private String value;
 

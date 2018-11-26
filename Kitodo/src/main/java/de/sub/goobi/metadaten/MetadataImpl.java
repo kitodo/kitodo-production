@@ -34,7 +34,7 @@ import org.kitodo.services.ServiceManager;
  * @version 1.00 - 10.01.2005
  */
 
-public class MetadatumImpl implements Metadatum {
+public class MetadataImpl implements Metadata {
     private ServiceManager serviceManager = new ServiceManager();
     private MetadataInterface md;
     private int identifier;
@@ -46,7 +46,7 @@ public class MetadatumImpl implements Metadatum {
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetadatumImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
+    public MetadataImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
         this.md = m;
         this.identifier = inID;
         this.myPrefs = inPrefs;

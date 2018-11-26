@@ -11,7 +11,7 @@
 
 package org.kitodo.metadata.pagination;
 
-import de.sub.goobi.metadaten.Metadatum;
+import de.sub.goobi.metadaten.Metadata;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class Paginator {
 
     private int[] selectedPages;
 
-    private Metadatum[] pagesToPaginate;
+    private Metadata[] pagesToPaginate;
 
     private Mode paginationMode = Mode.PAGES;
 
@@ -268,7 +268,7 @@ public class Paginator {
      *
      * @return Array of <code>Metadatum</code> instances.
      */
-    public Metadatum[] getPagesToPaginate() {
+    public Metadata[] getPagesToPaginate() {
         return pagesToPaginate;
     }
 
@@ -289,7 +289,7 @@ public class Paginator {
      * @param newPaginated
      *            Array of page objects.
      */
-    public void setPagesToPaginate(Metadatum[] newPaginated) {
+    public void setPagesToPaginate(Metadata[] newPaginated) {
         this.pagesToPaginate = newPaginated;
     }
 
