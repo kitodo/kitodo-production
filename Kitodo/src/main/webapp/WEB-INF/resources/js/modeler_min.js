@@ -6,7 +6,7 @@
  * It is licensed under MIT License by camunda Services GmbH
  *
  * For the full copyright and license information, please read the
- * Camunda-License.txt file that was buildributed with this source code.
+ * Camunda-License.txt file that was distributed with this source code.
 */
 
 
