@@ -20,10 +20,6 @@ import org.kitodo.api.ugh.MetadataInterface;
 
 public interface Metadatum {
 
-    List<Item> getWert();
-
-    void setWert(String inWert);
-
     String getTyp();
 
     void setTyp(String inTyp);

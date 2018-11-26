@@ -57,22 +57,6 @@ public class MetadatumImpl implements Metadatum {
     }
 
     @Override
-    public List<Item> getWert() {
-        String value = this.md.getValue();
-        if (value != null) {
-            for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                i.setIsSelected(i.getValue().equals(value));
-            }
-        }
-        return this.myValues.get(Modes.getBindState().getTitle()).getItemList();
-    }
-
-    @Override
-    public void setWert(String inWert) {
-        this.md.setStringValue(inWert.trim());
-    }
-
-    @Override
     public String getTyp() {
         String label = this.md.getMetadataType().getLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
@@ -147,7 +131,7 @@ public class MetadatumImpl implements Metadatum {
                 }
             }
         }
-        setWert(val.toString());
+        setValue(val.toString());
     }
 
     @Override
@@ -175,7 +159,7 @@ public class MetadatumImpl implements Metadatum {
                 }
             }
             if (values != null) {
-                setWert(values);
+                setValue(values);
             }
         }
         return this.selectedItems;
@@ -201,7 +185,7 @@ public class MetadatumImpl implements Metadatum {
             }
         }
 
-        setWert(val.toString());
+        setValue(val.toString());
     }
 
     @Override
@@ -216,8 +200,7 @@ public class MetadatumImpl implements Metadatum {
         } else {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
                 if (i.getIsSelected()) {
-                    value = i.getValue();
-                    setWert(value);
+                    setValue(i.getValue());
                     return i.getLabel();
                 }
             }
@@ -229,14 +212,14 @@ public class MetadatumImpl implements Metadatum {
     public void setSelectedItem(String selectedItem) {
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
             if (i.getLabel().equals(selectedItem)) {
-                setWert(i.getValue());
+                setValue(i.getValue());
             }
         }
     }
 
     @Override
     public void setValue(String value) {
-        setWert(value);
+        this.md.setStringValue(value.trim());
     }
 
     @Override

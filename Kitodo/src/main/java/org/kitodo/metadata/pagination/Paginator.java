@@ -233,7 +233,7 @@ public class Paginator {
             if (!seqit.hasNext()) {
                 seqit = sequence.iterator();
             }
-            pagesToPaginate[pageNum].setWert(String.valueOf(seqit.next()));
+            pagesToPaginate[pageNum].setValue(String.valueOf(seqit.next()));
         }
     }
 
@@ -243,7 +243,7 @@ public class Paginator {
             if (!seqit.hasNext()) {
                 seqit = sequence.iterator();
             }
-            pagesToPaginate[num].setWert(String.valueOf(seqit.next()));
+            pagesToPaginate[num].setValue(String.valueOf(seqit.next()));
         }
     }
 
