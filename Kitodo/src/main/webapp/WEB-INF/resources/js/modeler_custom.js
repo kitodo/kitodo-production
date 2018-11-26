@@ -10,7 +10,6 @@
  */
 
 var availableUserRoles = [];
-
 $(window).on("load", function () {
 
 	$.ready.then(function () {
