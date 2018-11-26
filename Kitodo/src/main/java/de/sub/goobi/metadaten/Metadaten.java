@@ -842,12 +842,8 @@ public class Metadaten {
          */
         for (HashMap childrenList : this.treeNodeStruct.getChildrenAsListAlle()) {
             TreeNodeStruct3 nodes = (TreeNodeStruct3) childrenList.get("node");
-            // Selection wiederherstellen
-            if (this.docStruct == nodes.getStruct()) {
-                nodes.setSelected(true);
-            } else {
-                nodes.setSelected(false);
-            }
+            // restore Selection
+            nodes.setSelected(this.docStruct == nodes.getStruct());
         }
 
         updateBlocked();
@@ -1947,9 +1943,6 @@ public class Metadaten {
         removeReferenceToSelectedPages(selectedPages, allPages);
 
         allPagesSelection = null;
-        if (digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
-        } else {
-        }
 
         allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
 
@@ -2315,8 +2308,8 @@ public class Metadaten {
         updateImagesFolder();
         if (!thumbnailsExist()) {
             URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
-            try (Stream<Path> ImagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
-                Thumbnails.of((File[]) ImagePaths
+            try (Stream<Path> imagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
+                Thumbnails.of((File[]) imagePaths
                         .filter(path -> path.toFile().isFile())
                         .filter(path -> path.toFile().canRead())
                         .filter(path -> path.toString().endsWith(".png"))

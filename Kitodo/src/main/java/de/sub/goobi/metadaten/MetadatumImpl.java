@@ -61,11 +61,7 @@ public class MetadatumImpl implements Metadatum {
         String value = this.md.getValue();
         if (value != null) {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                if (i.getValue().equals(value)) {
-                    i.setIsSelected(true);
-                } else {
-                    i.setIsSelected(false);
-                }
+                i.setIsSelected(i.getValue().equals(value));
             }
         }
         return this.myValues.get(Modes.getBindState().getTitle()).getItemList();
