@@ -66,38 +66,7 @@
 .content.with-diagram .canvas {
   visibility: visible;
 }
-/*
-.buttons {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  > li {
-    display: inline-block;
-    margin-right: 10px;
-
-    > a {
-      background: #DDD;
-      border: solid 1px #666;
-      display: inline-block;
-      padding: 5px;
-    }
-  }
-
-  a {
-    opacity: 0.3;
-  }
-
-  a.active {
-    opacity: 1.0;
-  }
-}
-*/
-/* line 94, styles/src.less */
+/* line 62, styles/src.less */
 #js-properties-panel {
   position: absolute;
   top: 0;
@@ -108,11 +77,11 @@
   border-left: 1px solid #ccc;
   overflow: auto;
 }
-/* line 103, styles/src.less */
+/* line 71, styles/src.less */
 #js-properties-panel:empty {
   display: none;
 }
-/* line 106, styles/src.less */
+/* line 74, styles/src.less */
 #js-properties-panel > .djs-properties-panel {
   padding-bottom: 70px;
   min-height: 100%;
@@ -831,73 +800,65 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 * Gateways
 */
 /* line 41, styles/modeler_custom.less */
-.bpmn-icon-gateway-none {
-  display: none !important;
-}
-/* line 42, styles/modeler_custom.less */
-.bpmn-icon-gateway-parallel {
-  display: none !important;
-}
-/* line 43, styles/modeler_custom.less */
 .bpmn-icon-gateway-or {
   display: none !important;
 }
-/* line 44, styles/modeler_custom.less */
+/* line 42, styles/modeler_custom.less */
 .bpmn-icon-gateway-complex {
   display: none !important;
 }
-/* line 45, styles/modeler_custom.less */
+/* line 43, styles/modeler_custom.less */
 .bpmn-icon-gateway-eventbased {
   display: none !important;
 }
 /**
 * Tasks
 */
-/* line 50, styles/modeler_custom.less */
+/* line 48, styles/modeler_custom.less */
 .bpmn-icon-send {
   display: none !important;
 }
-/* line 51, styles/modeler_custom.less */
+/* line 49, styles/modeler_custom.less */
 .bpmn-icon-receive {
   display: none !important;
 }
-/* line 52, styles/modeler_custom.less */
+/* line 50, styles/modeler_custom.less */
 .bpmn-icon-user {
   display: none !important;
 }
-/* line 53, styles/modeler_custom.less */
+/* line 51, styles/modeler_custom.less */
 .bpmn-icon-manual {
   display: none !important;
 }
-/* line 54, styles/modeler_custom.less */
+/* line 52, styles/modeler_custom.less */
 .bpmn-icon-business-rule {
   display: none !important;
 }
-/* line 55, styles/modeler_custom.less */
+/* line 53, styles/modeler_custom.less */
 .bpmn-icon-service {
   display: none !important;
 }
-/* line 56, styles/modeler_custom.less */
+/* line 54, styles/modeler_custom.less */
 .bpmn-icon-call-activity {
   display: none !important;
 }
-/* line 57, styles/modeler_custom.less */
+/* line 55, styles/modeler_custom.less */
 .bpmn-icon-subprocess-collapsed {
   display: none !important;
 }
-/* line 59, styles/modeler_custom.less */
+/* line 57, styles/modeler_custom.less */
 .bpmn-icon-parallel-mi-marker {
   display: none !important;
 }
-/* line 60, styles/modeler_custom.less */
+/* line 58, styles/modeler_custom.less */
 .bpmn-icon-sequential-mi-marker {
   display: none !important;
 }
-/* line 61, styles/modeler_custom.less */
+/* line 59, styles/modeler_custom.less */
 .bpmn-icon-loop-marker {
   display: none !important;
 }
-/* line 63, styles/modeler_custom.less */
+/* line 61, styles/modeler_custom.less */
 #editForm\:workflowTabView\:btnReadXmlDiagram {
   width: 1px !important;
   height: 1px !important;
