@@ -3,10 +3,10 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under MIT License by camunda Services GmbH
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
- * Camunda-License.txt file that was distributed with this source code.
+ * GPL3-License.txt file that was distributed with this source code.
  */
 
 var availableUserRoles = [];
