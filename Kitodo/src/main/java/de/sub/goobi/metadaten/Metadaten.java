@@ -85,8 +85,8 @@ import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.HelperComparator;
-import org.kitodo.helper.XmlArtikelZaehlen;
-import org.kitodo.helper.XmlArtikelZaehlen.CountType;
+import org.kitodo.helper.XmlArticleCounter;
+import org.kitodo.helper.XmlArticleCounter.CountType;
 import org.kitodo.helper.batch.BatchTaskHelper;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.helper.metadata.MetadataHelper;
@@ -605,11 +605,11 @@ public class Metadaten {
 
     private void calculateMetadataAndImages() {
         // go again through the metadata for the process and save the data
-        XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
+        XmlArticleCounter counter = new XmlArticleCounter();
 
         this.process
-                .setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
-        this.process.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
+                .setSortHelperDocstructs(counter.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
+        this.process.setSortHelperMetadata(counter.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
             this.process.setSortHelperImages(fileService
                     .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.process)));

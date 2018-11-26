@@ -27,9 +27,9 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
-public class XmlArtikelZaehlen {
+public class XmlArticleCounter {
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(XmlArtikelZaehlen.class);
+    private static final Logger logger = LogManager.getLogger(XmlArticleCounter.class);
 
     public enum CountType {
         METADATA,
