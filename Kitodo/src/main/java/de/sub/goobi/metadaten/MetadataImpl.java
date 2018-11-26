@@ -71,10 +71,6 @@ public class MetadataImpl implements Metadata {
         this.md.setType(mdt);
     }
 
-    /*
-     * Getter und Setter
-     */
-
     @Override
     public int getIdentifier() {
         return this.identifier;
@@ -94,10 +90,6 @@ public class MetadataImpl implements Metadata {
     public void setMd(MetadataInterface md) {
         this.md = md;
     }
-
-    /**
-     * new functions for use of display configuration whithin xml files.
-     */
 
     @Override
     public String getOutputType() {

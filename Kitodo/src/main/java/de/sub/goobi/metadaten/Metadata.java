@@ -15,42 +15,124 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.api.display.Item;
 import org.kitodo.api.ugh.MetadataInterface;
 
 public interface Metadata {
 
+    /**
+     * Get type.
+     * 
+     * @return type as String
+     */
     String getTyp();
 
+    /**
+     * Set type.
+     * 
+     * @param inTyp
+     *            as String
+     */
     void setTyp(String inTyp);
 
+    /**
+     * Get identifier.
+     * 
+     * @return identifier
+     */
     int getIdentifier();
 
+    /**
+     * Set identifier.
+     * 
+     * @param identifier
+     *            as int
+     */
     void setIdentifier(int identifier);
 
+    /**
+     * Get metadata.
+     * 
+     * @return metadata
+     */
     MetadataInterface getMd();
 
+    /**
+     * Set metadata.
+     * 
+     * @param md
+     *            as MetadataInterface object
+     */
     void setMd(MetadataInterface md);
 
     /**
-     * new functions for use of display configuration whithin xml files.
-     *
+     * New function for use of display configuration within xml files. This one gets
+     * output type.
+     * 
+     * @return output type as string
      */
     String getOutputType();
 
+    /**
+     * New function for use of display configuration within xml files. This one gets
+     * items.
+     *
+     * @return items as List of SelectItem objects
+     */
     List<SelectItem> getItems();
 
+    /**
+     * New function for use of display configuration within xml files. This one sets
+     * list of items.
+     *
+     * @param items as List of SelectItem objects
+     */
     void setItems(List<SelectItem> items);
 
+    /**
+     * New function for use of display configuration within xml files. This one gets
+     * list of selected items.
+     *
+     * @return selected item as List of SelectItem objects
+     */
     List<String> getSelectedItems();
 
+    /**
+     * New function for use of display configuration within xml files. This one sets
+     * list of selected items.
+     *
+     * @param selectedItems as List of String objects
+     */
     void setSelectedItems(List<String> selectedItems);
 
+    /**
+     * New function for use of display configuration within xml files. This one gets
+     * selected item.
+     *
+     * @return selected item as String
+     */
     String getSelectedItem();
 
+    /**
+     * New function for use of display configuration within xml files. This one sets
+     * selected item.
+     *
+     * @param selectedItem as String
+     */
     void setSelectedItem(String selectedItem);
 
+    /**
+     * New function for use of display configuration within xml files. This one sets
+     * value.
+     *
+     * @param value as String
+     */
     void setValue(String value);
 
+    /**
+     * New function for use of display configuration within xml files. This one gets
+     * value.
+     *
+     * @return value as String
+     */
     String getValue();
 }
