@@ -41,9 +41,9 @@ public class ManagementST extends BaseTestSelenium {
 
     @Test
     public void editUserConfigurationTest() throws Exception {
-        Pages.getUserConfigurationPage().changeUserSettings();
+        Pages.getUserEditPage().changeUserSettings();
 
-        await("Wait for visible user configuration link").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-                () -> assertTrue(Browser.getDriver().findElement(By.partialLinkText("User configuration")).isDisplayed()));
+        await("Wait for visible users header").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
+                () -> assertTrue(Browser.getDriver().findElement(By.partialLinkText("Users")).isDisplayed()));
     }
 }

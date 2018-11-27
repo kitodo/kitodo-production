@@ -98,10 +98,6 @@ public class Pages {
         return getPage(TopNavigationPage.class);
     }
 
-    public static UserConfigurationPage getUserConfigurationPage() throws InstantiationException, IllegalAccessException {
-        return getPage(UserConfigurationPage.class);
-    }
-
     public static UserEditPage getUserEditPage() throws InstantiationException, IllegalAccessException {
         return getPage(UserEditPage.class);
     }

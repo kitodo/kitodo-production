@@ -12,13 +12,19 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 public class UserEditPage extends EditPage<UserEditPage> {
 
@@ -50,7 +56,11 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
-    private WebElement metaDataLanguageInput;
+    private WebElement metadataLanguageInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":table-size")
+    private WebElement tableSizeInput;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":addRoleButton")
@@ -88,6 +98,14 @@ public class UserEditPage extends EditPage<UserEditPage> {
     @FindBy(id = "addClientDialog")
     private WebElement addToClientDialog;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "user-menu")
+    private WebElement userMenuButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(partialLinkText = "Benutzerdaten & Einstellungen")
+    private WebElement userConfigButton;
+
     public UserEditPage() {
         super("pages/userEdit.jsf");
     }
@@ -103,7 +121,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
         locationInput.sendKeys(user.getLocation());
-        metaDataLanguageInput.sendKeys(user.getMetadataLanguage());
+        metadataLanguageInput.sendKeys(user.getMetadataLanguage());
         return this;
     }
 
@@ -132,6 +150,26 @@ public class UserEditPage extends EditPage<UserEditPage> {
         List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
         addRow(tableRows, projectName, addToProjectDialog);
         return this;
+    }
+
+    public void changeUserSettings() throws Exception {
+        openUserConfig();
+        tableSizeInput.clear();
+        tableSizeInput.sendKeys("50");
+        metadataLanguageInput.clear();
+        metadataLanguageInput.sendKeys("en");
+        Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(1).click();
+        Browser.getDriver().findElement(By.id(USER_TAB_VIEW + ":languages_1")).click();
+        save();
+    }
+
+    private void openUserConfig() {
+        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+
+        hoverWebElement(userMenuButton);
+        hoverWebElement(userConfigButton);
+        userConfigButton.click();
     }
 
     /**
