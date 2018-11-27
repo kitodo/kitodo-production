@@ -373,6 +373,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
         duplicatedProject.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
 
+        duplicatedProject.setDmsImportImagesPath(baseProject.getDmsImportImagesPath());
+        duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
         duplicatedProject.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
         duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
         duplicatedProject.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
@@ -392,7 +394,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
-        ArrayList<Folder> duplicatedFolders = new ArrayList<>();
+        List<Folder> duplicatedFolders = new ArrayList<>();
         for (Folder folder : baseProject.getFolders()) {
             Folder duplicatedFolder = new Folder();
             duplicatedFolder.setMimeType(folder.getMimeType());
