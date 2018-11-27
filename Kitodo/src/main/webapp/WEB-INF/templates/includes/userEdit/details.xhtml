@@ -59,6 +59,11 @@
                 </p:selectOneMenu>
             </div>
             <div>
+                <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
+                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
+            </div>
+            <div>
                 <p:commandButton id="writUserToLdapButton"
                                  action="#{UserForm.writeUserAtLdapServer}"
                                  value="#{msgs.ldapKonfigurationSchreiben}"
@@ -93,6 +98,15 @@
                             redisplay="true"/>
             </div>
             <div>
+                <!-- table size -->
+                <p:outputLabel for="table-size" value="#{msgs.tableSize}" />
+                <p:inputText id="table-size" value="#{UserForm.userObject.tableSize}" label="'#{msgs.tableSize}'"
+                             class="input" onchange="toggleSave()">
+                    <f:convertNumber integerOnly="true"/>
+                    <f:validateLongRange maximum="100" minimum="10" />
+                </p:inputText>
+            </div>
+            <div>
                 <p:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
                 <p:selectOneMenu id="languages" value="#{UserForm.userObject.language}" disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
@@ -114,9 +128,10 @@
                                          onchange="toggleSave()"/>
             </div>
             <div>
-                <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
+                <!-- show process data in my tasks -->
+                <p:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
+                <p:selectBooleanCheckbox id="show-process-data" styleClass="input" onchange="toggleSave()"
+                                         value="#{UserForm.userObject.configProductionDateShow}"/>
             </div>
         </p:row>
     </p:panelGrid>
