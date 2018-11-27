@@ -44,6 +44,7 @@ import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.model.Subfolder;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
 import org.kitodo.production.thread.TaskScriptThread;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
 /**
@@ -54,6 +55,8 @@ import org.kitodo.services.file.FileService;
  */
 public class ImageGenerator implements Runnable {
     private static final Logger logger = LogManager.getLogger(ImageGenerator.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     /**
      * Output folders.
@@ -197,10 +200,10 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static void createImageWithImageIO(URI sourceImage, Folder imageProperties, FileFormat fileFormat,
+    private void createImageWithImageIO(URI sourceImage, Folder imageProperties, FileFormat fileFormat,
             URI destinationImage) throws IOException {
 
-        try (OutputStream outputStream = new FileService().write(destinationImage)) {
+        try (OutputStream outputStream = fileService.write(destinationImage)) {
             Image image = retrieveJavaImage(sourceImage, imageProperties);
             ImageIO.write((RenderedImage) image, fileFormat.getFormatName().get(), outputStream);
         }
@@ -250,7 +253,7 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private static void generateDerivative(URI sourceImage, Subfolder destinationImage, String canonical)
+    private void generateDerivative(URI sourceImage, Subfolder destinationImage, String canonical)
             throws IOException {
 
         Folder imageProperties = destinationImage.getFolder();

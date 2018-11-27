@@ -38,7 +38,7 @@ import org.kitodo.services.file.FileService;
 
 public class WebDav implements Serializable {
     private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = new FileService();
+    private final FileService fileService = serviceManager.getFileService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger logger = LogManager.getLogger(WebDav.class);
     private static final String ERROR_UPLOADING = "errorUploading";
