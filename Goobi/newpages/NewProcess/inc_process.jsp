@@ -53,7 +53,7 @@
         <h:column>
             <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
                 <f:selectItem itemValue="opac" itemLabel="OPAC search" />
-                <f:selectItem itemValue="file" itemLabel="File upload" />
+                <f:selectItem itemValue="file" itemLabel="File upload" itemDisabled="#{!ProzesskopieForm.fileUploadAvailable}"/>
             </h:selectOneRadio>
         </h:column>
     </h:panelGroup>
@@ -79,7 +79,7 @@
     </h:panelGroup>
 
     <%-- source 2: upload file --%>
-    <h:panelGroup rendered="#{ProzesskopieForm.source == 'file'}">
+    <h:panelGroup rendered="#{ProzesskopieForm.source == 'file' && ProzesskopieForm.fileUploadAvailable}">
         <x:inputFileUpload id="file" value="#{ProzesskopieForm.uploadedFile}"/>
         <h:commandButton action="#{ProzesskopieForm.uploadFile}"/>
         <h:outputText value="Name: #{ProzesskopieForm.uploadedFile.name}"/>
