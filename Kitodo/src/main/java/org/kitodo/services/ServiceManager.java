@@ -35,7 +35,7 @@ import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
 import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
-import org.kitodo.services.validation.LongTimePreservationValidationService;
+import org.kitodo.services.validation.LongTermPreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -64,7 +64,7 @@ public class ServiceManager {
     private SchemaService schemaService;
     private SecurityAccessService securityAccessService;
     private FileStructureValidationService fileStructureValidationService;
-    private LongTimePreservationValidationService longTimePreservationValidationService;
+    private LongTermPreservationValidationService longTermPreservationValidationService;
     private MetadataValidationService metadataValidationService;
     private SessionService sessionService;
     private WorkflowControllerService workflowControllerService;
@@ -213,9 +213,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeLongTimePreservationValidationService() {
-        if (longTimePreservationValidationService == null) {
-            longTimePreservationValidationService = new LongTimePreservationValidationService();
+    private void initializeLongTermPreservationValidationService() {
+        if (longTermPreservationValidationService == null) {
+            longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
@@ -486,14 +486,14 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize LongTimePreservationValidationService if it is not yet
+     * Initialize LongTermPreservationValidationService if it is not yet
      * initialized and next return it.
      *
-     * @return LongTimePreservationValidationService object
+     * @return LongTermPreservationValidationService object
      */
-    public LongTimePreservationValidationService getLongTimePreservationValidationService() {
-        initializeLongTimePreservationValidationService();
-        return longTimePreservationValidationService;
+    public LongTermPreservationValidationService getLongTermPreservationValidationService() {
+        initializeLongTermPreservationValidationService();
+        return longTermPreservationValidationService;
     }
 
     /**

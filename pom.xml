@@ -122,8 +122,8 @@
         <module>Kitodo-API</module>
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
-        <module>Kitodo-ImageManagementModule</module>
-        <module>Kitodo-LongTimePreservationValidationModule</module>
+        <module>Kitodo-ImageManagement</module>
+        <module>Kitodo-LongTermPreservationValidation</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
         <module>Kitodo-Command</module>

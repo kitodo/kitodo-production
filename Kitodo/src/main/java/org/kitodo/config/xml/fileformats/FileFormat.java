@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.api.imagemanagement.ImageFileFormat;
-import org.kitodo.api.validation.longtimepreservation.FileType;
+import org.kitodo.api.validation.longtermpreservation.FileType;
 
 /**
  * A file format supported by Production. Files of this format can be uploaded
