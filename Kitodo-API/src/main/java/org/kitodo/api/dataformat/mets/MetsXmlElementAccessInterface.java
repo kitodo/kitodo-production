@@ -11,6 +11,7 @@
 
 package org.kitodo.api.dataformat.mets;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -53,7 +54,17 @@ public interface MetsXmlElementAccessInterface {
      *
      * @return a service to access the {@code <fileGrp>}
      */
-    List<FileXmlElementAccessInterface> getFileGrp();
+    List<? extends FileXmlElementAccessInterface> getFileGrp();
+
+    /**
+     * Returns a service to access the {@code <metsHdr>}. The mets hdr makes it
+     * possible to record editing notes in an ordered list. These can be used by
+     * the editors similar to a diary, to exchange views on the processing
+     * status.
+     * 
+     * @return a service to access the {@code <metsHdr>}
+     */
+    List<? extends AgentXmlElementAccessInterface> getMetsHdr();
 
     /**
      * Returns a service to access to the logical {@code <structMap>}. The
@@ -78,14 +89,18 @@ public interface MetsXmlElementAccessInterface {
      *
      * @param in
      *            open input channel for reading the file
+     * @throws IOException
+     *             if the reading fails
      */
-    void read(InputStream in);
+    void read(InputStream in) throws IOException;
 
     /**
      * Writes the current state of this service to a METS file.
      *
      * @param out
      *            open output channel for writing the file
+     * @throws IOException
+     *             if the writing fails
      */
-    void save(OutputStream out);
+    void save(OutputStream out) throws IOException;
 }

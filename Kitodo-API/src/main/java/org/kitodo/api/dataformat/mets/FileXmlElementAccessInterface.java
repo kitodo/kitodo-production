@@ -33,7 +33,7 @@ public interface FileXmlElementAccessInterface {
      *
      * @return all use services with their associated F locat services
      */
-    Set<Entry<UseXmlAttributeAccessInterface, FLocatXmlElementAccessInterface>> getAllUsesWithFLocats();
+    Set<? extends Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface>> getAllUsesWithFLocats();
 
     /**
      * Returns a service to access a computer file that represents a variant of

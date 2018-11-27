@@ -42,5 +42,5 @@ public interface MetadataGroupXmlElementAccessInterface extends MetadataAccessIn
      *
      * @return the collection of meta-data in this group
      */
-    Collection<MetadataAccessInterface> getMetadata();
+    Collection<? extends MetadataAccessInterface> getMetadata();
 }
