@@ -114,13 +114,14 @@ public class Reader {
         task.setPriority(kitodoTask.getPriority());
         task.setEditType(kitodoTask.getEditType());
         task.setProcessingStatus(kitodoTask.getProcessingStatus());
-        task.setBatchStep(kitodoTask.getBatchStep());
-        task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
-        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
-        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
-        task.setTypeExportDMS(kitodoTask.getTypeExportDms());
-        task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
-        task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
+        task.setConcurrent(kitodoTask.isConcurrent());
+        task.setBatchStep(kitodoTask.isBatchStep());
+        task.setTypeAutomatic(kitodoTask.isTypeAutomatic());
+        task.setTypeImagesRead(kitodoTask.isTypeImagesRead());
+        task.setTypeImagesWrite(kitodoTask.isTypeImagesWrite());
+        task.setTypeExportDMS(kitodoTask.isTypeExportDms());
+        task.setTypeAcceptClose(kitodoTask.isTypeAcceptClose());
+        task.setTypeCloseVerify(kitodoTask.isTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
         Integer userRoleId = kitodoTask.getUserRole();
         if (userRoleId > 0) {
