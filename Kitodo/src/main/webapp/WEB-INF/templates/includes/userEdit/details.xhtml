@@ -21,38 +21,40 @@
     <ui:param name="isCreateMode"
               value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser()}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+    <ui:param name="isConfigMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
 
     <p:panelGrid id="useredit-grid" columns="2" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="surname" value="#{msgs.surname}"/>
-                <p:inputText id="surname" class="input" disabled="#{isViewMode}"
+                <p:inputText id="surname" class="input" disabled="#{isViewMode || isConfigMode}"
                              placeholder="#{msgs.surname}" value="#{UserForm.userObject.surname}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
-                <p:inputText id="firstName" class="input" disabled="#{isViewMode}"
+                <p:inputText id="firstName" class="input" disabled="#{isViewMode || isConfigMode}"
                              placeholder="#{msgs.firstName}" value="#{UserForm.userObject.name}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="location" value="#{msgs.location}"/>
-                <p:inputText id="location" class="input" disabled="#{isViewMode}"
+                <p:inputText id="location" class="input" disabled="#{isViewMode || isConfigMode}"
                              placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
-                <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode}"
+                <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode || isConfigMode}"
                              placeholder="#{msgs.ldaplogin}" onchange="toggleSave()"
                              value="#{UserForm.userObject.ldapLogin}"/>
             </div>
             <div>
                 <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
                 <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
-                                 disabled="#{isViewMode}" converter="#{ldapGroupConverter}">
+                                 disabled="#{isViewMode || isConfigMode}" converter="#{ldapGroupConverter}">
                     <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
@@ -60,7 +62,7 @@
             </div>
             <div>
                 <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode}"
+                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode || isConfigMode}"
                                          value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
             </div>
             <div>
@@ -69,7 +71,7 @@
                                  value="#{msgs.ldapKonfigurationSchreiben}"
                                  icon="fa fa-user-plus fa-lg"
                                  immediate="true"
-                                 disabled="#{isViewMode}"
+                                 disabled="#{isViewMode || isConfigMode}"
                                  rendered="#{AuthenticationController.ldapAuthentication}"
                                  class="button-filled-green">
                 </p:commandButton>
@@ -78,7 +80,7 @@
                                  value="#{msgs.passwordChange}"
                                  icon="fa fa-pencil fa-lg"
                                  immediate="true"
-                                 rendered="#{isEditMode}"
+                                 rendered="#{isEditMode || isConfigMode}"
                                  class="button-filled-green">
                 </p:commandButton>
             </div>
@@ -86,7 +88,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="login" value="#{msgs.login}"/>
-                <p:inputText id="login" class="input" disabled="#{isViewMode}" placeholder="#{msgs.login}"
+                <p:inputText id="login" class="input" disabled="#{isViewMode || isConfigMode}" placeholder="#{msgs.login}"
                              value="#{UserForm.userObject.login}" readonly="#{UserForm.userObject.id ne null}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
@@ -100,7 +102,7 @@
             <div>
                 <!-- table size -->
                 <p:outputLabel for="table-size" value="#{msgs.tableSize}" />
-                <p:inputText id="table-size" value="#{UserForm.userObject.tableSize}" label="'#{msgs.tableSize}'"
+                <p:inputText id="table-size" value="#{UserForm.userObject.tableSize}" disabled="#{isViewMode}"
                              class="input" onchange="toggleSave()">
                     <f:convertNumber integerOnly="true"/>
                     <f:validateLongRange maximum="100" minimum="10" />
@@ -131,7 +133,7 @@
                 <!-- show process data in my tasks -->
                 <p:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
                 <p:selectBooleanCheckbox id="show-process-data" styleClass="input" onchange="toggleSave()"
-                                         value="#{UserForm.userObject.configProductionDateShow}"/>
+                                         disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
             </div>
         </p:row>
     </p:panelGrid>
