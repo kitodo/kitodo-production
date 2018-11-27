@@ -64,19 +64,19 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void takeOpenTaskAndGiveItBackTest() throws Exception {
-        Task task = serviceManager.getTaskService().getById(2);
+        Task task = serviceManager.getTaskService().getById(9);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
         tasksPage.goTo().takeOpenTask();
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
-        task = serviceManager.getTaskService().getById(2);
+        task = serviceManager.getTaskService().getById(9);
         assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
 
         currentTasksEditPage.releaseTask();
         assertTrue("Redirection after click release task was not successful", tasksPage.isAt());
 
-        task = serviceManager.getTaskService().getById(2);
+        task = serviceManager.getTaskService().getById(9);
         assertEquals("Task was not released by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
     }
 
@@ -88,7 +88,7 @@ public class WorkingST extends BaseTestSelenium {
         currentTasksEditPage.closeTask();
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
-        Task task = serviceManager.getTaskService().getById(8);
+        Task task = serviceManager.getTaskService().getById(12);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
     }
 

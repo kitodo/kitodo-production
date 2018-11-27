@@ -79,10 +79,10 @@ public class ListingST extends BaseTestSelenium {
 
         List<String> detailsTask =  tasksPage.getTaskDetails();
         assertEquals("Displayed wrong number of task's details", 5, detailsTask.size());
-        assertEquals("Displayed wrong task's priority", "0", detailsTask.get(0));
-        assertEquals("Displayed wrong task's processing begin", "2016-10-25 00:00:00", detailsTask.get(1));
+        assertEquals("Displayed wrong task's priority", "10", detailsTask.get(0));
+        assertEquals("Displayed wrong task's processing begin", "2017-01-25 00:00:00", detailsTask.get(1));
         assertEquals("Displayed wrong task's processing update", "", detailsTask.get(2));
-        assertEquals("Displayed wrong task's processing user", "Kowalski, Jan", detailsTask.get(3));
+        assertEquals("Displayed wrong task's processing user", "Nowak, Adam", detailsTask.get(3));
         assertEquals("Displayed wrong task's edit type", "manuell, regulärer Worklflow", detailsTask.get(4));
 
         tasksPage.applyFilterShowOnlyOpenTasks();

@@ -34,7 +34,7 @@ public class TasksPage extends Page<TasksPage> {
     private WebElement taskTable;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=8']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=12']")
     private WebElement editTaskLink;
 
     private WebElement takeTaskLink;
@@ -66,7 +66,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     public List<String> getTaskDetails() {
-        int index = triggerRowToggle(taskTable, "Processed");
+        int index = triggerRowToggle(taskTable, "Progress");
         WebElement detailsTable = Browser.getDriver()
                 .findElementById(TASK_TABLE + ":" + index + ":currentTaskDetailTable");
         return getTableDataByColumn(detailsTable, 1);
@@ -94,7 +94,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     private void setTakeTaskLink() {
-        int index = getRowIndex(taskTable, "Blocking");
+        int index = getRowIndex(taskTable, "Open");
         takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:take");
     }
 }
