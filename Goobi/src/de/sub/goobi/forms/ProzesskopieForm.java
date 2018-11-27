@@ -109,6 +109,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
+import org.apache.commons.configuration.SubnodeConfiguration;
 
 public class ProzesskopieForm {
     private static final Logger logger = Logger.getLogger(ProzesskopieForm.class);
@@ -1514,6 +1515,7 @@ public class ProzesskopieForm {
                     }
                 }
             }
+            checkFileUpload();
             return allCatalogueTitles;
         } catch (Throwable t) {
             logger.error("Error while reading von opac-config", t);
@@ -1630,6 +1632,8 @@ public class ProzesskopieForm {
     public boolean isUseOpac() {
         return this.useOpac;
     }
+
+    public boolean isFileUploadAvailable() {return this.fileUploadAvailable; }
 
     public boolean isUseTemplates() {
         return this.useTemplates;
@@ -2193,6 +2197,28 @@ public class ProzesskopieForm {
             }
         } else {
             System.err.println("Uploaded file is null!");
+        }
+    }
+
+    public void checkFileUpload() {
+        try {
+            Boolean flag = false;
+            for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+                int i = 0;
+                SubnodeConfiguration pluginConfiguration = null;
+                XMLConfiguration config = plugin.getXMLConfiguration();
+                for(Object catalogue : config.getList("catalogue[@title]")) {
+                    if (catalogue.toString().equals(this.opacKatalog)) {
+                        pluginConfiguration = config.configurationAt("catalogue(" + i + ")");
+                        flag = Boolean.valueOf(pluginConfiguration.getString("fileUpload"));
+                    }
+                    i++;
+                }
+            }
+            this.fileUploadAvailable = flag;
+        } catch (Throwable t) {
+            logger.error("Error while reading von opac-config", t);
+            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
         }
     }
 }
