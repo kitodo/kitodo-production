@@ -166,9 +166,9 @@ public class SelectItemListIT {
         List<SelectItem> selectItems = SelectItemList.getRulesets(rulesetService.getAll());
 
         assertEquals("First item is not sorted correctly!", "Removable ruleset", selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "SLUBBB", selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "SLUBDD", selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "SLUBHH", selectItems.get(3).getLabel());
+        assertEquals("Second item is not sorted correctly!", "SLUBDD", selectItems.get(1).getLabel());
+        assertEquals("Third item is not sorted correctly!", "SUBBB", selectItems.get(2).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "SUBHH", selectItems.get(3).getLabel());
 
         assertThat("First item is not a Ruleset type!", selectItems.get(0).getValue(), instanceOf(Ruleset.class));
     }

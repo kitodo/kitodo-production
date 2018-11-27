@@ -64,6 +64,11 @@
         <language name="de">PPN (Digitalisat)</language>
     </MetadataType>
     <MetadataType>
+        <Name>CatalogIDSource</Name>
+        <language name="en">PPN (source)</language>
+        <language name="de">PPN (Vorlage)</language>
+    </MetadataType>
+    <MetadataType>
         <Name>ProcessID</Name>
         <language name="de">Kitodo-Vorgangsnummer</language>
         <language name="en">Kitodo Process ID</language>
@@ -154,6 +159,8 @@
         <language name="en">Monograph</language>
         <metadata DefaultDisplay="true" num="1m">TitleDocMain</metadata>
         <metadata num="1o">TitleDocMainShort</metadata>
+        <metadata DefaultDisplay="true" num="1m">CatalogIDDigital</metadata>
+        <metadata DefaultDisplay="true" num="*">CatalogIDSource</metadata>
         <metadata DefaultDisplay="true" num="1o">TSL_ATS</metadata>
     </DocStrctType>
     <DocStrctType>
@@ -188,7 +195,19 @@
                 <InternalName>PublisherName</InternalName>
                 <WriteXPath>./mods:mods/mods:originInfo/#mods:publisher</WriteXPath>
             </Metadata>
-
+            <Metadata>
+                <InternalName>CatalogIDDigital</InternalName>
+                <WriteXPath>./mods:mods/mods:extension/slub:slub/#slub:id[@type='digital']</WriteXPath>
+            </Metadata>
+            <Metadata>
+                <InternalName>CatalogIDSource</InternalName>
+                <ValueCondition>/^[0-9]{8}[0-9X]{1}$/</ValueCondition>
+                <WriteXPath>./mods:mods/#mods:identifier[@type='swb-ppn']</WriteXPath>
+            </Metadata>
+            <Metadata>
+                <InternalName>CatalogIDSource</InternalName>
+                <WriteXPath>./mods:mods/mods:extension/slub:slub/#slub:id[@type='source']</WriteXPath>
+            </Metadata>
             <Metadata>
                 <InternalName>FormerOwner</InternalName>
                 <MODSName>Person</MODSName>

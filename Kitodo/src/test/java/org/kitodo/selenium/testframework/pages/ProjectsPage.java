@@ -223,7 +223,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement createProcess = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":createProcessForm:projects:0:createProcess"));
-        createProcess.click();
+        clickButtonAndWaitForRedirect(createProcess, Pages.getProcessFromTemplatePage().getUrl());
     }
 
     public List<String> getProjectDetails() {
