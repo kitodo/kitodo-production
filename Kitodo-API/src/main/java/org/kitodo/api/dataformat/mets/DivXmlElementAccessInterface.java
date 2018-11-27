@@ -35,7 +35,7 @@ public interface DivXmlElementAccessInterface {
      *
      * @return the areas of this div
      */
-    List<AreaXmlElementAccessInterface> getAreas();
+    List<? extends AreaXmlElementAccessInterface> getAreas();
 
     /**
      * Returns services for access to the outline level that is a child of this
@@ -43,7 +43,7 @@ public interface DivXmlElementAccessInterface {
      *
      * @return services for access to the children of this div
      */
-    List<DivXmlElementAccessInterface> getChildren();
+    List<? extends DivXmlElementAccessInterface> getChildren();
 
     /**
      * Returns the human-readable name of this outline element.
@@ -57,7 +57,7 @@ public interface DivXmlElementAccessInterface {
      *
      * @return the meta-data
      */
-    Collection<MetadataAccessInterface> getMetadata();
+    Collection<? extends MetadataAccessInterface> getMetadata();
 
     /**
      * Returns a variant of the human-readable name of this outline element,
