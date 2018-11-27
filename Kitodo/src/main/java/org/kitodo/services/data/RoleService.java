@@ -139,6 +139,14 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return createQueryRolesForCurrentUser(filters).toString();
+        }
+        return null;
+    }
+
+    @Override
     public List<Role> getAllNotIndexed() {
         return getByQuery("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
@@ -356,7 +364,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     // TODO: filtering functionality
     private QueryBuilder createQueryRolesForCurrentUser(Map filters) {
-        return createSimpleQuery(RoleTypeField.CLIENT_ID + ".id", serviceManager.getUserService().getSessionClientId(), true);
+        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), serviceManager.getUserService().getSessionClientId(), true);
     }
 
     /**

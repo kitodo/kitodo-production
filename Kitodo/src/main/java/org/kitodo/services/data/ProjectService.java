@@ -155,6 +155,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        return getProjectsForCurrentUserQuery();
+    }
+
+    @Override
     public List<Project> getAllNotIndexed() {
         return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
@@ -162,19 +167,14 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     public List<Project> getAllForSelectedClient() {
         return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
-        int sessionClientId = serviceManager.getUserService().getSessionClientId();
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForUserId(currentUserId));
-        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getProjectsForCurrentUserQuery(), sort, offset, size),
+            false);
     }
 
     /**
@@ -342,8 +342,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project
-     *         is incomplete
+     * @return true, if project is complete and can be used, false, if project is
+     *         incomplete
      */
     public boolean isProjectComplete(Project project) {
         boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
@@ -429,5 +429,15 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
             return dao.getByIds(projectIds);
         }
         return new ArrayList<>();
+    }
+
+    private String getProjectsForCurrentUserQuery() {
+        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
+        int sessionClientId = serviceManager.getUserService().getSessionClientId();
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForUserId(currentUserId));
+        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
+        return query.toString();
     }
 }

@@ -71,11 +71,14 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        return getWorkflowsForCurrentUserQuery();
+    }
+
+    @Override
     public List<WorkflowDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
-                serviceManager.getUserService().getSessionClientId(), true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getWorkflowsForCurrentUserQuery(), sort, offset, size),
+            false);
     }
 
     @Override
@@ -99,6 +102,13 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
         workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
         return workflowDTO;
+    }
+
+    private String getWorkflowsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 
     /**
