@@ -129,7 +129,7 @@ public class Reader {
         }
 
         if (workflowTask instanceof ScriptTask) {
-            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask, taskInfo.getOrdering());
+            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask);
             task.setScriptName(kitodoScriptTask.getScriptName());
             task.setScriptPath(kitodoScriptTask.getScriptPath());
         }
