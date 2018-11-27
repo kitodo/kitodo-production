@@ -18,8 +18,9 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:outputStylesheet name="css/modeler.css"/>
-    <h:outputScript library="js" name="modeler_min.js" target="body"/>
+	<!-- The modeler_custom.js has to be included first because it declares global variables that are used in the editor.-->
     <h:outputScript library="js" name="modeler_custom.js" target="body"/>
+    <h:outputScript library="js" name="modeler_min.js" target="body"/>
 
     <p:panelGrid columns="2" layout="grid">
         <p:row>

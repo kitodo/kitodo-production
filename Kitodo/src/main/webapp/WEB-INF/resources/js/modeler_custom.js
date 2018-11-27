@@ -10,6 +10,7 @@
  */
 
 var availableUserRoles = [];
+var saveDiagramFunctionCall;
 $(window).on("load", function () {
 
 	$.ready.then(function () {
