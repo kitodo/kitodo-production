@@ -40,7 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String EDIT_RULESET = "editRuleset_";
     private static final String EDIT_PROCESS = "editProcess_";
     private static final String EDIT_PROJECT = "editProject_";
-    private static final String EDIT_USER = "editUser_";
     private static final String EDIT_ROLE = "editRole_";
     private static final String EDIT_WORKFLOW = "editWorkflow_";
     private static final String VIEW_ALL_DOCKETS = "viewAllDockets_";
@@ -53,7 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String VIEW_ALL_ROLES = "viewAllRoles_";
     private static final String VIEW_ALL_WORKFLOWS = "viewAllWorkflows_";
     private static final String VIEW_PROJECT = "viewProject_";
-    private static final String VIEW_USER = "viewUser_";
     private static final String VIEW_ROLE = "viewRole_";
     private static final String LOGIN_PAGE = "/pages/login.jsf";
 
@@ -149,11 +147,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_ROLES + CLIENT_ANY,
                 "viewAllClients_" + GLOBAL,
                 "viewAllLdapGroups_" + GLOBAL)
-            .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
-                EDIT_USER + GLOBAL,
-                EDIT_USER + CLIENT_ANY,
-                VIEW_USER + GLOBAL,
-                VIEW_USER + CLIENT_ANY)
 
             .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
                 EDIT_ROLE + GLOBAL,
