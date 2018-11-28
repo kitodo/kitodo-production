@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="defaultStringKey">
+            <label>Default string key</label>
+            <preset>Hello World!</preset>
+        </key>
+        <key id="anyURIKey">
+            <label>anyURI key</label>
+            <codomain type="anyURI"/>
+            <preset>https://en.wikipedia.org/wiki/%22Hello,_World!%22_program</preset>
+        </key>
+        <key id="booleanKey">
+            <label>Boolean key</label>
+            <codomain type="boolean"/>
+            <option value="on"/>
+            <preset>on</preset>
+        </key>
+        <key id="dateKey">
+            <label>Date key</label>
+            <codomain type="date"/>
+            <preset>1993-09-01</preset>
+        </key>
+        <key id="namespaceDefaultAnyURIKey">
+            <label>Namespace default anyURI key</label>
+            <codomain namespace="http://test.example/non-existent-namespace/"/>
+            <preset>http://test.example/non-existent-namespace/</preset>
+        </key>
+        <key id="namespaceStringKey">
+            <label>Namespace default anyURI key</label>
+            <codomain type="string" namespace="http://test.example/non-existent-namespace/"/>
+            <preset>http://test.example/non-existent-namespace/</preset>
+        </key>
+    </declaration>
+</ruleset>

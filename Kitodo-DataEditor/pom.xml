@@ -71,6 +71,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrest-library.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

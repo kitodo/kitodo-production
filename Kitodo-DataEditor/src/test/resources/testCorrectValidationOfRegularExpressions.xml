@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="defaultStringKey">
+            <label>Default string key → PPN</label>
+            <pattern>[0-9]{7,}[0-9X]</pattern>
+        </key>
+        <key id="anyURIKey">
+            <label>anyURI key → WWW URL</label>
+            <codomain type="anyURI"/>
+            <pattern>https?://.+/.*</pattern>
+        </key>
+        <key id="booleanKey">
+            <label>Boolean key</label>
+            <codomain type="boolean"/>
+            <option value="on"/>
+            <preset>on</preset>
+            <pattern>on</pattern>
+        </key>
+        <key id="dateKey">
+            <label>Date key</label>
+            <codomain type="date"/>
+            <pattern>(19\d{2}|20[01]\d)-\d{2}-\d{2}</pattern>
+        </key>
+        <key id="integerKey">
+            <label>Integer key</label>
+            <codomain type="integer"/>
+            <pattern>17\d{2}</pattern>
+        </key>
+        <key id="namespaceDefaultAnyURIKey">
+            <label>Namespace default anyURI key</label>
+            <codomain namespace="http://test.example/non-existent-namespace/"/>
+            <pattern>^http://test.example/non-existent-namespace/[_A-Za-z][_0-9A-Za-z]*</pattern>
+        </key>
+        <key id="namespaceStringKey">
+            <label>Namespace default anyURI key</label>
+            <codomain type="string" namespace="http://test.example/non-existent-namespace/"/>
+            <pattern>^http://test.example/non-existent-namespace/[_A-Za-z][_0-9A-Za-z]*</pattern>
+        </key>
+        <key id="optionsKey">
+            <label>Options key</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+            <pattern>opt\d+</pattern>
+        </key>
+    </declaration>
+</ruleset>

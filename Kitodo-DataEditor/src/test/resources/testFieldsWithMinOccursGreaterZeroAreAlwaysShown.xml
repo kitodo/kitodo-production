@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="test1">
+            <label>Test 1</label>
+        </key>
+        <key id="test2">
+            <label>Test 2</label>
+        </key>
+        <key id="test2options">
+            <label>Test 2</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+    </declaration>
+    <correlation>
+        <restriction division="book">
+            <permit key="test1" minOccurs="1"/>
+            <permit key="test2" minOccurs="2"/>
+            <permit key="test2options" minOccurs="2"/>
+        </restriction>
+    </correlation>
+</ruleset>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="alwaysShowingUnchangedTrue">
+            <label>Always showing unchanged/true</label>
+        </key>
+        <key id="alwaysShowingTrueUnchanged">
+            <label>Always showing true/unchanged</label>
+        </key>
+        <key id="alwaysShowingTrueOtherchanges">
+            <label>Always showing true/other changes</label>
+        </key>
+        <key id="alwaysShowingTrueTrue">
+            <label>Always showing true/true</label>
+        </key>
+        <key id="alwaysShowingTrueFalse">
+            <label>Always showing true/false</label>
+        </key>
+        <key id="excludedUnchangedTrue">
+            <label>Excluded unchanged/true</label>
+        </key>
+        <key id="excludedTrueUnchanged">
+            <label>Excluded true/unchanged</label>
+        </key>
+        <key id="excludedTrueOtherchanges">
+            <label>Excluded true/other changes</label>
+        </key>
+        <key id="excludedTrueTrue">
+            <label>Excluded true/true</label>
+        </key>
+        <key id="excludedTrueFalse">
+            <label>Excluded true/false</label>
+        </key>
+        <key id="editableUnchangedFalse">
+            <label>Editable unchanged/false</label>
+        </key>
+        <key id="editableFalseUnchanged">
+            <label>Editable false/unchanged</label>
+        </key>
+        <key id="editableFalseOtherchanges">
+            <label>Editable false/other changes</label>
+        </key>
+        <key id="editableFalseFalse">
+            <label>Editable false/false</label>
+        </key>
+        <key id="editableFalseTrue">
+            <label>Editable false/true</label>
+        </key>
+        <key id="multilineUnchangedTrue">
+            <label>Multi-line unchanged/true</label>
+        </key>
+        <key id="multilineTrueUnchanged">
+            <label>Multi-line true/unchanged</label>
+        </key>
+        <key id="multilineTrueOtherchanges">
+            <label>Multi-line true/other changes</label>
+        </key>
+        <key id="multilineTrueTrue">
+            <label>Multi-line true/true</label>
+        </key>
+        <key id="multilineTrueFalse">
+            <label>Multi-line true/false</label>
+        </key>
+    </declaration>
+    <editing>
+        <setting key="alwaysShowingTrueUnchanged" alwaysShowing="true"/>
+        <setting key="alwaysShowingTrueOtherchanges" alwaysShowing="true"/>
+        <setting key="alwaysShowingTrueTrue" alwaysShowing="true"/>
+        <setting key="alwaysShowingTrueFalse" alwaysShowing="true"/>
+        <setting key="excludedTrueUnchanged" excluded="true"/>
+        <setting key="excludedTrueOtherchanges" excluded="true"/>
+        <setting key="excludedTrueTrue" excluded="true"/>
+        <setting key="excludedTrueFalse" excluded="true"/>
+        <setting key="editableFalseUnchanged" editable="false"/>
+        <setting key="editableFalseOtherchanges" editable="false"/>
+        <setting key="editableFalseFalse" editable="false"/>
+        <setting key="editableFalseTrue" editable="false"/>
+        <setting key="multilineTrueUnchanged" multiline="true"/>
+        <setting key="multilineTrueOtherchanges" multiline="true"/>
+        <setting key="multilineTrueTrue" multiline="true"/>
+        <setting key="multilineTrueFalse" multiline="true"/>
+        <acquisitionStage name="The acquisition stage">
+            <setting key="alwaysShowingUnchangedTrue" alwaysShowing="true"/>
+            <setting key="alwaysShowingTrueOtherchanges" multiline="true"/>
+            <setting key="alwaysShowingTrueTrue" alwaysShowing="true"/>
+            <setting key="alwaysShowingTrueFalse" alwaysShowing="false"/>
+            <setting key="excludedUnchangedTrue" excluded="true"/>
+            <setting key="excludedTrueOtherchanges" multiline="true"/>
+            <setting key="excludedTrueTrue" excluded="true"/>
+            <setting key="excludedTrueFalse" excluded="false"/>
+            <setting key="editableUnchangedFalse" editable="false"/>
+            <setting key="editableFalseOtherchanges" multiline="true"/>
+            <setting key="editableFalseFalse" editable="false"/>
+            <setting key="editableFalseTrue" editable="true"/>
+            <setting key="multilineUnchangedTrue" multiline="true"/>
+            <setting key="multilineTrueOtherchanges" alwaysShowing="true"/>
+            <setting key="multilineTrueTrue" multiline="true"/>
+            <setting key="multilineTrueFalse" multiline="false"/>
+        </acquisitionStage>
+    </editing>
+</ruleset>
