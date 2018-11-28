@@ -520,6 +520,18 @@ public class SecurityAccessService {
     }
 
     /**
+     * Check if the current user has the authority to change the user config. It is
+     * true if current user is logged user.
+     *
+     * @param userId
+     *            id of the viewed user
+     * @return true if the current user has the authority to change the user config
+     */
+    public boolean hasAuthorityToConfigUser(int userId) {
+        return serviceManager.getUserService().getAuthenticatedUser().getId().equals(userId);
+    }
+
+    /**
      * Check if the current user has the authority to view the role. Add and edit
      * authorities include also view.
      *

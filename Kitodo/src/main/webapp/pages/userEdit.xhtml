@@ -27,7 +27,9 @@
     <ui:param name="isCreateMode"
               value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser()}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+    <ui:param name="isConfigMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -41,11 +43,13 @@
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.userView}"
                           rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.userConfiguration}"
+                          rendered="#{isConfigMode}"/>
         </h3>
         <p:commandButton value="#{msgs.save}"
                          action="#{UserForm.save}"
                          id="save"
-                         rendered="#{isEditMode || isCreateMode}"
+                         rendered="#{isEditMode || isCreateMode || isConfigMode}"
                          widgetVar="save"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -166,6 +170,9 @@
                 </ui:fragment>
                 <ui:fragment rendered="#{isViewMode}">
                     #{msgs.userView}
+                </ui:fragment>
+                <ui:fragment rendered="#{isConfigMode}">
+                    #{msgs.userConfiguration}
                 </ui:fragment>
             </a>
         </li>

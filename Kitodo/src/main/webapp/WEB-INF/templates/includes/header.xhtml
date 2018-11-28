@@ -139,7 +139,11 @@
                                         </p:repeat>
                                     </p:outputPanel>
                                 </div>
-                                <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
+                                <li>
+                                    <h:link value="#{msgs.userData}" outcome="userEdit">
+                                        <f:param name="id" value="#{LoginForm.myBenutzer.id}"/>
+                                    </h:link>
+                                </li>
                                 <li>
                                     <table>
                                         <tr>

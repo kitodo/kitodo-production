@@ -406,6 +406,17 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to change the user config.
+     *
+     * @param userId
+     *            id of the viewed user
+     * @return true if the current user has the authority to change the user config
+     */
+    public boolean hasAuthorityToConfigUser(int userId) {
+        return securityAccessService.hasAuthorityToConfigUser(userId);
+    }
+
+    /**
      * Check if the current user has the authority to view the role.
      *
      * @return true if the current user has the authority to view the role
