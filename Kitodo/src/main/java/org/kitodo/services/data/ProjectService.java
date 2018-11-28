@@ -417,20 +417,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return duplicatedProject;
     }
 
-    /**
-     * Get projects by a list of ids.
-     *
-     * @param projectIds
-     *            the list of ids
-     * @return the list of projects
-     */
-    public List<Project> getByIds(List<Integer> projectIds) {
-        if (!projectIds.isEmpty()) {
-            return dao.getByIds(projectIds);
-        }
-        return new ArrayList<>();
-    }
-
     private String getProjectsForCurrentUserQuery() {
         int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
         int sessionClientId = serviceManager.getUserService().getSessionClientId();
