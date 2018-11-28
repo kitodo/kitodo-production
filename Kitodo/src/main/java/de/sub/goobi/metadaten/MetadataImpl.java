@@ -34,7 +34,7 @@ import org.kitodo.services.ServiceManager;
  * @version 1.00 - 10.01.2005
  */
 
-public class MetadatumImpl implements Metadatum {
+public class MetadataImpl implements Metadata {
     private ServiceManager serviceManager = new ServiceManager();
     private MetadataInterface md;
     private int identifier;
@@ -46,7 +46,7 @@ public class MetadatumImpl implements Metadatum {
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetadatumImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
+    public MetadataImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
         this.md = m;
         this.identifier = inID;
         this.myPrefs = inPrefs;
@@ -54,22 +54,6 @@ public class MetadatumImpl implements Metadatum {
             this.myValues.put(state.getTitle(),
                     new DisplayCase(inProcess, state.getTitle(), this.md.getMetadataType().getName()));
         }
-    }
-
-    @Override
-    public List<Item> getWert() {
-        String value = this.md.getValue();
-        if (value != null) {
-            for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                i.setIsSelected(i.getValue().equals(value));
-            }
-        }
-        return this.myValues.get(Modes.getBindState().getTitle()).getItemList();
-    }
-
-    @Override
-    public void setWert(String inWert) {
-        this.md.setStringValue(inWert.trim());
     }
 
     @Override
@@ -86,10 +70,6 @@ public class MetadatumImpl implements Metadatum {
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(inTyp);
         this.md.setType(mdt);
     }
-
-    /*
-     * Getter und Setter
-     */
 
     @Override
     public int getIdentifier() {
@@ -109,15 +89,6 @@ public class MetadatumImpl implements Metadatum {
     @Override
     public void setMd(MetadataInterface md) {
         this.md = md;
-    }
-
-    /**
-     * new functions for use of display configuration whithin xml files.
-     */
-
-    @Override
-    public String getOutputType() {
-        return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
     }
 
     @Override
@@ -147,7 +118,7 @@ public class MetadatumImpl implements Metadatum {
                 }
             }
         }
-        setWert(val.toString());
+        setValue(val.toString());
     }
 
     @Override
@@ -175,7 +146,7 @@ public class MetadatumImpl implements Metadatum {
                 }
             }
             if (values != null) {
-                setWert(values);
+                setValue(values);
             }
         }
         return this.selectedItems;
@@ -201,7 +172,7 @@ public class MetadatumImpl implements Metadatum {
             }
         }
 
-        setWert(val.toString());
+        setValue(val.toString());
     }
 
     @Override
@@ -216,8 +187,7 @@ public class MetadatumImpl implements Metadatum {
         } else {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
                 if (i.getIsSelected()) {
-                    value = i.getValue();
-                    setWert(value);
+                    setValue(i.getValue());
                     return i.getLabel();
                 }
             }
@@ -229,14 +199,14 @@ public class MetadatumImpl implements Metadatum {
     public void setSelectedItem(String selectedItem) {
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
             if (i.getLabel().equals(selectedItem)) {
-                setWert(i.getValue());
+                setValue(i.getValue());
             }
         }
     }
 
     @Override
     public void setValue(String value) {
-        setWert(value);
+        this.md.setStringValue(value.trim());
     }
 
     @Override
