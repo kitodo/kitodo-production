@@ -12,6 +12,7 @@
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -72,6 +73,8 @@ public interface RulesetManagementInterface {
      *
      * @param rulesetFile
      *            ruleset to load
+     * @throws IOException
+     *             if the reading fails
      */
-    void load(File rulesetFile);
+    void load(File rulesetFile) throws IOException;
 }

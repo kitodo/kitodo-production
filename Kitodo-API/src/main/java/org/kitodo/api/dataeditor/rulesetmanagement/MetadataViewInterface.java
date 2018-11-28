@@ -11,11 +11,23 @@
 
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
+import java.util.Optional;
+
 /**
  * Provides a shared super interface for type view services. Type view services
  * provide filtered views on meta-data types.
  */
 public interface MetadataViewInterface {
+    /**
+     * Returns the domain that determines in which of the six available
+     * containers the meta-data entry is stored. The domain is optional. It is
+     * not present on undefined meta-data keys or if it is not written in the
+     * ruleset. Here the program has to know for itself what it has to do.
+     * 
+     * @return the domain
+     */
+    Optional<Domain> getDomain();
+
     /**
      * Returns the string used to encode this key in the meta-data file.
      *
