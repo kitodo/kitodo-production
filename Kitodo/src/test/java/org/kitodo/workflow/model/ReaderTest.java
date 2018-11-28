@@ -32,20 +32,14 @@ import static org.junit.Assert.assertTrue;
 
 public class ReaderTest {
 
-    private static FileService fileService = new ServiceManager().getFileService();
-
     @BeforeClass
     public static void setUp() throws Exception {
-        fileService.createDirectory(URI.create(""), "diagrams");
-
         FileLoader.createExtendedDiagramTestFile();
     }
 
     @AfterClass
     public static void tearDown() throws IOException {
         FileLoader.deleteExtendedDiagramTestFile();
-
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test

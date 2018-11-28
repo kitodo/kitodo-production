@@ -33,8 +33,6 @@ public class WorkflowFormTest {
 
     @BeforeClass
     public static void createDiagrams() throws Exception {
-        fileService.createDirectory(URI.create(""), "diagrams");
-
         FileLoader.createDiagramBaseFile();
         FileLoader.createDiagramTestFile();
     }
@@ -46,8 +44,6 @@ public class WorkflowFormTest {
 
         FileLoader.deleteDiagramBaseFile();
         FileLoader.deleteDiagramTestFile();
-
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
