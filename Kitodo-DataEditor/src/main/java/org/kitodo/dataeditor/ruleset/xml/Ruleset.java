@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.kitodo.dataeditor.ruleset.Settings;
 import org.kitodo.dataeditor.ruleset.Labeled;
+import org.kitodo.dataeditor.ruleset.Settings;
 import org.kitodo.dataeditor.ruleset.UniversalDivision;
 import org.kitodo.dataeditor.ruleset.UniversalRule;
 
