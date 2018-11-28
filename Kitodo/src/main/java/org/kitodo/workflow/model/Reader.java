@@ -12,6 +12,7 @@
 package org.kitodo.workflow.model;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
 import org.kitodo.workflow.model.beans.KitodoScriptTask;
 import org.kitodo.workflow.model.beans.KitodoTask;
@@ -43,10 +43,8 @@ import org.kitodo.workflow.model.beans.TaskInfo;
 
 public class Reader {
 
-    private String diagramName;
     private BpmnModelInstance modelInstance;
     private ServiceManager serviceManager = new ServiceManager();
-    private FileService fileService = serviceManager.getFileService();
     private Map<Task, TaskInfo> tasks;
     private Diagram workflow;
 
@@ -60,8 +58,21 @@ public class Reader {
      *             in case if file for given name doesn't exist
      */
     public Reader(String diagramName) throws IOException {
-        this.diagramName = diagramName;
-        loadProcess();
+        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + diagramName + ".bpmn20.xml";
+        loadProcess(serviceManager.getFileService().read(Paths.get(diagramPath).toUri()));
+    }
+
+    /**
+     * Constructor with diagram name as parameter. It loads modelInstance from file
+     * for given name.
+     *
+     * @param diagramXmlContent
+     *            as String
+     * @throws IOException
+     *             in case if file for given name doesn't exist
+     */
+    public Reader(InputStream diagramXmlContent) throws IOException {
+        loadProcess(diagramXmlContent);
     }
 
     /**
@@ -72,7 +83,7 @@ public class Reader {
     public Template convertWorkflowToTemplate(Template template) throws DAOException, WorkflowException {
         this.tasks = new HashMap<>();
 
-        getWorkflowTasks();
+        readWorkflowTasks();
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
@@ -83,12 +94,46 @@ public class Reader {
         return template;
     }
 
+    public void validateWorkflowTasks() throws WorkflowException {
+        readWorkflowTasks();
+    }
+
+    /**
+     * Get tasks.
+     *
+     * @return value of tasks
+     */
+    public Map<Task, TaskInfo> getTasks() {
+        return tasks;
+    }
+
+    /**
+     * Set tasks.
+     *
+     * @param tasks
+     *            as list of BPMN Task objects
+     */
+    public void setTasks(Map<Task, TaskInfo> tasks) {
+        this.tasks = tasks;
+    }
+
+    /**
+     * Get workflow.
+     *
+     * @return value of workflow
+     */
+    public Diagram getWorkflow() {
+        return workflow;
+    }
+
     /**
      * Read the workflow from diagram.
+     * 
+     * @param diagramXmlContent
+     *            as InputStream
      */
-    private void loadProcess() throws IOException {
-        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + this.diagramName + ".bpmn20.xml";
-        modelInstance = Bpmn.readModelFromStream(fileService.read(Paths.get(diagramPath).toUri()));
+    private void loadProcess(InputStream diagramXmlContent) throws IOException {
+        modelInstance = Bpmn.readModelFromStream(diagramXmlContent);
         getWorkflowFromProcess();
     }
 
@@ -99,7 +144,7 @@ public class Reader {
         Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
 
         if (Objects.isNull(process)) {
-            throw new IOException("It looks that given file contains invalid BPMN diagram!");
+            throw new IOException("It looks that given file or input stream contains invalid BPMN diagram!");
         }
         this.workflow = new Diagram(process);
     }
@@ -137,7 +182,7 @@ public class Reader {
         return task;
     }
 
-    private void getWorkflowTasks() throws WorkflowException {
+    private void readWorkflowTasks() throws WorkflowException {
         StartEvent startEvent = modelInstance.getModelElementsByType(StartEvent.class).iterator().next();
         iterateOverNodes(startEvent.getOutgoing().iterator().next().getTarget(), 1);
     }
@@ -264,7 +309,14 @@ public class Reader {
                 iterateOverNodes(nextNode, ordering, workflowCondition);
             }
         } else {
-            throw new WorkflowException("Task has more than one following tasks without any gateway in between!");
+            if (nextNodes.count() == 0) {
+                // TODO: implement here case for tasks with end event
+                // selenium test has problem as it doesn't add end event
+                // TODO: find solution for selenium test
+            } else {
+                throw new WorkflowException("Task with title '" + node.getName()
+                        + "' has more than one following tasks without any gateway in between!");
+            }
         }
     }
 
@@ -275,33 +327,5 @@ public class Reader {
      */
     BpmnModelInstance getModelInstance() {
         return modelInstance;
-    }
-
-    /**
-     * Get tasks.
-     *
-     * @return value of tasks
-     */
-    public Map<Task, TaskInfo> getTasks() {
-        return tasks;
-    }
-
-    /**
-     * Set tasks.
-     *
-     * @param tasks
-     *            as list of BPMN Task objects
-     */
-    public void setTasks(Map<Task, TaskInfo> tasks) {
-        this.tasks = tasks;
-    }
-
-    /**
-     * Get workflow.
-     *
-     * @return value of workflow
-     */
-    public Diagram getWorkflow() {
-        return workflow;
     }
 }

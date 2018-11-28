@@ -13,6 +13,7 @@ package org.kitodo.forms;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +44,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
@@ -101,11 +103,18 @@ public class WorkflowForm extends BaseForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        boolean filesSaved = saveFiles();
-        if (filesSaved) {
-            saveWorkflow();
-            return workflowListPath;
-        } else {
+        try {
+            if (saveFiles()) {
+                saveWorkflow();
+                return workflowListPath;
+            } else {
+                return this.stayOnCurrentPage;
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
+            return this.stayOnCurrentPage;
+        } catch (WorkflowException e) {
+            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -140,7 +149,7 @@ public class WorkflowForm extends BaseForm {
      *
      * @return true if save, false if not
      */
-    private boolean saveFiles() {
+    private boolean saveFiles() throws IOException, WorkflowException {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
 
@@ -158,6 +167,9 @@ public class WorkflowForm extends BaseForm {
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+
+            Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
+            reader.validateWorkflowTasks();
 
             saveFile(svgDiagramURI, svgDiagram);
             saveFile(xmlDiagramURI, xmlDiagram);
