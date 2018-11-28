@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<!--
+    This file provides an XML Schema for the ruleset. It was derived from the
+    Java classes for parsing the ruleset. The structure and naming follow the
+    the Java classes. This file is not used by the source code. It exists at
+    the suggestion of Henning Gerhardt so that it can be used to validate a
+    ruleset file with an (external) XML validation service.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:complexType name="AcquisitionStage">
+        <xs:sequence>
+            <xs:element name="setting" minOccurs="1" maxOccurs="unbounded" type="Setting"/>
+        </xs:sequence>
+        <xs:attribute use="required" type="xs:string" name="name"/>
+    </xs:complexType>
+
+    <xs:complexType name="CodomainElement">
+        <xs:attribute type="Type" name="type"/>
+        <xs:attribute type="xs:anyURI" name="namespace"/>
+    </xs:complexType>
+
+    <xs:complexType name="DeclarationElement">
+        <xs:sequence>
+            <xs:element name="division" minOccurs="1" maxOccurs="unbounded" type="Division" />
+            <xs:element name="key" minOccurs="0" maxOccurs="unbounded" type="Key"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Division">
+        <xs:sequence>
+            <xs:element type="Label" minOccurs="1" maxOccurs="unbounded" name="label"/>
+            <xs:element type="SubdivisionByDateElement" minOccurs="0" maxOccurs="1" name="subdivisionByDate"/>
+        </xs:sequence>
+        <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
+    </xs:complexType>
+
+    <xs:simpleType name="DomainAttribute">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="description"/>
+            <xs:enumeration value="digitalProvenance"/>
+            <xs:enumeration value="rights"/>
+            <xs:enumeration value="source"/>
+            <xs:enumeration value="technical"/>
+            <xs:enumeration value="mets:div"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="EditingElement">
+        <xs:sequence>
+            <xs:element name="setting" minOccurs="0" maxOccurs="unbounded" type="Setting"/>
+            <xs:element name="acquisitionStage" minOccurs="0" maxOccurs="unbounded" type="AcquisitionStage"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Key">
+        <xs:sequence>
+            <xs:element name="label" minOccurs="1" maxOccurs="unbounded" type="Label"/>
+            <xs:element name="codomain" minOccurs="0" maxOccurs="1" type="CodomainElement"/>
+            <xs:element name="option" minOccurs="0" maxOccurs="unbounded" type="Option"/>
+            <xs:element name="pattern" minOccurs="0" maxOccurs="1" type="xs:string"/>
+            <xs:element name="preset" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+            <xs:element name="key" minOccurs="0" maxOccurs="unbounded" type="Key"/>
+        </xs:sequence>
+        <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
+        <xs:attribute type="DomainAttribute" name="domain" default="description"/>
+    </xs:complexType>
+
+    <xs:complexType name="Label">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="Option">
+        <xs:sequence>
+            <xs:element name="label" minOccurs="0" maxOccurs="unbounded" type="Label"/>
+        </xs:sequence>
+        <xs:attribute use="required" type="xs:string" name="value"/>
+    </xs:complexType>
+
+    <xs:complexType name="Rule">
+        <xs:sequence>
+            <xs:element name="permit" minOccurs="0" maxOccurs="unbounded" type="Rule"/>
+        </xs:sequence>
+        <xs:attribute type="xs:NMTOKEN" name="divioion"/>
+        <xs:attribute type="xs:NMTOKEN" name="key"/>
+        <xs:attribute type="xs:string" name="value"/>
+        <xs:attribute type="xs:nonNegativeInteger" name="minOccurs"/>
+        <xs:attribute type="xs:nonNegativeInteger" name="maxOccurs"/>
+        <xs:attribute type="Unspecified" name="unspecified"/>
+    </xs:complexType>
+
+    <xs:element name="ruleset">
+        <xs:complexType>
+            <xs:sequence>
+            <xs:element name="declaration" minOccurs="1" maxOccurs="1" type="DeclarationElement"/>
+            <xs:element name="correlation" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="restriction" minOccurs="1" maxOccurs="unbounded" type="Rule"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="editing" minOccurs="0" maxOccurs="1" type="EditingElement"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Setting">
+        <xs:attribute type="xs:NMTOKEN" name="key"/>
+        <xs:attribute type="xs:boolean" name="alwaysShowing" default="false"/>
+        <xs:attribute type="xs:boolean" name="editable" default="true"/>
+        <xs:attribute type="xs:boolean" name="excluded" default="false"/>
+        <xs:attribute type="xs:boolean" name="multiline" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="SubdivisionByDateDivisionElement">
+        <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
+        <xs:attribute use="required" type="xs:NMTOKEN" name="dates"/>
+        <xs:attribute use="required" type="xs:string" name="scheme"/>
+    </xs:complexType>
+
+    <xs:complexType name="SubdivisionByDateElement">
+        <xs:sequence>
+            <xs:element name="declaration" minOccurs="1" maxOccurs="unbounded" type="SubdivisionByDateDivisionElement"/>
+        </xs:sequence>
+        <xs:attribute name="yearBegin">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="--((0[1-9]|1[0-2])-([01][1-9]|10|2[0-8]))|((0[13-9]|1[0-2])-(29|30))|((0[13578]|1[0-2])-31)"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="Type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="anyURI"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="date"/>
+            <xs:enumeration value="integer"/>
+            <xs:enumeration value="string"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Unspecified">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="unrestricted"/>
+            <xs:enumeration value="forbidden"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
