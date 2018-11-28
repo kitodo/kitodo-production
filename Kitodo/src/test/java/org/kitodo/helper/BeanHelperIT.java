@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.workflow.model.Reader;
+import org.kitodo.workflow.model.Converter;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,11 +39,11 @@ public class BeanHelperIT {
 
     @Test
     public void shouldCopyTasks() throws Exception {
-        Reader reader = new Reader("gateway-test1");
+        Converter converter = new Converter("gateway-test1");
 
         Template template = new Template();
         template.setTitle("Title");
-        template = reader.convertWorkflowToTemplate(template);
+        converter.convertWorkflowToTemplate(template);
         Process process = new Process();
 
         BeanHelper.copyTasks(template, process);
