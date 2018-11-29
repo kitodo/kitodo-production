@@ -2205,7 +2205,7 @@ public class ProzesskopieForm {
     /**
      * Checks if the file upload is available for the given catalogue configuration
      */
-    public void checkFileUpload() {
+    private void checkFileUpload() {
         try {
             Boolean flag = false;
             for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
