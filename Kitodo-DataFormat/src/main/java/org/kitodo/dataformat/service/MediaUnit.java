@@ -32,7 +32,10 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     private int order;
     private String orderlabel;
 
-    public MediaUnit(DivType div, Mets mets, Map<String, MediaVariant> mediaVariants) {
+    public MediaUnit() {
+    }
+
+    MediaUnit(DivType div, Mets mets, Map<String, MediaVariant> mediaVariants) {
         mediaFiles = div.getFptr().parallelStream().map(Fptr::getFILEID).filter(object -> object instanceof FileType)
                 .map(object -> (FileType) object)
                 .collect(Collectors.toMap(

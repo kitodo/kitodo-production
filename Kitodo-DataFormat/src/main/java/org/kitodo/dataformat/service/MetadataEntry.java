@@ -19,7 +19,10 @@ public class MetadataEntry extends Metadata implements MetadataXmlElementAccessI
 
     private String value;
 
-    public MetadataEntry(MdSec domain, MetadataType metadataType) {
+    public MetadataEntry() {
+    }
+
+    MetadataEntry(MdSec domain, MetadataType metadataType) {
         super.domain = domain;
         super.type = metadataType.getName();
         this.value = metadataType.getValue();

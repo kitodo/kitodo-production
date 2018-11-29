@@ -17,16 +17,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.api.dataformat.mets.MdSec;
 
 public class WorkpieceIT {
 
@@ -78,27 +78,115 @@ public class WorkpieceIT {
     @Test
     public void testWriteXML() throws Exception {
         Workpiece workpiece = new Workpiece();
-        workpiece.read(new FileInputStream(new File("src/test/resources/meta.xml")));
+        workpiece.setId("1");
 
+        List<MediaUnit> pages = new ArrayList<>();
+
+        // add files
+        MediaVariant local = new MediaVariant();
+        local.setUse("LOCAL");
+        local.setMimeType("image/tiff");
+        for (int i = 1; i <= 4; i++) {
+            MediaFile path = new MediaFile();
+            path.setUri(new URI(String.format("images/leaflet_media/%08d.tif", i)));
+            MediaUnit mediaUnit = new MediaUnit();
+            mediaUnit.setOrder(i);
+            mediaUnit.putFLocatForUse(local, path);
+            pages.add(mediaUnit);
+            workpiece.getFileGrp().add(mediaUnit);
+        }
+
+        // create document structure
+        workpiece.getStructMap().setType("leaflet");
+        workpiece.getStructMap().setLabel("The Leaflet");
+        for (MediaUnit page : pages) {
+            View view = new View();
+            view.setFile(page);
+            workpiece.getStructMap().getAreas().add(view);
+        }
+
+        Structure frontCover = new Structure();
+        frontCover.setType("frontCover");
+        frontCover.setLabel("Front cover");
+        View view = new View();
+        view.setFile(pages.get(0));
+        frontCover.getAreas().add(view);
+        workpiece.getStructMap().getChildren().add(frontCover);
+
+        Structure inside = new Structure();
+        inside.setType("inside");
+        inside.setLabel("Inside");
+        view = new View();
+        view.setFile(pages.get(1));
+        inside.getAreas().add(view);
+        view = new View();
+        view.setFile(pages.get(2));
+        inside.getAreas().add(view);
+        workpiece.getStructMap().getChildren().add(inside);
+
+        Structure backCover = new Structure();
+        backCover.setType("backCover");
+        backCover.setLabel("Back cover");
+        view = new View();
+        view.setFile(pages.get(3));
+        backCover.getAreas().add(view);
+        workpiece.getStructMap().getChildren().add(backCover);
+
+        // add metadata
+        MetadataEntry title = new MetadataEntry();
+        title.setType("title");
+        title.setDomain(MdSec.DMD_SEC);
+        title.setValue("The title");
+        frontCover.getMetadata().add(title);
+        MetadataEntryGroup author = new MetadataEntryGroup();
+        author.setType("author");
+        author.setDomain(MdSec.DMD_SEC);
+        MetadataEntry firstName = new MetadataEntry();
+        firstName.setType("firstName");
+        firstName.setValue("Alice");
+        author.getMetadata().add(firstName);
+        MetadataEntry lastName = new MetadataEntry();
+        lastName.setType("firstName");
+        lastName.setValue("Smith");
+        author.getMetadata().add(lastName);
+        frontCover.getMetadata().add(author);
+
+        MetadataEntry imagesConverted = new MetadataEntry();
+        imagesConverted.setType("imageConversionHint");
+        imagesConverted.setDomain(MdSec.DIGIPROV_MD);
+        imagesConverted.setValue("Images have been converted from TIFF to JPEG.");
+        workpiece.getStructMap().getMetadata().add(imagesConverted);
+        frontCover.getMetadata().add(imagesConverted);
+        inside.getMetadata().add(imagesConverted);
+        backCover.getMetadata().add(imagesConverted);
+
+        MetadataEntry copyright = new MetadataEntry();
+        copyright.setType("rights");
+        copyright.setDomain(MdSec.RIGHTS_MD);
+        copyright.setValue("© 2018 All rights reserved");
+        backCover.getMetadata().add(copyright);
+
+        // add derivatives
+        MediaVariant max = new MediaVariant();
+        max.setUse("MAX");
+        max.setMimeType("image/jpeg");
+        for (FileXmlElementAccessInterface mediaUnit : workpiece.getFileGrp()) {
+            String tiffFile = mediaUnit.getFLocatForUse(local).getUri().toString();
+            String jpgFile = tiffFile.replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
+            MediaFile path = new MediaFile();
+            path.setUri(new URI(jpgFile));
+            mediaUnit.putFLocatForUse(max, path);
+        }
+
+        // leave a note
         ProcessingNote note = new ProcessingNote();
-        note.setName("Ronge, Matthias");
-        note.setNote("Hallo Welt!" + System.lineSeparator() + "I was here!");
-        note.setRole("Programmer");
-        note.setType("INDIVIDUAL");
+        note.setName("Workpiece integration test");
+        note.setNote(new SimpleDateFormat("[dd.MM.yyyy HH:mm] ").format(new Date()) + "Process created");
+        note.setRole("CREATOR");
+        note.setType("software");
         workpiece.getMetsHdr().add(note);
 
-        workpiece.save(new FileOutputStream(new File("D:/out.xml")));
-    }
-
-    @Test
-    public void testReadWriteXML() throws Exception {
-        JAXBContext jc = JAXBContext.newInstance(Mets.class);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        Mets mets = (Mets) unmarshaller.unmarshal(new File("src/test/resources/meta.xml"));
-
-        JAXBContext context = JAXBContext.newInstance(Mets.class);
-        Marshaller marshal = context.createMarshaller();
-        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshal.marshal(mets, System.out);
+        // write file
+        workpiece.save(new FileOutputStream(new File("src/test/resources/out.xml")));
     }
 }

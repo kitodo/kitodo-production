@@ -42,7 +42,7 @@ public class Structure implements DivXmlElementAccessInterface {
 
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
     private String label;
-    private Collection<MetadataAccessInterface> metadata = new ArrayList<>();
+    private Collection<MetadataAccessInterface> metadata = new HashSet<>();
     private String orderlabel;
     private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
     private String type;
@@ -127,9 +127,8 @@ public class Structure implements DivXmlElementAccessInterface {
         div.setORDERLABEL(orderlabel);
         div.setTYPE(type);
         structuresWithIDs.put(this, divId);
-        views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
-                .map(mediaUnitId -> Pair.of(divId, mediaUnitId))
-                .forEach(smLinkData::add);
+        smLinkData.addAll(views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
+                .map(mediaUnitId -> Pair.of(divId, mediaUnitId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
@@ -139,12 +138,10 @@ public class Structure implements DivXmlElementAccessInterface {
             div.getDMDID().add(dmdSec);
         }
 
-        Optional<AmdSecType> optionalAmdSec = createAmdSec();
+        Optional<AmdSecType> optionalAmdSec = createAmdSec(idp, div);
         if (optionalAmdSec.isPresent()) {
-            AmdSecType amdSec = optionalAmdSec.get();
-            amdSec.setID(idp.next());
-            mets.getAmdSec().add(amdSec);
-            div.getDMDID().add(amdSec);
+            AmdSecType admSec = optionalAmdSec.get();
+            mets.getAmdSec().add(admSec);
         }
 
         for (DivXmlElementAccessInterface substructure : substructures) {
@@ -153,13 +150,17 @@ public class Structure implements DivXmlElementAccessInterface {
         return div;
     }
 
-    private Optional<MdSecType> createMdSec(MdSec dd) {
+    private Optional<MdSecType> createMdSec(MdSec domain) {
         KitodoType kitodoType = new KitodoType();
-        metadata.parallelStream().filter(entry -> dd.equals(entry.getDomain())).filter(MetadataEntry.class::isInstance)
-                .map(MetadataEntry.class::cast).map(MetadataEntry::toMetadata).forEach(kitodoType.getMetadata()::add);
-        metadata.parallelStream().filter(entry -> dd.equals(entry.getDomain()))
-                .filter(MetadataEntryGroup.class::isInstance).map(MetadataEntryGroup.class::cast)
-                .map(MetadataEntryGroup::toMetadataGroup).forEach(kitodoType.getMetadataGroup()::add);
+        for (MetadataAccessInterface entry : metadata) {
+            if (domain.equals(entry.getDomain())) {
+                if (entry instanceof MetadataEntry) {
+                    kitodoType.getMetadata().add(((MetadataEntry) entry).toMetadata());
+                } else if (entry instanceof MetadataEntryGroup) {
+                    kitodoType.getMetadataGroup().add(((MetadataEntryGroup) entry).toMetadataGroup());
+                }
+            }
+        }
         if (kitodoType.getMetadata().isEmpty() && kitodoType.getMetadataGroup().isEmpty()) {
             return Optional.empty();
         } else {
@@ -173,27 +174,35 @@ public class Structure implements DivXmlElementAccessInterface {
         }
     }
 
-    private Optional<AmdSecType> createAmdSec() {
+    private Optional<AmdSecType> createAmdSec(IdentifierProvider idp, DivType div) {
         AmdSecType amdSec = new AmdSecType();
         boolean data = false;
         Optional<MdSecType> optionalSourceMd = createMdSec(MdSec.SOURCE_MD);
         if (optionalSourceMd.isPresent()) {
+            optionalSourceMd.get().setID(idp.next());
             amdSec.getSourceMD().add(optionalSourceMd.get());
+            div.getADMID().add(optionalSourceMd.get());
             data = true;
         }
         Optional<MdSecType> optionalDigiprovMd = createMdSec(MdSec.DIGIPROV_MD);
         if (optionalDigiprovMd.isPresent()) {
+            optionalDigiprovMd.get().setID(idp.next());
             amdSec.getDigiprovMD().add(optionalDigiprovMd.get());
+            div.getADMID().add(optionalDigiprovMd.get());
             data = true;
         }
         Optional<MdSecType> optionalRightsMd = createMdSec(MdSec.RIGHTS_MD);
         if (optionalRightsMd.isPresent()) {
+            optionalRightsMd.get().setID(idp.next());
             amdSec.getRightsMD().add(optionalRightsMd.get());
+            div.getADMID().add(optionalRightsMd.get());
             data = true;
         }
         Optional<MdSecType> optionalTechMd = createMdSec(MdSec.TECH_MD);
         if (optionalTechMd.isPresent()) {
+            optionalTechMd.get().setID(idp.next());
             amdSec.getTechMD().add(optionalTechMd.get());
+            div.getADMID().add(optionalTechMd.get());
             data = true;
         }
         return data ? Optional.of(amdSec) : Optional.empty();

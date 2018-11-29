@@ -16,7 +16,10 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 
 public class View implements AreaXmlElementAccessInterface {
 
-    MediaUnit mediaUnit;
+    private MediaUnit mediaUnit;
+
+    public View() {
+    }
 
     public View(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;

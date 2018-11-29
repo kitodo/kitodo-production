@@ -23,6 +23,9 @@ public class MediaVariant implements UseXmlAttributeAccessInterface {
     private String mimeType;
     private String use;
 
+    public MediaVariant() {
+    }
+
     MediaVariant(FileGrp fileGrp) {
         this.use = fileGrp.getUSE();
         Set<String> mimeTypes = fileGrp.getFile().parallelStream().map(fileType -> fileType.getMIMETYPE())

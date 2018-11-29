@@ -22,7 +22,10 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
 
     URI uri;
 
-    public MediaFile(FLocat fLocat) {
+    public MediaFile() {
+    }
+
+    MediaFile(FLocat fLocat) {
         try {
             uri = new URI(fLocat.getHref());
         } catch (URISyntaxException e) {

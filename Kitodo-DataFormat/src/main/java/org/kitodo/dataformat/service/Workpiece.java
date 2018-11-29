@@ -319,11 +319,11 @@ public class Workpiece implements MetsXmlElementAccessInterface {
             MediaVariant mediaVariant = fileGrpData.getKey();
             fileGrp.setUSE(mediaVariant.getUse());
             String mimeType = mediaVariant.getMimeType();
-            for (MediaFile mediaFile : fileGrpData.getValue()) {
-                FileType file = mediaFile.toFile(idp.next(), mimeType);
-                fileGrp.getFile().add(file);
-                mediaFilesToIDFiles.put(mediaFile, file);
-            }
+            Map<MediaFile, FileType> files = fileGrpData.getValue().parallelStream()
+                    .map(mediaFile -> Pair.of(mediaFile, mediaFile.toFile(idp.next(), mimeType)))
+                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            mediaFilesToIDFiles.putAll(files);
+            fileGrp.getFile().addAll(files.values());
             fileSec.getFileGrp().add(fileGrp);
         }
         return fileSec;
@@ -370,12 +370,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      */
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
-        structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
+        smLinkData.parallelStream().map(entry -> {
             SmLink smLink = new SmLink();
             smLink.setFrom(entry.getLeft());
             smLink.setTo(entry.getRight());
             return smLink;
-        }).collect(Collectors.toList()));
+        }).forEach(structLink.getSmLinkOrSmLinkGrp()::add);
         return structLink;
     }
 }
