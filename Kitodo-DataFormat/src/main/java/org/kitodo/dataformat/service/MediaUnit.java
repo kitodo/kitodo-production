@@ -1,5 +1,17 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.dataformat.service;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,7 +47,7 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     }
 
     @Override
-    public Set<? extends Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface>> getAllUsesWithFLocats() {
+    public Set<Entry<MediaVariant, MediaFile>> getAllUsesWithFLocats() {
         return mediaFiles.entrySet();
     }
 
@@ -74,5 +86,22 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     @Override
     public void setOrderlabel(String orderlabel) {
         this.orderlabel = orderlabel;
+    }
+
+    DivType toDiv(IdentifierProvider identifierProvider, Map<MediaFile, FileType> mediaFilesToIDFiles,
+            Map<MediaUnit, String> mediaUnitIDs) {
+
+        DivType div = new DivType();
+        String divId = identifierProvider.next();
+        div.setID(divId);
+        mediaUnitIDs.put(this, divId);
+        div.setORDER(BigInteger.valueOf(order));
+        div.setORDERLABEL(orderlabel);
+        for (Entry<MediaVariant, MediaFile> use : mediaFiles.entrySet()) {
+            Fptr fptr = new Fptr();
+            fptr.setFILEID(mediaFilesToIDFiles.get(use.getValue()));
+            div.getFptr().add(fptr);
+        }
+        return div;
     }
 }

@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.dataformat.service;
 
 import java.util.Arrays;
@@ -45,6 +56,16 @@ public class ProcessingNote implements AgentXmlElementAccessInterface {
      * {@link #KNOWN_TYPES}.
      */
     private String type;
+
+    public ProcessingNote() {
+    }
+
+    ProcessingNote(Agent agent) {
+        this.name = agent.getName();
+        this.note = String.join(System.lineSeparator(), agent.getNote());
+        this.role = "OTHER".equals(agent.getROLE()) ? agent.getOTHERROLE() : agent.getROLE();
+        this.type = "OTHER".equals(agent.getTYPE()) ? agent.getOTHERTYPE() : agent.getROLE();
+    }
 
     /**
      * Returns the name of the entity causing the entry.
@@ -158,7 +179,9 @@ public class ProcessingNote implements AgentXmlElementAccessInterface {
     Agent toAgent() {
         Agent agent = new Agent();
         agent.setName(name);
-        agent.getNote().add(note);
+        for (String paragraph : note.split(System.lineSeparator())) {
+            agent.getNote().add(paragraph);
+        }
         if (KNOWN_ROLES.contains(role)) {
             agent.setROLE(role);
         } else {

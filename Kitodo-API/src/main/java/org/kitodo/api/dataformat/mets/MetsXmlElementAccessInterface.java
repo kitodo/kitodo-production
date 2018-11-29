@@ -103,4 +103,14 @@ public interface MetsXmlElementAccessInterface {
      *             if the writing fails
      */
     void save(OutputStream out) throws IOException;
+
+    /**
+     * Sets / changes the ID of the document. The system-internal ID of the
+     * document should be contained in the document and can therefore be set
+     * with this method. The method should be run before saving to set the ID.
+     * 
+     * @param id
+     *            the ID of the document
+     */
+    void setId(String id);
 }

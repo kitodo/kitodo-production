@@ -15,19 +15,25 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.junit.Test;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.dataformat.metskitodo.Mets;
 
 public class WorkpieceIT {
 
-    @Test
     /**
      * Tests loading a workpiece from a METS file.
      */
+    @Test
     public void testReadXML() throws Exception {
         Workpiece workpiece = new Workpiece();
         workpiece.read(new FileInputStream(new File("src/test/resources/meta.xml")));
@@ -67,5 +73,32 @@ public class WorkpieceIT {
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
             workpiece.getFileGrp().stream().map(FileXmlElementAccessInterface::getOrderlabel)
                     .collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testWriteXML() throws Exception {
+        Workpiece workpiece = new Workpiece();
+        workpiece.read(new FileInputStream(new File("src/test/resources/meta.xml")));
+
+        ProcessingNote note = new ProcessingNote();
+        note.setName("Ronge, Matthias");
+        note.setNote("Hallo Welt!" + System.lineSeparator() + "I was here!");
+        note.setRole("Programmer");
+        note.setType("INDIVIDUAL");
+        workpiece.getMetsHdr().add(note);
+
+        workpiece.save(new FileOutputStream(new File("D:/out.xml")));
+    }
+
+    @Test
+    public void testReadWriteXML() throws Exception {
+        JAXBContext jc = JAXBContext.newInstance(Mets.class);
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        Mets mets = (Mets) unmarshaller.unmarshal(new File("src/test/resources/meta.xml"));
+
+        JAXBContext context = JAXBContext.newInstance(Mets.class);
+        Marshaller marshal = context.createMarshaller();
+        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshal.marshal(mets, System.out);
     }
 }
