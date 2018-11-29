@@ -2210,11 +2210,10 @@ public class ProzesskopieForm {
             Boolean flag = false;
             for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
                 int i = 0;
-                SubnodeConfiguration pluginConfiguration = null;
                 XMLConfiguration config = plugin.getXMLConfiguration();
                 for (Object catalogue : config.getList("catalogue[@title]")) {
                     if (catalogue.toString().equals(this.opacKatalog)) {
-                        pluginConfiguration = config.configurationAt("catalogue(" + i + ")");
+                        SubnodeConfiguration pluginConfiguration = config.configurationAt("catalogue(" + i + ")");
                         flag = Boolean.valueOf(pluginConfiguration.getString("fileUpload"));
                     }
                     i++;
