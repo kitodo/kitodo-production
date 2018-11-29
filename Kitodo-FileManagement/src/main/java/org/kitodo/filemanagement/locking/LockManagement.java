@@ -49,10 +49,7 @@ public class LockManagement {
      * The singleton instance of the lock management. This class should be used
      * as singleton, meaning that there is only one lock management all over the
      * class loader. Everything else would not make sense or would even be
-     * dangerous. Nevertheless, the methods were not simply implemented
-     * {@code static}ally, because in the tests for this class, lock management
-     * must be re-initialized for each test. But for the usage, only the
-     * singleton should be used and no more instances of the class should exist.
+     * dangerous.
      */
     private static volatile LockManagement instance;
 
@@ -97,7 +94,7 @@ public class LockManagement {
      * This map will list for each URI what permissions have been granted to
      * whom.
      */
-    private final Map<URI, GrantedPermissions> grantedPermissions = new HashMap<>();
+    private Map<URI, GrantedPermissions> grantedPermissions = new HashMap<>();
 
     /**
      * Variable for accessing the immutable read file management.
@@ -106,12 +103,19 @@ public class LockManagement {
      * Note: The variable is package private for the unit test to check the
      * state of the immutable read file management.
      */
-    final ImmutableReadFileManagement immutableReadFileManagement = new ImmutableReadFileManagement();
+    private ImmutableReadFileManagement immutableReadFileManagement = new ImmutableReadFileManagement();
 
     /**
      * Variable for accessing the stream management.
      */
-    private final StreamManagement streamManagement = new StreamManagement();
+    private StreamManagement streamManagement = new StreamManagement();
+
+    /**
+     * Creates a new lock management. This constructor is private because it
+     * must only be called once per operation.
+     */
+    private LockManagement() {
+    }
 
     /**
      * Checks for a group of locks if they can be returned.
@@ -226,6 +230,16 @@ public class LockManagement {
         logger.trace("{} is allowed to open a {} channel to {}.", permissions.getUser(), write ? "writing" : "reading",
             uri);
         return uri;
+    }
+
+    /**
+     * <b>This method must never be called!</b> It may only be used by tests to
+     * reset the status of this instance.
+     */
+    void clear() {
+        grantedPermissions = new HashMap<>();
+        immutableReadFileManagement = new ImmutableReadFileManagement();
+        streamManagement = new StreamManagement();
     }
 
     /**

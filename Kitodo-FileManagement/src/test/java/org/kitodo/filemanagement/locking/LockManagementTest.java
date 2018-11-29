@@ -55,7 +55,11 @@ public class LockManagementTest {
      * copy the files.
      */
     private static final URI AN_URI = new File("Lorem ipsum").toURI();
-    private static final URI ANOTHER_URI = new File("dolor sit amet").toURI();
+
+    /**
+     * The lock management to be tested.
+     */
+    private final LockManagement underTest = LockManagement.getInstance();
 
     /**
      * If a user has an exclusive lock on one URI, the other user can not get
@@ -64,7 +68,7 @@ public class LockManagementTest {
      */
     @Test
     public void testExclusiveLockIsExclusive() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -94,7 +98,7 @@ public class LockManagementTest {
 
         for (LockingMode firstLock : LockingMode.values()) {
             for (LockingMode lockToAdd : LockingMode.values()) {
-                LockManagement underTest = new LockManagement();
+                underTest.clear();
 
                 LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI1, firstLock), null);
                 assertThat("Alice should have been allowed to access", alicesAccess,
@@ -118,7 +122,7 @@ public class LockManagementTest {
     public void testImmutableReadLockingWithLaterCleanUp() throws IOException {
         final URI existingURI1 = File.createTempFile("an_existing_file", ".xml").toURI();
 
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         try (LockingResult alicesAccess = underTest
                 .tryLock(createRequest(ALICE, existingURI1, LockingMode.IMMUTABLE_READ), null)) {
@@ -144,7 +148,7 @@ public class LockManagementTest {
     public void testImmutableReadLockingWithMultipleUsers() throws IOException {
         final URI existingURI = File.createTempFile("an_existing_file", ".xml").toURI();
 
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
             null);
@@ -218,7 +222,7 @@ public class LockManagementTest {
      */
     @Test(expected = IllegalStateException.class)
     public void testLockCanOnlyBeReturnedIfAllStreamsAreClosedForOpenInputStream() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
@@ -237,7 +241,7 @@ public class LockManagementTest {
      */
     @Test(expected = IllegalStateException.class)
     public void testLockCanOnlyBeReturnedIfAllStreamsAreClosedForOpenOutputStream() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -263,7 +267,8 @@ public class LockManagementTest {
                 Map<URI, LockingMode> request = new TreeMap<>();
                 request.put(existingURI1, firstLock);
                 request.put(existingURI2, secondLock);
-                LockingResult alicesAccess = new LockManagement().tryLock(new LockRequests(ALICE, request), null);
+                underTest.clear();
+                LockingResult alicesAccess = underTest.tryLock(new LockRequests(ALICE, request), null);
                 assertThat("Alice should have been allowed to access", alicesAccess,
                     is(instanceOf(GrantedAccess.class)));
             }
@@ -271,7 +276,7 @@ public class LockManagementTest {
 
         for (LockingMode firstLock : LockingMode.values()) {
             for (LockingMode secondLock : LockingMode.values()) {
-                LockManagement underTest = new LockManagement();
+                underTest.clear();
 
                 LockingResult alicesAccess = underTest
                         .tryLock(createRequest(ALICE, existingURI1, LockingMode.EXCLUSIVE), null);
@@ -310,7 +315,7 @@ public class LockManagementTest {
         final URI anIssue = File.createTempFile("issue", ".xml").toURI();
         final URI anotherIssue = File.createTempFile("anotherIssue", ".xml").toURI();
 
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         // Alice opens a newspaper issue
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, anIssue, LockingMode.EXCLUSIVE), null);
@@ -405,7 +410,7 @@ public class LockManagementTest {
      */
     @Test
     public void testMutualExclusionOfExclusiveLock() {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -422,7 +427,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testReadingRequiresGrantedPermissionForExclusiveLock() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -439,7 +444,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testReadingRequiresGrantedPermissionForImmutableReadLock() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -460,7 +465,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testReadingRequiresGrantedPermissionForUpgradeableReadLock() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -491,7 +496,7 @@ public class LockManagementTest {
      */
     @Test
     public void testUpgradeableReadLocking() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
@@ -545,7 +550,7 @@ public class LockManagementTest {
      */
     @Test(expected = ProtocolException.class)
     public void testUpgradeableWriteLockingEnforcesRereading() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
@@ -567,7 +572,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testUpgradeableWriteLockingExpires() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
@@ -591,7 +596,7 @@ public class LockManagementTest {
     public void testWritingNotAllowedForImmutableReadLock() throws IOException {
         final URI existingURI = File.createTempFile("an_existing_file", ".xml").toURI();
 
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
             null);
@@ -606,7 +611,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testWritingNotAllowedForUpgradeableReadLock() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
@@ -621,7 +626,7 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testWritingRequiresGrantedPermissionForExclusiveLock() throws IOException {
-        LockManagement underTest = new LockManagement();
+        underTest.clear();
 
         LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
@@ -638,7 +643,8 @@ public class LockManagementTest {
      */
     @Test(expected = AccessDeniedException.class)
     public void testWritingRequiresPermission() throws IOException {
-        new LockManagement().checkPermission(null, AN_URI, true);
+        underTest.clear();
+        underTest.checkPermission(null, AN_URI, true);
     }
 
     // === Supporting functions for the tests ===
