@@ -82,7 +82,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     private List<FileXmlElementAccessInterface> mediaUnits = new LinkedList<>();
 
     /**
-     * The root node of the outline tree.
+     * The logical structure.
      */
     private Structure structure = new Structure();
 
@@ -124,6 +124,17 @@ public class Workpiece implements MetsXmlElementAccessInterface {
                 .iterator().next();
     }
 
+    /**
+     * Returns the media units of this workpiece. An ordered list of media units
+     * is used to digitally represent a cultural work. The order is of minor
+     * importance at this point. It rather describes the order in which the
+     * media units are displayed on the workstation of the compiler, which
+     * determines the presentation form intended for the consumer (and thus also
+     * their presentation order). Mostly this is the order in which each digital
+     * part was recorded. The media unit is abstracted from its variant at this
+     * point, so there is only one media unit per file. The media unit elements
+     * then provide media files for various uses.
+     */
     @Override
     public List<FileXmlElementAccessInterface> getFileGrp() {
         return mediaUnits;
@@ -232,6 +243,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         return mets;
     }
 
+    /**
+     * Creates the header of the METS file. The header area stores the
+     * timestamp, the ID and the processing notes.
+     * 
+     * @return the header of the METS file
+     */
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
         metsHdr.setCREATEDATE(convertDate(createdate));
@@ -248,7 +265,9 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     /**
-     * Creates an object of class XMLGregorianCalendar.
+     * Creates an object of class XMLGregorianCalendar. Creating this
+     * JAXB-specific class is quite complicated and has therefore been
+     * outsourced to a separate method.
      * 
      * @param gregorianCalendar
      *            value of the calendar
@@ -266,6 +285,22 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         return datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
     }
 
+    /**
+     * Creates the file section. In the file section of a METS file after the
+     * ZVDD DFG Viewer Application Profile, the files are declared in exactly
+     * the opposite way as they are managed in Production. That is, there are
+     * file groups, each file group accommodating the files of a media variant.
+     * Therefore, the media units are first resolved according to their media
+     * variants, then the corresponding XML elements are generated.
+     * 
+     * @param idp
+     *            an object that generates a new, not yet assigned identifier
+     *            each time it is called
+     * @param mediaFilesToIDFiles
+     *            In this map, for each media unit, the corresponding XML file
+     *            element is added, so that it can be used for linking later.
+     * @return
+     */
     private FileSec generateFileSec(IdentifierProvider idp, Map<MediaFile, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();
 
@@ -294,6 +329,23 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         return fileSec;
     }
 
+    /**
+     * Creates the physical struct map. In the physical struct map, the
+     * individual files with their variants are enumerated and labeled.
+     * 
+     * @param identifierProvider
+     *            an object that generates a new, not yet assigned identifier
+     *            each time it is called
+     * @param mediaFilesToIDFiles
+     *            A map of the media files to the XML file elements used to
+     *            declare them in the file section. To output a link to the ID,
+     *            the XML element must be passed to JAXB.
+     * @param mediaUnitIDs
+     *            In this map, the function returns the assigned identifier for
+     *            each media unit so that the link pairs of the struct link
+     *            section can be formed later.
+     * @return the physical struct map
+     */
     private StructMapType generatePhysicalStructMap(IdentifierProvider identifierProvider,
             Map<MediaFile, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
         StructMapType physical = new StructMapType();
@@ -307,6 +359,15 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         return physical;
     }
 
+    /**
+     * Creates the struct link section. The struct link section stores which
+     * files are attached to which nodes and leaves of the description
+     * structure.
+     * 
+     * @param smLinkData
+     *            The list of related IDs
+     * @return the struct link section
+     */
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
         structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
@@ -317,5 +378,4 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         }).collect(Collectors.toList()));
         return structLink;
     }
-
 }
