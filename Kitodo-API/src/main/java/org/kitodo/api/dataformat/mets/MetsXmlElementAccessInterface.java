@@ -54,7 +54,7 @@ public interface MetsXmlElementAccessInterface {
      *
      * @return a service to access the {@code <fileGrp>}
      */
-    List<? extends FileXmlElementAccessInterface> getFileGrp();
+    List<FileXmlElementAccessInterface> getFileGrp();
 
     /**
      * Returns a service to access the {@code <metsHdr>}. The mets hdr makes it
@@ -64,7 +64,7 @@ public interface MetsXmlElementAccessInterface {
      * 
      * @return a service to access the {@code <metsHdr>}
      */
-    List<? extends AgentXmlElementAccessInterface> getMetsHdr();
+    List<AgentXmlElementAccessInterface> getMetsHdr();
 
     /**
      * Returns a service to access to the logical {@code <structMap>}. The

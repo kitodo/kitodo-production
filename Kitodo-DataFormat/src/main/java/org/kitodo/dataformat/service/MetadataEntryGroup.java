@@ -23,7 +23,7 @@ import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 
 public class MetadataEntryGroup extends Metadata implements MetadataGroupXmlElementAccessInterface {
 
-    Collection<Metadata> metadata = new ArrayList<>();
+    Collection<MetadataAccessInterface> metadata = new ArrayList<>();
 
     public MetadataEntryGroup(MdSec domain, MetadataGroupType metadataGroup) {
         super.domain = domain;
@@ -35,7 +35,7 @@ public class MetadataEntryGroup extends Metadata implements MetadataGroupXmlElem
     }
 
     @Override
-    public Collection<? extends MetadataAccessInterface> getMetadata() {
+    public Collection<MetadataAccessInterface> getMetadata() {
         return metadata;
     }
 

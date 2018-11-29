@@ -33,8 +33,11 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -63,7 +66,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     /**
      * The processing history.
      */
-    private List<ProcessingNote> editHistory = new ArrayList<>();
+    private List<AgentXmlElementAccessInterface> editHistory = new ArrayList<>();
 
     /**
      * The identifier of the workpiece.
@@ -73,7 +76,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     /**
      * The media units that belong to this workpiece.
      */
-    private LinkedList<MediaUnit> mediaUnits = new LinkedList<>();
+    private List<FileXmlElementAccessInterface> mediaUnits = new LinkedList<>();
 
     /**
      * The root node of the outline tree.
@@ -119,12 +122,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     @Override
-    public List<? extends FileXmlElementAccessInterface> getFileGrp() {
+    public List<FileXmlElementAccessInterface> getFileGrp() {
         return mediaUnits;
     }
 
     @Override
-    public List<ProcessingNote> getMetsHdr() {
+    public List<AgentXmlElementAccessInterface> getMetsHdr() {
         return editHistory;
     }
 
@@ -235,8 +238,8 @@ public class Workpiece implements MetsXmlElementAccessInterface {
             id.setValue(this.id);
             metsHdr.setMetsDocumentID(id);
         }
-        for (ProcessingNote processingNote : editHistory) {
-            metsHdr.getAgent().add(processingNote.toAgent());
+        for (AgentXmlElementAccessInterface processingNote : editHistory) {
+            metsHdr.getAgent().add(((ProcessingNote) processingNote).toAgent());
         }
         return metsHdr;
     }
@@ -245,11 +248,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         FileSec fileSec = new FileSec();
 
         Map<MediaVariant, Set<MediaFile>> useToMediaUnits = new HashMap<>();
-        for (MediaUnit mediaUnit : mediaUnits) {
-            for (Entry<MediaVariant, MediaFile> variantEntry : mediaUnit.getAllUsesWithFLocats()) {
-                MediaVariant use = variantEntry.getKey();
+        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+            for (Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface> variantEntry : mediaUnit
+                    .getAllUsesWithFLocats()) {
+                MediaVariant use = (MediaVariant) variantEntry.getKey();
                 useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
-                useToMediaUnits.get(use).add(variantEntry.getValue());
+                useToMediaUnits.get(use).add((MediaFile) variantEntry.getValue());
             }
         }
 
@@ -273,8 +277,9 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
         DivType boundBook = new DivType();
-        for (MediaUnit mediaUnit : mediaUnits) {
-            boundBook.getDiv().add(mediaUnit.toDiv(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
+        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+            boundBook.getDiv()
+                    .add(((MediaUnit) mediaUnit).toDiv(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
         }
         physical.setDiv(boundBook);
         return physical;

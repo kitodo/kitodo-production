@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
@@ -41,11 +42,11 @@ public class Structure implements DivXmlElementAccessInterface {
 
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
     private String label;
-    private Collection<Metadata> metadata = new ArrayList<>();
+    private Collection<MetadataAccessInterface> metadata = new ArrayList<>();
     private String orderlabel;
-    private LinkedList<Structure> substructures = new LinkedList<>();
+    private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
     private String type;
-    private List<View> views = new ArrayList<>();
+    private List<AreaXmlElementAccessInterface> views = new ArrayList<>();
 
     public Structure() {
     }
@@ -73,12 +74,12 @@ public class Structure implements DivXmlElementAccessInterface {
     }
 
     @Override
-    public List<View> getAreas() {
+    public List<AreaXmlElementAccessInterface> getAreas() {
         return views;
     }
 
     @Override
-    public List<Structure> getChildren() {
+    public List<DivXmlElementAccessInterface> getChildren() {
         return substructures;
     }
 
@@ -88,7 +89,7 @@ public class Structure implements DivXmlElementAccessInterface {
     }
 
     @Override
-    public Collection<? extends MetadataAccessInterface> getMetadata() {
+    public Collection<MetadataAccessInterface> getMetadata() {
         return metadata;
     }
 
@@ -126,7 +127,8 @@ public class Structure implements DivXmlElementAccessInterface {
         div.setORDERLABEL(orderlabel);
         div.setTYPE(type);
         structuresWithIDs.put(this, divId);
-        views.parallelStream().map(View::getFile).map(mediaUnitIDs::get).map(mediaUnitId -> Pair.of(divId, mediaUnitId))
+        views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
+                .map(mediaUnitId -> Pair.of(divId, mediaUnitId))
                 .forEach(smLinkData::add);
 
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
@@ -145,8 +147,8 @@ public class Structure implements DivXmlElementAccessInterface {
             div.getDMDID().add(amdSec);
         }
 
-        for (Structure substructure : substructures) {
-            div.getDiv().add(substructure.toDiv(idp, mediaUnitIDs, structuresWithIDs, smLinkData, mets));
+        for (DivXmlElementAccessInterface substructure : substructures) {
+            div.getDiv().add(((Structure) substructure).toDiv(idp, mediaUnitIDs, structuresWithIDs, smLinkData, mets));
         }
         return div;
     }
