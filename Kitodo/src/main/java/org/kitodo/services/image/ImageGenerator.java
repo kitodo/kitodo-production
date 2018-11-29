@@ -57,6 +57,7 @@ public class ImageGenerator implements Runnable {
     private static final Logger logger = LogManager.getLogger(ImageGenerator.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private final ImageService imageService = serviceManager.getImageService();    
 
     /**
      * Output folders.
@@ -151,11 +152,10 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
+    private void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
             URI destinationImage) throws IOException {
 
-        ImageService imageGenerator = new ImageService();
-        imageGenerator.createDerivative(sourceImage, imageProperties.getDerivative().get(), destinationImage,
+        imageService.createDerivative(sourceImage, imageProperties.getDerivative().get(), destinationImage,
             imageFileFormat);
     }
 

@@ -29,7 +29,7 @@ public class ImageService {
     private ImageManagementInterface imageManagement;
     private static ImageService instance = null;
 
-    public ImageService() {
+    private ImageService() {
         imageManagement = new KitodoServiceLoader<ImageManagementInterface>(ImageManagementInterface.class)
                 .loadModule();
     }

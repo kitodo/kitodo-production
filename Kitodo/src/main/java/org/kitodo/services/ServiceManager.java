@@ -48,7 +48,7 @@ public class ServiceManager {
     private DataEditorService dataEditorService;
     private DocketService docketService;
     private FilterService filterService;
-    private ImageService imageServic;
+    private ImageService imageService;
     private LdapGroupService ldapGroupService;
     private LdapServerService ldapServerService;
     private PropertyService propertyService;
@@ -107,9 +107,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeImareService() {
-        if (imageServic == null) {
-            imageServic = ImageService.getInstance();
+    private void initializeImageService() {
+        if (imageService == null) {
+            imageService = ImageService.getInstance();
         }
     }
 
@@ -323,9 +323,15 @@ public class ServiceManager {
         return ldapServerService;
     }
 
-    public ImageService getImageSerice() {
-        initializeImareService();
-        return imageServic;
+    /**
+     * Initialize ImageService if it is not yet initialized and next return
+     * it.
+     *
+     * @return ImageService object
+     */
+    public ImageService getImageService() {
+        initializeImageService();
+        return imageService;
     }
 
     /**
