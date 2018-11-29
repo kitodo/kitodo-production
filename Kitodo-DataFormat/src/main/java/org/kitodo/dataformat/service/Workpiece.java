@@ -31,6 +31,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
@@ -231,8 +234,8 @@ public class Workpiece implements MetsXmlElementAccessInterface {
 
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
-        metsHdr.setCREATEDATE(DataformatServiceUtil.convertDate(createdate));
-        metsHdr.setLASTMODDATE(DataformatServiceUtil.convertDate(new GregorianCalendar()));
+        metsHdr.setCREATEDATE(convertDate(createdate));
+        metsHdr.setLASTMODDATE(convertDate(new GregorianCalendar()));
         if (this.id != null) {
             MetsDocumentID id = new MetsDocumentID();
             id.setValue(this.id);
@@ -242,6 +245,25 @@ public class Workpiece implements MetsXmlElementAccessInterface {
             metsHdr.getAgent().add(((ProcessingNote) processingNote).toAgent());
         }
         return metsHdr;
+    }
+
+    /**
+     * Creates an object of class XMLGregorianCalendar.
+     * 
+     * @param gregorianCalendar
+     *            value of the calendar
+     * @return an object of class XMLGregorianCalendar
+     */
+    private static XMLGregorianCalendar convertDate(GregorianCalendar gregorianCalendar) {
+        DatatypeFactory datatypeFactory;
+        try {
+            datatypeFactory = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException e) {
+            String message = e.getMessage();
+            throw new NoClassDefFoundError(message != null ? message
+                    : "Implementation of DatatypeFactory not available or cannot be instantiated.");
+        }
+        return datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
     }
 
     private FileSec generateFileSec(IdentifierProvider idp, Map<MediaFile, FileType> mediaFilesToIDFiles) {
