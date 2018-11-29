@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.dataformat.service;
 
 import java.io.IOException;
@@ -6,9 +17,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,14 +32,18 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
+import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType.FileSec;
+import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr;
+import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.Agent;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.MetsDocumentID;
+import org.kitodo.dataformat.metskitodo.MetsType.StructLink;
 import org.kitodo.dataformat.metskitodo.StructLinkType.SmLink;
 import org.kitodo.dataformat.metskitodo.StructMapType;
 
@@ -49,6 +66,11 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     private List<ProcessingNote> editHistory = new ArrayList<>();
 
     /**
+     * The identifier of the workpiece.
+     */
+    private String id;
+
+    /**
      * The media units that belong to this workpiece.
      */
     private LinkedList<MediaUnit> mediaUnits = new LinkedList<>();
@@ -56,12 +78,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     /**
      * The root node of the outline tree.
      */
-    private Node structure = new Node();
-
-    /**
-     * The identifier of the workpiece.
-     */
-    private String id;
+    private Structure structure = new Structure();
 
     /**
      * Creates an empty workpiece. This is the default state when the editor
@@ -80,26 +97,25 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            METS XML structure to read
      */
     private Workpiece(Mets mets) {
-        this.createdate = mets.getMetsHdr().getCREATEDATE().toGregorianCalendar();
-
+        createdate = mets.getMetsHdr().getCREATEDATE().toGregorianCalendar();
+        for (Agent agent : mets.getMetsHdr().getAgent()) {
+            editHistory.add(new ProcessingNote(agent));
+        }
         Map<String, MediaVariant> mediaVariants = mets.getFileSec().getFileGrp().parallelStream().map(MediaVariant::new)
                 .collect(Collectors.toMap(MediaVariant::getUse, Function.identity()));
-
-        List<DivType> divs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
-        Map<String, MediaUnit> mediaUnitsForDivIDs = new HashMap<>((int) Math.ceil(divs.size() / 0.75));
-        mediaUnits = new LinkedList<>();
-        for (DivType div : divs) {
+        List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
+        Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
+        for (DivType div : physicalDivs) {
             MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
             mediaUnits.add(mediaUnit);
-            mediaUnitsForDivIDs.put(div.getID(), mediaUnit);
+            divIDsToMediaUnits.put(div.getID(), mediaUnit);
         }
-
         Map<String, Set<MediaUnit>> mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
                 .filter(SmLink.class::isInstance).map(SmLink.class::cast)
-                .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> mediaUnitsForDivIDs.get(smLink.getTo())));
+                .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         structure = getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMapType -> new Node(structMapType.getDiv(), mediaUnitsMap))
-                .collect(Collectors.toList()).iterator().next();
+                .map(structMap -> new Structure(structMap.getDiv(), mediaUnitsMap)).collect(Collectors.toList())
+                .iterator().next();
     }
 
     @Override
@@ -108,17 +124,17 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     @Override
-    public List<? extends AgentXmlElementAccessInterface> getMetsHdr() {
+    public List<ProcessingNote> getMetsHdr() {
         return editHistory;
     }
 
     @Override
-    public DivXmlElementAccessInterface getStructMap() {
+    public Structure getStructMap() {
         return structure;
     }
 
     private static final Stream<StructMapType> getStructMapsStreamByType(Mets mets, String type) {
-        return mets.getStructMap().parallelStream().filter(λ -> λ.getTYPE().equals(type));
+        return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 
     @Override
@@ -167,7 +183,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
             JAXBContext context = JAXBContext.newInstance(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshal.marshal(this.toMets(), System.out);
+            marshal.marshal(this.toMets(), out);
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -175,6 +191,11 @@ public class Workpiece implements MetsXmlElementAccessInterface {
                 throw new IOException(e.getMessage(), e);
             }
         }
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -186,14 +207,29 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     private Mets toMets() {
         Mets mets = new Mets();
         mets.setMetsHdr(generateMetsHdr());
-        // TODO
+
+        IdentifierProvider identifierProvider = new IdentifierProvider();
+        Map<MediaFile, FileType> mediaFilesToIDFiles = new HashMap<>();
+        mets.setFileSec(generateFileSec(identifierProvider, mediaFilesToIDFiles));
+
+        Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
+        mets.getStructMap().add(generatePhysicalStructMap(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
+
+        Map<Structure, String> structuresWithIDs = new HashMap<>();
+        LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
+        StructMapType logical = new StructMapType();
+        logical.setTYPE("LOGICAL");
+        logical.setDiv(structure.toDiv(identifierProvider, mediaUnitIDs, structuresWithIDs, smLinkData, mets));
+        mets.getStructMap().add(logical);
+
+        mets.setStructLink(createStructLink(smLinkData));
         return mets;
     }
 
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
-        metsHdr.setCREATEDATE(MetsUtils.convertDate(createdate));
-        metsHdr.setLASTMODDATE(MetsUtils.convertDate(new GregorianCalendar()));
+        metsHdr.setCREATEDATE(DataformatServiceUtil.convertDate(createdate));
+        metsHdr.setLASTMODDATE(DataformatServiceUtil.convertDate(new GregorianCalendar()));
         if (this.id != null) {
             MetsDocumentID id = new MetsDocumentID();
             id.setValue(this.id);
@@ -204,4 +240,55 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         }
         return metsHdr;
     }
+
+    private FileSec generateFileSec(IdentifierProvider idp, Map<MediaFile, FileType> mediaFilesToIDFiles) {
+        FileSec fileSec = new FileSec();
+
+        Map<MediaVariant, Set<MediaFile>> useToMediaUnits = new HashMap<>();
+        for (MediaUnit mediaUnit : mediaUnits) {
+            for (Entry<MediaVariant, MediaFile> variantEntry : mediaUnit.getAllUsesWithFLocats()) {
+                MediaVariant use = variantEntry.getKey();
+                useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
+                useToMediaUnits.get(use).add(variantEntry.getValue());
+            }
+        }
+
+        for (Entry<MediaVariant, Set<MediaFile>> fileGrpData : useToMediaUnits.entrySet()) {
+            FileGrp fileGrp = new FileGrp();
+            MediaVariant mediaVariant = fileGrpData.getKey();
+            fileGrp.setUSE(mediaVariant.getUse());
+            String mimeType = mediaVariant.getMimeType();
+            for (MediaFile mediaFile : fileGrpData.getValue()) {
+                FileType file = mediaFile.toFile(idp.next(), mimeType);
+                fileGrp.getFile().add(file);
+                mediaFilesToIDFiles.put(mediaFile, file);
+            }
+            fileSec.getFileGrp().add(fileGrp);
+        }
+        return fileSec;
+    }
+
+    private StructMapType generatePhysicalStructMap(IdentifierProvider identifierProvider,
+            Map<MediaFile, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
+        StructMapType physical = new StructMapType();
+        physical.setTYPE("PHYSICAL");
+        DivType boundBook = new DivType();
+        for (MediaUnit mediaUnit : mediaUnits) {
+            boundBook.getDiv().add(mediaUnit.toDiv(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
+        }
+        physical.setDiv(boundBook);
+        return physical;
+    }
+
+    private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
+        StructLink structLink = new StructLink();
+        structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
+            SmLink smLink = new SmLink();
+            smLink.setFrom(entry.getLeft());
+            smLink.setTo(entry.getRight());
+            return smLink;
+        }).collect(Collectors.toList()));
+        return structLink;
+    }
+
 }

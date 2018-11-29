@@ -26,7 +26,7 @@ import java.util.stream.Collector;
  * Collects an object stream to a multi-map. A multi-map is a
  * {@code Map<K, Set<V>>}, which can store several objects under one key.
  */
-public class MultiMapCollector<T, K, V> implements Collector<T, Map<K, Set<V>>, Map<K, Set<V>>> {
+class MultiMapCollector<T, K, V> implements Collector<T, Map<K, Set<V>>, Map<K, Set<V>>> {
 
     private final Function<T, K> keyAccessor;
     private final Function<T, V> valueAccessor;
