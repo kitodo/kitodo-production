@@ -16,13 +16,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
 
 /**
  * This class is used to return conflicts if the lock was unsuccessful.
  */
-class DeniedAccess implements LockingResult {
+class DeniedAccess extends LockResult {
     /**
      * The conflicts to be returned.
      */

@@ -17,8 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
 
 /**
  * Access privileges granted to a user in one or more consecutive requests. This
@@ -26,7 +26,7 @@ import org.kitodo.api.filemanagement.LockingResult;
  * only those from the queries that have led to this object or with which it has
  * been extended.
  */
-public class GrantedAccess implements LockingResult {
+public class GrantedAccess extends LockResult {
     /**
      * The lock management.
      */
@@ -186,7 +186,7 @@ public class GrantedAccess implements LockingResult {
      */
     @Override
     public Map<URI, Collection<String>> tryLock(Map<URI, LockingMode> requests) throws IOException {
-        LockingResult result = lockManagement.tryLock(user, this, requests);
+        LockResult result = lockManagement.tryLock(user, this, requests);
         if (result instanceof GrantedAccess) {
             locks.putAll(((GrantedAccess) result).locks);
         }

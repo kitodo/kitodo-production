@@ -38,7 +38,7 @@ import org.goobi.io.BackupFileRotation;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -186,7 +186,7 @@ public class FileService {
      * @throws IOException
      *             if write fails
      */
-    public OutputStream write(URI uri, LockingResult access) throws IOException {
+    public OutputStream write(URI uri, LockResult access) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.write(uri, access);
     }
@@ -235,7 +235,7 @@ public class FileService {
      * @throws IOException
      *             if read fails
      */
-    public InputStream read(URI uri, LockingResult access) throws IOException {
+    public InputStream read(URI uri, LockResult access) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.read(uri, access);
     }
@@ -957,7 +957,7 @@ public class FileService {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    public LockingResult tryLock(URI uri, LockingMode lockingMode) throws IOException {
+    public LockResult tryLock(URI uri, LockingMode lockingMode) throws IOException {
         return tryLock(Arrays.asList(uri), lockingMode);
     }
 
@@ -976,7 +976,7 @@ public class FileService {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    public LockingResult tryLock(Collection<URI> uris, LockingMode lockingMode) throws IOException {
+    public LockResult tryLock(Collection<URI> uris, LockingMode lockingMode) throws IOException {
         return tryLock(uris.parallelStream().collect(Collectors.toMap(Function.identity(), all -> lockingMode)));
     }
 
@@ -992,7 +992,7 @@ public class FileService {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    public LockingResult tryLock(Map<URI, LockingMode> requests) throws IOException {
+    public LockResult tryLock(Map<URI, LockingMode> requests) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.tryLock(getCurrentLockingUser(), requests);
     }

@@ -17,10 +17,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Manages allocated locks or provides information about conflict originators in
- * case of error.
+ * Defines an interface to manage allocated locks or obtain information about
+ * conflict originators in case of error.
  */
-public interface LockingResult extends AutoCloseable {
+public interface LockResultProtocol extends AutoCloseable {
     /**
      * Calling close() unlocks all locks. The method is inherited from the
      * AutoCloseable interface, which means that calling tryLock() on the

@@ -64,7 +64,7 @@ public interface FileManagementInterface {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    LockingResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException;
+    LockResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException;
 
     /**
      * Opens an OutputStream to a given uri.
@@ -75,7 +75,7 @@ public interface FileManagementInterface {
      * @deprecated This write function creates an exclusive lock with the
      *             meaningless user name “System”. Therefore, this writing
      *             function should not be used anymore. Use
-     *             {@link #write(URI, LockingResult)} instead.
+     *             {@link #write(URI, LockResult)} instead.
      */
     @Deprecated
     OutputStream write(URI uri) throws IOException;
@@ -98,7 +98,7 @@ public interface FileManagementInterface {
      *             that the file must first be read in again and the input
      *             stream must be closed after the lock has been upgraded.
      */
-    OutputStream write(URI uri, LockingResult permission) throws IOException;
+    OutputStream write(URI uri, LockResult permission) throws IOException;
 
     /**
      * Opens an InputStream to a given uri.
@@ -109,7 +109,7 @@ public interface FileManagementInterface {
      * @deprecated This read function creates an exclusive lock with the
      *             meaningless user name “System”. Therefore, this reading
      *             function should not be used anymore. Use
-     *             {@link #read(URI, LockingResult)} instead.
+     *             {@link #read(URI, LockResult)} instead.
      */
     @Deprecated
     InputStream read(URI uri) throws IOException;
@@ -126,7 +126,7 @@ public interface FileManagementInterface {
      * @throws AccessDeniedException
      *             if the user does not have sufficient authorization
      */
-    InputStream read(URI uri, LockingResult permission) throws IOException;
+    InputStream read(URI uri, LockResult permission) throws IOException;
 
     /**
      * Copy resource.

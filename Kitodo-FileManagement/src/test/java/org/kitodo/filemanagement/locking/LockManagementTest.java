@@ -38,8 +38,8 @@ import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
 import org.kitodo.filemanagement.FileManagement;
 
 public class LockManagementTest {
@@ -70,10 +70,10 @@ public class LockManagementTest {
     public void testExclusiveLockIsExclusive() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Bob should not have been allowed access", noAccessForBob, is(instanceOf(DeniedAccess.class)));
 
@@ -100,7 +100,7 @@ public class LockManagementTest {
             for (LockingMode lockToAdd : LockingMode.values()) {
                 underTest.clear();
 
-                LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI1, firstLock), null);
+                LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI1, firstLock), null);
                 assertThat("Alice should have been allowed to access", alicesAccess,
                     is(instanceOf(GrantedAccess.class)));
 
@@ -124,11 +124,11 @@ public class LockManagementTest {
 
         underTest.clear();
 
-        try (LockingResult alicesAccess = underTest
+        try (LockResult alicesAccess = underTest
                 .tryLock(createRequest(ALICE, existingURI1, LockingMode.IMMUTABLE_READ), null)) {
             assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-            try (LockingResult bobsAccess = underTest
+            try (LockResult bobsAccess = underTest
                     .tryLock(createRequest(ALICE, existingURI1, LockingMode.IMMUTABLE_READ), null)) {
                 assertThat("Bob should have been allowed to access", bobsAccess, is(instanceOf(GrantedAccess.class)));
             }
@@ -150,7 +150,7 @@ public class LockManagementTest {
 
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
         assertThat("One temporary file would have had to be created", listTempFiles(existingURI).length,
@@ -158,7 +158,7 @@ public class LockManagementTest {
         URI alicesTempFile = ((ImmutableReadLock) ((GrantedAccess) alicesAccess).getLock(existingURI))
                 .getImmutableReadCopyURI();
 
-        LockingResult bobsAccess = underTest.tryLock(createRequest(BOB, existingURI, LockingMode.IMMUTABLE_READ), null);
+        LockResult bobsAccess = underTest.tryLock(createRequest(BOB, existingURI, LockingMode.IMMUTABLE_READ), null);
         assertThat("Bob should have been allowed to access", bobsAccess, is(instanceOf(GrantedAccess.class)));
         assertThat("There should be exactly one temporary file", listTempFiles(existingURI).length, is(equalTo(1)));
         URI bobsTempFile = ((ImmutableReadLock) ((GrantedAccess) bobsAccess).getLock(existingURI))
@@ -167,10 +167,10 @@ public class LockManagementTest {
         assertThat("Bob should have been given the same URI to read as Alice", bobsTempFile,
             is(equalTo(alicesTempFile)));
 
-        LockingResult carolsAccess = underTest.tryLock(createRequest(CAROL, existingURI, LockingMode.EXCLUSIVE), null);
+        LockResult carolsAccess = underTest.tryLock(createRequest(CAROL, existingURI, LockingMode.EXCLUSIVE), null);
         assertThat("Carol should have been allowed to access", carolsAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult davesAccess = underTest.tryLock(createRequest(DAVE, existingURI, LockingMode.IMMUTABLE_READ),
+        LockResult davesAccess = underTest.tryLock(createRequest(DAVE, existingURI, LockingMode.IMMUTABLE_READ),
             null);
         assertThat("Dave should have been allowed to access", davesAccess, is(instanceOf(GrantedAccess.class)));
         assertThat("There should be exactly one temporary file", listTempFiles(existingURI).length, is(equalTo(1)));
@@ -181,7 +181,7 @@ public class LockManagementTest {
 
         mimicWriting(underTest, existingURI, (GrantedAccess) carolsAccess);
 
-        LockingResult franksAccess = underTest.tryLock(createRequest(FRANK, existingURI, LockingMode.IMMUTABLE_READ),
+        LockResult franksAccess = underTest.tryLock(createRequest(FRANK, existingURI, LockingMode.IMMUTABLE_READ),
             null);
         assertThat("Frank should have been allowed to access", franksAccess, is(instanceOf(GrantedAccess.class)));
         assertThat("There should be exactly two temporary files", listTempFiles(existingURI).length, is(equalTo(2)));
@@ -195,7 +195,7 @@ public class LockManagementTest {
         assertThat("Bob should have been given the same URI to read as Alice", bobsTempFile,
             is(equalTo(alicesTempFile)));
 
-        LockingResult bobsSecondAccess = underTest.tryLock(createRequest(BOB, existingURI, LockingMode.IMMUTABLE_READ),
+        LockResult bobsSecondAccess = underTest.tryLock(createRequest(BOB, existingURI, LockingMode.IMMUTABLE_READ),
             null);
         assertThat("Bob should have been allowed to access", bobsSecondAccess, is(instanceOf(GrantedAccess.class)));
         assertThat("There should be exactly two temporary files", listTempFiles(existingURI).length, is(equalTo(2)));
@@ -224,7 +224,7 @@ public class LockManagementTest {
     public void testLockCanOnlyBeReturnedIfAllStreamsAreClosedForOpenInputStream() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
@@ -243,7 +243,7 @@ public class LockManagementTest {
     public void testLockCanOnlyBeReturnedIfAllStreamsAreClosedForOpenOutputStream() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
         try (OutputStream openOutputStream = underTest.reportGrant(AN_URI, new NullOutputStream(),
@@ -268,7 +268,7 @@ public class LockManagementTest {
                 request.put(existingURI1, firstLock);
                 request.put(existingURI2, secondLock);
                 underTest.clear();
-                LockingResult alicesAccess = underTest.tryLock(new LockRequests(ALICE, request), null);
+                LockResult alicesAccess = underTest.tryLock(new LockRequests(ALICE, request), null);
                 assertThat("Alice should have been allowed to access", alicesAccess,
                     is(instanceOf(GrantedAccess.class)));
             }
@@ -278,7 +278,7 @@ public class LockManagementTest {
             for (LockingMode secondLock : LockingMode.values()) {
                 underTest.clear();
 
-                LockingResult alicesAccess = underTest
+                LockResult alicesAccess = underTest
                         .tryLock(createRequest(ALICE, existingURI1, LockingMode.EXCLUSIVE), null);
                 assertThat("Alice should have been allowed to access", alicesAccess,
                     is(instanceOf(GrantedAccess.class)));
@@ -286,7 +286,7 @@ public class LockManagementTest {
                 Map<URI, LockingMode> requestTwoURIs = new TreeMap<>();
                 requestTwoURIs.put(existingURI1, firstLock);
                 requestTwoURIs.put(existingURI2, secondLock);
-                LockingResult noAccessForBob;
+                LockResult noAccessForBob;
                 try (OutputStream aliceIsWriting = underTest.reportGrant(existingURI1, new NullOutputStream(),
                     (GrantedAccess) alicesAccess)) {
                     noAccessForBob = underTest.tryLock(new LockRequests(BOB, requestTwoURIs), null);
@@ -318,7 +318,7 @@ public class LockManagementTest {
         underTest.clear();
 
         // Alice opens a newspaper issue
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, anIssue, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, anIssue, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
         underTest.checkPermission(alicesAccess, anIssue, false);
         mimicReading(underTest, anIssue, (GrantedAccess) alicesAccess);
@@ -338,7 +338,7 @@ public class LockManagementTest {
         mimicReading(underTest, alicesNewspaperYearCopy, (GrantedAccess) alicesAccess);
 
         // Bob opens a different newspaper issue
-        LockingResult bobsAccess = underTest.tryLock(createRequest(BOB, anotherIssue, LockingMode.EXCLUSIVE), null);
+        LockResult bobsAccess = underTest.tryLock(createRequest(BOB, anotherIssue, LockingMode.EXCLUSIVE), null);
         assertThat("Bob should have been allowed to access", bobsAccess, is(instanceOf(GrantedAccess.class)));
         underTest.checkPermission(bobsAccess, anotherIssue, false);
         mimicReading(underTest, anotherIssue, (GrantedAccess) bobsAccess);
@@ -362,7 +362,7 @@ public class LockManagementTest {
         mimicWriting(underTest, anIssue, (GrantedAccess) alicesAccess);
 
         // Carol opens the overall edition of the newspaper
-        LockingResult carolsAccess = underTest.tryLock(createRequest(CAROL, newspaper, LockingMode.EXCLUSIVE), null);
+        LockResult carolsAccess = underTest.tryLock(createRequest(CAROL, newspaper, LockingMode.EXCLUSIVE), null);
         assertThat("Carol should have been allowed to access", carolsAccess, is(instanceOf(GrantedAccess.class)));
         underTest.checkPermission(carolsAccess, newspaper, false);
         mimicReading(underTest, newspaper, (GrantedAccess) carolsAccess);
@@ -412,10 +412,10 @@ public class LockManagementTest {
     public void testMutualExclusionOfExclusiveLock() {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Bob should not have been allowed access", noAccessForBob, is(instanceOf(DeniedAccess.class)));
         assertThat("Bob should have been reported Alice as preventer", ALICE,
             is(in(noAccessForBob.getConflicts().get(AN_URI))));
@@ -429,10 +429,10 @@ public class LockManagementTest {
     public void testReadingRequiresGrantedPermissionForExclusiveLock() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Bob should not have been allowed access", noAccessForBob, is(instanceOf(DeniedAccess.class)));
 
         new FileManagement().read(AN_URI, noAccessForBob);
@@ -446,10 +446,10 @@ public class LockManagementTest {
     public void testReadingRequiresGrantedPermissionForImmutableReadLock() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob;
+        LockResult noAccessForBob;
         try (OutputStream aliceIsWriting = underTest.reportGrant(AN_URI, new NullOutputStream(),
             (GrantedAccess) alicesAccess)) {
             noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.IMMUTABLE_READ), null);
@@ -467,10 +467,10 @@ public class LockManagementTest {
     public void testReadingRequiresGrantedPermissionForUpgradeableReadLock() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Bob should not have been allowed access", noAccessForBob, is(instanceOf(DeniedAccess.class)));
 
@@ -498,11 +498,11 @@ public class LockManagementTest {
     public void testUpgradeableReadLocking() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult bobsAccess = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ), null);
+        LockResult bobsAccess = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.UPGRADEABLE_READ), null);
         assertThat("Bob should have been allowed to access", bobsAccess, is(instanceOf(GrantedAccess.class)));
 
         Map<URI, Collection<String>> noConflictForAlice = alicesAccess
@@ -552,7 +552,7 @@ public class LockManagementTest {
     public void testUpgradeableWriteLockingEnforcesRereading() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
@@ -574,7 +574,7 @@ public class LockManagementTest {
     public void testUpgradeableWriteLockingExpires() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
@@ -598,7 +598,7 @@ public class LockManagementTest {
 
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, existingURI, LockingMode.IMMUTABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
@@ -613,7 +613,7 @@ public class LockManagementTest {
     public void testWritingNotAllowedForUpgradeableReadLock() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.UPGRADEABLE_READ),
             null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
@@ -628,10 +628,10 @@ public class LockManagementTest {
     public void testWritingRequiresGrantedPermissionForExclusiveLock() throws IOException {
         underTest.clear();
 
-        LockingResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult alicesAccess = underTest.tryLock(createRequest(ALICE, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Alice should have been allowed to access", alicesAccess, is(instanceOf(GrantedAccess.class)));
 
-        LockingResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
+        LockResult noAccessForBob = underTest.tryLock(createRequest(BOB, AN_URI, LockingMode.EXCLUSIVE), null);
         assertThat("Bob should not have been allowed access", noAccessForBob, is(instanceOf(DeniedAccess.class)));
 
         underTest.checkPermission(noAccessForBob, AN_URI, true);

@@ -35,8 +35,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
@@ -82,12 +82,12 @@ public class FileManagement implements FileManagementInterface {
     @Deprecated
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        LockingResult permissions = getASelfReleasingExclusiveSystemLock(uri, true);
+        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, true);
         return LockManagement.getInstance().reportGrant(uri, new FileOutputStream(new File(uri)), permissions);
     }
 
     @Override
-    public OutputStream write(URI uri, LockingResult permissions) throws IOException {
+    public OutputStream write(URI uri, LockResult permissions) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         LockManagement lockManagement = LockManagement.getInstance();
         lockManagement.checkPermission(permissions, uri, true);
@@ -99,12 +99,12 @@ public class FileManagement implements FileManagementInterface {
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         URL url = uri.toURL();
-        LockingResult permissions = getASelfReleasingExclusiveSystemLock(uri, false);
+        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, false);
         return LockManagement.getInstance().reportGrant(uri, url.openStream(), permissions);
     }
 
     @Override
-    public InputStream read(URI uri, LockingResult permissions) throws IOException {
+    public InputStream read(URI uri, LockResult permissions) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         LockManagement lockManagement = LockManagement.getInstance();
         uri = lockManagement.checkPermission(permissions, uri, false);
@@ -583,17 +583,17 @@ public class FileManagement implements FileManagementInterface {
      *             {@link #write(URI, LockingResult)}.
      */
     @Deprecated
-    private LockingResult getASelfReleasingExclusiveSystemLock(URI uri, boolean write) throws IOException {
+    private LockResult getASelfReleasingExclusiveSystemLock(URI uri, boolean write) throws IOException {
         Map<URI, LockingMode> request = new TreeMap<>();
         request.put(uri, LockingMode.EXCLUSIVE);
-        LockingResult lockingResult = tryLock(SYSTEM_USER, request);
+        LockResult lockingResult = tryLock(SYSTEM_USER, request);
         LockManagement.getInstance().checkPermission(lockingResult, uri, write);
         ((GrantedAccess) lockingResult).setSelfClosing();
         return lockingResult;
     }
 
     @Override
-    public LockingResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException {
+    public LockResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException {
         return LockManagement.getInstance().tryLock(user, null, requests);
     }
 }

@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.filemanagement.LockingResult;
 
 /**
  * This is the main class of lock management. In regular operation, there must
@@ -83,7 +83,7 @@ public class LockManagement {
         return instance;
     }
 
-    private static GrantedAccess tryCast(LockingResult lockingResult) throws AccessDeniedException {
+    private static GrantedAccess tryCast(LockResult lockingResult) throws AccessDeniedException {
         if (!(lockingResult instanceof GrantedAccess)) {
             throw new AccessDeniedException(UNSUITABLE_LOCKING_RESULT + Objects.toString(lockingResult));
         }
@@ -207,7 +207,7 @@ public class LockManagement {
      *             that the file must first be read in again and the input
      *             stream must be closed after the lock has been upgraded.
      */
-    public URI checkPermission(LockingResult lockingResult, URI uri, boolean write)
+    public URI checkPermission(LockResult lockingResult, URI uri, boolean write)
             throws AccessDeniedException, ProtocolException {
         GrantedAccess permissions = tryCast(lockingResult);
         logger.trace("{} wants to open a {} channel to {}.", permissions.getUser(), write ? "writing" : "reading", uri);
@@ -376,7 +376,7 @@ public class LockManagement {
      *         wrapped in an instance of a vigilant input stream that notifies
      *         the lock management when the stream is closed.
      */
-    public InputStream reportGrant(URI uri, InputStream readChannel, LockingResult lockingResult) {
+    public InputStream reportGrant(URI uri, InputStream readChannel, LockResult lockingResult) {
         GrantedAccess permissions = (GrantedAccess) lockingResult;
         if (logger.isTraceEnabled()) {
             logger.trace("For {}, the reading channel {} was opened to {}.", permissions,
@@ -409,7 +409,7 @@ public class LockManagement {
      *         wrapped in an instance of a vigilant output stream that notifies
      *         the lock management when the stream is closed.
      */
-    public VigilantOutputStream reportGrant(URI uri, OutputStream outputStream, LockingResult lockingResult) {
+    public VigilantOutputStream reportGrant(URI uri, OutputStream outputStream, LockResult lockingResult) {
         GrantedAccess permissions = (GrantedAccess) lockingResult;
         if (logger.isTraceEnabled()) {
             String hexString = Integer.toHexString(System.identityHashCode(outputStream));
@@ -448,7 +448,7 @@ public class LockManagement {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    LockingResult tryLock(LockRequests requests, GrantedAccess rights) {
+    LockResult tryLock(LockRequests requests, GrantedAccess rights) {
         if (logger.isTraceEnabled()) {
             logger.trace("{} asks the following locks: {}", requests.getUser(), requests.formatLocksAsString());
         }
@@ -498,7 +498,7 @@ public class LockManagement {
      *             access, e.g. because the write permission for the directory
      *             is missing
      */
-    public LockingResult tryLock(String user, GrantedAccess rights, Map<URI, LockingMode> requests) throws IOException {
+    public LockResult tryLock(String user, GrantedAccess rights, Map<URI, LockingMode> requests) throws IOException {
         try {
             return tryLock(new LockRequests(user, requests), rights);
         } catch (UncheckedIOException e) {
