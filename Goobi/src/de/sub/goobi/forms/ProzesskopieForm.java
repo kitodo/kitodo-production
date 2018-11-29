@@ -1633,7 +1633,9 @@ public class ProzesskopieForm {
         return this.useOpac;
     }
 
-    public boolean isFileUploadAvailable() {return this.fileUploadAvailable; }
+    public boolean isFileUploadAvailable() {
+        return this.fileUploadAvailable;
+    }
 
     public boolean isUseTemplates() {
         return this.useTemplates;
@@ -2200,6 +2202,9 @@ public class ProzesskopieForm {
         }
     }
 
+    /**
+     * Checks if the file upload is available for the given catalogue configuration
+     */
     public void checkFileUpload() {
         try {
             Boolean flag = false;
@@ -2207,7 +2212,7 @@ public class ProzesskopieForm {
                 int i = 0;
                 SubnodeConfiguration pluginConfiguration = null;
                 XMLConfiguration config = plugin.getXMLConfiguration();
-                for(Object catalogue : config.getList("catalogue[@title]")) {
+                for (Object catalogue : config.getList("catalogue[@title]")) {
                     if (catalogue.toString().equals(this.opacKatalog)) {
                         pluginConfiguration = config.configurationAt("catalogue(" + i + ")");
                         flag = Boolean.valueOf(pluginConfiguration.getString("fileUpload"));
