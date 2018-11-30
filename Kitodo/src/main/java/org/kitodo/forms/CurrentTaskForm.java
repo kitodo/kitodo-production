@@ -124,7 +124,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
-            setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
+            serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask);
             try {
                 serviceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
@@ -255,9 +255,10 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String schrittDurchBenutzerZurueckgeben() {
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask));
+            serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
         }
         return taskListPath;
     }
@@ -267,9 +268,13 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
-        setCurrentTask(serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask));
-        serviceManager.getTaskService().save(this.currentTask);
+    public String schrittDurchBenutzerAbschliessen() {
+        try {
+            serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
+        } catch (DataException | IOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
+        }
         return taskListPath;
     }
 
@@ -306,7 +311,7 @@ public class CurrentTaskForm extends BaseForm {
     public String reportProblem() {
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
+            serviceManager.getWorkflowControllerService().reportProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
@@ -334,7 +339,7 @@ public class CurrentTaskForm extends BaseForm {
     public String solveProblem() {
         serviceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
+            serviceManager.getWorkflowControllerService().solveProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
@@ -348,7 +353,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws DataException, IOException {
+    public String uploadFromHomeAlle() {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(doneDirectoryName);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -368,7 +373,7 @@ public class CurrentTaskForm extends BaseForm {
                 if (task.getProcess().getId() == Integer.parseInt(id)
                         && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.currentTask = task;
-                    if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
+                    if (Objects.nonNull(schrittDurchBenutzerAbschliessen())) {
                         geprueft.add(element);
                     }
                     this.currentTask.setEditTypeEnum(TaskEditType.MANUAL_MULTI);

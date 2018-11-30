@@ -120,9 +120,8 @@ public class WorkflowControllerService {
      *
      * @param task
      *            to change status up
-     * @return updated task
      */
-    public Task setTaskStatusUp(Task task) throws DataException, IOException {
+    public void setTaskStatusUp(Task task) throws DataException, IOException {
         if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
             setProcessingStatusUp(task);
             task.setEditTypeEnum(TaskEditType.ADMIN);
@@ -133,7 +132,6 @@ public class WorkflowControllerService {
                 taskService.replaceProcessingUser(task, getCurrentUser());
             }
         }
-        return task;
     }
 
     /**
@@ -141,14 +139,12 @@ public class WorkflowControllerService {
      *
      * @param task
      *            to change status down
-     * @return updated task
      */
-    public Task setTaskStatusDown(Task task) {
+    public void setTaskStatusDown(Task task) {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
         taskService.replaceProcessingUser(task, getCurrentUser());
         setProcessingStatusDown(task);
-        return task;
     }
 
     /**
@@ -178,7 +174,8 @@ public class WorkflowControllerService {
         for (Task task : tasks) {
             // TODO: check if this behaviour is correct
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-                taskService.save(setTaskStatusDown(task));
+                setTaskStatusDown(task);
+                taskService.save(task);
                 break;
             }
         }
@@ -189,9 +186,8 @@ public class WorkflowControllerService {
      *
      * @param task
      *            object
-     * @return closed Task
      */
-    public Task closeTaskByUser(Task task) throws DataException, IOException {
+    public void closeTaskByUser(Task task) throws DataException, IOException {
         // if the result of the task is to be verified first, then if necessary,
         // cancel the completion
         if (task.isTypeCloseVerify()) {
@@ -200,7 +196,7 @@ public class WorkflowControllerService {
                     && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
                 serviceManager.getMetadataValidationService().setAutoSave(true);
                 if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
-                    return null;
+                    return;
                 }
             }
 
@@ -210,7 +206,7 @@ public class WorkflowControllerService {
                 URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");
-                    return null;
+                    return;
                 }
             }
         }
@@ -223,7 +219,6 @@ public class WorkflowControllerService {
         this.webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         close(task);
-        return task;
     }
 
     /**
@@ -280,9 +275,8 @@ public class WorkflowControllerService {
      *
      * @param task
      *            object
-     * @return Task object
      */
-    public Task assignTaskToUser(Task task) {
+    public void assignTaskToUser(Task task) {
         this.flagWaitLock.lock();
         try {
             if (!this.flagWait) {
@@ -312,7 +306,6 @@ public class WorkflowControllerService {
         } finally {
             this.flagWaitLock.unlock();
         }
-        return task;
     }
 
     /**
@@ -320,9 +313,8 @@ public class WorkflowControllerService {
      *
      * @param task
      *            object
-     * @return Task object
      */
-    public Task unassignTaskFromUser(Task task) throws DataException {
+    public void unassignTaskFromUser(Task task) throws DataException {
         this.webDav.uploadFromHome(task.getProcess());
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.replaceProcessingUser(task, null);
@@ -339,8 +331,6 @@ public class WorkflowControllerService {
         metadataLock.setFree(task.getProcess().getId());
 
         updateProcessSortHelperStatus(task.getProcess());
-
-        return task;
     }
 
     /**
@@ -359,11 +349,9 @@ public class WorkflowControllerService {
      *
      * @param task
      *            Task object
-     * @return correction Task
      */
-    public Task setCorrectionTask(Task task) {
+    public void setCorrectionTask(Task task) {
         task.setPriority(10);
-        return task;
     }
 
     /**
@@ -371,9 +359,8 @@ public class WorkflowControllerService {
      *
      * @param currentTask
      *            as Task object
-     * @return Task
      */
-    public Task reportProblem(Task currentTask) throws DAOException, DataException {
+    public void reportProblem(Task currentTask) throws DAOException, DataException {
         this.webDav.uploadFromHome(getCurrentUser(), currentTask.getProcess());
         Date date = new Date();
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
@@ -385,7 +372,7 @@ public class WorkflowControllerService {
 
         Task correctionTask = taskService.getById(getProblem().getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        correctionTask = setCorrectionTask(correctionTask);
+        setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
 
         Property processProperty = prepareProblemMessageProperty(date, currentTask, correctionTask);
@@ -399,8 +386,6 @@ public class WorkflowControllerService {
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
         updateProcessSortHelperStatus(currentTask.getProcess());
-
-        return currentTask;
     }
 
     /**
@@ -408,9 +393,8 @@ public class WorkflowControllerService {
      *
      * @param currentTask
      *            task which was send to correction and now was fixed as Task object
-     * @return Task
      */
-    public Task solveProblem(Task currentTask) throws DAOException, DataException {
+    public void solveProblem(Task currentTask) throws DAOException, DataException {
         Date date = new Date();
         this.webDav.uploadFromHome(currentTask.getProcess());
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
@@ -439,8 +423,6 @@ public class WorkflowControllerService {
                 currentTask = correctionTask;
             }
         }
-
-        return currentTask;
     }
 
     /**
@@ -472,7 +454,7 @@ public class WorkflowControllerService {
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
-            taskInBetween = setCorrectionTask(taskInBetween);
+            setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             taskService.save(taskInBetween);
         }
@@ -492,7 +474,7 @@ public class WorkflowControllerService {
 
     private void openTaskForProcessing(Task correctionTask) throws DataException {
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        correctionTask = setCorrectionTask(correctionTask);
+        setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
         taskService.save(correctionTask);

@@ -11,7 +11,6 @@
 
 package org.goobi.mq.processors;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.forms.CurrentTaskForm;
 import org.kitodo.services.ServiceManager;
 
@@ -59,8 +57,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
      */
     @Override
-    protected void process(MapMessageObjectReader ticket)
-            throws DAOException, DataException, IOException, JMSException {
+    protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {
         CurrentTaskForm dialog = new CurrentTaskForm();
         Integer stepID = ticket.getMandatoryInteger("id");
         dialog.setCurrentTask(serviceManager.getTaskService().getById(stepID));
