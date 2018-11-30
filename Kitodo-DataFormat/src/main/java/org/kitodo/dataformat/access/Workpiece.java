@@ -280,11 +280,10 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
         mets.getStructMap().add(generatePhysicalStructMap(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
 
-        Map<Structure, String> structuresWithIDs = new HashMap<>();
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(structure.toDiv(identifierProvider, mediaUnitIDs, structuresWithIDs, smLinkData, mets));
+        logical.setDiv(structure.toDiv(identifierProvider, mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));

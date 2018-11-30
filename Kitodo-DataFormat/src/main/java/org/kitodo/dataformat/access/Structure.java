@@ -108,7 +108,7 @@ public class Structure implements DivXmlElementAccessInterface {
      * several sequences that are in conflict with each other.
      */
     private final List<AreaXmlElementAccessInterface> views = new OrderAwareList<AreaXmlElementAccessInterface>(
-            areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
+        areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
 
     /**
      * Public constructor to create a new structure. This constructor can be
@@ -239,15 +239,30 @@ public class Structure implements DivXmlElementAccessInterface {
         this.type = type;
     }
 
+    /**
+     * Creates a METS {@code <div>} element from this structure.
+     * 
+     * @param identifierProvider
+     *            an object that generates a new, not yet assigned identifier
+     *            each time it is called
+     * @param mediaUnitIDs
+     *            the assigned identifier for each media unit so that the link
+     *            pairs of the struct link section can be formed later
+     * @param smLinkData
+     *            the link pairs of the struct link section are added to this
+     *            list
+     * @param mets
+     *            the METS structure in which the meta-data is added
+     * @return a METS {@code <div>} element
+     */
     DivType toDiv(IdentifierProvider identifierProvider, Map<MediaUnit, String> mediaUnitIDs,
-            Map<Structure, String> structuresWithIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+            LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         String divId = identifierProvider.next();
         div.setID(divId);
         div.setLABEL(label);
         div.setORDERLABEL(orderlabel);
         div.setTYPE(type);
-        structuresWithIDs.put(this, divId);
         smLinkData.addAll(views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
                 .map(mediaUnitId -> Pair.of(divId, mediaUnitId)).collect(Collectors.toList()));
 
@@ -258,7 +273,6 @@ public class Structure implements DivXmlElementAccessInterface {
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
-
         Optional<AmdSecType> optionalAmdSec = createAmdSec(identifierProvider, div);
         if (optionalAmdSec.isPresent()) {
             AmdSecType admSec = optionalAmdSec.get();
@@ -266,12 +280,19 @@ public class Structure implements DivXmlElementAccessInterface {
         }
 
         for (DivXmlElementAccessInterface substructure : substructures) {
-            div.getDiv().add(((Structure) substructure).toDiv(identifierProvider, mediaUnitIDs, structuresWithIDs,
-                smLinkData, mets));
+            div.getDiv().add(((Structure) substructure).toDiv(identifierProvider, mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }
 
+    /**
+     * Creates a meta-data section of the specified domain of the Kitodo type
+     * and returns it with its connection to the METS if there is data for it.
+     * 
+     * @param domain
+     *            Domain for which a metadata section is to be generated
+     * @return a metadata section, if there is data for it
+     */
     private Optional<MdSecType> createMdSec(MdSec domain) {
         KitodoType kitodoType = new KitodoType();
         for (MetadataAccessInterface entry : metadata) {
@@ -296,6 +317,20 @@ public class Structure implements DivXmlElementAccessInterface {
         }
     }
 
+    /**
+     * Generates an {@code <amdSec>} if administrative meta-data exists on this
+     * structure. Remarkable in this function is the bitwise OR, so that in any
+     * case all sections are generated, which would not be the case with logical
+     * OR.
+     * 
+     * @param identifierProvider
+     *            an object that generates a new, not yet assigned identifier
+     *            each time it is called
+     * @param div
+     *            div where ADMID references must be added to the generated
+     *            meta-data sections
+     * @return an {@code <amdSec>}, if necessary
+     */
     private Optional<AmdSecType> createAmdSec(IdentifierProvider identifierProvider, DivType div) {
         AmdSecType amdSec = new AmdSecType();
         return addMdSec(createMdSec(MdSec.SOURCE_MD), AmdSecType::getSourceMD, identifierProvider, amdSec, div)
@@ -306,6 +341,28 @@ public class Structure implements DivXmlElementAccessInterface {
                         : Optional.empty();
     }
 
+    /**
+     * Adds a meta-data section to an administrative meta-data section, if there
+     * is one. This function deduplicates fourfold existing function for four
+     * different meta-data sections.
+     * 
+     * @param optionalMdSec
+     *            perhaps existing meta-data section to be added if it exists
+     * @param mdSecTypeGetter
+     *            the getter via which the meta-data section can be added to the
+     *            administrative meta-data section
+     * @param identifierProvider
+     *            an object that generates a new, not yet assigned identifier
+     *            each time it is called
+     * @param amdSec
+     *            administrative meta-data section to which the meta-data
+     *            section should be added, if any
+     * @param div
+     *            div where ADMID references must be added to the generated
+     *            meta-data sections
+     * @return whether something has been added to the administrative meta-data
+     *         section
+     */
     private static boolean addMdSec(Optional<MdSecType> optionalMdSec,
             Function<AmdSecType, List<MdSecType>> mdSecTypeGetter, IdentifierProvider identifierProvider,
             AmdSecType amdSec, DivType div) {
