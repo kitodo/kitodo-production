@@ -27,11 +27,27 @@ import java.util.stream.Collector;
  * {@code Map<K, Set<V>>}, which can store several objects under one key.
  */
 class MultiMapCollector<T, K, V> implements Collector<T, Map<K, Set<V>>, Map<K, Set<V>>> {
-
+    /**
+     * Function to get a key of type K from the type T to be collected.
+     */
     private final Function<T, K> keyAccessor;
+
+    /**
+     * Function to get a value of type V from the type T to be collected.
+     */
     private final Function<T, V> valueAccessor;
 
-    public MultiMapCollector(Function<T, K> keyAccessor, Function<T, V> valueAccessor) {
+    /**
+     * Constructor for a new multi-map collector.
+     * 
+     * @param keyAccessor
+     *            function to get a key of type K from the type T to be
+     *            collected
+     * @param valueAccessor
+     *            function to get a value of type V from the type T to be
+     *            collected
+     */
+    MultiMapCollector(Function<T, K> keyAccessor, Function<T, V> valueAccessor) {
         this.keyAccessor = keyAccessor;
         this.valueAccessor = valueAccessor;
     }

@@ -17,6 +17,9 @@ import java.util.List;
 import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.Agent;
 
+/**
+ * A processing note that can be placed in the header of the XML file.
+ */
 public class ProcessingNote implements AgentXmlElementAccessInterface {
     /**
      * Known roles in METS. If the role takes one of these values, the
@@ -57,9 +60,20 @@ public class ProcessingNote implements AgentXmlElementAccessInterface {
      */
     private String type;
 
+    /**
+     * Public constructor. This constructor is used to create a new machining
+     * comment via the module loader.
+     */
     public ProcessingNote() {
     }
 
+    /**
+     * Constructor with a METS agent. This constructor creates a new processing
+     * note from an agent.
+     * 
+     * @param agent
+     *            agent from which a new constructor is to be created
+     */
     ProcessingNote(Agent agent) {
         this.name = agent.getName();
         this.note = String.join(System.lineSeparator(), agent.getNote());

@@ -17,7 +17,10 @@ import java.util.Iterator;
  * Provides unique identifiers for elements in XML files.
  */
 class IdentifierProvider implements Iterator<String> {
-    int i = 1;
+    /**
+     * Counter for the identifier.
+     */
+    private int i = 1;
 
     /**
      * Returns if there is another identifier. Since there is always a larger
@@ -40,5 +43,4 @@ class IdentifierProvider implements Iterator<String> {
     public String next() {
         return Integer.toString(i++);
     }
-
 }

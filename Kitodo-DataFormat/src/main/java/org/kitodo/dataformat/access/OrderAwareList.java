@@ -32,8 +32,17 @@ class OrderAwareList<T> extends ArrayList<T> {
      */
     private boolean ensureOrderOnGet = true;
 
+    /**
+     * Possibility to get an order number for T.
+     */
     private Function<T, Integer> orderGetter;
 
+    /**
+     * Constructor for an order-aware list.
+     * 
+     * @param orderGetter
+     *            possibility to get an order number for T
+     */
     public OrderAwareList(Function<T, Integer> orderGetter) {
         this.orderGetter = orderGetter;
     }
