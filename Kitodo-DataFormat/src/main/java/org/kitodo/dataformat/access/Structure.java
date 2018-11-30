@@ -108,7 +108,7 @@ public class Structure implements DivXmlElementAccessInterface {
      * several sequences that are in conflict with each other.
      */
     private final List<AreaXmlElementAccessInterface> views = new OrderAwareList<AreaXmlElementAccessInterface>(
-        areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
+            areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
 
     /**
      * Public constructor to create a new structure. This constructor can be
@@ -129,8 +129,10 @@ public class Structure implements DivXmlElementAccessInterface {
      */
     Structure(DivType div, Map<String, Set<MediaUnit>> mediaUnitsMap) {
         label = div.getLABEL();
-        metadata = div.getDMDID().parallelStream().filter(MdSecType.class::isInstance).map(MdSecType.class::cast)
-                .map(MdSecType::getMdWrap).map(MdWrap::getXmlData).map(XmlData::getAny).flatMap(List::parallelStream)
+
+        metadata = Stream.concat(div.getDMDID().parallelStream(), div.getADMID().parallelStream())
+                .filter(MdSecType.class::isInstance).map(MdSecType.class::cast).map(MdSecType::getMdWrap)
+                .map(MdWrap::getXmlData).map(XmlData::getAny).flatMap(List::parallelStream)
                 .filter(JAXBElement.class::isInstance).map(JAXBElement.class::cast).map(JAXBElement::getValue)
                 .filter(KitodoType.class::isInstance).map(KitodoType.class::cast)
                 .flatMap(kitodoType -> Stream.concat(

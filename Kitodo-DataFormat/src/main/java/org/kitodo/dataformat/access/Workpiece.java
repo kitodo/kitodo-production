@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -123,6 +124,10 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         createdate = mets.getMetsHdr().getCREATEDATE().toGregorianCalendar();
         for (Agent agent : mets.getMetsHdr().getAgent()) {
             editHistory.add(new ProcessingNote(agent));
+        }
+        MetsDocumentID metsDocumentID = mets.getMetsHdr().getMetsDocumentID();
+        if (Objects.nonNull(metsDocumentID)) {
+            id = metsDocumentID.getID();
         }
         Map<String, MediaVariant> mediaVariants = mets.getFileSec().getFileGrp().parallelStream().map(MediaVariant::new)
                 .collect(Collectors.toMap(MediaVariant::getUse, Function.identity()));
@@ -229,6 +234,9 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            content to be set
      */
     private void replace(Workpiece workpiece) {
+        this.createdate = workpiece.createdate;
+        this.editHistory = workpiece.editHistory;
+        this.id = workpiece.id;
         this.mediaUnits = workpiece.mediaUnits;
         this.structure = workpiece.structure;
     }

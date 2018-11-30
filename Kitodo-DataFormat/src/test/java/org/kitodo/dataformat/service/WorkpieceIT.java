@@ -30,8 +30,8 @@ import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.dataformat.access.MediaFile;
 import org.kitodo.dataformat.access.MediaUnit;
 import org.kitodo.dataformat.access.MediaVariant;
-import org.kitodo.dataformat.access.MetadataEntry;
 import org.kitodo.dataformat.access.MetadataEntriesGroup;
+import org.kitodo.dataformat.access.MetadataEntry;
 import org.kitodo.dataformat.access.ProcessingNote;
 import org.kitodo.dataformat.access.Structure;
 import org.kitodo.dataformat.access.View;
@@ -197,5 +197,19 @@ public class WorkpieceIT {
 
         // write file
         workpiece.save(new FileOutputStream(new File("src/test/resources/out.xml")));
+
+        // read the file and see if everything is in it
+        Workpiece reread = new Workpiece();
+        reread.read(new FileInputStream(new File("src/test/resources/out.xml")));
+
+        assertEquals(1, reread.getMetsHdr().size());
+        assertEquals(4, reread.getFileGrp().size());
+        for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
+            assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
+        }
+        Structure structureRoot = reread.getStructMap();
+        assertEquals(4, structureRoot.getAreas().size());
+        assertEquals(3, structureRoot.getChildren().size());
+        assertEquals(1, structureRoot.getMetadata().size());
     }
 }
