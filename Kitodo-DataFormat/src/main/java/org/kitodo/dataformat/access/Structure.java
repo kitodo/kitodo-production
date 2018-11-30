@@ -108,7 +108,7 @@ public class Structure implements DivXmlElementAccessInterface {
      * several sequences that are in conflict with each other.
      */
     private final List<AreaXmlElementAccessInterface> views = new OrderAwareList<AreaXmlElementAccessInterface>(
-            areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
+        areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
 
     /**
      * Public constructor to create a new structure. This constructor can be
