@@ -112,23 +112,8 @@ public class BeanHelper {
             tasks.add(task);
         }
 
-        adjustTaskOrdering(tasks);
-        processCopy.setTasks(tasks);
-    }
-
-    /**
-     * First order tasks by ids read from templates and next assign correct
-     * ordering.
-     * 
-     * @param tasks
-     *            as List of Task objects
-     */
-    private static void adjustTaskOrdering(List<Task> tasks) {
         tasks.sort(Comparator.comparing(Task::getOrdering).thenComparing(Task::getTitle));
-
-        for (int i = 0; i < tasks.size(); i++) {
-            tasks.get(i).setOrdering(i + 1);
-        }
+        processCopy.setTasks(tasks);
     }
 
     /**
