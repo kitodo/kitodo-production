@@ -48,7 +48,7 @@
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.7</commons-lang3.version>
-        <hamcrest-library.version>1.4-atlassian-1</hamcrest-library.version>
+        <hamcrest-library.version>2.1-rc3</hamcrest-library.version>
         <hibernate.version>5.2.17.Final</hibernate.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.1.6</jaxen.version>
