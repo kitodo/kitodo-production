@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -41,9 +42,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
 /**
  * The tree-like outline structure for digital representation. This structuring
  * structure can be subdivided into arbitrary finely granular
- * {@link #substructures}.
- * 
- * It can be described by {@link #metadata}.
+ * {@link #substructures}. It can be described by {@link #metadata}.
  */
 public class Structure implements DivXmlElementAccessInterface {
     /**
@@ -123,29 +122,75 @@ public class Structure implements DivXmlElementAccessInterface {
      * @param div
      *            METS {@code <div>} element from which the structure is to be
      *            built
+     * @param mets
+     *            METS data structure from which it is possible to determine
+     *            what kind of metadata section is linked
      * @param mediaUnitsMap
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
      */
-    Structure(DivType div, Map<String, Set<MediaUnit>> mediaUnitsMap) {
+    Structure(DivType div, Mets mets, Map<String, Set<MediaUnit>> mediaUnitsMap) {
         label = div.getLABEL();
-
-        metadata = Stream.concat(div.getDMDID().parallelStream(), div.getADMID().parallelStream())
-                .filter(MdSecType.class::isInstance).map(MdSecType.class::cast).map(MdSecType::getMdWrap)
-                .map(MdWrap::getXmlData).map(XmlData::getAny).flatMap(List::parallelStream)
-                .filter(JAXBElement.class::isInstance).map(JAXBElement.class::cast).map(JAXBElement::getValue)
-                .filter(KitodoType.class::isInstance).map(KitodoType.class::cast)
-                .flatMap(kitodoType -> Stream.concat(
-                    kitodoType.getMetadata().parallelStream()
-                            .map(metadataType -> new MetadataEntry(MdSec.DMD_SEC, metadataType)),
-                    kitodoType.getMetadataGroup().parallelStream()
-                            .map(metadataGroupType -> new MetadataEntriesGroup(MdSec.DMD_SEC, metadataGroupType))))
-                .collect(Collectors.toCollection(HashSet::new));
+        for (Object mdSec : div.getDMDID()) {
+            readMetadata((MdSecType) mdSec, MdSec.DMD_SEC);
+        }
+        for (Object mdSec : div.getADMID()) {
+            readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec));
+        }
         orderlabel = div.getORDERLABEL();
-        substructures = div.getDiv().stream().map(child -> new Structure(child, mediaUnitsMap))
+        substructures = div.getDiv().stream().map(child -> new Structure(child, mets, mediaUnitsMap))
                 .collect(Collectors.toCollection(LinkedList::new));
         type = div.getTYPE();
         mediaUnitsMap.get(div.getID()).stream().map(View::new).forEach(views::add);
+    }
+
+    /**
+     * Determined from a METS data structure of which type is a meta-data
+     * section. It could be parallelized, it would be worth it, but the chunk
+     * that would come out of it would be so extreme that it would be difficult
+     * to understand it properly. That’s why I let it stay.
+     * 
+     * @param mets
+     *            METS data structure that determines what type of metadata
+     *            section is
+     * @param mdSec
+     *            administrative meta-data section whose type is to be
+     *            determined
+     * @return the type of administrative metadata section
+     */
+    private final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
+        for (AmdSecType amdSec : mets.getAmdSec()) {
+            if (amdSec.getSourceMD().contains(mdSec)) {
+                return MdSec.SOURCE_MD;
+            } else if (amdSec.getDigiprovMD().contains(mdSec)) {
+                return MdSec.DIGIPROV_MD;
+            } else if (amdSec.getRightsMD().contains(mdSec)) {
+                return MdSec.RIGHTS_MD;
+            } else if (amdSec.getTechMD().contains(mdSec)) {
+                return MdSec.TECH_MD;
+            }
+        }
+        throw new NoSuchElementException();
+    }
+
+    /**
+     * Reads a meta-data section and adds the meta-data to the structure.
+     * 
+     * @param mdSec
+     *            meta-data section to be read
+     * @param mdSecType
+     *            type of meta-data section
+     */
+    private final void readMetadata(MdSecType mdSec, MdSec mdSecType) {
+        metadata.addAll(mdSec.getMdWrap().getXmlData().getAny().parallelStream().filter(JAXBElement.class::isInstance)
+                .map(JAXBElement.class::cast).map(JAXBElement::getValue).filter(KitodoType.class::isInstance)
+                .map(KitodoType.class::cast)
+                .flatMap(kitodoType -> Stream.concat(
+                    kitodoType.getMetadata().parallelStream()
+                            .map(metadataType -> new MetadataEntry(mdSecType, metadataType)),
+                    kitodoType.getMetadataGroup().parallelStream()
+                            .map(metadataGroupType -> new MetadataEntriesGroup(mdSecType, metadataGroupType))))
+                .collect(Collectors.toList()));
     }
 
     /**

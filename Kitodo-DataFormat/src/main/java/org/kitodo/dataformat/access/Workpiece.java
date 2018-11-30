@@ -142,7 +142,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
                 .filter(SmLink.class::isInstance).map(SmLink.class::cast)
                 .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         structure = getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new Structure(structMap.getDiv(), mediaUnitsMap)).collect(Collectors.toList())
+                .map(structMap -> new Structure(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
                 .iterator().next();
     }
 
