@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -145,55 +146,103 @@ public class Structure implements DivXmlElementAccessInterface {
         mediaUnitsMap.get(div.getID()).stream().map(View::new).forEach(views::add);
     }
 
+    /**
+     * Returns the views associated with this structure.
+     * 
+     * @return the views
+     */
     @Override
     public List<AreaXmlElementAccessInterface> getAreas() {
         return views;
     }
 
+    /**
+     * Returns the substructures associated with this structure.
+     * 
+     * @return the substructures
+     */
     @Override
     public List<DivXmlElementAccessInterface> getChildren() {
         return substructures;
     }
 
+    /**
+     * Returns the label of this structure.
+     * 
+     * @return the label
+     */
     @Override
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Returns the meta-data on this structure.
+     * 
+     * @return the meta-data
+     */
     @Override
     public Collection<MetadataAccessInterface> getMetadata() {
         return metadata;
     }
 
+    /**
+     * Returns the order label of this structure.
+     * 
+     * @return the order label
+     */
     @Override
     public String getOrderlabel() {
         return orderlabel;
     }
 
+    /**
+     * Returns the type of this structure.
+     * 
+     * @return the type
+     */
     @Override
     public String getType() {
         return type;
     }
 
+    /**
+     * Sets the label of this structure.
+     * 
+     * @param label
+     *            label to set
+     */
     @Override
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     * Sets the order label of this structure.
+     * 
+     * @param orderlabel
+     *            order label to set
+     */
     @Override
     public void setOrderlabel(String orderlabel) {
         this.orderlabel = orderlabel;
     }
 
+    /**
+     * Sets the type of this structure.
+     * 
+     * @param type
+     *            type to set
+     */
     @Override
     public void setType(String type) {
         this.type = type;
     }
 
-    DivType toDiv(IdentifierProvider idp, Map<MediaUnit, String> mediaUnitIDs, Map<Structure, String> structuresWithIDs,
-            LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+    DivType toDiv(IdentifierProvider identifierProvider, Map<MediaUnit, String> mediaUnitIDs,
+            Map<Structure, String> structuresWithIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
-        String divId = idp.next();
+        String divId = identifierProvider.next();
         div.setID(divId);
         div.setLABEL(label);
         div.setORDERLABEL(orderlabel);
@@ -205,19 +254,20 @@ public class Structure implements DivXmlElementAccessInterface {
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            dmdSec.setID(idp.next());
+            dmdSec.setID(identifierProvider.next());
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
 
-        Optional<AmdSecType> optionalAmdSec = createAmdSec(idp, div);
+        Optional<AmdSecType> optionalAmdSec = createAmdSec(identifierProvider, div);
         if (optionalAmdSec.isPresent()) {
             AmdSecType admSec = optionalAmdSec.get();
             mets.getAmdSec().add(admSec);
         }
 
         for (DivXmlElementAccessInterface substructure : substructures) {
-            div.getDiv().add(((Structure) substructure).toDiv(idp, mediaUnitIDs, structuresWithIDs, smLinkData, mets));
+            div.getDiv().add(((Structure) substructure).toDiv(identifierProvider, mediaUnitIDs, structuresWithIDs,
+                smLinkData, mets));
         }
         return div;
     }
@@ -246,38 +296,28 @@ public class Structure implements DivXmlElementAccessInterface {
         }
     }
 
-    private Optional<AmdSecType> createAmdSec(IdentifierProvider idp, DivType div) {
+    private Optional<AmdSecType> createAmdSec(IdentifierProvider identifierProvider, DivType div) {
         AmdSecType amdSec = new AmdSecType();
-        boolean data = false;
-        Optional<MdSecType> optionalSourceMd = createMdSec(MdSec.SOURCE_MD);
-        if (optionalSourceMd.isPresent()) {
-            optionalSourceMd.get().setID(idp.next());
-            amdSec.getSourceMD().add(optionalSourceMd.get());
-            div.getADMID().add(optionalSourceMd.get());
-            data = true;
-        }
-        Optional<MdSecType> optionalDigiprovMd = createMdSec(MdSec.DIGIPROV_MD);
-        if (optionalDigiprovMd.isPresent()) {
-            optionalDigiprovMd.get().setID(idp.next());
-            amdSec.getDigiprovMD().add(optionalDigiprovMd.get());
-            div.getADMID().add(optionalDigiprovMd.get());
-            data = true;
-        }
-        Optional<MdSecType> optionalRightsMd = createMdSec(MdSec.RIGHTS_MD);
-        if (optionalRightsMd.isPresent()) {
-            optionalRightsMd.get().setID(idp.next());
-            amdSec.getRightsMD().add(optionalRightsMd.get());
-            div.getADMID().add(optionalRightsMd.get());
-            data = true;
-        }
-        Optional<MdSecType> optionalTechMd = createMdSec(MdSec.TECH_MD);
-        if (optionalTechMd.isPresent()) {
-            optionalTechMd.get().setID(idp.next());
-            amdSec.getTechMD().add(optionalTechMd.get());
-            div.getADMID().add(optionalTechMd.get());
-            data = true;
-        }
-        return data ? Optional.of(amdSec) : Optional.empty();
+        return addMdSec(createMdSec(MdSec.SOURCE_MD), AmdSecType::getSourceMD, identifierProvider, amdSec, div)
+                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), AmdSecType::getDigiprovMD, identifierProvider, amdSec, div)
+                | addMdSec(createMdSec(MdSec.RIGHTS_MD), AmdSecType::getRightsMD, identifierProvider, amdSec, div)
+                | addMdSec(createMdSec(MdSec.TECH_MD), AmdSecType::getTechMD, identifierProvider, amdSec, div)
+                        ? Optional.of(amdSec)
+                        : Optional.empty();
     }
 
+    private static boolean addMdSec(Optional<MdSecType> optionalMdSec,
+            Function<AmdSecType, List<MdSecType>> mdSecTypeGetter, IdentifierProvider identifierProvider,
+            AmdSecType amdSec, DivType div) {
+
+        if (!optionalMdSec.isPresent()) {
+            return false;
+        } else {
+            MdSecType mdSec = optionalMdSec.get();
+            mdSec.setID(identifierProvider.next());
+            mdSecTypeGetter.apply(amdSec).add(mdSec);
+            div.getADMID().add(mdSec);
+            return true;
+        }
+    }
 }
