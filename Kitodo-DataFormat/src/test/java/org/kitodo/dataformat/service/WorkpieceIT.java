@@ -31,7 +31,7 @@ import org.kitodo.dataformat.access.MediaFile;
 import org.kitodo.dataformat.access.MediaUnit;
 import org.kitodo.dataformat.access.MediaVariant;
 import org.kitodo.dataformat.access.MetadataEntry;
-import org.kitodo.dataformat.access.MetadataEntryGroup;
+import org.kitodo.dataformat.access.MetadataEntriesGroup;
 import org.kitodo.dataformat.access.ProcessingNote;
 import org.kitodo.dataformat.access.Structure;
 import org.kitodo.dataformat.access.View;
@@ -147,7 +147,7 @@ public class WorkpieceIT {
         title.setDomain(MdSec.DMD_SEC);
         title.setValue("The title");
         frontCover.getMetadata().add(title);
-        MetadataEntryGroup author = new MetadataEntryGroup();
+        MetadataEntriesGroup author = new MetadataEntriesGroup();
         author.setType("author");
         author.setDomain(MdSec.DMD_SEC);
         MetadataEntry firstName = new MetadataEntry();

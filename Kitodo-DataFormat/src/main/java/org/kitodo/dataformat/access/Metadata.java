@@ -15,19 +15,19 @@ import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 
 /**
- * A common description contains common properties of {@code Description} and
- * {@code NestedDescription} elements.
+ * Contains common properties of {@code MetadataEntry} and
+ * {@code MetadataEntriesGroup} elements.
  */
 abstract class Metadata implements MetadataAccessInterface {
     /**
-     * An enumeration of possible meta-data locations in a METS file.
+     * In which conceptual area in the METS file this meta-data entry is stored.
      */
     protected MdSec domain;
 
     /**
      * The type of the meta-data entry. The type is used to describe the
-     * meta-data entry, i.e. whether the value of the entry is about the
-     * title,the author or a summary of an intellectual work.
+     * meta-data entry, i.e. whether the value of the entry is about the title,
+     * the author or a summary of an intellectual work.
      */
     protected String type;
 
@@ -50,5 +50,4 @@ abstract class Metadata implements MetadataAccessInterface {
     public void setType(String type) {
         this.type = type;
     }
-
 }

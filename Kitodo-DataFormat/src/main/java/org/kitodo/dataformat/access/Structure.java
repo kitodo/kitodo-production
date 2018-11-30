@@ -137,7 +137,7 @@ public class Structure implements DivXmlElementAccessInterface {
                     kitodoType.getMetadata().parallelStream()
                             .map(metadataType -> new MetadataEntry(MdSec.DMD_SEC, metadataType)),
                     kitodoType.getMetadataGroup().parallelStream()
-                            .map(metadataGroupType -> new MetadataEntryGroup(MdSec.DMD_SEC, metadataGroupType))))
+                            .map(metadataGroupType -> new MetadataEntriesGroup(MdSec.DMD_SEC, metadataGroupType))))
                 .collect(Collectors.toCollection(HashSet::new));
         orderlabel = div.getORDERLABEL();
         substructures = div.getDiv().stream().map(child -> new Structure(child, mediaUnitsMap))
@@ -299,8 +299,8 @@ public class Structure implements DivXmlElementAccessInterface {
             if (domain.equals(entry.getDomain())) {
                 if (entry instanceof MetadataEntry) {
                     kitodoType.getMetadata().add(((MetadataEntry) entry).toMetadata());
-                } else if (entry instanceof MetadataEntryGroup) {
-                    kitodoType.getMetadataGroup().add(((MetadataEntryGroup) entry).toMetadataGroup());
+                } else if (entry instanceof MetadataEntriesGroup) {
+                    kitodoType.getMetadataGroup().add(((MetadataEntriesGroup) entry).toMetadataGroup());
                 }
             }
         }
