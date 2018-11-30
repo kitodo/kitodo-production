@@ -37,26 +37,97 @@ import org.kitodo.dataformat.metskitodo.MdSecType.MdWrap;
 import org.kitodo.dataformat.metskitodo.MdSecType.MdWrap.XmlData;
 import org.kitodo.dataformat.metskitodo.Mets;
 
+/**
+ * The tree-like outline structure for digital representation. This structuring
+ * structure can be subdivided into arbitrary finely granular
+ * {@link #substructures}.
+ * 
+ * It can be described by {@link #metadata}.
+ */
 public class Structure implements DivXmlElementAccessInterface {
-
+    /**
+     * The name of the Q of Kitodo. This parameter is needed to assemble the
+     * meta-data entries in METS using JAXB.
+     */
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
-    private String label;
-    private Collection<MetadataAccessInterface> metadata = new HashSet<>();
-    private String orderlabel;
-    private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
-    private String type;
-    private List<AreaXmlElementAccessInterface> views = new OrderAwareList();
 
+    /**
+     * The label for this structure. The label is displayed in the graphical
+     * representation of the structure tree for this level.
+     */
+    private String label;
+
+    /**
+     * The meta-data for this structure. This structure level can be described
+     * with any meta-data.
+     */
+    private Collection<MetadataAccessInterface> metadata = new HashSet<>();
+
+    /**
+     * The order label of this structure. This is needed very rarely. It is not
+     * displayed, and unlike the name suggests, it does not specify the order of
+     * this substructure along with other substructures within its parent
+     * structure, but the order is determined by the order of references from
+     * the parent tree to each substructure. The order label may be used to
+     * store the machine-readable value if the label contains a human-readable
+     * value that can be mapped to a machine-readable value. An example of this
+     * are calendar dates. For example, a label of “the fifteenth year of the
+     * reign of Tiberius Caesar” could be stored as “{@code -0006}”.
+     */
+    private String orderlabel;
+
+    /**
+     * The substructures of this structure, which form the structure tree. The
+     * order of the substructures described by the order of the {@code <div>}
+     * elements in the {@code <structMap TYPE="LOGICAL">} in the METS file.
+     */
+    private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
+
+    /**
+     * The type of structure, for example, book, chapter, page. Although the
+     * data type of this variable is a string, it is recommended to use a
+     * controlled vocabulary. If the generated METS files are to be used with
+     * the DFG Viewer, the list of possible structure types is defined.
+     * 
+     * @see "https://dfg-viewer.de/en/structural-data-set/"
+     */
+    private String type;
+
+    /**
+     * The views on media units that this structure level comprises. Currently,
+     * only {@link View}s on media units as a whole are possible with
+     * Production, but here it has already been built for the future, that also
+     * {@code View}s on parts of {@link MediaUnit}s are to be made possible. The
+     * list of {@code View}s is aware of the order of the {@code MediaUnit}s
+     * encoded by the {@code MediaUnit}’s {@code order} property. Although this
+     * list implements the {@link List} interface, it always preserves the order
+     * as dictated by the {@code order} property of the {@code MediaUnit}s.
+     * Therefore, to reorder this list, you must change the {@code order}
+     * property of the {@code MediaUnit}s instead. It is not possible to code
+     * several sequences that are in conflict with each other.
+     */
+    private final List<AreaXmlElementAccessInterface> views = new OrderAwareList<AreaXmlElementAccessInterface>(
+            areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
+
+    /**
+     * Public constructor to create a new structure. This constructor can be
+     * called via the service loader to get a new structure.
+     */
     public Structure() {
     }
 
+    /**
+     * Constructor to read a structure from METS.
+     * 
+     * @param div
+     *            METS {@code <div>} element from which the structure is to be
+     *            built
+     * @param mediaUnitsMap
+     *            From this map, the media units are read, which must be
+     *            referenced here by their ID.
+     */
     Structure(DivType div, Map<String, Set<MediaUnit>> mediaUnitsMap) {
-        substructures = div.getDiv().stream().map(child -> new Structure(child, mediaUnitsMap))
-                .collect(Collectors.toCollection(LinkedList::new));
         label = div.getLABEL();
-        views = mediaUnitsMap.get(div.getID()).stream().map(View::new)
-                .collect(Collectors.toCollection(OrderAwareList::new));
-
         metadata = div.getDMDID().parallelStream().filter(MdSecType.class::isInstance).map(MdSecType.class::cast)
                 .map(MdSecType::getMdWrap).map(MdWrap::getXmlData).map(XmlData::getAny).flatMap(List::parallelStream)
                 .filter(JAXBElement.class::isInstance).map(JAXBElement.class::cast).map(JAXBElement::getValue)
@@ -67,9 +138,11 @@ public class Structure implements DivXmlElementAccessInterface {
                     kitodoType.getMetadataGroup().parallelStream()
                             .map(metadataGroupType -> new MetadataEntryGroup(MdSec.DMD_SEC, metadataGroupType))))
                 .collect(Collectors.toCollection(HashSet::new));
-
         orderlabel = div.getORDERLABEL();
+        substructures = div.getDiv().stream().map(child -> new Structure(child, mediaUnitsMap))
+                .collect(Collectors.toCollection(LinkedList::new));
         type = div.getTYPE();
+        mediaUnitsMap.get(div.getID()).stream().map(View::new).forEach(views::add);
     }
 
     @Override

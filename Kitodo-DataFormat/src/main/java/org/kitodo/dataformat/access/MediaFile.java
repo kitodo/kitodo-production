@@ -20,7 +20,7 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
 
 public class MediaFile implements FLocatXmlElementAccessInterface {
 
-    URI uri;
+    private URI uri;
 
     public MediaFile() {
     }

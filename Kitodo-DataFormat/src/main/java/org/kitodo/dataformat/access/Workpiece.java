@@ -54,9 +54,26 @@ import org.kitodo.dataformat.metskitodo.StructLinkType.SmLink;
 import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
- * A workpiece is the administrative structure of the product of an element that
- * has passed through a Production workflow. The file format for this management
- * structure is METS XML after the ZVDD DFG Viewer Application Profile.
+ * The administrative structure of the product of an element that passes through
+ * a Production workflow. The file format for this management structure is METS
+ * XML after the ZVDD DFG Viewer Application Profile.
+ * 
+ * <p>
+ * A {@code Workpiece} has two essential characteristics: {@link MediaUnit}s and
+ * an outline {@link Structure}. {@code MediaUnit}s are the types of every
+ * single digital medium on a conceptual level, such as the individual pages of
+ * a book. Each {@code MediaUnit} can be in different {@link MediaVariant}s (for
+ * example, in different resolutions or file formats). Each {@code MediaVariant}
+ * of a {@code MediaUnit} resides in a {@link MediaFile} in the data store.
+ * 
+ * <p>
+ * The {@code Structure} is a tree structure that can be finely subdivided, e.g.
+ * a book, in which the chapters, in it individual elements such as tables or
+ * figures. Each outline level points to the {@code MediaUnit}s that belong to
+ * it via {@link View}s. Currently, a {@code View} always contains exactly one
+ * {@code MediaUnit} unit, here a simple expandability is provided, so that in a
+ * future version excerpts from {@code MediaUnit}s can be described. Each
+ * outline level can be described with any {@link Metadata}.
  * 
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
@@ -131,29 +148,60 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      * media units are displayed on the workstation of the compiler, which
      * determines the presentation form intended for the consumer (and thus also
      * their presentation order). Mostly this is the order in which each digital
-     * part was recorded. The media unit is abstracted from its variant at this
-     * point, so there is only one media unit per file. The media unit elements
-     * then provide media files for various uses.
+     * part was recorded. The order of this list is described by the order of
+     * the {@code <div>} elements in the {@code <structMap TYPE="PHYSICAL">} in
+     * the METS file and need not necessarily be the same as the order of the
+     * media units when referenced from the structure, which is determined by
+     * the ORDER attribute of the {@code <file>} elements.
+     * 
+     * @return the media units
      */
     @Override
     public List<FileXmlElementAccessInterface> getFileGrp() {
         return mediaUnits;
     }
 
+    /**
+     * Returns the edit history. The head of each METS file has space for
+     * processing notes of the individual editors. In this way, the processing
+     * process of the digital representation can be understood.
+     * 
+     * @return the edit history
+     */
     @Override
     public List<AgentXmlElementAccessInterface> getMetsHdr() {
         return editHistory;
     }
 
+    /**
+     * Returns the root element of the structure.
+     * 
+     * @return root element of the structure
+     */
     @Override
     public Structure getStructMap() {
         return structure;
     }
 
+    /**
+     * The method helps to read {@code <structMap>}s from METS.
+     * 
+     * @param mets
+     *            METS that can be read from
+     * @param type
+     *            type of the {@code <structMap>} to read
+     * @return a stream of {@code <structMap>}s
+     */
     private static final Stream<StructMapType> getStructMapsStreamByType(Mets mets, String type) {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 
+    /**
+     * Reads METS from an InputStream. JAXB is used to parse the XML.
+     * 
+     * @param in
+     *            InputStream to read from
+     */
     @Override
     public void read(InputStream in) throws IOException {
         try {
@@ -370,12 +418,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      */
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
-        smLinkData.parallelStream().map(entry -> {
+        structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
             SmLink smLink = new SmLink();
             smLink.setFrom(entry.getLeft());
             smLink.setTo(entry.getRight());
             return smLink;
-        }).forEach(structLink.getSmLinkOrSmLinkGrp()::add);
+        }).collect(Collectors.toList()));
         return structLink;
     }
 }
