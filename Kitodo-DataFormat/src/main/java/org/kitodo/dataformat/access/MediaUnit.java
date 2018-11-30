@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataformat.service;
+package org.kitodo.dataformat.access;
 
 import java.math.BigInteger;
 import java.util.HashMap;

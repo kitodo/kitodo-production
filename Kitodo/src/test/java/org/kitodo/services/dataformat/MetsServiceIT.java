@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataformat.service;
+package org.kitodo.services.dataformat;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,27 +25,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.dataformat.access.MediaFile;
-import org.kitodo.dataformat.access.MediaUnit;
-import org.kitodo.dataformat.access.MediaVariant;
-import org.kitodo.dataformat.access.MetadataEntry;
-import org.kitodo.dataformat.access.MetadataEntryGroup;
-import org.kitodo.dataformat.access.ProcessingNote;
-import org.kitodo.dataformat.access.Structure;
-import org.kitodo.dataformat.access.View;
-import org.kitodo.dataformat.access.Workpiece;
+import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 
-public class WorkpieceIT {
+public class MetsServiceIT {
 
     /**
      * Tests loading a workpiece from a METS file.
      */
     @Test
     public void testReadXML() throws Exception {
-        Workpiece workpiece = new Workpiece();
-        workpiece.read(new FileInputStream(new File("src/test/resources/meta.xml")));
+        MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMets();
+        workpiece.read(new FileInputStream(new File("../kitodo-dataformat/src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getFileGrp().size());
@@ -86,19 +85,19 @@ public class WorkpieceIT {
 
     @Test
     public void testWriteXML() throws Exception {
-        Workpiece workpiece = new Workpiece();
+        MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMets();
         workpiece.setId("1");
 
-        List<MediaUnit> pages = new ArrayList<>();
+        List<FileXmlElementAccessInterface> pages = new ArrayList<>();
 
         // add files
-        MediaVariant local = new MediaVariant();
+        UseXmlAttributeAccessInterface local = MetsService.getInstance().createUse();
         local.setUse("LOCAL");
         local.setMimeType("image/tiff");
         for (int i = 1; i <= 4; i++) {
-            MediaFile path = new MediaFile();
+            FLocatXmlElementAccessInterface path = MetsService.getInstance().createFLocat();
             path.setUri(new URI(String.format("images/leaflet_media/%08d.tif", i)));
-            MediaUnit mediaUnit = new MediaUnit();
+            FileXmlElementAccessInterface mediaUnit = MetsService.getInstance().createFile();
             mediaUnit.setOrder(i);
             mediaUnit.putFLocatForUse(local, path);
             pages.add(mediaUnit);
@@ -108,59 +107,59 @@ public class WorkpieceIT {
         // create document structure
         workpiece.getStructMap().setType("leaflet");
         workpiece.getStructMap().setLabel("The Leaflet");
-        for (MediaUnit page : pages) {
-            View view = new View();
+        for (FileXmlElementAccessInterface page : pages) {
+            AreaXmlElementAccessInterface view = MetsService.getInstance().createArea();
             view.setFile(page);
             workpiece.getStructMap().getAreas().add(view);
         }
 
-        Structure frontCover = new Structure();
+        DivXmlElementAccessInterface frontCover = MetsService.getInstance().createDiv();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
-        View view = new View();
+        AreaXmlElementAccessInterface view = MetsService.getInstance().createArea();
         view.setFile(pages.get(0));
         frontCover.getAreas().add(view);
         workpiece.getStructMap().getChildren().add(frontCover);
 
-        Structure inside = new Structure();
+        DivXmlElementAccessInterface inside = MetsService.getInstance().createDiv();
         inside.setType("inside");
         inside.setLabel("Inside");
-        view = new View();
+        view = MetsService.getInstance().createArea();
         view.setFile(pages.get(1));
         inside.getAreas().add(view);
-        view = new View();
+        view = MetsService.getInstance().createArea();
         view.setFile(pages.get(2));
         inside.getAreas().add(view);
         workpiece.getStructMap().getChildren().add(inside);
 
-        Structure backCover = new Structure();
+        DivXmlElementAccessInterface backCover = MetsService.getInstance().createDiv();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
-        view = new View();
+        view = MetsService.getInstance().createArea();
         view.setFile(pages.get(3));
         backCover.getAreas().add(view);
         workpiece.getStructMap().getChildren().add(backCover);
 
         // add metadata
-        MetadataEntry title = new MetadataEntry();
+        MetadataXmlElementAccessInterface title = MetsService.getInstance().createMetadata();
         title.setType("title");
         title.setDomain(MdSec.DMD_SEC);
         title.setValue("The title");
         frontCover.getMetadata().add(title);
-        MetadataEntryGroup author = new MetadataEntryGroup();
+        MetadataGroupXmlElementAccessInterface author = MetsService.getInstance().createMetadataGroup();
         author.setType("author");
         author.setDomain(MdSec.DMD_SEC);
-        MetadataEntry firstName = new MetadataEntry();
+        MetadataXmlElementAccessInterface firstName = MetsService.getInstance().createMetadata();
         firstName.setType("firstName");
         firstName.setValue("Alice");
         author.getMetadata().add(firstName);
-        MetadataEntry lastName = new MetadataEntry();
+        MetadataXmlElementAccessInterface lastName = MetsService.getInstance().createMetadata();
         lastName.setType("firstName");
         lastName.setValue("Smith");
         author.getMetadata().add(lastName);
         frontCover.getMetadata().add(author);
 
-        MetadataEntry imagesConverted = new MetadataEntry();
+        MetadataXmlElementAccessInterface imagesConverted = MetsService.getInstance().createMetadata();
         imagesConverted.setType("imageConversionHint");
         imagesConverted.setDomain(MdSec.DIGIPROV_MD);
         imagesConverted.setValue("Images have been converted from TIFF to JPEG.");
@@ -169,27 +168,27 @@ public class WorkpieceIT {
         inside.getMetadata().add(imagesConverted);
         backCover.getMetadata().add(imagesConverted);
 
-        MetadataEntry copyright = new MetadataEntry();
+        MetadataXmlElementAccessInterface copyright = MetsService.getInstance().createMetadata();
         copyright.setType("rights");
         copyright.setDomain(MdSec.RIGHTS_MD);
         copyright.setValue("© 2018 All rights reserved");
         backCover.getMetadata().add(copyright);
 
         // add derivatives
-        MediaVariant max = new MediaVariant();
+        UseXmlAttributeAccessInterface max = MetsService.getInstance().createUse();
         max.setUse("MAX");
         max.setMimeType("image/jpeg");
         for (FileXmlElementAccessInterface mediaUnit : workpiece.getFileGrp()) {
             String tiffFile = mediaUnit.getFLocatForUse(local).getUri().toString();
             String jpgFile = tiffFile.replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
-            MediaFile path = new MediaFile();
+            FLocatXmlElementAccessInterface path = MetsService.getInstance().createFLocat();
             path.setUri(new URI(jpgFile));
             mediaUnit.putFLocatForUse(max, path);
         }
 
         // leave a note
-        ProcessingNote note = new ProcessingNote();
-        note.setName("Workpiece integration test");
+        AgentXmlElementAccessInterface note = MetsService.getInstance().createAgent();
+        note.setName("METS service integration test");
         note.setNote(new SimpleDateFormat("[dd.MM.yyyy HH:mm] ").format(new Date()) + "Process created");
         note.setRole("CREATOR");
         note.setType("software");

@@ -65,39 +65,39 @@ public class MetsService {
         useServiceLoader = new KitodoServiceLoader<>(UseXmlAttributeAccessInterface.class);
     }
 
-    private AgentXmlElementAccessInterface createAgent() {
+    public AgentXmlElementAccessInterface createAgent() {
         return agentServiceLoader.loadModule();
     }
 
-    private AreaXmlElementAccessInterface createArea() {
+    public AreaXmlElementAccessInterface createArea() {
         return areaServiceLoader.loadModule();
     }
 
-    private DivXmlElementAccessInterface createDiv() {
+    public DivXmlElementAccessInterface createDiv() {
         return divServiceLoader.loadModule();
     }
 
-    private FileXmlElementAccessInterface createFile() {
+    public FileXmlElementAccessInterface createFile() {
         return fileServiceLoader.loadModule();
     }
 
-    private FLocatXmlElementAccessInterface createFLocat() {
+    public FLocatXmlElementAccessInterface createFLocat() {
         return fLocatServiceLoader.loadModule();
     }
 
-    private MetadataGroupXmlElementAccessInterface createMetadataGroup() {
+    public MetadataGroupXmlElementAccessInterface createMetadataGroup() {
         return metadataGroupServiceLoader.loadModule();
     }
 
-    private MetadataXmlElementAccessInterface createMetadata() {
+    public MetadataXmlElementAccessInterface createMetadata() {
         return metadataServiceLoader.loadModule();
     }
 
-    private MetsXmlElementAccessInterface createMets() {
+    public MetsXmlElementAccessInterface createMets() {
         return metsServiceLoader.loadModule();
     }
 
-    private UseXmlAttributeAccessInterface createUse() {
+    public UseXmlAttributeAccessInterface createUse() {
         return useServiceLoader.loadModule();
     }
 }

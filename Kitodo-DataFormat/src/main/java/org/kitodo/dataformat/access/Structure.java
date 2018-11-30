@@ -9,9 +9,8 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataformat.service;
+package org.kitodo.dataformat.access;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,7 +45,7 @@ public class Structure implements DivXmlElementAccessInterface {
     private String orderlabel;
     private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
     private String type;
-    private List<AreaXmlElementAccessInterface> views = new ArrayList<>();
+    private List<AreaXmlElementAccessInterface> views = new OrderAwareList();
 
     public Structure() {
     }
@@ -56,7 +55,7 @@ public class Structure implements DivXmlElementAccessInterface {
                 .collect(Collectors.toCollection(LinkedList::new));
         label = div.getLABEL();
         views = mediaUnitsMap.get(div.getID()).stream().map(View::new)
-                .collect(Collectors.toCollection(LinkedList::new));
+                .collect(Collectors.toCollection(OrderAwareList::new));
 
         metadata = div.getDMDID().parallelStream().filter(MdSecType.class::isInstance).map(MdSecType.class::cast)
                 .map(MdSecType::getMdWrap).map(MdWrap::getXmlData).map(XmlData::getAny).flatMap(List::parallelStream)
