@@ -266,6 +266,14 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         }
     }
 
+    /**
+     * Sets / changes the ID of the document. The system-internal ID of
+     * thedocument should be contained in the document and can therefore be set
+     * with this method. The method should be run before saving to set the ID.
+     * 
+     * @param id
+     *            the ID of the document
+     */
     @Override
     public void setId(String id) {
         this.id = id;
