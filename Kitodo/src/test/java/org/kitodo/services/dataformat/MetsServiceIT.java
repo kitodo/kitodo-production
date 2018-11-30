@@ -44,7 +44,7 @@ public class MetsServiceIT {
     @Test
     public void testReadXML() throws Exception {
         MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMets();
-        workpiece.read(new FileInputStream(new File("../kitodo-dataformat/src/test/resources/meta.xml")));
+        workpiece.read(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getFileGrp().size());
