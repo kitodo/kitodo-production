@@ -680,4 +680,14 @@ public class SecurityAccessService {
     public boolean hasAuthorityToViewLdapServerList() {
         return hasAuthorityForClient("viewAllLdapServers");
     }
+
+    /**
+     * Checks if current user has global authority for add or edit role. If yes,
+     * current client is not assigned to created or edited role.
+     *
+     * @return true if current user has global authority for add or edit role
+     */
+    public boolean hasAuthorityGlobalToAddOrEditRole() {
+        return hasAnyAuthorityGlobal("addRole, editRole");
+    }
 }
