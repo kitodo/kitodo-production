@@ -34,16 +34,28 @@ public class PrefsJoint implements PrefsInterface {
 
     @Override
     public DocStructTypeInterface getDocStrctTypeByName(String identifier) {
-        logger.log(Level.TRACE, "getDocStrctTypeByName(identifier: \"{}\")", identifier);
-        // TODO Auto-generated method stub
-        return new DocStructTypeJoint();
+        switch (identifier) {
+            case "page":
+                return DocStructTypeJoint.SPECIAL_TYPE_PAGE;
+            default:
+                logger.log(Level.TRACE, "getDocStrctTypeByName(identifier: \"{}\")", identifier);
+                // TODO Auto-generated method stub
+                return new DocStructTypeJoint();
+        }
     }
 
     @Override
     public MetadataTypeInterface getMetadataTypeByName(String identifier) {
-        logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
-        // TODO Auto-generated method stub
-        return new MetadataTypeJoint();
+        switch (identifier) {
+            case "logicalPageNumber":
+                return MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL;
+            case "physPageNumber":
+                return MetadataTypeJoint.SPECIAL_TYPE_ORDER;
+            default:
+                logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
+                // TODO Auto-generated method stub
+                return new MetadataTypeJoint();
+        }
     }
 
     @Override

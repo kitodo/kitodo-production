@@ -23,6 +23,38 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class DocStructTypeJoint implements DocStructTypeInterface {
     private static final Logger logger = LogManager.getLogger(DocStructTypeJoint.class);
 
+    public static final DocStructTypeInterface SPECIAL_TYPE_PAGE = new DocStructTypeInterface() {
+        @Override
+        public List<String> getAllAllowedDocStructTypes() {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+
+        @Override
+        public List<MetadataTypeInterface> getAllMetadataTypes() {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+
+        @Override
+        public String getAnchorClass() {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+
+        @Override
+        public String getName() {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+
+        @Override
+        public String getNameByLanguage(String language) {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+
+        @Override
+        public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+            throw new UnsupportedOperationException("Page type needs special treatment");
+        }
+    };
+
     @Override
     public List<String> getAllAllowedDocStructTypes() {
         logger.log(Level.TRACE, "getAllAllowedDocStructTypes()");
