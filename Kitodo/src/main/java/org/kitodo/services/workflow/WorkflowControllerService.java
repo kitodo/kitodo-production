@@ -290,7 +290,18 @@ public class WorkflowControllerService {
                     task.setProcessingBegin(new Date());
                 }
 
-                updateProcessSortHelperStatus(task.getProcess());
+                Process process = task.getProcess();
+
+                List<Task> concurrentTasks = getConcurrentTasksForOpen(process.getTasks(), task);
+
+                if (!concurrentTasks.isEmpty()) {
+                    for (Task concurrentTask : concurrentTasks) {
+                        concurrentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+                        serviceManager.getTaskService().save(concurrentTask);
+                    }
+                }
+
+                updateProcessSortHelperStatus(process);
 
                 // if it is an image task, then download the images into the
                 // user home directory
