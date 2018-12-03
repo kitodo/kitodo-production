@@ -496,7 +496,7 @@ public class SecurityAccessService {
      * @return true if the current user has the authority to view the docket
      */
     public boolean hasAuthorityToViewDocket() {
-        return hasAnyAuthorityForClient("viewDocket, addWorkflow, editDocket");
+        return hasAnyAuthorityForClient("viewDocket, addDocket, editDocket");
     }
 
     /**
