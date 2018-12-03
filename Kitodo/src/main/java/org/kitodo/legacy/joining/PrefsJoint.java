@@ -41,7 +41,7 @@ public class PrefsJoint implements PrefsInterface {
 
     @Override
     public MetadataTypeInterface getMetadataTypeByName(String identifier) {
-        logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")");
+        logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
         // TODO Auto-generated method stub
         return new MetadataTypeJoint();
     }

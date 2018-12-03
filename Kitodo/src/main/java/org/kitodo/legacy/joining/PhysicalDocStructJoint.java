@@ -84,7 +84,7 @@ public class PhysicalDocStructJoint implements DocStructInterface {
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return null;
+        return new ReferenceJoint();
     }
 
     @Override
@@ -248,7 +248,7 @@ public class PhysicalDocStructJoint implements DocStructInterface {
     public String getImageName() {
         logger.log(Level.TRACE, "getImageName()");
         // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     @Override
