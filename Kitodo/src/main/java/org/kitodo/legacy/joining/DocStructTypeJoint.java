@@ -41,7 +41,7 @@ public class DocStructTypeJoint implements DocStructTypeInterface {
     public String getAnchorClass() {
         logger.log(Level.TRACE, "getAnchorClass()");
         // TODO Auto-generated method stub
-        return "";
+        return null; // muss null sein = keine
     }
 
     @Override

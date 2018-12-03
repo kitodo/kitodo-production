@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -36,6 +37,16 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
 public class PhysicalDocStructJoint implements DocStructInterface {
     private static final Logger logger = LogManager.getLogger(PhysicalDocStructJoint.class);
+
+    private FileXmlElementAccessInterface mediaUnit;
+
+    public PhysicalDocStructJoint() {
+        // TODO Auto-generated constructor stub
+    }
+
+    public PhysicalDocStructJoint(FileXmlElementAccessInterface mediaUnit) {
+        this.mediaUnit = mediaUnit;
+    }
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
@@ -126,7 +137,9 @@ public class PhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildren() {
-        logger.log(Level.TRACE, "getAllChildren()");
+        // logger.log(Level.TRACE, "getAllChildren()");
+        // Methode wird zwar aufgerufen, weil für logische und physiche die
+        // gleiche Schleife benutzt wird, muss aber leer zurückkommen
         // TODO Auto-generated method stub
         return Collections.emptyList();
     }
@@ -197,8 +210,10 @@ public class PhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<ReferenceInterface> getAllReferences(String direction) {
-        logger.log(Level.TRACE, "getAllReferences(direction: \"{}\")", direction);
-        // TODO Auto-generated method stub
+        // logger.log(Level.TRACE, "getAllReferences(direction: \"{}\")",
+        // direction);
+        // Methode wird zwar aufgerufen, weil für logische und physiche die
+        // gleiche Schleife benutzt wird, muss aber leer zurückkommen
         return Collections.emptyList();
     }
 
@@ -277,6 +292,20 @@ public class PhysicalDocStructJoint implements DocStructInterface {
         logger.log(Level.TRACE, "getDocStructType()");
         // TODO Auto-generated method stub
         return new DocStructTypeJoint();
+    }
+
+    /**
+     * This method is not part of the interface, but the JSF code digs in the
+     * depths of the UGH and uses it on the guts.
+     * 
+     * @return Method delegated to {@link #getDocStructType()}
+     */
+    public DocStructTypeInterface getType() {
+        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+        logger.log(Level.WARN, "Method {}.{}() invokes Method {}.{}(), bypassing the interface!",
+            stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
+            stackTrace[0].getMethodName());
+        return getDocStructType();
     }
 
     @Override
