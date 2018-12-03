@@ -86,6 +86,7 @@ public class DocStructTypeJoint implements DocStructTypeInterface {
     @Override
     public String getNameByLanguage(String language) {
         logger.log(Level.TRACE, "getNameByLanguage(language: \"{}\")", language);
+
         // TODO Auto-generated method stub
         return "";
     }
