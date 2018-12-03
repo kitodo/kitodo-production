@@ -18,7 +18,17 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 
 public class ReferenceJoint implements ReferenceInterface {
-    private static final Logger logger = LogManager.getLogger(PhysicalDocStructJoint.class);
+    private static final Logger logger = LogManager.getLogger(ReferenceJoint.class);
+
+    private PhysicalDocStructJoint target;
+
+    ReferenceJoint() {
+
+    }
+
+    public ReferenceJoint(PhysicalDocStructJoint target) {
+        this.target = target;
+    }
 
     @Override
     public DocStructInterface getSource() {
@@ -29,9 +39,7 @@ public class ReferenceJoint implements ReferenceInterface {
 
     @Override
     public DocStructInterface getTarget() {
-        logger.log(Level.TRACE, "getTarget()");
-        // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return target;
     }
 
     @Override

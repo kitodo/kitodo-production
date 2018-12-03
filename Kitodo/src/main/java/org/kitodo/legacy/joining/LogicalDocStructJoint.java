@@ -11,6 +11,7 @@
 
 package org.kitodo.legacy.joining;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,9 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -142,13 +145,11 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildren() {
-        logger.log(Level.TRACE, "getAllChildren()");
-        // TODO Auto-generated method stub
-        /*
-         * Hier muss mindestens das Root-Element des Baumes drin sein, sonst
-         * gibt es in Faces eine NPE.
-         */
-        return Collections.emptyList();
+        List<DocStructInterface> wrappedChildren = new ArrayList<>();
+        for (DivXmlElementAccessInterface child : structure.getChildren()) {
+            wrappedChildren.add(new LogicalDocStructJoint(child));
+        }
+        return wrappedChildren;
     }
 
     @Override
@@ -217,9 +218,18 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<ReferenceInterface> getAllReferences(String direction) {
-        logger.log(Level.TRACE, "getAllReferences(direction: \"{}\")", direction);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        switch (direction) {
+            case "to":
+                List<AreaXmlElementAccessInterface> views = structure.getAreas();
+                ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
+                for (AreaXmlElementAccessInterface view : views) {
+                    FileXmlElementAccessInterface mediaUnit = view.getFile();
+                    allReferences.add(new ReferenceJoint(new PhysicalDocStructJoint(mediaUnit)));
+                }
+                return allReferences;
+            default:
+                throw new IllegalArgumentException("Unknown reference direction: " + direction);
+        }
     }
 
     @Override
@@ -297,6 +307,20 @@ public class LogicalDocStructJoint implements DocStructInterface {
         logger.log(Level.TRACE, "getDocStructType()");
         // TODO Auto-generated method stub
         return new DocStructTypeJoint();
+    }
+
+    /**
+     * This method is not part of the interface, but the JSF code digs in the
+     * depths of the UGH and uses it on the guts.
+     * 
+     * @return Method delegated to {@link #getDocStructType()}
+     */
+    public DocStructTypeInterface getType() {
+        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+        logger.log(Level.WARN, "Method {}.{}() invokes Method {}.{}(), bypassing the interface!",
+            stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
+            stackTrace[0].getMethodName());
+        return getDocStructType();
     }
 
     @Override
