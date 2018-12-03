@@ -1187,6 +1187,7 @@ public class MockDatabase {
 
         BeanHelper.copyTasks(template, firstProcess);
         firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(0).setProcessingUser(serviceManager.getUserService().getById(1));
         firstProcess.getTasks().get(1).setProcessingStatus(0);
         firstProcess.getTasks().get(2).setProcessingStatus(0);
         firstProcess.getTasks().get(3).setProcessingStatus(0);
