@@ -42,7 +42,7 @@
                     <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
-                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                     <f:param name="stayOnCurrentPage" value="processList"/>
                 </h:commandLink>
                 <h:commandLink action="#{ProcessForm.exportMets()}" id="exportMets" title="#{msgs.exportMets}">

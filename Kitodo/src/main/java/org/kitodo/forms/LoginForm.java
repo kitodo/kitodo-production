@@ -26,7 +26,7 @@ public class LoginForm implements Serializable {
     private static final long serialVersionUID = 7732045664713555233L;
     private String login;
     private String password;
-    private User myBenutzer;
+    private User loggedUser;
     private boolean alreadyLoggedIn = false;
     private transient ServiceManager serviceManager = new ServiceManager();
     private boolean firstVisit = true;
@@ -34,7 +34,6 @@ public class LoginForm implements Serializable {
     /*
      * Getter und Setter
      */
-
     public String getLogin() {
         return this.login;
     }
@@ -65,17 +64,17 @@ public class LoginForm implements Serializable {
      *
      * @return The user object or null if no user is authenticated.
      */
-    public User getMyBenutzer() {
-        if (myBenutzer != null) {
-            return this.myBenutzer;
+    public User getLoggedUser() {
+        if (loggedUser != null) {
+            return this.loggedUser;
         } else {
-            this.myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
-            return this.myBenutzer;
+            this.loggedUser = serviceManager.getUserService().getAuthenticatedUser();
+            return this.loggedUser;
         }
     }
 
-    public void setMyBenutzer(User myClass) {
-        this.myBenutzer = myClass;
+    public void setLoggedUser(User myClass) {
+        this.loggedUser = myClass;
     }
 
     /**
@@ -109,7 +108,7 @@ public class LoginForm implements Serializable {
      * @return path to desktop
      */
     public String redirectToDesktop() {
-        if (Objects.nonNull(this.myBenutzer)) {
+        if (Objects.nonNull(this.loggedUser)) {
             return "desktop";
         } else {
             return "login";
