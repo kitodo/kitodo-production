@@ -22,6 +22,110 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class MetadataTypeJoint implements MetadataTypeInterface {
     private static final Logger logger = LogManager.getLogger(MetadataTypeJoint.class);
 
+    public static final MetadataTypeInterface SPECIAL_TYPE_ORDER = new MetadataTypeInterface() {
+        @Override
+        public Map<String, String> getAllLanguages() {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public boolean isPerson() {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public String getLanguage(String language) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public String getName() {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public String getNum() {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public void setAllLanguages(Map<String, String> labels) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public void setIdentifier(boolean identifier) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public void setPerson(boolean person) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public void setName(String name) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+
+        @Override
+        public void setNum(String quantityRestriction) {
+            throw new UnsupportedOperationException("Order type needs special treatment");
+        }
+    };
+
+    public static final MetadataTypeInterface SPECIAL_TYPE_ORDERLABEL = new MetadataTypeInterface() {
+        @Override
+        public Map<String, String> getAllLanguages() {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public boolean isPerson() {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public String getLanguage(String language) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public String getName() {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public String getNum() {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public void setAllLanguages(Map<String, String> labels) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public void setIdentifier(boolean identifier) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public void setPerson(boolean person) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public void setName(String name) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+
+        @Override
+        public void setNum(String quantityRestriction) {
+            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+        }
+    };
+
     @Override
     public Map<String, String> getAllLanguages() {
         logger.log(Level.TRACE, "getAllLanguages()");

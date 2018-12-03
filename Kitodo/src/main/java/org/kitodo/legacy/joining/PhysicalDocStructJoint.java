@@ -11,9 +11,11 @@
 
 package org.kitodo.legacy.joining;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -182,9 +184,17 @@ public class PhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
-        logger.log(Level.TRACE, "getAllMetadataByType(metadataType: {})", metadataType);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDER) {
+            return Arrays.asList(new MetadataJoint(metadataType, Integer.toString(mediaUnit.getOrder())));
+        } else if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDER) {
+            return Objects.nonNull(mediaUnit.getOrderlabel())
+                    ? Arrays.asList(new MetadataJoint(metadataType, mediaUnit.getOrderlabel()))
+                    : Collections.emptyList();
+        } else {
+            logger.log(Level.TRACE, "getAllMetadataByType(metadataType: {})", metadataType);
+            // TODO Auto-generated method stub
+            return Collections.emptyList();
+        }
     }
 
     @Override

@@ -21,6 +21,18 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class MetadataJoint implements MetadataInterface {
     private static final Logger logger = LogManager.getLogger(MetadataJoint.class);
     private DocStructInterface docStruct;
+    private String value;
+    private MetadataTypeInterface type;
+
+    public MetadataJoint() {
+        type = new MetadataTypeJoint();
+        value = "";
+    }
+
+    MetadataJoint(MetadataTypeInterface type, String value) {
+        this.type = type;
+        this.value = value;
+    }
 
     @Override
     public DocStructInterface getDocStruct() {
@@ -30,15 +42,12 @@ public class MetadataJoint implements MetadataInterface {
     @Override
     public MetadataTypeInterface getMetadataType() {
         logger.log(Level.TRACE, "getMetadataType()");
-        // TODO Auto-generated method stub
-        return new MetadataTypeJoint();
+        return type;
     }
 
     @Override
     public String getValue() {
-        logger.log(Level.TRACE, "getValue()");
-        // TODO Auto-generated method stub
-        return "";
+        return value;
     }
 
     @Override
