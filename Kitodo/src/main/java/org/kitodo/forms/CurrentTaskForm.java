@@ -117,9 +117,11 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Bearbeitung des Schritts übernehmen oder abschliessen.
+     * Take over task by user which calls this method.
+     *
+     * @return page
      */
-    public String schrittDurchBenutzerUebernehmen() {
+    public String takeOverTask() {
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
@@ -140,16 +142,16 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return page
      */
-    public String editStep() {
+    public String editTask() {
         serviceManager.getTaskService().refresh(this.currentTask);
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
-     * Take over batch of tasks - all tasks assigned to the same batch with the
-     * same title.
+     * Take over batch of tasks - all tasks assigned to the same batch with the same
+     * title.
      *
-     * @return page for edit one task, page for edit many or null
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -157,14 +159,14 @@ public class CurrentTaskForm extends BaseForm {
             Type.LOGISTIC);
 
         if (batches.isEmpty()) {
-            return schrittDurchBenutzerUebernehmen();
+            return takeOverTask();
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
-                return schrittDurchBenutzerUebernehmen();
+                return takeOverTask();
             } else {
                 for (Task task : currentTasksOfBatch) {
                     processTask(task);
@@ -222,7 +224,7 @@ public class CurrentTaskForm extends BaseForm {
      * Edit batch of tasks - all tasks assigned to the same batch with the same
      * title.
      *
-     * @return page for edit one task, page for edit many or null
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -249,11 +251,12 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Not sure.
+     * Release task - set up task status to open and make available for other users
+     * to take over.
      *
      * @return page
      */
-    public String schrittDurchBenutzerZurueckgeben() {
+    public String releaseTask() {
         try {
             serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
         } catch (DataException e) {
@@ -264,11 +267,11 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Not sure.
+     * Close method task called by user action.
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() {
+    public String closeTaskByUser() {
         try {
             serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
         } catch (DataException | IOException e) {
@@ -281,9 +284,9 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Unlock the current task's process.
      * 
-     * @return null
+     * @return stay on the current page
      */
-    public String sperrungAufheben() {
+    public String releaseLock() {
         MetadataLock.unlockProcess(this.currentTask.getProcess().getId());
         this.currentTask.getProcess().setBlockedUser(null);
         this.currentTask.getProcess().setBlockedMinutes(0);
@@ -354,17 +357,15 @@ public class CurrentTaskForm extends BaseForm {
      */
     @SuppressWarnings("unchecked")
     public String uploadFromHomeAlle() {
-        List<URI> fertigListe = this.myDav.uploadAllFromHome(doneDirectoryName);
-        List<URI> geprueft = new ArrayList<>();
-        /*
-         * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
-         * setzen
-         */
-        if (!fertigListe.isEmpty() && this.onlyOpenTasks) {
+        List<URI> readyList = this.myDav.uploadAllFromHome(doneDirectoryName);
+        List<URI> checkedList = new ArrayList<>();
+
+        // go through the uploaded process IDs and set to complete
+        if (!readyList.isEmpty() && this.onlyOpenTasks) {
             this.onlyOpenTasks = false;
             return taskListPath;
         }
-        for (URI element : fertigListe) {
+        for (URI element : readyList) {
             String id = element.toString()
                     .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
 
@@ -373,16 +374,16 @@ public class CurrentTaskForm extends BaseForm {
                 if (task.getProcess().getId() == Integer.parseInt(id)
                         && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.currentTask = task;
-                    if (Objects.nonNull(schrittDurchBenutzerAbschliessen())) {
-                        geprueft.add(element);
+                    if (Objects.nonNull(closeTaskByUser())) {
+                        checkedList.add(element);
                     }
                     this.currentTask.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 }
             }
         }
 
-        this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
-        Helper.setMessage("removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
+        this.myDav.removeAllFromHome(checkedList, URI.create(doneDirectoryName));
+        Helper.setMessage("removed " + checkedList.size() + " directories from user home:", doneDirectoryName);
         return this.stayOnCurrentPage;
     }
 
@@ -612,8 +613,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Set selected tasks: Set tasks in old list to false and set new list to
-     * true.
+     * Set selected tasks: Set tasks in old list to false and set new list to true.
      *
      * @param selectedTasks
      *            provided by data table
@@ -701,9 +701,9 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Using this helper variable, JSF can check if there is content to generate
-     * in the current task. In this case, corresponding action links are
-     * rendered, otherwise not.
+     * Using this helper variable, JSF can check if there is content to generate in
+     * the current task. In this case, corresponding action links are rendered,
+     * otherwise not.
      * 
      * @return whether action links should be displayed
      */
@@ -918,8 +918,8 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user that
-     * are currently in progress.
+     * Retrieve and return the list of tasks that are assigned to the user that are
+     * currently in progress.
      *
      * @return list of tasks that are currently assigned to the user that are
      *         currently in progress.

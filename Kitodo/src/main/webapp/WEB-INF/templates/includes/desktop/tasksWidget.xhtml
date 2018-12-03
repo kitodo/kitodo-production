@@ -36,7 +36,7 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <!-- assign task -->
-                <h:commandLink id="take" action="#{CurrentTaskForm.schrittDurchBenutzerUebernehmen}"
+                <h:commandLink id="take" action="#{CurrentTaskForm.takeOverTask}"
                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}" icon="fa fa-bell-o">
                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
@@ -50,7 +50,7 @@
                     <f:param name="id" value="#{task.id}"/>
                 </h:link>
                 <!-- already assigned task (different user) -->
-                <h:commandLink action="#{CurrentTaskForm.editStep}" id="view2"
+                <h:commandLink action="#{CurrentTaskForm.editTask}" id="view2"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.myBenutzer.id and (!task.batchStep || !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>

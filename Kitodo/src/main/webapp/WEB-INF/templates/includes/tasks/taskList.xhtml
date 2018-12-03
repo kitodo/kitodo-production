@@ -55,7 +55,7 @@
         <p:column headerText="#{msgs.actions}">
             <h:form id="actions">
                 <!-- assign task -->
-                <h:commandLink id="take" action="#{CurrentTaskForm.schrittDurchBenutzerUebernehmen}"
+                <h:commandLink id="take" action="#{CurrentTaskForm.takeOverTask}"
                                rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <i class="fa fa-bell-o"/>
@@ -69,7 +69,7 @@
                     <f:param name="id" value="#{item.id}"/>
                 </h:link>
                 <!-- already assigned task (different user) -->
-                <h:commandLink action="#{CurrentTaskForm.editStep}" id="view2"
+                <h:commandLink action="#{CurrentTaskForm.editTask}" id="view2"
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <i class="fa fa-bell-slash"/>

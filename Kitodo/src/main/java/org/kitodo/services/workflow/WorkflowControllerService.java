@@ -182,7 +182,7 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Not sure.
+     * Close method task called by user action.
      *
      * @param task
      *            object
