@@ -12,11 +12,10 @@
 package org.kitodo.legacy;
 
 import org.kitodo.api.ugh.FactoryInterface;
-
-import ugh.LegacyUghImplementation;
+import org.kitodo.legacy.joining.ReplacementFactory;
 
 public class UghImplementation {
-    public static final FactoryInterface INSTANCE = new LegacyUghImplementation();
+    public static final FactoryInterface INSTANCE = new ReplacementFactory();
 
     /**
      * Private constructor to hide the implicit public one.
