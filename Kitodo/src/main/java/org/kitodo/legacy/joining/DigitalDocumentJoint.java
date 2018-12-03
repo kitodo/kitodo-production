@@ -16,13 +16,29 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileSetInterface;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataformat.MetsService;
 
 public class DigitalDocumentJoint implements DigitalDocumentInterface {
     private static final Logger logger = LogManager.getLogger(DigitalDocumentJoint.class);
+
+    private final ServiceManager serviceLoader = new ServiceManager();
+    private final MetsService metsService = serviceLoader.getMetsService();
+
+    private MetsXmlElementAccessInterface workpiece;
+
+    public DigitalDocumentJoint() {
+        this.workpiece = metsService.createMets();
+    }
+
+    DigitalDocumentJoint(MetsXmlElementAccessInterface workpiece) {
+        this.workpiece = workpiece;
+    }
 
     @Override
     public void addAllContentFiles() {
@@ -48,7 +64,7 @@ public class DigitalDocumentJoint implements DigitalDocumentInterface {
     public DocStructInterface getLogicalDocStruct() {
         logger.log(Level.TRACE, "getLogicalDocStruct()");
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return new LogicalDocStructJoint(workpiece.getStructMap());
     }
 
     @Override
