@@ -30,7 +30,7 @@ import org.kitodo.services.dataeditor.RulesetManagementService;
 public class PrefsJoint implements PrefsInterface {
     private static final Logger logger = LogManager.getLogger(PrefsJoint.class);
     private final ServiceManager serviceLoader = new ServiceManager();
-    private final RulesetManagementService rums = serviceLoader.getRulesetManagementService();
+    private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
     RulesetManagementInterface ruleset;
 
@@ -69,14 +69,14 @@ public class PrefsJoint implements PrefsInterface {
 
     @Override
     public void loadPrefs(String fileName) throws PreferencesException {
-        logger.log(Level.TRACE, "loadPrefs(fileName: {})", fileName);
-        RulesetManagementInterface rum = rums.getRulesetManagement();
+        File rulesetFile = new File(fileName);
+        RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();
         try {
-            rum.load(new File(fileName));
+            ruleset.load(rulesetFile);
         } catch (IOException e) {
             throw new PreferencesException(e.getMessage(), e);
         }
-        this.ruleset = rum;
+        this.ruleset = ruleset;
     }
 
 }
