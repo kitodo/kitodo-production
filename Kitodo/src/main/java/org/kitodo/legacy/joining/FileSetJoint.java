@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -38,6 +39,12 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
 public class FileSetJoint implements FileSetInterface, DocStructInterface {
     private static final Logger logger = LogManager.getLogger(FileSetJoint.class);
+
+    private List<FileXmlElementAccessInterface> mediaUnits;
+
+    public FileSetJoint(List<FileXmlElementAccessInterface> mediaUnits) {
+        this.mediaUnits = mediaUnits;
+    }
 
     // FileSetInterface methods ==============================================
 
@@ -122,7 +129,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new FileSetJoint();
+        return null; // new FileSetJoint(); // wird das gebraucht?
     }
 
     @Override
@@ -321,10 +328,13 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
-            stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
-            stackTrace[0].getMethodName());
+        // StackTraceElement[] stackTrace = new
+        // RuntimeException().getStackTrace();
+        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
+        // interface!",
+        // stackTrace[1].getClassName(), stackTrace[1].getMethodName(),
+        // stackTrace[0].getClassName(),
+        // stackTrace[0].getMethodName());
         return getDocStructType();
     }
 

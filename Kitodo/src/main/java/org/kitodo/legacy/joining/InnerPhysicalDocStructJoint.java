@@ -299,9 +299,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public DocStructTypeInterface getDocStructType() {
-        logger.log(Level.TRACE, "getDocStructType()");
-        // TODO Auto-generated method stub
-        return null; // wird das gebraucht? Wäre BoundBook
+        return PageType.INSTANCE;
     }
 
     /**
@@ -311,10 +309,13 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
-            stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
-            stackTrace[0].getMethodName());
+        // StackTraceElement[] stackTrace = new
+        // RuntimeException().getStackTrace();
+        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
+        // interface!",
+        // stackTrace[1].getClassName(), stackTrace[1].getMethodName(),
+        // stackTrace[0].getClassName(),
+        // stackTrace[0].getMethodName());
         return getDocStructType();
     }
 
