@@ -113,7 +113,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     public DocStructInterface getPhysicalDocStruct() {
         logger.log(Level.TRACE, "getPhysicalDocStruct()");
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override

@@ -20,13 +20,13 @@ import org.kitodo.api.ugh.ReferenceInterface;
 public class ReferenceJoint implements ReferenceInterface {
     private static final Logger logger = LogManager.getLogger(ReferenceJoint.class);
 
-    private PhysicalDocStructJoint target;
+    private InnerPhysicalDocStructJoint target;
 
     ReferenceJoint() {
 
     }
 
-    public ReferenceJoint(PhysicalDocStructJoint target) {
+    public ReferenceJoint(InnerPhysicalDocStructJoint target) {
         this.target = target;
     }
 
@@ -34,7 +34,7 @@ public class ReferenceJoint implements ReferenceInterface {
     public DocStructInterface getSource() {
         logger.log(Level.TRACE, "getSource()");
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override

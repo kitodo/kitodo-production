@@ -11,25 +11,26 @@
 
 package org.kitodo.legacy.joining;
 
-import org.apache.logging.log4j.Level;
+import java.io.File;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 
 public class ContentFileJoint implements ContentFileInterface {
     private static final Logger logger = LogManager.getLogger(ContentFileJoint.class);
 
+    FLocatXmlElementAccessInterface mediaFile;
+
     @Override
     public String getLocation() {
-        logger.log(Level.TRACE, "getLocation()");
-        // TODO Auto-generated method stub
-        return "";
+        return mediaFile.getUri().toString();
     }
 
     @Override
     public void setLocation(String fileName) {
-        logger.log(Level.TRACE, "setLocation(fileName: \"{}\")", fileName);
-        // TODO Auto-generated method stub
+        mediaFile.setUri(new File(fileName).toURI());
     }
 
 }

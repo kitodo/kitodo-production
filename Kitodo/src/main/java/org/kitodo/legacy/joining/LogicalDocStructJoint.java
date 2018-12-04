@@ -224,7 +224,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
                 ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
                 for (AreaXmlElementAccessInterface view : views) {
                     FileXmlElementAccessInterface mediaUnit = view.getFile();
-                    allReferences.add(new ReferenceJoint(new PhysicalDocStructJoint(mediaUnit)));
+                    allReferences.add(new ReferenceJoint(new InnerPhysicalDocStructJoint(mediaUnit)));
                 }
                 return allReferences;
             default:
