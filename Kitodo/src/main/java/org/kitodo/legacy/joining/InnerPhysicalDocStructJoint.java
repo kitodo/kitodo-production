@@ -37,16 +37,16 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
-public class PhysicalDocStructJoint implements DocStructInterface {
-    private static final Logger logger = LogManager.getLogger(PhysicalDocStructJoint.class);
+public class InnerPhysicalDocStructJoint implements DocStructInterface {
+    private static final Logger logger = LogManager.getLogger(InnerPhysicalDocStructJoint.class);
 
     private FileXmlElementAccessInterface mediaUnit;
 
-    public PhysicalDocStructJoint() {
+    public InnerPhysicalDocStructJoint() {
         // TODO Auto-generated constructor stub
     }
 
-    public PhysicalDocStructJoint(FileXmlElementAccessInterface mediaUnit) {
+    public InnerPhysicalDocStructJoint(FileXmlElementAccessInterface mediaUnit) {
         this.mediaUnit = mediaUnit;
     }
 
@@ -104,7 +104,7 @@ public class PhysicalDocStructJoint implements DocStructInterface {
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class PhysicalDocStructJoint implements DocStructInterface {
         logger.log(Level.TRACE, "createChild(docStructType: \"{}\", digitalDocument: {}, prefs: {})", docStructType,
             digitalDocument, prefs);
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint(); // returns the child
+        return new InnerPhysicalDocStructJoint(); // returns the child
     }
 
     @Override
@@ -259,7 +259,7 @@ public class PhysicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
         logger.log(Level.TRACE, "getChild(type: \"{}\", identifierField: \"{}\", identifier: \"{}\")");
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override
@@ -280,14 +280,14 @@ public class PhysicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
         logger.log(Level.TRACE, "getNextChild(predecessor: {})", predecessor);
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override
     public DocStructInterface getParent() {
         logger.log(Level.TRACE, "getParent()");
         // TODO Auto-generated method stub
-        return new PhysicalDocStructJoint();
+        return new InnerPhysicalDocStructJoint();
     }
 
     @Override
