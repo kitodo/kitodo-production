@@ -74,7 +74,7 @@ public class PrefsJoint implements PrefsInterface {
         try {
             ruleset.load(rulesetFile);
         } catch (IOException e) {
-            throw new PreferencesException(e.getMessage(), e);
+            throw new PreferencesException("Error reading " + fileName + ": " + e.getMessage(), e);
         }
         this.ruleset = ruleset;
     }

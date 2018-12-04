@@ -80,9 +80,7 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException {
-        logger.log(Level.TRACE, "createMetsMods(prefs: {})", prefs);
-        // TODO Auto-generated method stub
-        return new DigitalMetsKitodoDocumentJoint();
+        return new DigitalMetsKitodoDocumentJoint(((PrefsJoint) prefs).ruleset);
     }
 
     @Override

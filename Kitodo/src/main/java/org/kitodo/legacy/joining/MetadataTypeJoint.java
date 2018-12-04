@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 public class MetadataTypeJoint implements MetadataTypeInterface {
@@ -125,6 +126,14 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
             throw new UnsupportedOperationException("Orderlabel type needs special treatment");
         }
     };
+
+    public MetadataTypeJoint() {
+        // TODO Auto-generated constructor stub
+    }
+
+    public MetadataTypeJoint(MetadataViewInterface key) {
+        // TODO Auto-generated constructor stub
+    }
 
     @Override
     public Map<String, String> getAllLanguages() {

@@ -11,6 +11,8 @@
 
 package org.kitodo.legacy.joining;
 
+import de.sub.goobi.metadaten.Metadaten;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +20,13 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale.LanguageRange;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -33,7 +38,10 @@ import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataeditor.RulesetManagementService;
 import org.kitodo.services.dataformat.MetsService;
 import org.kitodo.services.file.FileService;
 
@@ -43,15 +51,28 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
     private final FileService fileService = serviceLoader.getFileService();
+    RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
     private MetsXmlElementAccessInterface workpiece = metsService.createMets();
+    private RulesetManagementInterface ruleset;
 
-    public DigitalMetsKitodoDocumentJoint() {
-        this.workpiece = metsService.createMets();
+    private List<LanguageRange> priorityList;
+
+    // hat Regelsatz und leeres Werkstück
+    public DigitalMetsKitodoDocumentJoint(RulesetManagementInterface ruleset) {
+        this();
+        this.ruleset = ruleset;
     }
 
-    DigitalMetsKitodoDocumentJoint(MetsXmlElementAccessInterface workpiece) {
-        this.workpiece = workpiece;
+    // hat leeres Werkstück und keinen Regelsatz
+    public DigitalMetsKitodoDocumentJoint() {
+        this.ruleset = rulesetManagementService.getRulesetManagement();
+        this.workpiece = metsService.createMets();
+
+        User user = new Metadaten().getCurrentUser();
+        String metadataLanguage = user != null ? user.getMetadataLanguage()
+                : Helper.getRequestParameter("Accept-Language");
+        this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
     }
 
     @Override
@@ -91,8 +112,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
-        logger.log(Level.TRACE, "getDigitalDocument()");
-        return new DigitalMetsKitodoDocumentJoint(workpiece);
+        return this;
     }
 
     @Override
@@ -104,9 +124,11 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DocStructInterface getLogicalDocStruct() {
-        logger.log(Level.TRACE, "getLogicalDocStruct()");
-        // TODO Auto-generated method stub
-        return new LogicalDocStructJoint(workpiece.getStructMap());
+        String structuralElement = workpiece.getStructMap().getType();
+        String bind = "edit";
+        StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structuralElement, bind,
+            priorityList);
+        return new LogicalDocStructJoint(workpiece.getStructMap(), divisionView);
     }
 
     @Override
@@ -143,7 +165,8 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        this.workpiece = ((DigitalMetsKitodoDocumentJoint) digitalDocument).workpiece;
+        DigitalMetsKitodoDocumentJoint metsKitodoDocument = (DigitalMetsKitodoDocumentJoint) digitalDocument;
+        this.workpiece = metsKitodoDocument.workpiece;
     }
 
     @Override
