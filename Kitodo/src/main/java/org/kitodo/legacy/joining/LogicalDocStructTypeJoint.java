@@ -52,9 +52,7 @@ public class LogicalDocStructTypeJoint implements DocStructTypeInterface {
 
     @Override
     public String getName() {
-        logger.log(Level.TRACE, "getName()");
-        // TODO Auto-generated method stub
-        return "";
+        return divisionView.getId();
     }
 
     @Override

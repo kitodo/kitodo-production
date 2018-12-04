@@ -346,9 +346,9 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataTypeInterface> getPossibleMetadataTypes() {
-        logger.log(Level.TRACE, "getPossibleMetadataTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        // The method is a doublet (in the interface, as well as doubled code in
+        // the legacy implementation)
+        return getAddableMetadataTypes();
     }
 
     @Override
@@ -363,9 +363,12 @@ public class LogicalDocStructJoint implements DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
-            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
+        // StackTraceElement[] stackTrace = new
+        // RuntimeException().getStackTrace();
+        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
+        // interface!", stackTrace[1].getClassName(),
+        // stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
+        // stackTrace[0].getMethodName());
         return getDocStructType();
     }
 

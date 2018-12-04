@@ -77,8 +77,10 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public void addAllContentFiles() {
-        logger.log(Level.TRACE, "addAllContentFiles()");
-        // TODO Auto-generated method stub
+        // In the legacy implementation, this method must be called to fully
+        // build the object-internal data structure after reading a file. Since
+        // in the new implementation each method does everything it should from
+        // the start, and not just half of it, this function is empty.
     }
 
     @Override
@@ -117,9 +119,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public FileSetInterface getFileSet() {
-        logger.log(Level.TRACE, "getFileSet()");
-        // TODO Auto-generated method stub
-        return new FileSetJoint();
+        return new FileSetJoint(workpiece.getFileGrp());
     }
 
     @Override
@@ -133,9 +133,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DocStructInterface getPhysicalDocStruct() {
-        logger.log(Level.TRACE, "getPhysicalDocStruct()");
-        // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new FileSetJoint(workpiece.getFileGrp());
     }
 
     @Override
@@ -146,13 +144,12 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public void read(String path) throws ReadException {
-        logger.log(Level.TRACE, "read(path: \"{}\")", path);
         URI uri = new File(path).toURI();
 
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
             if (lockResult.isSuccessful()) {
                 try (InputStream in = fileService.read(uri, lockResult)) {
-                    logger.info("Reading METS/Kitodo file {}", uri.toString());
+                    logger.info("Reading METS/Kitodo document {}", uri.toString());
                     workpiece.read(in);
                 }
             } else {

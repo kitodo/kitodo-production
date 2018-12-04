@@ -107,8 +107,6 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public PrefsInterface createPrefs() {
-        logger.log(Level.TRACE, "createPrefs()");
-        // TODO Auto-generated method stub
         return new PrefsJoint();
     }
 
