@@ -15,13 +15,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -47,13 +53,17 @@ public class LogicalDocStructJoint implements DocStructInterface {
     private final MetsService metsService = serviceLoader.getMetsService();
 
     private DivXmlElementAccessInterface structure;
+    private StructuralElementViewInterface divisionView;
 
     public LogicalDocStructJoint() {
+        logger.log(Level.TRACE, "new LogicalDocStructJoint()");
+        // TODO Auto-generated method stub
         this.structure = metsService.createDiv();
     }
 
-    LogicalDocStructJoint(DivXmlElementAccessInterface structure) {
+    LogicalDocStructJoint(DivXmlElementAccessInterface structure, StructuralElementViewInterface divisionView) {
         this.structure = structure;
+        this.divisionView = divisionView;
     }
 
     @Override
@@ -138,16 +148,22 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataTypeInterface> getAddableMetadataTypes() {
-        logger.log(Level.TRACE, "getAddableMetadataTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
+            Collections.emptyList());
+        ArrayList<MetadataTypeInterface> result = new ArrayList<>(addableKeys.size());
+        for (MetadataViewInterface key : addableKeys) {
+            result.add(new MetadataTypeJoint(key));
+        }
+        return result;
     }
 
     @Override
     public List<DocStructInterface> getAllChildren() {
         List<DocStructInterface> wrappedChildren = new ArrayList<>();
         for (DivXmlElementAccessInterface child : structure.getChildren()) {
-            wrappedChildren.add(new LogicalDocStructJoint(child));
+            wrappedChildren.add(new LogicalDocStructJoint(child, divisionView));
         }
         return wrappedChildren;
     }
