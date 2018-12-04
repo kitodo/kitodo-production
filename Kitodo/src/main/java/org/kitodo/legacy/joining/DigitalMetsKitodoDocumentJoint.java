@@ -123,7 +123,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DocStructInterface getLogicalDocStruct() {
-        return new LogicalDocStructJoint(workpiece.getStructMap(), ruleset, priorityList);
+        return new LogicalDocStructJoint(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
     @Override
