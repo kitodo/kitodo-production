@@ -16,15 +16,6 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <ui:param name="isEditMode"
-              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
-    <ui:param name="isCreateMode"
-              value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
-    <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
-    <ui:param name="isConfigMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
-
     <p:panelGrid id="useredit-grid" columns="2" layout="grid">
         <p:row>
             <div>
