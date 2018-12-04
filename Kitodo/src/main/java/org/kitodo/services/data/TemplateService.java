@@ -259,11 +259,9 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
-        int sessionClientId = serviceManager.getUserService().getSessionClientId();
-
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
-        query.must(createSimpleQuery(TemplateTypeField.CLIENT_ID.getKey(), sessionClientId, true));
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
     }
 
@@ -456,7 +454,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
         return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id,
-            true);
+                true);
     }
 
     /**
