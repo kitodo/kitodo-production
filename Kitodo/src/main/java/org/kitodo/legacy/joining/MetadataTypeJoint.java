@@ -41,7 +41,7 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
         @Override
         public String getName() {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            return "physPageNumber";
         }
 
         @Override
@@ -93,7 +93,7 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
         @Override
         public String getName() {
-            return "physPageNumber";
+            return "logicalPageNumber";
         }
 
         @Override
