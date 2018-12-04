@@ -11,24 +11,28 @@
 
 package org.kitodo.legacy.joining;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
@@ -89,8 +93,26 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "addMetadata(metadata: {})", metadata);
-        // TODO Auto-generated method stub
+        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        Optional<MetadataViewInterface> zz = divisionView
+                .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
+                .filter(x -> x.getId().equals(metadata.getMetadataType().getName())).findFirst();
+        Optional<Domain> optionalDomain = zz.isPresent() ? zz.get().getDomain() : Optional.empty();
+        if (!optionalDomain.isPresent() || !optionalDomain.get().equals(Domain.METS_DIV)) {
+            MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadata();
+            metadataEntry.setType(metadata.getMetadataType().getName());
+            metadataEntry.setDomain(domainToMdSec(optionalDomain.orElse(Domain.DESCRIPTION)));
+            metadataEntry.setValue(metadata.getValue());
+            structure.getMetadata().add(metadataEntry);
+        } else {
+            try {
+                structure.getClass().getMethod("set".concat(metadata.getMetadataType().getName()), String.class)
+                        .invoke(structure, metadata.getValue());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalArgumentException(e.getMessage(), e);
+            }
+        }
     }
 
     @Override
@@ -140,6 +162,23 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public void deleteUnusedPersonsAndMetadata() {
         logger.log(Level.TRACE, "deleteUnusedPersonsAndMetadata()");
         // TODO Auto-generated method stub
+    }
+
+    private MdSec domainToMdSec(Domain domain) {
+        switch (domain) {
+            case DESCRIPTION:
+                return MdSec.DMD_SEC;
+            case DIGITAL_PROVENANCE:
+                return MdSec.DIGIPROV_MD;
+            case RIGHTS:
+                return MdSec.RIGHTS_MD;
+            case SOURCE:
+                return MdSec.SOURCE_MD;
+            case TECHNICAL:
+                return MdSec.TECH_MD;
+            default:
+                throw new IllegalArgumentException(domain.name());
+        }
     }
 
     @Override
