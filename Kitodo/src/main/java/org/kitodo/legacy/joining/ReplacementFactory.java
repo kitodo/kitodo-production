@@ -51,8 +51,6 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public MetadataInterface createMetadata(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "createMetadata(metadataType: {})", metadataType);
-        // TODO Auto-generated method stub
         return new MetadataJoint(metadataType);
     }
 

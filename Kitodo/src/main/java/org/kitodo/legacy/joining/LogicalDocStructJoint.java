@@ -14,6 +14,7 @@ package org.kitodo.legacy.joining;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,11 +24,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
+import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -199,9 +202,27 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataInterface> getAllMetadata() {
-        logger.log(Level.TRACE, "getAllMetadata()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        List<MetadataInterface> result = new LinkedList<>();
+        // sortieren
+        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+                .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
+
+        // ausgabe
+
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
+            if (x.getMetadata().isPresent()) {
+                MetadataViewInterface key = x.getMetadata().get();
+                for (MetadataAccessInterface value : x.getValues()) {
+                    if (value instanceof MetadataXmlElementAccessInterface) {
+                        result.add(new MetadataJoint(null, new MetadataTypeJoint(key),
+                                ((MetadataXmlElementAccessInterface) value).getValue()));
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -220,8 +241,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<PersonInterface> getAllPersons() {
-        logger.log(Level.TRACE, "getAllPersons()");
-        // TODO Auto-generated method stub
+        // “persons” is no longer supported, uses groups instead
         return Collections.emptyList();
     }
 
@@ -285,9 +305,22 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataTypeInterface> getDisplayMetadataTypes() {
-        logger.log(Level.TRACE, "getDisplayMetadataTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        List<MetadataTypeInterface> result = new LinkedList<>();
+        // sortieren
+        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+                .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
+
+        // ausgabe
+
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
+            if (x.getMetadata().isPresent()) {
+                MetadataViewInterface key = x.getMetadata().get();
+                result.add(new MetadataTypeJoint(key));
+            }
+        }
+        return result;
     }
 
     @Override
@@ -331,9 +364,8 @@ public class LogicalDocStructJoint implements DocStructInterface {
      */
     public DocStructTypeInterface getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
-            stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
-            stackTrace[0].getMethodName());
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
+            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 
