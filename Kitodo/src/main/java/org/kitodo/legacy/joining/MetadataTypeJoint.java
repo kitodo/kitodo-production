@@ -142,8 +142,6 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
     @Override
     public boolean isPerson() {
-        logger.log(Level.TRACE, "isPerson()");
-        // TODO Auto-generated method stub
         return false;
     }
 

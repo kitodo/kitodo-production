@@ -11,6 +11,7 @@
 
 package org.kitodo.legacy.joining;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,9 +33,7 @@ public class LogicalDocStructTypeJoint implements DocStructTypeInterface {
 
     @Override
     public List<String> getAllAllowedDocStructTypes() {
-        logger.log(Level.TRACE, "getAllAllowedDocStructTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
     @Override
