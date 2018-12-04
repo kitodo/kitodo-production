@@ -320,9 +320,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public DocStructTypeInterface getDocStructType() {
-        logger.log(Level.TRACE, "getDocStructType()");
-        // TODO Auto-generated method stub
-        return new DocStructTypeJoint();
+        return new LogicalDocStructTypeJoint(divisionView);
     }
 
     /**
@@ -333,7 +331,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
      */
     public DocStructTypeInterface getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes Method {}.{}(), bypassing the interface!",
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
             stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
             stackTrace[0].getMethodName());
         return getDocStructType();

@@ -45,11 +45,12 @@ public class PrefsJoint implements PrefsInterface {
     public DocStructTypeInterface getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
-                return DocStructTypeJoint.SPECIAL_TYPE_PAGE;
+                return PageType.INSTANCE;
             default:
                 logger.log(Level.TRACE, "getDocStrctTypeByName(identifier: \"{}\")", identifier);
                 // TODO Auto-generated method stub
-                return new DocStructTypeJoint();
+                return null; // new LogicalDocStructTypeJoint();
+            // Wird das überhaupt gebraucht?
         }
     }
 
@@ -63,7 +64,7 @@ public class PrefsJoint implements PrefsInterface {
             default:
                 logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
                 // TODO Auto-generated method stub
-                return new MetadataTypeJoint();
+                return null; // new MetadataTypeJoint();
         }
     }
 

@@ -93,7 +93,7 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
         @Override
         public String getName() {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            return "physPageNumber";
         }
 
         @Override
@@ -127,12 +127,10 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
         }
     };
 
-    public MetadataTypeJoint() {
-        // TODO Auto-generated constructor stub
-    }
+    private MetadataViewInterface keyView;
 
-    public MetadataTypeJoint(MetadataViewInterface key) {
-        // TODO Auto-generated constructor stub
+    public MetadataTypeJoint(MetadataViewInterface keyView) {
+        this.keyView = keyView;
     }
 
     @Override
@@ -151,16 +149,12 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
     @Override
     public String getLanguage(String language) {
-        logger.log(Level.TRACE, "getLanguage(language: \"{}\")", language);
-        // TODO Auto-generated method stub
-        return "";
+        return keyView.getLabel();
     }
 
     @Override
     public String getName() {
-        logger.log(Level.TRACE, "getName()");
-        // TODO Auto-generated method stub
-        return "";
+        return keyView.getId();
     }
 
     @Override

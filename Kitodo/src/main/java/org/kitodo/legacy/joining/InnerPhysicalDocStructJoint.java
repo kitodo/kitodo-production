@@ -185,10 +185,10 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
         if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDER) {
-            return Arrays.asList(new MetadataJoint(metadataType, Integer.toString(mediaUnit.getOrder())));
-        } else if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDER) {
+            return Arrays.asList(new MetadataJoint(this, metadataType, Integer.toString(mediaUnit.getOrder())));
+        } else if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL) {
             return Objects.nonNull(mediaUnit.getOrderlabel())
-                    ? Arrays.asList(new MetadataJoint(metadataType, mediaUnit.getOrderlabel()))
+                    ? Arrays.asList(new MetadataJoint(this, metadataType, mediaUnit.getOrderlabel()))
                     : Collections.emptyList();
         } else {
             logger.log(Level.TRACE, "getAllMetadataByType(metadataType: {})", metadataType);
@@ -301,7 +301,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     public DocStructTypeInterface getDocStructType() {
         logger.log(Level.TRACE, "getDocStructType()");
         // TODO Auto-generated method stub
-        return new DocStructTypeJoint();
+        return null; // wird das gebraucht? Wäre BoundBook
     }
 
     /**
@@ -312,7 +312,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
      */
     public DocStructTypeInterface getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes Method {}.{}(), bypassing the interface!",
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
             stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
             stackTrace[0].getMethodName());
         return getDocStructType();
