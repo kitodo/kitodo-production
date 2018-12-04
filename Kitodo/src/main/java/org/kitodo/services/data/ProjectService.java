@@ -158,8 +158,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Find all projects available to assign to the edited user. It will be
-     * displayed in the userEditProjectsPopup. If user id is null and session client
-     * is null, return list of all projects.
+     * displayed in the userEditProjectsPopup.
      *
      * @param userId
      *            id of user which is going to be edited
