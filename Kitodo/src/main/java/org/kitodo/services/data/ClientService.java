@@ -11,31 +11,24 @@
 
 package org.kitodo.services.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ClientType;
 import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
-import org.kitodo.dto.ProjectDTO;
-import org.kitodo.helper.RelatedProperty;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static ClientService instance = null;
 
     /**
@@ -89,37 +82,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         clientDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject clientJSONObject = jsonObject.getJsonObject("_source");
         clientDTO.setName(ClientTypeField.NAME.getStringValue(clientJSONObject));
-        clientDTO.setProjectsSize(ClientTypeField.PROJECTS.getSizeOfProperty(clientJSONObject));
-        if (!related) {
-            convertRelatedJSONObjects(clientJSONObject, clientDTO);
-        } else {
-            addBasicProjectRelation(clientDTO, clientJSONObject);
-        }
         return clientDTO;
-    }
-
-    private void convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
-        clientDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, ClientTypeField.PROJECTS.getKey(),
-            serviceManager.getProjectService()));
-    }
-
-    private void addBasicProjectRelation(ClientDTO clientDTO, JsonObject jsonObject) {
-        if (clientDTO.getProjectsSize() > 0) {
-            List<ProjectDTO> projects = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(ProjectTypeField.TITLE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                ClientTypeField.PROJECTS.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                ProjectDTO project = new ProjectDTO();
-                project.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    project.setTitle(relatedProperty.getValues().get(0));
-                }
-                projects.add(project);
-            }
-            clientDTO.setProjects(projects);
-        }
     }
 
     /**
@@ -158,31 +121,5 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
      */
     public void refresh(Client client) {
         dao.refresh(client);
-    }
-
-    /**
-     * Find clients by id of projects.
-     *
-     * @param id
-     *            The id of the project.
-     * @return list of JSON objects with clients for specific project id
-     */
-    public JsonObject findByProjectId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("projects.id", id, true);
-        return searcher.findDocument(query.toString());
-    }
-
-    /**
-     * Get clients by a list of ids.
-     * 
-     * @param clientIds
-     *            the list of ids
-     * @return the list of clients
-     */
-    public List<Client> getByIds(List<Integer> clientIds) {
-        if (!clientIds.isEmpty()) {
-            return dao.getByIds(clientIds);
-        }
-        return new ArrayList<>();
     }
 }
