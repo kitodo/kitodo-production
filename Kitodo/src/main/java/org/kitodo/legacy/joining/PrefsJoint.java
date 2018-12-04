@@ -11,19 +11,28 @@
 
 package org.kitodo.legacy.joining;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataeditor.RulesetManagementService;
 
 public class PrefsJoint implements PrefsInterface {
     private static final Logger logger = LogManager.getLogger(PrefsJoint.class);
+    private final ServiceManager serviceLoader = new ServiceManager();
+    private final RulesetManagementService rums = serviceLoader.getRulesetManagementService();
+
+    RulesetManagementInterface ruleset;
 
     @Override
     public List<DocStructTypeInterface> getAllDocStructTypes() {
@@ -61,7 +70,13 @@ public class PrefsJoint implements PrefsInterface {
     @Override
     public void loadPrefs(String fileName) throws PreferencesException {
         logger.log(Level.TRACE, "loadPrefs(fileName: {})", fileName);
-        // TODO Auto-generated method stub
+        RulesetManagementInterface rum = rums.getRulesetManagement();
+        try {
+            rum.load(new File(fileName));
+        } catch (IOException e) {
+            throw new PreferencesException(e.getMessage(), e);
+        }
+        this.ruleset = rum;
     }
 
 }
