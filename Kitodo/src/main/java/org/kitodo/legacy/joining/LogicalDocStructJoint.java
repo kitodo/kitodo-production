@@ -68,17 +68,21 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     private List<LanguageRange> priorityList;
 
+    private LogicalDocStructJoint parent;
+
     public LogicalDocStructJoint() {
         logger.log(Level.TRACE, "new LogicalDocStructJoint()");
         // TODO Auto-generated method stub
         this.structure = metsService.createDiv();
     }
 
-    LogicalDocStructJoint(DivXmlElementAccessInterface structure, RulesetManagementInterface ruleset,
+    LogicalDocStructJoint(DivXmlElementAccessInterface structure, LogicalDocStructJoint parent,
+            RulesetManagementInterface ruleset,
             List<LanguageRange> priorityList) {
         this.structure = structure;
         this.ruleset = ruleset;
         this.priorityList = priorityList;
+        this.parent = parent;
         this.divisionView = ruleset.getStructuralElementView(structure.getType(), "edit", priorityList);
     }
 
@@ -214,7 +218,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public List<DocStructInterface> getAllChildren() {
         List<DocStructInterface> wrappedChildren = new ArrayList<>();
         for (DivXmlElementAccessInterface child : structure.getChildren()) {
-            wrappedChildren.add(new LogicalDocStructJoint(child, ruleset, priorityList));
+            wrappedChildren.add(new LogicalDocStructJoint(child, this, ruleset, priorityList));
         }
         return wrappedChildren;
     }
@@ -407,9 +411,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public DocStructInterface getParent() {
-        logger.log(Level.TRACE, "getParent()");
-        // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return parent;
     }
 
     @Override
