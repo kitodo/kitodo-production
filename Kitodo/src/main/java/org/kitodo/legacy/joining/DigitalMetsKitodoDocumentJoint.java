@@ -67,6 +67,28 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
         return new LogicalDocStructJoint();
     }
 
+    /**
+     * Extracts the formation of the error message as it occurs during both
+     * reading and writing. In addition, the error is logged.
+     * 
+     * @param uri
+     *            URI to be read/written
+     * @param lockResult
+     *            Lock result that did not work
+     * @return The error message for the exception.
+     */
+    private String createLockErrorMessage(URI uri, LockResult lockResult) {
+        Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Cannot lock ");
+        buffer.append(uri);
+        buffer.append(" because it is already locked by ");
+        buffer.append(String.join(" & ", conflictingUsers));
+        String message = buffer.toString();
+        logger.info(message);
+        return message;
+    }
+
     @Override
     public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
         logger.log(Level.TRACE, "getDigitalDocument()");
@@ -112,15 +134,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
                     workpiece.read(in);
                 }
             } else {
-                Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-                StringBuilder messageBuilder = new StringBuilder();
-                messageBuilder.append("Cannot lock ");
-                messageBuilder.append(uri);
-                messageBuilder.append(" because it is already locked by ");
-                messageBuilder.append(String.join("; ", conflictingUsers));
-                String message = messageBuilder.toString();
-                logger.info(message);
-                throw new ReadException(message);
+                throw new ReadException(createLockErrorMessage(uri, lockResult));
             }
         } catch (IOException e) {
             throw new ReadException(e.getMessage(), e);
@@ -155,15 +169,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
                     workpiece.save(out);
                 }
             } else {
-                Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-                StringBuilder messageBuilder = new StringBuilder();
-                messageBuilder.append("Cannot lock ");
-                messageBuilder.append(uri);
-                messageBuilder.append(" because it is already locked by ");
-                messageBuilder.append(String.join("; ", conflictingUsers));
-                String message = messageBuilder.toString();
-                logger.info(message);
-                throw new WriteException(message);
+                throw new WriteException(createLockErrorMessage(uri, lockResult));
             }
         } catch (IOException e) {
             throw new WriteException(e.getMessage(), e);
