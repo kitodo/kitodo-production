@@ -17,43 +17,18 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
-public class DocStructTypeJoint implements DocStructTypeInterface {
-    private static final Logger logger = LogManager.getLogger(DocStructTypeJoint.class);
+public class LogicalDocStructTypeJoint implements DocStructTypeInterface {
+    private static final Logger logger = LogManager.getLogger(LogicalDocStructTypeJoint.class);
 
-    public static final DocStructTypeInterface SPECIAL_TYPE_PAGE = new DocStructTypeInterface() {
-        @Override
-        public List<String> getAllAllowedDocStructTypes() {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
+    private StructuralElementViewInterface divisionView;
 
-        @Override
-        public List<MetadataTypeInterface> getAllMetadataTypes() {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
-
-        @Override
-        public String getAnchorClass() {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
-
-        @Override
-        public String getName() {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
-
-        @Override
-        public String getNameByLanguage(String language) {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
-
-        @Override
-        public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
-            throw new UnsupportedOperationException("Page type needs special treatment");
-        }
-    };
+    public LogicalDocStructTypeJoint(StructuralElementViewInterface divisionView) {
+        this.divisionView = divisionView;
+    }
 
     @Override
     public List<String> getAllAllowedDocStructTypes() {
@@ -85,10 +60,7 @@ public class DocStructTypeJoint implements DocStructTypeInterface {
 
     @Override
     public String getNameByLanguage(String language) {
-        logger.log(Level.TRACE, "getNameByLanguage(language: \"{}\")", language);
-
-        // TODO Auto-generated method stub
-        return "";
+        return divisionView.getLabel();
     }
 
     @Override
