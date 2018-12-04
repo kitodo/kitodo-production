@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -124,11 +123,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DocStructInterface getLogicalDocStruct() {
-        String structuralElement = workpiece.getStructMap().getType();
-        String bind = "edit";
-        StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structuralElement, bind,
-            priorityList);
-        return new LogicalDocStructJoint(workpiece.getStructMap(), divisionView);
+        return new LogicalDocStructJoint(workpiece.getStructMap(), ruleset, priorityList);
     }
 
     @Override

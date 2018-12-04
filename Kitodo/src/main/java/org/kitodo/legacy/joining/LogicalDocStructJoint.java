@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -28,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
@@ -62,15 +64,22 @@ public class LogicalDocStructJoint implements DocStructInterface {
     private DivXmlElementAccessInterface structure;
     private StructuralElementViewInterface divisionView;
 
+    private RulesetManagementInterface ruleset;
+
+    private List<LanguageRange> priorityList;
+
     public LogicalDocStructJoint() {
         logger.log(Level.TRACE, "new LogicalDocStructJoint()");
         // TODO Auto-generated method stub
         this.structure = metsService.createDiv();
     }
 
-    LogicalDocStructJoint(DivXmlElementAccessInterface structure, StructuralElementViewInterface divisionView) {
+    LogicalDocStructJoint(DivXmlElementAccessInterface structure, RulesetManagementInterface ruleset,
+            List<LanguageRange> priorityList) {
         this.structure = structure;
-        this.divisionView = divisionView;
+        this.ruleset = ruleset;
+        this.priorityList = priorityList;
+        this.divisionView = ruleset.getStructuralElementView(structure.getType(), "edit", priorityList);
     }
 
     @Override
@@ -205,7 +214,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public List<DocStructInterface> getAllChildren() {
         List<DocStructInterface> wrappedChildren = new ArrayList<>();
         for (DivXmlElementAccessInterface child : structure.getChildren()) {
-            wrappedChildren.add(new LogicalDocStructJoint(child, divisionView));
+            wrappedChildren.add(new LogicalDocStructJoint(child, ruleset, priorityList));
         }
         return wrappedChildren;
     }
