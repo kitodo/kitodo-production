@@ -227,9 +227,29 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
-        logger.log(Level.TRACE, "getAllMetadataByType(metadataType: {})", metadataType);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        List<MetadataInterface> result = new LinkedList<>();
+        // sortieren
+        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+                .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
+
+        // ausgabe
+
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
+            if (x.getMetadata().isPresent()) {
+                MetadataViewInterface key = x.getMetadata().get();
+                if (key.getId().equals(metadataType.getName())) {
+                    for (MetadataAccessInterface value : x.getValues()) {
+                        if (value instanceof MetadataXmlElementAccessInterface) {
+                            result.add(new MetadataJoint(null, new MetadataTypeJoint(key),
+                                    ((MetadataXmlElementAccessInterface) value).getValue()));
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

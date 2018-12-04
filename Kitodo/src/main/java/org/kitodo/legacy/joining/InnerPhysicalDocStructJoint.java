@@ -177,9 +177,9 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataInterface> getAllMetadata() {
-        logger.log(Level.TRACE, "getAllMetadata()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        return Arrays.asList(
+            new MetadataJoint(this, MetadataTypeJoint.SPECIAL_TYPE_ORDER, Integer.toString(mediaUnit.getOrder())),
+            new MetadataJoint(this, MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL, mediaUnit.getOrderlabel()));
     }
 
     @Override
