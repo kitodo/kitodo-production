@@ -14,6 +14,7 @@ package org.kitodo.legacy.joining;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -45,48 +46,6 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     private MetsXmlElementAccessInterface workpiece = metsService.createMets();
 
-    @Override
-    public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
-        logger.log(Level.TRACE, "getDigitalDocument()");
-        return new DigitalMetsKitodoDocumentJoint(workpiece);
-    }
-
-    @Override
-    public void read(String path) throws ReadException {
-        logger.log(Level.TRACE, "read(path: \"{}\")", path);
-        URI uri = new File(path).toURI();
-
-        try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
-            if (lockResult.isSuccessful()) {
-                try (InputStream in = fileService.read(uri, lockResult)) {
-                    workpiece.read(in);
-                }
-            } else {
-                Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-                StringBuilder message = new StringBuilder();
-                message.append("Cannot lock ");
-                message.append(uri);
-                message.append(" because it is already locked by ");
-                message.append(String.join("; ", conflictingUsers));
-                throw new ReadException(message.toString());
-            }
-        } catch (IOException e) {
-            throw new ReadException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        logger.log(Level.TRACE, "setDigitalDocument(digitalDocument: {})", digitalDocument);
-        this.workpiece = ((DigitalMetsKitodoDocumentJoint) digitalDocument).workpiece;
-    }
-
-    @Override
-    public void write(String filename) throws PreferencesException, WriteException {
-        logger.log(Level.TRACE, "write(filename: {})");
-        // TODO Auto-generated method stub
-    }
-
     public DigitalMetsKitodoDocumentJoint() {
         this.workpiece = metsService.createMets();
     }
@@ -106,6 +65,12 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
         logger.log(Level.TRACE, "createDocStruct(docStructType: {})", docStructType);
         // TODO Auto-generated method stub
         return new LogicalDocStructJoint();
+    }
+
+    @Override
+    public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
+        logger.log(Level.TRACE, "getDigitalDocument()");
+        return new DigitalMetsKitodoDocumentJoint(workpiece);
     }
 
     @Override
@@ -136,6 +101,38 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     }
 
     @Override
+    public void read(String path) throws ReadException {
+        logger.log(Level.TRACE, "read(path: \"{}\")", path);
+        URI uri = new File(path).toURI();
+
+        try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
+            if (lockResult.isSuccessful()) {
+                try (InputStream in = fileService.read(uri, lockResult)) {
+                    logger.info("Reading METS/Kitodo file {}", uri.toString());
+                    workpiece.read(in);
+                }
+            } else {
+                Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
+                StringBuilder messageBuilder = new StringBuilder();
+                messageBuilder.append("Cannot lock ");
+                messageBuilder.append(uri);
+                messageBuilder.append(" because it is already locked by ");
+                messageBuilder.append(String.join("; ", conflictingUsers));
+                String message = messageBuilder.toString();
+                logger.info(message);
+                throw new ReadException(message);
+            }
+        } catch (IOException e) {
+            throw new ReadException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
+        this.workpiece = ((DigitalMetsKitodoDocumentJoint) digitalDocument).workpiece;
+    }
+
+    @Override
     public void setLogicalDocStruct(DocStructInterface docStruct) {
         logger.log(Level.TRACE, "setLogicalDocStruct(docStruct: {})", docStruct);
         // TODO Auto-generated method stub
@@ -145,5 +142,31 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     public void setPhysicalDocStruct(DocStructInterface docStruct) {
         logger.log(Level.TRACE, "setPhysicalDocStruct(docStruct: {})", docStruct);
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void write(String filename) throws PreferencesException, WriteException {
+        URI uri = new File(filename).toURI();
+
+        try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
+            if (lockResult.isSuccessful()) {
+                try (OutputStream out = fileService.write(uri, lockResult)) {
+                    logger.info("Saving METS/Kitodo file {}", uri.toString());
+                    workpiece.save(out);
+                }
+            } else {
+                Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
+                StringBuilder messageBuilder = new StringBuilder();
+                messageBuilder.append("Cannot lock ");
+                messageBuilder.append(uri);
+                messageBuilder.append(" because it is already locked by ");
+                messageBuilder.append(String.join("; ", conflictingUsers));
+                String message = messageBuilder.toString();
+                logger.info(message);
+                throw new WriteException(message);
+            }
+        } catch (IOException e) {
+            throw new WriteException(e.getMessage(), e);
+        }
     }
 }
