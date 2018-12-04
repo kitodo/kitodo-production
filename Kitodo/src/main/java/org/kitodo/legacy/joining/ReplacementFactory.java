@@ -46,7 +46,7 @@ public class ReplacementFactory implements FactoryInterface {
     public DigitalDocumentInterface createDigitalDocument() {
         logger.log(Level.TRACE, "createDigitalDocument()");
         // TODO Auto-generated method stub
-        return new DigitalDocumentJoint();
+        return new DigitalMetsKitodoDocumentJoint();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ReplacementFactory implements FactoryInterface {
     public MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException {
         logger.log(Level.TRACE, "createMetsMods(prefs: {})", prefs);
         // TODO Auto-generated method stub
-        return new MetsModsJoint();
+        return new DigitalMetsKitodoDocumentJoint();
     }
 
     @Override
