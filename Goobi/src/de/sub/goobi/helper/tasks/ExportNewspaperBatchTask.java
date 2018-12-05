@@ -630,8 +630,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         for (String year : collectedYears.keySet()) {
             if (!year.equals(ownYear)) {
                 DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-                        MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(),
-                        MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
+                        MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, year.toString(),
+                        null, act, ruleSet);
                 child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, collectedYears.get(year));
             }
         }
@@ -683,14 +683,17 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 }
             }
             DocStruct child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
-            child.addMetadata(identifierField,
-                    idLabels.containsKey(identifier) ? idLabels.get(identifier) : identifier);
-            try {
-                child.addMetadata(optionalField, identifier);
-            } catch (MetadataTypeNotAllowedException e) {
-                if (logger.isInfoEnabled()) {
-                    logger.info(
-                            e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
+            child.addMetadata(identifierField, identifier);
+            if (idLabels.containsKey(identifier)) {
+                child.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, idLabels.get(identifier));
+            } else if (optionalField != null) {
+                try {
+                    child.addMetadata(optionalField, identifier);
+                } catch (MetadataTypeNotAllowedException e) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info(e.getMessage().replaceFirst("^Couldn’t add ([^:]+):",
+                                "Couldn’t add optional field $1."));
+                    }
                 }
             }
 
