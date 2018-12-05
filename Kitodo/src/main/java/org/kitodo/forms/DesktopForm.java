@@ -136,6 +136,8 @@ public class DesktopForm extends BaseForm {
                     return serviceManager.getTemplateService().count();
                 case ROLE:
                     return serviceManager.getRoleService().count();
+                case WORKFLOW:
+                    return serviceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }
