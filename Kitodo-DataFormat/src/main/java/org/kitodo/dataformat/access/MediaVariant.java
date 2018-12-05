@@ -115,4 +115,42 @@ public class MediaVariant implements UseXmlAttributeAccessInterface {
     public void setUse(String use) {
         this.use = use;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
+        result = prime * result + ((use == null) ? 0 : use.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MediaVariant other = (MediaVariant) obj;
+        if (mimeType == null) {
+            if (other.mimeType != null) {
+                return false;
+            }
+        } else if (!mimeType.equals(other.mimeType)) {
+            return false;
+        }
+        if (use == null) {
+            if (other.use != null) {
+                return false;
+            }
+        } else if (!use.equals(other.use)) {
+            return false;
+        }
+        return true;
+    }
 }

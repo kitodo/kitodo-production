@@ -164,11 +164,11 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildren() {
-        // logger.log(Level.TRACE, "getAllChildren()");
-        // Methode wird zwar aufgerufen, weil für logische und physiche die
-        // gleiche Schleife benutzt wird, muss aber leer zurückkommen
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
+        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+            result.add(new InnerPhysicalDocStructJoint(mediaUnit));
+        }
+        return result;
     }
 
     @Override
