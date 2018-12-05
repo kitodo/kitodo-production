@@ -12,18 +12,12 @@
 package org.kitodo.forms;
 
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.helper.Helper;
-import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
@@ -34,46 +28,8 @@ public class LoginForm implements Serializable {
     private String password;
     private User myBenutzer;
     private boolean alreadyLoggedIn = false;
-    private String passwordChanged;
-    private String passwordChangedRepeat;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private boolean firstVisit = true;
-
-    /**
-     * Save changed password at database and in case Ldap authentication is active
-     * also on ldap server.
-     *
-     */
-    public void saveChangedPassword() {
-        if (!this.passwordChanged.equals(this.passwordChangedRepeat)) {
-            Helper.setErrorMessage("passwordsDontMatch");
-        } else {
-            try {
-                if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
-                    serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwordChanged);
-                }
-                serviceManager.getUserService().changeUserPassword(this.myBenutzer, this.passwordChanged);
-                Helper.setMessage("passwordChanged");
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {"user" }, logger, e);
-            } catch (NoSuchAlgorithmException e) {
-                Helper.setErrorMessage("ldap error", logger, e);
-            }
-        }
-    }
-
-    /**
-     * Save user configuration.
-     *
-     */
-    public void saveUser() {
-        try {
-            serviceManager.getUserService().save(this.myBenutzer);
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("user") }, logger, e);
-        }
-    }
 
     /*
      * Getter und Setter
@@ -120,44 +76,6 @@ public class LoginForm implements Serializable {
 
     public void setMyBenutzer(User myClass) {
         this.myBenutzer = myClass;
-    }
-
-    /**
-     * Get changed password.
-     * 
-     * @return changed password
-     */
-    public String getPasswordChanged() {
-        return this.passwordChanged;
-    }
-
-    /**
-     * Set changed password.
-     * 
-     * @param passwordChanged
-     *            as String
-     */
-    public void setPasswordChanged(String passwordChanged) {
-        this.passwordChanged = passwordChanged;
-    }
-
-    /**
-     * Get repeated changed password.
-     * 
-     * @return repeated changed password
-     */
-    public String getPasswordChangedRepeat() {
-        return this.passwordChangedRepeat;
-    }
-
-    /**
-     * Set repeated changed password.
-     * 
-     * @param passwordChangedRepeat
-     *            as String
-     */
-    public void setPasswordChangedRepeat(String passwordChangedRepeat) {
-        this.passwordChangedRepeat = passwordChangedRepeat;
     }
 
     /**
