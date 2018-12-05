@@ -78,13 +78,13 @@
                                   value="#{msgs.timeoutWarningDMS}"/>
 
                     <!-- Upload-button -->
-                    <h:commandLink id="action9" rendered="#{task.typeExportDMS and process.blockedUser == null}"
+                    <h:commandLink id="exportDms" rendered="#{task.typeExportDMS and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.exportDMS}" title="#{msgs.importDms}">
                         <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.importDms}</h:outputText>
                     </h:commandLink>
 
                     <!-- Metadaten-button -->
-                    <h:commandLink id="action10" rendered="#{task.typeMetadata and process.blockedUser == null}"
+                    <h:commandLink id="readXml" rendered="#{task.typeMetadata and process.blockedUser == null}"
                                    action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                         <h:outputText><i class="fa fa-file-o"/> #{msgs.metadataEdit}</h:outputText>
                         <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}"
@@ -95,21 +95,21 @@
                     </h:commandLink>
 
                     <!-- Re-generate all images action link -->
-                    <h:commandLink id="action12"
+                    <h:commandLink id="generateAllImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateAllImages}"
                                    title="#{msgs.regenerateAllImages}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
                     </h:commandLink>
                     <!-- Generate missing and re-generate damaged images action link -->
-                    <h:commandLink id="action16"
+                    <h:commandLink id="regenerateMissingAndDamagedImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingAndDamagedImages}"
                                    title="#{msgs.regenerateMissingAndDamagedImages}">
                         <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
                     </h:commandLink>
                     <!-- Generate missing images action link -->
-                    <h:commandLink id="action17"
+                    <h:commandLink id="generateMissingImages"
                                    rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
                                    action="#{CurrentTaskForm.generateMissingImages}"
                                    title="#{msgs.generateMissingImages}">
