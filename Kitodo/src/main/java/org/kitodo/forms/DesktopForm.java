@@ -31,6 +31,7 @@ import org.kitodo.helper.Helper;
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
+    private static final String SORT_TITLE_ASC = "{\"title\":\"asc\" }";
 
     /**
      * Default constructor.
@@ -55,7 +56,7 @@ public class DesktopForm extends BaseForm {
      */
     public List getTasks() {
         try {
-            return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
+            return serviceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger, e);
             return new ArrayList();
@@ -69,7 +70,7 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10, null);
+            return serviceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
             return new ArrayList();
@@ -83,7 +84,7 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10, null);
+            return serviceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
             return new ArrayList();
