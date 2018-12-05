@@ -31,6 +31,7 @@ import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.image.ImageService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
 import org.kitodo.services.security.SessionService;
@@ -47,6 +48,7 @@ public class ServiceManager {
     private DataEditorService dataEditorService;
     private DocketService docketService;
     private FilterService filterService;
+    private ImageService imageService;
     private LdapGroupService ldapGroupService;
     private LdapServerService ldapServerService;
     private PropertyService propertyService;
@@ -102,6 +104,12 @@ public class ServiceManager {
     private void initializeFilterService() {
         if (filterService == null) {
             filterService = FilterService.getInstance();
+        }
+    }
+
+    private void initializeImageService() {
+        if (imageService == null) {
+            imageService = ImageService.getInstance();
         }
     }
 
@@ -313,6 +321,17 @@ public class ServiceManager {
     public LdapServerService getLdapServerService() {
         initializeLdapServerService();
         return ldapServerService;
+    }
+
+    /**
+     * Initialize ImageService if it is not yet initialized and next return
+     * it.
+     *
+     * @return ImageService object
+     */
+    public ImageService getImageService() {
+        initializeImageService();
+        return imageService;
     }
 
     /**
