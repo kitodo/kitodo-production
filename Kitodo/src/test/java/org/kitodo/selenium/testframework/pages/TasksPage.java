@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -33,8 +34,6 @@ public class TasksPage extends Page<TasksPage> {
     @FindBy(id = TASK_TABLE + "_data")
     private WebElement taskTable;
 
-    @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=12']")
     private WebElement editTaskLink;
 
     private WebElement takeTaskLink;
@@ -84,17 +83,46 @@ public class TasksPage extends Page<TasksPage> {
         return getRowsOfTable(taskTable).size();
     }
 
-    public void takeOpenTask() throws Exception {
-        setTakeTaskLink();
+    public void takeOpenTask(String taskTitle, String processTitle) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        setTakeTaskLink(taskTitle, processTitle);
         takeTaskLink.click();
     }
 
-    public void editOwnedTask() {
+    public void editOwnedTask(int id) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        setEditTaskLink(id);
         editTaskLink.click();
     }
 
-    private void setTakeTaskLink() {
-        int index = getRowIndex(taskTable, "Open");
+    private void setEditTaskLink(int id) {
+        editTaskLink = Browser.getDriver()
+                .findElementByXPath("//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=" + id + "']");
+    }
+
+    private void setTakeTaskLink(String taskTitle, String processTitle) {
+        int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
         takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:take");
+    }
+
+    private int getRowIndexForTask(WebElement dataTable, String searchedTaskTitle, String searchedProcessTitle) {
+        List<WebElement> tableRows = getRowsOfTable(dataTable);
+
+        for (int i = 0; i < tableRows.size(); i++) {
+            WebElement tableRow = tableRows.get(i);
+            String taskTitle = Browser.getCellDataByRow(tableRow, 1);
+            String processTitle = Browser.getCellDataByRow(tableRow, 2);
+
+            if (taskTitle.equals(searchedTaskTitle) && processTitle.equals(searchedProcessTitle)) {
+                return i;
+            }
+        }
+
+        throw new NotFoundException("Row for task title " + searchedTaskTitle + " and process title "
+                + searchedProcessTitle + "was not found!");
     }
 }

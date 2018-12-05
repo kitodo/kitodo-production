@@ -125,7 +125,6 @@ public abstract class Page<T> {
         return index;
     }
 
-
     /**
      * Find row in table matching to give title, return index of found row.
      *

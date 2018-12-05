@@ -26,7 +26,7 @@ public class BeanHelperIT {
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertClients();
+        MockDatabase.insertRolesFull();
         MockDatabase.insertDockets();
         MockDatabase.insertRulesets();
     }

@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Task;
@@ -44,6 +45,9 @@ public class WorkingST extends BaseTestSelenium {
 
     @BeforeClass
     public static void setup() throws Exception {
+        MockDatabase.cleanDatabase();
+        MockDatabase.insertProcessesForWorkflowFull();
+
         currentTasksEditPage = Pages.getCurrentTasksEditPage();
         processesPage = Pages.getProcessesPage();
         tasksPage = Pages.getTasksPage();
@@ -67,7 +71,7 @@ public class WorkingST extends BaseTestSelenium {
         Task task = serviceManager.getTaskService().getById(9);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
-        tasksPage.goTo().takeOpenTask();
+        tasksPage.goTo().takeOpenTask("Open", "First process");
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
         task = serviceManager.getTaskService().getById(9);
@@ -82,7 +86,7 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void editOwnedTaskTest() throws Exception {
-        tasksPage.goTo().editOwnedTask();
+        tasksPage.goTo().editOwnedTask(12);
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
         currentTasksEditPage.closeTask();
@@ -90,6 +94,36 @@ public class WorkingST extends BaseTestSelenium {
 
         Task task = serviceManager.getTaskService().getById(12);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void editOwnedTaskAndTakeNextForParallelWorkflowTest() throws Exception {
+        tasksPage.editOwnedTask(19);
+        assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
+
+        currentTasksEditPage.closeTask();
+        assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
+
+        Task task = serviceManager.getTaskService().getById(19);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        task = serviceManager.getTaskService().getById(20);
+        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        task = serviceManager.getTaskService().getById(21);
+        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        task = serviceManager.getTaskService().getById(22);
+        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+
+        tasksPage.takeOpenTask("Task3", "Parallel");
+        assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
+
+        task = serviceManager.getTaskService().getById(21);
+        assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
+
+        task = serviceManager.getTaskService().getById(20);
+        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
+        task = serviceManager.getTaskService().getById(22);
+        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
     }
 
     @Test

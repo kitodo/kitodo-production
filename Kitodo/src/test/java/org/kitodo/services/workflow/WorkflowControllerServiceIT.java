@@ -83,7 +83,8 @@ public class WorkflowControllerServiceIT {
         workflowService.setTaskStatusUp(task);
         assertEquals("Task status was not set up!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
-        taskService.save(workflowService.setTaskStatusDown(task));
+        workflowService.setTaskStatusDown(task);
+        taskService.save(task);
     }
 
     @Test
@@ -102,7 +103,9 @@ public class WorkflowControllerServiceIT {
         }
 
         // set up task to previous state
-        taskService.save(workflowService.setTaskStatusDown(taskService.getById(6)));
+        Task task = taskService.getById(6);
+        workflowService.setTaskStatusDown(task);
+        taskService.save(task);
     }
 
     @Test
@@ -117,7 +120,9 @@ public class WorkflowControllerServiceIT {
         assertEquals("Task status was not set down!", TaskStatus.OPEN, tasks.get(3).getProcessingStatusEnum());
 
         // set up task to previous state
-        taskService.save(workflowService.setTaskStatusUp(taskService.getById(8)));
+        Task task = taskService.getById(8);
+        workflowService.setTaskStatusUp(task);
+        taskService.save(task);
     }
 
     @Test
@@ -131,8 +136,11 @@ public class WorkflowControllerServiceIT {
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
-        taskService.save(workflowService.setTaskStatusDown(task));
-        taskService.save(workflowService.setTaskStatusDown(nextTask));
+        workflowService.setTaskStatusDown(task);
+        workflowService.setTaskStatusDown(nextTask);
+
+        taskService.save(task);
+        taskService.save(nextTask);
     }
 
     @Test

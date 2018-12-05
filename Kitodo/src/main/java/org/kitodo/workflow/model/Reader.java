@@ -241,7 +241,8 @@ public class Reader {
     }
 
     /**
-     * Add task to tasks list.
+     * Add task to tasks list. If node has 0 following nodes, it makes assumption
+     * that it is the last task in the workflow.
      *
      * @param node
      *            for task
@@ -252,8 +253,9 @@ public class Reader {
      */
     private void addTask(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
         Query<FlowNode> nextNodes = node.getSucceedingNodes();
+        int nextNodesSize = nextNodes.count();
 
-        if (nextNodes.count() == 1) {
+        if (nextNodesSize == 1) {
             FlowNode nextNode = nextNodes.singleResult();
 
             if (nextNode instanceof EndEvent) {
@@ -263,15 +265,11 @@ public class Reader {
                 ordering++;
                 iterateOverNodes(nextNode, ordering, workflowCondition);
             }
+        } else if (nextNodesSize == 0) {
+            tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
         } else {
-            if (nextNodes.count() == 0) {
-                // TODO: implement here case for tasks with end event
-                // selenium test has problem as it doesn't add end event
-                // TODO: find solution for selenium test
-            } else {
-                throw new WorkflowException("Task with title '" + node.getName()
-                        + "' has more than one following tasks without any gateway in between!");
-            }
+            throw new WorkflowException("Task with title '" + node.getName()
+                    + "' has more than one following tasks without any gateway in between!");
         }
     }
 
