@@ -68,7 +68,6 @@ public class MetadataJoint implements MetadataInterface {
 
     @Override
     public void setStringValue(String value) {
-        logger.log(Level.TRACE, "setStringValue(value: {})", value);
-        // TODO Auto-generated method stub
+        this.value = value;
     }
 }

@@ -11,6 +11,7 @@
 
 package org.kitodo.legacy.joining;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -172,11 +173,12 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     }
 
     @Override
-    public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType) {
-        logger.log(Level.TRACE, "getAllChildrenByTypeAndMetadataType(docStructType: \"{}\", metaDataType: \"{}\")",
-            docStructType, metaDataType);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+    public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
+        List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
+        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+            result.add(new InnerPhysicalDocStructJoint(mediaUnit));
+        }
+        return result;
     }
 
     @Override
@@ -202,8 +204,6 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
 
     @Override
     public List<MetadataInterface> getAllMetadata() {
-        logger.log(Level.TRACE, "getAllMetadata()");
-        // TODO Auto-generated method stub
         return Collections.emptyList();
     }
 
