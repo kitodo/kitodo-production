@@ -13,26 +13,27 @@ package org.kitodo.workflow.model;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.Query;
 import org.camunda.bpm.model.bpmn.instance.ConditionExpression;
+import org.camunda.bpm.model.bpmn.instance.EndEvent;
+import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
-import org.camunda.bpm.model.bpmn.instance.Gateway;
+import org.camunda.bpm.model.bpmn.instance.ParallelGateway;
 import org.camunda.bpm.model.bpmn.instance.Process;
 import org.camunda.bpm.model.bpmn.instance.ScriptTask;
-import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -46,7 +47,6 @@ public class Reader {
     private BpmnModelInstance modelInstance;
     private ServiceManager serviceManager = new ServiceManager();
     private FileService fileService = serviceManager.getFileService();
-    private Collection<FlowNode> followingFlowNodes;
     private Map<Task, TaskInfo> tasks;
     private Diagram workflow;
 
@@ -69,9 +69,8 @@ public class Reader {
      *
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate(Template template) throws DAOException {
+    public Template convertWorkflowToTemplate(Template template) throws DAOException, WorkflowException {
         this.tasks = new HashMap<>();
-        this.followingFlowNodes = new ArrayList<>();
 
         getWorkflowTasks();
 
@@ -107,20 +106,22 @@ public class Reader {
 
     private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) throws DAOException {
         org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
-        KitodoTask kitodoTask = new KitodoTask(workflowTask, taskInfo.getOrdering());
+        KitodoTask kitodoTask = new KitodoTask(workflowTask);
         task.setWorkflowId(kitodoTask.getWorkflowId());
         task.setTitle(kitodoTask.getTitle());
-        task.setOrdering(kitodoTask.getOrdering());
+        task.setOrdering(taskInfo.getOrdering());
         task.setPriority(kitodoTask.getPriority());
         task.setEditType(kitodoTask.getEditType());
         task.setProcessingStatus(kitodoTask.getProcessingStatus());
-        task.setBatchStep(kitodoTask.getBatchStep());
-        task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
-        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
-        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
-        task.setTypeExportDMS(kitodoTask.getTypeExportDms());
-        task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
-        task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
+        task.setConcurrent(kitodoTask.isConcurrent());
+        task.setLast(taskInfo.isLast());
+        task.setBatchStep(kitodoTask.isBatchStep());
+        task.setTypeAutomatic(kitodoTask.isTypeAutomatic());
+        task.setTypeImagesRead(kitodoTask.isTypeImagesRead());
+        task.setTypeImagesWrite(kitodoTask.isTypeImagesWrite());
+        task.setTypeExportDMS(kitodoTask.isTypeExportDms());
+        task.setTypeAcceptClose(kitodoTask.isTypeAcceptClose());
+        task.setTypeCloseVerify(kitodoTask.isTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
         Integer userRoleId = kitodoTask.getUserRole();
         if (userRoleId > 0) {
@@ -128,7 +129,7 @@ public class Reader {
         }
 
         if (workflowTask instanceof ScriptTask) {
-            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask, taskInfo.getOrdering());
+            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask);
             task.setScriptName(kitodoScriptTask.getScriptName());
             task.setScriptPath(kitodoScriptTask.getScriptPath());
         }
@@ -136,97 +137,134 @@ public class Reader {
         return task;
     }
 
-    private void getWorkflowTasks() {
+    private void getWorkflowTasks() throws WorkflowException {
         StartEvent startEvent = modelInstance.getModelElementsByType(StartEvent.class).iterator().next();
-        getFlowingFlowNodes(startEvent);
-
-        int i = 1;
-        Iterator<FlowNode> sequenceFlowIterator = this.followingFlowNodes.iterator();
-        while (sequenceFlowIterator.hasNext()) {
-            FlowNode flowNode = sequenceFlowIterator.next();
-
-            if (flowNode instanceof Gateway) {
-                addTasksBranch((Gateway) flowNode, sequenceFlowIterator, i);
-            } else {
-                addTask(flowNode, new TaskInfo(i, "default"));
-                i++;
-            }
-        }
+        iterateOverNodes(startEvent.getOutgoing().iterator().next().getTarget(), 1);
     }
 
     /**
-     * Create sequence flow for given diagrams.
+     * Iterate over diagram nodes.
      *
      * @param node
-     *            add description
+     *            for current iteration call
      */
-    private void getFlowingFlowNodes(FlowNode node) {
-        Collection<SequenceFlow> sequenceFlow = node.getOutgoing();
-
-        if (sequenceFlow.iterator().hasNext()) {
-            FlowNode flowNode = sequenceFlow.iterator().next().getTarget();
-
-            if (flowNode instanceof Gateway) {
-                getFlowingFlowNodesWithConditions((Gateway) flowNode);
-            } else if (flowNode instanceof Task) {
-                this.followingFlowNodes.add(flowNode);
-                getFlowingFlowNodes(flowNode);
-            }
-        }
+    private void iterateOverNodes(FlowNode node, int ordering) throws WorkflowException {
+        iterateOverNodes(node, ordering, "");
     }
 
     /**
-     * Add flowing nodes after gateway.
+     * Iterate over diagram nodes.
      *
-     * @param gateway
-     *            add description
+     * @param node
+     *            for current iteration call
+     * @param workflowCondition
+     *            given from exclusive gateway
      */
-    private void getFlowingFlowNodesWithConditions(Gateway gateway) {
-        Collection<SequenceFlow> conditionedSequencedFlow = gateway.getOutgoing();
-        for (SequenceFlow sequenceFlow : conditionedSequencedFlow) {
-            this.followingFlowNodes.add(gateway);
-            this.followingFlowNodes.add(sequenceFlow.getTarget());
-            getFlowingFlowNodes(sequenceFlow.getTarget());
-        }
-    }
-
-    /**
-     * Add all tasks in exact branch - following given gateway.
-     *
-     * @param gateway
-     *            which is followed by tasks
-     * @param sequenceFlowIterator
-     *            iterator containing tasks following given gateway
-     * @param ordering
-     *            which is going to be assigned to tasks in this branch
-     */
-    private void addTasksBranch(Gateway gateway, Iterator<FlowNode> sequenceFlowIterator, int ordering) {
-        int j = ordering;
-        ConditionExpression conditionExpression = null;
-
-        while (sequenceFlowIterator.hasNext()) {
-            FlowNode flowNode = sequenceFlowIterator.next();
-            if (Objects.isNull(conditionExpression)) {
-                conditionExpression = flowNode.getIncoming().iterator().next().getConditionExpression();
-            }
-            if (Objects.equals(gateway, flowNode)) {
-                break;
+    private void iterateOverNodes(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+        if (node instanceof Task) {
+            addTask(node, ordering, workflowCondition);
+        } else if (node instanceof ExclusiveGateway) {
+            Query<FlowNode> nextNodes = node.getSucceedingNodes();
+            if (nextNodes.count() == 1) {
+                iterateOverNodes(nextNodes.singleResult(), ordering);
+            } else if (nextNodes.count() > 1) {
+                addConditionalTasksBranch(nextNodes.list(), ordering);
             } else {
-                TaskInfo taskInfo = new TaskInfo(j, conditionExpression.getTextContent());
-                addTask(flowNode, taskInfo);
-                j++;
+                throw new WorkflowException("Exclusive gateway is not followed by any tasks!");
+            }
+        } else if (node instanceof ParallelGateway) {
+            Query<FlowNode> nextNodes = node.getSucceedingNodes();
+            if (nextNodes.count() == 1) {
+                iterateOverNodes(nextNodes.singleResult(), ordering, workflowCondition);
+            } else if (nextNodes.count() > 1) {
+                addParallelTasksBranch(nextNodes.list(), ordering, workflowCondition);
+            } else {
+                throw new WorkflowException("Parallel gateway is not followed by any tasks!");
             }
         }
     }
 
-    private void addTask(FlowNode flowNode, TaskInfo taskInfo) {
-        if (flowNode instanceof Task) {
-            if (tasks.containsKey(flowNode)) {
-                String currentCondition = tasks.get(flowNode).getCondition();
-                String appendCondition = taskInfo.getCondition();
-                taskInfo.setCondition(currentCondition + " " + appendCondition);
+    /**
+     * Add all tasks in exact branch - following given exclusive gateway.
+     *
+     * @param nextNodes
+     *            nodes of exclusive gateway
+     */
+    private void addConditionalTasksBranch(List<FlowNode> nextNodes, int ordering) throws WorkflowException {
+        for (FlowNode node : nextNodes) {
+            if (isBranchInvalid(node)) {
+                throw new WorkflowException(
+                        "Task in conditional branch can not have second task. Please remove task after task with name '"
+                                + node.getName() + "'.");
             }
-            tasks.put((Task) flowNode, taskInfo);
+
+            ConditionExpression conditionExpression = node.getIncoming().iterator().next().getConditionExpression();
+            String workflowCondition = "default";
+            if (Objects.nonNull(conditionExpression)) {
+                workflowCondition = conditionExpression.getTextContent();
+            }
+
+            iterateOverNodes(node, ordering, workflowCondition);
+        }
+    }
+
+    /**
+     * Add all tasks for parallel execution - following given parallel gateway until
+     * ending parallel gateway.
+     *
+     * @param nodes
+     *            nodes of parallel gateway
+     * @param workflowCondition
+     *            workflow condition is carried over from previous states
+     */
+    private void addParallelTasksBranch(List<FlowNode> nodes, int ordering, String workflowCondition)
+            throws WorkflowException {
+        for (FlowNode node : nodes) {
+            if (isBranchInvalid(node)) {
+                throw new WorkflowException(
+                        "Task in parallel branch can not have second task. Please remove task after task with name '"
+                                + node.getName() + "'.");
+            }
+
+            iterateOverNodes(node, ordering, workflowCondition);
+        }
+    }
+
+    private boolean isBranchInvalid(FlowNode node) {
+        List<FlowNode> nextNodes = node.getSucceedingNodes().list();
+        for (FlowNode nextNode : nextNodes) {
+            if (nextNode instanceof Task) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add task to tasks list.
+     *
+     * @param node
+     *            for task
+     * @param ordering
+     *            for task
+     * @param workflowCondition
+     *            for task
+     */
+    private void addTask(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+        Query<FlowNode> nextNodes = node.getSucceedingNodes();
+
+        if (nextNodes.count() == 1) {
+            FlowNode nextNode = nextNodes.singleResult();
+
+            if (nextNode instanceof EndEvent) {
+                tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
+            } else {
+                tasks.put((Task) node, new TaskInfo(ordering, false, workflowCondition));
+                ordering++;
+                iterateOverNodes(nextNode, ordering, workflowCondition);
+            }
+        } else {
+            throw new WorkflowException("Task has more than one following tasks without any gateway in between!");
         }
     }
 
