@@ -70,9 +70,11 @@ public class RoleForm extends BaseForm {
     public String newRole() {
         this.role = new Role();
 
-        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(sessionClient)) {
-            this.role.setClient(sessionClient);
+        if (!serviceManager.getSecurityAccessService().hasAuthorityGlobalToAddOrEditRole()) {
+            Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+            if (Objects.nonNull(sessionClient)) {
+                this.role.setClient(sessionClient);
+            }
         }
 
         return roleEditPath;
