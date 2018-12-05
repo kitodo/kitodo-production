@@ -144,7 +144,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
             if (lockResult.isSuccessful()) {
                 try (InputStream in = fileService.read(uri, lockResult)) {
-                    logger.info("Reading METS/Kitodo document {}", uri.toString());
+                    logger.info("Reading {}", uri.toString());
                     workpiece.read(in);
                 }
             } else {

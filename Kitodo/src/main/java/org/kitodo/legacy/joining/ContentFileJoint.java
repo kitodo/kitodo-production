@@ -13,13 +13,13 @@ package org.kitodo.legacy.joining;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 
+/**
+ * Connects a content file to a media file.
+ */
 public class ContentFileJoint implements ContentFileInterface {
-    private static final Logger logger = LogManager.getLogger(ContentFileJoint.class);
 
     FLocatXmlElementAccessInterface mediaFile;
 

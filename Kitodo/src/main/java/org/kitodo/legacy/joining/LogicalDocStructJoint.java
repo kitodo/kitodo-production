@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -173,8 +174,13 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public void deleteUnusedPersonsAndMetadata() {
-        logger.log(Level.TRACE, "deleteUnusedPersonsAndMetadata()");
-        // TODO Auto-generated method stub
+        Iterator<MetadataAccessInterface> metadataAccessInterfaceIterator = structure.getMetadata().iterator();
+        while (metadataAccessInterfaceIterator.hasNext()) {
+            MetadataAccessInterface metadataAccessInterface = metadataAccessInterfaceIterator.next();
+            if (((MetadataXmlElementAccessInterface) metadataAccessInterface).getValue().isEmpty()) {
+                metadataAccessInterfaceIterator.remove();
+            }
+        }
     }
 
     private MdSec domainToMdSec(Domain domain) {
@@ -349,9 +355,18 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public Collection<ReferenceInterface> getAllToReferences(String type) {
-        logger.log(Level.TRACE, "getAllToReferences(type: \"{}\")", type);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        switch (type) {
+            case "logical_physical":
+                List<AreaXmlElementAccessInterface> views = structure.getAreas();
+                ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
+                for (AreaXmlElementAccessInterface view : views) {
+                    FileXmlElementAccessInterface mediaUnit = view.getFile();
+                    allReferences.add(new ReferenceJoint(new InnerPhysicalDocStructJoint(mediaUnit)));
+                }
+                return allReferences;
+            default:
+                throw new IllegalArgumentException("Unknown reference type: " + type);
+        }
     }
 
     @Override

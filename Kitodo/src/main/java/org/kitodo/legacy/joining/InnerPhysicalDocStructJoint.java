@@ -11,6 +11,7 @@
 
 package org.kitodo.legacy.joining;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +21,9 @@ import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -36,9 +39,19 @@ import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataformat.MetsService;
 
 public class InnerPhysicalDocStructJoint implements DocStructInterface {
     private static final Logger logger = LogManager.getLogger(InnerPhysicalDocStructJoint.class);
+
+    private final ServiceManager serviceLoader = new ServiceManager();
+    private final MetsService metsService = serviceLoader.getMetsService();
+
+    private final UseXmlAttributeAccessInterface LOCAL = metsService.createUse();
+    {
+        LOCAL.setUse("LOCAL");
+    }
 
     private FileXmlElementAccessInterface mediaUnit;
 
@@ -264,16 +277,13 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public List<MetadataTypeInterface> getDisplayMetadataTypes() {
-        logger.log(Level.TRACE, "getDisplayMetadataTypes()");
-        // TODO Auto-generated method stub
         return Collections.emptyList();
     }
 
     @Override
     public String getImageName() {
-        logger.log(Level.TRACE, "getImageName()");
-        // TODO Auto-generated method stub
-        return "";
+        FLocatXmlElementAccessInterface uri = this.mediaUnit.getFLocatForUse(LOCAL);
+        return new File(uri.getUri().getPath()).getName();
     }
 
     @Override
