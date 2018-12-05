@@ -44,8 +44,8 @@ import org.kitodo.services.dataeditor.RulesetManagementService;
 import org.kitodo.services.dataformat.MetsService;
 import org.kitodo.services.file.FileService;
 
-public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface, MetsModsInterface {
-    private static final Logger logger = LogManager.getLogger(DigitalMetsKitodoDocumentJoint.class);
+public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInterface {
+    private static final Logger logger = LogManager.getLogger(MetsDocumentJoint.class);
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
@@ -58,13 +58,13 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     private List<LanguageRange> priorityList;
 
     // hat Regelsatz und leeres Werkstück
-    public DigitalMetsKitodoDocumentJoint(RulesetManagementInterface ruleset) {
+    public MetsDocumentJoint(RulesetManagementInterface ruleset) {
         this();
         this.ruleset = ruleset;
     }
 
     // hat leeres Werkstück und keinen Regelsatz
-    public DigitalMetsKitodoDocumentJoint() {
+    public MetsDocumentJoint() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
         this.workpiece = metsService.createMets();
 
@@ -84,6 +84,9 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
+        if (docStructType.equals(PageType.INSTANCE)) {
+            return new InnerPhysicalDocStructJoint();
+        }
         logger.log(Level.TRACE, "createDocStruct(docStructType: {})", docStructType);
         // TODO Auto-generated method stub
         return new LogicalDocStructJoint();
@@ -157,7 +160,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
 
     @Override
     public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        DigitalMetsKitodoDocumentJoint metsKitodoDocument = (DigitalMetsKitodoDocumentJoint) digitalDocument;
+        MetsDocumentJoint metsKitodoDocument = (MetsDocumentJoint) digitalDocument;
         this.workpiece = metsKitodoDocument.workpiece;
     }
 

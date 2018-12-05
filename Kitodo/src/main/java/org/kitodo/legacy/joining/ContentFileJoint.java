@@ -15,13 +15,22 @@ import java.io.File;
 
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataformat.MetsService;
 
 /**
  * Connects a content file to a media file.
  */
 public class ContentFileJoint implements ContentFileInterface {
 
-    FLocatXmlElementAccessInterface mediaFile;
+    private final ServiceManager serviceLoader = new ServiceManager();
+    private final MetsService metsService = serviceLoader.getMetsService();
+
+    private FLocatXmlElementAccessInterface mediaFile;
+
+    public ContentFileJoint() {
+        mediaFile = metsService.createFLocat();
+    }
 
     @Override
     public String getLocation() {
@@ -31,6 +40,10 @@ public class ContentFileJoint implements ContentFileInterface {
     @Override
     public void setLocation(String fileName) {
         mediaFile.setUri(new File(fileName).toURI());
+    }
+
+    public FLocatXmlElementAccessInterface getMediaFile() {
+        return mediaFile;
     }
 
 }
