@@ -22,8 +22,6 @@ import javax.json.JsonException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProcessDTO;
-import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 
@@ -88,22 +86,6 @@ public class DesktopForm extends BaseForm {
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
             return new ArrayList();
-        }
-    }
-
-    /**
-     * Get project of process.
-     *
-     * @param processDTO
-     *          process whose project is returned
-     * @return project of the given process
-     */
-    public ProjectDTO getProject(ProcessDTO processDTO) {
-        try {
-            return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
-        } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
-            return null;
         }
     }
 
