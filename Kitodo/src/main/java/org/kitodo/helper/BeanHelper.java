@@ -124,7 +124,7 @@ public class BeanHelper {
      *            as List of Task objects
      */
     private static void adjustTaskOrdering(List<Task> tasks) {
-        tasks.sort(Comparator.comparing(Task::getOrdering));
+        tasks.sort(Comparator.comparing(Task::getOrdering).thenComparing(Task::getTitle));
 
         for (int i = 0; i < tasks.size(); i++) {
             tasks.get(i).setOrdering(i + 1);

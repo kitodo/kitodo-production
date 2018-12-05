@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -43,6 +42,7 @@ import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.TaskService;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -59,7 +59,8 @@ public class WorkflowControllerService {
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private static WorkflowControllerService instance = null;
-    private transient ServiceManager serviceManager = new ServiceManager();
+    private ServiceManager serviceManager = new ServiceManager();
+    private TaskService taskService = serviceManager.getTaskService();
 
     /**
      * Return singleton variable of type TaskService.
@@ -115,22 +116,6 @@ public class WorkflowControllerService {
         this.solution = solution;
     }
 
-    private User getCurrentUser() {
-        return serviceManager.getUserService().getAuthenticatedUser();
-    }
-
-    /**
-     * Set workflow as ready - available for usage in templates.
-     * 
-     * @param id
-     *            of workflow
-     */
-    public void setWorkflowAsReady(Integer id) throws DAOException, DataException {
-        Workflow workflow = serviceManager.getWorkflowService().getById(id);
-        workflow.setReady(true);
-        serviceManager.getWorkflowService().save(workflow);
-    }
-
     /**
      * Set Task status up.
      *
@@ -146,7 +131,7 @@ public class WorkflowControllerService {
                 close(task);
             } else {
                 task.setProcessingTime(new Date());
-                serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
+                taskService.replaceProcessingUser(task, getCurrentUser());
             }
         }
         return task;
@@ -162,7 +147,7 @@ public class WorkflowControllerService {
     public Task setTaskStatusDown(Task task) {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
+        taskService.replaceProcessingUser(task, getCurrentUser());
         setProcessingStatusDown(task);
         return task;
     }
@@ -194,7 +179,7 @@ public class WorkflowControllerService {
         for (Task task : tasks) {
             // TODO: check if this behaviour is correct
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-                serviceManager.getTaskService().save(setTaskStatusDown(task));
+                taskService.save(setTaskStatusDown(task));
                 break;
             }
         }
@@ -251,19 +236,21 @@ public class WorkflowControllerService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
+        taskService.replaceProcessingUser(task, getCurrentUser());
         task.setProcessingEnd(new Date());
 
-        serviceManager.getTaskService().save(task);
+        taskService.save(task);
+
         automaticTasks = new ArrayList<>();
         tasksToFinish = new ArrayList<>();
 
         // check if there are tasks that take place in parallel but are not yet
         // completed
         List<Task> tasks = task.getProcess().getTasks();
-        List<Task> allHigherTasks = getAllHigherTasks(tasks, task);
 
-        activateNextTask(allHigherTasks);
+        if (!task.isLast()) {
+            activateNextTask(getAllHigherTasks(tasks, task));
+        }
 
         Process process = task.getProcess();
         URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, process);
@@ -300,7 +287,7 @@ public class WorkflowControllerService {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
                 task.setProcessingTime(new Date());
-                serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
+                taskService.replaceProcessingUser(task, getCurrentUser());
                 if (task.getProcessingBegin() == null) {
                     task.setProcessingBegin(new Date());
                 }
@@ -334,7 +321,7 @@ public class WorkflowControllerService {
     public Task unassignTaskFromUser(Task task) throws DataException {
         this.webDav.uploadFromHome(task.getProcess());
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        serviceManager.getTaskService().replaceProcessingUser(task, null);
+        taskService.replaceProcessingUser(task, null);
         // if we have a correction task here then never remove startdate
         if (isCorrectionTask(task)) {
             task.setProcessingBegin(null);
@@ -342,7 +329,7 @@ public class WorkflowControllerService {
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
 
-        serviceManager.getTaskService().save(task);
+        taskService.save(task);
 
         // unlock the process
         metadataLock.setFree(task.getProcess().getId());
@@ -388,11 +375,11 @@ public class WorkflowControllerService {
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
+        taskService.replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
-        serviceManager.getTaskService().save(currentTask);
+        taskService.save(currentTask);
 
-        Task correctionTask = serviceManager.getTaskService().getById(getProblem().getId());
+        Task correctionTask = taskService.getById(getProblem().getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
         correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
@@ -403,7 +390,7 @@ public class WorkflowControllerService {
 
         currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
 
-        serviceManager.getTaskService().save(correctionTask);
+        taskService.save(correctionTask);
 
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
@@ -416,8 +403,7 @@ public class WorkflowControllerService {
      * Unified method for solve problem with task.
      *
      * @param currentTask
-     *            task which was send to correction and now was fixed as Task
-     *            object
+     *            task which was send to correction and now was fixed as Task object
      * @return Task
      */
     public Task solveProblem(Task currentTask) throws DAOException, DataException {
@@ -427,8 +413,8 @@ public class WorkflowControllerService {
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
-        serviceManager.getTaskService().save(currentTask);
+        taskService.replaceProcessingUser(currentTask, getCurrentUser());
+        taskService.save(currentTask);
 
         // TODO: find more suitable name for this task
         // tasks which was executed at the moment of correction reporting
@@ -436,14 +422,16 @@ public class WorkflowControllerService {
         for (Property property : properties) {
             if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
                     && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
-                int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ")
-                        + 14, property.getValue().indexOf(" CorrectionTask: ")));
-                Task correctionTask = serviceManager.getTaskService().getById(id);
+                int id = Integer
+                        .parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
+                            property.getValue().indexOf(" CorrectionTask: ")));
+                Task correctionTask = taskService.getById(id);
                 closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
                 openTaskForProcessing(correctionTask);
                 Property processProperty = prepareSolveMessageProperty(property, currentTask);
                 serviceManager.getPropertyService().save(processProperty);
-                updateProcessSortHelperStatus(serviceManager.getProcessService().getById(currentTask.getProcess().getId()));
+                updateProcessSortHelperStatus(
+                    serviceManager.getProcessService().getById(currentTask.getProcess().getId()));
                 currentTask = correctionTask;
             }
         }
@@ -476,24 +464,25 @@ public class WorkflowControllerService {
     }
 
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
-        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-                correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
+        List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
+            currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
             taskInBetween = setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
-            serviceManager.getTaskService().save(taskInBetween);
+            taskService.save(taskInBetween);
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) throws DataException {
-        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-                currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
+            throws DataException {
+        List<Task> allTasksInBetween = taskService.getAllTasksInBetween(currentTask.getOrdering(),
+            correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
-            serviceManager.getTaskService().save(taskInBetween);
+            taskService.save(taskInBetween);
         }
     }
 
@@ -502,31 +491,32 @@ public class WorkflowControllerService {
         correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
-        serviceManager.getTaskService().save(correctionTask);
+        taskService.save(correctionTask);
     }
 
     private Property prepareProblemMessageProperty(Date date, Task currentTask, Task correctionTask) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
         processProperty.setValue("[" + Helper.getDateAsFormattedString(date) + ", "
-                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: " + currentTask.getId().toString()
-                + " CorrectionTask: " + correctionTask.getId().toString() + ") " + this.problem.getMessage());
+                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: "
+                + currentTask.getId().toString() + " CorrectionTask: " + correctionTask.getId().toString() + ") "
+                + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
         return processProperty;
     }
 
     private Property prepareSolveMessageProperty(Property property, Task correctionTask) {
         property.setTitle(Helper.getTranslation("correctionPerformed"));
-        property.setValue(
-                "[" + Helper.getDateAsFormattedString(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
-                        + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
+        property.setValue("[" + Helper.getDateAsFormattedString(new Date()) + ", "
+                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] "
+                + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
         property.setType(PropertyType.MESSAGE_IMPORTANT);
         return property;
     }
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser())
-                + " " + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
+        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser()) + " "
+                + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
                 + this.problem.getMessage();
 
         serviceManager.getProcessService().addToWikiField(message, process);
@@ -568,7 +558,7 @@ public class WorkflowControllerService {
 
                     verifyTask(task);
 
-                    serviceManager.getTaskService().save(task);
+                    taskService.save(task);
                     matched = true;
                 } else {
                     if (matched) {
@@ -609,8 +599,12 @@ public class WorkflowControllerService {
     private void downloadToHome(Task task) {
         task.setProcessingTime(new Date());
         if (serviceManager.getSecurityAccessService().isAuthenticated()) {
-            serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
+            taskService.replaceProcessingUser(task, getCurrentUser());
             this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
         }
+    }
+
+    private User getCurrentUser() {
+        return serviceManager.getUserService().getAuthenticatedUser();
     }
 }
