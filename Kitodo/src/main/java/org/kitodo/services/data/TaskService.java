@@ -418,10 +418,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
         taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(taskJSONObject));
         taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(taskJSONObject));
-        Integer taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
+        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
         taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        Integer editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
+        int editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
@@ -442,7 +442,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
          * are displayed in the task list and reading the template list would result in
          * never-ending loops as the list of templates reads the list of tasks.
          */
-        Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
+        int process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(serviceManager.getProcessService()
