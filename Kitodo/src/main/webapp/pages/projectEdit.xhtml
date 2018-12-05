@@ -71,6 +71,9 @@
             <p:tab title="#{msgs.metsParameter}">
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMets.xhtml"/>
             </p:tab>
+            <p:tab title="#{msgs.templates}" id="templates">
+                <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
+            </p:tab>
         </p:tabView>
         <ui:fragment rendered="#{not empty ProjectForm.project.title}">
             <script>
@@ -99,5 +102,6 @@
     </ui:define>
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMetsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/projectEdit/templateAddPopup.xhtml"/>
     </ui:define>
 </ui:composition>

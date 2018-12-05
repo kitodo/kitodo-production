@@ -25,7 +25,6 @@ import javax.json.JsonValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -75,36 +74,16 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Method saves processes, users and clients related to modified project.
+     * Method saves processes and users related to modified project.
      *
      * @param project
      *            object
      */
     @Override
     protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException, DAOException, DataException {
+            throws CustomResponseException, IOException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
-        manageClientDependenciesForIndex(project);
-    }
-
-    private void manageClientDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException, DataException, DAOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            Client client = project.getClient();
-            if (Objects.nonNull(client)) {
-                client.getProjects().remove(project);
-                serviceManager.getClientService().saveToIndex(client, false);
-            }
-        } else {
-            JsonObject clients = serviceManager.getClientService().findByProjectId(project.getId());
-            Integer id = getIdFromJSONObject(clients);
-            if (id > 0 && !Objects.equals(id, project.getClient().getId())) {
-                Client oldClient = serviceManager.getClientService().getById(id);
-                serviceManager.getClientService().saveToIndex(oldClient, false);
-                serviceManager.getClientService().saveToIndex(project.getClient(), false);
-            }
-        }
     }
 
     /**
@@ -179,8 +158,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Find all projects available to assign to the edited user. It will be
-     * displayed in the userEditProjectsPopup. If user id is null and session client
-     * is null, return list of all projects.
+     * displayed in the userEditProjectsPopup.
      *
      * @param userId
      *            id of user which is going to be edited

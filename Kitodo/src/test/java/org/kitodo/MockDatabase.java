@@ -638,6 +638,8 @@ public class MockDatabase {
         User firstUser = serviceManager.getUserService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
+        Client client = serviceManager.getClientService().getById(1);
+
         Project firstProject = new Project();
         firstProject.setTitle("First project");
         firstProject.setUseDmsImport(true);
@@ -652,8 +654,6 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        Client client = serviceManager.getClientService().getById(1);
-        client.getProjects().add(firstProject);
         firstProject.setClient(client);
         serviceManager.getProjectService().save(firstProject);
 
@@ -667,7 +667,6 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
-        client.getProjects().add(secondProject);
         secondProject.setClient(client);
         serviceManager.getProjectService().save(secondProject);
 

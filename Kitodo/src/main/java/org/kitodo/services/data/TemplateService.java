@@ -247,6 +247,25 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
+     * Find all templates available to assign to the edited project. It will be
+     * displayed in the templateAddPopup.
+     *
+     * @param projectId
+     *            id of project which is going to be edited
+     * @return list of all matching templates
+     */
+    public List<TemplateDTO> findAllAvailableForAssignToProject(int projectId) throws DataException {
+        return findAvailableForAssignToUser(projectId);
+    }
+
+    private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
+    }
+
+    /**
      * Duplicate the template with the given ID 'itemId'.
      *
      * @return the duplicated Template
@@ -435,7 +454,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
         return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id,
-            true);
+                true);
     }
 
     /**
