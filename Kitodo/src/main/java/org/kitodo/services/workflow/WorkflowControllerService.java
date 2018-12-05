@@ -49,7 +49,6 @@ import org.kitodo.workflow.Solution;
 public class WorkflowControllerService {
 
     private final MetadataLock metadataLock = new MetadataLock();
-    private int openTasksWithTheSameOrdering;
     private List<Task> automaticTasks;
     private List<Task> tasksToFinish;
     private Problem problem = new Problem();
@@ -247,9 +246,14 @@ public class WorkflowControllerService {
         // check if there are tasks that take place in parallel but are not yet
         // completed
         List<Task> tasks = task.getProcess().getTasks();
+        List<Task> concurrentTasksForOpen = getConcurrentTasksForOpen(tasks, task);
 
-        if (!task.isLast()) {
-            activateNextTask(getAllHigherTasks(tasks, task));
+        if (concurrentTasksForOpen.isEmpty() && !isAnotherTaskInWorkWhichBlocksOtherTasks(tasks, task)) {
+            if (!task.isLast()) {
+                activateNextTasks(getAllHigherTasks(tasks, task));
+            }
+        } else {
+            activateConcurrentTasks(concurrentTasksForOpen);
         }
 
         Process process = task.getProcess();
@@ -525,48 +529,82 @@ public class WorkflowControllerService {
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
         List<Task> allHigherTasks = new ArrayList<>();
-        this.openTasksWithTheSameOrdering = 0;
         for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() != 3
-                    && !tempTask.getId().equals(task.getId())) {
-                openTasksWithTheSameOrdering++;
-            } else if (tempTask.getOrdering() > task.getOrdering()) {
+            if (tempTask.getOrdering() > task.getOrdering()) {
                 allHigherTasks.add(tempTask);
             }
         }
         return allHigherTasks;
     }
 
-    /**
-     * If no open parallel tasks are available, activate the next tasks.
-     */
-    private void activateNextTask(List<Task> allHigherTasks) throws DataException {
-        if (openTasksWithTheSameOrdering == 0) {
-            int ordering = 0;
-            boolean matched = false;
-            for (Task task : allHigherTasks) {
-                if (ordering < task.getOrdering() && !matched) {
-                    ordering = task.getOrdering();
-                }
+    private List<Task> getConcurrentTasksForOpen(List<Task> tasks, Task task) {
+        boolean blocksOtherTasks = isAnotherTaskInWorkWhichBlocksOtherTasks(tasks, task);
 
-                if (ordering == task.getOrdering() && task.getProcessingStatus() != 3
-                        && task.getProcessingStatus() != 2) {
-                    // activate the task if it is not fully automatic
-                    task.setProcessingStatus(1);
-                    task.setProcessingTime(new Date());
-                    task.setEditType(4);
-
-                    verifyTask(task);
-
-                    taskService.save(task);
-                    matched = true;
-                } else {
-                    if (matched) {
-                        break;
+        List<Task> allConcurrentTasks = new ArrayList<>();
+        for (Task tempTask : tasks) {
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() < 2
+                    && !tempTask.getId().equals(task.getId())) {
+                if (blocksOtherTasks) {
+                    if (tempTask.isConcurrent()) {
+                        allConcurrentTasks.add(tempTask);
                     }
+                } else {
+                    allConcurrentTasks.add(tempTask);
                 }
             }
         }
+        return allConcurrentTasks;
+    }
+
+    private boolean isAnotherTaskInWorkWhichBlocksOtherTasks(List<Task> tasks, Task task) {
+        for (Task tempTask : tasks) {
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() == 2
+                    && !tempTask.getId().equals(task.getId()) && !tempTask.isConcurrent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Activate the concurrent tasks.
+     */
+    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException {
+        for (Task concurrentTask : concurrentTasks) {
+            activateTask(concurrentTask);
+        }
+    }
+
+    /**
+     * If no open parallel tasks are available, activate the next tasks.
+     */
+    private void activateNextTasks(List<Task> allHigherTasks) throws DataException {
+        int ordering = 0;
+        boolean matched = false;
+        for (Task higherTask : allHigherTasks) {
+            if (ordering < higherTask.getOrdering() && !matched) {
+                ordering = higherTask.getOrdering();
+            }
+
+            if (ordering == higherTask.getOrdering() && higherTask.getProcessingStatus() < 2) {
+                activateTask(higherTask);
+                matched = true;
+            }
+        }
+    }
+
+    /**
+     * If no open parallel tasks are available, activate the next tasks.
+     */
+    private void activateTask(Task task) throws DataException {
+        // activate the task if it is not fully automatic
+        task.setProcessingStatus(1);
+        task.setProcessingTime(new Date());
+        task.setEditType(4);
+
+        verifyTask(task);
+
+        taskService.save(task);
     }
 
     private void verifyTask(Task task) {

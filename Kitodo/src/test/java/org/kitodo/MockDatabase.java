@@ -111,7 +111,6 @@ public class MockDatabase {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void startNode() throws Exception {
         startNodeWithoutMapping();
         indexRestClient.createIndex(readMapping());
@@ -167,7 +166,7 @@ public class MockDatabase {
         insertRemovableObjects();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
+    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException, WorkflowException {
         insertRolesFull();
         insertDockets();
         insertRulesets();
@@ -181,6 +180,7 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
+        insertDataForParallelTasks();
     }
 
     public static void insertRolesFull() throws DAOException, DataException {
@@ -1159,6 +1159,109 @@ public class MockDatabase {
         secondWorkflow.setReady(false);
         secondWorkflow.setClient(serviceManager.getClientService().getById(2));
         serviceManager.getWorkflowService().save(secondWorkflow);
+    }
+
+    private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+        Workflow workflow = new Workflow("gateway-test1", "gateway-test1");
+        workflow.setActive(true);
+        workflow.setReady(true);
+        workflow.setClient(serviceManager.getClientService().getById(1));
+        serviceManager.getWorkflowService().save(workflow);
+
+        Project project = serviceManager.getProjectService().getById(1);
+
+        Converter converter = new Converter("gateway-test1");
+
+        Template template = new Template();
+        template.setTitle("Parallel Template");
+        converter.convertWorkflowToTemplate(template);
+        template.setDocket(serviceManager.getDocketService().getById(1));
+        template.setRuleset(serviceManager.getRulesetService().getById(1));
+        template.setWorkflow(workflow);
+        template.getProjects().add(project);
+        serviceManager.getTemplateService().save(template);
+
+        Process firstProcess = new Process();
+        firstProcess.setTitle("Parallel");
+        firstProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, firstProcess);
+        firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(1).setProcessingStatus(0);
+        firstProcess.getTasks().get(2).setProcessingStatus(0);
+        firstProcess.getTasks().get(3).setProcessingStatus(0);
+        firstProcess.getTasks().get(4).setProcessingStatus(0);
+
+        firstProcess.setProject(project);
+        firstProcess.setDocket(template.getDocket());
+        firstProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(firstProcess);
+
+        Process secondProcess = new Process();
+        secondProcess.setTitle("ParallelInWork");
+        secondProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, secondProcess);
+        secondProcess.getTasks().get(0).setProcessingStatus(3);
+        secondProcess.getTasks().get(1).setProcessingStatus(2);
+        secondProcess.getTasks().get(2).setProcessingStatus(0);
+        secondProcess.getTasks().get(3).setProcessingStatus(0);
+        secondProcess.getTasks().get(4).setProcessingStatus(0);
+
+        secondProcess.setProject(project);
+        secondProcess.setDocket(template.getDocket());
+        secondProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(secondProcess);
+
+        Process thirdProcess = new Process();
+        thirdProcess.setTitle("ParallelInWorkWithBlocking");
+        thirdProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, thirdProcess);
+        thirdProcess.getTasks().get(0).setProcessingStatus(3);
+        thirdProcess.getTasks().get(1).setProcessingStatus(2);
+        thirdProcess.getTasks().get(2).setProcessingStatus(2);
+        thirdProcess.getTasks().get(3).setProcessingStatus(0);
+        thirdProcess.getTasks().get(4).setProcessingStatus(0);
+
+        thirdProcess.setProject(project);
+        thirdProcess.setDocket(template.getDocket());
+        thirdProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(thirdProcess);
+
+        Process fourthProcess = new Process();
+        fourthProcess.setTitle("ParallelInWorkWithNonBlocking");
+        fourthProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, fourthProcess);
+        fourthProcess.getTasks().get(0).setProcessingStatus(3);
+        fourthProcess.getTasks().get(1).setProcessingStatus(2);
+        fourthProcess.getTasks().get(2).setProcessingStatus(2);
+        fourthProcess.getTasks().get(2).setConcurrent(true);
+        fourthProcess.getTasks().get(3).setProcessingStatus(0);
+        fourthProcess.getTasks().get(3).setConcurrent(true);
+        fourthProcess.getTasks().get(4).setProcessingStatus(0);
+
+        fourthProcess.setProject(project);
+        fourthProcess.setDocket(template.getDocket());
+        fourthProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(fourthProcess);
+
+        Process fifthProcess = new Process();
+        fifthProcess.setTitle("ParallelAlmostFinished");
+        secondProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, fifthProcess);
+        fifthProcess.getTasks().get(0).setProcessingStatus(3);
+        fifthProcess.getTasks().get(1).setProcessingStatus(3);
+        fifthProcess.getTasks().get(2).setProcessingStatus(3);
+        fifthProcess.getTasks().get(3).setProcessingStatus(2);
+        fifthProcess.getTasks().get(4).setProcessingStatus(0);
+
+        fifthProcess.setProject(project);
+        fifthProcess.setDocket(template.getDocket());
+        fifthProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(fifthProcess);
     }
 
     /**
