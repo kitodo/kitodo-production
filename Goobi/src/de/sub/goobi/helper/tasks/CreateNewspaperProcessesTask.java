@@ -347,7 +347,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         LocalDate firstDate = issues.get(0).getDate();
         String theYear = Integer.toString(firstDate.getYear());
         if (seasonBegin.isEqual(Course.FIRST_OF_JANUARY) && seasonLabel.isEmpty()) {
-            addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+            addMetadatum(year, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, theYear, true);
         } else {
             boolean secondYear = compare(firstDate, seasonBegin) < 0;
             int yearNumber = firstDate.getYear();
@@ -359,8 +359,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             if(!seasonLabel.isEmpty()){
                 years.insert(0, ' ');
                 years.insert(0, seasonLabel);
+                addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, years.toString(), true);
             }
-            addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, years.toString(), true);
         }
 
         // create the month level
