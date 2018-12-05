@@ -31,7 +31,7 @@
                              value="#{RoleForm.lazyDTOModel}"
                              lazy="true"
                              paginator="true"
-                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{msgs.role}">
                         <h:outputText value="#{item.title}"/>

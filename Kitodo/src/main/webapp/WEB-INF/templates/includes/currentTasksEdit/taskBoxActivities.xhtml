@@ -21,8 +21,7 @@
     <c:set var="task" value="#{CurrentTaskForm.currentTask}" scope="request"/>
     <c:set var="process" value="#{CurrentTaskForm.currentTask.process}" scope="request"/>
 
-    <h:panelGroup
-            rendered="#{task.processingUser.id == LoginForm.myBenutzer.id}">
+    <h:panelGroup rendered="#{task.processingUser.id == LoginForm.loggedUser.id}">
 
         <!--  Import -->
         <h:form id="actionForm">
@@ -50,7 +49,7 @@
 
                         <!-- If blocked by yourself: you can unblocked -->
                         <h:commandLink id="releaseLock"
-                                       rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.myBenutzer.id)}"
+                                       rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.loggedUser.id)}"
                                        action="#{CurrentTaskForm.releaseLock}"
                                        title="#{msgs.oderSperrungAufheben}">
                             <h:outputText><i class="fa fa-lock"/> #{msgs.oderSperrungAufheben}</h:outputText>
@@ -91,7 +90,7 @@
                         <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}"
                                                      target="#{Metadaten.referringView}"/>
                         <f:param name="ProzesseID" value="#{process.id}"/>
-                        <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                        <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                         <f:param name="stayOnCurrentPage" value="AktuelleSchritteBearbeiten"/>
                     </h:commandLink>
 

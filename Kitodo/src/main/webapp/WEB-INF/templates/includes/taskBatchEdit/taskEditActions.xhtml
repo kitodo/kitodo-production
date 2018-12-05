@@ -19,7 +19,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:t="http://myfaces.apache.org/tomahawk"
 >
-    <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
+    <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
 
         <h:form id="actionForm">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">

@@ -30,7 +30,7 @@
                                  value="#{ClientForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"
-                                 rows="#{LoginForm.myBenutzer.tableSize}"
+                                 rows="#{LoginForm.loggedUser.tableSize}"
                                  paginatorPosition="bottom">
                         <p:column headerText="#{msgs.clientList}">
                             <h:outputText value="#{client.name}"/>

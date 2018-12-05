@@ -28,7 +28,7 @@
                          var="role"
                          value="#{RoleForm.lazyDTOModel}"
                          lazy="true"
-                         rows="#{LoginForm.myBenutzer.tableSize}"
+                         rows="#{LoginForm.loggedUser.tableSize}"
                          paginator="true">
                 <p:column headerText="#{msgs.role}">
                     <h:outputText value="#{role.title}"/>

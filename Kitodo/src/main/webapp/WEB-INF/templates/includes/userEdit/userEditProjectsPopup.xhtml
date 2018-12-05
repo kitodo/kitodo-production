@@ -31,7 +31,7 @@
                              value="#{UserForm.projects}"
                              lazy="true"
                              paginator="true"
-                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{msgs.projectList}">
                         <h:outputText value="#{item.title}"/>

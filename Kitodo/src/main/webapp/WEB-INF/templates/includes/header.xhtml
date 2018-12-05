@@ -117,7 +117,7 @@
                         <h:form id="logout-form">
                             <ul id="nav-user">
                                 <li>
-                                    <h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}</h3>
+                                    <h3>#{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}</h3>
                                 </li>
 
                                 <li>
@@ -141,7 +141,7 @@
                                 </div>
                                 <li>
                                     <h:link value="#{msgs.userData}" outcome="userEdit">
-                                        <f:param name="id" value="#{LoginForm.myBenutzer.id}"/>
+                                        <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
                                     </h:link>
                                 </li>
                                 <li>
@@ -168,7 +168,7 @@
                 </ul>
             </nav>
         </section>
-        <p:dialog header="#{msgs.welcome}, #{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}"
+        <p:dialog header="#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}"
                   class="client-select-dialog"
                   id="clientSelectDialog"
                   widgetVar="selectClientDialog"

@@ -19,7 +19,7 @@
     <h:form id="processesForm">
         <p:dataTable id="processesTable" var="process" value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}" lazy="true" paginator="true"
-                     rows="#{LoginForm.myBenutzer.tableSize}"
+                     rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
             <p:column styleClass="checkboxListColumn" selectionMode="multiple"/>
@@ -51,7 +51,7 @@
                                rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
-                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                     <f:param name="stayOnCurrentPage" value="processList"/>
                     <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
