@@ -50,7 +50,7 @@ public class DigitalMetsKitodoDocumentJoint implements DigitalDocumentInterface,
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
     private final FileService fileService = serviceLoader.getFileService();
-    RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
+    private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
     private MetsXmlElementAccessInterface workpiece = metsService.createMets();
     private RulesetManagementInterface ruleset;
