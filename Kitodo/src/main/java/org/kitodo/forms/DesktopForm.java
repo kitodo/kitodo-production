@@ -54,11 +54,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getTasks() {
         try {
-            return serviceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
+                return serviceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
+                e);
         }
+        return new ArrayList();
     }
 
     /**
@@ -68,11 +71,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            return serviceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
+                return serviceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
+                logger, e);
         }
+        return new ArrayList();
     }
 
     /**
@@ -82,18 +88,21 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            return serviceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
+                return serviceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
+                logger, e);
         }
+        return new ArrayList();
     }
 
     /**
      * Get number of elements of given type 'objectType' in index.
      *
      * @param objectType
-     *          type of elements
+     *            type of elements
      * @return number of elements
      */
     public long getNumberOfElements(ObjectType objectType) {

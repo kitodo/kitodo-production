@@ -484,7 +484,7 @@ public class SecurityAccessController {
      * @return true if user has authority 'viewAllTasks' for client
      */
     public boolean hasAuthorityToViewTaskPage() {
-        return securityAccessService.hasAuthorityForClient("viewAllTasks");
+        return hasAuthorityToViewTaskList();
     }
 
     /**
@@ -508,7 +508,7 @@ public class SecurityAccessController {
      * @return true if user has authority 'viewAllTasks' for client
      */
     public boolean hasAuthorityToViewTaskList() {
-        return hasAuthorityToViewTaskPage();
+        return securityAccessService.hasAuthorityToViewTaskList();
     }
 
     /**
