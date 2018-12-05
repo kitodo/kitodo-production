@@ -150,9 +150,11 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
-        logger.log(Level.TRACE, "()");
-        // TODO Auto-generated method stub
-        return new ReferenceJoint();
+        AreaXmlElementAccessInterface view = metsService.createArea();
+        InnerPhysicalDocStructJoint target = (InnerPhysicalDocStructJoint) docStruct;
+        view.setFile(target.getMediaUnit());
+        structure.getAreas().add(view);
+        return new ReferenceJoint(target);
     }
 
     @Override
@@ -448,12 +450,9 @@ public class LogicalDocStructJoint implements DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        // StackTraceElement[] stackTrace = new
-        // RuntimeException().getStackTrace();
-        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
-        // interface!", stackTrace[1].getClassName(),
-        // stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
-        // stackTrace[0].getMethodName());
+        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
+            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 

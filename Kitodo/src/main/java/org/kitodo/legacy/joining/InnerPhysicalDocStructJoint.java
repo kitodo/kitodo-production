@@ -48,15 +48,16 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
 
-    private final UseXmlAttributeAccessInterface LOCAL = metsService.createUse();
+    private final UseXmlAttributeAccessInterface local = metsService.createUse();
+
     {
-        LOCAL.setUse("LOCAL");
+        local.setUse("LOCAL");
     }
 
     private FileXmlElementAccessInterface mediaUnit;
 
     public InnerPhysicalDocStructJoint() {
-        // TODO Auto-generated constructor stub
+        this.mediaUnit = metsService.createFile();
     }
 
     public InnerPhysicalDocStructJoint(FileXmlElementAccessInterface mediaUnit) {
@@ -77,14 +78,18 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public void addContentFile(ContentFileInterface contentFile) {
-        logger.log(Level.TRACE, "addContentFile(contentFile: {})", contentFile);
-        // TODO Auto-generated method stub
+        mediaUnit.putFLocatForUse(local, ((ContentFileJoint) contentFile).getMediaFile());
     }
 
     @Override
     public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "addMetadata(metadata: {})", metadata);
-        // TODO Auto-generated method stub
+        if (MetadataTypeJoint.SPECIAL_TYPE_ORDER.equals(metadata.getMetadataType())) {
+            mediaUnit.setOrder(Integer.parseInt(metadata.getValue()));
+        } else if (MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL.equals(metadata.getMetadataType())) {
+            mediaUnit.setOrderlabel(metadata.getValue());
+        } else {
+            logger.log(Level.TRACE, "addMetadata(metadata: {})", metadata);
+        }
     }
 
     @Override
@@ -282,8 +287,12 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public String getImageName() {
-        FLocatXmlElementAccessInterface uri = this.mediaUnit.getFLocatForUse(LOCAL);
+        FLocatXmlElementAccessInterface uri = this.mediaUnit.getFLocatForUse(local);
         return new File(uri.getUri().getPath()).getName();
+    }
+
+    FileXmlElementAccessInterface getMediaUnit() {
+        return mediaUnit;
     }
 
     @Override
@@ -319,13 +328,9 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        // StackTraceElement[] stackTrace = new
-        // RuntimeException().getStackTrace();
-        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
-        // interface!",
-        // stackTrace[1].getClassName(), stackTrace[1].getMethodName(),
-        // stackTrace[0].getClassName(),
-        // stackTrace[0].getMethodName());
+        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
+            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 

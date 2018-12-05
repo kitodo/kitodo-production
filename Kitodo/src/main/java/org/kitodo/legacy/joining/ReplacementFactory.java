@@ -37,8 +37,6 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public ContentFileInterface createContentFile() {
-        logger.log(Level.TRACE, "createContentFile()");
-        // TODO Auto-generated method stub
         return new ContentFileJoint();
     }
 
@@ -46,7 +44,7 @@ public class ReplacementFactory implements FactoryInterface {
     public DigitalDocumentInterface createDigitalDocument() {
         logger.log(Level.TRACE, "createDigitalDocument()");
         // TODO Auto-generated method stub
-        return new DigitalMetsKitodoDocumentJoint();
+        return new MetsDocumentJoint();
     }
 
     @Override
@@ -78,7 +76,7 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException {
-        return new DigitalMetsKitodoDocumentJoint(((PrefsJoint) prefs).ruleset);
+        return new MetsDocumentJoint(((PrefsJoint) prefs).ruleset);
     }
 
     @Override

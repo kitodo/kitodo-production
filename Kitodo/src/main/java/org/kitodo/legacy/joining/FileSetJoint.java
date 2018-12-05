@@ -78,8 +78,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
-        logger.log(Level.TRACE, "addChild(child: {})", child);
-        // TODO Auto-generated method stub
+        mediaUnits.add(((InnerPhysicalDocStructJoint) child).getMediaUnit());
     }
 
     @Override
@@ -328,13 +327,9 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        // StackTraceElement[] stackTrace = new
-        // RuntimeException().getStackTrace();
-        // logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the
-        // interface!",
-        // stackTrace[1].getClassName(), stackTrace[1].getMethodName(),
-        // stackTrace[0].getClassName(),
-        // stackTrace[0].getMethodName());
+        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
+            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 
