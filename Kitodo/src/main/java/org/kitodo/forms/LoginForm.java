@@ -24,40 +24,10 @@ import org.kitodo.services.ServiceManager;
 @SessionScoped
 public class LoginForm implements Serializable {
     private static final long serialVersionUID = 7732045664713555233L;
-    private String login;
-    private String password;
     private User loggedUser;
     private boolean alreadyLoggedIn = false;
     private transient ServiceManager serviceManager = new ServiceManager();
     private boolean firstVisit = true;
-
-    /*
-     * Getter und Setter
-     */
-    public String getLogin() {
-        return this.login;
-    }
-
-    /**
-     * Set login.
-     *
-     * @param login
-     *            String
-     */
-    public void setLogin(String login) {
-        if (this.login != null && !this.login.equals(login)) {
-            this.alreadyLoggedIn = false;
-        }
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     /**
      * Gets current authenticated User.
