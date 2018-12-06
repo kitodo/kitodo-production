@@ -328,9 +328,12 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
      * @return Method delegated to {@link #getDocStructType()}
      */
     public DocStructTypeInterface getType() {
-        StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-        logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
-            stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
+        if (!logger.isTraceEnabled()) {
+            StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+            logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
+                stackTrace[1].getClassName(), stackTrace[1].getMethodName(), stackTrace[0].getClassName(),
+                stackTrace[0].getMethodName());
+        }
         return getDocStructType();
     }
 
