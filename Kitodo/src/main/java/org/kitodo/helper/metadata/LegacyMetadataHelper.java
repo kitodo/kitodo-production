@@ -23,9 +23,21 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
  */
 public class LegacyMetadataHelper implements MetadataInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
-    private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
-    private String value;
+
+    /**
+     * The legacy type of the legacy metadata.
+     */
     private MetadataTypeInterface type;
+
+    /**
+     * The value of the legacy metadata.
+     */
+    private String value;
+
+    /**
+     * The legacy doc struct of the legacy metadata.
+     */
+    private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
     LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper, MetadataTypeInterface type, String value) {
         this.type = type;
@@ -85,6 +97,7 @@ public class LegacyMetadataHelper implements MetadataInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

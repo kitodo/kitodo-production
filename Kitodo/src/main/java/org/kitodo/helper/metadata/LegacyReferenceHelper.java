@@ -17,18 +17,18 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 
 /**
- * Connects a legacy reference to a (reference to a) media unit. This is a
- * soldering class to keep legacy code operational which is about to be removed.
- * Do not use this class.
+ * Connects a legacy reference to a media unit. This is a soldering class to
+ * keep legacy code operational which is about to be removed. Do not use this
+ * class.
  */
 public class LegacyReferenceHelper implements ReferenceInterface {
     private static final Logger logger = LogManager.getLogger(LegacyReferenceHelper.class);
 
+    /**
+     * The soldering class containing the media unit accessed via this soldering
+     * class.
+     */
     private LegacyInnerPhysicalDocStructHelper target;
-
-    LegacyReferenceHelper() {
-
-    }
 
     public LegacyReferenceHelper(LegacyInnerPhysicalDocStructHelper target) {
         this.target = target;
@@ -66,6 +66,7 @@ public class LegacyReferenceHelper implements ReferenceInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

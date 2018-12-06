@@ -74,7 +74,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException {
-        return new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).ruleset);
+        return new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
     }
 
     @Override
@@ -134,6 +134,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

@@ -67,20 +67,30 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
 
+    /**
+     * The media file accessed via this soldering class.
+     */
     private DivXmlElementAccessInterface structure;
-    private StructuralElementViewInterface divisionView;
 
+    /**
+     * The current ruleset.
+     */
     private RulesetManagementInterface ruleset;
 
+    /**
+     * The view on this division.
+     */
+    private StructuralElementViewInterface divisionView;
+
+    /**
+     * The user’s meta-data language priority list.
+     */
     private List<LanguageRange> priorityList;
 
+    /**
+     * The parent of this class—required by legacy code.
+     */
     private LegacyLogicalDocStructHelper parent;
-
-    public LegacyLogicalDocStructHelper() {
-        logger.log(Level.TRACE, "new LogicalDocStructJoint()");
-        // TODO Auto-generated method stub
-        this.structure = metsService.createDiv();
-    }
 
     LegacyLogicalDocStructHelper(DivXmlElementAccessInterface structure, LegacyLogicalDocStructHelper parent,
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) {
@@ -306,7 +316,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<PersonInterface> getAllPersons() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        return Collections.emptyList();
     }
 
     @Override
@@ -511,6 +521,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

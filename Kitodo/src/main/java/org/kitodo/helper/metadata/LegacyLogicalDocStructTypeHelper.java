@@ -28,6 +28,9 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructTypeHelper.class);
 
+    /**
+     * The division view accessed via this soldering class.
+     */
     private StructuralElementViewInterface divisionView;
 
     public LegacyLogicalDocStructTypeHelper(StructuralElementViewInterface divisionView) {
@@ -81,6 +84,7 @@ public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface 
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

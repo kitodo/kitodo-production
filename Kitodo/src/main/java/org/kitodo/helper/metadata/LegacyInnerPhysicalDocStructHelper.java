@@ -61,8 +61,12 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     {
         local.setUse("LOCAL");
+        local.setMimeType("image/tiff");
     }
 
+    /**
+     * The media unit accessed via this soldering class.
+     */
     private FileXmlElementAccessInterface mediaUnit;
 
     public LegacyInnerPhysicalDocStructHelper() {
@@ -203,7 +207,9 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<PersonInterface> getAllPersons() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // Although the method is called because the same loop is used for
+        // logical and physical structure elements, it must come back empty.
+        return Collections.emptyList();
     }
 
     @Override
@@ -213,7 +219,9 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<ReferenceInterface> getAllReferences(String direction) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // Although the method is called because the same loop is used for
+        // logical and physical structure elements, it must come back empty.
+        return Collections.emptyList();
     }
 
     @Override
@@ -356,6 +364,7 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

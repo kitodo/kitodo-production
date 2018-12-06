@@ -56,18 +56,35 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
     private final FileService fileService = serviceLoader.getFileService();
     private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
+    /**
+     * The workpiece accessed via this soldering class.
+     */
     private MetsXmlElementAccessInterface workpiece = metsService.createMets();
+
+    /**
+     * The current ruleset.
+     */
     private RulesetManagementInterface ruleset;
 
+    /**
+     * The user’s meta-data language priority list.
+     */
     private List<LanguageRange> priorityList;
 
-    // hat Regelsatz und leeres Werkstück
+    /**
+     * Creates a new legacy METS MODS digital document helper with a ruleset.
+     * 
+     * @param ruleset
+     *            ruleset to set
+     */
     public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset) {
         this();
         this.ruleset = ruleset;
     }
 
-    // hat leeres Werkstück und keinen Regelsatz
+    /**
+     * Creates a new legacy METS MODS digital document helper.
+     */
     public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
         this.workpiece = metsService.createMets();
@@ -183,7 +200,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
             if (lockResult.isSuccessful()) {
                 try (OutputStream out = fileService.write(uri, lockResult)) {
-                    logger.info("Saving METS/Kitodo file {}", uri.toString());
+                    logger.info("Saving {}", uri.toString());
                     workpiece.save(out);
                 }
             } else {
@@ -211,6 +228,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

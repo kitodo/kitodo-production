@@ -47,6 +47,9 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStructInterface {
     private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
+    /**
+     * The media units list accessed via this soldering class.
+     */
     private List<FileXmlElementAccessInterface> mediaUnits;
 
     public LegacyFileSetDocStructHelper(List<FileXmlElementAccessInterface> mediaUnits) {
@@ -342,6 +345,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());
