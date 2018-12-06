@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.util.Collections;
 import java.util.Map;
@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
-public class MetadataTypeJoint implements MetadataTypeInterface {
-    private static final Logger logger = LogManager.getLogger(MetadataTypeJoint.class);
+public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetadataTypeHelper.class);
 
     public static final MetadataTypeInterface SPECIAL_TYPE_ORDER = new MetadataTypeInterface() {
         @Override
@@ -129,7 +129,7 @@ public class MetadataTypeJoint implements MetadataTypeInterface {
 
     private MetadataViewInterface keyView;
 
-    public MetadataTypeJoint(MetadataViewInterface keyView) {
+    public LegacyMetadataTypeHelper(MetadataViewInterface keyView) {
         this.keyView = keyView;
     }
 

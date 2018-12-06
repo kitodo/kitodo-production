@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,12 +38,12 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
-public class FileSetJoint implements FileSetInterface, DocStructInterface {
-    private static final Logger logger = LogManager.getLogger(FileSetJoint.class);
+public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStructInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
     private List<FileXmlElementAccessInterface> mediaUnits;
 
-    public FileSetJoint(List<FileXmlElementAccessInterface> mediaUnits) {
+    public LegacyFileSetDocStructHelper(List<FileXmlElementAccessInterface> mediaUnits) {
         this.mediaUnits = mediaUnits;
     }
 
@@ -78,7 +78,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
-        mediaUnits.add(((InnerPhysicalDocStructJoint) child).getMediaUnit());
+        mediaUnits.add(((LegacyInnerPhysicalDocStructHelper) child).getMediaUnit());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new ReferenceJoint();
+        return new LegacyReferenceHelper();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
         logger.log(Level.TRACE, "createChild(docStructType: \"{}\", digitalDocument: {}, prefs: {})", docStructType,
             digitalDocument, prefs);
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint(); // returns the child
+        return new LegacyInnerPhysicalDocStructHelper(); // returns the child
     }
 
     @Override
@@ -166,7 +166,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public List<DocStructInterface> getAllChildren() {
         List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
-            result.add(new InnerPhysicalDocStructJoint(mediaUnit));
+            result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
         return result;
     }
@@ -175,7 +175,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
         List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
-            result.add(new InnerPhysicalDocStructJoint(mediaUnit));
+            result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
         return result;
     }
@@ -275,7 +275,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
         logger.log(Level.TRACE, "getChild(type: \"{}\", identifierField: \"{}\", identifier: \"{}\")");
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
@@ -296,7 +296,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
         logger.log(Level.TRACE, "getNextChild(predecessor: {})", predecessor);
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
@@ -317,7 +317,7 @@ public class FileSetJoint implements FileSetInterface, DocStructInterface {
     public DocStructTypeInterface getDocStructType() {
         logger.log(Level.TRACE, "getDocStructType()");
         // TODO Auto-generated method stub
-        return PageType.INSTANCE;
+        return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
     }
 
     /**

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,8 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataeditor.RulesetManagementService;
 
-public class PrefsJoint implements PrefsInterface {
-    private static final Logger logger = LogManager.getLogger(PrefsJoint.class);
+public class LegacyPrefsHelper implements PrefsInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
     private final ServiceManager serviceLoader = new ServiceManager();
     private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
@@ -45,7 +45,7 @@ public class PrefsJoint implements PrefsInterface {
     public DocStructTypeInterface getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
-                return PageType.INSTANCE;
+                return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
             default:
                 logger.log(Level.TRACE, "getDocStrctTypeByName(identifier: \"{}\")", identifier);
                 // TODO Auto-generated method stub
@@ -58,9 +58,9 @@ public class PrefsJoint implements PrefsInterface {
     public MetadataTypeInterface getMetadataTypeByName(String identifier) {
         switch (identifier) {
             case "logicalPageNumber":
-                return MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL;
+                return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL;
             case "physPageNumber":
-                return MetadataTypeJoint.SPECIAL_TYPE_ORDER;
+                return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER;
             default:
                 logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
                 // TODO Auto-generated method stub

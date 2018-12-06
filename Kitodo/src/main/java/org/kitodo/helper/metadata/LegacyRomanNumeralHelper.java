@@ -9,12 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
-import org.kitodo.production.lugh.pagination.RomanNumeral;
 
-public class RomanNumeralJoint implements RomanNumeralInterface {
+public class LegacyRomanNumeralHelper implements RomanNumeralInterface {
 
     private int value;
 

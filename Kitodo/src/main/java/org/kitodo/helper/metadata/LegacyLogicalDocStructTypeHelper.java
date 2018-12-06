@@ -9,31 +9,31 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
-public class PageType implements DocStructTypeInterface {
-    private static final Logger logger = LogManager.getLogger(PageType.class);
+public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructTypeHelper.class);
 
-    public static final DocStructTypeInterface INSTANCE = new PageType();
+    private StructuralElementViewInterface divisionView;
 
-    private PageType() {
-        // TODO Auto-generated constructor stub
+    public LegacyLogicalDocStructTypeHelper(StructuralElementViewInterface divisionView) {
+        this.divisionView = divisionView;
     }
 
     @Override
     public List<String> getAllAllowedDocStructTypes() {
-        logger.log(Level.TRACE, "getAllAllowedDocStructTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
     @Override
@@ -45,24 +45,17 @@ public class PageType implements DocStructTypeInterface {
 
     @Override
     public String getAnchorClass() {
-        logger.log(Level.TRACE, "getAnchorClass()");
-        // TODO Auto-generated method stub
         return null; // muss null sein = keine
     }
 
     @Override
     public String getName() {
-        return "page";
+        return divisionView.getId();
     }
 
     @Override
     public String getNameByLanguage(String language) {
-        switch (language) {
-            case "de":
-                return "Seite";
-            default:
-                return "Page";
-        }
+        return divisionView.getLabel();
     }
 
     @Override

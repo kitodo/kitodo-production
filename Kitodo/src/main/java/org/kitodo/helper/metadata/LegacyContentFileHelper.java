@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.io.File;
 
@@ -21,14 +21,14 @@ import org.kitodo.services.dataformat.MetsService;
 /**
  * Connects a content file to a media file.
  */
-public class ContentFileJoint implements ContentFileInterface {
+public class LegacyContentFileHelper implements ContentFileInterface {
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
 
     private FLocatXmlElementAccessInterface mediaFile;
 
-    public ContentFileJoint() {
+    public LegacyContentFileHelper() {
         mediaFile = metsService.createFLocat();
     }
 

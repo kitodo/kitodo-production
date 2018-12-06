@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import de.sub.goobi.metadaten.Metadaten;
 
@@ -44,8 +44,8 @@ import org.kitodo.services.dataeditor.RulesetManagementService;
 import org.kitodo.services.dataformat.MetsService;
 import org.kitodo.services.file.FileService;
 
-public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInterface {
-    private static final Logger logger = LogManager.getLogger(MetsDocumentJoint.class);
+public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInterface, MetsModsInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
@@ -58,13 +58,13 @@ public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInte
     private List<LanguageRange> priorityList;
 
     // hat Regelsatz und leeres Werkstück
-    public MetsDocumentJoint(RulesetManagementInterface ruleset) {
+    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset) {
         this();
         this.ruleset = ruleset;
     }
 
     // hat leeres Werkstück und keinen Regelsatz
-    public MetsDocumentJoint() {
+    public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
         this.workpiece = metsService.createMets();
 
@@ -84,12 +84,12 @@ public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInte
 
     @Override
     public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
-        if (docStructType.equals(PageType.INSTANCE)) {
-            return new InnerPhysicalDocStructJoint();
+        if (docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
+            return new LegacyInnerPhysicalDocStructHelper();
         }
         logger.log(Level.TRACE, "createDocStruct(docStructType: {})", docStructType);
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return new LegacyLogicalDocStructHelper();
     }
 
     /**
@@ -121,17 +121,17 @@ public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInte
 
     @Override
     public FileSetInterface getFileSet() {
-        return new FileSetJoint(workpiece.getFileGrp());
+        return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
     @Override
     public DocStructInterface getLogicalDocStruct() {
-        return new LogicalDocStructJoint(workpiece.getStructMap(), null, ruleset, priorityList);
+        return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
     @Override
     public DocStructInterface getPhysicalDocStruct() {
-        return new FileSetJoint(workpiece.getFileGrp());
+        return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class MetsDocumentJoint implements DigitalDocumentInterface, MetsModsInte
 
     @Override
     public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        MetsDocumentJoint metsKitodoDocument = (MetsDocumentJoint) digitalDocument;
+        LegacyMetsModsDigitalDocumentHelper metsKitodoDocument = (LegacyMetsModsDigitalDocumentHelper) digitalDocument;
         this.workpiece = metsKitodoDocument.workpiece;
     }
 

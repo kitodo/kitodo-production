@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -32,24 +32,24 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 
-public class ReplacementFactory implements FactoryInterface {
-    private static final Logger logger = LogManager.getLogger(ReplacementFactory.class);
+public class LegacyReplacementFactoryHelper implements FactoryInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyReplacementFactoryHelper.class);
 
     @Override
     public ContentFileInterface createContentFile() {
-        return new ContentFileJoint();
+        return new LegacyContentFileHelper();
     }
 
     @Override
     public DigitalDocumentInterface createDigitalDocument() {
         logger.log(Level.TRACE, "createDigitalDocument()");
         // TODO Auto-generated method stub
-        return new MetsDocumentJoint();
+        return new LegacyMetsModsDigitalDocumentHelper();
     }
 
     @Override
     public MetadataInterface createMetadata(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException {
-        return new MetadataJoint(metadataType);
+        return new LegacyMetadataHelper(metadataType);
     }
 
     @Override
@@ -57,14 +57,14 @@ public class ReplacementFactory implements FactoryInterface {
             throws MetadataTypeNotAllowedException {
         logger.log(Level.TRACE, "createMetadataGroup(metadataGroupType: {})", metadataGroupType);
         // TODO Auto-generated method stub
-        return new MetadataGroupJoint();
+        return new LegacyMetadataGroupHelper();
     }
 
     @Override
     public MetadataGroupTypeInterface createMetadataGroupType() {
         logger.log(Level.TRACE, "createMetadataGroupType()");
         // TODO Auto-generated method stub
-        return new MetadataGroupTypeJoint();
+        return new LegacyMetadataGroupTypeHelper();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException {
-        return new MetsDocumentJoint(((PrefsJoint) prefs).ruleset);
+        return new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).ruleset);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class ReplacementFactory implements FactoryInterface {
 
     @Override
     public PrefsInterface createPrefs() {
-        return new PrefsJoint();
+        return new LegacyPrefsHelper();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class ReplacementFactory implements FactoryInterface {
     public RomanNumeralInterface createRomanNumeral() {
         logger.log(Level.TRACE, "createRomanNumeral()");
         // TODO Auto-generated method stub
-        return new RomanNumeralJoint();
+        return new LegacyRomanNumeralHelper();
     }
 
     @Override

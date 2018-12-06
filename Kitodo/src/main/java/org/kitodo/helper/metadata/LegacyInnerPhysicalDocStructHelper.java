@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.io.File;
 import java.util.Arrays;
@@ -42,8 +42,8 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataformat.MetsService;
 
-public class InnerPhysicalDocStructJoint implements DocStructInterface {
-    private static final Logger logger = LogManager.getLogger(InnerPhysicalDocStructJoint.class);
+public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructHelper.class);
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
@@ -56,11 +56,11 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     private FileXmlElementAccessInterface mediaUnit;
 
-    public InnerPhysicalDocStructJoint() {
+    public LegacyInnerPhysicalDocStructHelper() {
         this.mediaUnit = metsService.createFile();
     }
 
-    public InnerPhysicalDocStructJoint(FileXmlElementAccessInterface mediaUnit) {
+    public LegacyInnerPhysicalDocStructHelper(FileXmlElementAccessInterface mediaUnit) {
         this.mediaUnit = mediaUnit;
     }
 
@@ -78,14 +78,14 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public void addContentFile(ContentFileInterface contentFile) {
-        mediaUnit.putFLocatForUse(local, ((ContentFileJoint) contentFile).getMediaFile());
+        mediaUnit.putFLocatForUse(local, ((LegacyContentFileHelper) contentFile).getMediaFile());
     }
 
     @Override
     public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
-        if (MetadataTypeJoint.SPECIAL_TYPE_ORDER.equals(metadata.getMetadataType())) {
+        if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER.equals(metadata.getMetadataType())) {
             mediaUnit.setOrder(Integer.parseInt(metadata.getValue()));
-        } else if (MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL.equals(metadata.getMetadataType())) {
+        } else if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL.equals(metadata.getMetadataType())) {
             mediaUnit.setOrderlabel(metadata.getValue());
         } else {
             logger.log(Level.TRACE, "addMetadata(metadata: {})", metadata);
@@ -115,14 +115,14 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new ReferenceJoint();
+        return new LegacyReferenceHelper();
     }
 
     @Override
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
         logger.log(Level.TRACE, "createChild(docStructType: \"{}\", digitalDocument: {}, prefs: {})", docStructType,
             digitalDocument, prefs);
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint(); // returns the child
+        return new LegacyInnerPhysicalDocStructHelper(); // returns the child
     }
 
     @Override
@@ -196,17 +196,17 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     @Override
     public List<MetadataInterface> getAllMetadata() {
         return Arrays.asList(
-            new MetadataJoint(this, MetadataTypeJoint.SPECIAL_TYPE_ORDER, Integer.toString(mediaUnit.getOrder())),
-            new MetadataJoint(this, MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL, mediaUnit.getOrderlabel()));
+            new LegacyMetadataHelper(this, LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER, Integer.toString(mediaUnit.getOrder())),
+            new LegacyMetadataHelper(this, LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL, mediaUnit.getOrderlabel()));
     }
 
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
-        if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDER) {
-            return Arrays.asList(new MetadataJoint(this, metadataType, Integer.toString(mediaUnit.getOrder())));
-        } else if (metadataType == MetadataTypeJoint.SPECIAL_TYPE_ORDERLABEL) {
+        if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
+            return Arrays.asList(new LegacyMetadataHelper(this, metadataType, Integer.toString(mediaUnit.getOrder())));
+        } else if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL) {
             return Objects.nonNull(mediaUnit.getOrderlabel())
-                    ? Arrays.asList(new MetadataJoint(this, metadataType, mediaUnit.getOrderlabel()))
+                    ? Arrays.asList(new LegacyMetadataHelper(this, metadataType, mediaUnit.getOrderlabel()))
                     : Collections.emptyList();
         } else {
             logger.log(Level.TRACE, "getAllMetadataByType(metadataType: {})", metadataType);
@@ -277,7 +277,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
         logger.log(Level.TRACE, "getChild(type: \"{}\", identifierField: \"{}\", identifier: \"{}\")");
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
@@ -299,14 +299,14 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
         logger.log(Level.TRACE, "getNextChild(predecessor: {})", predecessor);
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
     public DocStructInterface getParent() {
         logger.log(Level.TRACE, "getParent()");
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override
@@ -318,7 +318,7 @@ public class InnerPhysicalDocStructJoint implements DocStructInterface {
 
     @Override
     public DocStructTypeInterface getDocStructType() {
-        return PageType.INSTANCE;
+        return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
     }
 
     /**
