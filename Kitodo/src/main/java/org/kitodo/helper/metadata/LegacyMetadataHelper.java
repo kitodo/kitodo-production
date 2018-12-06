@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -18,9 +18,9 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
-public class MetadataJoint implements MetadataInterface {
-    private static final Logger logger = LogManager.getLogger(MetadataJoint.class);
-    private InnerPhysicalDocStructJoint innerPhysicalDocStructJoint;
+public class LegacyMetadataHelper implements MetadataInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
+    private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
     private String value;
     private MetadataTypeInterface type;
 
@@ -29,20 +29,20 @@ public class MetadataJoint implements MetadataInterface {
     // value = "";
     // }
 
-    MetadataJoint(InnerPhysicalDocStructJoint innerPhysicalDocStructJoint, MetadataTypeInterface type, String value) {
+    LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper, MetadataTypeInterface type, String value) {
         this.type = type;
         this.value = value;
-        this.innerPhysicalDocStructJoint = innerPhysicalDocStructJoint;
+        this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
     }
 
-    public MetadataJoint(MetadataTypeInterface type) {
+    public LegacyMetadataHelper(MetadataTypeInterface type) {
         this.type = type;
         this.value = "";
     }
 
     @Override
-    public InnerPhysicalDocStructJoint getDocStruct() {
-        return innerPhysicalDocStructJoint;
+    public LegacyInnerPhysicalDocStructHelper getDocStruct() {
+        return legacyInnerPhysicalDocStructHelper;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MetadataJoint implements MetadataInterface {
 
     @Override
     public void setDocStruct(DocStructInterface docStruct) {
-        this.innerPhysicalDocStructJoint = (InnerPhysicalDocStructJoint) docStruct;
+        this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
     }
 
     @Override

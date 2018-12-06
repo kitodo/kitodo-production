@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -17,16 +17,16 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 
-public class ReferenceJoint implements ReferenceInterface {
-    private static final Logger logger = LogManager.getLogger(ReferenceJoint.class);
+public class LegacyReferenceHelper implements ReferenceInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyReferenceHelper.class);
 
-    private InnerPhysicalDocStructJoint target;
+    private LegacyInnerPhysicalDocStructHelper target;
 
-    ReferenceJoint() {
+    LegacyReferenceHelper() {
 
     }
 
-    public ReferenceJoint(InnerPhysicalDocStructJoint target) {
+    public LegacyReferenceHelper(LegacyInnerPhysicalDocStructHelper target) {
         this.target = target;
     }
 
@@ -34,7 +34,7 @@ public class ReferenceJoint implements ReferenceInterface {
     public DocStructInterface getSource() {
         logger.log(Level.TRACE, "getSource()");
         // TODO Auto-generated method stub
-        return new InnerPhysicalDocStructJoint();
+        return new LegacyInnerPhysicalDocStructHelper();
     }
 
     @Override

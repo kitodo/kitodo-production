@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,8 +23,8 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
 
-public class MetadataGroupJoint implements MetadataGroupInterface {
-    private static final Logger logger = LogManager.getLogger(MetadataGroupJoint.class);
+public class LegacyMetadataGroupHelper implements MetadataGroupInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetadataGroupHelper.class);
 
     @Override
     public void addMetadata(MetadataInterface metadata) {
@@ -72,6 +72,6 @@ public class MetadataGroupJoint implements MetadataGroupInterface {
     public MetadataGroupTypeInterface getMetadataGroupType() {
         logger.log(Level.TRACE, "getMetadataGroupType()");
         // TODO Auto-generated method stub
-        return new MetadataGroupTypeJoint();
+        return new LegacyMetadataGroupTypeHelper();
     }
 }

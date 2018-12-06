@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.legacy.joining;
+package org.kitodo.helper.metadata;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,8 +56,8 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataformat.MetsService;
 
-public class LogicalDocStructJoint implements DocStructInterface {
-    private static final Logger logger = LogManager.getLogger(LogicalDocStructJoint.class);
+public class LegacyLogicalDocStructHelper implements DocStructInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructHelper.class);
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
@@ -69,15 +69,15 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     private List<LanguageRange> priorityList;
 
-    private LogicalDocStructJoint parent;
+    private LegacyLogicalDocStructHelper parent;
 
-    public LogicalDocStructJoint() {
+    public LegacyLogicalDocStructHelper() {
         logger.log(Level.TRACE, "new LogicalDocStructJoint()");
         // TODO Auto-generated method stub
         this.structure = metsService.createDiv();
     }
 
-    LogicalDocStructJoint(DivXmlElementAccessInterface structure, LogicalDocStructJoint parent,
+    LegacyLogicalDocStructHelper(DivXmlElementAccessInterface structure, LegacyLogicalDocStructHelper parent,
             RulesetManagementInterface ruleset,
             List<LanguageRange> priorityList) {
         this.structure = structure;
@@ -151,17 +151,17 @@ public class LogicalDocStructJoint implements DocStructInterface {
     @Override
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
         AreaXmlElementAccessInterface view = metsService.createArea();
-        InnerPhysicalDocStructJoint target = (InnerPhysicalDocStructJoint) docStruct;
+        LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
         view.setFile(target.getMediaUnit());
         structure.getAreas().add(view);
-        return new ReferenceJoint(target);
+        return new LegacyReferenceHelper(target);
     }
 
     @Override
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
         logger.log(Level.TRACE, "()");
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return new LegacyLogicalDocStructHelper();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
         logger.log(Level.TRACE, "createChild(docStructType: \"{}\", digitalDocument: {}, prefs: {})", docStructType,
             digitalDocument, prefs);
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint(); // returns the child
+        return new LegacyLogicalDocStructHelper(); // returns the child
     }
 
     @Override
@@ -217,7 +217,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
             Collections.emptyList());
         ArrayList<MetadataTypeInterface> result = new ArrayList<>(addableKeys.size());
         for (MetadataViewInterface key : addableKeys) {
-            result.add(new MetadataTypeJoint(key));
+            result.add(new LegacyMetadataTypeHelper(key));
         }
         return result;
     }
@@ -226,7 +226,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public List<DocStructInterface> getAllChildren() {
         List<DocStructInterface> wrappedChildren = new ArrayList<>();
         for (DivXmlElementAccessInterface child : structure.getChildren()) {
-            wrappedChildren.add(new LogicalDocStructJoint(child, this, ruleset, priorityList));
+            wrappedChildren.add(new LegacyLogicalDocStructHelper(child, this, ruleset, priorityList));
         }
         return wrappedChildren;
     }
@@ -276,7 +276,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
                 MetadataViewInterface key = x.getMetadata().get();
                 for (MetadataAccessInterface value : x.getValues()) {
                     if (value instanceof MetadataXmlElementAccessInterface) {
-                        result.add(new MetadataJoint(null, new MetadataTypeJoint(key),
+                        result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                 ((MetadataXmlElementAccessInterface) value).getValue()));
                     }
                 }
@@ -302,7 +302,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
                 if (key.getId().equals(metadataType.getName())) {
                     for (MetadataAccessInterface value : x.getValues()) {
                         if (value instanceof MetadataXmlElementAccessInterface) {
-                            result.add(new MetadataJoint(null, new MetadataTypeJoint(key),
+                            result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                     ((MetadataXmlElementAccessInterface) value).getValue()));
                         }
                     }
@@ -340,7 +340,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
                 ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
                 for (AreaXmlElementAccessInterface view : views) {
                     FileXmlElementAccessInterface mediaUnit = view.getFile();
-                    allReferences.add(new ReferenceJoint(new InnerPhysicalDocStructJoint(mediaUnit)));
+                    allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
                 }
                 return allReferences;
             default:
@@ -363,7 +363,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
                 ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
                 for (AreaXmlElementAccessInterface view : views) {
                     FileXmlElementAccessInterface mediaUnit = view.getFile();
-                    allReferences.add(new ReferenceJoint(new InnerPhysicalDocStructJoint(mediaUnit)));
+                    allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
                 }
                 return allReferences;
             default:
@@ -389,7 +389,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
         logger.log(Level.TRACE, "getChild(type: \"{}\", identifierField: \"{}\", identifier: \"{}\")");
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return new LegacyLogicalDocStructHelper();
     }
 
     @Override
@@ -406,7 +406,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
         for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
             if (x.getMetadata().isPresent()) {
                 MetadataViewInterface key = x.getMetadata().get();
-                result.add(new MetadataTypeJoint(key));
+                result.add(new LegacyMetadataTypeHelper(key));
             }
         }
         return result;
@@ -423,7 +423,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
         logger.log(Level.TRACE, "getNextChild(predecessor: {})", predecessor);
         // TODO Auto-generated method stub
-        return new LogicalDocStructJoint();
+        return new LegacyLogicalDocStructHelper();
     }
 
     @Override
@@ -440,7 +440,7 @@ public class LogicalDocStructJoint implements DocStructInterface {
 
     @Override
     public DocStructTypeInterface getDocStructType() {
-        return new LogicalDocStructTypeJoint(divisionView);
+        return new LegacyLogicalDocStructTypeHelper(divisionView);
     }
 
     /**
