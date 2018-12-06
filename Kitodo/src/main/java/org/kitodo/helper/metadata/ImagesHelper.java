@@ -171,6 +171,7 @@ public class ImagesHelper {
                 try {
                     // physical page no
                     physicalStructure.addChild(dsPage);
+                    currentPhysicalOrder++;
                     dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
                     // logical page no
@@ -303,7 +304,7 @@ public class ImagesHelper {
             throws MetadataTypeNotAllowedException {
         MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
         MetadataInterface metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
-        metadata.setStringValue(String.valueOf(++currentPhysicalOrder));
+        metadata.setStringValue(String.valueOf(currentPhysicalOrder));
         return metadata;
     }
 
