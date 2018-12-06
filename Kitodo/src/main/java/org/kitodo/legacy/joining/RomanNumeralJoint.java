@@ -1,36 +1,40 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.legacy.joining;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.RomanNumeralInterface;
+import org.kitodo.production.lugh.pagination.RomanNumeral;
 
 public class RomanNumeralJoint implements RomanNumeralInterface {
-    private static final Logger logger = LogManager.getLogger(RomanNumeralJoint.class);
+
+    private int value;
 
     @Override
     public String getNumber() {
-        logger.log(Level.TRACE, "getNumber()");
-        // TODO Auto-generated method stub
-        return "";
+        return RomanNumeral.format(value, true);
     }
 
     @Override
     public int intValue() {
-        logger.log(Level.TRACE, "intValue()");
-        // TODO Auto-generated method stub
-        return 0;
+        return value;
     }
 
     @Override
     public void setValue(int value) {
-        logger.log(Level.TRACE, "setValue(value: {})", value);
-        // TODO Auto-generated method stub
+        this.value = value;
     }
 
     @Override
     public void setValue(String value) {
-        logger.log(Level.TRACE, "setValue(value: \"{}\")");
-        // TODO Auto-generated method stub
+        this.value = RomanNumeral.parseInt(value);
     }
 }
