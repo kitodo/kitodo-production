@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
+import org.kitodo.data.database.persistence.LdapServerDAO;
 
 @Entity
 @Table(name = "ldapServer")
@@ -149,7 +151,11 @@ public class LdapServer extends BaseBean {
      * @return The ldapGroups.
      */
     public List<LdapGroup> getLdapGroups() {
-        return ldapGroups;
+        initialize(new LdapServerDAO(), this.ldapGroups);
+        if (Objects.isNull(this.ldapGroups)) {
+            this.ldapGroups = new ArrayList<>();
+        }
+        return this.ldapGroups;
     }
 
     /**

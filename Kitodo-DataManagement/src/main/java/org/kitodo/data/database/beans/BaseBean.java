@@ -12,12 +12,18 @@
 package org.kitodo.data.database.beans;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.kitodo.data.database.persistence.BaseDAO;
 
 /**
  * Base bean class.
@@ -38,5 +44,16 @@ public abstract class BaseBean implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @SuppressWarnings("unchecked")
+    void initialize(BaseDAO baseDAO, List<? extends BaseBean> list) {
+        if (Objects.nonNull(this.id) && !Hibernate.isInitialized(list)) {
+            try {
+                Hibernate.initialize(list);
+            } catch (HibernateException e) {
+                baseDAO.initialize(this, list);
+            }
+        }
     }
 }

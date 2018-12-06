@@ -31,6 +31,8 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.kitodo.data.database.persistence.ProcessDAO;
+
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
 // elements. Further XML elements can be
@@ -269,7 +271,8 @@ public class Process extends BaseTemplateBean {
      * @return list of Task objects or empty list
      */
     public List<Task> getTasks() {
-        if (this.tasks == null) {
+        initialize(new ProcessDAO(), this.tasks);
+        if (Objects.isNull(this.tasks)) {
             this.tasks = new ArrayList<>();
         }
         return this.tasks;
@@ -285,7 +288,8 @@ public class Process extends BaseTemplateBean {
      * @return list of Property objects or empty list
      */
     public List<Property> getTemplates() {
-        if (this.templates == null) {
+        initialize(new ProcessDAO(), this.templates);
+        if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
         return this.templates;
@@ -308,7 +312,8 @@ public class Process extends BaseTemplateBean {
      * @return list of Property objects or empty list
      */
     public List<Property> getWorkpieces() {
-        if (this.workpieces == null) {
+        initialize(new ProcessDAO(), this.workpieces);
+        if (Objects.isNull(this.workpieces)) {
             this.workpieces = new ArrayList<>();
         }
         return this.workpieces;
@@ -330,7 +335,8 @@ public class Process extends BaseTemplateBean {
      * @return list of batches or empty list
      */
     public List<Batch> getBatches() {
-        if (this.batches == null) {
+        initialize(new ProcessDAO(), this.batches);
+        if (Objects.isNull(this.batches)) {
             this.batches = new ArrayList<>();
         }
         return this.batches;
@@ -357,7 +363,8 @@ public class Process extends BaseTemplateBean {
      * @return list of Property objects or empty list
      */
     public List<Property> getProperties() {
-        if (this.properties == null) {
+        initialize(new ProcessDAO(), this.properties);
+        if (Objects.isNull(this.properties)) {
             this.properties = new ArrayList<>();
         }
         return this.properties;

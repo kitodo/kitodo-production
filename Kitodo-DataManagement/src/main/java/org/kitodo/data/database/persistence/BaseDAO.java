@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -61,7 +62,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return constrained list of persisted beans
      */
     public abstract List<T> getAll(int offset, int size) throws DAOException;
-
 
     /**
      * Retrieves all not indexed BaseBean objects in given range.
@@ -222,6 +222,21 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
         } catch (HibernateException e) {
             throw new DAOException(e);
+        }
+    }
+
+    /**
+     * Initialize child list of objects for given base bean.
+     * 
+     * @param object
+     *            for update
+     * @param list
+     *            child list for initialize
+     */
+    public void initialize(T object, List<? extends BaseBean> list) {
+        try (Session session = HibernateUtil.getSession()) {
+            session.update(object);
+            Hibernate.initialize(list);
         }
     }
 
@@ -410,6 +425,4 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             session.update(object);
         }
     }
-
-
 }

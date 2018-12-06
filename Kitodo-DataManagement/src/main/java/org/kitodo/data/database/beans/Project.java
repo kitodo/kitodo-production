@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.data.database.persistence.ProjectDAO;
 
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
@@ -223,7 +224,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @return the folders
      */
     public List<User> getUsers() {
-        if (this.users == null) {
+        initialize(new ProjectDAO(), this.users);
+        if (Objects.isNull(this.users)) {
             this.users = new ArrayList<>();
         }
         return this.users;
@@ -239,7 +241,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @return the folders
      */
     public List<Process> getProcesses() {
-        if (this.processes == null) {
+        initialize(new ProjectDAO(), this.processes);
+        if (Objects.isNull(this.processes)) {
             this.processes = new ArrayList<>();
         }
         return this.processes;
@@ -255,7 +258,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @return value of templates
      */
     public List<Template> getTemplates() {
-        if (this.templates == null) {
+        initialize(new ProjectDAO(), this.templates);
+        if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
         return this.templates;
@@ -347,7 +351,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @return the folders
      */
     public List<Folder> getFolders() {
-        if (this.folders == null) {
+        initialize(new ProjectDAO(), this.folders);
+        if (Objects.isNull(this.folders)) {
             this.folders = new ArrayList<>();
         }
         return this.folders;

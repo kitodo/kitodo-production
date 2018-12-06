@@ -24,6 +24,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.LdapGroupDAO;
+
 @Entity
 @Table(name = "ldapGroup")
 public class LdapGroup extends BaseBean {
@@ -270,10 +272,11 @@ public class LdapGroup extends BaseBean {
      * @return list of users
      */
     public List<User> getUsers() {
-        if (Objects.isNull(users)) {
-            users = new ArrayList<>();
+        initialize(new LdapGroupDAO(), this.users);
+        if (Objects.isNull(this.users)) {
+            this.users = new ArrayList<>();
         }
-        return users;
+        return this.users;
     }
 
     /**

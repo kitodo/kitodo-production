@@ -25,6 +25,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.RoleDAO;
+
 @Entity
 @Table(name = "role")
 public class Role extends BaseIndexedBean implements Comparable<Role> {
@@ -88,7 +90,8 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
      * @return The authorities.
      */
     public List<Authority> getAuthorities() {
-        if (this.authorities == null) {
+        initialize(new RoleDAO(), this.authorities);
+        if (Objects.isNull(this.authorities)) {
             this.authorities = new ArrayList<>();
         }
         return this.authorities;
@@ -110,7 +113,11 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
      * @return The users.
      */
     public List<User> getUsers() {
-        return users;
+        initialize(new RoleDAO(), this.users);
+        if (Objects.isNull(this.users)) {
+            this.users = new ArrayList<>();
+        }
+        return this.users;
     }
 
     /**
@@ -129,7 +136,11 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
      * @return The tasks.
      */
     public List<Task> getTasks() {
-        return tasks;
+        initialize(new RoleDAO(), this.tasks);
+        if (Objects.isNull(this.tasks)) {
+            this.tasks = new ArrayList<>();
+        }
+        return this.tasks;
     }
 
     /**

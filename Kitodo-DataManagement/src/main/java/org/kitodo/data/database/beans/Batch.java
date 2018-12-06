@@ -28,6 +28,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.BatchDAO;
+
 /**
  * The class Batch represents a user-definable, unordered collection of
  * processes that methods can be applied on in batch processing.
@@ -195,7 +197,8 @@ public class Batch extends BaseIndexedBean {
      * @return the processes that are in the batch
      */
     public List<Process> getProcesses() {
-        if (this.processes == null) {
+        initialize(new BatchDAO(), this.processes);
+        if (Objects.isNull(this.processes)) {
             this.processes = new ArrayList<>();
         }
         return this.processes;
