@@ -89,14 +89,16 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
-        logger.log(Level.TRACE, "addChild(child: {})", child);
-        // TODO Auto-generated method stub
+        LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
+        legacyLogicalDocStructHelperChild.parent = this;
+        structure.getChildren().add(legacyLogicalDocStructHelperChild.structure);
     }
 
     @Override
     public void addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException {
-        logger.log(Level.TRACE, "addChild(index: {}, child: {})", index, child);
-        // TODO Auto-generated method stub
+        LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
+        legacyLogicalDocStructHelperChild.parent = this;
+        structure.getChildren().add(index, legacyLogicalDocStructHelperChild.structure);
     }
 
     @Override
@@ -350,9 +352,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public Collection<ReferenceInterface> getAllToReferences() {
-        logger.log(Level.TRACE, "getAllToReferences()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        return getAllReferences("to");
     }
 
     @Override
@@ -468,8 +468,9 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void removeChild(DocStructInterface docStruct) {
-        logger.log(Level.TRACE, "removeChild(docStruct: {})", docStruct);
-        // TODO Auto-generated method stub
+        LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) docStruct;
+        legacyLogicalDocStructHelperChild.parent = null;
+        structure.getChildren().remove(legacyLogicalDocStructHelperChild.structure);
     }
 
     @Override
@@ -480,8 +481,17 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void removeMetadata(MetadataInterface metaDatum) {
-        logger.log(Level.TRACE, "removeMetadata(metaDatum: {})", metaDatum);
-        // TODO Auto-generated method stub
+        Iterator<MetadataAccessInterface> metadataAccessInterfaceIterator = structure.getMetadata().iterator();
+        String metadataTypeName = metaDatum.getMetadataType().getName();
+        while (metadataAccessInterfaceIterator.hasNext()) {
+            MetadataAccessInterface metadataAccessInterface = metadataAccessInterfaceIterator.next();
+            if (metadataAccessInterface.getType().equals(metadataTypeName)
+                    && ((MetadataXmlElementAccessInterface) metadataAccessInterface).getValue()
+                            .equals(metaDatum.getValue())) {
+                metadataAccessInterfaceIterator.remove();
+                break;
+            }
+        }
     }
 
     @Override
@@ -498,9 +508,14 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void removeReferenceTo(DocStructInterface target) {
-        logger.log(Level.TRACE, "removeReferenceTo(target: {})", target);
-        // TODO Auto-generated method stub
-
+        FileXmlElementAccessInterface mediaUnit = ((LegacyInnerPhysicalDocStructHelper) target).getMediaUnit();
+        Iterator<AreaXmlElementAccessInterface> areaXmlElementAccessInterfaceIterator = structure.getAreas().iterator();
+        while (areaXmlElementAccessInterfaceIterator.hasNext()) {
+            FileXmlElementAccessInterface fileXmlElementAccessInterface = areaXmlElementAccessInterfaceIterator.next()
+                    .getFile();
+            if (fileXmlElementAccessInterface.equals(mediaUnit))
+                areaXmlElementAccessInterfaceIterator.remove();
+        }
     }
 
     @Override

@@ -84,12 +84,11 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
 
     @Override
     public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
-        if (docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
+        if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
+            return new LegacyLogicalDocStructHelper(metsService.createDiv(), null, ruleset, priorityList);
+        } else {
             return new LegacyInnerPhysicalDocStructHelper();
         }
-        logger.log(Level.TRACE, "createDocStruct(docStructType: {})", docStructType);
-        // TODO Auto-generated method stub
-        return new LegacyLogicalDocStructHelper();
     }
 
     /**
