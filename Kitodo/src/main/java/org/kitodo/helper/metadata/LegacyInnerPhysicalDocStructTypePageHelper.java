@@ -26,6 +26,9 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructTypeInterface {
     private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructTypePageHelper.class);
 
+    /**
+     * The sole doc struct type instance “page”.
+     */
     public static final DocStructTypeInterface INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
 
     private LegacyInnerPhysicalDocStructTypePageHelper() {
@@ -84,6 +87,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

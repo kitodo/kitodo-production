@@ -19,7 +19,9 @@ import org.kitodo.api.ugh.RomanNumeralInterface;
  * removed. Do not use this class.
  */
 public class LegacyRomanNumeralHelper implements RomanNumeralInterface {
-
+    /**
+     * The value of the Roman numeral accessed via this soldering class.
+     */
     private int value;
 
     @Override

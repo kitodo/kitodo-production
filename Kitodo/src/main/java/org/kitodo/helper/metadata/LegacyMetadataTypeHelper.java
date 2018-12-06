@@ -26,20 +26,24 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataTypeHelper.class);
 
+    /**
+     * A representative for a special legacy meta-data type to read and write
+     * the METS ORDER attribute.
+     */
     public static final MetadataTypeInterface SPECIAL_TYPE_ORDER = new MetadataTypeInterface() {
         @Override
         public Map<String, String> getAllLanguages() {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public boolean isPerson() {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public String getLanguage(String language) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            return "de".equals(language) ? "physische Seitenzahl (Imagenummer)" : "physical page number";
         }
 
         @Override
@@ -49,49 +53,53 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
         @Override
         public String getNum() {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setAllLanguages(Map<String, String> labels) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setIdentifier(boolean identifier) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setPerson(boolean person) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setName(String name) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setNum(String quantityRestriction) {
-            throw new UnsupportedOperationException("Order type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
     };
 
+    /**
+     * A representative for a special legacy meta-data type to read and write
+     * the METS ORDERLABEL attribute.
+     */
     public static final MetadataTypeInterface SPECIAL_TYPE_ORDERLABEL = new MetadataTypeInterface() {
         @Override
         public Map<String, String> getAllLanguages() {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public boolean isPerson() {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public String getLanguage(String language) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            return "de".equals(language) ? "logische Seitenzahl (gedruckte Zeitenzahl)" : "logical page number";
         }
 
         @Override
@@ -101,35 +109,38 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
         @Override
         public String getNum() {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setAllLanguages(Map<String, String> labels) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setIdentifier(boolean identifier) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setPerson(boolean person) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setName(String name) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setNum(String quantityRestriction) {
-            throw new UnsupportedOperationException("Orderlabel type needs special treatment");
+            throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
     };
 
+    /**
+     * The key view accessed via this soldering class.
+     */
     private MetadataViewInterface keyView;
 
     public LegacyMetadataTypeHelper(MetadataViewInterface keyView) {
@@ -203,6 +214,7 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());

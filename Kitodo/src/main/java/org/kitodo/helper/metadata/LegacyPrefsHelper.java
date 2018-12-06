@@ -42,10 +42,14 @@ import org.kitodo.services.dataeditor.RulesetManagementService;
  */
 public class LegacyPrefsHelper implements PrefsInterface {
     private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
+
     private final ServiceManager serviceLoader = new ServiceManager();
     private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
 
-    RulesetManagementInterface ruleset;
+    /**
+     * The ruleset accessed via this soldering class.
+     */
+    private RulesetManagementInterface ruleset;
 
     @Override
     public List<DocStructTypeInterface> getAllDocStructTypes() {
@@ -93,6 +97,15 @@ public class LegacyPrefsHelper implements PrefsInterface {
         }
     }
 
+    /**
+     * Returns the ruleset of the legacy prefs helper.
+     * 
+     * @return the ruleset
+     */
+    RulesetManagementInterface getRuleset() {
+        return ruleset;
+    }
+
     @Override
     public void loadPrefs(String fileName) throws PreferencesException {
         File rulesetFile = new File(fileName);
@@ -122,6 +135,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
         buffer.append(stackTrace[1].getClassName());
         buffer.append('.');
         buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
         if (stackTrace[1].getLineNumber() > -1) {
             buffer.append(" line ");
             buffer.append(stackTrace[1].getLineNumber());
