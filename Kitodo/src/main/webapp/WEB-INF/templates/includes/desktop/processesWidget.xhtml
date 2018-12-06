@@ -27,7 +27,7 @@
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
         <p:column headerText="#{msgs.project}" styleClass="process-table-column">
-            <h:outputText value="#{DesktopForm.getProject(process).title}"/>
+            <h:outputText value="#{process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">

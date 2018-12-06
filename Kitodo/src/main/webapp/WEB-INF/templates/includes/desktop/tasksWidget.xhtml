@@ -24,7 +24,7 @@
             <h:outputText value="#{task.process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.project}" id="taskProject" styleClass="task-table-column">
-            <h:outputText value="#{DesktopForm.getProject(task.process).title}"/>
+            <h:outputText value="#{task.process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" id="taskActions" styleClass="actionsColumn task-table-column">
             <h:form id="actionForm">

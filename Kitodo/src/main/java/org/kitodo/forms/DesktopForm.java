@@ -22,8 +22,6 @@ import javax.json.JsonException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProcessDTO;
-import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 
@@ -31,6 +29,7 @@ import org.kitodo.helper.Helper;
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
+    private static final String SORT_TITLE_ASC = "{\"title\":\"asc\" }";
 
     /**
      * Default constructor.
@@ -55,11 +54,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getTasks() {
         try {
-            return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
+                return serviceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
+                e);
         }
+        return new ArrayList();
     }
 
     /**
@@ -69,11 +71,14 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10, null);
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
+                return serviceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
+                logger, e);
         }
+        return new ArrayList();
     }
 
     /**
@@ -83,34 +88,21 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10, null);
+            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
+                return serviceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            }
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
-            return new ArrayList();
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
+                logger, e);
         }
-    }
-
-    /**
-     * Get project of process.
-     *
-     * @param processDTO
-     *          process whose project is returned
-     * @return project of the given process
-     */
-    public ProjectDTO getProject(ProcessDTO processDTO) {
-        try {
-            return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
-        } catch (DataException | JsonException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
-            return null;
-        }
+        return new ArrayList();
     }
 
     /**
      * Get number of elements of given type 'objectType' in index.
      *
      * @param objectType
-     *          type of elements
+     *            type of elements
      * @return number of elements
      */
     public long getNumberOfElements(ObjectType objectType) {
@@ -144,6 +136,8 @@ public class DesktopForm extends BaseForm {
                     return serviceManager.getTemplateService().count();
                 case ROLE:
                     return serviceManager.getRoleService().count();
+                case WORKFLOW:
+                    return serviceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }

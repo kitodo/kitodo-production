@@ -562,6 +562,16 @@ public class SecurityAccessService {
     }
 
     /**
+     * Check if current user has authority to view task list. It returns true if
+     * user has "viewAllTasks" authority for client.
+     *
+     * @return true if user has authority 'viewAllTasks' for client
+     */
+    public boolean hasAuthorityToViewTaskList() {
+        return hasAuthorityForClient("viewAllTasks");
+    }
+
+    /**
      * Check if current user has authority to view batch list. It returns true if
      * user has "viewAllBatches" authority for client.
      *
