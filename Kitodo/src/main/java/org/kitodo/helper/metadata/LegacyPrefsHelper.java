@@ -15,13 +15,17 @@ import de.sub.goobi.metadaten.Metadaten;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Optional;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
@@ -72,9 +76,19 @@ public class LegacyPrefsHelper implements PrefsInterface {
             case "physPageNumber":
                 return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER;
             default:
-                logger.log(Level.TRACE, "getMetadataTypeByName(identifier: \"{}\")", identifier);
-                // TODO Auto-generated method stub
-                return null; // new MetadataTypeJoint();
+                User user = new Metadaten().getCurrentUser();
+                String metadataLanguage = user != null ? user.getMetadataLanguage()
+                        : Helper.getRequestParameter("Accept-Language");
+                List<LanguageRange> priorityList = LanguageRange
+                        .parse(metadataLanguage != null ? metadataLanguage : "en");
+                StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("", "edit",
+                    priorityList);
+                List<MetadataViewWithValuesInterface<Void>> svm = divisionView
+                        .getSortedVisibleMetadata(Collections.emptyMap(), Arrays.asList(identifier));
+                MetadataViewInterface v = svm.parallelStream().map(x -> x.getMetadata()).filter(Optional::isPresent)
+                        .map(Optional::get).filter(mv -> mv.getId().equals(identifier)).findFirst()
+                        .orElseThrow(IllegalStateException::new);
+                return new LegacyMetadataTypeHelper(v);
         }
     }
 
