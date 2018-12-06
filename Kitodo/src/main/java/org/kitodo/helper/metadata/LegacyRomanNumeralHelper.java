@@ -13,6 +13,11 @@ package org.kitodo.helper.metadata;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
 
+/**
+ * Connects the legacy Roman numeral to a Roman numeral implementation. This is
+ * a soldering class to keep legacy code operational which is about to be
+ * removed. Do not use this class.
+ */
 public class LegacyRomanNumeralHelper implements RomanNumeralInterface {
 
     private int value;

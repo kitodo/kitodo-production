@@ -11,15 +11,18 @@
 
 package org.kitodo.helper.metadata;
 
-import java.util.Collections;
 import java.util.Map;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
+/**
+ * Connects a legacy meta-data type to a key view. This is a soldering class to
+ * keep legacy code operational which is about to be removed. Do not use this
+ * class.
+ */
 public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataTypeHelper.class);
 
@@ -135,9 +138,7 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
     @Override
     public Map<String, String> getAllLanguages() {
-        logger.log(Level.TRACE, "getAllLanguages()");
-        // TODO Auto-generated method stub
-        return Collections.emptyMap();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -157,38 +158,62 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
     @Override
     public String getNum() {
-        logger.log(Level.TRACE, "getNum()");
-        // TODO Auto-generated method stub
-        return "";
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setAllLanguages(Map<String, String> labels) {
-        logger.log(Level.TRACE, "setAllLanguages(labels: {})", labels);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setIdentifier(boolean identifier) {
-        logger.log(Level.TRACE, "setIdentifier(identifier: {})", identifier);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setPerson(boolean person) {
-        logger.log(Level.TRACE, "setPerson(person: {})", person);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setName(String name) {
-        logger.log(Level.TRACE, "setName(name: \"{}\")", name);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setNum(String quantityRestriction) {
-        logger.log(Level.TRACE, "setNum(quantityRestriction: \"{}\")", quantityRestriction);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    /**
+     * This method generates a comprehensible log message in case something was
+     * overlooked and one of the unimplemented methods should ever be called in
+     * operation. The name was chosen deliberately short in order to keep the
+     * calling code clear. This method must be implemented in every class
+     * because it uses the logger tailored to the class.
+     * 
+     * @param exception
+     *            created {@code UnsupportedOperationException}
+     * @return the exception
+     */
+    private static RuntimeException andLog(UnsupportedOperationException exception) {
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        StringBuilder buffer = new StringBuilder(255);
+        buffer.append(stackTrace[1].getClassName());
+        buffer.append('.');
+        buffer.append(stackTrace[1].getMethodName());
+        if (stackTrace[1].getLineNumber() > -1) {
+            buffer.append(" line ");
+            buffer.append(stackTrace[1].getLineNumber());
+        }
+        buffer.append(" unexpectedly called unimplemented ");
+        buffer.append(stackTrace[0].getMethodName());
+        if (exception.getMessage() != null) {
+            buffer.append(": ");
+            buffer.append(exception.getMessage());
+        }
+        logger.error(buffer.toString());
+        return exception;
     }
 }
