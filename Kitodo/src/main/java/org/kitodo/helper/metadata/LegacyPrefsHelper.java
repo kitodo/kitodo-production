@@ -11,19 +11,25 @@
 
 package org.kitodo.helper.metadata;
 
+import de.sub.goobi.metadaten.Metadaten;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale.LanguageRange;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataeditor.RulesetManagementService;
 
@@ -47,10 +53,14 @@ public class LegacyPrefsHelper implements PrefsInterface {
             case "page":
                 return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
             default:
-                logger.log(Level.TRACE, "getDocStrctTypeByName(identifier: \"{}\")", identifier);
-                // TODO Auto-generated method stub
-                return null; // new LogicalDocStructTypeJoint();
-            // Wird das überhaupt gebraucht?
+                User user = new Metadaten().getCurrentUser();
+                String metadataLanguage = user != null ? user.getMetadataLanguage()
+                        : Helper.getRequestParameter("Accept-Language");
+                List<LanguageRange> priorityList = LanguageRange
+                        .parse(metadataLanguage != null ? metadataLanguage : "en");
+                StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(identifier, "edit",
+                    priorityList);
+                return new LegacyLogicalDocStructTypeHelper(divisionView);
         }
     }
 
