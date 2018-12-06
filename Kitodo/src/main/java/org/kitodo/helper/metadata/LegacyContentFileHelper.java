@@ -19,13 +19,18 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataformat.MetsService;
 
 /**
- * Connects a content file to a media file.
+ * Connects a legacy content file to a media file. This is a soldering class to
+ * keep legacy code operational which is about to be removed. Do not use this
+ * class.
  */
 public class LegacyContentFileHelper implements ContentFileInterface {
 
     private final ServiceManager serviceLoader = new ServiceManager();
     private final MetsService metsService = serviceLoader.getMetsService();
 
+    /**
+     * The media file accessed via this soldering class.
+     */
     private FLocatXmlElementAccessInterface mediaFile;
 
     public LegacyContentFileHelper() {

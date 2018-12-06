@@ -11,7 +11,6 @@
 
 package org.kitodo.helper.metadata;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.ContentFileInterface;
@@ -32,6 +31,11 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 
+/**
+ * Connects the UGH factory interface to the legacy helper classes. This is a
+ * soldering class to keep legacy code operational which is about to be removed.
+ * Do not use this class.
+ */
 public class LegacyReplacementFactoryHelper implements FactoryInterface {
     private static final Logger logger = LogManager.getLogger(LegacyReplacementFactoryHelper.class);
 
@@ -42,9 +46,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public DigitalDocumentInterface createDigitalDocument() {
-        logger.log(Level.TRACE, "createDigitalDocument()");
-        // TODO Auto-generated method stub
-        return new LegacyMetsModsDigitalDocumentHelper();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -55,23 +57,19 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
     @Override
     public MetadataGroupInterface createMetadataGroup(MetadataGroupTypeInterface metadataGroupType)
             throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "createMetadataGroup(metadataGroupType: {})", metadataGroupType);
-        // TODO Auto-generated method stub
-        return new LegacyMetadataGroupHelper();
+
+        UnsupportedOperationException e = new UnsupportedOperationException("MetadataGroupInterface is not supported");
+        throw andLog(new UnsupportedOperationException("MetadataGroupInterface is not supported"));
     }
 
     @Override
     public MetadataGroupTypeInterface createMetadataGroupType() {
-        logger.log(Level.TRACE, "createMetadataGroupType()");
-        // TODO Auto-generated method stub
-        return new LegacyMetadataGroupTypeHelper();
+        throw andLog(new UnsupportedOperationException("Metadata group type is not supported"));
     }
 
     @Override
     public MetadataTypeInterface createMetadataType() {
-        logger.log(Level.TRACE, "createMetadataType()");
-        // TODO Auto-generated method stub
-        return null; // new MetadataTypeJoint();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -81,26 +79,17 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefs) throws PreferencesException {
-        logger.log(Level.TRACE, "createMetsModsImportExport(prefs: {})", prefs);
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: METS/MODS import/export is not supported");
-        throw new UnsupportedOperationException("MetsModsImportExportInterface is not supported");
+        throw andLog(new UnsupportedOperationException("METS/MODS import/export is not supported"));
     }
 
     @Override
     public PersonInterface createPerson(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "createPerson(metadataType: {})", metadataType);
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: Person is not supported");
-        throw new UnsupportedOperationException("Person is not supported");
+        throw andLog(new UnsupportedOperationException("Person is not supported"));
     }
 
     @Override
     public PicaPlusInterface createPicaPlus(PrefsInterface prefs) {
-        logger.log(Level.TRACE, "createPicaPlus(prefs: {})", prefs);
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: PICA+ is not supported");
-        throw new UnsupportedOperationException("PicaPlus is not supported");
+        throw andLog(new UnsupportedOperationException("PICA+ is not supported"));
     }
 
     @Override
@@ -110,33 +99,52 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public FileformatInterface createRDFFile(PrefsInterface prefs) throws PreferencesException {
-        logger.log(Level.TRACE, "createRDFFile(prefs: {})", prefs);
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: RDF file is not supported");
-        throw new UnsupportedOperationException("RDFFile is not supported");
+        throw andLog(new UnsupportedOperationException("RDF file is not supported"));
     }
 
     @Override
     public RomanNumeralInterface createRomanNumeral() {
-        logger.log(Level.TRACE, "createRomanNumeral()");
-        // TODO Auto-generated method stub
         return new LegacyRomanNumeralHelper();
     }
 
     @Override
     public VirtualFileGroupInterface createVirtualFileGroup() {
-        logger.log(Level.TRACE, "createVirtualFileGroup()");
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: Virtual file group is not supported");
-        throw new UnsupportedOperationException("VirtualFileGroup is not supported");
+        throw andLog(new UnsupportedOperationException("Virtual file group is not supported"));
     }
 
     @Override
     public FileformatInterface createXStream(PrefsInterface prefs) throws PreferencesException {
-        logger.log(Level.TRACE, "createXStream(prefs: {})", prefs);
-        // TODO Auto-generated method stub
-        logger.error("UnsupportedOperationException: XStream file group is not supported");
-        throw new UnsupportedOperationException("XStream is not supported");
+        throw andLog(new UnsupportedOperationException("XStream is not supported"));
     }
 
+    /**
+     * This method generates a comprehensible log message in case something was
+     * overlooked and one of the unimplemented methods should ever be called in
+     * operation. The name was chosen deliberately short in order to keep the
+     * calling code clear. This method must be implemented in every class
+     * because it uses the logger tailored to the class.
+     * 
+     * @param exception
+     *            created {@code UnsupportedOperationException}
+     * @return the exception
+     */
+    private static RuntimeException andLog(UnsupportedOperationException exception) {
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        StringBuilder buffer = new StringBuilder(255);
+        buffer.append(stackTrace[1].getClassName());
+        buffer.append('.');
+        buffer.append(stackTrace[1].getMethodName());
+        if (stackTrace[1].getLineNumber() > -1) {
+            buffer.append(" line ");
+            buffer.append(stackTrace[1].getLineNumber());
+        }
+        buffer.append(" unexpectedly called unimplemented ");
+        buffer.append(stackTrace[0].getMethodName());
+        if (exception.getMessage() != null) {
+            buffer.append(": ");
+            buffer.append(exception.getMessage());
+        }
+        logger.error(buffer.toString());
+        return exception;
+    }
 }

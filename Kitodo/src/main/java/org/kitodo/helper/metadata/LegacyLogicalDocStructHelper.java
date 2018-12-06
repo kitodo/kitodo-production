@@ -56,6 +56,11 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataformat.MetsService;
 
+/**
+ * Connects a legacy doc struct from the logical map to a structure. This is a
+ * soldering class to keep legacy code operational which is about to be removed.
+ * Do not use this class.
+ */
 public class LegacyLogicalDocStructHelper implements DocStructInterface {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructHelper.class);
 
@@ -78,8 +83,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     }
 
     LegacyLogicalDocStructHelper(DivXmlElementAccessInterface structure, LegacyLogicalDocStructHelper parent,
-            RulesetManagementInterface ruleset,
-            List<LanguageRange> priorityList) {
+            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) {
         this.structure = structure;
         this.ruleset = ruleset;
         this.priorityList = priorityList;
@@ -103,8 +107,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void addContentFile(ContentFileInterface contentFile) {
-        logger.log(Level.TRACE, "addContentFile(contentFile: {})", contentFile);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -133,21 +136,18 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public DocStructInterface addMetadata(String metadataType, String value) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "addMetadata(metadataType: {}, value: {})", metadataType, value);
-        // TODO Auto-generated method stub
-        return this;
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // return: this
     }
 
     @Override
     public void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "addMetadataGroup(metadataGroup: {})", metadataGroup);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException {
-        logger.log(Level.TRACE, "addPerson(person: {})", person);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -161,19 +161,15 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
-        logger.log(Level.TRACE, "()");
-        // TODO Auto-generated method stub
-        return new LegacyLogicalDocStructHelper();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public DocStructInterface createChild(String docStructType, DigitalDocumentInterface digitalDocument,
             PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
-        logger.log(Level.TRACE, "createChild(docStructType: \"{}\", digitalDocument: {}, prefs: {})", docStructType,
-            digitalDocument, prefs);
-        // TODO Auto-generated method stub
-        return new LegacyLogicalDocStructHelper(); // returns the child
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // return the child
     }
 
     @Override
@@ -206,9 +202,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<MetadataGroupTypeInterface> getAddableMetadataGroupTypes() {
-        logger.log(Level.TRACE, "getAddableMetadataGroupTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -235,31 +229,22 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType) {
-        logger.log(Level.TRACE, "getAllChildrenByTypeAndMetadataType(docStructType: \"{}\", metaDataType: \"{}\")",
-            docStructType, metaDataType);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<ContentFileInterface> getAllContentFiles() {
-        logger.log(Level.TRACE, "getAllContentFiles()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<ReferenceInterface> getAllFromReferences() {
-        logger.log(Level.TRACE, "getAllFromReferences()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataInterface> getAllIdentifierMetadata() {
-        logger.log(Level.TRACE, "getAllIdentifierMetadata()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -316,22 +301,17 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<MetadataGroupInterface> getAllMetadataGroups() {
-        logger.log(Level.TRACE, "getAllMetadataGroups()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<PersonInterface> getAllPersons() {
-        // “persons” is no longer supported, uses groups instead
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
-        logger.log(Level.TRACE, "getAllPersonsByType(metadataType: {})", metadataType);
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -373,23 +353,19 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public Object getAllVisibleMetadata() {
-        logger.log(Level.TRACE, "getAllVisibleMetadata()");
-        // TODO Auto-generated method stub
-        return null; // null -> false, new Object() -> true
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // return: null -> false, new Object() -> true
     }
 
     @Override
     public String getAnchorClass() {
-        logger.log(Level.TRACE, "getAnchorClass()");
-        // TODO Auto-generated method stub
-        return "";
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // return: null (none)
     }
 
     @Override
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
-        logger.log(Level.TRACE, "getChild(type: \"{}\", identifierField: \"{}\", identifier: \"{}\")");
-        // TODO Auto-generated method stub
-        return new LegacyLogicalDocStructHelper();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -414,16 +390,12 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public String getImageName() {
-        logger.log(Level.TRACE, "getImageName()");
-        // TODO Auto-generated method stub
-        return "";
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
-        logger.log(Level.TRACE, "getNextChild(predecessor: {})", predecessor);
-        // TODO Auto-generated method stub
-        return new LegacyLogicalDocStructHelper();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -461,9 +433,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
-        logger.log(Level.TRACE, "isDocStructTypeAllowedAsChild(type: {})", type);
-        // TODO Auto-generated method stub
-        return false;
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -475,20 +445,18 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException {
-        logger.log(Level.TRACE, "removeContentFile(contentFile: {})", contentFile);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeMetadata(MetadataInterface metaDatum) {
-        Iterator<MetadataAccessInterface> metadataAccessInterfaceIterator = structure.getMetadata().iterator();
+        Iterator<MetadataAccessInterface> entries = structure.getMetadata().iterator();
         String metadataTypeName = metaDatum.getMetadataType().getName();
-        while (metadataAccessInterfaceIterator.hasNext()) {
-            MetadataAccessInterface metadataAccessInterface = metadataAccessInterfaceIterator.next();
-            if (metadataAccessInterface.getType().equals(metadataTypeName)
-                    && ((MetadataXmlElementAccessInterface) metadataAccessInterface).getValue()
-                            .equals(metaDatum.getValue())) {
-                metadataAccessInterfaceIterator.remove();
+        while (entries.hasNext()) {
+            MetadataAccessInterface entry = entries.next();
+            if (entry.getType().equals(metadataTypeName)
+                    && ((MetadataXmlElementAccessInterface) entry).getValue().equals(metaDatum.getValue())) {
+                entries.remove();
                 break;
             }
         }
@@ -496,14 +464,12 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void removeMetadataGroup(MetadataGroupInterface metadataGroup) {
-        logger.log(Level.TRACE, "removeMetadataGroup(metadataGroup: {})");
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removePerson(PersonInterface person) {
-        logger.log(Level.TRACE, "removePerson(person: {})", person);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -520,13 +486,42 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void setImageName(String imageName) {
-        logger.log(Level.TRACE, "setImageName(imageName: {})", imageName);
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setType(DocStructTypeInterface docStructType) {
-        logger.log(Level.TRACE, "setType(docStructType: {})");
-        // TODO Auto-generated method stub
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    /**
+     * This method generates a comprehensible log message in case something was
+     * overlooked and one of the unimplemented methods should ever be called in
+     * operation. The name was chosen deliberately short in order to keep the
+     * calling code clear. This method must be implemented in every class
+     * because it uses the logger tailored to the class.
+     * 
+     * @param exception
+     *            created {@code UnsupportedOperationException}
+     * @return the exception
+     */
+    private static RuntimeException andLog(UnsupportedOperationException exception) {
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        StringBuilder buffer = new StringBuilder(255);
+        buffer.append(stackTrace[1].getClassName());
+        buffer.append('.');
+        buffer.append(stackTrace[1].getMethodName());
+        if (stackTrace[1].getLineNumber() > -1) {
+            buffer.append(" line ");
+            buffer.append(stackTrace[1].getLineNumber());
+        }
+        buffer.append(" unexpectedly called unimplemented ");
+        buffer.append(stackTrace[0].getMethodName());
+        if (exception.getMessage() != null) {
+            buffer.append(": ");
+            buffer.append(exception.getMessage());
+        }
+        logger.error(buffer.toString());
+        return exception;
     }
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Optional;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
@@ -37,6 +36,10 @@ import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataeditor.RulesetManagementService;
 
+/**
+ * Connects a legacy prefs to a ruleset. This is a soldering class to keep
+ * legacy code operational which is about to be removed. Do not use this class.
+ */
 public class LegacyPrefsHelper implements PrefsInterface {
     private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
     private final ServiceManager serviceLoader = new ServiceManager();
@@ -46,9 +49,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
 
     @Override
     public List<DocStructTypeInterface> getAllDocStructTypes() {
-        logger.log(Level.TRACE, "getAllDocStructTypes()");
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -104,4 +105,34 @@ public class LegacyPrefsHelper implements PrefsInterface {
         this.ruleset = ruleset;
     }
 
+    /**
+     * This method generates a comprehensible log message in case something was
+     * overlooked and one of the unimplemented methods should ever be called in
+     * operation. The name was chosen deliberately short in order to keep the
+     * calling code clear. This method must be implemented in every class
+     * because it uses the logger tailored to the class.
+     * 
+     * @param exception
+     *            created {@code UnsupportedOperationException}
+     * @return the exception
+     */
+    private static RuntimeException andLog(UnsupportedOperationException exception) {
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        StringBuilder buffer = new StringBuilder(255);
+        buffer.append(stackTrace[1].getClassName());
+        buffer.append('.');
+        buffer.append(stackTrace[1].getMethodName());
+        if (stackTrace[1].getLineNumber() > -1) {
+            buffer.append(" line ");
+            buffer.append(stackTrace[1].getLineNumber());
+        }
+        buffer.append(" unexpectedly called unimplemented ");
+        buffer.append(stackTrace[0].getMethodName());
+        if (exception.getMessage() != null) {
+            buffer.append(": ");
+            buffer.append(exception.getMessage());
+        }
+        logger.error(buffer.toString());
+        return exception;
+    }
 }
