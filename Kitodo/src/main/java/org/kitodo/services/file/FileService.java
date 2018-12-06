@@ -41,7 +41,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
@@ -654,11 +653,10 @@ public class FileService {
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
-            ProcessSubType processSubType, String resourceName) throws DAOException {
+            ProcessSubType processSubType, String resourceName) {
 
         if (processDataDirectory == null) {
-            Process process = serviceManager.getProcessService().getById(processId);
-            processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+            processDataDirectory = URI.create(String.valueOf(processId));
         }
 
         if (resourceName == null) {
@@ -712,7 +710,7 @@ public class FileService {
      * @return unmapped URI
      */
     public List<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
-            URI processDataDirectory, ProcessSubType processSubType, String resourceName) throws DAOException {
+            URI processDataDirectory, ProcessSubType processSubType, String resourceName) {
         URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType,
             resourceName);
         return getSubUris(filter, processSubTypeURI);

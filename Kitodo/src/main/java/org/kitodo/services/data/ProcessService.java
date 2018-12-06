@@ -864,7 +864,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return tif directory
      */
     public URI getImagesTifDirectory(boolean useFallBack, Integer processId, String processTitle, URI processBaseURI)
-            throws DAOException, IOException {
+            throws IOException {
         URI dir = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -918,7 +918,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
                     && !fileService.getSubUris(testMe).isEmpty();
-        } catch (DAOException | IOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
             return false;
         }
