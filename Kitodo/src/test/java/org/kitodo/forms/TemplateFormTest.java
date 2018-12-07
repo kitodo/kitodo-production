@@ -30,6 +30,7 @@ public class TemplateFormTest {
     public void testGettingGeneratableFolderSwitches() {
         Project projectWithoutSourceFolder = new Project();
         Folder folderInProjectWithoutSourceFolder = new Folder();
+        folderInProjectWithoutSourceFolder.setId(1);
         folderInProjectWithoutSourceFolder.setPath("folderInProjectWithoutSourceFolder");
         folderInProjectWithoutSourceFolder.setImageScale(1.0);
         projectWithoutSourceFolder.getFolders().add(folderInProjectWithoutSourceFolder);
@@ -39,14 +40,17 @@ public class TemplateFormTest {
         Project project = new Project();
         List<Folder> projectFolders = project.getFolders();
         Folder sourceFolder = new Folder();
+        sourceFolder.setId(2);
         sourceFolder.setPath("sourceFolder");
         sourceFolder.setImageScale(1.0);
         projectFolders.add(sourceFolder);
         project.setGeneratorSource(sourceFolder);
         Folder folderWhichHasNothingToBeGenerated = new Folder();
+        folderWhichHasNothingToBeGenerated.setId(3);
         folderWhichHasNothingToBeGenerated.setPath("folderWhichHasNothingToBeGenerated");
         projectFolders.add(folderWhichHasNothingToBeGenerated);
         Folder folderToBeGenerated = new Folder();
+        folderToBeGenerated.setId(4);
         folderToBeGenerated.setPath("folderToBeGenerated");
         folderToBeGenerated.setImageScale(1.0);
         projectFolders.add(folderToBeGenerated);
@@ -76,6 +80,7 @@ public class TemplateFormTest {
         Project project = new Project();
         List<Folder> projectFolders = project.getFolders();
         Folder folderToBeValidated = new Folder();
+        folderToBeValidated.setId(1);
         folderToBeValidated.setPath("folderToBeValidated");
         projectFolders.add(folderToBeValidated);
         projects.add(project);
