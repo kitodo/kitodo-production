@@ -79,6 +79,15 @@ public class Key {
     private List<Key> keys = new LinkedList<>();
 
     /**
+     * Returns the domain of the key.
+     * 
+     * @return the domain
+     */
+    public Domain getDomain() {
+        return domain;
+    }
+
+    /**
      * Returns the ID of the relation.
      * 
      * @return the ID of the relation
@@ -159,6 +168,12 @@ public class Key {
         return codomain.getNamespace() != null ? Type.ANY_URI : Type.STRING;
     }
 
+    /**
+     * Setter for all options.
+     * 
+     * @param options
+     *            all options to be set
+     */
     public void setOptions(Collection<Option> options) {
         this.options = new ArrayList<>(options);
     }
@@ -171,14 +186,5 @@ public class Key {
      */
     public void setKeys(List<Key> keys) {
         this.keys = keys;
-    }
-
-    /**
-     * Returns the domain of the key.
-     * 
-     * @return the domain
-     */
-    public Domain getDomain() {
-        return domain;
     }
 }

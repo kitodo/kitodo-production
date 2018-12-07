@@ -263,7 +263,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
         this.scheme = scheme;
     }
 
-    public void setYearBegin(MonthDay yearBegin) {
+    void setYearBegin(MonthDay yearBegin) {
         this.yearBegin = yearBegin;
     }
 

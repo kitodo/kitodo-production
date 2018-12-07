@@ -40,6 +40,11 @@ public class RulesetManagementService {
         rulesetManagementLoader = new KitodoServiceLoader<>(RulesetManagementInterface.class);
     }
 
+    /**
+     * Returns a new ruleset management.
+     * 
+     * @return a new ruleset management
+     */
     public RulesetManagementInterface getRulesetManagement() {
         return rulesetManagementLoader.loadModule();
     }

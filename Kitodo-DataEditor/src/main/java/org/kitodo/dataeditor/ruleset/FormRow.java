@@ -36,7 +36,7 @@ class FormRow<T> implements MetadataViewWithValuesInterface<T> {
      */
     private Collection<T> values;
 
-    public FormRow(Optional<MetadataViewInterface> optionalKeyView, Collection<T> values) {
+    FormRow(Optional<MetadataViewInterface> optionalKeyView, Collection<T> values) {
         this.optionalKeyView = optionalKeyView;
         this.values = values;
     }

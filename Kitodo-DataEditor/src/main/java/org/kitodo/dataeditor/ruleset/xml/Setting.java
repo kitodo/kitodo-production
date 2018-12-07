@@ -239,6 +239,12 @@ public class Setting {
         this.multiline = multiline;
     }
 
+    /**
+     * Sets the settings for nested keys.
+     * 
+     * @param settings
+     *            the settings for nested keys
+     */
     public void setSettings(List<Setting> settings) {
         this.settings = settings;
     }

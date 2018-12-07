@@ -62,6 +62,12 @@ public class Division {
     @XmlElement
     private SubdivisionByDateElement subdivisionByDate;
 
+    /**
+     * Returns the key used to store the part of the date relevant to this
+     * division, to which the described subtree dates.
+     * 
+     * @return the key used to store the date
+     */
     public Optional<String> getDates() {
         return Optional.ofNullable(dates);
     }
