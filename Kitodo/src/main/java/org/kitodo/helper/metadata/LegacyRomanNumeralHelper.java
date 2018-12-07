@@ -43,4 +43,9 @@ public class LegacyRomanNumeralHelper implements RomanNumeralInterface {
     public void setValue(String value) {
         this.value = RomanNumeral.parseInt(value);
     }
+
+    @Override
+    public String toString() {
+        return getNumber();
+    }
 }
