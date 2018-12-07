@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -77,9 +78,12 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.helper.BeanHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.model.Converter;
 
 /**
  * Insert data to test database.
@@ -89,6 +93,8 @@ public class MockDatabase {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
+    private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
+    private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
@@ -105,7 +111,6 @@ public class MockDatabase {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void startNode() throws Exception {
         startNodeWithoutMapping();
         indexRestClient.createIndex(readMapping());
@@ -119,7 +124,7 @@ public class MockDatabase {
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         indexRestClient = initializeIndexRestClient();
 
-        Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
+        Map settingsMap = prepareNodeSettings(port, nodeName);
         Settings settings = Settings.builder().put(settingsMap).build();
 
         removeOldDataDirectories("target/" + nodeName);
@@ -144,11 +149,7 @@ public class MockDatabase {
     }
 
     public static void insertProcessesFull() throws DAOException, DataException {
-        insertAuthorities();
-        insertLdapGroups();
-        insertUserGroups();
-        insertUsers();
-        insertClients();
+        insertRolesFull();
         insertDockets();
         insertRulesets();
         insertProjects();
@@ -165,44 +166,42 @@ public class MockDatabase {
         insertRemovableObjects();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
-        insertAuthorities();
-        insertLdapGroups();
-        insertUserGroups();
-        insertUsers();
-        insertClients();
+    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException, WorkflowException {
+        insertRolesFull();
         insertDockets();
         insertRulesets();
         insertProjects();
         insertFolders();
-        insertProcessForWorkflow();
+        insertTemplates();
+        insertProcesses();
         insertBatches();
-        insertTemplateForWorkflow();
         insertProcessPropertiesForWorkflow();
         insertWorkpieceProperties();
         insertTemplateProperties();
         insertUserFilters();
-        insertTasksForWorkflow();
+        insertTasks();
+        insertDataForParallelTasks();
     }
 
-    public static void insertUserGroupsFull() throws DAOException, DataException {
+    public static void insertRolesFull() throws DAOException, DataException {
         insertAuthorities();
+        insertClients();
         insertLdapGroups();
-        insertUserGroups();
+        insertRoles();
         insertUsers();
     }
 
     public static void insertForAuthenticationTesting() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
-        insertUserGroups();
-        insertUsers();
         insertClients();
+        insertRoles();
+        insertUsers();
         insertProjects();
     }
 
     private static class ExtendedNode extends Node {
-        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
+        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
         }
     }
@@ -236,7 +235,7 @@ public class MockDatabase {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map prepareNodeSettings(String httpPort, String httpTransportPort, String nodeName) {
+    private static Map prepareNodeSettings(String httpPort, String nodeName) {
         Map settingsMap = new HashMap();
         settingsMap.put("node.name", nodeName);
         // create all data directories under Maven build directory
@@ -247,171 +246,126 @@ public class MockDatabase {
         // set ports used by Elastic Search to something different than default
         settingsMap.put("http.type", "netty4");
         settingsMap.put("http.port", httpPort);
-        settingsMap.put("transport.tcp.port", httpTransportPort);
+        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
         settingsMap.put("transport.type", "netty4");
         // disable automatic index creation
         settingsMap.put("action.auto_create_index", "false");
         return settingsMap;
     }
 
-
     private static void insertAuthorities() throws DataException {
-        String globalAssignableAuthoritySuffix = "_globalAssignable";
-        String clientAssignableAuthoritySuffix = "_clientAssignable";
-        String projectAssignableAuthoritySuffix = "_projectAssignable";
         List<Authority> authorities = new ArrayList<>();
 
-        authorities.add(new Authority("admin" + globalAssignableAuthoritySuffix));
+        // Client
+        authorities.add(new Authority("viewAllClients" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteClient" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addClient" + GLOBAL_ASSIGNABLE));
 
-        //Client
-        authorities.add(new Authority("viewAllClients" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteClient" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addClient" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewClient" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editClient" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewClient" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editClient" + CLIENT_ASSIGNABLE));
 
-        //Project
-        authorities.add(new Authority("viewProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProjects" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProject" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProject" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProjects" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProject" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewIndex" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editIndex" + GLOBAL_ASSIGNABLE));
 
-        authorities.add(new Authority("viewProject" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject" + projectAssignableAuthoritySuffix));
+        //Role
+        authorities.add(new Authority("viewAllRoles" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editRole" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteRole" + GLOBAL_ASSIGNABLE));
 
-        //Docket
-        authorities.add(new Authority("viewAllDockets" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllRoles" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteRole" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addRole" + CLIENT_ASSIGNABLE));
 
-        //ruleset
-        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
+        // User
+        authorities.add(new Authority("viewAllUsers" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editUser" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteUser" + GLOBAL_ASSIGNABLE));
 
-        //process
-        authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllUsers" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteUser" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addUser" + CLIENT_ASSIGNABLE));
 
-        authorities.add(new Authority("editProcessMetaData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + globalAssignableAuthoritySuffix));
+        // LDAP Group
+        authorities.add(new Authority("viewAllLdapGroups" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("viewLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("addLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("editLdapGroup" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("deleteLdapGroup" + GLOBAL_ASSIGNABLE));
 
-        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
+        // Project
+        authorities.add(new Authority("viewProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllProjects" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteProject" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addProject" + CLIENT_ASSIGNABLE));
 
-        authorities.add(new Authority("editProcessMetaData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages" + clientAssignableAuthoritySuffix));
+        // Template
+        authorities.add(new Authority("viewTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllTemplates" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteTemplate" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addTemplate" + CLIENT_ASSIGNABLE));
 
-        authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + projectAssignableAuthoritySuffix));
+        // Workflow
+        authorities.add(new Authority("viewWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllWorkflows" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteWorkflow" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addWorkflow" + CLIENT_ASSIGNABLE));
 
-        authorities.add(new Authority("editProcessMetaData" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages" + projectAssignableAuthoritySuffix));
+        // Docket
+        authorities.add(new Authority("viewDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllDockets" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteDocket" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addDocket" + CLIENT_ASSIGNABLE));
 
-        //Task
-        authorities.add(new Authority("viewAllTasks" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTasks" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask" + clientAssignableAuthoritySuffix));
+        // Ruleset
+        authorities.add(new Authority("viewRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllRulesets" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteRuleset" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
 
-        authorities.add(new Authority("viewTask" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTasks" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask" + projectAssignableAuthoritySuffix));
+        // Process
+        authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllProcesses" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addProcess" + CLIENT_ASSIGNABLE));
 
-        //UserGroup
-        authorities.add(new Authority("viewAllUserGroups" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUserGroup" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUserGroup" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUserGroups" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUserGroup" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessMetaData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessStructureData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessPagination" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editProcessImages" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessStructureData" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessPagination" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewProcessImages" + CLIENT_ASSIGNABLE));
 
-        //User
-        authorities.add(new Authority("viewAllUsers" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUser" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUser" + globalAssignableAuthoritySuffix));
-        
-        authorities.add(new Authority("viewUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUsers" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
+        // Batch
+        authorities.add(new Authority("viewBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllBatches" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteBatch" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addBatch" + CLIENT_ASSIGNABLE));
 
-        //Workflow
-        authorities.add(new Authority("viewAllWorkflows" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + globalAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + globalAssignableAuthoritySuffix));
-
-        authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
+        // Task
+        authorities.add(new Authority("viewTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllTasks" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteTask" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("addTask" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
@@ -541,7 +495,7 @@ public class MockDatabase {
         firstTemplate.setInChoiceListShown(true);
         firstTemplate.setDocket(serviceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
-        firstTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
+        firstTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         serviceManager.getTemplateService().save(firstTemplate);
 
         Project thirdProject = serviceManager.getProjectService().getById(3);
@@ -553,7 +507,7 @@ public class MockDatabase {
         secondTemplate.setDocket(serviceManager.getDocketService().getById(1));
         secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
-        secondTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
+        secondTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
         secondTemplate.setInChoiceListShown(true);
         serviceManager.getTemplateService().save(secondTemplate);
 
@@ -569,48 +523,6 @@ public class MockDatabase {
         thirdTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         thirdTemplate.setInChoiceListShown(true);
         serviceManager.getTemplateService().save(thirdTemplate);
-    }
-
-    private static void insertProcessForWorkflow() throws DAOException, DataException {
-        Project project = serviceManager.getProjectService().getById(1);
-
-        Process firstProcess = new Process();
-        firstProcess.setTitle("First process");
-        firstProcess.setWikiField("field");
-        LocalDate localDate = new LocalDate(2017, 1, 20);
-        firstProcess.setCreationDate(localDate.toDate());
-        firstProcess.setSortHelperImages(30);
-        firstProcess.setDocket(serviceManager.getDocketService().getById(1));
-        firstProcess.setProject(project);
-        firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
-        firstProcess.setSortHelperStatus("100000000");
-        serviceManager.getProcessService().save(firstProcess);
-
-        Process secondProcess = new Process();
-        secondProcess.setTitle("Second process");
-        secondProcess.setWikiField("field");
-        secondProcess.setCreationDate(localDate.toDate());
-        secondProcess.setSortHelperImages(30);
-        secondProcess.setDocket(serviceManager.getDocketService().getById(1));
-        secondProcess.setProject(project);
-        secondProcess.setRuleset(serviceManager.getRulesetService().getById(1));
-        secondProcess.setSortHelperStatus("100000000");
-        serviceManager.getProcessService().save(secondProcess);
-    }
-
-    private static void insertTemplateForWorkflow() throws DAOException, DataException {
-        Project project = serviceManager.getProjectService().getById(1);
-
-        Template template = new Template();
-        template.setTitle("First process");
-        template.setWikiField("wiki");
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        template.setCreationDate(localDate.toDate());
-        template.setInChoiceListShown(true);
-        template.setDocket(serviceManager.getDocketService().getById(1));
-        template.getProjects().add(project);
-        template.setRuleset(serviceManager.getRulesetService().getById(1));
-        serviceManager.getTemplateService().save(template);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
@@ -708,34 +620,14 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    public static void insertClients() throws DataException, DAOException {
-        boolean usersAvailable = serviceManager.getUserService().getAll().size() > 0;
+    public static void insertClients() throws DataException {
         Client client = new Client();
         client.setName("First client");
-
-        if (usersAvailable) {
-            User firstUser = serviceManager.getUserService().getById(1);
-            User secondUser = serviceManager.getUserService().getById(2);
-            client.getUsers().add(firstUser);
-            client.getUsers().add(secondUser);
-            firstUser.getClients().add(client);
-            serviceManager.getClientService().save(client);
-            serviceManager.getUserService().save(firstUser);
-        } else {
-            serviceManager.getClientService().save(client);
-        }
+        serviceManager.getClientService().save(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
-        if (usersAvailable) {
-            User secondUser = serviceManager.getUserService().getById(2);
-            secondClient.getUsers().add(secondUser);
-            secondUser.getClients().add(secondClient);
-            serviceManager.getClientService().save(secondClient);
-            serviceManager.getUserService().save(secondUser);
-        } else {
-            serviceManager.getClientService().save(secondClient);
-        }
+        serviceManager.getClientService().save(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
@@ -745,6 +637,8 @@ public class MockDatabase {
     private static void insertProjects() throws DAOException, DataException {
         User firstUser = serviceManager.getUserService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
+
+        Client client = serviceManager.getClientService().getById(1);
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
@@ -760,8 +654,6 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        Client client = serviceManager.getClientService().getById(1);
-        client.getProjects().add(firstProject);
         firstProject.setClient(client);
         serviceManager.getProjectService().save(firstProject);
 
@@ -775,7 +667,6 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
-        client.getProjects().add(secondProject);
         secondProject.setClient(client);
         serviceManager.getProjectService().save(secondProject);
 
@@ -877,8 +768,8 @@ public class MockDatabase {
         serviceManager.getRulesetService().save(firstRuleset);
 
         Ruleset secondRuleset = new Ruleset();
-        secondRuleset.setTitle("SLUBHH");
-        secondRuleset.setFile("ruleset_slubhh.xml");
+        secondRuleset.setTitle("SUBHH");
+        secondRuleset.setFile("ruleset_subhh.xml");
         secondRuleset.setOrderMetadataByRuleset(false);
         secondRuleset.setClient(client);
         serviceManager.getRulesetService().save(secondRuleset);
@@ -886,8 +777,8 @@ public class MockDatabase {
         Client secondClient = serviceManager.getClientService().getById(2);
 
         Ruleset thirdRuleset = new Ruleset();
-        thirdRuleset.setTitle("SLUBBB");
-        thirdRuleset.setFile("ruleset_slubbb.xml");
+        thirdRuleset.setTitle("SUBBB");
+        thirdRuleset.setFile("ruleset_subbb.xml");
         thirdRuleset.setOrderMetadataByRuleset(false);
         thirdRuleset.setClient(secondClient);
         serviceManager.getRulesetService().save(thirdRuleset);
@@ -895,164 +786,106 @@ public class MockDatabase {
 
     private static void insertTasks() throws DAOException, DataException {
         Template firstTemplate = serviceManager.getTemplateService().getById(1);
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
-        User secondUser = serviceManager.getUserService().getById(2);
+        Role role = serviceManager.getRoleService().getById(1);
 
-        Task firstTask = new Task();
-        firstTask.setTitle("Testing");
-        firstTask.setPriority(1);
-        firstTask.setOrdering(1);
-        firstTask.setEditTypeEnum(TaskEditType.ADMIN);
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
-        firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
-        firstTask.setProcessingEnd(localDate.toDate());
-        User firstUser = serviceManager.getUserService().getById(1);
-        firstTask.setProcessingUser(firstUser);
-        firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        firstTask.setTemplate(firstTemplate);
-        firstTemplate.getTasks().add(firstTask);
-        firstTask.setUsers(serviceManager.getUserService().getAll());
-        firstTask.getUserGroups().add(userGroup);
-        firstUser.getProcessingTasks().add(firstTask);
-        serviceManager.getTaskService().save(firstTask);
+        List<Task> templateTasks = new ArrayList<>(getTasks());
+        for (Task task : templateTasks) {
+            task.setTemplate(firstTemplate);
+            task.getRoles().add(role);
+            role.getTasks().add(task);
+            serviceManager.getTaskService().save(task);
+        }
 
         Process firstProcess = serviceManager.getProcessService().getById(1);
+        User firstUser = serviceManager.getUserService().getById(1);
+        User secondUser = serviceManager.getUserService().getById(2);
         User blockedUser = serviceManager.getUserService().getById(3);
 
-        Task secondTask = new Task();
-        secondTask.setTitle("Blocking");
-        secondTask = serviceManager.getWorkflowControllerService().setCorrectionTask(secondTask);
-        secondTask.setOrdering(1);
-        secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 9, 25);
-        secondTask.setProcessingBegin(localDate.toDate());
-        secondTask.setProcessingUser(blockedUser);
-        secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        secondTask.setProcess(firstProcess);
-        secondTask.getUsers().add(blockedUser);
-        secondTask.getUsers().add(secondUser);
-        secondTask.getUserGroups().add(userGroup);
-        secondTask.setScriptName("scriptName");
-        secondTask.setScriptPath("../type/automatic/script/path");
-        serviceManager.getTaskService().save(secondTask);
+        List<Task> processTasks = new ArrayList<>(getTasks());
+        for (int i = 0; i < processTasks.size(); i++) {
+            Task task = processTasks.get(i);
+            task.setProcess(firstProcess);
+            task.getRoles().add(role);
+            role.getTasks().add(task);
+            if (i == 0) {
+                task.setProcessingUser(firstUser);
+                firstUser.getProcessingTasks().add(task);
+            } else if (i == 1) {
+                task.setTitle("Closed");
+                task.setProcessingUser(blockedUser);
+                blockedUser.getProcessingTasks().add(task);
+            } else {
+                task.setProcessingUser(secondUser);
+                secondUser.getProcessingTasks().add(task);
+            }
+            serviceManager.getTaskService().save(task);
+        }
 
-        Task thirdTask = new Task();
-        thirdTask.setTitle("Testing and Blocking");
-        thirdTask.setOrdering(2);
-        thirdTask.setPriority(10);
-        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2017, 1, 25);
-        thirdTask.setProcessingBegin(localDate.toDate());
-        thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        thirdTask.setProcess(firstProcess);
-        thirdTask.getUsers().add(secondUser);
-        serviceManager.getTaskService().save(thirdTask);
-
-        Task fourthTask = new Task();
-        fourthTask.setTitle("Progress");
-        fourthTask.setOrdering(3);
-        fourthTask.setPriority(10);
-        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fourthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 1, 29);
-        fourthTask.setProcessingBegin(localDate.toDate());
-        fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        fourthTask.setProcessingUser(secondUser);
-        fourthTask.setProcess(firstProcess);
-        fourthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fourthTask);
-
-        Template secondTemplate = serviceManager.getTemplateService().getById(2);
-
-        Task fifthTask = new Task();
-        fifthTask.setTitle("Closed");
-        fifthTask.setOrdering(1);
-        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fifthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 6, 27);
-        fifthTask.setProcessingBegin(localDate.toDate());
-        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
-        fifthTask.setProcessingUser(secondUser);
-        fifthTask.setTemplate(secondTemplate);
-        fifthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fifthTask);
-
-        Task sixthTask = new Task();
-        sixthTask.setTitle("Progress");
-        sixthTask.setOrdering(2);
-        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        sixthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 7, 27);
-        sixthTask.setProcessingBegin(localDate.toDate());
-        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setUserGroups(serviceManager.getUserGroupService().getAll());
-        sixthTask.setProcessingUser(secondUser);
-        sixthTask.setTemplate(secondTemplate);
-        serviceManager.getTaskService().save(sixthTask);
+        serviceManager.getUserService().save(firstUser);
+        serviceManager.getUserService().save(secondUser);
+        serviceManager.getUserService().save(blockedUser);
 
         Process secondProcess = serviceManager.getProcessService().getById(2);
 
-        Task seventhTask = new Task();
-        seventhTask.setTitle("Additional");
-        seventhTask.setOrdering(1);
-        seventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 9, 25);
-        seventhTask.setProcessingBegin(localDate.toDate());
-        seventhTask.setProcessingUser(blockedUser);
-        seventhTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        seventhTask.setProcess(secondProcess);
-        seventhTask.getUsers().add(blockedUser);
-        seventhTask.getUsers().add(secondUser);
-        seventhTask.getUserGroups().add(userGroup);
-        seventhTask.setScriptName("scriptName");
-        seventhTask.setScriptPath("../type/automatic/script/path");
-        serviceManager.getTaskService().save(seventhTask);
+        Task eleventhTask = new Task();
+        eleventhTask.setTitle("Additional");
+        eleventhTask.setOrdering(1);
+        eleventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        LocalDate localDate = new LocalDate(2016, 9, 25);
+        eleventhTask.setProcessingBegin(localDate.toDate());
+        eleventhTask.setProcessingUser(firstUser);
+        eleventhTask.setProcessingStatusEnum(TaskStatus.DONE);
+        eleventhTask.setProcess(secondProcess);
+        eleventhTask.setScriptName("scriptName");
+        eleventhTask.setScriptPath("../type/automatic/script/path");
+        eleventhTask.getRoles().add(role);
+        role.getTasks().add(eleventhTask);
+        serviceManager.getTaskService().save(eleventhTask);
+        firstUser.getProcessingTasks().add(eleventhTask);
 
-        Task eightTask = new Task();
-        eightTask.setTitle("Processed");
-        eightTask.setOrdering(2);
-        eightTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        Task twelfthTask = new Task();
+        twelfthTask.setTitle("Processed and Some");
+        twelfthTask.setOrdering(2);
+        twelfthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 10, 25);
-        eightTask.setProcessingBegin(localDate.toDate());
-        eightTask.setProcessingUser(firstUser);
-        eightTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        eightTask.setProcess(secondProcess);
-        eightTask.setUsers(serviceManager.getUserService().getAll());
-        eightTask.getUserGroups().add(userGroup);
-        serviceManager.getTaskService().save(eightTask);
+        twelfthTask.setProcessingBegin(localDate.toDate());
+        twelfthTask.setProcessingUser(firstUser);
+        twelfthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        twelfthTask.setProcess(secondProcess);
+        twelfthTask.getRoles().add(role);
+        role.getTasks().add(twelfthTask);
+        serviceManager.getTaskService().save(twelfthTask);
+        firstUser.getProcessingTasks().add(twelfthTask);
+        serviceManager.getUserService().save(firstUser);
+
+        Task thirteenTask = new Task();
+        thirteenTask.setTitle("Next Open");
+        thirteenTask.setOrdering(3);
+        thirteenTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2016, 10, 25);
+        thirteenTask.setProcessingBegin(localDate.toDate());
+        thirteenTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        thirteenTask.setProcess(secondProcess);
+        thirteenTask.getRoles().add(role);
+        role.getTasks().add(thirteenTask);
+        serviceManager.getTaskService().save(thirteenTask);
+
+        serviceManager.getRoleService().save(role);
     }
 
-    private static void insertTasksForWorkflow() throws DAOException, DataException {
-        Template template = serviceManager.getTemplateService().getById(1);
-
+    private static List<Task> getTasks() {
         Task firstTask = new Task();
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
-        firstTask.setTitle("Testing");
+        firstTask.setTitle("Finished");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
         firstTask.setEditTypeEnum(TaskEditType.ADMIN);
-        LocalDate localDate = new LocalDate(2016, 10, 20);
+        LocalDate localDate = new LocalDate(2016, 8, 20);
         firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
+        localDate = new LocalDate(2016, 9, 24);
         firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
+        localDate = new LocalDate(2016, 9, 24);
         firstTask.setProcessingEnd(localDate.toDate());
-        User firstUser = serviceManager.getUserService().getById(1);
-        firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
-        firstTask.setTemplate(template);
-        firstTask.setUsers(serviceManager.getUserService().getAll());
-        firstTask.getUserGroups().add(userGroup);
-        serviceManager.getTaskService().save(firstTask);
-        serviceManager.getTemplateService().save(template);
-        firstUser.getProcessingTasks().add(firstTask);
-        serviceManager.getUserService().save(firstUser);
-
-        User blockedUser = serviceManager.getUserService().getById(3);
-        User secondUser = serviceManager.getUserService().getById(2);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
@@ -1060,95 +893,38 @@ public class MockDatabase {
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);
         secondTask.setProcessingBegin(localDate.toDate());
-        secondTask.setProcessingUser(blockedUser);
+        localDate = new LocalDate(2016, 11, 25);
+        secondTask.setProcessingEnd(localDate.toDate());
         secondTask.setProcessingStatusEnum(TaskStatus.DONE);
-        secondTask.setTemplate(template);
-        secondTask.getUsers().add(blockedUser);
-        secondTask.getUsers().add(secondUser);
-        secondTask.getUserGroups().add(userGroup);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
-        serviceManager.getTaskService().save(secondTask);
 
         Task thirdTask = new Task();
-        thirdTask.setTitle("Testing and Blocking");
+        thirdTask.setTitle("Progress");
         thirdTask.setOrdering(3);
         thirdTask.setPriority(10);
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        thirdTask.setTypeImagesWrite(true);
         localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        thirdTask.setTemplate(template);
-        thirdTask.getUsers().add(secondUser);
-        serviceManager.getTaskService().save(thirdTask);
 
         Task fourthTask = new Task();
-        fourthTask.setTitle("Progress");
+        fourthTask.setTitle("Open");
         fourthTask.setOrdering(4);
         fourthTask.setPriority(10);
         fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fourthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 1, 29);
-        fourthTask.setProcessingBegin(localDate.toDate());
-        fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        fourthTask.setProcessingUser(secondUser);
-        fourthTask.setTemplate(template);
-        fourthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fourthTask);
-
-        secondUser.getProcessingTasks().add(fourthTask);
-        blockedUser.getProcessingTasks().add(secondTask);
-        blockedUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(thirdTask);
-        serviceManager.getUserService().save(blockedUser);
-        serviceManager.getUserService().save(secondUser);
-
-        userGroup.getTasks().add(firstTask);
-        userGroup.getTasks().add(secondTask);
-        serviceManager.getUserGroupService().save(userGroup);
-
-        Process process = serviceManager.getProcessService().getById(1);
+        fourthTask.setProcessingStatusEnum(TaskStatus.OPEN);
 
         Task fifthTask = new Task();
-        fifthTask.setTitle("Closed");
-        fifthTask.setOrdering(1);
+        fifthTask.setTitle("Locked");
+        fifthTask.setOrdering(5);
+        fifthTask.setPriority(10);
         fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         fifthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 6, 27);
-        fifthTask.setProcessingBegin(localDate.toDate());
-        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
-        fifthTask.setProcessingUser(secondUser);
-        fifthTask.setProcess(process);
-        fifthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fifthTask);
+        fifthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
 
-        Task sixthTask = new Task();
-        sixthTask.setTitle("Progress");
-        sixthTask.setOrdering(2);
-        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        sixthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 7, 27);
-        sixthTask.setProcessingBegin(localDate.toDate());
-        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setProcessingUser(secondUser);
-        sixthTask.setProcess(process);
-        sixthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(sixthTask);
-
-        Task seventhTask = new Task();
-        seventhTask.setTitle("Progress");
-        seventhTask.setOrdering(3);
-        seventhTask.setPriority(10);
-        seventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        seventhTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 3, 29);
-        seventhTask.setProcessingBegin(localDate.toDate());
-        seventhTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        seventhTask.setProcessingUser(secondUser);
-        seventhTask.setProcess(process);
-        seventhTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(seventhTask);
+        return Arrays.asList(firstTask, secondTask, thirdTask, fourthTask, fifthTask);
     }
 
     private static void insertTemplateProperties() throws DAOException, DataException {
@@ -1183,6 +959,14 @@ public class MockDatabase {
 
     private static void insertUsers() throws DAOException, DataException {
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+        Client firstClient = serviceManager.getClientService().getById(1);
+        Client secondClient = serviceManager.getClientService().getById(2);
+
+        Role adminRole = serviceManager.getRoleService().getById(1);
+        Role generalRole = serviceManager.getRoleService().getById(2);
+        Role projectRoleForFirstClient = serviceManager.getRoleService().getById(3);
+        Role projectRoleForSecondClient = serviceManager.getRoleService().getById(4);
+        Role withoutAuthoritiesRole = serviceManager.getRoleService().getById(5);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1193,18 +977,25 @@ public class MockDatabase {
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
-        firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        firstUser.setMetadataLanguage("de");
+        firstUser.getRoles().add(adminRole);
+        firstUser.getRoles().add(generalRole);
+        firstUser.getClients().add(firstClient);
         serviceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
+        secondUser.setPassword(passwordEncoder.encrypt("test"));
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
         secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
-        secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
+        secondUser.getRoles().add(projectRoleForFirstClient);
+        secondUser.getRoles().add(projectRoleForSecondClient);
+        secondUser.getClients().add(firstClient);
+        secondUser.getClients().add(secondClient);
         serviceManager.getUserService().save(secondUser);
 
         User thirdUser = new User();
@@ -1215,6 +1006,7 @@ public class MockDatabase {
         thirdUser.setLocation("Leipzig");
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
+        thirdUser.getRoles().add(adminRole);
         serviceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
@@ -1226,34 +1018,81 @@ public class MockDatabase {
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
-        fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        fourthUser.getRoles().add(withoutAuthoritiesRole);
         serviceManager.getUserService().save(fourthUser);
+
+        User fifthUser = new User();
+        fifthUser.setName("Last");
+        fifthUser.setSurname("User");
+        fifthUser.setLogin("user");
+        fifthUser.setPassword(passwordEncoder.encrypt("test"));
+        fifthUser.setLdapLogin("user");
+        fifthUser.setLocation("Dresden");
+        fifthUser.setTableSize(20);
+        fifthUser.setLanguage("de");
+        serviceManager.getUserService().save(fifthUser);
     }
 
-    private static void insertUserGroups() throws DAOException, DataException {
+    private static void insertRoles() throws DAOException, DataException {
         List<Authority> allAuthorities = serviceManager.getAuthorityService().getAll();
+        Client client = serviceManager.getClientService().getById(1);
 
-        UserGroup firstUserGroup = new UserGroup();
-        firstUserGroup.setTitle("Admin");
-        firstUserGroup.setAuthorities(allAuthorities);
-        serviceManager.getUserGroupService().save(firstUserGroup);
+        Role firstRole = new Role();
+        firstRole.setTitle("Admin");
+        firstRole.setClient(client);
 
-        UserGroup secondUserGroup = new UserGroup();
-        secondUserGroup.setTitle("Random");
+        // insert administration authorities
+        for (int i = 0; i < 34; i++) {
+            firstRole.getAuthorities().add(allAuthorities.get(i));
+        }
 
-        List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(serviceManager.getAuthorityService().getById(2));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(12));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(16));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(4));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(20));
-        userAuthorities.add(serviceManager.getAuthorityService().getById(19));
-        secondUserGroup.setAuthorities(userAuthorities);
-        serviceManager.getUserGroupService().save(secondUserGroup);
+        serviceManager.getRoleService().save(firstRole);
 
-        UserGroup thirdUserGroup = new UserGroup();
-        thirdUserGroup.setTitle("Without authorities");
-        serviceManager.getUserGroupService().save(thirdUserGroup);
+        Role secondRole = new Role();
+        secondRole.setTitle("General");
+        secondRole.setClient(client);
+
+        // insert general authorities
+        for (int i = 34; i < allAuthorities.size(); i++) {
+            secondRole.getAuthorities().add(allAuthorities.get(i));
+        }
+
+        serviceManager.getRoleService().save(secondRole);
+
+        Role thirdRole = new Role();
+        thirdRole.setTitle("Random for first");
+        thirdRole.setClient(client);
+
+        // insert authorities for view on projects page
+        List<Authority> userAuthoritiesForFirst = new ArrayList<>();
+        userAuthoritiesForFirst.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForFirst.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
+        thirdRole.setAuthorities(userAuthoritiesForFirst);
+
+        serviceManager.getRoleService().save(thirdRole);
+
+        Role fourthRole = new Role();
+        fourthRole.setTitle("Random for second");
+        fourthRole.setClient(serviceManager.getClientService().getById(2));
+
+        // insert authorities for view on projects page
+        List<Authority> userAuthoritiesForSecond = new ArrayList<>();
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewProject" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewTemplate" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllTemplates" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewWorkflow" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllWorkflows" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewDocket" + CLIENT_ASSIGNABLE));
+        userAuthoritiesForSecond.add(serviceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
+        fourthRole.setAuthorities(userAuthoritiesForSecond);
+
+        serviceManager.getRoleService().save(fourthRole);
+
+        Role fifthUserGroup = new Role();
+        fifthUserGroup.setTitle("Without authorities");
+        fifthUserGroup.setClient(client);
+        serviceManager.getRoleService().save(fifthUserGroup);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1308,20 +1147,126 @@ public class MockDatabase {
         serviceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DataException {
+    public static void insertWorkflows() throws DAOException, DataException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
+        firstWorkflow.setClient(serviceManager.getClientService().getById(1));
         serviceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
         secondWorkflow.setReady(false);
+        secondWorkflow.setClient(serviceManager.getClientService().getById(2));
         serviceManager.getWorkflowService().save(secondWorkflow);
     }
 
+    private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+        Workflow workflow = new Workflow("gateway-test1", "gateway-test1");
+        workflow.setActive(true);
+        workflow.setReady(true);
+        workflow.setClient(serviceManager.getClientService().getById(1));
+        serviceManager.getWorkflowService().save(workflow);
+
+        Project project = serviceManager.getProjectService().getById(1);
+
+        Converter converter = new Converter("gateway-test1");
+
+        Template template = new Template();
+        template.setTitle("Parallel Template");
+        converter.convertWorkflowToTemplate(template);
+        template.setDocket(serviceManager.getDocketService().getById(1));
+        template.setRuleset(serviceManager.getRulesetService().getById(1));
+        template.setWorkflow(workflow);
+        template.getProjects().add(project);
+        serviceManager.getTemplateService().save(template);
+
+        Process firstProcess = new Process();
+        firstProcess.setTitle("Parallel");
+        firstProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, firstProcess);
+        firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(0).setProcessingUser(serviceManager.getUserService().getById(1));
+        firstProcess.getTasks().get(1).setProcessingStatus(0);
+        firstProcess.getTasks().get(2).setProcessingStatus(0);
+        firstProcess.getTasks().get(3).setProcessingStatus(0);
+        firstProcess.getTasks().get(4).setProcessingStatus(0);
+
+        firstProcess.setProject(project);
+        firstProcess.setDocket(template.getDocket());
+        firstProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(firstProcess);
+
+        Process secondProcess = new Process();
+        secondProcess.setTitle("ParallelInWork");
+        secondProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, secondProcess);
+        secondProcess.getTasks().get(0).setProcessingStatus(3);
+        secondProcess.getTasks().get(1).setProcessingStatus(2);
+        secondProcess.getTasks().get(2).setProcessingStatus(0);
+        secondProcess.getTasks().get(3).setProcessingStatus(0);
+        secondProcess.getTasks().get(4).setProcessingStatus(0);
+
+        secondProcess.setProject(project);
+        secondProcess.setDocket(template.getDocket());
+        secondProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(secondProcess);
+
+        Process thirdProcess = new Process();
+        thirdProcess.setTitle("ParallelInWorkWithBlocking");
+        thirdProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, thirdProcess);
+        thirdProcess.getTasks().get(0).setProcessingStatus(3);
+        thirdProcess.getTasks().get(1).setProcessingStatus(2);
+        thirdProcess.getTasks().get(2).setProcessingStatus(2);
+        thirdProcess.getTasks().get(3).setProcessingStatus(0);
+        thirdProcess.getTasks().get(4).setProcessingStatus(0);
+
+        thirdProcess.setProject(project);
+        thirdProcess.setDocket(template.getDocket());
+        thirdProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(thirdProcess);
+
+        Process fourthProcess = new Process();
+        fourthProcess.setTitle("ParallelInWorkWithNonBlocking");
+        fourthProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, fourthProcess);
+        fourthProcess.getTasks().get(0).setProcessingStatus(3);
+        fourthProcess.getTasks().get(1).setProcessingStatus(2);
+        fourthProcess.getTasks().get(2).setProcessingStatus(2);
+        fourthProcess.getTasks().get(2).setConcurrent(true);
+        fourthProcess.getTasks().get(3).setProcessingStatus(0);
+        fourthProcess.getTasks().get(3).setConcurrent(true);
+        fourthProcess.getTasks().get(4).setProcessingStatus(0);
+
+        fourthProcess.setProject(project);
+        fourthProcess.setDocket(template.getDocket());
+        fourthProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(fourthProcess);
+
+        Process fifthProcess = new Process();
+        fifthProcess.setTitle("ParallelAlmostFinished");
+        secondProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, fifthProcess);
+        fifthProcess.getTasks().get(0).setProcessingStatus(3);
+        fifthProcess.getTasks().get(1).setProcessingStatus(3);
+        fifthProcess.getTasks().get(2).setProcessingStatus(3);
+        fifthProcess.getTasks().get(3).setProcessingStatus(2);
+        fifthProcess.getTasks().get(4).setProcessingStatus(0);
+
+        fifthProcess.setProject(project);
+        fifthProcess.setDocket(template.getDocket());
+        fifthProcess.setRuleset(template.getRuleset());
+        serviceManager.getProcessService().save(fifthProcess);
+    }
+
     /**
-     * Clean database after class. Truncate all tables, reset id sequences and
-     * clear session.
+     * Clean database after class. Truncate all tables, reset id sequences and clear
+     * session.
      */
     public static void cleanDatabase() {
         Session session = HibernateUtil.getSession();
@@ -1355,9 +1300,7 @@ public class MockDatabase {
         transaction.commit();
     }
 
-
-    private static void insertRemovableObjects() throws DataException {
-
+    private static void insertRemovableObjects() throws DataException, DAOException {
         removableObjectIDs = new HashMap<>();
 
         Client client = new Client();
@@ -1365,38 +1308,45 @@ public class MockDatabase {
         serviceManager.getClientService().save(client);
         removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
 
+        Client assignableClient = serviceManager.getClientService().getById(1);
+
         Docket docket = new Docket();
         docket.setTitle("Removable docket");
+        docket.setClient(assignableClient);
         serviceManager.getDocketService().save(docket);
         removableObjectIDs.put(ObjectType.DOCKET.name(), docket.getId());
 
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("Removable ruleset");
+        ruleset.setClient(assignableClient);
         serviceManager.getRulesetService().save(ruleset);
         removableObjectIDs.put(ObjectType.RULESET.name(), ruleset.getId());
 
         User user = new User();
         user.setName("Removable user");
+        user.getClients().add(assignableClient);
         serviceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
-        UserGroup userGroup = new UserGroup();
-        userGroup.setTitle("Removable user group");
-        serviceManager.getUserGroupService().save(userGroup);
-        removableObjectIDs.put(ObjectType.USER_GROUP.name(), userGroup.getId());
+        Role role = new Role();
+        role.setTitle("Removable role");
+        role.setClient(assignableClient);
+        serviceManager.getRoleService().save(role);
+        removableObjectIDs.put(ObjectType.ROLE.name(), role.getId());
 
     }
 
     /**
-     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of removable database objects as values.
-     * @return
-     *      HashMap containing IDs of removable instances of ObjectsTypes
+     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of
+     * removable database objects as values.
+     * 
+     * @return HashMap containing IDs of removable instances of ObjectsTypes
      */
     public static HashMap<String, Integer> getRemovableObjectIDs() {
         if (removableObjectIDs.isEmpty()) {
             try {
                 insertRemovableObjects();
-            } catch (DataException e) {
+            } catch (DataException | DAOException e) {
                 logger.error("Unable to save removable objects to test database!");
             }
         }

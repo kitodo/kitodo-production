@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -21,6 +22,10 @@ import org.openqa.selenium.support.FindBy;
 public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
     private static final String TEMPLATE_TAB_VIEW = EDIT_FORM + ":templateTabView";
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TEMPLATE_TAB_VIEW)
+    private WebElement templateTabView;
 
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TAB_VIEW + ":title")
@@ -37,6 +42,14 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TAB_VIEW + ":docket")
     private WebElement docketSelect;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TEMPLATE_TAB_VIEW + ":taskTable:0:editTask")
+    private WebElement editTaskLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = EDIT_FORM + ":tabs:j_id_44:0:validator")
+    private WebElement firstValidatorCheckbox;
 
     private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
@@ -61,6 +74,19 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
         clickElement(docketSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docketSelect.getAttribute("id") + "_1")));
         return this;
+    }
+
+    public TemplateEditPage editTemplateTask() throws Exception {
+        switchToTabByIndex(TabIndex.TEMPLATE_TASKS.getIndex(), templateTabView);
+        editTaskLink.click();
+        // TODO: I'm unable to reproduce conditions to display this checkbox
+        // TODO: find out what more is needed
+        //firstValidatorCheckbox.click();
+        return this;
+    }
+
+    public void saveTask()throws IllegalAccessException, InstantiationException {
+        clickButtonAndWaitForRedirect(saveButton, Pages.getTemplateEditPage().getUrl());
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {

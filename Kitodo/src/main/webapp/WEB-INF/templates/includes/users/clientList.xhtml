@@ -19,7 +19,7 @@
                  value="#{ClientForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.client}">
@@ -28,13 +28,12 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="clientEdit" title="#{msgs.clientEdit}"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewClient',item.id)}">
+                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editClient')}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteClient"
-                               action="#{ClientForm.delete}"
-                               title="#{msgs.delete}"
+                <p:commandLink id="deleteClient" action="#{ClientForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteClient')}"
                                update="usersTabView:clientsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{ClientForm.clientById}"/>

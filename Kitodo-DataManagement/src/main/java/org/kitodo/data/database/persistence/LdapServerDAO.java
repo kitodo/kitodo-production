@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.NotImplementedException;
 
 public class LdapServerDAO extends BaseDAO<LdapServer> {
     @Override
@@ -45,5 +46,10 @@ public class LdapServerDAO extends BaseDAO<LdapServer> {
     @Override
     public List<LdapServer> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM LdapServer ORDER BY id ASC", offset, size);
+    }
+
+    @Override
+    public List<LdapServer> getAllNotIndexed(int offset, int size) {
+        throw new NotImplementedException();
     }
 }

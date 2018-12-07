@@ -1,0 +1,96 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{RoleForm.load(id)}"/>
+    </f:metadata>
+
+    <ui:param name="isEditMode"
+              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
+    <ui:param name="isCreateMode"
+              value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRole()}"/>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.roleEdit} (#{RoleForm.role.title})"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.createNewRole}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.roleView} (#{RoleForm.role.title})"
+                          rendered="#{isViewMode}"/>
+        </h3>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         rendered="#{isEditMode || isCreateMode}"
+                         value="#{msgs.save}"
+                         action="#{RoleForm.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
+                                        'summary':'#{msgs.roleSaving}',
+                                        'detail':'#{msgs.youWillBeRedirected}',
+                                        'severity':'info'});"
+
+                         update="notifications"
+                         disabled="#{RoleForm.saveDisabled}"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{RoleForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="users.jsf?id=#{UserForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="roleTabView">
+            <p:tab id="roleTab" title="#{msgs.details}">
+                <ui:include src="/WEB-INF/templates/includes/roleEdit/details.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
+        <li><h:link value="#{msgs.users}" outcome="users"/></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{isEditMode}">
+                    #{msgs.roleEdit}
+                </ui:fragment>
+                <ui:fragment rendered="#{isCreateMode}">
+                    #{msgs.newRole}
+                </ui:fragment>
+                <ui:fragment rendered="#{isViewMode}">
+                    #{msgs.roleView}
+                </ui:fragment>
+            </a>
+        </li>
+    </ui:define>
+</ui:composition>

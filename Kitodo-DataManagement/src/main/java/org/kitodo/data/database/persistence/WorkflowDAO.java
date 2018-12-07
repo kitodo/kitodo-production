@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,12 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     @Override
+    public List<Workflow> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Workflow save(Workflow workflow) throws DAOException {
         storeObject(workflow);
         return retrieveObject(Workflow.class, workflow.getId());
@@ -70,11 +77,16 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     /**
-     * Get available workflows - available means that workflow is active and ready.
+     * Get available workflows - available means that workflow is active, ready and
+     * assigned to client with given id.
      * 
+     * @param clientId
+     *            id of client to which searched workflows should be assigned
      * @return list of available Workflow objects
      */
-    public List<Workflow> getAvailableWorkflows() {
-        return getByQuery("FROM Workflow WHERE active = 1 AND ready = 1 ORDER BY title");
+    public List<Workflow> getAvailableWorkflows(int clientId) {
+        return getByQuery(
+            "SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.active = 1 AND w.ready = 1",
+            Collections.singletonMap("clientId", clientId));
     }
 }

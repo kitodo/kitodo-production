@@ -11,14 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -29,12 +23,6 @@ public class Client extends BaseIndexedBean {
 
     @Column(name = "name")
     private String name;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Project> projects;
-
-    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
-    private List<User> users;
 
     /**
      * Gets name.
@@ -53,49 +41,6 @@ public class Client extends BaseIndexedBean {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Gets projects.
-     *
-     * @return The projects.
-     */
-    public List<Project> getProjects() {
-        if (this.projects == null) {
-            this.projects = new ArrayList<>();
-        }
-        return projects;
-    }
-
-    /**
-     * Sets projects.
-     *
-     * @param projects
-     *            The projects.
-     */
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
-
-    /**
-     * Gets users.
-     *
-     * @return The users.
-     */
-    public List<User> getUsers() {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
-        }
-        return users;
-    }
-
-    /**
-     * Sets users.
-     *
-     * @param users The users.
-     */
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     @Override

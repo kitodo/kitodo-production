@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,9 +36,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.data.ProcessService;
 
 @Named("DocketForm")
 @SessionScoped
@@ -75,6 +72,7 @@ public class DocketForm extends BaseForm {
      */
     public String newDocket() {
         this.myDocket = new Docket();
+        this.myDocket.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return docketEditPath;
     }
 
@@ -85,20 +83,20 @@ public class DocketForm extends BaseForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(ParameterCore.DIR_XSLT)) ) {
+            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(ParameterCore.DIR_XSLT))) {
                 if (existsDocketWithSameName()) {
                     Helper.setErrorMessage("docketTitleDuplicated");
-                    return null;
+                    return this.stayOnCurrentPage;
                 }
                 serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {
                 Helper.setErrorMessage("docketNotFound");
-                return null;
+                return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -112,7 +110,7 @@ public class DocketForm extends BaseForm {
      */
     public void delete() {
         try {
-            if (hasAssignedProcesses(myDocket)) {
+            if (hasAssignedProcessesOrTemplates(this.myDocket.getId())) {
                 Helper.setErrorMessage("docketInUse");
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
@@ -140,9 +138,9 @@ public class DocketForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcesses(Docket d) throws DataException {
-        ProcessService processService = serviceManager.getProcessService();
-        return !processService.findByDocket(d).isEmpty();
+    private boolean hasAssignedProcessesOrTemplates(int docketId) throws DataException {
+        return !serviceManager.getProcessService().findByDocket(docketId).isEmpty()
+                || !serviceManager.getTemplateService().findByDocket(docketId).isEmpty();
     }
 
     /**
@@ -189,15 +187,6 @@ public class DocketForm extends BaseForm {
 
     public void setMyDocket(Docket docket) {
         this.myDocket = docket;
-    }
-
-    /**
-     * Get all available clients.
-     *
-     * @return list of Client objects
-     */
-    public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
     }
 
     /**

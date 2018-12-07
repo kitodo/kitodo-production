@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -28,11 +29,14 @@ import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.DocketDTO;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
+    private final ServiceManager serviceManager = new ServiceManager();
     private static DocketService instance = null;
 
     /**
@@ -61,6 +65,49 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Docket");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        return getDocketsForCurrentUserQuery();
+    }
+
+    @Override
+    public List<DocketDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getDocketsForCurrentUserQuery(), sort, offset, size),
+            false);
+    }
+
+    @Override
+    public List<Docket> getAllNotIndexed() {
+        return getByQuery("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Docket> getAllForSelectedClient() {
+        return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        DocketDTO docketDTO = new DocketDTO();
+        docketDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
+        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
+        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(docketJSONObject));
+        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(docketJSONObject));
+
+        docketDTO.setClientDTO(clientDTO);
+        return docketDTO;
     }
 
     /**
@@ -130,13 +177,10 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         return searcher.findDocuments(query.toString());
     }
 
-    @Override
-    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        DocketDTO docketDTO = new DocketDTO();
-        docketDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
-        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
-        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
-        return docketDTO;
+    private String getDocketsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 }

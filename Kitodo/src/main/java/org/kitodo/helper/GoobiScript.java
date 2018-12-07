@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
@@ -35,11 +34,9 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UghHelperException;
@@ -55,16 +52,12 @@ public class GoobiScript {
     private final FileService fileService = serviceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
-    private static final String NUMBER = "number";
     private static final String RULESET = "ruleset";
     private static final String SCRIPT = "script";
     private static final String SOURCE_FOLDER = "sourcefolder";
     private static final String STATUS = "status";
-    private static final String SWAP_1_NR = "swap1nr";
-    private static final String SWAP_2_NR = "swap2nr";
     private static final String TASK_TITLE = "steptitle";
-    private static final String USER_GROUP = "group";
-    private static final String USER_NAME = "username";
+    private static final String ROLE = "role";
 
     /**
      * Start the script execution.
@@ -92,7 +85,7 @@ public class GoobiScript {
         // pass the appropriate method with the correct parameters
         if (this.parameters.get("action") == null) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
-                " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
+                " - possible: 'action:swapsteps, action:adduser, action:addrole, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                         + "action:importFromFileSystem'");
             return;
@@ -100,29 +93,14 @@ public class GoobiScript {
 
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
-            case "swapSteps":
-                swapTasks(processes);
-                break;
             case "importFromFileSystem":
                 importFromFileSystem(processes);
                 break;
-            case "addUser":
-                addUser(processes);
-                break;
-            case "addUserGroup":
-                addUserGroup(processes);
+            case "addRole":
+                addRole(processes);
                 break;
             case "setTaskProperty":
                 setTaskProperty(processes);
-                break;
-            case "deleteStep":
-                deleteTask(processes);
-                break;
-            case "addStep":
-                addTask(processes);
-                break;
-            case "setStepNumber":
-                setTaskNumber(processes);
                 break;
             case "setStepStatus":
                 setTaskStatus(processes);
@@ -174,7 +152,7 @@ public class GoobiScript {
                 break;
             default:
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
+                    " - use: 'action:swapsteps, action:adduser, action:addrole, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
                 return;
@@ -324,125 +302,6 @@ public class GoobiScript {
     }
 
     /**
-     * Swap two tasks against each other.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void swapTasks(List<Process> processes) {
-        if (isActionParameterInvalid(SWAP_1_NR) || isActionParameterInvalid(SWAP_2_NR)
-                || isActionParameterInvalid("swap1title") || isActionParameterInvalid("swap2title")) {
-            return;
-        }
-
-        int firstOrder;
-        int secondOrder;
-        try {
-            firstOrder = Integer.parseInt(this.parameters.get(SWAP_1_NR));
-            secondOrder = Integer.parseInt(this.parameters.get(SWAP_2_NR));
-        } catch (NumberFormatException e1) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Invalid order number used: ",
-                this.parameters.get(SWAP_1_NR) + " - " + this.parameters.get(SWAP_2_NR));
-            return;
-        }
-
-        executeActionForSwapTasks(processes, firstOrder, secondOrder);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "swapsteps finished: ");
-    }
-
-    private void executeActionForSwapTasks(List<Process> processes, int firstOrder, int secondOrder) {
-        for (Process process : processes) {
-            Task firstTask = null;
-            Task secondTask = null;
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("swap1title")) && task.getOrdering() == firstOrder) {
-                    firstTask = task;
-                }
-                if (task.getTitle().equals(this.parameters.get("swap2title")) && task.getOrdering() == secondOrder) {
-                    secondTask = task;
-                }
-            }
-            if (firstTask != null && secondTask != null) {
-                TaskStatus statusTemp = firstTask.getProcessingStatusEnum();
-                firstTask.setProcessingStatusEnum(secondTask.getProcessingStatusEnum());
-                secondTask.setProcessingStatusEnum(statusTemp);
-                firstTask.setOrdering(secondOrder);
-                secondTask.setOrdering(firstOrder);
-                try {
-                    serviceManager.getTaskService().save(firstTask);
-                    serviceManager.getTaskService().save(secondTask);
-                } catch (DataException e) {
-                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error on save while swapping tasks in process: ",
-                        process.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
-                    logger.error("Error on save while swapping process: " + process.getTitle() + " - "
-                            + firstTask.getTitle() + " : " + secondTask.getTitle(),
-                        e);
-                }
-                Helper.setMessage(KITODO_SCRIPT_FIELD, "Swapped tasks in: ", process.getTitle());
-            }
-
-        }
-    }
-
-    /**
-     * Delete task for the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void deleteTask(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE)) {
-            return;
-        }
-
-        executeActionForDeleteTask(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteStep finished: ");
-    }
-
-    private void executeActionForDeleteTask(List<Process> processes) {
-        for (Process process : processes) {
-            if (process.getTasks() != null) {
-                for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                        process.getTasks().remove(task);
-                        saveProcess(process);
-                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Removed step from process: ", process.getTitle());
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Add tasks to the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void addTask(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
-                || isActionParameterInvalidNumber()) {
-            return;
-        }
-
-        executeActionForAddTask(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addStep finished: ");
-    }
-
-    private void executeActionForAddTask(List<Process> processes) {
-        for (Process process : processes) {
-            Task task = new Task();
-            task.setTitle(this.parameters.get(TASK_TITLE));
-            task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
-            task.setProcess(process);
-            process.getTasks().add(task);
-            saveProcess(process);
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added task to process: ", process.getTitle());
-        }
-    }
-
-    /**
      * Add ShellScript to task of the given processes.
      *
      * @param processes
@@ -581,113 +440,43 @@ public class GoobiScript {
     }
 
     /**
-     * Schritte auf bestimmten Reihenfolge setzen.
+     * Add role to the task of given processes.
      *
      * @param processes
      *            list of Process objects
      */
-    private void setTaskNumber(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
-                || isActionParameterInvalidNumber()) {
+    private void addRole(List<Process> processes) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(ROLE)) {
             return;
         }
 
-        executeActionForSetTaskNumber(processes);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setStepNumber finished ");
-    }
-
-    private void executeActionForSetTaskNumber(List<Process> processes) {
-        for (Process process : processes) {
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
-                    saveTask(process.getTitle(), task);
-                    Helper.setMessage(KITODO_SCRIPT_FIELD, "step order changed in process: ", process.getTitle());
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Add user to task of the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void addUser(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_NAME)) {
-            return;
-        }
-
-        // checks if user exists
-        User user;
-        List<User> foundUsers = serviceManager.getUserService()
-                .getByQuery("from User where login='" + this.parameters.get(USER_NAME) + "'");
-        if (!foundUsers.isEmpty()) {
-            user = foundUsers.get(0);
+        // check if role exists
+        Role role;
+        List<Role> foundRoles = serviceManager.getRoleService()
+                .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");
+        if (!foundRoles.isEmpty()) {
+            role = foundRoles.get(0);
         } else {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown role: ", this.parameters.get(ROLE));
             return;
         }
 
-        executeActionForAddUser(processes, user);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "adduser finished.");
+        executeActionForAddRole(processes, role);
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addRole finished");
     }
 
-    private void executeActionForAddUser(List<Process> processes, User user) {
+    private void executeActionForAddRole(List<Process> processes, Role role) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<User> users = task.getUsers();
-                    if (!users.contains(user)) {
-                        users.add(user);
+                    List<Role> roles = task.getRoles();
+                    if (!roles.contains(role)) {
+                        roles.add(role);
                         saveTask(process.getTitle(), task);
                     }
                 }
             }
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added user to step: ", process.getTitle());
-        }
-    }
-
-    /**
-     * Add user group to the task of given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void addUserGroup(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_GROUP)) {
-            return;
-        }
-
-        // check if user group exists
-        UserGroup userGroup;
-        List<UserGroup> foundUserGroups = serviceManager.getUserGroupService()
-                .getByQuery("from UserGroup where title='" + this.parameters.get(USER_GROUP) + "'");
-        if (!foundUserGroups.isEmpty()) {
-            userGroup = foundUserGroups.get(0);
-        } else {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
-            return;
-        }
-
-        executeActionForAddUserGroup(processes, userGroup);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addusergroup finished");
-    }
-
-    private void executeActionForAddUserGroup(List<Process> processes, UserGroup userGroup) {
-        for (Process process : processes) {
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<UserGroup> userGroups = task.getUserGroups();
-                    if (!userGroups.contains(userGroup)) {
-                        userGroups.add(userGroup);
-                        saveTask(process.getTitle(), task);
-                    }
-                }
-            }
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "added usergroup to step: ", process.getTitle());
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "added role to task: ", process.getTitle());
         }
     }
 
@@ -768,14 +557,6 @@ public class GoobiScript {
     private boolean isActionParameterInvalid(String parameter) {
         if (Objects.isNull(this.parameters.get(parameter)) || Objects.equals(this.parameters.get(parameter), "")) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing parameter: ", parameter);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isActionParameterInvalidNumber() {
-        if (!StringUtils.isNumeric(this.parameters.get(NUMBER))) {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Wrong number parameter", "(only numbers allowed)");
             return true;
         }
         return false;

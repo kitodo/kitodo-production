@@ -1,0 +1,42 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable var="role" id="roleTable" value="#{ProcessForm.task.roles}">
+        <p:column headerText="#{msgs.title}">
+            <h:outputText value="#{role.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.delete}">
+            <p:commandLink action="#{ProcessForm.deleteRole}"
+                           id="deleteRole"
+                           immediate="true"
+                           oncomplete="toggleSave()"
+                           update="editForm:tabs:roleTable"
+                           title="#{msgs.removeRole}">
+                <i class="fa fa-trash-o fa-lg"/>
+                <f:param name="ID" value="#{role.id}"/>
+            </p:commandLink>
+        </p:column>
+    </p:dataTable>
+    <p:commandButton id="addRole"
+                     onclick="PF('addRoleDialog').show()"
+                     value="#{msgs.rolesAdd}"
+                     type="button"
+                     icon="fa fa-plus-circle fa-lg"
+                     iconPos="right"
+                     class="callto m-1em"/>
+</ui:composition>

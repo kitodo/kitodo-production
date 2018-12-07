@@ -16,59 +16,6 @@
                         }
                     },
                     "fielddata": true
-                },
-                "projects": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "active": {
-                            "type": "boolean"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "users": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "login": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "surname": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
                 }
             }
         },
@@ -422,6 +369,13 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
+                                }
+                            }
                         }
                     }
                 },
@@ -531,22 +485,6 @@
         "template": {
             "dynamic": "strict",
             "properties": {
-                "batches": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
                 "creationDate": {
                     "type": "date",
                     "format":"yyyy-MM-dd HH:mm:ss"
@@ -571,6 +509,13 @@
                                 "keyword": {
                                     "type": "keyword",
                                     "ignore_above": 256
+                                }
+                            }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
                                 }
                             }
                         }
@@ -757,14 +702,7 @@
                 "typeMetadata": {
                     "type": "boolean"
                 },
-                "users": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        }
-                    }
-                },
-                "userGroups": {
+                "roles": {
                     "properties": {
                         "id": {
                             "type": "long"
@@ -773,7 +711,7 @@
                 }
             }
         },
-        "userGroup": {
+        "role": {
             "dynamic": "strict",
             "properties": {
                 "title": {
@@ -842,6 +780,22 @@
                                 }
                             },
                             "fielddata": true
+                        }
+                    }
+                },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
                         }
                     }
                 }
@@ -1005,6 +959,13 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
+                                }
+                            }
                         }
                     }
                 },
@@ -1024,22 +985,6 @@
                         }
                     }
                 },
-                "tasks": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
                 "surname": {
                     "type": "text",
                     "fields": {
@@ -1049,7 +994,7 @@
                         }
                     }
                 },
-                "userGroups": {
+                "roles": {
                     "properties": {
                         "id": {
                             "type": "long"
@@ -1157,6 +1102,22 @@
                 },
                 "active": {
                     "type": "boolean"
+                },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

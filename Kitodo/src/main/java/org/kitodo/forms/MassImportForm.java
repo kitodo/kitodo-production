@@ -81,7 +81,7 @@ public class MassImportForm extends BaseForm {
     private List<String> usablePluginsForFiles;
     private List<String> usablePluginsForFolder;
     private String currentPlugin = "";
-    private IImportPlugin plugin;
+    private transient IImportPlugin plugin;
     private File importFile = null;
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
@@ -117,11 +117,11 @@ public class MassImportForm extends BaseForm {
             this.project = serviceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
         if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
-            return null;
+            return this.stayOnCurrentPage;
         }
         initializePossibleDigitalCollections();
         return massImportPath;
@@ -221,7 +221,7 @@ public class MassImportForm extends BaseForm {
         this.processList = new ArrayList<>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setErrorMessage("missingPlugin");
-            return null;
+            return this.stayOnCurrentPage;
         }
         if (testForData()) {
             List<ImportObject> answer = new ArrayList<>();
@@ -249,11 +249,11 @@ public class MassImportForm extends BaseForm {
 
             if (answer.size() != this.processList.size()) {
                 // some error on process generation, don't go to next page
-                return null;
+                return this.stayOnCurrentPage;
             }
         } else {
             Helper.setErrorMessage("missingData");
-            return null;
+            return this.stayOnCurrentPage;
         }
 
         removeFiles();
@@ -723,7 +723,7 @@ public class MassImportForm extends BaseForm {
     public String nextPage() {
         if (!testForData()) {
             Helper.setErrorMessage("missingData");
-            return null;
+            return this.stayOnCurrentPage;
         }
         java.lang.reflect.Method method;
         try {

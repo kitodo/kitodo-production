@@ -28,14 +28,13 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
-                <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',project.client.id, project.id)}"
-                        outcome="projectEdit"
-                        title="#{msgs.projectEdit}">
+                <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
+                        outcome="projectEdit" title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject', project.client.id)}"
+                <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(project.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
@@ -43,7 +42,7 @@
                                action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
                                update="projectTable"
-                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteProject', project.client.id, project.id)}">
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProject()}">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{project.id}" target="#{ProjectForm.projectById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"

@@ -293,6 +293,8 @@ class ConfigOpacCatalogue {
     }
 
     /**
+     * Set cbs.
+     *
      * @param cbs
      *            the cbs to set
      */
@@ -301,6 +303,8 @@ class ConfigOpacCatalogue {
     }
 
     /**
+     * Get cbs.
+     *
      * @return the cbs
      */
     String getCbs() {

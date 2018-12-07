@@ -62,6 +62,12 @@ public class Task extends BaseIndexedBean {
     @Column(name = "homeDirectory")
     private short homeDirectory;
 
+    @Column(name = "concurrent")
+    private boolean concurrent = false;
+
+    @Column(name = "last")
+    private boolean last = false;
+
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
 
@@ -90,7 +96,7 @@ public class Task extends BaseIndexedBean {
     private boolean typeCloseVerify = false;
 
     @Column(name = "batchStep")
-    private Boolean batchStep = false;
+    private boolean batchStep = false;
 
     @Column(name = "workflowId")
     private String workflowId;
@@ -114,24 +120,14 @@ public class Task extends BaseIndexedBean {
     private Process process;
 
     /**
-     * This field contains information about users, which are allowed to work on
-     * this task.
-     */
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
-    private List<User> users;
-
-    /**
-     * This field contains information about user's groups, which are allowed to
+     * This field contains information about user's roles, which are allowed to
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
-    private List<UserGroup> userGroups;
+    @JoinTable(name = "task_x_role", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_role_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_task_x_user_role_id")) })
+    private List<Role> roles;
 
     /**
      * This field contains information about folders whose contents are to be
@@ -144,6 +140,17 @@ public class Task extends BaseIndexedBean {
     )
     private List<Folder> contentFolders;
 
+    /**
+     * This field contains information about folders whose contents are to be
+     * validated in this task.
+     */
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "validationFolders_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_validationFolders_task_x_folder_task_id")),
+        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
+    )
+    private List<Folder> validationFolders;
+
     @Transient
     private String localizedTitle;
 
@@ -152,8 +159,7 @@ public class Task extends BaseIndexedBean {
      */
     public Task() {
         this.title = "";
-        this.users = new ArrayList<>();
-        this.userGroups = new ArrayList<>();
+        this.roles = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
     }
@@ -172,6 +178,8 @@ public class Task extends BaseIndexedBean {
         this.scriptName = templateTask.getScriptName();
         this.scriptPath = templateTask.getScriptPath();
         this.batchStep = templateTask.isBatchStep();
+        this.concurrent = templateTask.isConcurrent();
+        this.last = templateTask.isLast();
         this.typeAcceptClose = templateTask.isTypeAcceptClose();
         this.typeCloseVerify = templateTask.isTypeCloseVerify();
         this.typeExportDMS = templateTask.isTypeExportDMS();
@@ -184,10 +192,7 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = templateTask.getWorkflowCondition();
 
         // necessary to create new ArrayList in other case session problem!
-        this.users = new ArrayList<>(templateTask.getUsers());
-
-        // necessary to create new ArrayList in other case session problem!
-        this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+        this.roles = new ArrayList<>(templateTask.getRoles());
 
         // necessary to create new ArrayList in other case session problem!
         this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
@@ -331,6 +336,44 @@ public class Task extends BaseIndexedBean {
         this.homeDirectory = homeDirectory;
     }
 
+    /**
+     * Get concurrent.
+     *
+     * @return value of concurrent
+     */
+    public boolean isConcurrent() {
+        return concurrent;
+    }
+
+    /**
+     * Set concurrent.
+     *
+     * @param concurrent
+     *            as boolean
+     */
+    public void setConcurrent(boolean concurrent) {
+        this.concurrent = concurrent;
+    }
+
+    /**
+     * Get information if task is the last task in the workflow.
+     *
+     * @return information if task is the last task in the workflow
+     */
+    public boolean isLast() {
+        return last;
+    }
+
+    /**
+     * Set last information if task is the last task in the workflow.
+     *
+     * @param last
+     *            as true or false
+     */
+    public void setLast(boolean last) {
+        this.last = last;
+    }
+
     public User getProcessingUser() {
         return this.processingUser;
     }
@@ -367,47 +410,25 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of users.
+     * Get list of roles.
      *
-     * @return list of User objects or empty list
+     * @return list of Role objects or empty list
      */
-    public List<User> getUsers() {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
+    public List<Role> getRoles() {
+        if (this.roles == null) {
+            this.roles = new ArrayList<>();
         }
-        return this.users;
+        return this.roles;
     }
 
     /**
-     * Set list of users.
+     * Set list of roles.
      *
-     * @param users
-     *            as list
+     * @param roles
+     *            as list of Role objects
      */
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    /**
-     * Get list of user groups.
-     *
-     * @return list of UserGroup objects or empty list
-     */
-    public List<UserGroup> getUserGroups() {
-        if (this.userGroups == null) {
-            this.userGroups = new ArrayList<>();
-        }
-        return this.userGroups;
-    }
-
-    /**
-     * Set list of user groups.
-     *
-     * @param userGroups
-     *            as list
-     */
-    public void setUserGroups(List<UserGroup> userGroups) {
-        this.userGroups = userGroups;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     /**
@@ -430,6 +451,28 @@ public class Task extends BaseIndexedBean {
      */
     public void setContentFolders(List<Folder> contentFolders) {
         this.contentFolders = contentFolders;
+    }
+
+    /**
+     * Get list of folders whose contents are to be validated.
+     *
+     * @return list of Folder objects or empty list
+     */
+    public List<Folder> getValidationFolders() {
+        if (this.validationFolders == null) {
+            this.validationFolders = new ArrayList<>();
+        }
+        return validationFolders;
+    }
+
+    /**
+     * Set list of folders whose contents are to be validated.
+     *
+     * @param validationFolders
+     *            as list
+     */
+    public void setValidationFolders(List<Folder> validationFolders) {
+        this.validationFolders = validationFolders;
     }
 
     public boolean isTypeImagesRead() {
@@ -554,24 +597,11 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = workflowCondition;
     }
 
-    public Boolean getBatchStep() {
-        if (this.batchStep == null) {
-            this.batchStep = Boolean.FALSE;
-        }
+    public boolean isBatchStep() {
         return this.batchStep;
     }
 
-    public Boolean isBatchStep() {
-        if (this.batchStep == null) {
-            this.batchStep = Boolean.FALSE;
-        }
-        return this.batchStep;
-    }
-
-    public void setBatchStep(Boolean batchStep) {
-        if (batchStep == null) {
-            batchStep = Boolean.FALSE;
-        }
+    public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
 
@@ -647,6 +677,8 @@ public class Task extends BaseIndexedBean {
         }
         Task task = (Task) o;
         return homeDirectory == task.homeDirectory
+                && concurrent == task.concurrent
+                && last == task.last
                 && typeMetadata == task.typeMetadata
                 && typeAutomatic == task.typeAutomatic
                 && typeImagesRead == task.typeImagesRead
@@ -671,7 +703,7 @@ public class Task extends BaseIndexedBean {
     @Override
     public int hashCode() {
         return Objects.hash(title, priority, ordering, processingStatus, processingTime, processingBegin, processingEnd,
-            editType, homeDirectory, typeMetadata, typeAutomatic,
+            editType, homeDirectory, concurrent, last, typeMetadata, typeAutomatic,
             typeImagesRead, typeImagesWrite, typeExportDMS, typeAcceptClose, scriptName, scriptPath, typeCloseVerify,
             batchStep, workflowId, workflowCondition, processingUser, template, localizedTitle);
     }

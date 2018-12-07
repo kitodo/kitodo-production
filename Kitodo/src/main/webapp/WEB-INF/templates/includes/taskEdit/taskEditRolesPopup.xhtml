@@ -1,0 +1,46 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <!-- edit dialog -->
+    <p:dialog widgetVar="addRoleDialog"
+              header="#{msgs.rolesAdd}"
+              width="700px"
+              modal="true"
+              dynamic="true">
+        <h:form id="roleForm">
+            <p:dataTable id="roleTable"
+                         var="role"
+                         value="#{RoleForm.lazyDTOModel}"
+                         lazy="true"
+                         rows="#{LoginForm.loggedUser.tableSize}"
+                         paginator="true">
+                <p:column headerText="#{msgs.role}">
+                    <h:outputText value="#{role.title}"/>
+                </p:column>
+                <p:column headerText="#{msgs.actions}">
+                    <p:commandLink id="addRule" action="#{ProcessForm.addRole}" oncomplete="toggleSave()"
+                                   update="editForm:tabs:roleTable">
+                        <i class="fa fa-user-plus"/>
+                        <f:param name="ID" value="#{role.id}"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</ui:composition>

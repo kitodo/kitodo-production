@@ -62,6 +62,18 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public abstract List<T> getAll(int offset, int size) throws DAOException;
 
+
+    /**
+     * Retrieves all not indexed BaseBean objects in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of persisted beans
+     */
+    public abstract List<T> getAllNotIndexed(int offset, int size) throws DAOException;
+
     /**
      * Saves a BaseBean object to the database.
      *

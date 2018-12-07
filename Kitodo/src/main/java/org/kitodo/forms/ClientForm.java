@@ -11,6 +11,7 @@
 
 package org.kitodo.forms;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
@@ -32,6 +33,9 @@ public class ClientForm extends BaseForm {
     private Client client;
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
 
+    private String clientListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String clientEditPath = MessageFormat.format(REDIRECT_PATH, "clientEdit");
+
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -42,17 +46,17 @@ public class ClientForm extends BaseForm {
     }
 
     /**
-     * Save user group.
+     * Save client.
      *
      * @return page or empty String
      */
     public String save() {
         try {
             this.serviceManager.getClientService().save(this.client);
-            return "/pages/users?" + REDIRECT_PARAMETER;
+            return clientListPath;
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -79,7 +83,7 @@ public class ClientForm extends BaseForm {
      */
     public String newClient() {
         this.client = new Client();
-        return "/pages/clientEdit?" + REDIRECT_PARAMETER;
+        return clientEditPath;
     }
 
     /**

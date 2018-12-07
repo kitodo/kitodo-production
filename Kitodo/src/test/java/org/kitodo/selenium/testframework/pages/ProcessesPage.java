@@ -167,7 +167,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         if (isNotAt()) {
             goTo();
         }
-        return getTableDataByColumn(processesTable, 0);
+        return getTableDataByColumn(processesTable, 1);
     }
 
     public void createNewBatch() throws Exception {

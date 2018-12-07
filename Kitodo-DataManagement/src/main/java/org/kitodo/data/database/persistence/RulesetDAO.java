@@ -46,6 +46,12 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     }
 
     @Override
+    public List<Ruleset> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Ruleset.class, id);
     }

@@ -20,17 +20,18 @@ public class KitodoTask {
     private String workflowId;
     private String title;
     private Integer priority;
-    private Integer ordering;
     private Integer editType;
     private Integer processingStatus;
-    private Boolean typeMetadata;
-    private Boolean typeAutomatic;
-    private Boolean typeExportDms;
-    private Boolean typeImagesRead;
-    private Boolean typeImagesWrite;
-    private Boolean typeAcceptClose;
-    private Boolean typeCloseVerify;
-    private Boolean batchStep;
+    private boolean concurrent;
+    private boolean typeMetadata;
+    private boolean typeAutomatic;
+    private boolean typeExportDms;
+    private boolean typeImagesRead;
+    private boolean typeImagesWrite;
+    private boolean typeAcceptClose;
+    private boolean typeCloseVerify;
+    private boolean batchStep;
+    private Integer userRole;
 
     static final String NAMESPACE = "http://www.kitodo.org/template";
 
@@ -39,16 +40,14 @@ public class KitodoTask {
      * 
      * @param task
      *            BPMN model task
-     * @param ordering
-     *            * determined out of sequence flow
      */
-    public KitodoTask(Task task, int ordering) {
+    public KitodoTask(Task task) {
         this.workflowId = task.getId();
         this.title = task.getName();
         this.priority = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "priority"));
-        this.ordering = ordering;
         this.editType = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "editType"));
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
+        this.concurrent = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "concurrent"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
         this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
@@ -57,6 +56,7 @@ public class KitodoTask {
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
+        this.userRole = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "permittedUserRole"));
     }
 
     private Boolean getBooleanValue(String value) {
@@ -83,30 +83,12 @@ public class KitodoTask {
     }
 
     /**
-     * Set workflow id.
-     *
-     * @param workflowId as String
-     */
-    public void setWorkflowId(String workflowId) {
-        this.workflowId = workflowId;
-    }
-
-    /**
      * Get title.
      *
      * @return value of title
      */
     public String getTitle() {
         return title;
-    }
-
-    /**
-     * Set title.
-     *
-     * @param title as String
-     */
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     /**
@@ -121,28 +103,11 @@ public class KitodoTask {
     /**
      * Set priority.
      *
-     * @param priority as Integer
+     * @param priority
+     *            as Integer
      */
     public void setPriority(Integer priority) {
         this.priority = priority;
-    }
-
-    /**
-     * Get ordering.
-     *
-     * @return value of ordering
-     */
-    public Integer getOrdering() {
-        return ordering;
-    }
-
-    /**
-     * Set ordering.
-     *
-     * @param ordering as Integer
-     */
-    public void setOrdering(Integer ordering) {
-        this.ordering = ordering;
     }
 
     /**
@@ -157,7 +122,8 @@ public class KitodoTask {
     /**
      * Set editType.
      *
-     * @param editType as Integer
+     * @param editType
+     *            as Integer
      */
     public void setEditType(Integer editType) {
         this.editType = editType;
@@ -175,10 +141,30 @@ public class KitodoTask {
     /**
      * Set processingStatus.
      *
-     * @param processingStatus as java.lang.Integer
+     * @param processingStatus
+     *            as java.lang.Integer
      */
     public void setProcessingStatus(Integer processingStatus) {
         this.processingStatus = processingStatus;
+    }
+
+    /**
+     * Get concurrent.
+     *
+     * @return value of concurrent
+     */
+    public boolean isConcurrent() {
+        return concurrent;
+    }
+
+    /**
+     * Set concurrent.
+     *
+     * @param concurrent
+     *            as true or false
+     */
+    public void setConcurrent(boolean concurrent) {
+        this.concurrent = concurrent;
     }
 
     /**
@@ -186,16 +172,17 @@ public class KitodoTask {
      *
      * @return value of typeMetadata
      */
-    public Boolean getTypeMetadata() {
+    public boolean isTypeMetadata() {
         return typeMetadata;
     }
 
     /**
      * Set typeMetadata.
      *
-     * @param typeMetadata as Boolean
+     * @param typeMetadata
+     *            as true or false
      */
-    public void setTypeMetadata(Boolean typeMetadata) {
+    public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
     }
 
@@ -204,16 +191,17 @@ public class KitodoTask {
      *
      * @return value of typeAutomatic
      */
-    public Boolean getTypeAutomatic() {
+    public boolean isTypeAutomatic() {
         return typeAutomatic;
     }
 
     /**
      * Set typeAutomatic.
      *
-     * @param typeAutomatic as Boolean
+     * @param typeAutomatic
+     *            as true or false
      */
-    public void setTypeAutomatic(Boolean typeAutomatic) {
+    public void setTypeAutomatic(boolean typeAutomatic) {
         this.typeAutomatic = typeAutomatic;
     }
 
@@ -222,16 +210,17 @@ public class KitodoTask {
      *
      * @return value of typeExportDms
      */
-    public Boolean getTypeExportDms() {
+    public boolean isTypeExportDms() {
         return typeExportDms;
     }
 
     /**
      * Set typeExportDms.
      *
-     * @param typeExportDms as Boolean
+     * @param typeExportDms
+     *            as true or false
      */
-    public void setTypeExportDms(Boolean typeExportDms) {
+    public void setTypeExportDms(boolean typeExportDms) {
         this.typeExportDms = typeExportDms;
     }
 
@@ -240,16 +229,17 @@ public class KitodoTask {
      *
      * @return value of typeImagesRead
      */
-    public Boolean getTypeImagesRead() {
+    public boolean isTypeImagesRead() {
         return typeImagesRead;
     }
 
     /**
      * Set typeImagesRead.
      *
-     * @param typeImagesRead as java.lang.Boolean
+     * @param typeImagesRead
+     *            as true or false
      */
-    public void setTypeImagesRead(Boolean typeImagesRead) {
+    public void setTypeImagesRead(boolean typeImagesRead) {
         this.typeImagesRead = typeImagesRead;
     }
 
@@ -258,16 +248,17 @@ public class KitodoTask {
      *
      * @return value of typeImagesWrite
      */
-    public Boolean getTypeImagesWrite() {
+    public boolean isTypeImagesWrite() {
         return typeImagesWrite;
     }
 
     /**
      * Set typeImagesWrite.
      *
-     * @param typeImagesWrite as java.lang.Boolean
+     * @param typeImagesWrite
+     *            as true or false
      */
-    public void setTypeImagesWrite(Boolean typeImagesWrite) {
+    public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
     }
 
@@ -276,16 +267,17 @@ public class KitodoTask {
      *
      * @return value of typeAcceptClose
      */
-    public Boolean getTypeAcceptClose() {
+    public boolean isTypeAcceptClose() {
         return typeAcceptClose;
     }
 
     /**
      * Set typeAcceptClose.
      *
-     * @param typeAcceptClose as java.lang.Boolean
+     * @param typeAcceptClose
+     *            as true or false
      */
-    public void setTypeAcceptClose(Boolean typeAcceptClose) {
+    public void setTypeAcceptClose(boolean typeAcceptClose) {
         this.typeAcceptClose = typeAcceptClose;
     }
 
@@ -294,16 +286,17 @@ public class KitodoTask {
      *
      * @return value of typeCloseVerify
      */
-    public Boolean getTypeCloseVerify() {
+    public boolean isTypeCloseVerify() {
         return typeCloseVerify;
     }
 
     /**
      * Set typeCloseVerify.
      *
-     * @param typeCloseVerify as java.lang.Boolean
+     * @param typeCloseVerify
+     *            as true or false
      */
-    public void setTypeCloseVerify(Boolean typeCloseVerify) {
+    public void setTypeCloseVerify(boolean typeCloseVerify) {
         this.typeCloseVerify = typeCloseVerify;
     }
 
@@ -312,16 +305,36 @@ public class KitodoTask {
      *
      * @return value of batchStep
      */
-    public Boolean getBatchStep() {
+    public boolean isBatchStep() {
         return batchStep;
     }
 
     /**
      * Set batchStep.
      *
-     * @param batchStep as java.lang.Boolean
+     * @param batchStep
+     *            true or false
      */
-    public void setBatchStep(Boolean batchStep) {
+    public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
+    }
+
+    /**
+     * Get user role.
+     *
+     * @return value of userRole
+     */
+    public Integer getUserRole() {
+        return userRole;
+    }
+
+    /**
+     * Set user role.
+     *
+     * @param userRole
+     *            as java.lang.Integer
+     */
+    public void setUserRole(Integer userRole) {
+        this.userRole = userRole;
     }
 }

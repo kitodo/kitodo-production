@@ -20,7 +20,6 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 import javax.json.JsonObject;
@@ -38,9 +37,9 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -77,7 +76,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllUsers() {
         await().untilAsserted(
-            () -> assertEquals("Users were not counted correctly!", Long.valueOf(5), userService.count()));
+            () -> assertEquals("Users were not counted correctly!", Long.valueOf(6), userService.count()));
     }
 
     @Test
@@ -105,9 +104,9 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
+    public void shouldCountAllDatabaseRowsForUsers() throws Exception {
         Long amount = userService.countDatabaseRows();
-        assertEquals("Users were not counted correctly!", Long.valueOf(5), amount);
+        assertEquals("Users were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test
@@ -116,20 +115,19 @@ public class UserServiceIT {
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
         assertTrue("User was not found in database!", condition);
 
-        assertEquals("User was found but tasks were not inserted!", 4, user.getTasks().size());
-        assertEquals("User was found but tasks were not inserted!", 2, user.getProcessingTasks().size());
+        assertEquals("User was found but tasks were not inserted!", 3, user.getProcessingTasks().size());
     }
 
     @Test
     public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
-        assertEquals("Not all users were found in database!", 5, users.size());
+        assertEquals("Not all users were found in database!", 6, users.size());
     }
 
     @Test
     public void shouldGetAllUsersInGivenRange() throws Exception {
         List<User> users = userService.getAll(2, 10);
-        assertEquals("Not all users were found in database!", 3, users.size());
+        assertEquals("Not all users were found in database!", 4, users.size());
     }
 
     @Test
@@ -156,17 +154,17 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldRemoveUserButNotUserGroup() throws Exception {
-        UserGroupService userGroupService = new ServiceManager().getUserGroupService();
+    public void shouldRemoveUserButNotRole() throws Exception {
+        RoleService roleService = new ServiceManager().getRoleService();
 
-        UserGroup userGroup = new UserGroup();
-        userGroup.setTitle("Cascade Group");
-        userGroupService.saveToDatabase(userGroup);
+        Role role = new Role();
+        role.setTitle("Cascade Group");
+        roleService.saveToDatabase(role);
 
         User user = new User();
         user.setLogin("Cascade");
-        user.getUserGroups().add(
-            userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+        user.getRoles().add(
+            roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
@@ -175,11 +173,11 @@ public class UserServiceIT {
         int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").size();
-        assertEquals("User Group was removed from database!", 1, size);
+        size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
+        assertEquals("Role was removed from database!", 1, size);
 
-        userGroupService
-                .removeFromDatabase(userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").get(0));
+        roleService
+                .removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test
@@ -256,7 +254,7 @@ public class UserServiceIT {
     @Test
     public void shouldFindManyByLocation() {
         await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 3, userService.findByLocation("Dresden").size()));
+            () -> assertEquals("Users were not found in index!", 4, userService.findByLocation("Dresden").size()));
     }
 
     @Test
@@ -283,27 +281,27 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindByUserGroupId() {
+    public void shouldFindByRoleId() {
         await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 2, userService.findByUserGroupId(1).size()));
+            () -> assertEquals("Users were not found in index!", 2, userService.findByRoleId(1).size()));
     }
 
     @Test
-    public void shouldNotFindByUserGroupId() {
+    public void shouldNotFindByRoleId() {
         await().untilAsserted(
-            () -> assertEquals("User was found in index!", 1, userService.findByUserGroupId(3).size()));
+            () -> assertEquals("User was found in index!", 1, userService.findByRoleId(3).size()));
     }
 
     @Test
-    public void shouldFindByUserGroupTitle() {
+    public void shouldFindByRoleTitle() {
         await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 2, userService.findByUserGroupTitle("Admin").size()));
+            () -> assertEquals("User was not found in index!", 2, userService.findByRoleTitle("Admin").size()));
     }
 
     @Test
-    public void shouldNotFindByUserGroupTitle() {
+    public void shouldNotFindByRoleTitle() {
         await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByUserGroupTitle("None").size()));
+            () -> assertEquals("User was found in index!", 0, userService.findByRoleTitle("None").size()));
     }
 
     @Test
@@ -330,29 +328,20 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetUserGroupSize() {
+    public void shouldGetRolesSize() {
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getUserGroupSize()));
+            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1).getRolesSize()));
 
         await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1, true).getUserGroupSize()));
+            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1, true).getRolesSize()));
 
         await().untilAsserted(() -> assertEquals("User group's title is incorrect!", "Admin",
-            userService.findById(1, true).getUserGroups().get(0).getTitle()));
-    }
-
-    @Test
-    public void shouldGetTasksSize() {
-        await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", 7, userService.findById(2).getTasks().size()));
-
-        await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", 6, userService.findById(3).getTasks().size()));
+            userService.findById(1, true).getRoles().get(0).getTitle()));
     }
 
     @Test
     public void shouldGetProcessingTasksSize() {
-        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 2,
+        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 3,
             userService.findById(1).getProcessingTasks().size()));
     }
 
@@ -416,40 +405,25 @@ public class UserServiceIT {
     @Test
     public void shouldFindAllVisibleUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllVisibleUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 6, userService.findAllVisibleUsers().size()));
 
-        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 5,
+        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 6,
             userService.findAllVisibleUsersWithRelations().size()));
     }
 
     @Test
     public void shouldFindAllActiveUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllActiveUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllActiveUsers().size()));
 
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllActiveUsersWithRelations().size()));
-    }
-
-    @Test
-    public void shouldFindActiveUsersByName() {
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 1, userService.findActiveUsersByName("Jan").size()));
-
-        await().untilAsserted(() -> assertEquals(2, userService.findActiveUsersByName("owa").size()));
-
-        Integer expected = 1;
-        await().untilAsserted(() -> assertEquals("Id of first user is incorrect!", expected,
-            userService.findActiveUsersByName("owa").get(0).getId()));
-
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 2, userService.findActiveUsersByName("owa").size()));
+            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllActiveUsersWithRelations().size()));
     }
 
     @Test
     public void shouldGetAuthorityOfUser() throws Exception {
-        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(1);
-        assertEquals("Authority title is incorrect!", "viewAllClients_globalAssignable", authority.getTitle());
+        Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
+        assertEquals("Authority title is incorrect!", "viewClient_globalAssignable", authority.getTitle());
     }
 
     @Test
@@ -475,26 +449,15 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
-        User user = userService.getByLdapLogin("kowalLDP");
+        User user = userService.getByLdapLogin("nowakLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
-        assertEquals("Title of task is incorrect!", "Processed", tasks.get(0).getTitle());
-    }
-
-    @Test
-    public void shouldGetAllActiveUsersByClientIds() {
-        List<Integer> clientIds = Collections.singletonList(1);
-        List<User> users = userService.getAllActiveUsersByClientIds(clientIds);
-        assertEquals("Amount of users assigned to client is incorrect!", 2, users.size());
-
-        clientIds = Collections.singletonList(2);
-        users = userService.getAllActiveUsersByClientIds(clientIds);
-        assertEquals("Amount of users assigned to client is incorrect!", 1, users.size());
+        assertEquals("Title of task is incorrect!", "Progress", tasks.get(0).getTitle());
     }
 
     @Test
     public void shouldGetAuthenticatedUser() throws DAOException {
-        SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1), 1);
         User authenticatedUser = userService.getAuthenticatedUser();
         assertEquals("Returned authenticated user was wrong", "kowal", authenticatedUser.getLogin());
         SecurityTestUtils.cleanSecurityContext();

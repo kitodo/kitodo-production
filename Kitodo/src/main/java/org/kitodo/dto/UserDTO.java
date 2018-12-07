@@ -28,13 +28,12 @@ public class UserDTO extends BaseDTO {
     private boolean active = true;
     private List<FilterDTO> filters = new ArrayList<>();
     private Integer filtersSize;
-    private List<UserGroupDTO> userGroups = new ArrayList<>();
-    private Integer userGroupSize;
+    private List<RoleDTO> roles = new ArrayList<>();
+    private Integer rolesSize;
     private List<ClientDTO> clients = new ArrayList<>();
     private int clientsSize;
     private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
-    private List<TaskDTO> tasks = new ArrayList<>();
     private List<TaskDTO> processingTasks = new ArrayList<>();
 
     /**
@@ -209,41 +208,41 @@ public class UserDTO extends BaseDTO {
     }
 
     /**
-     * Get list of user's groups.
+     * Get list of roles.
      *
-     * @return list of user's groups as UserGroupDTO
+     * @return list of roles as RoleDTO
      */
-    public List<UserGroupDTO> getUserGroups() {
-        return userGroups;
+    public List<RoleDTO> getRoles() {
+        return roles;
     }
 
     /**
-     * Set list of user's groups.
+     * Set list of roles.
      *
-     * @param userGroups
-     *            list of user's groups as UserGroupDTO
+     * @param roles
+     *            list of roles as RoleDTO
      */
-    public void setUserGroups(List<UserGroupDTO> userGroups) {
-        this.userGroups = userGroups;
+    public void setRoles(List<RoleDTO> roles) {
+        this.roles = roles;
     }
 
     /**
-     * Get size of user group.
+     * Get size of roles.
      *
      * @return size
      */
-    public int getUserGroupSize() {
-        return userGroupSize;
+    public int getRolesSize() {
+        return rolesSize;
     }
 
     /**
-     * Set size of user group.
+     * Set size of roles.
      * 
-     * @param userGroupSize
+     * @param rolesSize
      *            as Integer
      */
-    public void setUserGroupSize(Integer userGroupSize) {
-        this.userGroupSize = userGroupSize;
+    public void setRolesSize(Integer rolesSize) {
+        this.rolesSize = rolesSize;
     }
 
     /**
@@ -319,25 +318,6 @@ public class UserDTO extends BaseDTO {
      */
     public void setProjectsSize(Integer projectsSize) {
         this.projectsSize = projectsSize;
-    }
-
-    /**
-     * Get list of tasks.
-     *
-     * @return list of tasks as TaskDTO
-     */
-    public List<TaskDTO> getTasks() {
-        return tasks;
-    }
-
-    /**
-     * Set list of tasks.
-     * 
-     * @param tasks
-     *            list of tasks as TaskDTO
-     */
-    public void setTasks(List<TaskDTO> tasks) {
-        this.tasks = tasks;
     }
 
     /**

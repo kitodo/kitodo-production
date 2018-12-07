@@ -30,11 +30,10 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>92</maxAllowedViolations>
+        <maxAllowedViolations>88</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
-        <selenium.version>3.9.1</selenium.version>
+        <selenium.version>3.12.0</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>
-        <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
     </properties>
 
     <dependencies>
@@ -271,8 +270,8 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest-library.version}</version>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -323,7 +322,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>1.7.1</version>
+            <version>1.8.16</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -575,7 +574,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.193</version>
+            <version>${com.h2database.h2.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

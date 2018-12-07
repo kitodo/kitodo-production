@@ -579,7 +579,7 @@ public class CalendarForm implements Serializable {
      * changing the configuration should take effect without need to restart the
      * servlet container.
      */
-    protected static String[] issueColours;
+    private static String[] issueColours;
 
     private static final Logger logger = LogManager.getLogger(CalendarForm.class);
 
@@ -596,7 +596,7 @@ public class CalendarForm implements Serializable {
      * changer drop down element and the references to the block objects
      * referenced by the IDs for easily looking them up upon change.
      */
-    protected Map<String, Block> blockChangerResolver;
+    private transient Map<String, Block> blockChangerResolver;
 
     /**
      * The field blockChangerUnchanged is of importance during the update model
@@ -611,14 +611,14 @@ public class CalendarForm implements Serializable {
      * to control whether the other setter methods shall or shall not write the
      * incoming data into the respective fields.
      */
-    protected boolean blockChangerUnchanged = true;
+    private boolean blockChangerUnchanged = true;
 
     /**
      * The field blockShowing holds the block currently showing in this calendar
      * instance. The block held in blockShowing must be part of the course
      * object, too.
      */
-    protected Block blockShowing;
+    private transient Block blockShowing;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -651,7 +651,7 @@ public class CalendarForm implements Serializable {
      */
     private final LocalDate today = LocalDate.now();
 
-    protected UploadedFile uploadedFile;
+    private UploadedFile uploadedFile;
 
     /**
      * The field uploadShowing indicates whether the dialogue box to upload a

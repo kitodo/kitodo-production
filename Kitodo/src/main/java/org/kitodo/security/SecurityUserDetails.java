@@ -17,9 +17,8 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,8 +27,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * The implementation of Spring Security's UserDetails interface which is used
- * to population the current authentication with security information
- * (e.g. authorities, account expired or locked, ...).
+ * to population the current authentication with security information (e.g.
+ * authorities, account expired or locked, ...).
  */
 @Service
 public class SecurityUserDetails extends User implements UserDetails {
@@ -41,7 +40,7 @@ public class SecurityUserDetails extends User implements UserDetails {
      */
     private Client sessionClient;
 
-    private ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     public SecurityUserDetails(final User user) {
         super(user);
@@ -49,23 +48,18 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        List<UserGroup> userGroups = super.getUserGroups();
-        List<Client> clients = super.getClients();
-        List<Project> projects = super.getProjects();
+        List<Role> roles = super.getRoles();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
-        for (UserGroup userGroup : userGroups) {
-            List<Authority> authorities = userGroup.getAuthorities();
+        for (Role role : roles) {
+            List<Authority> authorities = role.getAuthorities();
+            int clientId = role.getClient().getId();
             for (Authority authority : authorities) {
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getGlobalAuthoritySuffix())) {
                     insertGlobalAuthorities(userAuthorities, authority);
                 }
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getClientAuthoritySuffix())) {
-                    insertClientAuthorities(userAuthorities, authority, clients);
-                }
-                if (authority.getTitle().contains(serviceManager.getAuthorityService().getProjectAuthoritySuffix())) {
-                    insertProjectAuthorities(userAuthorities, authority, projects);
+                    insertClientAuthorities(userAuthorities, authority, clientId);
                 }
             }
         }
@@ -82,38 +76,19 @@ public class SecurityUserDetails extends User implements UserDetails {
     }
 
     private void insertClientAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
-            List<Client> clients) {
-        for (Client client : clients) {
-            String authorityTitle = authority.getTitle()
-                    .replace(serviceManager.getAuthorityService().getClientAuthoritySuffix(), "");
+            int clientId) {
+        String authorityTitle = authority.getTitle()
+                .replace(serviceManager.getAuthorityService().getClientAuthoritySuffix(), "");
 
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
-            if (!userAuthorities.contains(simpleGrantedAuthority)) {
-                userAuthorities.add(simpleGrantedAuthority);
-            }
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                    authorityTitle + "_CLIENT_" + client.getId());
-            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                userAuthorities.add(simpleGrantedAuthorityWithId);
-            }
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
+        if (!userAuthorities.contains(simpleGrantedAuthority)) {
+            userAuthorities.add(simpleGrantedAuthority);
         }
-    }
 
-    private void insertProjectAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
-            List<Project> projects) {
-        for (Project project : projects) {
-            String authorityTitle = authority.getTitle()
-                    .replace(serviceManager.getAuthorityService().getProjectAuthoritySuffix(), "");
-
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_PROJECT_ANY");
-            if (!userAuthorities.contains(simpleGrantedAuthority)) {
-                userAuthorities.add(simpleGrantedAuthority);
-            }
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                    authorityTitle + "_PROJECT_" + project.getId());
-            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                userAuthorities.add(simpleGrantedAuthorityWithId);
-            }
+        SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+                authorityTitle + "_CLIENT_" + clientId);
+        if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
+            userAuthorities.add(simpleGrantedAuthorityWithId);
         }
     }
 
@@ -159,5 +134,15 @@ public class SecurityUserDetails extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return super.isActive();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return super.equals(object);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

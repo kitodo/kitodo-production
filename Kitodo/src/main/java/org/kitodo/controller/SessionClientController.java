@@ -19,7 +19,6 @@ import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -30,10 +29,8 @@ import org.primefaces.PrimeFaces;
 @RequestScoped
 public class SessionClientController {
 
-    private transient ServiceManager serviceManager = new ServiceManager();
-
+    private ServiceManager serviceManager = new ServiceManager();
     private Client selectedClient;
-    private static final String NO_CLIENT_SELECTED = "clientSelectNone";
 
     /**
      * Gets the name of the current session client. In case that no session client
@@ -47,9 +44,6 @@ public class SessionClientController {
         if (Objects.nonNull(getCurrentSessionClient())) {
             return getCurrentSessionClient().getName();
         } else {
-            if (userIsAdmin()) {
-                return Helper.getTranslation(NO_CLIENT_SELECTED);
-            }
             if (userHasOnlyOneClient()) {
                 Client client = getFirstClientOfCurrentUser();
                 setSessionClient(client);
@@ -63,37 +57,30 @@ public class SessionClientController {
         return getAvailableClientsOfCurrentUser().get(0);
     }
 
-    private boolean userIsAdmin() {
-        return serviceManager.getSecurityAccessService().isAdmin();
-    }
-
     private boolean userHasOnlyOneClient() {
         return getAvailableClientsOfCurrentUser().size() == 1;
     }
 
     /**
      * The conditions when user need to select a session client is configured in
-     * this method. Change is not happening if user is admin or has only one client
+     * this method. Change is not happening if user has only one client
      * assigned.
      *
      * @return True if the session client select dialog should by displayed to the
      *         current user
      */
     public boolean shouldUserChangeSessionClient() {
-        if (userIsAdmin()) {
-            return false;
-        }
         return !userHasOnlyOneClient();
     }
 
     /**
-     * Display client selection dialog if user is logged in, not an admin and has multiple clients.
+     * Display client selection dialog if user is logged in and has multiple clients.
      */
     public void showClientSelectDialog() {
-        if (!Objects.nonNull(getCurrentSessionClient())) {
-            if (!userIsAdmin() && !userHasOnlyOneClient()) {
-                PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
-            }
+        if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
+            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
+        } else if (userHasOnlyOneClient()) {
+            setSessionClient(getFirstClientOfCurrentUser());
         }
     }
 

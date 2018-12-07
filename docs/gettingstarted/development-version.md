@@ -114,7 +114,7 @@ sudo sh -c "echo '[mysqld] innodb_file_per_table' >> /etc/mysql/my.cnf"
 sudo service mysql restart
 ```
 
-### Configure Elasticsearch
+### Configure ElasticSearch
 
 ```
 sudo sed -i 's/#path.data: \/path\/to\/data/path.data: \/var\/lib\/elasticsearch/' /etc/elasticsearch/elasticsearch.yml
@@ -124,7 +124,19 @@ sudo sed -i 's/#node.name: node-1/node.name: kitodo-1/' /etc/elasticsearch/elast
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 sudo systemctl start elasticsearch.service
-until curl -s -X GET "localhost:9200/kitodo" | grep -q -o "kitodo" ; do sleep 1; done
+```
+
+Other ElasticSearch settings can be adjusted in _kitodo_config.properties_ file:
+
+```
+elasticsearch.host=localhost
+elasticsearch.port=9200
+elasticsearch.protocol=http
+elasticsearch.index=kitodo
+elasticsearch.batch=1000
+elasticsearch.useAuthentication=true
+elasticsearch.user=kitodo
+elasticsearch.password=kitodo
 ```
 
 ### Create directories and set permissions

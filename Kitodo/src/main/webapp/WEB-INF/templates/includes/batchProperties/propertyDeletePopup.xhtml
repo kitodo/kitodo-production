@@ -1,0 +1,46 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <!-- edit dialog -->
+    <p:dialog widgetVar="deletePropertyDialog"
+              header="#{msgs.deleteProperty}"
+              width="700px"
+              modal="true"
+              dynamic="true"
+              styleClass="editDialog">
+        <h:form id="propertyDeleteForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <p:commandButton value="#{msgs.cancel}" immediate="true" icon="fa fa-times fa-lg" iconPos="right"
+                                     styleClass="secondary" onclick="PF('deletePropertyDialog').hide();">
+                    </p:commandButton>
+                    <p:commandButton value="#{msgs.applyToThisProcess}" id="deleteCurrentProperty"
+                                     action="#{BatchForm.batchHelper.deletePropertyForOneProcess}"
+                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
+                                     oncomplete="PF('deletePropertyDialog').hide();">
+                    </p:commandButton>
+                    <p:commandButton value="#{msgs.applyToAllProcesses}" id="deleteCurrentPropertyForAll"
+                                     action="#{BatchForm.batchHelper.deletePropertyForAllProcesses}"
+                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
+                                     oncomplete="PF('deletePropertyDialog').hide();">
+                    </p:commandButton>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>

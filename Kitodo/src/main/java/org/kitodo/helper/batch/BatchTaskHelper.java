@@ -146,7 +146,7 @@ public class BatchTaskHelper extends BatchHelper {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            this.currentStep = serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
+            serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionReportProblem", logger, e);
@@ -164,7 +164,7 @@ public class BatchTaskHelper extends BatchHelper {
             this.myDav.uploadFromHome(this.currentStep.getProcess());
             serviceManager.getWorkflowControllerService().setProblem(getProblem());
             try {
-                setCurrentStep(serviceManager.getWorkflowControllerService().reportProblem(this.currentStep));
+                serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionReportProblem", logger, e);
@@ -210,7 +210,7 @@ public class BatchTaskHelper extends BatchHelper {
     public void solveProblemForSingle(Task currentStep) {
         this.currentStep = currentStep;
         try {
-            setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
+            serviceManager.getWorkflowControllerService().solveProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
@@ -227,7 +227,7 @@ public class BatchTaskHelper extends BatchHelper {
             this.currentStep = task;
             serviceManager.getWorkflowControllerService().setSolution(getSolution());
             try {
-                setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
+                serviceManager.getWorkflowControllerService().solveProblem(this.currentStep);
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionSolveProblem", logger, e);

@@ -28,6 +28,7 @@ public enum ProcessTypeField implements TypeInterface {
     PROJECT_ID("project.id"),
     PROJECT_TITLE("project.title"),
     PROJECT_ACTIVE("project.active"),
+    PROJECT_CLIENT_ID("project.client.id"),
     DOCKET("docket"),
     RULESET("ruleset"),
     BATCHES("batches"),

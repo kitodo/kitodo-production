@@ -12,7 +12,9 @@
 package org.kitodo;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.security.SecurityUserDetails;
+import org.kitodo.services.ServiceManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,14 +22,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityTestUtils {
 
     /**
-     * Adds a given user as SecurityUserDetails object to security context. Can be used for unit testing.
+     * Adds a given user as SecurityUserDetails object to security context. Can be
+     * used for unit testing.
      * 
      * @param user
      *            user object
+     * @param clientId
+     *            id of client dor session client
      */
-    public static void addUserDataToSecurityContext(User user) {
+    public static void addUserDataToSecurityContext(User user, int clientId) throws DAOException {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null, securityUserDetails.getAuthorities());
+        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
+                securityUserDetails.getAuthorities());
+        securityUserDetails.setSessionClient(new ServiceManager().getClientService().getById(clientId));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

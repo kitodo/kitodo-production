@@ -14,7 +14,6 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <div class="wrapper">
@@ -60,50 +59,55 @@
                         <a href="#" id="dashboard-menu"><i class="fa fa-th fa-lg"/></a>
                         <ul>
                             <li id="dashboard-menu-header">
-                                <h3>#{msgs.dashboard}
-                                    <h:outputText
-                                        rendered="#{SecurityAccessController.isAdmin()}">
-                                        <i>(Admin)</i>
-                                    </h:outputText>
-                                </h3>
+                                <h3>#{msgs.dashboard}</h3>
                             </li>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.tasks}" id="linkTasks"
-                                                                 outcome="tasks"><i
-                                    class="fa fa-bell fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewTaskPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.tasks}" id="linkTasks" outcome="tasks">
+                                        <i class="fa fa-bell fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.processes}" id="linkProcesses"
-                                                                 outcome="processes"><i
-                                    class="fa fa-hourglass-3 fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes">
+                                        <i class="fa fa-hourglass-3 fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.projects}" id="linkProjects"
-                                                                 outcome="projects"><i
-                                    class="fa fa-folder-open fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProjectPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects">
+                                        <i class="fa fa-folder-open fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllUsers, viewAllUserGroups, viewAllClients, viewAllLdapGroups')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.user}" id="linkUsers" outcome="users"><i
-                                    class="fa fa-user fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewUserPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.user}" id="linkUsers" outcome="users">
+                                        <i class="fa fa-user fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobal('viewIndex, editIndex')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.system}" id="linkSystem"
-                                                                 outcome="system"><i
-                                    class="fa fa-wrench fa-lg"/></h:link></li>
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewSystemPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.system}" id="linkSystem" outcome="system">
+                                        <i class="fa fa-wrench fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
 
                             <h:panelGroup rendered="true">
-                                <li class="nav-pic-text"><h:link value="#{msgs.help}" id="linkHelp" outcome="help"><i
-                                    class="fa fa-life-ring fa-lg"/></h:link></li>
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.help}" id="linkHelp" outcome="help">
+                                        <i class="fa fa-life-ring fa-lg"/>
+                                    </h:link>
+                                </li>
                             </h:panelGroup>
                         </ul>
                     </li>
@@ -112,11 +116,9 @@
                         <a href="#" id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></a>
                         <h:form id="logout-form">
                             <ul id="nav-user">
-                                <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}
-                                    <h:outputText rendered="#{SecurityAccessController.isAdmin()}">
-                                        <i>(Admin)</i>
-                                    </h:outputText>
-                                </h3></li>
+                                <li>
+                                    <h3>#{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}</h3>
+                                </li>
 
                                 <li>
                                     <div id="sessionClient">
@@ -137,16 +139,20 @@
                                         </p:repeat>
                                     </p:outputPanel>
                                 </div>
-                                <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
+                                <li>
+                                    <h:link value="#{msgs.userData}" outcome="userEdit">
+                                        <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
+                                    </h:link>
+                                </li>
                                 <li>
                                     <table>
                                         <tr>
                                             <td width="100px">
                                                 <h:outputText value="#{msgs.languages}"/>
                                             </td>
-                                            <ui:repeat value="#{SpracheForm.supportedLocales}" var="entry">
-                                                <td class="languageButtonCell #{SpracheForm.language eq entry['id'] ? 'selected' : ''}">
-                                                    <h:commandButton action="#{SpracheForm.setLanguage(entry['id'])}"
+                                            <ui:repeat value="#{LanguageForm.supportedLocales}" var="entry">
+                                                <td class="languageButtonCell #{LanguageForm.language eq entry['id'] ? 'selected' : ''}">
+                                                    <h:commandButton action="#{LanguageForm.setLanguage(entry['id'])}"
                                                                      image="#{request.contextPath}/#{entry['flag']}"
                                                                      styleClass="languageButton"/>
                                                 </td>
@@ -162,7 +168,7 @@
                 </ul>
             </nav>
         </section>
-        <p:dialog header="#{msgs.welcome}, #{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}"
+        <p:dialog header="#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}"
                   class="client-select-dialog"
                   id="clientSelectDialog"
                   widgetVar="selectClientDialog"

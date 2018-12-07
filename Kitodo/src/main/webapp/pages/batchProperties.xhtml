@@ -33,11 +33,11 @@
         </h3>
 
         <p:commandButton value="#{msgs.applyToThisProcess}" id="saveCurrentProperty"
-                         action="#{BatchForm.batchHelper.saveCurrentProperty}" update="editForm" styleClass="right"
+                         action="#{BatchForm.batchHelper.saveForChosenProcess}" update="editForm" styleClass="right"
                          oncomplete="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});">
         </p:commandButton>
         <p:commandButton value="#{msgs.applyToAllProcesses}" id="saveCurrentPropertyForAll"
-                         action="#{BatchForm.batchHelper.saveCurrentPropertyForAll}" update="editForm" styleClass="right"
+                         action="#{BatchForm.batchHelper.saveForAllProcesses}" update="editForm" styleClass="right"
                          oncomplete="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processesSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});">
         </p:commandButton>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="processes" onclick="setConfirmUnload(false);"
@@ -55,6 +55,7 @@
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/batchProperties/propertyEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/batchProperties/propertyDeletePopup.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

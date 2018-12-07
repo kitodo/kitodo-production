@@ -50,13 +50,22 @@ public class TaskScriptThread extends EmptyTask {
         boolean automatic = this.task.isTypeAutomatic();
         logger.debug("task is automatic: {}", automatic);
         String scriptPath = taskService.getScriptPath(this.task);
-        if (!scriptPath.equals("")) {
+        boolean noScriptToRun = scriptPath.isEmpty();
+        if (!noScriptToRun) {
             try {
                 this.taskService.executeScript(this.task, automatic);
             } catch (DataException e) {
                 logger.error("Data Error occurred", e);
             }
-        } else if (this.task.isTypeExportDMS()) {
+        }
+        if (!task.getContentFolders().isEmpty()) {
+            try {
+                taskService.generateImages(this, task, automatic);
+            } catch (DataException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (noScriptToRun && task.isTypeExportDMS()) {
             try {
                 serviceManager.getTaskService().executeDmsExport(this.task);
             } catch (DataException e) {

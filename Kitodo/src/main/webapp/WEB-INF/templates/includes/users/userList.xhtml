@@ -21,18 +21,18 @@
                  value="#{UserForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.user}">
+        <p:column headerText="#{msgs.username}">
             <h:outputText value="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}">
             <h:outputText value="#{item.location}"/>
         </p:column>
-        <p:column headerText="#{msgs.userGroups}">
-            <ui:repeat var="usergroup" value="#{item.userGroups}" varStatus="status">
-                <h:outputText value="#{usergroup.title}"/>
+        <p:column headerText="#{msgs.roles}">
+            <ui:repeat var="role" value="#{item.roles}" varStatus="status">
+                <h:outputText value="#{role.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
@@ -57,13 +57,20 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link outcome="userEdit" title="#{msgs.userEdit}"
-                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
+                <h:link id="viewUser" outcome="userEdit" title="#{msgs.userView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToEditUser()}">
+                    <f:param name="id" value="#{item.id}"/>
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
+
+                <h:link id="editUser" outcome="userEdit" title="#{msgs.userEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditUser()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteUser"
-                               action="#{UserForm.delete}"
+
+                <p:commandLink id="deleteUser" action="#{UserForm.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteUser()}"
                                update="usersTabView:usersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{UserForm.userById}"/>

@@ -13,6 +13,7 @@ package org.kitodo.forms;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +39,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
@@ -57,13 +58,16 @@ public class WorkflowForm extends BaseForm {
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private FileService fileService = serviceManager.getFileService();
+    private transient FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
+    private static final String SVG_EXTENSION = ".svg";
+    private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
+    private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
-    private Integer userGroupId;
+    private Integer roleId;
 
     /**
      * Constructor.
@@ -99,13 +103,19 @@ public class WorkflowForm extends BaseForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        // FIXME: in this solution workflow is saved but redirect doesn't work
-        boolean filesSaved = saveFiles();
-        if (filesSaved) {
-            saveWorkflow();
-            return workflowListPath;
-        } else {
-            return null;
+        try {
+            if (saveFiles()) {
+                saveWorkflow();
+                return workflowListPath;
+            } else {
+                return this.stayOnCurrentPage;
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
+            return this.stayOnCurrentPage;
+        } catch (WorkflowException e) {
+            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle() }, logger, e);
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -121,7 +131,7 @@ public class WorkflowForm extends BaseForm {
 
                 String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
                 URI svgDiagramURI = new File(
-                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
+                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + SVG_EXTENSION).toURI();
                 URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(this.workflow.getFileName()))
                         .toURI();
 
@@ -139,7 +149,7 @@ public class WorkflowForm extends BaseForm {
      *
      * @return true if save, false if not
      */
-    private boolean saveFiles() {
+    private boolean saveFiles() throws IOException, WorkflowException {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
 
@@ -150,13 +160,16 @@ public class WorkflowForm extends BaseForm {
 
         Map<String, URI> diagramsUris = getDiagramUris();
 
-        URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
-        URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
+        URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
+        URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
         xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+
+            Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
+            reader.validateWorkflowTasks();
 
             saveFile(svgDiagramURI, svgDiagram);
             saveFile(xmlDiagramURI, xmlDiagram);
@@ -171,12 +184,13 @@ public class WorkflowForm extends BaseForm {
 
     private Map<String, URI> getDiagramUris(Workflow workflow) {
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
-        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + ".svg").toURI();
+        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + SVG_EXTENSION)
+                .toURI();
         URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(workflow.getFileName())).toURI();
 
         Map<String, URI> diagramUris = new HashMap<>();
-        diagramUris.put("svgDiagramURI", svgDiagramURI);
-        diagramUris.put("xmlDiagramURI", xmlDiagramURI);
+        diagramUris.put(SVG_DIAGRAM_URI, svgDiagramURI);
+        diagramUris.put(XML_DIAGRAM_URI, xmlDiagramURI);
         return diagramUris;
     }
 
@@ -234,6 +248,7 @@ public class WorkflowForm extends BaseForm {
      */
     public String newWorkflow() {
         this.workflow = new Workflow();
+        this.workflow.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
     }
 
@@ -252,14 +267,14 @@ public class WorkflowForm extends BaseForm {
 
             Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow);
 
-            URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
-            URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
+            URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
+            URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             Map<String, URI> diagramsCopyUris = getDiagramUris();
 
-            URI svgDiagramCopyURI = diagramsCopyUris.get("svgDiagramURI");
-            URI xmlDiagramCopyURI = diagramsCopyUris.get("xmlDiagramURI");
+            URI svgDiagramCopyURI = diagramsCopyUris.get(SVG_DIAGRAM_URI);
+            URI xmlDiagramCopyURI = diagramsCopyUris.get(XML_DIAGRAM_URI);
 
             try (InputStream svgInputStream = serviceManager.getFileService().read(svgDiagramURI);
                     InputStream xmlInputStream = serviceManager.getFileService().read(xmlDiagramURI)) {
@@ -268,13 +283,13 @@ public class WorkflowForm extends BaseForm {
                 saveFile(xmlDiagramCopyURI, this.xmlDiagram);
             } catch (IOException e) {
                 Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
             return workflowEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
                 logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -315,34 +330,36 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Get userGroupId.
+     * Get role id.
      *
-     * @return value of userGroupId
+     * @return value of roleId
      */
-    public Integer getUserGroupId() {
-        return userGroupId;
+    public Integer getRoleId() {
+        return roleId;
     }
 
     /**
-     * Set userGroupId.
+     * Set role idd.
      * 
-     * @param userGroupId
+     * @param roleId
      *            as Integer.
      */
-    public void setUserGroupId(Integer userGroupId) {
-        this.userGroupId = userGroupId;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
     /**
-     * Get hidden list of user groups.
+     * Get hidden list of roles.
      *
-     * @return hidden list of user groups
+     * @return hidden list of roles
      */
-    public List<SelectItem> getUserGroups() {
+    public List<SelectItem> getRoles() {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<UserGroup> userGroups = serviceManager.getUserGroupService().getAllUserGroupsByClientIds(Arrays.asList(1));
-        for (UserGroup userGroup : userGroups) {
-            selectItems.add(new SelectItem(userGroup.getId(), userGroup.getTitle(), null));
+
+        List<Role> roles = serviceManager.getRoleService()
+                .getAllRolesByClientId(serviceManager.getUserService().getSessionClientId());
+        for (Role role : roles) {
+            selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
         }
         return selectItems;
     }

@@ -14,9 +14,7 @@ package org.kitodo.data.elasticsearch.index.type.enums;
 public enum ClientTypeField implements TypeInterface {
 
     ID("id"),
-    NAME("clientName"),
-    PROJECTS("projects"),
-    USERS("users");
+    NAME("clientName");
 
     private String name;
 

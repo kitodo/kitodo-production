@@ -40,6 +40,12 @@ public class DocketDAO extends BaseDAO<Docket> {
     }
 
     @Override
+    public List<Docket> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+                size);
+    }
+
+    @Override
     public Docket save(Docket docket) throws DAOException {
         storeObject(docket);
         return retrieveObject(Docket.class, docket.getId());

@@ -135,7 +135,7 @@ public class RulesetServiceIT {
     public void shouldFindByTitleAndFile() {
         Integer expected = 2;
         await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", expected,
-            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml"))));
+            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SUBHH", "ruleset_subhh.xml"))));
     }
 
     @Test
@@ -148,13 +148,13 @@ public class RulesetServiceIT {
     @Test
     public void shouldFindManyByTitleOrFile() {
         await().untilAsserted(() -> assertEquals("Rulesets were not found in index!", 2,
-            rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml").size()));
+            rulesetService.findByTitleOrFile("SLUBDD", "ruleset_subhh.xml").size()));
     }
 
     @Test
     public void shouldFindOneByTitleOrFile() {
         await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", 1,
-            rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml").size()));
+            rulesetService.findByTitleOrFile("default", "ruleset_subhh.xml").size()));
     }
 
     @Test

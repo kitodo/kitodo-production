@@ -12,18 +12,20 @@
 package org.kitodo.services.data;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -36,12 +38,13 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -55,13 +58,22 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.enums.GenerationMode;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.tasks.EmptyTask;
+import org.kitodo.model.Subfolder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
-import org.kitodo.util.GeneratorSwitch;
+import org.kitodo.services.file.SubfolderFactoryService;
+import org.kitodo.services.image.ImageGenerator;
 
+/**
+ * The class provides a service for tasks. The service can be used to perform
+ * functions on the task because the task itself is a database bean and
+ * therefore may not include functionality.
+ */
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
@@ -103,10 +115,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            currently logged in user
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(User user) {
+    private BoolQueryBuilder createUserTaskQuery(User user) throws DataException {
+        Set<Integer> processingStatuses = new HashSet<>();
+        processingStatuses.add(TaskStatus.OPEN.getValue());
+        processingStatuses.add(TaskStatus.INWORK.getValue());
+
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
+        query.must(getQueryForProcessingStatus(processingStatuses));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
         if (onlyOpenTasks) {
@@ -118,9 +133,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            subQuery.should(createSimpleQuery("users.id", user.getId(), true));
-            for (UserGroup userGroup : user.getUserGroups()) {
-                subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+            for (Role role : user.getRoles()) {
+                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
             query.must(subQuery);
         }
@@ -133,6 +147,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
 
+        List<JsonObject> processes = serviceManager.getProcessService().findForCurrentSessionClient();
+        query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
+
         return query;
     }
 
@@ -144,7 +161,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public String createCountQuery(Map filters) {
+    public String createCountQuery(Map filters) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         BoolQueryBuilder query = createUserTaskQuery(user);
         return query.toString();
@@ -163,8 +180,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
-        manageUsersDependenciesForIndex(task);
-        manageUserGroupsDependenciesForIndex(task);
+        manageRolesDependenciesForIndex(task);
     }
 
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
@@ -219,28 +235,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageUsersDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
-            for (User user : task.getUsers()) {
-                user.getTasks().remove(task);
-                serviceManager.getUserService().saveToIndex(user, false);
+            for (Role role : task.getRoles()) {
+                role.getTasks().remove(task);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (User user : task.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user, false);
-            }
-        }
-    }
-
-    private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : task.getUserGroups()) {
-                userGroup.getTasks().remove(task);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
-            }
-        } else {
-            for (UserGroup userGroup : task.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : task.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -288,6 +291,21 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return countDatabaseRows("SELECT COUNT(*) FROM Task");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Task> getAllNotIndexed() {
+        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Task> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Get query for processing statuses.
      *
@@ -295,7 +313,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            set of processing statuses as Integer
      * @return query as QueryBuilder
      */
-    public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
+    private QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
         return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
     }
 
@@ -306,20 +324,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            of process
      * @return list of JSON objects with tasks for specific process id
      */
-    public List<JsonObject> findByProcessId(Integer id) throws DataException {
+    List<JsonObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), id, true);
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Get query for process ids.
-     *
-     * @param processIds
-     *            set of process ids as Integer
-     * @return query as QueryBuilder
-     */
-    public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
-        return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processIds, true);
     }
 
     /**
@@ -350,7 +357,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Integer
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
+    private List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
             Integer priority, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
@@ -370,7 +377,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+    private List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
             boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
@@ -392,8 +399,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-            Integer priority, boolean typeAutomatic, String sort) throws DataException {
+    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
+            Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
@@ -411,10 +418,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
         taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(taskJSONObject));
         taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(taskJSONObject));
-        Integer taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
+        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
         taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        Integer editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
+        int editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
@@ -428,15 +435,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
-        taskDTO.setUsersSize(TaskTypeField.USERS.getSizeOfProperty(taskJSONObject));
-        taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
+        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(taskJSONObject));
 
         /*
-         * we read list of process but not list of templates because only process tasks
-         * are displayed on the task list and reading list of templates would cause
-         * never ending loop as list of templates reads list of tasks
+         * We read the list of the process but not the list of templates, because only process tasks
+         * are displayed in the task list and reading the template list would result in
+         * never-ending loops as the list of templates reads the list of tasks.
          */
-        Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
+        int process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(serviceManager.getProcessService()
@@ -450,31 +456,16 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
-        Integer processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
+        int processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setUsers(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
-        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        taskDTO.setRoles(
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), serviceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {
         return date != JsonValue.NULL ? date.toString().replace("\"", "") : "";
-    }
-
-    /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
-     *
-     * @return list of GeneratorSwitch objects or empty list
-     */
-    public List<GeneratorSwitch> getGenerators(Task task) {
-        if (Objects.isNull(task.getContentFolders())) {
-            task.setContentFolders(new ArrayList<>());
-        }
-        return GeneratorSwitch.getGeneratorSwitches(getProjects(task).stream(), task.getContentFolders());
     }
 
     /**
@@ -552,32 +543,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get users' list size.
+     * Get roles list size.
      *
      * @param task
      *            object
-     * @return size
+     * @return size of roles assigned to task
      */
-    public int getUsersSize(Task task) {
-        if (task.getUsers() == null) {
+    public int getRolesSize(Task task) {
+        if (task.getRoles() == null) {
             return 0;
         } else {
-            return task.getUsers().size();
-        }
-    }
-
-    /**
-     * Get user groups' list size.
-     *
-     * @param task
-     *            object
-     * @return size
-     */
-    public int getUserGroupsSize(Task task) {
-        if (task.getUserGroups() == null) {
-            return 0;
-        } else {
-            return task.getUserGroups().size();
+            return task.getRoles().size();
         }
     }
 
@@ -657,17 +633,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             CommandService commandService = serviceManager.getCommandService();
             CommandResult commandResult = commandService.runCommand(script);
             executedSuccessful = commandResult.isSuccessful();
-            if (automatic) {
-                if (commandResult.isSuccessful()) {
-                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
-                    task.setProcessingStatus(TaskStatus.DONE.getValue());
-                    serviceManager.getWorkflowControllerService().close(task);
-                } else {
-                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
-                    task.setProcessingStatus(TaskStatus.OPEN.getValue());
-                    save(task);
-                }
-            }
+            finishOrReturnAutomaticTask(task, automatic, commandResult.isSuccessful());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -694,10 +660,64 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
+    /**
+     * Make the necessary changes when performing an automatic task.
+     * 
+     * @param task
+     *            ongoing task
+     * @param automatic
+     *            if it is an automatic task
+     * @param successful
+     *            if the processing was successful
+     * @throws DataException
+     *             if the task cannot be saved
+     * @throws IOException
+     *             if the task cannot be closed
+     */
+    private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
+            throws DataException, IOException {
+        if (automatic) {
+            task.setEditType(TaskEditType.AUTOMATIC.getValue());
+            if (successful) {
+                task.setProcessingStatus(TaskStatus.DONE.getValue());
+                serviceManager.getWorkflowControllerService().close(task);
+            } else {
+                task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                save(task);
+            }
+        }
+    }
+
     private void abortTask(Task task) throws DataException {
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
         save(task);
+    }
+
+    /**
+     * Performs creating images when this happens automatically in a task.
+     *
+     * @param executingThread
+     *            Executing thread (displayed in the taskmanager)
+     * @param task
+     *            Task that generates images
+     * @param automatic
+     *            Whether it is an automatic task
+     * @throws DataException
+     *             if the task cannot be saved
+     */
+    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
+        try {
+            Process process = task.getProcess();
+            Subfolder sourceFolder = new Subfolder(process, process.getProject().getGeneratorSource());
+            List<Subfolder> foldersToGenerate = SubfolderFactoryService.createAll(process, task.getContentFolders());
+            ImageGenerator generator = new ImageGenerator(sourceFolder, GenerationMode.ALL, foldersToGenerate);
+            generator.setSupervisor(executingThread);
+            generator.run();
+            finishOrReturnAutomaticTask(task, automatic, executingThread.getException() == null);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -707,8 +727,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
+        boolean automaticExportWithImages = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
+        boolean automaticExportWithOcr = ConfigCore
+                .getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
@@ -877,91 +899,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get tasks for non template processes for given project id and ordered by
-     * ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Task> getTasksForProjectHelper(Integer projectId) {
-        return dao.getTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getSizeOfTasksForProjectHelper(Integer projectId) {
-        return dao.getSizeOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get average ordering of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Double
-     */
-    public List<Double> getAverageOrderingOfTasksForProjectHelper(Integer projectId) {
-        return dao.getAverageOrderingOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get tasks for non template processes for given project id and ordered by
-     * ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Task> getTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus, projectId);
-    }
-
-    /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getSizeOfTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus,
-            projectId);
-    }
-
-    /**
-     * Get amount of images of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(Integer processingStatus,
-            Integer projectId) {
-        return dao.getAmountOfImagesForTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            processingStatus, projectId);
-    }
-
-    /**
      * Set up matching error messages for unreachable tasks. Unreachable task is
-     * this one which has no user / user groups assigned to itself. Other
-     * possibility is that given list is empty. It means that whole workflow is
-     * unreachable.
+     * this one which has no roles assigned to itself. Other possibility is that
+     * given list is empty. It means that whole workflow is unreachable.
      *
      * @param tasks
      *            list of tasks for check
@@ -971,9 +911,85 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Helper.setErrorMessage("noStepsInWorkflow");
         }
         for (Task task : tasks) {
-            if (getUserGroupsSize(task) == 0 && getUsersSize(task) == 0) {
+            if (getRolesSize(task) == 0) {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }
+    }
+
+    /**
+     * The function determines, from projects, the folders whose contents can be
+     * generated automatically.
+     * 
+     * <p>
+     * This feature is needed once by the task in the template to determine
+     * which folders show buttons in the interface to turn content creation on
+     * or off. In addition, the function of the task in the process is required
+     * to determine if there is at least one folder to be created in the task,
+     * because then action links for generating are displayed, and not
+     * otherwise.
+     * 
+     * <p>
+     * To create content automatically, a folder must be defined as the template
+     * folder in the project. The templates serve to create the contents in the
+     * other folders to be created. Under no circumstances should the contents
+     * of the template folder be automatically generated, even if, for example,
+     * after a reconfiguration, this is still set as otherwise they would
+     * overwrite themselves. Also, contents can not be created in folders where
+     * nothing is configured. The folders that are left over can be created.
+     * 
+     * @param projects
+     *            an object stream of projects that may have folders defined
+     *            whose contents can be auto-generated
+     * @return an object stream of generable folders
+     */
+    public static Stream<Folder> generatableFoldersFromProjects(Stream<Project> projects) {
+        Stream<Project> projectsWithSourceFolder = skipProjectsWithoutSourceFolder(projects);
+        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
+        Stream<Folder> generatableFolders = removeFoldersThatCannotBeGenerated(allowedFolders);
+        return generatableFolders;
+    }
+
+    /**
+     * Only lets projects pass where a source folder is selected.
+     * 
+     * @param projects
+     *            the unpurified stream of projects
+     * @return a stream only of projects that define a source to generate images
+     */
+    private static Stream<Project> skipProjectsWithoutSourceFolder(Stream<Project> projects) {
+        return projects.filter(project -> Objects.nonNull(project.getGeneratorSource()));
+    }
+
+    /**
+     * Drops all folders to generate if they are their own source folder.
+     *
+     * @param projects
+     *            projects whose folders allowed to be generated are to be
+     *            determined
+     * @return a stream of folders that are allowed to be generated
+     */
+    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
+        Stream<Pair<Folder, Folder>> withSources = projects.flatMap(
+            project -> project.getFolders().stream().map(folder -> Pair.of(folder, project.getGeneratorSource())));
+        Stream<Pair<Folder, Folder>> filteredWithSources = withSources.filter(
+            destinationAndSource -> !destinationAndSource.getLeft().equals(destinationAndSource.getRight()));
+        Stream<Folder> filteredFolders = filteredWithSources
+                .map(destinationAndSource -> destinationAndSource.getLeft());
+        return filteredFolders;
+    }
+
+    /**
+     * Removes all folders to generate which do not have anything to generate
+     * configured.
+     * 
+     * @param folders
+     *            a stream of folders
+     * @return a stream only of those folders where an image generation module
+     *         has been selected
+     */
+    private static Stream<Folder> removeFoldersThatCannotBeGenerated(Stream<Folder> folders) {
+        return folders.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
+                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
     }
 }

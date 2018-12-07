@@ -28,6 +28,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
@@ -96,6 +97,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM LdapServer");
+    }
+
+    @Override
+    public List<LdapServer> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
     }
 
     private String buildUserDN(User inUser) {

@@ -61,7 +61,7 @@ import org.kitodo.services.ServiceManager;
 public class CopyProcess extends ProzesskopieForm {
 
     private static final Logger logger = LogManager.getLogger(CopyProcess.class);
-    private FileformatInterface myRdf;
+    private transient FileformatInterface myRdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -73,7 +73,7 @@ public class CopyProcess extends ProzesskopieForm {
     private boolean useTemplates;
     private URI metadataFile;
     private HashMap<String, Boolean> standardFields;
-    private List<AdditionalField> additionalFields;
+    private transient List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
     private StringBuilder tifHeaderImageDescription = new StringBuilder();
     private String tifHeaderDocumentName = "";
@@ -83,7 +83,7 @@ public class CopyProcess extends ProzesskopieForm {
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private final transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Prepare import object.
@@ -129,8 +129,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
         if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
+                if (serviceManager.getTaskService().getRolesSize(s) == 0) {
                     Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
                 }
             }

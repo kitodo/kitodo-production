@@ -11,17 +11,15 @@
 
 package org.kitodo.metadata.pagination;
 
-import de.sub.goobi.metadaten.Metadatum;
+import de.sub.goobi.metadaten.Metadata;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.api.display.Item;
 import org.kitodo.api.ugh.MetadataInterface;
 
-class MockMetadata implements Metadatum {
+class MockMetadata implements Metadata {
 
     private String value;
 
@@ -44,10 +42,6 @@ class MockMetadata implements Metadatum {
         return null;
     }
 
-    public String getOutputType() {
-        return null;
-    }
-
     public String getSelectedItem() {
         return null;
     }
@@ -62,10 +56,6 @@ class MockMetadata implements Metadatum {
 
     public String getValue() {
         return value;
-    }
-
-    public ArrayList<Item> getWert() {
-        return null;
     }
 
     public void setIdentifier(int identifier) {
@@ -87,10 +77,6 @@ class MockMetadata implements Metadatum {
     }
 
     public void setValue(String value) {
+        this.value = value;
     }
-
-    public void setWert(String inWert) {
-        value = inWert;
-    }
-
 }

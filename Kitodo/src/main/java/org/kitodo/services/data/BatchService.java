@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,6 +89,21 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         return countDatabaseRows("SELECT COUNT(*) FROM Batch");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Batch> getAllNotIndexed() {
+        return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Batch> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Remove all passed batches.
      * 
@@ -100,31 +114,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         for (Batch batch : batches) {
             dao.remove(batch);
         }
-    }
-
-    /**
-     * The function removeAll() removes all elements that are contained in the given
-     * collection from this batch. TODO: Not sure if this method is needed, check it
-     *
-     * @param processes
-     *            collection containing elements to be removed from this set
-     * @return true if the set of processes was changed as a result of the call
-     */
-    public boolean removeAll(Batch batch, Collection<?> processes) {
-        return batch.getProcesses().removeAll(processes);
-    }
-
-    /**
-     * Find batches with exact type. Necessary to assure that user pickup type from
-     * the list which contains enums.
-     *
-     * @param type
-     *            of the searched batches
-     * @return list of JSON objects with batches of exact type
-     */
-    public List<JsonObject> findByType(Batch.Type type, boolean contains) throws DataException {
-        QueryBuilder query = createSimpleQuery("type", type.toString(), contains);
-        return searcher.findDocuments(query.toString());
     }
 
     /**
@@ -200,31 +189,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     private void convertRelatedJSONObjects(JsonObject jsonObject, BatchDTO batchDTO) throws DataException {
         batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
             serviceManager.getProcessService()));
-    }
-
-    /**
-     * The function add() adds the given process to this batch if it is not
-     * already present. TODO: Not sure if this method is needed, check it
-     *
-     * @param process
-     *            to add
-     * @return true if this batch did not already contain the specified process
-     */
-    public boolean add(Batch batch, Process process) {
-        return batch.getProcesses().add(process);
-    }
-
-    /**
-     * The function addAll() adds all of the elements in the given collection to
-     * this batch if they're not already present. TODO: Not sure if this method
-     * is needed, check it
-     *
-     * @param processes
-     *            collection containing elements to be added to this set
-     * @return true if this set changed as a result of the call
-     */
-    public boolean addAll(Batch batch, Collection<? extends Process> processes) {
-        return batch.getProcesses().addAll(processes);
     }
 
     /**

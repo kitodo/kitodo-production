@@ -21,13 +21,13 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,13 +73,11 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
-import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -134,7 +132,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
             .getBooleanParameter(ParameterCore.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
-    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore
+            .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -160,58 +159,54 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
 
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
-        }
-
-        query = readFilters(filterMap);
-
-        String queryString = "";
-        if (!Objects.equals(query, null)) {
-            queryString = query.toString();
-        }
-        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public String createCountQuery(Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
-
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            query = new BoolQueryBuilder();
-            query.must(getQuerySortHelperStatus(false));
-            query.must(getQueryProjectActive(true));
-        } else {
-            query = readFilters(filterMap);
-        }
-
-        if (Objects.nonNull(query)) {
-            return query.toString();
-        }
-        return "";
+        return createUserProcessesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        BoolQueryBuilder query = null;
+        BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false);
-            if (!this.showClosedProcesses) {
-                query.must(getQuerySortHelperStatus(false));
-            }
-            if (!this.showInactiveProjects) {
-                query.must(getQueryProjectActive(true));
-            }
+            query.must(
+                serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
         }
+        return query;
+    }
+
+    /**
+     * Creates and returns a query to retrieve processes for which the currently
+     * logged in user is eligible.
+     *
+     * @param filters
+     *            map of applicable filters
+     * @return query to retrieve processes for which the user eligible
+     */
+    @SuppressWarnings("unchecked")
+    private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        if (Objects.nonNull(filters) && !filters.isEmpty()) {
+            Map<String, String> filterMap = (Map<String, String>) filters;
+            query.must(readFilters(filterMap));
+        }
+
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+
+        if (!this.showClosedProcesses) {
+            query.must(getQuerySortHelperStatus(false));
+        }
+
+        if (!this.showInactiveProjects) {
+            query.must(getQueryProjectActive(true));
+        }
+
         return query;
     }
 
@@ -404,8 +399,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Process> getAllNotIndexed() {
+        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Process> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void refresh(Process process) {
         dao.refresh(process);
+    }
+
+    List<JsonObject> findForCurrentSessionClient() throws DataException {
+        return searcher.findDocuments(
+            getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()).toString());
     }
 
     /**
@@ -436,26 +451,26 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find processes by docket.
+     * Find processes by docket id.
      *
-     * @param docket
-     *            of project
-     * @return list of JSON objects with processes for specific docket
+     * @param docketId
+     *            id of dockett for search
+     * @return list of JSON objects with processes for specific docket id
      */
-    public List<JsonObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docket.getId(), true);
+    public List<JsonObject> findByDocket(int docketId) throws DataException {
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docketId, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find processes by ruleset.
+     * Find processes by ruleset id.
      *
-     * @param ruleset
-     *            of project
-     * @return list of JSON objects with processes for specific ruleset
+     * @param rulesetId
+     *            id of ruleset for search
+     * @return list of JSON objects with processes for specific ruleset id
      */
-    public List<JsonObject> findByRuleset(Ruleset ruleset) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), ruleset.getId(), true);
+    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -540,6 +555,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Get query for projects assigned to selected client.
+     *
+     * @param id
+     *            of selected client
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
+        return createSimpleQuery(ProcessTypeField.PROJECT_CLIENT_ID.getKey(), id, true);
+    }
+
+    /**
      * Find processes by property.
      *
      * @param title
@@ -552,8 +578,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private List<JsonObject> findByProperty(String title, String value, String type, String key, boolean contains)
             throws DataException {
-        Set<Integer> propertyIds = new HashSet<>();
-
         List<JsonObject> properties;
         if (value == null) {
             properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
@@ -563,36 +587,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
-        for (JsonObject property : properties) {
-            propertyIds.add(getIdFromJSONObject(property));
-        }
-        return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
-    }
-
-    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort, offset, size);
-    }
-
-    private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active, String sort)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort);
-    }
-
-    private List<JsonObject> findBySortHelperStatus(boolean closed, String sort) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        return searcher.findDocuments(query.toString(), sort);
-    }
-
-    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
+        return searcher.findDocuments(createSetQuery(key, properties, true).toString());
     }
 
     List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
@@ -693,7 +688,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
+        int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
@@ -1115,10 +1110,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return null;
     }
 
-    public String getCreationDateAsString(Process process) {
-        return Helper.getDateAsFormattedString(process.getCreationDate());
-    }
-
     /**
      * Get full progress for process.
      *
@@ -1302,6 +1293,38 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
+    /**
+     * Reads the metadata File.
+     *
+     * @param metadataFile
+     *            The given metadataFile.
+     * @param prefs
+     *            The Preferences
+     * @return The fileFormat.
+     */
+    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
+            throws IOException, PreferencesException, ReadException {
+        String type = MetadataHelper.getMetaFileType(metadataFile);
+        FileformatInterface ff;
+        switch (type) {
+            case "metsmods":
+                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
+                break;
+            case "mets":
+                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
+                break;
+            case "xstream":
+                ff = UghImplementation.INSTANCE.createXStream(prefs);
+                break;
+            default:
+                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
+                break;
+        }
+        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
+
+        return ff;
+    }
+
     private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
         FileformatInterface fileFormat;
         RulesetService rulesetService = serviceManager.getRulesetService();
@@ -1426,7 +1449,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, getNormalizedTitle(process.getTitle()) + ".pdf");
-            file.delete();
+            Files.deleteIfExists(file.toPath());
         }
     }
 
@@ -1449,7 +1472,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
-            file.delete();
+            Files.deleteIfExists(file.toPath());
         }
     }
 
@@ -1521,6 +1544,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Sets new value for wiki field.
+     *
+     * @param wikiField
+     *            string
+     * @param process
+     *            object
+     */
+    public void setWikiField(String wikiField, Process process) {
+        process.setWikiField(wikiField);
+    }
+
+    /**
      * The addMessageToWikiField() method is a helper method which composes the
      * new wiki field using a StringBuilder. The message is encoded using HTML
      * entities to prevent certain characters from playing merry havoc when the
@@ -1544,18 +1579,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Sets new value for wiki field.
-     *
-     * @param wikiField
-     *            string
-     * @param process
-     *            object
-     */
-    public void setWikiField(String wikiField, Process process) {
-        process.setWikiField(wikiField);
-    }
-
-    /**
      * The method addToWikiField() adds a message with a given level to the wiki
      * field of the process. Four level strings will be recognized and result in
      * different colors:
@@ -1571,7 +1594,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * <dd>orange</dd>
      * <dt><i>any other value</i></dt>
      * <dd>blue</dd>
-     * <dt>
+     * </dl>
      *
      * @param level
      *            message colour, one of: "debug", "error", "info", "user" or
@@ -1696,39 +1719,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Reads the metadata File.
-     *
-     * @param metadataFile
-     *            The given metadataFile.
-     * @param prefs
-     *            The Preferences
-     * @return The fileFormat.
-     */
-    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
-            throws IOException, PreferencesException, ReadException {
-        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadataHelper.getMetaFileType(metadataFile);
-        FileformatInterface ff;
-        switch (type) {
-            case "metsmods":
-                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
-                break;
-            case "mets":
-                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
-                break;
-            case "xstream":
-                ff = UghImplementation.INSTANCE.createXStream(prefs);
-                break;
-            default:
-                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
-                break;
-        }
-        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
-
-        return ff;
-    }
-
-    /**
      * DMS-Export to a desired location.
      *
      * @param process
@@ -1814,8 +1804,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                File successFile = new File(project.getDmsImportSuccessPath() + File.separator
-                        + getNormalizedTitle(process.getTitle()));
+                File successFile = new File(
+                        project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
         }
@@ -1860,16 +1850,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return false;
         }
         // remove old success folder
-        File successFile = new File(project.getDmsImportSuccessPath() + File.separator
-                + getNormalizedTitle(process.getTitle()));
+        File successFile = new File(
+                project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(successFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
-        File errorFile = new File(project.getDmsImportErrorPath() + File.separator
-                + getNormalizedTitle(process.getTitle()));
+        File errorFile = new File(
+                project.getDmsImportErrorPath() + File.separator + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(errorFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
@@ -2060,7 +2050,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        Project project = process.getProject();
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
@@ -2127,6 +2116,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
+        Project project = process.getProject();
         VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
         List<Folder> folders = project.getFolders();
         for (Folder folder : folders) {
@@ -2335,53 +2325,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         return propertiesForDocket;
-    }
-
-    /**
-     * Find all processes of active projects, sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findProcessesOfActiveProjects(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
-    }
-
-    /**
-     * Find not closed processes sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     *
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findNotClosedProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatus(false, sort), false);
-    }
-
-    /**
-     * Find processes of open and active projects, sorted according to sort
-     * query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findOpenAndActiveProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActive(false, true, sort), false);
-    }
-
-    /**
-     * Find all processes of active projects that are not templates, sorted
-     * according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objectss
-     */
-    public List<ProcessDTO> findAllActiveWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
     }
 
     /**

@@ -23,11 +23,13 @@
     </f:metadata>
 
     <ui:param name="isEditMode"
-              value="#{UserForm.userObject.id ne null and SecurityAccessController.isAdminOrHasAuthorityToEditUser(id)}"/>
+              value="#{UserForm.userObject.id ne null and SecurityAccessController.hasAuthorityToEditUser()}"/>
     <ui:param name="isCreateMode"
-              value="#{UserForm.userObject.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser')}"/>
+              value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+    <ui:param name="isConfigMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -41,11 +43,13 @@
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.userView}"
                           rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.userConfiguration}"
+                          rendered="#{isConfigMode}"/>
         </h3>
         <p:commandButton value="#{msgs.save}"
                          action="#{UserForm.save}"
                          id="save"
-                         rendered="#{isEditMode || isCreateMode}"
+                         rendered="#{isEditMode || isCreateMode || isConfigMode}"
                          widgetVar="save"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -63,181 +67,33 @@
     <ui:define name="pageTabView">
         <p:tabView id="userTabView">
             <p:tab id="detailsTab" title="#{msgs.details}">
-                <p:panelGrid id="useredit-grid" columns="2" layout="grid">
-                    <p:row>
-                        <div>
-                            <p:outputLabel for="surname" value="#{msgs.surname}"/>
-                            <p:inputText id="surname" class="input" disabled="#{isViewMode}"
-                                         placeholder="#{msgs.surname}" value="#{UserForm.userObject.surname}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
-                            <p:inputText id="firstName" class="input" disabled="#{isViewMode}"
-                                         placeholder="#{msgs.firstName}" value="#{UserForm.userObject.name}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="location" value="#{msgs.location}"/>
-                            <p:inputText id="location" class="input" disabled="#{isViewMode}"
-                                         placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
-                            <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode}"
-                                         placeholder="#{msgs.ldaplogin}" onchange="toggleSave()"
-                                         value="#{UserForm.userObject.ldapLogin}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
-                            <p:selectOneMenu id="ldapGroup"  value="#{UserForm.userObject.ldapGroup}"
-                                             disabled="#{isViewMode}" converter="#{ldapGroupConverter}">
-                                <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
-                                               itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
-                                <p:ajax event="change" oncomplete="toggleSave()"/>
-                            </p:selectOneMenu>
-                        </div>
-                    </p:row>
-                    <p:row>
-                        <div>
-                            <p:outputLabel for="login" value="#{msgs.login}"/>
-                            <p:inputText id="login" class="input" disabled="#{isViewMode}" placeholder="#{msgs.login}"
-                                         value="#{UserForm.userObject.login}"
-                                         readonly="#{UserForm.userObject.id ne null}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
-                            <p:password id="password" class="input" rendered="#{isCreateMode}"
-                                        placeholder="#{msgs.password}" value="#{UserForm.passwordToEncrypt}"
-                                        onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
-                                        redisplay="true"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="metaDataLanguage" value="#{msgs.metadataLanguage}"/>
-                            <p:inputText id="metaDataLanguage" class="input" disabled="#{isViewMode}"
-                                         placeholder="#{msgs.metadataLanguage}"
-                                         value="#{UserForm.userObject.metadataLanguage}"
-                                         onchange="toggleSave()"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
-                            <p:selectBooleanCheckbox id="withMassDownload" styleClass="input" disabled="#{isViewMode}"
-                                                     value="#{UserForm.userObject.withMassDownload}"
-                                                     onchange="toggleSave()"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="active" value="#{msgs.isActive}"/>
-                            <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode}"
-                                                     value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
-                        </div>
-                    </p:row>
-                </p:panelGrid>
-                <div>
-                    <p:commandButton id="writUserToLdapButton"
-                                     action="#{UserForm.writeUserAtLdapServer}"
-                                     value="#{msgs.ldapKonfigurationSchreiben}"
-                                     icon="fa fa-user-plus fa-lg"
-                                     immediate="true"
-                                     disabled="#{isViewMode}"
-                                     rendered="#{AuthenticationController.ldapAuthentication}"
-                                     class="button-filled-green">
-                    </p:commandButton>
-                    <p:commandButton onclick="PF('changePasswordDialog').show()"
-                                     id="changePasswordButton"
-                                     value="#{msgs.passwordChange}"
-                                     icon="fa fa-pencil fa-lg"
-                                     immediate="true"
-                                     rendered="#{isEditMode}"
-                                     class="button-filled-green">
-                    </p:commandButton>
-                </div>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/details.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                    <ui:param name="isConfigMode" value="#{isConfigMode}" />
+                </ui:include>
             </p:tab>
-            <!-- user groups -->
-            <p:tab id="usergroupTab" title="#{msgs.userGroups}">
-                <p:dataTable id="usergroupDatatable" var="item" value="#{UserForm.userObject.userGroups}">
-                    <p:column headerText="#{msgs.userGroup}">
-                        <h:outputText value="#{item.title}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromUserGroup"
-                                       rendered="#{isEditMode || isCreateMode}"
-                                       action="#{UserForm.deleteFromGroup}"
-                                       title="#{msgs.ausGruppeLoeschen}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{item.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addUserGroupDialog').show()"
-                                 id="addUserGroupButton"
-                                 value="#{msgs.userGroupsAdd}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="callto m-1em">
-                </p:commandButton>
+
+            <p:tab id="roleTab" title="#{msgs.roles}">
+                <ui:include src="/WEB-INF/templates/includes/userEdit/roleList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
-            <!-- projects -->
+
             <p:tab id="projectTab" title="#{msgs.projectList}">
-                <p:dataTable id="projectDatatable" var="item" value="#{UserForm.userObject.projects}">
-                    <p:column headerText="#{msgs.projectList}">
-                        <h:outputText value="#{item.title}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromProject"
-                                       action="#{UserForm.deleteFromProject}"
-                                       title="#{msgs.deleteFromProject}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{item.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addProjectDialog').show()"
-                                 id="addProjectButton"
-                                 value="#{msgs.addProjects}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="callto m-1em">
-                </p:commandButton>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/projectList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
-            <!-- clients -->
+
             <p:tab id="clientTab" title="#{msgs.clientList}">
-                <p:dataTable id="clientDatatable" var="client" value="#{UserForm.userObject.clients}">
-                    <p:column headerText="#{msgs.clientList}">
-                        <h:outputText value="#{client.name}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromClient"
-                                       action="#{UserForm.deleteFromClient}"
-                                       title="#{msgs.clientDeleteFrom}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{client.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addClientDialog').show()"
-                                 id="addClientButton"
-                                 value="#{msgs.clientAdd}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="button-filled-green">
-                </p:commandButton>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/clientList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -256,14 +112,17 @@
                 <ui:fragment rendered="#{isViewMode}">
                     #{msgs.userView}
                 </ui:fragment>
+                <ui:fragment rendered="#{isConfigMode}">
+                    #{msgs.userConfiguration}
+                </ui:fragment>
             </a>
         </li>
     </ui:define>
     <!-- add user groups dialog -->
     <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditChangePasswordPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditClientsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addRolesPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addProjectsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addClientsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/changePasswordPopup.xhtml"/>
     </ui:define>
 </ui:composition>

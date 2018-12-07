@@ -66,7 +66,7 @@ public class BatchForm extends BaseForm {
     private String batchfilter;
     private String processfilter;
     private String batchTitle;
-    private BatchProcessHelper batchHelper;
+    private transient BatchProcessHelper batchHelper;
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String NO_PROCESS_SELECTED = "noProcessSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
@@ -78,15 +78,6 @@ public class BatchForm extends BaseForm {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getBatchService()));
         filterAll();
-    }
-
-    // TODO; for what is it needed - right now it is used only in new tests
-    public List<Process> getCurrentProcesses() {
-        return this.currentProcesses;
-    }
-
-    public void setCurrentProcesses(List<Process> currentProcesses) {
-        this.currentProcesses = currentProcesses;
     }
 
     /**
@@ -314,7 +305,7 @@ public class BatchForm extends BaseForm {
         }
         try {
             for (Batch selectedBatch : this.selectedBatches) {
-                serviceManager.getBatchService().addAll(selectedBatch, this.selectedProcesses);
+                selectedBatch.getProcesses().addAll(this.selectedProcesses);
                 serviceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
@@ -346,7 +337,7 @@ public class BatchForm extends BaseForm {
         }
 
         for (Batch selectedBatch : this.selectedBatches) {
-            serviceManager.getBatchService().removeAll(selectedBatch, this.selectedProcesses);
+            selectedBatch.getProcesses().removeAll(this.selectedProcesses);
             serviceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
@@ -450,7 +441,7 @@ public class BatchForm extends BaseForm {
     public String export() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
-            return null;
+            return this.stayOnCurrentPage;
         }
 
         for (Batch selectedBatch : selectedBatches) {
@@ -476,7 +467,7 @@ public class BatchForm extends BaseForm {
                     | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
-                return null;
+                return this.stayOnCurrentPage;
             }
         }
 

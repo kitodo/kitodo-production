@@ -32,6 +32,13 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
+    public abstract List<T> getAllForSelectedClient();
+
+    /**
      * Method saves object to database.
      *
      * @param baseIndexedBean

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,7 +36,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("RulesetForm")
@@ -74,6 +72,7 @@ public class RulesetForm extends BaseForm {
      */
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
+        this.ruleset.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return rulesetEditPath;
     }
 
@@ -87,18 +86,34 @@ public class RulesetForm extends BaseForm {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
-                    return null;
+                    return this.stayOnCurrentPage;
                 }
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
                 Helper.setErrorMessage("rulesetNotFound");
-                return null;
+                return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                 e);
-            return null;
+            return this.stayOnCurrentPage;
+        }
+    }
+
+    /**
+     * Delete ruleset.
+     */
+    public void delete() {
+        try {
+            if (hasAssignedProcessesOrTemplates(this.ruleset.getId())) {
+                Helper.setErrorMessage("rulesetInUse");
+            } else {
+                this.serviceManager.getRulesetService().remove(this.ruleset);
+            }
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                    e);
         }
     }
 
@@ -133,8 +148,9 @@ public class RulesetForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
-        return !serviceManager.getProcessService().findByRuleset(ruleset).isEmpty();
+    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DataException {
+        return !serviceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
+                || !serviceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
     }
 
     /**
@@ -184,15 +200,6 @@ public class RulesetForm extends BaseForm {
     }
 
     /**
-     * Get all available clients.
-     *
-     * @return list of Client objects
-     */
-    public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
-    }
-
-    /**
      * Get list of ruleset filenames.
      *
      * @return list of ruleset filenames
@@ -205,22 +212,6 @@ public class RulesetForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
                 logger, e);
             return new ArrayList();
-        }
-    }
-
-    /**
-     * Delete ruleset.
-     */
-    public void delete() {
-        try {
-            if (hasAssignedProcesses(ruleset)) {
-                Helper.setErrorMessage("rulesetInUse");
-            } else {
-                this.serviceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
         }
     }
 }

@@ -75,13 +75,10 @@ public class User extends BaseIndexedBean {
     private LdapGroup ldapGroup;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id",
-        foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id",
-            foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
-    private List<UserGroup> userGroups;
-
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
-    private List<Task> tasks;
+    @JoinTable(name = "user_x_role", joinColumns = {@JoinColumn(name = "user_id",
+        foreignKey = @ForeignKey(name = "FK_user_x_role_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "role_id",
+            foreignKey = @ForeignKey(name = "FK_user_x_role_role_id")) })
+    private List<Role> roles;
 
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
     private List<Task> processingTasks;
@@ -105,9 +102,8 @@ public class User extends BaseIndexedBean {
      * Constructor for User Entity.
      */
     public User() {
-        this.userGroups = new ArrayList<>();
+        this.roles = new ArrayList<>();
         this.projects = new ArrayList<>();
-        this.tasks = new ArrayList<>();
         this.filters = new ArrayList<>();
         this.setLanguage("de");
     }
@@ -137,10 +133,10 @@ public class User extends BaseIndexedBean {
         this.surname = user.surname;
         this.withMassDownload = user.withMassDownload;
 
-        if (user.userGroups != null) {
-            this.userGroups = user.userGroups;
+        if (user.roles != null) {
+            this.roles = user.roles;
         } else {
-            this.userGroups = new ArrayList<>();
+            this.roles = new ArrayList<>();
         }
 
         if (user.projects != null) {
@@ -153,12 +149,6 @@ public class User extends BaseIndexedBean {
             this.clients = user.clients;
         } else {
             this.clients = new ArrayList<>();
-        }
-
-        if (user.tasks != null) {
-            this.tasks = user.tasks;
-        } else {
-            this.tasks = new ArrayList<>();
         }
 
         if (user.filters != null) {
@@ -261,20 +251,26 @@ public class User extends BaseIndexedBean {
         this.ldapGroup = ldapGroup;
     }
 
-    public List<UserGroup> getUserGroups() {
-        return this.userGroups;
+    /**
+     * Get roles.
+     *
+     * @return list of Role objects
+     */
+    public List<Role> getRoles() {
+        if (Objects.isNull(this.roles)) {
+            this.roles = new ArrayList<>();
+        }
+        return this.roles;
     }
 
-    public void setUserGroups(List<UserGroup> userGroups) {
-        this.userGroups = userGroups;
-    }
-
-    public List<Task> getTasks() {
-        return this.tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    /**
+     * Set roles.
+     * 
+     * @param roles
+     *            list of Role objects
+     */
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Task> getProcessingTasks() {
@@ -314,7 +310,8 @@ public class User extends BaseIndexedBean {
     /**
      * Sets clients.
      *
-     * @param clients The clients.
+     * @param clients
+     *            The clients.
      */
     public void setClients(List<Client> clients) {
         this.clients = clients;
@@ -405,7 +402,7 @@ public class User extends BaseIndexedBean {
         this.name = null;
         this.surname = null;
         this.location = null;
-        this.userGroups = new ArrayList<>();
+        this.roles = new ArrayList<>();
         this.projects = new ArrayList<>();
         return this;
     }

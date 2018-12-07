@@ -103,7 +103,7 @@ public class IndexingForm {
 
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
 
-    private transient ServiceManager serviceManager = new ServiceManager();
+    private ServiceManager serviceManager = new ServiceManager();
 
     private ObjectType currentIndexState = ObjectType.NONE;
 
@@ -232,30 +232,48 @@ public class IndexingForm {
     public void startIndexing(ObjectType type) {
         if (getNumberOfDatabaseObjects(type) > 0) {
             IndexWorker worker = indexWorkers.get(type);
-            currentState = IndexStates.NO_STATE;
-            int attempts = 0;
-            while (attempts < 10) {
-                try {
-                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                        indexingStartedTime = LocalDateTime.now();
-                        currentIndexState = type;
-                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
-                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
-                        indexerThread = new Thread(worker);
-                        indexerThread.setDaemon(true);
-                        indexerThread.start();
-                        indexerThread.join();
-                        break;
-                    } else {
-                        logger.debug("Cannot start '" + type
-                                + "' indexing while a different indexing process running: '" + currentIndexState + "'");
-                        Thread.sleep(pause);
-                        attempts++;
-                    }
-                } catch (InterruptedException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                    Thread.currentThread().interrupt();
+            runIndexing(worker, type);
+        }
+    }
+
+    /**
+     * Index all objects of given type 'objectType'.
+     *
+     * @param type
+     *            type objects that get indexed
+     */
+    public void startIndexingRemaining(ObjectType type) {
+        if (getNumberOfDatabaseObjects(type) > 0) {
+            IndexWorker worker = indexWorkers.get(type);
+            worker.setIndexAllObjects(false);
+            runIndexing(worker, type);
+        }
+    }
+
+    private void runIndexing(IndexWorker worker, ObjectType type) {
+        currentState = IndexStates.NO_STATE;
+        int attempts = 0;
+        while (attempts < 10) {
+            try {
+                if (Objects.equals(currentIndexState, ObjectType.NONE)) {
+                    indexingStartedTime = LocalDateTime.now();
+                    currentIndexState = type;
+                    objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
+                    pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
+                    indexerThread = new Thread(worker);
+                    indexerThread.setDaemon(true);
+                    indexerThread.start();
+                    indexerThread.join();
+                    break;
+                } else {
+                    logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
+                            + currentIndexState + "'");
+                    Thread.sleep(pause);
+                    attempts++;
                 }
+            } catch (InterruptedException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -266,6 +284,16 @@ public class IndexingForm {
     public void startAllIndexing() {
         IndexAllThread indexAllThread = new IndexAllThread();
         indexAllThread.start();
+    }
+
+    /**
+     * Starts the process of indexing all objects to the ElasticSearch index.
+     */
+    public void startAllIndexingRemaining() {
+        for (Map.Entry<ObjectType, IndexWorker> workerEntry : indexWorkers.entrySet()) {
+            workerEntry.getValue().setIndexAllObjects(false);
+        }
+        startAllIndexing();
     }
 
     /**
@@ -587,8 +615,8 @@ public class IndexingForm {
                 case USER:
                     searchServices.put(objectType, serviceManager.getUserService());
                     break;
-                case USER_GROUP:
-                    searchServices.put(objectType, serviceManager.getUserGroupService());
+                case ROLE:
+                    searchServices.put(objectType, serviceManager.getRoleService());
                     break;
                 case WORKFLOW:
                     searchServices.put(objectType, serviceManager.getWorkflowService());

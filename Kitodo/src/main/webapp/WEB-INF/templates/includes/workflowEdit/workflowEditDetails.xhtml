@@ -17,8 +17,10 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:outputScript library="js" name="modeler.js" target="body"/>
-    <h:outputScript library="js" name="modeler-custom.js" target="body"/>
+    <h:outputStylesheet name="css/modeler.css"/>
+    <!-- The modeler_custom.js has to be included first because it declares global variables that are used in the editor.-->
+    <h:outputScript library="js" name="modeler_custom.js" target="body"/>
+    <h:outputScript library="js" name="modeler_min.js" target="body"/>
 
     <p:panelGrid columns="2" layout="grid">
         <p:row>
@@ -29,8 +31,8 @@
                              required="true"/>
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
 
-                <p:selectOneMenu id="userGroupId" value="#{WorkflowForm.userGroupId}" style="visibility: hidden">
-                    <f:selectItems value="#{WorkflowForm.userGroups}" />
+                <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}" style="visibility: hidden">
+                    <f:selectItems value="#{WorkflowForm.roles}" />
                 </p:selectOneMenu>
             </div>
 

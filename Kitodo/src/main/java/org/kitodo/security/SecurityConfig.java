@@ -35,15 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SessionRegistry sessionRegistry;
     private static final String CLIENT_ANY = "CLIENT_ANY";
     private static final String GLOBAL = "GLOBAL";
-    private static final String PROJECT_ANY = "PROJECT_ANY";
-    private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
     private static final String EDIT_CLIENT = "editClient_";
     private static final String EDIT_DOCKET = "editDocket_";
     private static final String EDIT_RULESET = "editRuleset_";
     private static final String EDIT_PROCESS = "editProcess_";
     private static final String EDIT_PROJECT = "editProject_";
-    private static final String EDIT_USER = "editUser_";
-    private static final String EDIT_USER_GROUP = "editUserGroup_";
+    private static final String EDIT_ROLE = "editRole_";
+    private static final String EDIT_TEMPLATE = "editTemplate_";
     private static final String EDIT_WORKFLOW = "editWorkflow_";
     private static final String VIEW_ALL_DOCKETS = "viewAllDockets_";
     private static final String VIEW_ALL_PROCESSES = "viewAllProcesses_";
@@ -52,11 +50,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String VIEW_ALL_TASKS = "viewAllTasks_";
     private static final String VIEW_ALL_TEMPLATES = "viewAllTemplates_";
     private static final String VIEW_ALL_USERS = "viewAllUsers_";
-    private static final String VIEW_ALL_USER_GROUPS = "viewAllUserGroups_";
+    private static final String VIEW_ALL_ROLES = "viewAllRoles_";
     private static final String VIEW_ALL_WORKFLOWS = "viewAllWorkflows_";
+    private static final String VIEW_CLIENT = "viewClient_";
+    private static final String VIEW_DOCKET = "viewDocket_";
+    private static final String VIEW_PROCESS = "viewProcess_";
     private static final String VIEW_PROJECT = "viewProject_";
-    private static final String VIEW_USER = "viewUser_";
-    private static final String VIEW_USER_GROUP = "viewUserGroup_";
+    private static final String VIEW_RULESET = "viewRuleset_";
+    private static final String VIEW_ROLE = "viewRole_";
+    private static final String VIEW_TEMPLATE = "viewTemplate_";
+    private static final String VIEW_WORKFLOW = "viewProcess_";
     private static final String LOGIN_PAGE = "/pages/login.jsf";
 
     /**
@@ -98,30 +101,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // edit...... Authority to change and save entities at edit page
         http.authorizeRequests()
             .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_CLIENT + GLOBAL,
-                EDIT_CLIENT + CLIENT_ANY)
+                EDIT_CLIENT + CLIENT_ANY,
+                VIEW_CLIENT + GLOBAL,
+                VIEW_CLIENT + CLIENT_ANY)
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 "editIndex_" + GLOBAL,
                 "viewIndex_" + GLOBAL)
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
                 VIEW_ALL_PROCESSES + GLOBAL,
-                VIEW_ALL_PROCESSES + CLIENT_ANY,
-                VIEW_ALL_PROCESSES + PROJECT_ANY)
+                VIEW_ALL_PROCESSES + CLIENT_ANY)
             .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
                 EDIT_PROCESS + GLOBAL,
                 EDIT_PROCESS + CLIENT_ANY,
-                EDIT_PROCESS + PROJECT_ANY)
+                VIEW_PROCESS + GLOBAL,
+                VIEW_PROCESS + CLIENT_ANY)
 
             .antMatchers("/pages/projects.jsf").hasAnyAuthority(
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
                 VIEW_ALL_TEMPLATES + GLOBAL,
                 VIEW_ALL_TEMPLATES + CLIENT_ANY,
-                VIEW_ALL_TEMPLATES + PROJECT_ANY,
                 VIEW_ALL_DOCKETS + GLOBAL,
                 VIEW_ALL_DOCKETS + CLIENT_ANY,
                 VIEW_ALL_RULESETS + GLOBAL,
@@ -130,53 +132,52 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
                 EDIT_PROJECT + GLOBAL,
                 EDIT_PROJECT + CLIENT_ANY,
-                EDIT_PROJECT + PROJECT_ANY,
                 VIEW_PROJECT + GLOBAL,
-                VIEW_PROJECT + CLIENT_ANY,
-                VIEW_PROJECT + PROJECT_ANY)
+                VIEW_PROJECT + CLIENT_ANY)
+
+                .antMatchers("/pages/templateEdit.jsf*").hasAnyAuthority(
+                EDIT_TEMPLATE + GLOBAL,
+                EDIT_TEMPLATE + CLIENT_ANY,
+                VIEW_TEMPLATE + GLOBAL,
+                VIEW_TEMPLATE + CLIENT_ANY)
 
             .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
                 EDIT_DOCKET + GLOBAL,
-                EDIT_DOCKET + CLIENT_ANY)
+                EDIT_DOCKET + CLIENT_ANY,
+                VIEW_DOCKET + GLOBAL,
+                VIEW_DOCKET + CLIENT_ANY)
 
             .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
                 EDIT_RULESET + GLOBAL,
-                EDIT_RULESET + CLIENT_ANY)
+                EDIT_RULESET + CLIENT_ANY,
+                VIEW_RULESET + GLOBAL,
+                VIEW_RULESET + CLIENT_ANY)
 
             .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
                 EDIT_WORKFLOW + GLOBAL,
                 EDIT_WORKFLOW + CLIENT_ANY,
-                EDIT_WORKFLOW + PROJECT_ANY)
+                VIEW_WORKFLOW + GLOBAL,
+                VIEW_WORKFLOW + CLIENT_ANY)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
                 VIEW_ALL_TASKS + GLOBAL,
-                VIEW_ALL_TASKS + CLIENT_ANY,
-                VIEW_ALL_TASKS + PROJECT_ANY)
+                VIEW_ALL_TASKS + CLIENT_ANY)
 
             .antMatchers("/pages/users.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 VIEW_ALL_USERS + GLOBAL,
                 VIEW_ALL_USERS + CLIENT_ANY,
-                VIEW_ALL_USER_GROUPS + GLOBAL,
-                VIEW_ALL_USER_GROUPS + CLIENT_ANY,
+                VIEW_ALL_ROLES + GLOBAL,
+                VIEW_ALL_ROLES + CLIENT_ANY,
                 "viewAllClients_" + GLOBAL,
                 "viewAllLdapGroups_" + GLOBAL)
-            .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
-                EDIT_USER + GLOBAL,
-                EDIT_USER + CLIENT_ANY,
-                VIEW_USER + GLOBAL,
-                VIEW_USER + CLIENT_ANY)
 
-            .antMatchers("/pages/usergroupEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
-                EDIT_USER_GROUP + GLOBAL,
-                EDIT_USER_GROUP + CLIENT_ANY,
-                VIEW_USER_GROUP + GLOBAL,
-                VIEW_USER_GROUP + CLIENT_ANY)
+            .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
+                EDIT_ROLE + GLOBAL,
+                EDIT_ROLE + CLIENT_ANY,
+                VIEW_ROLE + GLOBAL,
+                VIEW_ROLE + CLIENT_ANY)
 
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 "editLdapGroup_" + GLOBAL,
                 "viewLdapGroup_" + GLOBAL)
 

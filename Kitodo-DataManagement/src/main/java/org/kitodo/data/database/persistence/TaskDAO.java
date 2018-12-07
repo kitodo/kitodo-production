@@ -22,8 +22,6 @@ public class TaskDAO extends BaseDAO<Task> {
 
     private static final long serialVersionUID = -2368830124391080142L;
     private static final String KEY_PROCESS_ID = "processId";
-    private static final String KEY_PROJECT_ID = "projectId";
-    private static final String KEY_PROCESSING_STATUS = "processingStatus";
 
     @Override
     public Task getById(Integer id) throws DAOException {
@@ -42,6 +40,12 @@ public class TaskDAO extends BaseDAO<Task> {
     @Override
     public List<Task> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Task ORDER BY id ASC", offset, size);
+    }
+
+    @Override
+    public List<Task> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+            size);
     }
 
     @Override
@@ -77,7 +81,8 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("title", title);
         parameters.put("batchId", batchId);
         return getByQuery("SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
-                + ":title AND batchStep = 1 AND b.id = :batchId", parameters);
+                + ":title AND batchStep = 1 AND b.id = :batchId",
+            parameters);
     }
 
     /**
@@ -97,7 +102,8 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("orderingMin", orderingMin);
         parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
-                + " AND ordering > :orderingMax ORDER BY ordering ASC", parameters);
+                + " AND ordering > :orderingMax ORDER BY ordering ASC",
+            parameters);
     }
 
     /**
@@ -113,8 +119,8 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery(
-                "FROM Task WHERE process_id = :processId AND ordering > :ordering AND priority = 10", parameters);
+        return getByQuery("FROM Task WHERE process_id = :processId AND ordering > :ordering AND priority = 10",
+            parameters);
     }
 
     /**
@@ -130,109 +136,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :ordering"
-                + " ORDER BY ordering DESC", parameters);
-    }
-
-    /**
-     * Get tasks for processes for given project id and ordered by
-     * ordering.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of tasks
-     */
-    public List<Task> getTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROJECT_ID, projectId);
         return getByQuery(
-                "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
-    }
-
-    /**
-     * Get size of tasks for processes for given project id and ordered
-     * by ordering.
-     * 
-     * @param projectId
-     *            as Integer
-     * @return list of tasks
-     */
-    public List<Long> getSizeOfTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROJECT_ID, projectId);
-        return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
-    }
-
-    /**
-     * Get average ordering of tasks for processes for given project id
-     * and ordered by ordering.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of tasks
-     */
-    public List<Double> getAverageOrderingOfTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROJECT_ID, projectId);
-        return getAverage("SELECT AVG(t.ordering) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
-    }
-
-    /**
-     * Get tasks for exact processing status for non template processes for given
-     * project id and ordered by ordering.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of tasks
-     */
-    public List<Task> getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            Integer processingStatus, Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
-        parameters.put(KEY_PROJECT_ID, projectId);
-        return getByQuery(
-                "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
-                        + "GROUP BY t.title ORDER BY t.ordering", parameters);
-    }
-
-    /**
-     * Get size of tasks for exact processing status for processes for
-     * given project id and ordered by ordering.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of tasks sizes
-     */
-    public List<Long> getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            Integer processingStatus, Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROJECT_ID, projectId);
-        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
-        return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
-                        + "GROUP BY t.title ORDER BY t.ordering", parameters);
-    }
-
-    /**
-     * Get average ordering of tasks for exact processing status for non template
-     * processes for given project id and ordered by ordering.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of average tasks' ordering
-     */
-    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            Integer processingStatus, Integer projectId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(KEY_PROJECT_ID, projectId);
-        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
-        return getSum(
-                "SELECT SUM(p.sortHelperImages) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
-                        + "GROUP BY t.title ORDER BY t.ordering", parameters);
+            "FROM Task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
     }
 }

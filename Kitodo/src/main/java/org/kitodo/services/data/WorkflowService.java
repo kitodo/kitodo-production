@@ -11,11 +11,14 @@
 
 package org.kitodo.services.data;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
@@ -26,11 +29,13 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
     private static WorkflowService instance = null;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Private constructor with Searcher and Indexer assigning.
@@ -61,6 +66,33 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        return getWorkflowsForCurrentUserQuery();
+    }
+
+    @Override
+    public List<WorkflowDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getWorkflowsForCurrentUserQuery(), sort, offset, size),
+            false);
+    }
+
+    @Override
+    public List<Workflow> getAllNotIndexed() {
+        return getByQuery("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Workflow> getAllForSelectedClient() {
+        return dao.getByQuery("SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
     public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
@@ -70,6 +102,13 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
         workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
         return workflowDTO;
+    }
+
+    private String getWorkflowsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 
     /**
@@ -86,6 +125,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_" + Helper.generateRandomString(3));
         duplicatedWorkflow.setActive(baseWorkflow.isActive());
         duplicatedWorkflow.setReady(false);
+        duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
         return duplicatedWorkflow;
     }
@@ -105,11 +145,12 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     /**
-     * Get available workflows - available means that workflow is active and ready.
+     * Get available workflows - available means that workflow is active, ready and
+     * assigned to selected session client.
      *
      * @return list of available Workflow objects
      */
     public List<Workflow> getAvailableWorkflows() {
-        return dao.getAvailableWorkflows();
+        return dao.getAvailableWorkflows(serviceManager.getUserService().getSessionClientId());
     }
 }

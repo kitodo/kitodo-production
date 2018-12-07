@@ -85,6 +85,21 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return countDatabaseRows("SELECT COUNT(*) FROM Template");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Template> getAllNotIndexed() {
+        return getByQuery("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Template> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Method saves or removes tasks and project related to modified template.
      *
@@ -182,59 +197,72 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(createUserTemplatesQuery(filters).toString(), sort, offset, size), false);
 
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
-        }
-
-        query = readFilters(filterMap);
-
-        String queryString = "";
-        if (!Objects.equals(query, null)) {
-            queryString = query.toString();
-        }
-        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public String createCountQuery(Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
-
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            query = new BoolQueryBuilder();
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            query.must(getQueryProjectActive(true));
-        } else {
-            query = readFilters(filterMap);
-        }
-
-        if (Objects.nonNull(query)) {
-            return query.toString();
-        }
-        return "";
+        return createUserTemplatesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        BoolQueryBuilder query = null;
+        BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false);
-            if (!showInactiveTemplates) {
-                query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            }
-            if (!showInactiveProjects) {
-                query.must(getQueryProjectActive(true));
-            }
+            query.must(serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
         }
         return query;
+    }
+
+    /**
+     * Creates and returns a query to retrieve templates for which the currently
+     * logged in user is eligible.
+     *
+     * @param filters
+     *            map of applicable filters
+     * @return query to retrieve templates for which the user eligible
+     */
+    @SuppressWarnings("unchecked")
+    private BoolQueryBuilder createUserTemplatesQuery(Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        if (Objects.nonNull(filters) && !filters.isEmpty()) {
+            Map<String, String> filterMap = (Map<String, String>) filters;
+            query.must(readFilters(filterMap));
+        }
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+
+        if (!showInactiveTemplates) {
+            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+        }
+
+        if (!this.showInactiveProjects) {
+            query.must(getQueryProjectActive(true));
+        }
+
+        return query;
+    }
+
+    /**
+     * Find all templates available to assign to the edited project. It will be
+     * displayed in the templateAddPopup.
+     *
+     * @param projectId
+     *            id of project which is going to be edited
+     * @return list of all matching templates
+     */
+    public List<TemplateDTO> findAllAvailableForAssignToProject(int projectId) throws DataException {
+        return findAvailableForAssignToUser(projectId);
+    }
+
+    private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
+        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
     }
 
     /**
@@ -253,7 +281,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         // tasks don't need to be duplicated - will be created out of copied workflow
         duplicatedTemplate.setWorkflow(baseTemplate.getWorkflow());
 
-        //TODO: make sure if copy should be assigned automatically to all projects
+        // TODO: make sure if copy should be assigned automatically to all projects
         for (Project project : baseTemplate.getProjects()) {
             duplicatedTemplate.getProjects().add(project);
             project.getTemplates().add(duplicatedTemplate);
@@ -280,7 +308,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
         templateDTO.setWorkflow(workflowDTO);
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
-                serviceManager.getTaskService()));
+            serviceManager.getTaskService()));
         templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
@@ -295,12 +323,28 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             serviceManager.getProjectService()));
     }
 
-    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort, offset, size);
+    /**
+     * Find templates by docket id.
+     *
+     * @param docketId
+     *            id of docket for search
+     * @return list of JSON objects with templates for specific docket id
+     */
+    public List<JsonObject> findByDocket(int docketId) throws DataException {
+        QueryBuilder query = createSimpleQuery(TemplateTypeField.DOCKET.getKey(), docketId, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find templates by ruleset id.
+     *
+     * @param rulesetId
+     *            id of ruleset for search
+     * @return list of JSON objects with templates for specific ruleset id
+     */
+    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+        QueryBuilder query = createSimpleQuery(TemplateTypeField.RULESET.getKey(), rulesetId, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
@@ -331,8 +375,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Check whether the template contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the template contains tasks that are not assigned to a role.
      *
      * @param tasks
      *            list of tasks for testing
@@ -344,7 +387,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return true;
         }
         for (Task task : tasks) {
-            if (taskService.getUserGroupsSize(task) == 0 && taskService.getUsersSize(task) == 0) {
+            if (taskService.getRolesSize(task) == 0) {
                 return true;
             }
         }
@@ -364,7 +407,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return false;
         }
         for (TaskDTO task : tasks) {
-            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+            if (task.getRolesSize() == 0) {
                 return false;
             }
         }
@@ -392,21 +435,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Find templates of active projects, sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<TemplateDTO> findTemplatesOfActiveProjects(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
-    }
-
-    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
-    }
-
-    /**
      * Get query for active projects.
      *
      * @param active
@@ -415,6 +443,18 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     private QueryBuilder getQueryProjectActive(boolean active) {
         return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.ACTIVE, active, true);
+    }
+
+    /**
+     * Get query for projects assigned to selected client.
+     *
+     * @param id
+     *            of selected client
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
+        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id,
+                true);
     }
 
     /**

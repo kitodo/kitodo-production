@@ -12,14 +12,19 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 public class UserEditPage extends EditPage<UserEditPage> {
 
@@ -51,31 +56,55 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
-    private WebElement metaDataLanguageInput;
+    private WebElement metadataLanguageInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_TAB_VIEW + ":addUserGroupButton")
-    private WebElement addUserToGroupButton;
+    @FindBy(id = USER_TAB_VIEW + ":table-size")
+    private WebElement tableSizeInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":addRoleButton")
+    private WebElement addUserToRoleButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":addProjectButton")
+    private WebElement addUserToProjectButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":addClientButton")
     private WebElement addUserToClientButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userGroupForm:selectUserGroupTable_data")
-    private WebElement selectUserGroupTable;
+    @FindBy(id = "roleForm:selectRoleTable_data")
+    private WebElement selectRoleTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "userProjectForm:selectProjectTable_data")
+    private WebElement selectProjectTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "userClientForm:selectClientTable_data")
     private WebElement selectClientTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "addUserGroupDialog")
-    private WebElement addToUserGroupDialog;
+    @FindBy(id = "addRoleDialog")
+    private WebElement addToRoleDialog;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "addProjectDialog")
+    private WebElement addToProjectDialog;
 
     @SuppressWarnings("unused")
     @FindBy(id = "addClientDialog")
     private WebElement addToClientDialog;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "user-menu")
+    private WebElement userMenuButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(partialLinkText = "Benutzerdaten & Einstellungen")
+    private WebElement userConfigButton;
 
     public UserEditPage() {
         super("pages/userEdit.jsf");
@@ -92,7 +121,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
         locationInput.sendKeys(user.getLocation());
-        metaDataLanguageInput.sendKeys(user.getMetadataLanguage());
+        metadataLanguageInput.sendKeys(user.getMetadataLanguage());
         return this;
     }
 
@@ -101,42 +130,53 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return Pages.getUsersPage();
     }
 
+    public void addUserToRole(String roleTitle) throws Exception {
+        switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
+        addUserToRoleButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
+        addRow(tableRows, roleTitle, addToRoleDialog);
+    }
+
+    public void addUserToClient(String clientName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
+        addUserToClientButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
+        addRow(tableRows, clientName, addToClientDialog);
+    }
+
+    public UserEditPage addUserToProject(String projectName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
+        addUserToProjectButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
+        addRow(tableRows, projectName, addToProjectDialog);
+        return this;
+    }
+
+    public void changeUserSettings() throws Exception {
+        openUserConfig();
+        tableSizeInput.clear();
+        tableSizeInput.sendKeys("50");
+        metadataLanguageInput.clear();
+        metadataLanguageInput.sendKeys("en");
+        Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(1).click();
+        Browser.getDriver().findElement(By.id(USER_TAB_VIEW + ":languages_1")).click();
+        save();
+    }
+
+    private void openUserConfig() {
+        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+
+        hoverWebElement(userMenuButton);
+        hoverWebElement(userConfigButton);
+        userConfigButton.click();
+    }
+
     /**
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).
-     *
-     * @return The users page.
      */
-    public UserEditPage switchToTabByIndex(int index) throws Exception {
-        return switchToTabByIndex(index, userEditTabView);
-    }
-
-    public UserEditPage addUserToUserGroup(String userGroupTitle) {
-        addUserToGroupButton.click();
-        List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
-        return addRow(tableRows, userGroupTitle, addToUserGroupDialog);
-    }
-
-    public UserEditPage addUserToClient(String clientName) {
-        addUserToClientButton.click();
-        List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        return addRow(tableRows, clientName, addToClientDialog);
-    }
-
-    private void clickLinkOfTableRow(WebElement tableRow) {
-        WebElement link = tableRow.findElement(By.tagName("a"));
-        link.click();
-    }
-
-
-    private UserEditPage addRow(List<WebElement> tableRows, String title, WebElement dialog) {
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(dialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No row for given value found: " + title);
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, userEditTabView);
     }
 }

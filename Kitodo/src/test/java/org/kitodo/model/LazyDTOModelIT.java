@@ -18,23 +18,22 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.dto.DocketDTO;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.DocketService;
+import org.kitodo.services.data.ClientService;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
 
     private static final ServiceManager serviceManager = new ServiceManager();
-    private static DocketService docketService = serviceManager.getDocketService();
+    private static ClientService clientService = serviceManager.getClientService();
     private static LazyDTOModel lazyDTOModel = null;
 
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertClients();
-        MockDatabase.insertDockets();
-        lazyDTOModel = new LazyDTOModel(docketService);
+        lazyDTOModel = new LazyDTOModel(clientService);
     }
 
     @AfterClass
@@ -45,16 +44,16 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List dockets = docketService.findAll();
-        DocketDTO firstDocket = (DocketDTO) dockets.get(0);
-        DocketDTO lazyDocket = (DocketDTO) lazyDTOModel.getRowData(String.valueOf(firstDocket.getId()));
-        Assert.assertEquals(firstDocket.getTitle(), lazyDocket.getTitle());
+        List clients = clientService.findAll();
+        ClientDTO firstClient = (ClientDTO) clients.get(0);
+        ClientDTO lazyClient = (ClientDTO) lazyDTOModel.getRowData(String.valueOf(firstClient.getId()));
+        Assert.assertEquals(firstClient.getName(), lazyClient.getName());
     }
 
     @Test
     public void shouldLoad() {
-        List dockets = lazyDTOModel.load(0, 2, "title", SortOrder.ASCENDING, null);
-        DocketDTO docket = (DocketDTO) dockets.get(0);
-        Assert.assertEquals("default", docket.getTitle());
+        List clients = lazyDTOModel.load(0, 2, "clientName", SortOrder.ASCENDING, null);
+        ClientDTO client = (ClientDTO) clients.get(0);
+        Assert.assertEquals("Second client", client.getName());
     }
 }

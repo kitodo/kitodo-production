@@ -42,6 +42,12 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     @Override
+    public List<Template> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Template save(Template process) throws DAOException {
         storeObject(process);
         return retrieveObject(Template.class, process.getId());

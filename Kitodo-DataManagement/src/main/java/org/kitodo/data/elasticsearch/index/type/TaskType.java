@@ -25,13 +25,13 @@ public class TaskType extends BaseType<Task> {
 
     @Override
     JsonObject getJsonObject(Task task) {
-        Integer processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
+        int processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
                 : 0;
-        Integer editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
-        Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
-        Integer processId = task.getProcess() != null ? task.getProcess().getId() : 0;
+        int editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
+        int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
+        int processId = task.getProcess() != null ? task.getProcess().getId() : 0;
         String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
-        Integer templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
+        int templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
         String templateTitle = task.getTemplate() != null ? task.getTemplate().getTitle() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
@@ -54,8 +54,7 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), processTitle);
         jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
         jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), templateTitle);
-        jsonObjectBuilder.add(TaskTypeField.USERS.getKey(), addObjectRelation(task.getUsers()));
-        jsonObjectBuilder.add(TaskTypeField.USER_GROUPS.getKey(), addObjectRelation(task.getUserGroups()));
+        jsonObjectBuilder.add(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObjectBuilder.build();
     }
 }

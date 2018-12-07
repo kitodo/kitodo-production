@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.model.Subfolder;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.services.data.TaskService;
 import org.kitodo.services.file.SubfolderFactoryService;
 import org.kitodo.services.image.ImageGenerator;
 import org.kitodo.workflow.Problem;
@@ -70,9 +72,9 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private Problem problem = new Problem();
-    private Solution solution = new Solution();
-    private List<TaskDTO> selectedTasks;
+    private transient Problem problem = new Problem();
+    private transient Solution solution = new Solution();
+    private transient List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
     private boolean onlyOpenTasks = false;
@@ -83,7 +85,7 @@ public class CurrentTaskForm extends BaseForm {
     private String scriptPath;
     private String addToWikiField = "";
     private String doneDirectoryName;
-    private BatchTaskHelper batchHelper;
+    private transient BatchTaskHelper batchHelper;
     private List<Property> properties;
     private Property property;
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -115,14 +117,16 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Bearbeitung des Schritts übernehmen oder abschliessen.
+     * Take over task by user which calls this method.
+     *
+     * @return page
      */
-    public String schrittDurchBenutzerUebernehmen() {
+    public String takeOverTask() {
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
-            return null;
+            return this.stayOnCurrentPage;
         } else {
-            setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
+            serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask);
             try {
                 serviceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
@@ -138,16 +142,16 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return page
      */
-    public String editStep() {
+    public String editTask() {
         serviceManager.getTaskService().refresh(this.currentTask);
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
-     * Take over batch of tasks - all tasks assigned to the same batch with the
-     * same title.
+     * Take over batch of tasks - all tasks assigned to the same batch with the same
+     * title.
      *
-     * @return page for edit one task, page for edit many or null
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -155,14 +159,14 @@ public class CurrentTaskForm extends BaseForm {
             Type.LOGISTIC);
 
         if (batches.isEmpty()) {
-            return schrittDurchBenutzerUebernehmen();
+            return takeOverTask();
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
-                return null;
+                return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
-                return schrittDurchBenutzerUebernehmen();
+                return takeOverTask();
             } else {
                 for (Task task : currentTasksOfBatch) {
                     processTask(task);
@@ -173,7 +177,7 @@ public class CurrentTaskForm extends BaseForm {
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -220,7 +224,7 @@ public class CurrentTaskForm extends BaseForm {
      * Edit batch of tasks - all tasks assigned to the same batch with the same
      * title.
      *
-     * @return page for edit one task, page for edit many or null
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -233,7 +237,7 @@ public class CurrentTaskForm extends BaseForm {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
-                return null;
+                return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
                 return taskEditPath + "&id=" + getTaskIdForPath();
             } else {
@@ -242,46 +246,52 @@ public class CurrentTaskForm extends BaseForm {
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
     /**
-     * Not sure.
+     * Release task - set up task status to open and make available for other users
+     * to take over.
      *
      * @return page
      */
-    public String schrittDurchBenutzerZurueckgeben() {
+    public String releaseTask() {
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask));
+            serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
         }
         return taskListPath;
     }
 
     /**
-     * Not sure.
+     * Close method task called by user action.
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
-        setCurrentTask(serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask));
-        serviceManager.getTaskService().save(this.currentTask);
+    public String closeTaskByUser() {
+        try {
+            serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
+        } catch (DataException | IOException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
+        }
         return taskListPath;
     }
 
     /**
      * Unlock the current task's process.
      * 
-     * @return null
+     * @return stay on the current page
      */
-    public String sperrungAufheben() {
+    public String releaseLock() {
         MetadataLock.unlockProcess(this.currentTask.getProcess().getId());
         this.currentTask.getProcess().setBlockedUser(null);
         this.currentTask.getProcess().setBlockedMinutes(0);
         this.currentTask.getProcess().setBlockedSeconds(0);
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -304,7 +314,7 @@ public class CurrentTaskForm extends BaseForm {
     public String reportProblem() {
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
+            serviceManager.getWorkflowControllerService().reportProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
@@ -332,7 +342,7 @@ public class CurrentTaskForm extends BaseForm {
     public String solveProblem() {
         serviceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
+            serviceManager.getWorkflowControllerService().solveProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
@@ -346,18 +356,16 @@ public class CurrentTaskForm extends BaseForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws DataException, IOException {
-        List<URI> fertigListe = this.myDav.uploadAllFromHome(doneDirectoryName);
-        List<URI> geprueft = new ArrayList<>();
-        /*
-         * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
-         * setzen
-         */
-        if (!fertigListe.isEmpty() && this.onlyOpenTasks) {
+    public String uploadFromHomeAlle() {
+        List<URI> readyList = this.myDav.uploadAllFromHome(doneDirectoryName);
+        List<URI> checkedList = new ArrayList<>();
+
+        // go through the uploaded process IDs and set to complete
+        if (!readyList.isEmpty() && this.onlyOpenTasks) {
             this.onlyOpenTasks = false;
             return taskListPath;
         }
-        for (URI element : fertigListe) {
+        for (URI element : readyList) {
             String id = element.toString()
                     .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
 
@@ -366,17 +374,17 @@ public class CurrentTaskForm extends BaseForm {
                 if (task.getProcess().getId() == Integer.parseInt(id)
                         && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.currentTask = task;
-                    if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
-                        geprueft.add(element);
+                    if (Objects.nonNull(closeTaskByUser())) {
+                        checkedList.add(element);
                     }
                     this.currentTask.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 }
             }
         }
 
-        this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
-        Helper.setMessage("removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
-        return null;
+        this.myDav.removeAllFromHome(checkedList, URI.create(doneDirectoryName));
+        Helper.setMessage("removed " + checkedList.size() + " directories from user home:", doneDirectoryName);
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -388,7 +396,7 @@ public class CurrentTaskForm extends BaseForm {
         download();
         // calcHomeImages();
         Helper.setMessage("Created directories in user home");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -400,7 +408,7 @@ public class CurrentTaskForm extends BaseForm {
         download();
         // calcHomeImages();
         Helper.setMessage("Created directories in user home");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     @SuppressWarnings("unchecked")
@@ -605,8 +613,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Set selected tasks: Set tasks in old list to false and set new list to
-     * true.
+     * Set selected tasks: Set tasks in old list to false and set new list to true.
      *
      * @param selectedTasks
      *            provided by data table
@@ -694,14 +701,15 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Using this helper variable, JSF can check if there is content to generate
-     * in the current task. In this case, corresponding action links are
-     * rendered, otherwise not.
+     * Using this helper variable, JSF can check if there is content to generate in
+     * the current task. In this case, corresponding action links are rendered,
+     * otherwise not.
      * 
      * @return whether action links should be displayed
      */
     public boolean isShowingGenerationActions() {
-        return !serviceManager.getTaskService().getGenerators(currentTask).isEmpty();
+        return TaskService.generatableFoldersFromProjects(Arrays.asList(currentTask.getProcess().getProject()).stream())
+                .findAny().isPresent();
     }
 
     /**
@@ -910,8 +918,8 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user that
-     * are currently in progress.
+     * Retrieve and return the list of tasks that are assigned to the user that are
+     * currently in progress.
      *
      * @return list of tasks that are currently assigned to the user that are
      *         currently in progress.

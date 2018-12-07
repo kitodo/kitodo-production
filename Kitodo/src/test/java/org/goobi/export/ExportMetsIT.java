@@ -62,7 +62,7 @@ public class ExportMetsIT {
         fileService.createDirectory(URI.create(""), metadataDirectory);
         fileService.copyFileToDirectory(URI.create("metadata/testmetaOldFormat.xml"), URI.create(metadataDirectory));
         fileService.renameFile(URI.create(metadataDirectory + "/testmetaOldFormat.xml"), "meta.xml");
-        SecurityTestUtils.addUserDataToSecurityContext(user);
+        SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         FileLoader.createConfigProjectsFile();
 
         if (!SystemUtils.IS_OS_WINDOWS) {

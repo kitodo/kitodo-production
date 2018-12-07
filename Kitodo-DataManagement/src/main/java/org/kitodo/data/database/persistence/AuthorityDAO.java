@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Authority;
@@ -40,6 +41,12 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     }
 
     @Override
+    public List<Authority> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Authority save(Authority authority) throws DAOException {
         storeObject(authority);
         return retrieveObject(Authority.class, authority.getId());
@@ -48,5 +55,21 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Authority.class, id);
+    }
+
+    /**
+     * Get authority by title.
+     *
+     * @param title
+     *            of the searched authority
+     * @return matching authority
+     */
+    public Authority getByTitle(String title) throws DAOException {
+        List<Authority> authorities = getByQuery("FROM Authority WHERE title = :title", Collections.singletonMap("title", title));
+
+        if (!authorities.isEmpty()) {
+            return authorities.get(0);
+        }
+        throw new DAOException("Object can not be found in database");
     }
 }

@@ -12,14 +12,13 @@
 package org.kitodo.helper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -30,12 +29,10 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 public class SelectItemList {
 
-    private static final Logger logger = LogManager.getLogger(SelectItemList.class);
     private static ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -63,11 +60,13 @@ public class SelectItemList {
     /**
      * Get clients for select list.
      *
+     * @param clients
+     *            to convert to select list
      * @return list of clients as SelectItem list
      */
-    public static List<SelectItem> getClients() {
+    public static List<SelectItem> getClients(List<Client> clients) {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Client> clients = serviceManager.getClientService().getByQuery("from Client ORDER BY name");
+        clients.sort(Comparator.comparing(Client::getName));
         for (Client client : clients) {
             selectItems.add(new SelectItem(client, client.getName(), null));
         }
@@ -77,11 +76,13 @@ public class SelectItemList {
     /**
      * Get dockets for select list.
      *
+     * @param dockets
+     *            to convert to select list
      * @return list of dockets as SelectItem list
      */
-    public static List<SelectItem> getDockets() {
+    public static List<SelectItem> getDockets(List<Docket> dockets) {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Docket> dockets = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
+        dockets.sort(Comparator.comparing(Docket::getTitle));
         for (Docket docket : dockets) {
             selectItems.add(new SelectItem(docket, docket.getTitle(), null));
         }
@@ -111,19 +112,10 @@ public class SelectItemList {
     // templates
     public static List<SelectItem> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        // TODO Change to check the corresponding authority
-        if (serviceManager.getSecurityAccessService().isAdmin()) {
-            try {
-                processes = serviceManager.getProcessService().getAll();
-            } catch (DAOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        } else {
-            User currentUser = serviceManager.getUserService().getAuthenticatedUser();
-            if (Objects.nonNull(currentUser)) {
-                for (Project project : currentUser.getProjects()) {
-                    processes.addAll(project.getProcesses());
-                }
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(currentUser)) {
+            for (Project project : currentUser.getProjects()) {
+                processes.addAll(project.getProcesses());
             }
         }
         processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
@@ -140,6 +132,7 @@ public class SelectItemList {
      */
     public static List<SelectItem> getProcesses(List<Process> processes) {
         List<SelectItem> selectItems = new ArrayList<>();
+        processes.sort(Comparator.comparing(Process::getTitle));
         for (Process process : processes) {
             selectItems.add(new SelectItem(process, process.getTitle(), null));
         }
@@ -149,12 +142,14 @@ public class SelectItemList {
     /**
      * Get list of projects for select list.
      *
+     * @param projects
+     *            to convert to select list
      * @return list of SelectItem objects
      */
-    public static List<SelectItem> getProjects() {
+    public static List<SelectItem> getProjects(List<Project> projects) {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
-        for (Project project : temp) {
+        projects.sort(Comparator.comparing(Project::getTitle));
+        for (Project project : projects) {
             selectItems.add(new SelectItem(project, project.getTitle(), null));
         }
         return selectItems;
@@ -163,11 +158,13 @@ public class SelectItemList {
     /**
      * Get rulesets for select list.
      *
+     * @param rulesets
+     *            to convert to select list
      * @return list of rulesets as SelectItem list
      */
-    public static List<SelectItem> getRulesets() {
+    public static List<SelectItem> getRulesets(List<Ruleset> rulesets) {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Ruleset> rulesets = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
+        rulesets.sort(Comparator.comparing(Ruleset::getTitle));
         for (Ruleset ruleset : rulesets) {
             selectItems.add(new SelectItem(ruleset, ruleset.getTitle(), null));
         }
@@ -177,13 +174,15 @@ public class SelectItemList {
     /**
      * Get list of workflows for select list.
      *
+     * @param workflows
+     *            to convert to select list
      * @return list of SelectItem objects
      */
-    public static List<SelectItem> getWorkflows() {
+    public static List<SelectItem> getWorkflows(List<Workflow> workflows) {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<Workflow> workflows = serviceManager.getWorkflowService().getAvailableWorkflows();
+        workflows.sort(Comparator.comparing(Workflow::getFileName));
         for (Workflow workflow : workflows) {
-            selectItems.add(new SelectItem(workflow, workflow.getTitle(), null));
+            selectItems.add(new SelectItem(workflow, workflow.getFileName(), null));
         }
         return selectItems;
     }

@@ -75,12 +75,14 @@
                         <h:outputText><i class="fa fa-print"/> #{msgs.docketPrint}</h:outputText>
                     </h:commandLink>
 
-                    <h:link outcome="batchProperties" title="#{msgs.propertyEdit}">
+                    <h:link outcome="batchProperties" title="#{msgs.propertyEdit}"
+                            rendered="#{SecurityAccessController.hasAuthorityToEditBatch()}">
                         <f:param name="id" value="#{BatchForm.selectedBatchId}"/>
                         <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
                     </h:link>
 
-                    <h:commandLink id="deleteBatch" action="#{BatchForm.delete}">
+                    <h:commandLink id="deleteBatch" action="#{BatchForm.delete}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteBatch()}">
                         <h:outputText><i class="fa fa-trash-o"/> #{msgs.deleteBatch}</h:outputText>
                     </h:commandLink>
                 </h:panelGrid>
@@ -111,21 +113,25 @@
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadAssociatedBatchOfProcess}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink id="addProcessesToBatch" action="#{BatchForm.addProcessesToBatch}">
+                    <h:commandLink id="addProcessesToBatch" action="#{BatchForm.addProcessesToBatch}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditBatch()}">
                         <h:outputText><i class="fa fa-check-circle-o"/> #{msgs.addToSelectedBatch}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink id="removeProcessesFromBatch" action="#{BatchForm.removeProcessesFromBatch}">
+                    <h:commandLink id="removeProcessesFromBatch" action="#{BatchForm.removeProcessesFromBatch}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditBatch()}">
                         <h:outputText><i class="fa fa-times-circle-o"/> #{msgs.removeFromAssociatedBatch}</h:outputText>
                     </h:commandLink>
 
                     <p:commandLink id="renameBatch" title="#{msgs.renameBatch}"
-                                   oncomplete="PF('renameBatchDialog').show()" update="@(.editDialog)">
+                                   oncomplete="PF('renameBatchDialog').show()" update="@(.editDialog)"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditBatch()}">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/> #{msgs.renameBatch}</h:outputText>
                     </p:commandLink>
 
                     <p:commandLink id="createBatch" title="#{msgs.createNewBatchFromSelectedProcesses}"
-                                   oncomplete="PF('createBatchDialog').show()" update="@(.editDialog)">
+                                   oncomplete="PF('createBatchDialog').show()" update="@(.editDialog)"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddBatch()}">
                         <h:outputText><i class="fa fa-plus"/> #{msgs.createNewBatchFromSelectedProcesses}</h:outputText>
                     </p:commandLink>
                 </h:panelGrid>

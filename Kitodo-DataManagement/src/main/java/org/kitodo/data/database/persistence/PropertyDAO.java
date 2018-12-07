@@ -40,6 +40,12 @@ public class PropertyDAO extends BaseDAO<Property> {
     }
 
     @Override
+    public List<Property> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Property save(Property property) throws DAOException {
         storeObject(property);
         return retrieveObject(Property.class, property.getId());

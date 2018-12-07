@@ -11,6 +11,8 @@
 
 package org.kitodo.services.data;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LdapGroupDAO;
@@ -25,6 +27,11 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM LdapGroup");
+    }
+
+    @Override
+    public List<LdapGroup> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
     }
 
     /**

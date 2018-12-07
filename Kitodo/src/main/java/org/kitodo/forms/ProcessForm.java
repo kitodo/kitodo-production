@@ -63,22 +63,21 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.exporter.download.ExportPdf;
-import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
@@ -94,7 +93,7 @@ public class ProcessForm extends TemplateBaseForm {
     private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();
-    private List<ProcessCounterObject> processCounterObjects;
+    private transient List<ProcessCounterObject> processCounterObjects;
     private HashMap<String, Integer> counterSummary;
     private Property templateProperty;
     private Property workpieceProperty;
@@ -109,15 +108,12 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private String addToWikiField = "";
-    private List<ProcessDTO> processDTOS = new ArrayList<>();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String EXPORT_FINISHED = "exportFinished";
-    private static final String PROPERTIES_SAVED = "propertiesSaved";
-    private static final String PROPERTY_SAVED = "propertySaved";
-    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
@@ -161,7 +157,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.process != null && this.process.getTitle() != null) {
             if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return this.stayOnCurrentPage;
             }
 
             try {
@@ -175,7 +171,7 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("titleEmpty");
         }
         reload();
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -235,13 +231,13 @@ public class ProcessForm extends TemplateBaseForm {
         }
 
         Helper.setMessage("Content deleted");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            Helper.setErrorMessage("processTitleInvalid");
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());
@@ -306,8 +302,12 @@ public class ProcessForm extends TemplateBaseForm {
                     .resolve(processDir.replace("(processtitle)", process.getTitle()));
 
             File dir = new File(processDirAbsolute);
+            boolean renamed;
             if (dir.isDirectory()) {
-                dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                if (!renamed) {
+                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName()});
+                }
             }
         }
     }
@@ -333,15 +333,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove template properties.
      */
     public void deleteTemplateProperty() {
-        try {
-            this.templateProperty.getProcesses().clear();
-            this.process.getTemplates().remove(this.templateProperty);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.templateProperty);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
-                e);
-        }
+        this.templateProperty.getProcesses().clear();
+        this.process.getTemplates().remove(this.templateProperty);
         loadTemplateProperties();
     }
 
@@ -349,15 +342,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove workpiece properties.
      */
     public void deleteWorkpieceProperty() {
-        try {
-            this.workpieceProperty.getProcesses().clear();
-            this.process.getWorkpieces().remove(this.workpieceProperty);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.workpieceProperty);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
-                e);
-        }
+        this.workpieceProperty.getProcesses().clear();
+        this.process.getWorkpieces().remove(this.workpieceProperty);
         loadWorkpieceProperties();
     }
 
@@ -368,10 +354,10 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.templates.add(property);
-        this.templateProperty = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.templates.add(newProperty);
+        this.templateProperty = newProperty;
     }
 
     /**
@@ -381,25 +367,18 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.workpieces.add(property);
-        this.workpieceProperty = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.workpieces.add(newProperty);
+        this.workpieceProperty = newProperty;
     }
 
     /**
      * Save template property.
      */
     public void saveTemplateProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.templateProperty);
-            if (!this.process.getTemplates().contains(this.templateProperty)) {
-                this.process.getTemplates().add(this.templateProperty);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+        if (!this.process.getTemplates().contains(this.templateProperty)) {
+            this.process.getTemplates().add(this.templateProperty);
         }
         loadTemplateProperties();
     }
@@ -408,15 +387,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Save workpiece property.
      */
     public void saveWorkpieceProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.workpieceProperty);
-            if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
-                this.process.getWorkpieces().add(this.workpieceProperty);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+        if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
+            this.process.getWorkpieces().add(this.workpieceProperty);
         }
         loadWorkpieceProperties();
     }
@@ -435,37 +407,20 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove task.
      */
     public void removeTask() {
-        try {
-            this.process.getTasks().remove(this.task);
-            List<User> users = this.task.getUsers();
-            for (User user : users) {
-                user.getTasks().remove(this.task);
-            }
+        this.process.getTasks().remove(this.task);
 
-            List<UserGroup> userGroups = this.task.getUserGroups();
-            for (UserGroup userGroup : userGroups) {
-                userGroup.getTasks().remove(this.task);
-            }
-            deleteSymlinksFromUserHomes();
-            serviceManager.getTaskService().remove(this.task);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+        List<Role> roles = this.task.getRoles();
+        for (Role role : roles) {
+            role.getTasks().remove(this.task);
         }
+        deleteSymlinksFromUserHomes();
     }
 
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
-        /* alle Benutzer */
-        for (User user : this.task.getUsers()) {
-            try {
-                webDav.uploadFromHome(user, this.task.getProcess());
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
-        /* alle Benutzergruppen mit ihren Benutzern */
-        for (UserGroup userGroup : this.task.getUserGroups()) {
-            for (User user : userGroup.getUsers()) {
+
+        for (Role role : this.task.getRoles()) {
+            for (User user : role.getUsers()) {
                 try {
                     webDav.uploadFromHome(user, this.task.getProcess());
                 } catch (RuntimeException e) {
@@ -476,43 +431,45 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Remove User.
+     * Remove role from the task.
      *
-     * @return empty String
+     * @return stay on the same page
      */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
+    public String deleteRole() {
+        try {
+            int roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Role role : this.task.getRoles()) {
+                if (role.getId().equals(roleId)) {
+                    this.task.getRoles().remove(role);
+                }
+            }
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return this.stayOnCurrentPage;
     }
 
     /**
-     * Remove UserGroup.
+     * Add role to the task.
      *
-     * @return empty String
+     * @return stay on the same page
      */
-    public String deleteUserGroup() {
-        deleteUserGroup(this.task);
-        return null;
-    }
+    public String addRole() {
+        int roleId = 0;
+        try {
+            roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Role role = serviceManager.getRoleService().getById(roleId);
 
-    /**
-     * Add UserGroup.
-     *
-     * @return empty String
-     */
-    public String addUserGroup() {
-        addUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Add User.
-     *
-     * @return empty String
-     */
-    public String addUser() {
-        addUser(this.task);
-        return null;
+            if (!this.task.getRoles().contains(role)) {
+                this.task.getRoles().add(role);
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -774,7 +731,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status up.
      */
     public void setTaskStatusUp() throws DataException, IOException {
-        setTask(workflowControllerService.setTaskStatusUp(this.task));
+        workflowControllerService.setTaskStatusUp(this.task);
         save();
         deleteSymlinksFromUserHomes();
     }
@@ -783,7 +740,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status down.
      */
     public void setTaskStatusDown() {
-        setTask(workflowControllerService.setTaskStatusDown(this.task));
+        workflowControllerService.setTaskStatusDown(this.task);
         save();
         deleteSymlinksFromUserHomes();
     }
@@ -1443,17 +1400,14 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void loadProcessProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.properties = this.process.getProperties();
     }
 
     private void loadTemplateProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.templates = this.process.getTemplates();
     }
 
     private void loadWorkpieceProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.workpieces = this.process.getWorkpieces();
     }
 
@@ -1464,26 +1418,18 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.properties.add(property);
-        this.property = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.properties.add(newProperty);
+        this.property = newProperty;
     }
 
     /**
      * Save current property.
      */
     public void saveCurrentProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.property);
-            if (!this.process.getProperties().contains(this.property)) {
-                this.process.getProperties().add(this.property);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTY_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
+        if (!this.process.getProperties().contains(this.property)) {
+            this.process.getProperties().add(this.property);
         }
         loadProcessProperties();
     }
@@ -1492,18 +1438,11 @@ public class ProcessForm extends TemplateBaseForm {
      * Delete property.
      */
     public void deleteProperty() {
-        try {
-            this.property.getProcesses().clear();
-            this.process.getProperties().remove(this.property);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.property);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
-        }
+        this.property.getProcesses().clear();
+        this.process.getProperties().remove(this.property);
 
-        List<Property> properties = this.process.getProperties();
-        removePropertiesWithEmptyTitle(properties);
+        List<Property> propertiesToFilterTitle = this.process.getProperties();
+        removePropertiesWithEmptyTitle(propertiesToFilterTitle);
         loadProcessProperties();
     }
 
@@ -1512,31 +1451,17 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void duplicateProperty() {
         Property newProperty = serviceManager.getPropertyService().transfer(this.property);
-        try {
-            newProperty.getProcesses().add(this.process);
-            this.process.getProperties().add(newProperty);
-            serviceManager.getPropertyService().save(newProperty);
-            Helper.setMessage(PROPERTY_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
-        }
+        newProperty.getProcesses().add(this.process);
+        this.process.getProperties().add(newProperty);
         loadProcessProperties();
     }
 
     // TODO: is it really a case that title is empty?
     private void removePropertiesWithEmptyTitle(List<Property> properties) {
         for (Property processProperty : properties) {
-            if (processProperty.getTitle() == null) {
-                try {
-                    processProperty.getProcesses().clear();
-                    this.process.getProperties().remove(processProperty);
-                    serviceManager.getProcessService().save(this.process);
-                    serviceManager.getPropertyService().remove(processProperty);
-                } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
-                        logger, e);
-                }
+            if (Objects.isNull(processProperty.getTitle()) ||  processProperty.getTitle().isEmpty()) {
+                processProperty.getProcesses().clear();
+                this.process.getProperties().remove(processProperty);
             }
         }
     }
@@ -1547,7 +1472,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of dockets as SelectItem objects
      */
     public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets();
+        return SelectItemList.getDockets(serviceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -1556,7 +1481,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of projects as SelectItem objects
      */
     public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects();
+        return SelectItemList.getProjects(serviceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -1565,16 +1490,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of rulesets as SelectItem objects
      */
     public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets();
-    }
-
-    /**
-     * Get list od DTO processes.
-     *
-     * @return list of ProcessDTO objects
-     */
-    public List<ProcessDTO> getProcessDTOS() {
-        return processDTOS;
+        return SelectItemList.getRulesets(serviceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**
@@ -1615,7 +1531,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Return list of users.
      *
-     * @return list of user groups
+     * @return list of active user
      */
     public List<UserDTO> getActiveUsers() {
         try {
@@ -1628,15 +1544,15 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Return list of user groups.
+     * Return list of roles.
      *
-     * @return list of user groups
+     * @return list of roles
      */
-    public List<UserGroupDTO> getUserGroups() {
+    public List<RoleDTO> getRoles() {
         try {
-            return serviceManager.getUserGroupService().findAll();
+            return serviceManager.getRoleService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() },
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
         }

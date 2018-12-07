@@ -22,7 +22,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -31,18 +30,18 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
+import org.kitodo.selenium.testframework.pages.UserEditPage;
+import org.kitodo.selenium.testframework.pages.RoleEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
 
@@ -53,14 +52,16 @@ public class AddingST extends BaseTestSelenium {
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
-    private static UserGroupEditPage userGroupEditPage;
+    private static RoleEditPage roleEditPage;
+    private static UserEditPage userEditPage;
 
     @BeforeClass
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
         usersPage = Pages.getUsersPage();
-        userGroupEditPage = Pages.getUserGroupEditPage();
+        userEditPage = Pages.getUserEditPage();
+        roleEditPage = Pages.getRoleEditPage();
     }
 
     @Before
@@ -110,13 +111,12 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }
 
-    @Ignore("buttons invisible for tests")
     @Test
     public void addProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         projectsPage.createNewProcess();
-        assertEquals("Header for create new process is incorrect", "createNewProcess",
+        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
             Pages.getProcessFromTemplatePage().getHeaderText());
 
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
@@ -177,19 +177,21 @@ public class AddingST extends BaseTestSelenium {
         User user = UserGenerator.generateUser();
         usersPage.createNewUser();
         assertEquals("Header for create new user is incorrect", "Neuen Benutzer anlegen",
-            Pages.getUserEditPage().getHeaderText());
+                userEditPage.getHeaderText());
 
-        Pages.getUserEditPage().insertUserData(user).switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
-        Pages.getUserEditPage().addUserToUserGroup(serviceManager.getUserGroupService().getById(2).getTitle());
-        Pages.getUserEditPage().switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
-        Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(1).getName());
-        Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(2).getName()).save();
-        assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+        userEditPage.insertUserData(user);
+        userEditPage.addUserToRole(serviceManager.getRoleService().getById(2).getTitle());
+        userEditPage.addUserToClient(serviceManager.getClientService().getById(1).getName());
+        userEditPage.addUserToClient(serviceManager.getClientService().getById(2).getName());
+        userEditPage.save();
+        assertTrue("Redirection after save was not successful", usersPage.isAt());
+
+        User insertedUser = serviceManager.getUserService().getByLogin(user.getLogin());
 
         Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLogin(user);
-        Pages.getTopNavigation().acceptClientSelection();
-        assertEquals(serviceManager.getClientService().getById(1).getName(),
+        Pages.getLoginPage().performLogin(insertedUser);
+        Pages.getTopNavigation().selectSessionClient(1);
+        assertEquals(serviceManager.getClientService().getById(2).getName(),
             Pages.getTopNavigation().getSessionClient());
     }
 
@@ -226,40 +228,33 @@ public class AddingST extends BaseTestSelenium {
     }
 
     @Test
-    public void addUserGroupTest() throws Exception {
-        UserGroup userGroup = new UserGroup();
-        userGroup.setTitle("MockUserGroup");
+    public void addRoleTest() throws Exception {
+        Role role = new Role();
+        role.setTitle("MockRole");
 
-        usersPage.createNewUserGroup();
-        assertEquals("Header for create new user group is incorrect", "Neue Benutzergruppe anlegen",
-                userGroupEditPage.getHeaderText());
+        usersPage.createNewRole();
+        assertEquals("Header for create new role is incorrect", "Neue Rolle anlegen",
+                roleEditPage.getHeaderText());
 
-        userGroupEditPage.setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
-                .assignAllClientAuthorities().assignAllProjectAuthorities();
-        userGroupEditPage.save();
+        roleEditPage.setRoleTitle(role.getTitle()).assignAllGlobalAuthorities()
+                .assignAllClientAuthorities();
+        roleEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
-        List<String> userGroupTitles = usersPage.getUserGroupTitles();
-        assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
+        List<String> roleTitles = usersPage.getRoleTitles();
+        assertTrue("New role was not saved", roleTitles.contains(role.getTitle()));
 
         int availableGlobalAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
-        int assignedGlobalAuthorities = usersPage.editUserGroup(userGroup.getTitle())
+        int assignedGlobalAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedGlobalAuthorities();
-        assertEquals("Assigned authorities of the new user group were not saved!", availableGlobalAuthorities,
+        assertEquals("Assigned authorities of the new role were not saved!", availableGlobalAuthorities,
                 assignedGlobalAuthorities);
-        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
-        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
+        String actualTitle = Pages.getRoleEditPage().getRoleTitle();
+        assertEquals("New Name of role was not saved", role.getTitle(), actualTitle);
 
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
-        int assignedClientAuthorities = usersPage.editUserGroup(userGroup.getTitle())
+        int assignedClientAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedClientAuthorities();
-        assertEquals("Assigned client authorities of the new user group were not saved!", availableClientAuthorities,
+        assertEquals("Assigned client authorities of the new role were not saved!", availableClientAuthorities,
             assignedClientAuthorities);
-
-        int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
-        int assignedProjectAuthorities = userGroupEditPage.countAssignedProjectAuthorities();
-        assertEquals("Assigned project authorities of the new user group were not saved!", availableProjectAuthorities,
-                assignedProjectAuthorities);
-        actualTitle = userGroupEditPage.getUserGroupTitle();
-        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
     }
 }

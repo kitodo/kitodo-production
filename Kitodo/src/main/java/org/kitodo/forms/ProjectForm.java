@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -38,12 +37,13 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.TemplateDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("ProjectForm")
@@ -57,9 +57,9 @@ public class ProjectForm extends BaseForm {
      * The folder currently under edit in the pop-up dialog.
      */
     /*
-     * This is a hack. The clean solution would be to have an inner class bean
-     * for the data table row an dialog, but this approach was introduced
-     * decades ago and has been maintained until today.
+     * This is a hack. The clean solution would be to have an inner class bean for
+     * the data table row an dialog, but this approach was introduced decades ago
+     * and has been maintained until today.
      */
     private Folder myFolder;
     private Project baseProject;
@@ -78,14 +78,14 @@ public class ProjectForm extends BaseForm {
     private String projectEditReferer = DEFAULT_LINK;
 
     /**
-     * Cash for the list of possible MIME types. So that the list does not have
-     * to be read from file several times for one page load.
+     * Cash for the list of possible MIME types. So that the list does not have to
+     * be read from file several times for one page load.
      */
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of
-     * this bean.
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
      */
     public ProjectForm() {
         super();
@@ -156,8 +156,8 @@ public class ProjectForm extends BaseForm {
      * @param itemId
      *            ID of the project to duplicate
      * @return page address; either redirect to the edit project page or return
-     *         'null' if the project could not be retrieved, which will prompt
-     *         JSF to remain on the same page and reuse the bean.
+     *         'null' if the project could not be retrieved, which will prompt JSF
+     *         to remain on the same page and reuse the bean.
      */
     public String duplicate(Integer itemId) {
         setCopyTemplates(true);
@@ -166,14 +166,14 @@ public class ProjectForm extends BaseForm {
             this.project = serviceManager.getProjectService().duplicateProject(baseProject);
             return projectEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
-            return null;
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
+                e);
+            return this.stayOnCurrentPage;
         }
     }
 
     /**
-     * Saves current project if title is not empty and redirects to projects
-     * page.
+     * Saves current project if title is not empty and redirects to projects page.
      *
      * @return page or null
      */
@@ -183,46 +183,42 @@ public class ProjectForm extends BaseForm {
         this.commitFolders();
         if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
             Helper.setErrorMessage("errorProjectNoTitleGiven");
-            return null;
+            return this.stayOnCurrentPage;
         } else {
             try {
+                addFirstUserToNewProject();
+
+                serviceManager.getProjectService().save(this.project);
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
                         template.getProjects().add(this.project);
                         this.project.getTemplates().add(template);
+                        serviceManager.getTemplateService().save(template);
                     }
                     setCopyTemplates(false);
                 }
-                serviceManager.getProjectService().save(this.project);
+
                 return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
-                return null;
+                return this.stayOnCurrentPage;
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular() },
+                    logger, e);
+                return this.stayOnCurrentPage;
             }
         }
     }
 
-    /**
-     * Saves current project if title is not empty.
-     *
-     * @return String
-     */
-    public String apply() {
-        // call this to make saving and deleting permanent
-        this.commitFolders();
-        if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
-            Helper.setErrorMessage("Can not save project with empty title!");
-        } else {
-            try {
-                serviceManager.getProjectService().save(this.project);
-                Helper.setMessage("Project saved!");
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
-                    logger, e);
-            }
+    private void addFirstUserToNewProject() throws DAOException, DataException {
+        if (this.project.getUsers().isEmpty()) {
+            User user = serviceManager.getUserService().getCurrentUser();
+            user.getProjects().add(this.project);
+            this.project.getUsers().add(user);
+            serviceManager.getProjectService().save(this.project);
+            serviceManager.getUserService().save(user);
         }
-        return null;
     }
 
     /**
@@ -250,7 +246,7 @@ public class ProjectForm extends BaseForm {
         this.myFolder = new Folder();
         this.myFolder.setProject(this.project);
         this.newFolders.add(this.myFolder.getId());
-        return this.zurueck;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -274,7 +270,66 @@ public class ProjectForm extends BaseForm {
         // to be deleted folder IDs are listed
         // and deleted after a commit
         this.deletedFolders.add(this.myFolder.getId());
-        return null;
+        return this.stayOnCurrentPage;
+    }
+
+    /**
+     * Return list of templates assignable to this project. Templates are assignable
+     * when they are not assigned already to this project and they belong to the
+     * same client as the project and user which edits this project.
+     *
+     * @return list of assignable templates
+     */
+    public List<TemplateDTO> getTemplates() {
+        try {
+            return serviceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
+                logger, e);
+            return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Add template to project.
+     *
+     * @return stay on the same page
+     */
+    public String addTemplate() {
+        int templateId = 0;
+        try {
+            templateId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Template template = serviceManager.getTemplateService().getById(templateId);
+
+            if (!this.project.getTemplates().contains(template)) {
+                this.project.getTemplates().add(template);
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), templateId }, logger, e);
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return this.stayOnCurrentPage;
+    }
+
+    /**
+     * Remove template from project.
+     *
+     * @return stay on the same page
+     */
+    public String deleteTemplate() {
+        try {
+            int templateId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Template template : this.project.getTemplates()) {
+                if (template.getId().equals(templateId)) {
+                    this.project.getTemplates().remove(template);
+                }
+            }
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -386,9 +441,9 @@ public class ProjectForm extends BaseForm {
             try {
                 Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
                 List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
-                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(
-                        Collectors.toMap(locale -> locale.getLabel(languages),
-                                FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
+                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream()
+                        .collect(Collectors.toMap(locale -> locale.getLabel(languages), FileFormat::getMimeType,
+                            (prior, recent) -> recent, TreeMap::new));
             } catch (JAXBException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
             }
@@ -397,8 +452,8 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Returns the folder to use as source for generation of derived resources
-     * of this project.
+     * Returns the folder to use as source for generation of derived resources of
+     * this project.
      *
      * @return the source folder for generation
      */
@@ -408,8 +463,8 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Sets the folder to use as source for generation of derived resources of
-     * this project.
+     * Sets the folder to use as source for generation of derived resources of this
+     * project.
      *
      * @param generatorSource
      *            source folder for generation to set
@@ -493,18 +548,11 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Gets all available clients.
+     * Set referring view which will be returned when the user clicks "save" or
+     * "cancel" on the project edit page.
      *
-     * @return The list of clients.
-     */
-    public List<SelectItem> getClients() {
-        return SelectItemList.getClients();
-    }
-
-    /**
-     * Set referring view which will be returned when the user clicks "save" or "cancel" on the project edit page.
-     *
-     * @param referer the referring view
+     * @param referer
+     *            the referring view
      */
     public void setProjectEditReferer(String referer) {
         if (!referer.isEmpty()) {
@@ -518,6 +566,7 @@ public class ProjectForm extends BaseForm {
 
     /**
      * Get project edit page referring view.
+     * 
      * @return project edit page referring view
      */
     public String getProjectEditReferer() {

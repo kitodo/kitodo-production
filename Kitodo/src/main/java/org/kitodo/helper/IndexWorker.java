@@ -28,12 +28,13 @@ import org.kitodo.services.data.base.SearchService;
 public class IndexWorker implements Runnable {
 
     private int indexedObjects = 0;
+    private boolean indexAllObjects = true;
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(IndexWorker.class);
 
     /**
-     * Constructor initializing an IndexWorker object with the given
-     * SearchService and list of objects that will be indexed.
+     * Constructor initializing an IndexWorker object with the given SearchService
+     * and list of objects that will be indexed.
      *
      * @param searchService
      *            SearchService instance used for indexing
@@ -48,9 +49,18 @@ public class IndexWorker implements Runnable {
         this.indexedObjects = 0;
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         try {
-            int amountToIndex = searchService.countDatabaseRows().intValue();
+            int amountToIndex;
+            if (indexAllObjects) {
+                amountToIndex = searchService.countDatabaseRows().intValue();
+            } else {
+                amountToIndex = searchService.countNotIndexedDatabaseRows().intValue();
+            }
             if (amountToIndex < batchSize) {
-                indexObjects(searchService.getAll());
+                if (indexAllObjects) {
+                    indexObjects(searchService.getAll());
+                } else {
+                    indexObjects(searchService.getAllNotIndexed());
+                }
             } else {
                 while (this.indexedObjects < amountToIndex) {
                     indexChunks(batchSize);
@@ -64,15 +74,20 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     private void indexChunks(int batchSize) throws CustomResponseException, DAOException, IOException {
         Session session = HibernateUtil.getSession();
-        List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
+        List<Object> objectsToIndex;
+        if (indexAllObjects) {
+            objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
+        } else {
+            objectsToIndex = searchService.getAllNotIndexed(this.indexedObjects, batchSize);
+        }
         indexObjects(objectsToIndex);
         session.clear();
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, IOException {
+    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
         for (Object object : objectsToIndex) {
-            this.searchService.saveToIndex((BaseIndexedBean) object, false);
+            this.searchService.saveToIndexAndUpdateIndexFlag((BaseIndexedBean) object, false);
             this.indexedObjects++;
         }
     }
@@ -85,5 +100,16 @@ public class IndexWorker implements Runnable {
      */
     public int getIndexedObjects() {
         return indexedObjects;
+    }
+
+    /**
+     * Set value for indexAllObjects. If true, it indexes all objects, if false it
+     * indexes only objects with flag IndexAction.INDEX.
+     *
+     * @param indexAllObjects
+     *            as boolean
+     */
+    public void setIndexAllObjects(boolean indexAllObjects) {
+        this.indexAllObjects = indexAllObjects;
     }
 }

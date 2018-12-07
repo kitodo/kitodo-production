@@ -97,6 +97,8 @@ public class URNGenerator implements UnifiedResourceNameGeneratorInterface {
     }
 
     /**
+     * Get check digit for URN.
+     *
      * {@see http://www.persistent-identifier.de/?link=316}
      * {@see http://nbn-resolving.de/nbncheckdigit.php}
      *

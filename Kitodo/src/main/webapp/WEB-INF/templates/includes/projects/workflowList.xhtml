@@ -21,7 +21,7 @@
                  value="#{WorkflowForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
@@ -44,17 +44,26 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
-                    <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}">
+                    <h:link id="viewWorkflow" outcome="workflowEdit" title="#{msgs.workflowView}"
+                            rendered="#{SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                        <i class="fa fa-eye fa-lg"/>
+                        <f:param name="id" value="#{item.id}"/>
+                    </h:link>
+
+                    <h:link id="editWorkflow" outcome="workflowEdit" title="#{msgs.editWorkflow}"
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}">
+                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
                         <i class="fa fa-clone fa-lg"/>
                     </h:commandLink>
 
-                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}"
-                                   title="#{msgs.delete}" update="projectsTabView:workflowTable">
+                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
+                                   update="projectsTabView:workflowTable">
                         <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                         <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
                         <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteWorkflow}"

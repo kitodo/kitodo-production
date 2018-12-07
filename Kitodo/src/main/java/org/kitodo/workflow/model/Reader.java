@@ -12,40 +12,33 @@
 package org.kitodo.workflow.model;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.Query;
 import org.camunda.bpm.model.bpmn.instance.ConditionExpression;
+import org.camunda.bpm.model.bpmn.instance.EndEvent;
+import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
-import org.camunda.bpm.model.bpmn.instance.Gateway;
+import org.camunda.bpm.model.bpmn.instance.ParallelGateway;
 import org.camunda.bpm.model.bpmn.instance.Process;
-import org.camunda.bpm.model.bpmn.instance.ScriptTask;
-import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
-import org.kitodo.workflow.model.beans.KitodoScriptTask;
-import org.kitodo.workflow.model.beans.KitodoTask;
 import org.kitodo.workflow.model.beans.TaskInfo;
 
 public class Reader {
 
-    private String diagramName;
     private BpmnModelInstance modelInstance;
-    private ServiceManager serviceManager = new ServiceManager();
-    private FileService fileService = serviceManager.getFileService();
-    private Collection<FlowNode> followingFlowNodes;
     private Map<Task, TaskInfo> tasks;
     private Diagram workflow;
 
@@ -59,179 +52,33 @@ public class Reader {
      *             in case if file for given name doesn't exist
      */
     public Reader(String diagramName) throws IOException {
-        this.diagramName = diagramName;
-        loadProcess();
+        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + diagramName + ".bpmn20.xml";
+        loadProcess(new ServiceManager().getFileService().read(Paths.get(diagramPath).toUri()));
     }
 
     /**
-     * Convert BPMN process (workflow) to template stored in database.
+     * Constructor with diagram name as parameter. It loads modelInstance for xml
+     * with given content.
      *
-     * @return Template bean
+     * @param diagramXmlContent
+     *            as InputStream
+     * @throws IOException
+     *             in case if input stream contains incorrect data
      */
-    public Template convertWorkflowToTemplate(Template template) {
-        this.tasks = new HashMap<>();
-        this.followingFlowNodes = new ArrayList<>();
-
-        getWorkflowTasks();
-
-        for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
-            org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
-            task.setTemplate(template);
-            template.getTasks().add(task);
-        }
-
-        return template;
+    public Reader(InputStream diagramXmlContent) throws IOException {
+        loadProcess(diagramXmlContent);
     }
 
     /**
-     * Read the workflow from diagram.
+     * Method reads workflow tasks, in case reading fails it throws
+     * WorkflowException.
+     * 
+     * @throws WorkflowException
+     *             is thrown when reading of the tasks fail, exception message
+     *             explains what caused problem
      */
-    private void loadProcess() throws IOException {
-        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + this.diagramName + ".bpmn20.xml";
-        modelInstance = Bpmn.readModelFromStream(fileService.read(Paths.get(diagramPath).toUri()));
-        getWorkflowFromProcess();
-    }
-
-    /**
-     * Get workflow from process inside the given file.
-     */
-    private void getWorkflowFromProcess() throws IOException {
-        Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
-
-        if (Objects.isNull(process)) {
-            throw new IOException("It looks that given file contains invalid BPMN diagram!");
-        }
-        this.workflow = new Diagram(process);
-    }
-
-    private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) {
-        org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
-        KitodoTask kitodoTask = new KitodoTask(workflowTask, taskInfo.getOrdering());
-        task.setWorkflowId(kitodoTask.getWorkflowId());
-        task.setTitle(kitodoTask.getTitle());
-        task.setOrdering(kitodoTask.getOrdering());
-        task.setPriority(kitodoTask.getPriority());
-        task.setEditType(kitodoTask.getEditType());
-        task.setProcessingStatus(kitodoTask.getProcessingStatus());
-        task.setBatchStep(kitodoTask.getBatchStep());
-        task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
-        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
-        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
-        task.setTypeExportDMS(kitodoTask.getTypeExportDms());
-        task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
-        task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
-        task.setWorkflowCondition(taskInfo.getCondition());
-
-        if (workflowTask instanceof ScriptTask) {
-            KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask, taskInfo.getOrdering());
-            task.setScriptName(kitodoScriptTask.getScriptName());
-            task.setScriptPath(kitodoScriptTask.getScriptPath());
-        }
-
-        return task;
-    }
-
-    private void getWorkflowTasks() {
-        StartEvent startEvent = modelInstance.getModelElementsByType(StartEvent.class).iterator().next();
-        getFlowingFlowNodes(startEvent);
-
-        int i = 1;
-        Iterator<FlowNode> sequenceFlowIterator = this.followingFlowNodes.iterator();
-        while (sequenceFlowIterator.hasNext()) {
-            FlowNode flowNode = sequenceFlowIterator.next();
-
-            if (flowNode instanceof Gateway) {
-                addTasksBranch((Gateway) flowNode, sequenceFlowIterator, i);
-            } else {
-                addTask(flowNode, new TaskInfo(i, "default"));
-                i++;
-            }
-        }
-    }
-
-    /**
-     * Create sequence flow for given diagrams.
-     *
-     * @param node
-     *            add description
-     */
-    private void getFlowingFlowNodes(FlowNode node) {
-        Collection<SequenceFlow> sequenceFlow = node.getOutgoing();
-
-        if (sequenceFlow.iterator().hasNext()) {
-            FlowNode flowNode = sequenceFlow.iterator().next().getTarget();
-
-            if (flowNode instanceof Gateway) {
-                getFlowingFlowNodesWithConditions((Gateway) flowNode);
-            } else if (flowNode instanceof Task) {
-                this.followingFlowNodes.add(flowNode);
-                getFlowingFlowNodes(flowNode);
-            }
-        }
-    }
-
-    /**
-     * Add flowing nodes after gateway.
-     *
-     * @param gateway
-     *            add description
-     */
-    private void getFlowingFlowNodesWithConditions(Gateway gateway) {
-        Collection<SequenceFlow> conditionedSequencedFlow = gateway.getOutgoing();
-        for (SequenceFlow sequenceFlow : conditionedSequencedFlow) {
-            this.followingFlowNodes.add(gateway);
-            this.followingFlowNodes.add(sequenceFlow.getTarget());
-            getFlowingFlowNodes(sequenceFlow.getTarget());
-        }
-    }
-
-    /**
-     * Add all tasks in exact branch - following given gateway.
-     *
-     * @param gateway
-     *            which is followed by tasks
-     * @param sequenceFlowIterator
-     *            iterator containing tasks following given gateway
-     * @param ordering
-     *            which is going to be assigned to tasks in this branch
-     */
-    private void addTasksBranch(Gateway gateway, Iterator<FlowNode> sequenceFlowIterator, int ordering) {
-        int j = ordering;
-        ConditionExpression conditionExpression = null;
-
-        while (sequenceFlowIterator.hasNext()) {
-            FlowNode flowNode = sequenceFlowIterator.next();
-            if (Objects.isNull(conditionExpression)) {
-                conditionExpression = flowNode.getIncoming().iterator().next().getConditionExpression();
-            }
-            if (Objects.equals(gateway, flowNode)) {
-                break;
-            } else {
-                TaskInfo taskInfo = new TaskInfo(j, conditionExpression.getTextContent());
-                addTask(flowNode, taskInfo);
-                j++;
-            }
-        }
-    }
-
-    private void addTask(FlowNode flowNode, TaskInfo taskInfo) {
-        if (flowNode instanceof Task) {
-            if (tasks.containsKey(flowNode)) {
-                String currentCondition = tasks.get(flowNode).getCondition();
-                String appendCondition = taskInfo.getCondition();
-                taskInfo.setCondition(currentCondition + " " + appendCondition);
-            }
-            tasks.put((Task) flowNode, taskInfo);
-        }
-    }
-
-    /**
-     * Get modelInstance.
-     *
-     * @return value of modelInstance
-     */
-    BpmnModelInstance getModelInstance() {
-        return modelInstance;
+    public void validateWorkflowTasks() throws WorkflowException {
+        readWorkflowTasks();
     }
 
     /**
@@ -244,10 +91,11 @@ public class Reader {
     }
 
     /**
-     * Set tasks.
+     * Set tasks as map of BPMN Task objects. Key is BPMN Task and value is
+     * TaskInfo.
      *
      * @param tasks
-     *            as list of BPMN Task objects
+     *            as map of BPMN Task objects
      */
     public void setTasks(Map<Task, TaskInfo> tasks) {
         this.tasks = tasks;
@@ -260,5 +108,177 @@ public class Reader {
      */
     public Diagram getWorkflow() {
         return workflow;
+    }
+
+    void readWorkflowTasks() throws WorkflowException {
+        tasks = new LinkedHashMap<>();
+
+        StartEvent startEvent = modelInstance.getModelElementsByType(StartEvent.class).iterator().next();
+        if (startEvent.getOutgoing().iterator().hasNext()) {
+            iterateOverNodes(startEvent.getOutgoing().iterator().next().getTarget(), 1);
+        }
+    }
+
+    /**
+     * Read the workflow from diagram.
+     * 
+     * @param diagramXmlContent
+     *            as InputStream
+     */
+    private void loadProcess(InputStream diagramXmlContent) throws IOException {
+        modelInstance = Bpmn.readModelFromStream(diagramXmlContent);
+        getWorkflowFromProcess();
+    }
+
+    /**
+     * Get workflow from process inside the given file.
+     */
+    private void getWorkflowFromProcess() throws IOException {
+        Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
+
+        if (Objects.isNull(process)) {
+            throw new IOException("It looks that given file or input stream contains invalid BPMN diagram!");
+        }
+        this.workflow = new Diagram(process);
+    }
+
+    /**
+     * Iterate over diagram nodes.
+     *
+     * @param node
+     *            for current iteration call
+     */
+    private void iterateOverNodes(FlowNode node, int ordering) throws WorkflowException {
+        iterateOverNodes(node, ordering, "");
+    }
+
+    /**
+     * Iterate over diagram nodes.
+     *
+     * @param node
+     *            for current iteration call
+     * @param workflowCondition
+     *            given from exclusive gateway
+     */
+    private void iterateOverNodes(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+        if (node instanceof Task) {
+            addTask(node, ordering, workflowCondition);
+        } else if (node instanceof ExclusiveGateway) {
+            Query<FlowNode> nextNodes = node.getSucceedingNodes();
+            if (nextNodes.count() == 1) {
+                iterateOverNodes(nextNodes.singleResult(), ordering);
+            } else if (nextNodes.count() > 1) {
+                addConditionalTasksBranch(nextNodes.list(), ordering);
+            } else {
+                throw new WorkflowException("Exclusive gateway is not followed by any tasks!");
+            }
+        } else if (node instanceof ParallelGateway) {
+            Query<FlowNode> nextNodes = node.getSucceedingNodes();
+            if (nextNodes.count() == 1) {
+                iterateOverNodes(nextNodes.singleResult(), ordering, workflowCondition);
+            } else if (nextNodes.count() > 1) {
+                addParallelTasksBranch(nextNodes.list(), ordering, workflowCondition);
+            } else {
+                throw new WorkflowException("Parallel gateway is not followed by any tasks!");
+            }
+        }
+    }
+
+    /**
+     * Add all tasks in exact branch - following given exclusive gateway.
+     *
+     * @param nextNodes
+     *            nodes of exclusive gateway
+     */
+    private void addConditionalTasksBranch(List<FlowNode> nextNodes, int ordering) throws WorkflowException {
+        for (FlowNode node : nextNodes) {
+            if (isBranchInvalid(node)) {
+                throw new WorkflowException(
+                        "Task in conditional branch can not have second task. Please remove task after task with name '"
+                                + node.getName() + "'.");
+            }
+
+            ConditionExpression conditionExpression = node.getIncoming().iterator().next().getConditionExpression();
+            String workflowCondition = "default";
+            if (Objects.nonNull(conditionExpression)) {
+                workflowCondition = conditionExpression.getTextContent();
+            }
+
+            iterateOverNodes(node, ordering, workflowCondition);
+        }
+    }
+
+    /**
+     * Add all tasks for parallel execution - following given parallel gateway until
+     * ending parallel gateway.
+     *
+     * @param nodes
+     *            nodes of parallel gateway
+     * @param workflowCondition
+     *            workflow condition is carried over from previous states
+     */
+    private void addParallelTasksBranch(List<FlowNode> nodes, int ordering, String workflowCondition)
+            throws WorkflowException {
+        for (FlowNode node : nodes) {
+            if (isBranchInvalid(node)) {
+                throw new WorkflowException(
+                        "Task in parallel branch can not have second task. Please remove task after task with name '"
+                                + node.getName() + "'.");
+            }
+
+            iterateOverNodes(node, ordering, workflowCondition);
+        }
+    }
+
+    private boolean isBranchInvalid(FlowNode node) {
+        List<FlowNode> nextNodes = node.getSucceedingNodes().list();
+        for (FlowNode nextNode : nextNodes) {
+            if (nextNode instanceof Task) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add task to tasks list. If node has 0 following nodes, it makes assumption
+     * that it is the last task in the workflow.
+     *
+     * @param node
+     *            for task
+     * @param ordering
+     *            for task
+     * @param workflowCondition
+     *            for task
+     */
+    private void addTask(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+        Query<FlowNode> nextNodes = node.getSucceedingNodes();
+        int nextNodesSize = nextNodes.count();
+
+        if (nextNodesSize == 1) {
+            FlowNode nextNode = nextNodes.singleResult();
+
+            if (nextNode instanceof EndEvent) {
+                tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
+            } else {
+                tasks.put((Task) node, new TaskInfo(ordering, false, workflowCondition));
+                ordering++;
+                iterateOverNodes(nextNode, ordering, workflowCondition);
+            }
+        } else if (nextNodesSize == 0) {
+            tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
+        } else {
+            throw new WorkflowException("Task with title '" + node.getName()
+                    + "' has more than one following tasks without any gateway in between!");
+        }
+    }
+
+    /**
+     * Get modelInstance.
+     *
+     * @return value of modelInstance
+     */
+    BpmnModelInstance getModelInstance() {
+        return modelInstance;
     }
 }

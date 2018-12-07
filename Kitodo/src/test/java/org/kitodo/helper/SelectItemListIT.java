@@ -29,14 +29,20 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.BatchService;
+import org.kitodo.services.data.ClientService;
+import org.kitodo.services.data.DocketService;
+import org.kitodo.services.data.ProjectService;
+import org.kitodo.services.data.RulesetService;
+import org.kitodo.services.data.WorkflowService;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class SelectItemListIT {
+
+    private static ServiceManager serviceManager = new ServiceManager();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -44,7 +50,7 @@ public class SelectItemListIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
 
-        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(serviceManager.getUserService().getById(1), 1);
     }
 
     @AfterClass
@@ -57,7 +63,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetBatches() throws Exception {
-        BatchService batchService = new ServiceManager().getBatchService();
+        BatchService batchService = serviceManager.getBatchService();
 
         await().untilAsserted(() -> assertEquals("Incorrect amount of select items!", 4,
             SelectItemList.getBatches(batchService.getAll()).size()));
@@ -77,11 +83,13 @@ public class SelectItemListIT {
     }
 
     @Test
-    public void shouldGetClients() {
-        await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getClients().size()));
+    public void shouldGetClients() throws Exception {
+        ClientService clientService = serviceManager.getClientService();
 
-        List<SelectItem> selectItems = SelectItemList.getClients();
+        await().untilAsserted(
+            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getClients(clientService.getAll()).size()));
+
+        List<SelectItem> selectItems = SelectItemList.getClients(clientService.getAll());
 
         assertEquals("Second item is not sorted correctly!", "First client", selectItems.get(0).getLabel());
         assertEquals("Third item is not sorted correctly!", "Not used client", selectItems.get(1).getLabel());
@@ -92,11 +100,13 @@ public class SelectItemListIT {
     }
 
     @Test
-    public void shouldGetDockets() {
-        await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets().size()));
+    public void shouldGetDockets() throws Exception {
+        DocketService docketService = serviceManager.getDocketService();
 
-        List<SelectItem> selectItems = SelectItemList.getDockets();
+        await().untilAsserted(
+            () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets(docketService.getAll()).size()));
+
+        List<SelectItem> selectItems = SelectItemList.getDockets(docketService.getAll());
 
         assertEquals("First item is not sorted correctly!", "Removable docket", selectItems.get(0).getLabel());
         assertEquals("Second item is not sorted correctly!", "default", selectItems.get(1).getLabel());
@@ -131,11 +141,13 @@ public class SelectItemListIT {
     }
 
     @Test
-    public void shouldGetProjects() {
-        await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getProjects().size()));
+    public void shouldGetProjects() throws Exception {
+        ProjectService projectService = serviceManager.getProjectService();
 
-        List<SelectItem> selectItems = SelectItemList.getProjects();
+        await().untilAsserted(
+            () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getProjects(projectService.getAll()).size()));
+
+        List<SelectItem> selectItems = SelectItemList.getProjects(projectService.getAll());
 
         assertEquals("First item is not sorted correctly!", "First project", selectItems.get(0).getLabel());
         assertEquals("Second item is not sorted correctly!", "Inactive project", selectItems.get(1).getLabel());
@@ -145,28 +157,33 @@ public class SelectItemListIT {
     }
 
     @Test
-    public void shouldGetRulesets() {
-        await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets().size()));
+    public void shouldGetRulesets() throws Exception {
+        RulesetService rulesetService = serviceManager.getRulesetService();
 
-        List<SelectItem> selectItems = SelectItemList.getRulesets();
+        await().untilAsserted(
+            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets(rulesetService.getAll()).size()));
+
+        List<SelectItem> selectItems = SelectItemList.getRulesets(rulesetService.getAll());
 
         assertEquals("First item is not sorted correctly!", "Removable ruleset", selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "SLUBBB", selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "SLUBDD", selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "SLUBHH", selectItems.get(3).getLabel());
+        assertEquals("Second item is not sorted correctly!", "SLUBDD", selectItems.get(1).getLabel());
+        assertEquals("Third item is not sorted correctly!", "SUBBB", selectItems.get(2).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "SUBHH", selectItems.get(3).getLabel());
 
         assertThat("First item is not a Ruleset type!", selectItems.get(0).getValue(), instanceOf(Ruleset.class));
     }
 
     @Test
-    public void shouldGetWorkflows() {
+    public void shouldGetWorkflows() throws Exception {
+        WorkflowService workflowService = serviceManager.getWorkflowService();
+
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 1, SelectItemList.getWorkflows().size()));
+            () -> assertEquals("Incorrect amount of select items!", 2, SelectItemList.getWorkflows(workflowService.getAll()).size()));
 
-        List<SelectItem> selectItems = SelectItemList.getWorkflows();
+        List<SelectItem> selectItems = SelectItemList.getWorkflows(workflowService.getAll());
 
-        assertEquals("First item is not sorted correctly!", "say-hello", selectItems.get(0).getLabel());
+        assertEquals("First item is not sorted correctly!", "gateway", selectItems.get(0).getLabel());
+        assertEquals("Second item is not sorted correctly!", "test", selectItems.get(1).getLabel());
 
         assertThat("First item is not a Workflow type!", selectItems.get(0).getValue(), instanceOf(Workflow.class));
     }

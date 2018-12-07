@@ -19,7 +19,7 @@
     <h:form id="processesForm">
         <p:dataTable id="processesTable" var="process" value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}" lazy="true" paginator="true"
-                     rows="#{LoginForm.myBenutzer.tableSize}"
+                     rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
             <p:column styleClass="checkboxListColumn" selectionMode="multiple"/>
@@ -33,17 +33,26 @@
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}">
+                <h:link id="viewProcess" outcome="processEdit" title="#{msgs.processView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                    <i class="fa fa-eye fa-lg"/>
+                    <f:param name="referer" value="processes"/>
+                    <f:param name="id" value="#{process.id}"/>
+                </h:link>
+
+                <h:link id="editProcess" outcome="processEdit" title="#{msgs.processEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
 
-                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}"
+                               rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
-                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
-                    <f:param name="zurueck" value="processList"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
+                    <f:param name="stayOnCurrentPage" value="processList"/>
                     <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
                     <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
@@ -91,6 +100,7 @@
                 </h:commandLink>
 
                 <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>

@@ -13,7 +13,6 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -24,7 +23,7 @@
               modal="true"
               dynamic="true"
               styleClass="editDialog">
-        <h:form id="propertyForm">
+        <h:form id="propertyEditForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <div>
@@ -43,12 +42,12 @@
                                      styleClass="secondary" onclick="PF('editPropertyDialog').hide();">
                     </p:commandButton>
                     <p:commandButton value="#{msgs.applyToThisProcess}" id="saveCurrentProperty"
-                                     action="#{BatchForm.batchHelper.saveCurrentProperty}"
+                                     action="#{BatchForm.batchHelper.editPropertyForOneProcess}"
                                      update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
                                      oncomplete="PF('editPropertyDialog').hide();">
                     </p:commandButton>
                     <p:commandButton value="#{msgs.applyToAllProcesses}" id="saveCurrentPropertyForAll"
-                                     action="#{BatchForm.batchHelper.saveCurrentPropertyForAll}"
+                                     action="#{BatchForm.batchHelper.editPropertyForAllProcesses}"
                                      update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
                                      oncomplete="PF('editPropertyDialog').hide();">
                     </p:commandButton>

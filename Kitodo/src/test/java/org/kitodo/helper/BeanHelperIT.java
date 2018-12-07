@@ -11,53 +11,39 @@
 
 package org.kitodo.helper;
 
-import java.net.URI;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
-import org.kitodo.workflow.model.Reader;
+import org.kitodo.workflow.model.Converter;
 
 import static org.junit.Assert.assertEquals;
 
 public class BeanHelperIT {
 
-    private static FileService fileService = new ServiceManager().getFileService();
-
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertClients();
+        MockDatabase.insertRolesFull();
         MockDatabase.insertDockets();
         MockDatabase.insertRulesets();
-        fileService.createDirectory(URI.create(""), "diagrams");
-
-        FileLoader.createExtendedGatewayDiagramTestFile();
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
-
-        FileLoader.deleteExtendedGatewayDiagramTestFile();
-
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
     public void shouldCopyTasks() throws Exception {
-        Reader reader = new Reader("gateway");
+        Converter converter = new Converter("gateway-test1");
 
         Template template = new Template();
         template.setTitle("Title");
-        template = reader.convertWorkflowToTemplate(template);
+        converter.convertWorkflowToTemplate(template);
         Process process = new Process();
 
         BeanHelper.copyTasks(template, process);

@@ -26,7 +26,7 @@
             <p:dataTable id="hitlistTable"
                          value="#{ProzesskopieForm.hitlist}"
                          var="hit"
-                         rows="#{LoginForm.myBenutzer.tableSize}"
+                         rows="#{LoginForm.loggedUser.tableSize}"
                          paginator="true">
                 <p:column headerText="#{msgs.hits}">
                     <p:commandLink value="#{hit.bibliographicCitation}"

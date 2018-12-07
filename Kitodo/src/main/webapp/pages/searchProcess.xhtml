@@ -173,11 +173,11 @@
                         </p:column>
                     </p:row>
                     <p:row>
-                        <p:column><p:outputLabel value="#{msgs.showInactiveProjects}"
-                                                 rendered="#{SecurityAccessController.isAdmin()}"/></p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox value="#{ProcessForm.showInactiveProjects}"
-                                rendered="#{SecurityAccessController.isAdmin()}"/>
+                            <p:outputLabel value="#{msgs.showInactiveProjects}"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox value="#{ProcessForm.showInactiveProjects}"/>
                         </p:column>
                     </p:row>
                     <p:row>

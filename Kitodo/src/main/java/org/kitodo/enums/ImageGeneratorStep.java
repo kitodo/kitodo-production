@@ -33,7 +33,8 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
     LIST_SOURCE_FOLDER {
         @Override
         public void accept(ImageGenerator imageGenerator) {
-            imageGenerator.letTheSupervisor(lambda -> lambda.setWorkDetail(Helper.getTranslation("listSourceFolder")));
+            imageGenerator.letTheSupervisorDo(
+                emptyTask -> emptyTask.setWorkDetail(Helper.getTranslation("listSourceFolder")));
             imageGenerator.determineSources();
             imageGenerator.setState(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED);
             imageGenerator.setPosition(-1);
@@ -50,14 +51,17 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
         @Override
         public void accept(ImageGenerator imageGenerator) {
             Pair<String, URI> source = imageGenerator.getSources().get(imageGenerator.getPosition());
+            String canonical = source.getKey();
             if (!imageGenerator.getMode().equals(GenerationMode.ALL)) {
-                imageGenerator.letTheSupervisor(lambda -> lambda.setWorkDetail(
-                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Arrays.asList(source.getKey()))));
+                imageGenerator.letTheSupervisorDo(emptyTask -> emptyTask.setWorkDetail(
+                    Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Arrays.asList(canonical))));
             }
 
-            List<Subfolder> generations = imageGenerator.determineFoldersThatNeedDerivatives(source.getKey());
-            if (!generations.isEmpty()) {
-                imageGenerator.addToContentToBeGenerated(source, generations);
+            List<Subfolder> subfoldersWhoseContentsAreToBeGenerated = imageGenerator
+                    .determineFoldersThatNeedDerivatives(canonical);
+            if (!subfoldersWhoseContentsAreToBeGenerated.isEmpty()) {
+                imageGenerator.addToContentToBeGenerated(canonical, source.getValue(),
+                    subfoldersWhoseContentsAreToBeGenerated);
             }
             if (imageGenerator.getPosition() == imageGenerator.getSources().size() - 1) {
                 imageGenerator.setState(GENERATE_IMAGES);
@@ -73,12 +77,12 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
         @Override
         public void accept(ImageGenerator imageGenerator) {
             ContentToBeGenerated instructuon = imageGenerator.getFromContentToBeGeneratedByPosition();
-            imageGenerator.letTheSupervisor(lambda -> lambda.setWorkDetail(
+            imageGenerator.letTheSupervisorDo(emptyTask -> emptyTask.setWorkDetail(
                 Helper.getTranslation("generateImages", Arrays.asList(instructuon.getCanonical()))));
             LogManager.getLogger(ImageGeneratorStep.class).info("Generating ".concat(instructuon.toString()));
             imageGenerator.createDerivatives(instructuon);
             if (imageGenerator.getPosition() == imageGenerator.getContentToBeGenerated().size() - 1) {
-                imageGenerator.letTheSupervisor(lambda -> lambda.setProgress(100));
+                imageGenerator.letTheSupervisorDo(emptyTask -> emptyTask.setProgress(100));
                 return;
             }
         }

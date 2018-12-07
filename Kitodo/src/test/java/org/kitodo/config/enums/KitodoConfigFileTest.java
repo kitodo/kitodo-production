@@ -51,9 +51,8 @@ public class KitodoConfigFileTest {
     @Test
     public void shouldGetAbsolutePathTest() {
         assertTrue("Config projects file absolute path is incorrect!",
-            KitodoConfigFile.PROJECT_CONFIGURATION.getAbsolutePath()
-                    .contains("kitodo-production" + File.separator + "Kitodo" + File.separator + "src" + File.separator
-                            + "test" + File.separator + "resources" + File.separator + "kitodo_projects.xml"));
+            KitodoConfigFile.PROJECT_CONFIGURATION.getAbsolutePath().contains("Kitodo" + File.separator + "src"
+                    + File.separator + "test" + File.separator + "resources" + File.separator + "kitodo_projects.xml"));
     }
 
     @Test

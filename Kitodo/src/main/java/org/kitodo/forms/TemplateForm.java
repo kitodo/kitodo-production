@@ -14,8 +14,11 @@ package org.kitodo.forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -24,18 +27,19 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.util.GeneratorSwitch;
-import org.kitodo.workflow.model.Reader;
+import org.kitodo.services.data.TaskService;
+import org.kitodo.workflow.model.Converter;
 
 @Named("TemplateForm")
 @SessionScoped
@@ -47,7 +51,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Template template;
     private Task task;
     private boolean showInactiveTemplates = false;
-    private String title;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
 
@@ -116,48 +119,8 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String newTemplate() {
         this.template = new Template();
-        this.title = "";
+        this.template.setTitle("");
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
-    }
-
-    /**
-     * Add UserGroup.
-     *
-     * @return empty String
-     */
-    public String addUserGroup() {
-        addUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Add User.
-     *
-     * @return empty String
-     */
-    public String addUser() {
-        addUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove User.
-     *
-     * @return empty String
-     */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove UserGroup.
-     *
-     * @return empty String
-     */
-    public String deleteUserGroup() {
-        deleteUserGroup(this.task);
-        return null;
     }
 
     /**
@@ -176,7 +139,7 @@ public class TemplateForm extends TemplateBaseForm {
             return templateEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -186,20 +149,21 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String save() {
-        if (this.template != null && this.template.getTitle() != null) {
-            if (!this.template.getTitle().equals(this.title) && this.title != null
-                    && !renameAfterProcessTitleChanged()) {
-                return null;
-            }
-
+        if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
             try {
                 if (this.template.getTasks().isEmpty()) {
-                    Reader reader = new Reader(this.template.getWorkflow().getFileName());
-                    this.template = reader.convertWorkflowToTemplate(this.template);
+                    Converter converter = new Converter(this.template.getWorkflow().getFileName());
+                    converter.convertWorkflowToTemplate(this.template);
                 }
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                return this.stayOnCurrentPage;
             } catch (IOException e) {
-                Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
-                return null;
+                Helper.setErrorMessage("errorDiagramFile", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                return this.stayOnCurrentPage;
+            } catch (WorkflowException e) {
+                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                return this.stayOnCurrentPage;
             }
 
             try {
@@ -207,11 +171,11 @@ public class TemplateForm extends TemplateBaseForm {
             } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
-            return null;
+            return this.stayOnCurrentPage;
         }
         return templateListPath;
     }
@@ -243,17 +207,6 @@ public class TemplateForm extends TemplateBaseForm {
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
-    private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
-        if (!this.title.matches(validateRegEx)) {
-            Helper.setErrorMessage("processTitleInvalid");
-            return false;
-        } else {
-            this.template.setTitle(this.title);
-        }
-        return true;
-    }
-
     /**
      * Get diagram image for current template.
      *
@@ -272,7 +225,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets();
+        return SelectItemList.getDockets(serviceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -281,7 +234,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects();
+        return SelectItemList.getProjects(serviceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -290,7 +243,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets();
+        return SelectItemList.getRulesets(serviceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**
@@ -299,16 +252,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getWorkflows() {
-        return SelectItemList.getWorkflows();
-    }
-
-    /**
-     * Get list of generator switches.
-     * 
-     * @return list of generator switches
-     */
-    public List<GeneratorSwitch> getGeneratorSwitches() {
-        return serviceManager.getTaskService().getGenerators(task);
+        return SelectItemList.getWorkflows(serviceManager.getWorkflowService().getAvailableWorkflows());
     }
 
     /**
@@ -382,7 +326,6 @@ public class TemplateForm extends TemplateBaseForm {
      *            as Template
      */
     public void setTemplate(Template template) {
-        this.title = template.getTitle();
         this.template = template;
     }
 
@@ -406,21 +349,45 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Get title.
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
      *
-     * @return value of title
+     * @return list of FolderProcessingSwitch objects or empty list
      */
-    public String getTitle() {
-        return title;
+    public List<FolderProcessingSwitch> getGeneratableFolderSwitches() {
+        Stream<Project> projectsStream = template.getProjects().stream();
+        Stream<Folder> generatableFolders = TaskService.generatableFoldersFromProjects(projectsStream);
+        return getSwitches(generatableFolders, task.getContentFolders());
     }
 
     /**
-     * Set title.
-     *
-     * @param title
-     *            as String
+     * Convert the stream of folders to a list of switch objects.
+     * 
+     * @param folders
+     *            folders for which generation or validation can be switched on
+     *            or off
+     * @param activated
+     *            Folders for which generation or validation is switched on.
+     *            This list must be modifiable and connected to the database so
+     *            that changes made by the switches are persisted when the
+     *            template is stored in the database.
+     * @return a list of switch objects to be rendered by JSF
      */
-    public void setTitle(String title) {
-        this.title = title;
+    private List<FolderProcessingSwitch> getSwitches(Stream<Folder> folders, List<Folder> activated) {
+        Stream<FolderProcessingSwitch> validatorSwitches = folders
+                .map(folder -> new FolderProcessingSwitch(folder, activated));
+        return validatorSwitches.collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
+     *
+     * @return list of FolderProcessingSwitch objects or empty list
+     */
+    public List<FolderProcessingSwitch> getValidatableFolderSwitches() {
+        Stream<Folder> validatableFolders = template.getProjects().stream()
+                .flatMap(project -> project.getFolders().stream());
+        return getSwitches(validatableFolders, task.getValidationFolders());
     }
 }

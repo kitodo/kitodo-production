@@ -47,6 +47,12 @@ public class ProjectDAO extends BaseDAO<Project> {
     }
 
     @Override
+    public List<Project> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public void remove(Integer id) throws DAOException {
         if (id != null) {
             removeObject(Project.class, id);
@@ -81,8 +87,6 @@ public class ProjectDAO extends BaseDAO<Project> {
     public List<Project> getByIds(List<Integer> projectIds) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectIds", projectIds);
-        return getByQuery(
-            "FROM Project WHERE id IN :projectIds",
-            parameters);
+        return getByQuery("FROM Project WHERE id IN :projectIds", parameters);
     }
 }

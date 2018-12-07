@@ -20,7 +20,7 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.templateTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.templateTitle}"
-                             value="#{TemplateForm.title}"
+                             value="#{TemplateForm.template.title}"
                              class="input"
                              required="#{empty param['editForm:saveButtonToggler']}">
                     <p:ajax event="blur"/>

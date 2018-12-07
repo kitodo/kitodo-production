@@ -15,16 +15,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,9 +45,9 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -57,14 +57,14 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.security.SecurityUserDetails;
@@ -81,6 +81,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
     private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
+    private static final String LOGIN_NOT_VALID = "loginNotValid";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
@@ -107,7 +108,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Method saves user groups, properties and tasks related to modified user.
+     * Method saves roles, properties and tasks related to modified user.
      *
      * @param user
      *            object
@@ -117,7 +118,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         manageFiltersDependenciesForIndex(user);
         manageProjectsDependenciesForIndex(user);
         manageTasksDependenciesForIndex(user);
-        manageUserGroupsDependenciesForIndex(user);
+        manageRolesDependenciesForIndex(user);
     }
 
     @Override
@@ -180,18 +181,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     private void manageTasksDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : user.getTasks()) {
-                task.getUsers().remove(user);
-                serviceManager.getTaskService().saveToIndex(task, false);
-            }
             for (Task task : user.getProcessingTasks()) {
                 task.setProcessingUser(null);
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
-            for (Task task : user.getTasks()) {
-                serviceManager.getTaskService().saveToIndex(task, false);
-            }
             for (Task task : user.getProcessingTasks()) {
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
@@ -200,20 +194,20 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     /**
      * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save group, if false only re-save group object.
+     * users and re-save role, if false only re-save role object.
      *
      * @param user
      *            object
      */
-    private void manageUserGroupsDependenciesForIndex(User user) throws CustomResponseException, IOException {
+    private void manageRolesDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : user.getUserGroups()) {
-                userGroup.getUsers().remove(user);
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : user.getRoles()) {
+                role.getUsers().remove(user);
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
-            for (UserGroup userGroup : user.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
+            for (Role role : user.getRoles()) {
+                serviceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -283,6 +277,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
+     * Get the current authenticated user as User bean.
+     *
+     * @return the User object or null if no user is authenticated.
+     */
+    public User getCurrentUser() throws DAOException {
+        return getById(getAuthenticatedUser().getId());
+    }
+
+    /**
      * Gets the session client of the current authenticated user.
      * 
      * @return The client object or null if no session client is set or no user is
@@ -294,6 +297,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         } else {
             return null;
         }
+    }
+
+    /**
+     * Gets the selected session client id of the current authenticated user.
+     *
+     * @return session client id
+     */
+    public int getSessionClientId() {
+        if (Objects.nonNull(getSessionClientOfAuthenticatedUser())) {
+            return getSessionClientOfAuthenticatedUser().getId();
+        }
+        return 0;
     }
 
     /**
@@ -320,13 +335,38 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return createQueryAllActiveUsersForCurrentUser().toString();
+        }
+        return null;
+    }
+
+    @Override
+    public List<User> getAllNotIndexed() {
+        return getByQuery("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<User> getAllForSelectedClient() {
+        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
         }
-        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
-            return getAllActiveUsersVisibleForCurrentUser();
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return convertJSONObjectsToDTOs(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
+                sortByLogin(), offset, size), false);
         }
         return new ArrayList<>();
     }
@@ -429,31 +469,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * Find active or inactive users.
      *
      * @param active
-     *            true -active user or false - inactive user
+     *            true - active user or false - inactive user
      * @return list of JSON objects
      */
     List<JsonObject> findByActive(boolean active) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true);
-        return searcher.findDocuments(query.toString(), sortByLogin());
+        return searcher.findDocuments(getQueryForActive(active).toString(), sortByLogin());
     }
 
-    /**
-     * Find active users by name or surname.
-     *
-     * @param active
-     *            true or false
-     * @param name
-     *            name or surname
-     * @return list of JSONObjects
-     */
-    List<JsonObject> findByActiveAndName(boolean active, String name) throws DataException {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.must(createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true));
-        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
-        nestedBoolQuery.should(createSimpleWildcardQuery(UserTypeField.NAME.getKey(), name));
-        nestedBoolQuery.should(createSimpleWildcardQuery(UserTypeField.SURNAME.getKey(), name));
-        boolQuery.must(nestedBoolQuery);
-        return searcher.findDocuments(boolQuery.toString(), sortByLogin());
+    private QueryBuilder getQueryForActive(boolean active) {
+        return createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true);
     }
 
     /**
@@ -469,26 +493,26 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Find users by id of user group.
+     * Find users by id of role.
      *
      * @param id
-     *            of user group
-     * @return list of JSON objects with users for specific user group id
+     *            of role
+     * @return list of JSON objects with users for specific role id
      */
-    List<JsonObject> findByUserGroupId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
+    List<JsonObject> findByRoleId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".id", id, true);
         return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find users by title of user group.
+     * Find users by title of role.
      *
      * @param title
-     *            of user group
-     * @return list of JSON objects with users for specific user group title
+     *            of role
+     * @return list of JSON objects with users for specific role title
      */
-    List<JsonObject> findByUserGroupTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery("userGroups.title", title, true, Operator.AND);
+    List<JsonObject> findByRoleTitle(String title) throws DataException {
+        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".title", title, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
 
@@ -500,14 +524,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of JSON objects with users for specific filter
      */
     List<JsonObject> findByFilter(String value) throws DataException {
-        Set<Integer> filterIds = new HashSet<>();
-
         List<JsonObject> filters = serviceManager.getFilterService().findByValue(value, true);
 
-        for (JsonObject filter : filters) {
-            filterIds.add(getIdFromJSONObject(filter));
-        }
-        return searcher.findDocuments(createSetQuery("filters.id", filterIds, true).toString());
+        return searcher.findDocuments(createSetQuery("filters.id", filters, true).toString());
     }
 
     /**
@@ -563,18 +582,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
 
-    /**
-     * Find filtered users by name.
-     *
-     * @param name
-     *            the name filter
-     * @return a list of filtered users
-     */
-    public List<UserDTO> findActiveUsersByName(String name) throws DataException {
-        List<JsonObject> jsonObjects = findByActiveAndName(true, name);
-        return convertJSONObjectsToDTOs(jsonObjects, true);
-    }
-
     private String sortByLogin() {
         return SortBuilders.fieldSort(UserTypeField.LOGIN.getKey()).order(SortOrder.ASC).toString();
     }
@@ -603,14 +610,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
         userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
         userDTO.setClientsSize(UserTypeField.CLIENTS.getSizeOfProperty(userJSONObject));
-        userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
+        userDTO.setRolesSize(UserTypeField.ROLES.getSizeOfProperty(userJSONObject));
 
         if (!related) {
             convertRelatedJSONObjects(userJSONObject, userDTO);
         } else {
             addBasicFilterRelation(userDTO, userJSONObject);
             addBasicProjectRelation(userDTO, userJSONObject);
-            addBasicUserGroupRelation(userDTO, userJSONObject);
+            addBasicRoleRelation(userDTO, userJSONObject);
         }
 
         return userDTO;
@@ -623,13 +630,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getProjectService()));
         userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
             serviceManager.getClientService()));
-        userDTO.setTasks(
-            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getKey(), serviceManager.getTaskService()));
-        userDTO.setProcessingTasks(
-                convertRelatedJSONObjectToDTO(
-                        jsonObject, UserTypeField.PROCESSING_TASKS.getKey(), serviceManager.getTaskService()));
-        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getKey(),
-            serviceManager.getUserGroupService()));
+        userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
+            serviceManager.getTaskService()));
+        userDTO.setRoles(
+            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(), serviceManager.getRoleService()));
     }
 
     private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
@@ -671,22 +675,22 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         }
     }
 
-    private void addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
-        if (userDTO.getUserGroupSize() > 0) {
-            List<UserGroupDTO> userGroups = new ArrayList<>();
+    private void addBasicRoleRelation(UserDTO userDTO, JsonObject jsonObject) {
+        if (userDTO.getRolesSize() > 0) {
+            List<RoleDTO> roles = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserGroupTypeField.TITLE.getKey());
+            subKeys.add(RoleTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserTypeField.USER_GROUPS.getKey(), subKeys);
+                UserTypeField.ROLES.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
-                UserGroupDTO userGroup = new UserGroupDTO();
-                userGroup.setId(relatedProperty.getId());
+                RoleDTO role = new RoleDTO();
+                role.setId(relatedProperty.getId());
                 if (!relatedProperty.getValues().isEmpty()) {
-                    userGroup.setTitle(relatedProperty.getValues().get(0));
+                    role.setTitle(relatedProperty.getValues().get(0));
                 }
-                userGroups.add(userGroup);
+                roles.add(role);
             }
-            userDTO.setUserGroups(userGroups);
+            userDTO.setRoles(roles);
         }
     }
 
@@ -702,26 +706,51 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(login);
         if (!matcher.matches()) {
-            Helper.setErrorMessage("loginNotValid", new Object[] {login});
+            Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
             return false;
         }
 
-        // Go through the file line by line and compare to invalid characters
-        try (FileInputStream fis = new FileInputStream(KitodoConfigFile.LOGIN_BLACKLIST.getFile());
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr)) {
-            String str;
-            while ((str = in.readLine()) != null) {
-                if (str.length() > 0 && login.equalsIgnoreCase(str)) {
-                    Helper.setErrorMessage("loginNotValid", new Object[] {login});
+        return isLoginAllowed(login);
+    }
+
+    private boolean isLoginAllowed(String login) {
+        // If user defined blacklist doesn't exists, use default one
+        if (!KitodoConfigFile.LOGIN_BLACKLIST.exists()) {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            try (InputStream inputStream = classloader.getResourceAsStream(KitodoConfigFile.LOGIN_BLACKLIST.getName());
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                    BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                if (isLoginFoundOnBlackList(reader, login)) {
                     return false;
                 }
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                return false;
+            }
+        }
+        // Go through the user defined blacklist file line by line and compare with login
+        try (FileInputStream inputStream = new FileInputStream(KitodoConfigFile.LOGIN_BLACKLIST.getFile());
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            if (isLoginFoundOnBlackList(reader, login)) {
+                return false;
             }
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return false;
         }
         return true;
+    }
+
+    private boolean isLoginFoundOnBlackList(BufferedReader reader, String login) throws IOException {
+        String notAllowedLogin;
+        while ((notAllowedLogin = reader.readLine()) != null) {
+            if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {
+                Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getFullName(User user) {
@@ -880,45 +909,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get all active users visible for current user - user assigned to projects
-     * with certain clients.
-     *
-     * @return list of users
-     */
-    private List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
-        List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
-        return convertListIdToDTO(getAllActiveUserIdsByClientIds(clientIdList), this);
-    }
-
-    /**
-     * Get ids of all active users which are assigned to project of the given
-     * clients.
-     * 
-     * @param clientIdList
-     *            The list of client ids.
-     * @return list of user ids
-     */
-    public List<Integer> getAllActiveUserIdsByClientIds(List<Integer> clientIdList) {
-        List<User> users = getAllActiveUsersByClientIds(clientIdList);
-        List<Integer> userIdList = new ArrayList<>();
-        for (User user : users) {
-            userIdList.add(user.getId());
-        }
-        return userIdList;
-    }
-
-    /**
-     * Get all active users which are assigned to project of the given clients.
-     * 
-     * @param clientIdList
-     *            The list of client ids.
-     *
-     * @return list of users
-     */
-    public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
-        return dao.getAllActiveUsersByClientIds(clientIdList);
+    private QueryBuilder createQueryAllActiveUsersForCurrentUser() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForActive(true));
+        query.must(createSimpleQuery(UserTypeField.CLIENTS + ".id", getSessionClientId(), true));
+        return query;
     }
 
     /**

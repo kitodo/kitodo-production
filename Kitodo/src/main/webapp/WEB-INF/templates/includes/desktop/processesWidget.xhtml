@@ -27,31 +27,30 @@
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
         <p:column headerText="#{msgs.project}" styleClass="process-table-column">
-            <h:outputText value="#{DesktopForm.getProject(process).title}"/>
+            <h:outputText value="#{process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">
-                <h:link id="editProcess"
-                        outcome="/pages/processEdit"
-                        title="#{msgs.processEdit}">
+                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="desktop"/>
                 </h:link>
-                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}"
+                               rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
                     <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
-                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
-                    <f:param name="zurueck" value="processList"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
+                    <f:param name="stayOnCurrentPage" value="processList"/>
                 </h:commandLink>
                 <h:commandLink action="#{ProcessForm.exportMets()}" id="exportMets" title="#{msgs.exportMets}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
-                <p:commandLink id="deleteProcess"
-                               action="#{ProcessForm.delete}"
-                               title="#{msgs.delete}"
+                <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
                                update="processTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>

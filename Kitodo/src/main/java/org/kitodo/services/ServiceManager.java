@@ -23,19 +23,20 @@ import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
+import org.kitodo.services.data.RoleService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.data.TemplateService;
-import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.image.ImageService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
 import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
-import org.kitodo.services.validation.LongTimePreservationValidationService;
+import org.kitodo.services.validation.LongTermPreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -47,6 +48,7 @@ public class ServiceManager {
     private DataEditorService dataEditorService;
     private DocketService docketService;
     private FilterService filterService;
+    private ImageService imageService;
     private LdapGroupService ldapGroupService;
     private LdapServerService ldapServerService;
     private PropertyService propertyService;
@@ -56,7 +58,7 @@ public class ServiceManager {
     private RulesetService rulesetService;
     private TaskService taskService;
     private TemplateService templateService;
-    private UserGroupService userGroupService;
+    private RoleService roleService;
     private UserService userService;
     private WorkflowService workflowService;
     private FileService fileService;
@@ -64,7 +66,7 @@ public class ServiceManager {
     private SchemaService schemaService;
     private SecurityAccessService securityAccessService;
     private FileStructureValidationService fileStructureValidationService;
-    private LongTimePreservationValidationService longTimePreservationValidationService;
+    private LongTermPreservationValidationService longTermPreservationValidationService;
     private MetadataValidationService metadataValidationService;
     private SessionService sessionService;
     private WorkflowControllerService workflowControllerService;
@@ -102,6 +104,12 @@ public class ServiceManager {
     private void initializeFilterService() {
         if (filterService == null) {
             filterService = FilterService.getInstance();
+        }
+    }
+
+    private void initializeImageService() {
+        if (imageService == null) {
+            imageService = ImageService.getInstance();
         }
     }
 
@@ -171,9 +179,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeUserGroupService() {
-        if (userGroupService == null) {
-            userGroupService = UserGroupService.getInstance();
+    private void initializeRoleService() {
+        if (roleService == null) {
+            roleService = RoleService.getInstance();
         }
     }
 
@@ -213,9 +221,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeLongTimePreservationValidationService() {
-        if (longTimePreservationValidationService == null) {
-            longTimePreservationValidationService = new LongTimePreservationValidationService();
+    private void initializeLongTermPreservationValidationService() {
+        if (longTermPreservationValidationService == null) {
+            longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
@@ -316,6 +324,17 @@ public class ServiceManager {
     }
 
     /**
+     * Initialize ImageService if it is not yet initialized and next return
+     * it.
+     *
+     * @return ImageService object
+     */
+    public ImageService getImageService() {
+        initializeImageService();
+        return imageService;
+    }
+
+    /**
      * Initialize PropertyService if it is not yet initialized and next return
      * it.
      *
@@ -413,14 +432,13 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize UserGroupService if it is not yet initialized and next return
-     * it.
+     * Initialize RoleService if it is not yet initialized and next return it.
      *
-     * @return UserGroupService object
+     * @return RoleService object
      */
-    public UserGroupService getUserGroupService() {
-        initializeUserGroupService();
-        return userGroupService;
+    public RoleService getRoleService() {
+        initializeRoleService();
+        return roleService;
     }
 
     /**
@@ -487,14 +505,14 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize LongTimePreservationValidationService if it is not yet
+     * Initialize LongTermPreservationValidationService if it is not yet
      * initialized and next return it.
      *
-     * @return LongTimePreservationValidationService object
+     * @return LongTermPreservationValidationService object
      */
-    public LongTimePreservationValidationService getLongTimePreservationValidationService() {
-        initializeLongTimePreservationValidationService();
-        return longTimePreservationValidationService;
+    public LongTermPreservationValidationService getLongTermPreservationValidationService() {
+        initializeLongTermPreservationValidationService();
+        return longTermPreservationValidationService;
     }
 
     /**

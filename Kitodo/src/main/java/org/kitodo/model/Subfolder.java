@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
 /**
@@ -58,6 +59,8 @@ import org.kitodo.services.file.FileService;
  * institutions to migrate the files.
  */
 public class Subfolder {
+    private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
     /**
      * The general metrics of this kind of subfolder. So to say its type.
      */
@@ -101,7 +104,10 @@ public class Subfolder {
             @Override
             public String apply(URI uri) {
                 Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
-                matcher.matches();
+                if (!matcher.matches()) {
+                    throw new IllegalStateException(
+                            "At this point may only arrive files where the pattern had already matched.");
+                }
                 return matcher.group(1);
             }
         };
@@ -185,7 +191,8 @@ public class Subfolder {
     }
 
     /**
-     * Returns the settings of the subfolder configured in the project.
+     * Returns the folder database bean. The folder bean contains the settings
+     * for the subfolder.
      * 
      * @return the folder
      */
@@ -262,8 +269,7 @@ public class Subfolder {
      *            searched and a pattern to which the file names must correspond
      * @return a map from the canonical file name part to the URI
      */
-    private static Map<String, URI> listDirectory(Pair<URI, Pattern> query) {
-        FileService fileService = new FileService();
+    private Map<String, URI> listDirectory(Pair<URI, Pattern> query) {
         FilenameFilter filter = (dir, name) -> query.getRight().matcher(name).matches();
         Stream<URI> relativeURIs = fileService.getSubUris(filter, query.getLeft()).parallelStream();
         Stream<URI> absoluteURIs = relativeURIs

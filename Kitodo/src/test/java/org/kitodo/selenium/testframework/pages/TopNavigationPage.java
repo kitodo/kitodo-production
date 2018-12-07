@@ -18,11 +18,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class TopNavigationPage {
+public class TopNavigationPage extends Page<TopNavigationPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -73,6 +74,10 @@ public class TopNavigationPage {
     private WebElement linkSystem;
 
     @SuppressWarnings("unused")
+    @FindBy(className = "ui-selectonemenu-trigger")
+    private WebElement clientSelectTrigger;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "select-session-client-form:setSessionClientButton")
     private WebElement acceptClientSelectionButton;
 
@@ -80,21 +85,30 @@ public class TopNavigationPage {
     @FindBy(id = "select-session-client-form:cancelSessionClientSelectionButton")
     private WebElement cancelClientSelectionButton;
 
+    public TopNavigationPage() {
+        super(null);
+    }
+
+    @Override
+    public TopNavigationPage goTo() {
+        return null;
+    }
+
     /**
      * Hovers user menu and logs out.
      */
-    public void logout() throws InterruptedException {
+    public void logout() throws Exception {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
         hoverWebElement(userMenuButton);
         hoverWebElement(logoutButton);
-        logoutButton.click();
-        Thread.sleep(Browser.getDelayAfterLogout());
+
+        clickButtonAndWaitForRedirect(logoutButton, Pages.getLoginPage().getUrl());
     }
 
     public String getSessionClient() throws InterruptedException {
-        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+        await("Wait for visible user menu button").atMost(30, TimeUnit.SECONDS).ignoreExceptions()
             .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
         hoverWebElement(userMenuButton);
@@ -106,17 +120,24 @@ public class TopNavigationPage {
         return element.getText();
     }
 
-    public void acceptClientSelection() throws InterruptedException {
-        acceptClientSelectionButton.click();
-        Thread.sleep(5000);
+    public void acceptClientSelection() throws IllegalAccessException, InstantiationException {
+        clickButtonAndWaitForRedirect(acceptClientSelectionButton, Pages.getDesktopPage().getUrl());
+    }
+
+    public void selectSessionClient(int id)throws Exception {
+        chooseClient(id);
+        acceptClientSelection();
+        Thread.sleep(Browser.getDelayAfterLogin());
+    }
+
+    private void chooseClient(int id) throws InterruptedException {
+        clientSelectTrigger.click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        Browser.getDriver().findElement(By.id("select-session-client-form:client_" + id)).click();
     }
 
     public void cancelClientSelection() {
         cancelClientSelectionButton.click();
-    }
-
-    public boolean isClientSelectionPossible() {
-        return acceptClientSelectionButton.isEnabled();
     }
 
     /**

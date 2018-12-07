@@ -20,10 +20,19 @@
             <td>#{objectType.translationPlural}</td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
-                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editIndex')}"
+                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexing(objectType)}"
+                                 styleClass="indexing-button"
+                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
+            </td>
+            <td>
+                <p:commandButton widgetVar="startIndexing#{objectType}"
+                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
+                                 onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
+                                 value="#{msgs.startIndexing}"
+                                 action="#{indexingForm.startIndexingRemaining(objectType)}"
                                  styleClass="indexing-button"
                                  disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
             </td>

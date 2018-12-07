@@ -22,6 +22,7 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,6 +96,36 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return DTO object
      */
     public abstract S convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException;
+
+    /**
+     * Count all not indexed rows in database. Not indexed means that row has index
+     * action INDEX or NULL.
+     *
+     * @return amount of all not indexed rows
+     */
+    public abstract Long countNotIndexedDatabaseRows() throws DAOException;
+
+    /**
+     * Get all not indexed objects from database. Not indexed means that row has
+     * index action INDEX or NULL.
+     *
+     * @return list of all not indexed objects
+     */
+    public abstract List<T> getAllNotIndexed();
+
+    /**
+     * Get all not indexed objects from database in given range. Not indexed means
+     * that row has index action INDEX or NULL.
+     *
+     * @param offset
+     *            result - important, numeration starts since 0
+     * @param size
+     *            amount of results
+     * @return list of all not indexed objects from database in given range
+     */
+    public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
+        return dao.getAllNotIndexed(offset, size);
+    }
 
     /**
      * Get all DTO objects from index an convert them for frontend wit all
@@ -192,6 +223,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * Saves document to the index of Elastic Search and update index flag for
+     * indexed object.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public void saveToIndexAndUpdateIndexFlag(T baseIndexedBean, boolean forceRefresh)
+            throws CustomResponseException, DAOException, IOException {
+        saveToIndex(baseIndexedBean, forceRefresh);
+        updateIndexFlag(baseIndexedBean);
+    }
+
+    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean
@@ -203,7 +247,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     @SuppressWarnings("unchecked")
     public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        if (baseIndexedBean != null) {
+        if (Objects.nonNull(baseIndexedBean)) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
     }
@@ -220,8 +264,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(baseIndexedBeans, type);
         for (T baseIndexedBean : baseIndexedBeans) {
-            baseIndexedBean.setIndexAction(IndexAction.DONE);
-            dao.save(baseIndexedBean);
+            updateIndexFlag(baseIndexedBean);
         }
     }
 
@@ -630,6 +673,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         }
     }
 
+    protected QueryBuilder createSetQuery(String key, List<JsonObject> values, boolean contains) {
+        Set<Integer> valuesIds = new HashSet<>();
+        for (JsonObject value : values) {
+            valuesIds.add(getIdFromJSONObject(value));
+        }
+
+        return createSetQuery(key, valuesIds, contains);
+    }
+
     /**
      * Used for cases where operator is not necessary to create query - checking
      * only for one parameter.
@@ -905,5 +957,18 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             return relatedProperties;
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Update index flag for indexed object.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    private void updateIndexFlag(T baseIndexedBean) throws DAOException {
+        if (Objects.nonNull(baseIndexedBean)) {
+            baseIndexedBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(baseIndexedBean);
+        }
     }
 }

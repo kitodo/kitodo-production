@@ -17,7 +17,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item" id="ldapGroupsTable" value="#{LdapGroupForm.ldapGroups}" lazy="true" paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.ldapGroup}">
@@ -31,13 +31,17 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link outcome="ldapgroupEdit">
+                <h:link outcome="ldapgroupEdit"
+                        rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapGroup')}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" immediate="true"
-                               title="#{msgs.duplicateLdapGroup}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" title="#{msgs.duplicateLdapGroup}"
+                               rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}">
+                    <i class="fa fa-clone fa-lg"/>
+                </h:commandLink>
                 <p:commandLink id="deleteLdapgroup" action="#{LdapGroupForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapGroup')}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>

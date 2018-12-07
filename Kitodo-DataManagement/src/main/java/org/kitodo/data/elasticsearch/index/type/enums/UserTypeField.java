@@ -21,12 +21,11 @@ public enum UserTypeField implements TypeInterface {
     ACTIVE("active"),
     LOCATION("location"),
     METADATA_LANGUAGE("metadataLanguage"),
-    USER_GROUPS("userGroups"),
+    ROLES("roles"),
     FILTERS("filters"),
     PROJECTS("projects"),
     CLIENTS("clients"),
-    PROCESSING_TASKS("processingTasks"),
-    TASKS("tasks");
+    PROCESSING_TASKS("processingTasks");
 
     private String name;
 

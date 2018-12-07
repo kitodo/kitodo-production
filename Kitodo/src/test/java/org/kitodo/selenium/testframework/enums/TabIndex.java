@@ -15,15 +15,18 @@ package org.kitodo.selenium.testframework.enums;
 public enum TabIndex {
     // users page
     USERS(0),
-    USER_GROUPS(1),
+    ROLES(1),
     CLIENTS(2),
     LDAP_GROUPS(3),
 
     // user edit page
     USER_DETAILS(0),
-    USER_USER_GROUPS(1),
+    USER_ROLES(1),
     USER_PROJECT_LIST(2),
     USER_CLIENT_LIST(3),
+
+    // role edit page
+    ROLE_DETAILS(0),
 
     // projects page
     PROJECTS(0),
@@ -32,9 +35,20 @@ public enum TabIndex {
     DOCKETS(3),
     RULESETS(4),
 
+    // template edit page
+    TEMPLATE_DETAILS(0),
+    TEMPLATE_TASKS(1),
+
     // processes page
     PROCESSES(0),
     BATCHES(1),
+
+    // template edit page
+    PROCESS_DETAILS(0),
+    PROCESS_TASKS(1),
+    PROCESS_TEMPLATES(2),
+    PROCESS_WORKPIECES(3),
+    PROCESS_PROPERTIES(1),
 
     // system page
     INDEXING(0),

@@ -11,6 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.Objects;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -27,6 +29,10 @@ public class WorkflowType extends BaseType<Workflow> {
         jsonObjectBuilder.add(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
         jsonObjectBuilder.add(WorkflowTypeField.READY.getKey(), workflow.isReady());
         jsonObjectBuilder.add(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
+        if (Objects.nonNull(workflow.getClient())) {
+            jsonObjectBuilder.add(WorkflowTypeField.CLIENT_ID.getKey(), workflow.getClient().getId());
+            jsonObjectBuilder.add(WorkflowTypeField.CLIENT_NAME.getKey(), preventNull(workflow.getClient().getName()));
+        }
         return jsonObjectBuilder.build();
     }
 }

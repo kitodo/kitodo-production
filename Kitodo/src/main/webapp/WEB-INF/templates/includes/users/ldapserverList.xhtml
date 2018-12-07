@@ -19,7 +19,7 @@
                  value="#{LdapServerForm.ldapServers}"
                  lazy="true"
                  paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.ldapServer}">
@@ -30,13 +30,13 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link outcome="ldapserverEdit">
+                <h:link outcome="ldapserverEdit"
+                        rendered="#{SecurityAccessController.hasAuthorityGlobal('editLdapServer')}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteLdapserver"
-                               action="#{LdapServerForm.delete}"
-                               title="#{msgs.delete}"
+                <p:commandLink id="deleteLdapserver" action="#{LdapServerForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityGlobal('deleteLdapServer')}"
                                update="usersTabView:ldapServersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapServerForm.ldapServerById}"/>

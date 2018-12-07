@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -35,13 +36,16 @@ import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.RulesetDTO;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
+    private final ServiceManager serviceManager = new ServiceManager();
     private static RulesetService instance = null;
 
     /**
@@ -70,6 +74,51 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Ruleset");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        return getRulesetsForCurrentUserQuery();
+    }
+
+    @Override
+    public List<RulesetDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getRulesetsForCurrentUserQuery(), sort, offset, size),
+            false);
+    }
+
+    @Override
+    public List<Ruleset> getAllNotIndexed() {
+        return getByQuery("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Ruleset> getAllForSelectedClient() {
+        return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        RulesetDTO rulesetDTO = new RulesetDTO();
+        rulesetDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
+        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setOrderMetadataByRuleset(
+            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(rulesetJSONObject));
+        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(rulesetJSONObject));
+
+        rulesetDTO.setClientDTO(clientDTO);
+        return rulesetDTO;
     }
 
     /**
@@ -151,18 +200,6 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         return searcher.findDocuments(query.toString());
     }
 
-    @Override
-    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        RulesetDTO rulesetDTO = new RulesetDTO();
-        rulesetDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
-        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
-        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
-        rulesetDTO.setOrderMetadataByRuleset(
-            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
-        return rulesetDTO;
-    }
-
     /**
      * Get preferences.
      *
@@ -178,5 +215,12 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
             logger.error(e.getMessage(), e);
         }
         return myPreferences;
+    }
+
+    private String getRulesetsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 }

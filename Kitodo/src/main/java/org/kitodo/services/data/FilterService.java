@@ -45,10 +45,9 @@ import org.kitodo.dto.BaseDTO;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.PropertyDTO;
+import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.FilterString;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
@@ -89,6 +88,21 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Filter");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Filter> getAllNotIndexed() {
+        return getByQuery("FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Filter> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -408,8 +422,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
-        // TODO Change to check the corresponding authority
-        if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
+
+        if (Objects.nonNull(currentUser)) {
             List<ProjectDTO> projects = currentUser.getProjects();
             query.must(createSetQuery(ProcessTypeField.PROJECT_ID.getKey(), collectIds(projects), true));
         }
@@ -465,14 +479,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             logger.error(e.getMessage(), e);
         }
 
-        BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
-
         // only tasks assigned to the user groups the current user is member of
-        List<UserGroupDTO> userUserGroups = userDTO.getUserGroups();
-        userGroupsOrUsers.should(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
-        // only task where the user is assigned to
-        userGroupsOrUsers.should(createSimpleQuery("users.id", user.getId(), true));
-        taskQuery.must(userGroupsOrUsers);
+        List<RoleDTO> userRoles = userDTO.getRoles();
+        taskQuery.must(createSetQuery(TaskTypeField.ROLES + ".id", collectIds(userRoles), true));
 
         return taskQuery;
     }
@@ -922,16 +931,16 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterProcessProperty(String filter, boolean negate, ObjectType objectType)
             throws DataException {
         /* Filtering by signature */
-        List<JsonObject> jsonObjects;
+        List<JsonObject> processes;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
+            processes = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
                 !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
+            processes = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
         }
-        List<ProcessDTO> processes = serviceManager.getProcessService().convertJSONObjectsToDTOs(jsonObjects, true);
-        QueryBuilder projectQuery = createSetQuery("_id", collectIds(processes), true);
+
+        QueryBuilder projectQuery = createSetQuery("_id", processes, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
 
@@ -966,18 +975,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
         // Filtering by signature
-        List<JsonObject> jsonObjects;
+        List<JsonObject> templates;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
+            templates = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
                 templateProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
+            templates = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
                 !negate);
         }
-        List<PropertyDTO> templateDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-            true);
-        QueryBuilder templateQuery = createSetQuery("template", collectIds(templateDTOS), true);
+
+        QueryBuilder templateQuery = createSetQuery("template", templates, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
     }
 
@@ -999,19 +1007,18 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
         // filter according signature
-        List<JsonObject> jsonObjects;
+        List<JsonObject> workpieces;
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
             FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
+            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
                 workpieceProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
+            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
                 !negate);
         }
-        List<PropertyDTO> workpieceDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-            true);
-        QueryBuilder workpieceQuery = createSetQuery("workpieces.id", collectIds(workpieceDTOS), true);
+
+        QueryBuilder workpieceQuery = createSetQuery("workpieces.id", workpieces, true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, workpieceQuery);
     }
 

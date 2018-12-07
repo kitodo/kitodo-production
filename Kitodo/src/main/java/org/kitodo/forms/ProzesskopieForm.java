@@ -223,7 +223,7 @@ public class ProzesskopieForm implements Serializable {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
-    private List<AdditionalField> additionalFields;
+    private transient List<AdditionalField> additionalFields;
     private String atstsl = "";
     private List<String> digitalCollections;
     private String docType;
@@ -714,7 +714,7 @@ public class ProzesskopieForm implements Serializable {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
-            Helper.setErrorMessage("processTitleInvalid");
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
         }
 
         if (process.getTitle() != null) {

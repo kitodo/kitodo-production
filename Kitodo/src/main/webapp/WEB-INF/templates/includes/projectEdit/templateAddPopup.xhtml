@@ -1,0 +1,53 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <!-- edit dialog -->
+        <p:dialog widgetVar="addTemplateDialog"
+                  id="addTemplateDialog"
+                  header="#{msgs.templates}"
+                  width="700px"
+                  modal="true"
+                  dynamic="true">
+            <h:form id="templateForm">
+                <p:dataTable var="item"
+                             id="selectTemplateTable"
+                             value="#{ProjectForm.templates}"
+                             lazy="true"
+                             paginator="true"
+                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             paginatorPosition="bottom">
+                    <p:column headerText="#{msgs.template}">
+                        <h:outputText value="#{item.title}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                        <p:commandLink id="addTemplate"
+                                       action="#{ProjectForm.addTemplate}"
+                                       title="#{msgs.templateAdd}"
+                                       update="editForm:projectTabView:templateTable"
+                                       oncomplete="toggleSave()">
+                            <i class="fa fa-user-plus fa-lg"/>
+                            <f:param name="ID" value="#{item.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</ui:composition>

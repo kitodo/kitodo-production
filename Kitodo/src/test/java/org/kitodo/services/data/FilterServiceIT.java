@@ -43,7 +43,7 @@ public class FilterServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1), 1);
     }
 
     @AfterClass
@@ -111,7 +111,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).get(0).getId()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"id:2 3\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 2,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 1,
             processService.findByQuery(thirdQuery, true).size()));
     }
 
@@ -165,13 +165,13 @@ public class FilterServiceIT {
     public void shouldBuildQueryAndFindByProcessServiceByTaskTitle() throws Exception {
         ProcessService processService = new ServiceManager().getProcessService();
 
-        QueryBuilder firstQuery = filterService.queryBuilder("\"step:Testing\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'Testing'!", 0,
+        QueryBuilder firstQuery = filterService.queryBuilder("\"step:Finished\"", ObjectType.PROCESS, false, false);
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'Finished'!", 0,
             processService.findByQuery(firstQuery, true).size()));
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Blocking\"", ObjectType.PROCESS, false,
+        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.PROCESS, false,
             false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'Blocking'!", 1,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'Open'!", 2,
             processService.findByQuery(secondQuery, true).size()));
     }
 
@@ -188,7 +188,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 3,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 2,
             processService.findByQuery(thirdQuery, true).size()));
     }
 
@@ -330,16 +330,16 @@ public class FilterServiceIT {
         TaskService taskService = new ServiceManager().getTaskService();
 
         // TODO: why "step" creates something called historical filter?
-        QueryBuilder query = filterService.queryBuilder("\"step:Testing\"", ObjectType.TASK, false, false);
+        QueryBuilder query = filterService.queryBuilder("\"step:Finished\"", ObjectType.TASK, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
         //assertEquals("Incorrect amount of tasks with title containing 'Testing'!", 1, taskDTOS.size());
 
-        QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:Blocking\"", ObjectType.TASK, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of tasks with title containing 'Testing'!", 1,
+        QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
+        await().untilAsserted(() -> assertEquals("Incorrect amount of tasks with title containing 'Open'!", 2,
             taskService.findByQuery(firstQuery, true).size()));
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Testing\"", ObjectType.TASK, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of tasks with title containing 'Testing'!", 0,
+        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Finished\"", ObjectType.TASK, false, false);
+        await().untilAsserted(() -> assertEquals("Incorrect amount of tasks with title containing 'Finished'!", 0,
             taskService.findByQuery(secondQuery, true).size()));
     }
 
@@ -404,17 +404,17 @@ public class FilterServiceIT {
     public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
         TaskService taskService = new ServiceManager().getTaskService();
 
-        QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:1\"", ObjectType.TASK, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of open tasks with ordering 1!", 2,
+        QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:4\"", ObjectType.TASK, false, false);
+        await().untilAsserted(() -> assertEquals("Incorrect amount of open tasks with ordering 4!", 1,
             taskService.findByQuery(firstQuery, true).size()));
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Blocking\"", ObjectType.TASK, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of open tasks with title 'Blocking'!", 1,
+        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
+        await().untilAsserted(() -> assertEquals("Incorrect amount of open tasks with title 'Open'!", 2,
             taskService.findByQuery(secondQuery, true).size()));
 
-        QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepopen:Blocking\"", ObjectType.TASK, false, false);
+        QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepopen:Open\"", ObjectType.TASK, false, false);
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of not open tasks with title different than 'Blocking'!", 2,
+            () -> assertEquals("Incorrect amount of not open tasks with title different than 'Open'!", 2,
                 taskService.findByQuery(thirdQuery, true).size()));
     }
 
@@ -426,9 +426,9 @@ public class FilterServiceIT {
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks in progress with ordering 3!", 1,
             taskService.findByQuery(firstQuery, true).size()));
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"-stepinwork:3\"", ObjectType.TASK, false, false);
+        QueryBuilder secondQuery = filterService.queryBuilder("\"-stepinwork:1\"", ObjectType.TASK, false, false);
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of tasks not in progress with ordering different than 3!", 2,
+            () -> assertEquals("Incorrect amount of tasks not in progress with ordering different than 1!", 2,
                 taskService.findByQuery(secondQuery, true).size()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepinwork:2\"", ObjectType.TASK, false, false);
@@ -467,7 +467,7 @@ public class FilterServiceIT {
         QueryBuilder secondQuery = filterService.queryBuilder("\"id:1\" \"-stepdone:4\"", ObjectType.TASK, false,
             false);
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 1!", 2,
+            () -> assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 1!", 1,
                 taskService.findByQuery(secondQuery, true).size()));
     }
 

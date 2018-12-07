@@ -30,7 +30,7 @@ public class Authority extends BaseIndexedBean {
     private String title;
 
     @ManyToMany(mappedBy = "authorities", cascade = CascadeType.PERSIST)
-    private List<UserGroup> userGroups;
+    private List<Role> roles;
 
     /**
      * The constructor for setting title and assignables.
@@ -58,7 +58,9 @@ public class Authority extends BaseIndexedBean {
     }
 
     /**
-     * Gets the title without suffixes seperated by "_" e.g. "admin_global" will become "admin".
+     * Gets the title without suffixes separated by "_" e.g. "admin_global" will
+     * become "admin".
+     * 
      * @return The title without suffix.
      */
     public String getTitleWithoutSuffix() {
@@ -76,25 +78,25 @@ public class Authority extends BaseIndexedBean {
     }
 
     /**
-     * Gets all user groups in which this authority is used.
+     * Get all roles in which this authority is used.
      *
-     * @return The user groups.
+     * @return the roles
      */
-    public List<UserGroup> getUserGroups() {
-        if (this.userGroups == null) {
-            this.userGroups = new ArrayList<>();
+    public List<Role> getRoles() {
+        if (this.roles == null) {
+            this.roles = new ArrayList<>();
         }
-        return userGroups;
+        return roles;
     }
 
     /**
-     * Sets the user groups.
+     * Set the roles.
      *
-     * @param userGroups
-     *            The user groups.
+     * @param roles
+     *            the roles
      */
-    public void setUserGroups(List<UserGroup> userGroups) {
-        this.userGroups = userGroups;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

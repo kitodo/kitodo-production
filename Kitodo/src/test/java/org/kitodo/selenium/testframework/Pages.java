@@ -30,6 +30,10 @@ public class Pages {
         return getPage(CurrentTasksEditPage.class);
     }
 
+    public static DesktopPage getDesktopPage() throws InstantiationException, IllegalAccessException {
+        return getPage(DesktopPage.class);
+    }
+
     public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
         return getPage(HelpPage.class);
     }
@@ -94,16 +98,12 @@ public class Pages {
         return getPage(TopNavigationPage.class);
     }
 
-    public static UserConfigurationPage getUserConfigurationPage() throws InstantiationException, IllegalAccessException {
-        return getPage(UserConfigurationPage.class);
-    }
-
     public static UserEditPage getUserEditPage() throws InstantiationException, IllegalAccessException {
         return getPage(UserEditPage.class);
     }
 
-    public static UserGroupEditPage getUserGroupEditPage() throws InstantiationException, IllegalAccessException {
-        return getPage(UserGroupEditPage.class);
+    public static RoleEditPage getRoleEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(RoleEditPage.class);
     }
 
     public static LdapGroupEditPage getLdapGroupEditPage() throws InstantiationException, IllegalAccessException {

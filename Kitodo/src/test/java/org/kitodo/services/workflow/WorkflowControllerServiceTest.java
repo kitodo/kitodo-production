@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -29,7 +28,6 @@ public class WorkflowControllerServiceTest {
     @BeforeClass
     public static void setUp() {
         workflowControllerService = new ServiceManager().getWorkflowControllerService();
-        SecurityTestUtils.addUserDataToSecurityContext(new User());
     }
 
     @AfterClass
@@ -41,7 +39,7 @@ public class WorkflowControllerServiceTest {
     public void shouldSetTaskStatusUp() throws Exception {
         Task task = new Task();
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        task = workflowControllerService.setTaskStatusUp(task);
+        workflowControllerService.setTaskStatusUp(task);
         assertEquals("Task status was not set up!", TaskStatus.INWORK, task.getProcessingStatusEnum());
     }
 
@@ -49,7 +47,7 @@ public class WorkflowControllerServiceTest {
     public void shouldSetTaskStatusDown() {
         Task task = new Task();
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        task = workflowControllerService.setTaskStatusDown(task);
+        workflowControllerService.setTaskStatusDown(task);
         assertEquals("Task status was not set down!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
     }
 }
