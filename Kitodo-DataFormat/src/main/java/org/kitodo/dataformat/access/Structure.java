@@ -141,7 +141,10 @@ public class Structure implements DivXmlElementAccessInterface {
         substructures = div.getDiv().stream().map(child -> new Structure(child, mets, mediaUnitsMap))
                 .collect(Collectors.toCollection(LinkedList::new));
         type = div.getTYPE();
-        mediaUnitsMap.get(div.getID()).stream().map(View::new).forEach(views::add);
+        Set<MediaUnit> mediaUnits = mediaUnitsMap.get(div.getID());
+        if (mediaUnits != null) {
+            mediaUnits.stream().map(View::new).forEach(views::add);
+        }
     }
 
     /**

@@ -129,8 +129,10 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         if (Objects.nonNull(metsDocumentID)) {
             id = metsDocumentID.getID();
         }
-        Map<String, MediaVariant> mediaVariants = mets.getFileSec().getFileGrp().parallelStream().map(MediaVariant::new)
-                .collect(Collectors.toMap(MediaVariant::getUse, Function.identity()));
+        FileSec fileSec = mets.getFileSec();
+        Map<String, MediaVariant> mediaVariants = fileSec != null ? fileSec.getFileGrp().parallelStream()
+                .map(MediaVariant::new).collect(Collectors.toMap(MediaVariant::getUse, Function.identity()))
+                : new HashMap<>();
         List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
         Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
         for (DivType div : physicalDivs) {
