@@ -46,8 +46,8 @@ public class ImageGeneratorIT {
 
     // Test data
 
-    Path tiff = Paths.get("../Kitodo-LongTimePreservationValidationModule/src/test/resources/rose.tif");
-    Path jpg = Paths.get("../Kitodo-LongTimePreservationValidationModule/src/test/resources/rose.jpg");
+    Path tiff = Paths.get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.tif");
+    Path jpg = Paths.get("../Kitodo-LongTermPreservationValidation/src/test/resources/rose.jpg");
 
     // These settings are needed in both test variants
 

@@ -418,10 +418,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
         taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(taskJSONObject));
         taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(taskJSONObject));
-        Integer taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
+        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
         taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        Integer editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
+        int editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
@@ -442,7 +442,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
          * are displayed in the task list and reading the template list would result in
          * never-ending loops as the list of templates reads the list of tasks.
          */
-        Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
+        int process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(serviceManager.getProcessService()
@@ -896,87 +896,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
-    }
-
-    /**
-     * Get tasks for non template processes for given project id and ordered by
-     * ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Task> getTasksForProjectHelper(Integer projectId) {
-        return dao.getTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getSizeOfTasksForProjectHelper(Integer projectId) {
-        return dao.getSizeOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get average ordering of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
-     *
-     * @param projectId
-     *            as Integer
-     * @return list of Double
-     */
-    public List<Double> getAverageOrderingOfTasksForProjectHelper(Integer projectId) {
-        return dao.getAverageOrderingOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
-    }
-
-    /**
-     * Get tasks for non template processes for given project id and ordered by
-     * ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Task> getTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus, projectId);
-    }
-
-    /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getSizeOfTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus,
-            projectId);
-    }
-
-    /**
-     * Get amount of images of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
-     *
-     * @param processingStatus
-     *            as Integer
-     * @param projectId
-     *            as Integer
-     * @return list of Long
-     */
-    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(Integer processingStatus,
-            Integer projectId) {
-        return dao.getAmountOfImagesForTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            processingStatus, projectId);
     }
 
     /**

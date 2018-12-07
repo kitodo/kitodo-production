@@ -25,7 +25,6 @@ import javax.json.JsonValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -75,36 +74,16 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Method saves processes, users and clients related to modified project.
+     * Method saves processes and users related to modified project.
      *
      * @param project
      *            object
      */
     @Override
     protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException, DAOException, DataException {
+            throws CustomResponseException, IOException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
-        manageClientDependenciesForIndex(project);
-    }
-
-    private void manageClientDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException, DataException, DAOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            Client client = project.getClient();
-            if (Objects.nonNull(client)) {
-                client.getProjects().remove(project);
-                serviceManager.getClientService().saveToIndex(client, false);
-            }
-        } else {
-            JsonObject clients = serviceManager.getClientService().findByProjectId(project.getId());
-            Integer id = getIdFromJSONObject(clients);
-            if (id > 0 && !Objects.equals(id, project.getClient().getId())) {
-                Client oldClient = serviceManager.getClientService().getById(id);
-                serviceManager.getClientService().saveToIndex(oldClient, false);
-                serviceManager.getClientService().saveToIndex(project.getClient(), false);
-            }
-        }
     }
 
     /**
@@ -155,6 +134,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        return getProjectsForCurrentUserQuery();
+    }
+
+    @Override
     public List<Project> getAllNotIndexed() {
         return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
@@ -162,25 +146,19 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     public List<Project> getAllForSelectedClient() {
         return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-                Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
-        int sessionClientId = serviceManager.getUserService().getSessionClientId();
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForUserId(currentUserId));
-        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getProjectsForCurrentUserQuery(), sort, offset, size),
+            false);
     }
 
     /**
      * Find all projects available to assign to the edited user. It will be
-     * displayed in the userEditProjectsPopup. If user id is null and session client
-     * is null, return list of all projects.
+     * displayed in the userEditProjectsPopup.
      *
      * @param userId
      *            id of user which is going to be edited
@@ -342,8 +320,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project
-     *         is incomplete
+     * @return true, if project is complete and can be used, false, if project is
+     *         incomplete
      */
     public boolean isProjectComplete(Project project) {
         boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
@@ -373,6 +351,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
         duplicatedProject.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
 
+        duplicatedProject.setDmsImportImagesPath(baseProject.getDmsImportImagesPath());
+        duplicatedProject.setDmsImportRootPath(baseProject.getDmsImportRootPath());
         duplicatedProject.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
         duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
         duplicatedProject.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
@@ -392,7 +372,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
-        ArrayList<Folder> duplicatedFolders = new ArrayList<>();
+        List<Folder> duplicatedFolders = new ArrayList<>();
         for (Folder folder : baseProject.getFolders()) {
             Folder duplicatedFolder = new Folder();
             duplicatedFolder.setMimeType(folder.getMimeType());
@@ -415,17 +395,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return duplicatedProject;
     }
 
-    /**
-     * Get projects by a list of ids.
-     *
-     * @param projectIds
-     *            the list of ids
-     * @return the list of projects
-     */
-    public List<Project> getByIds(List<Integer> projectIds) {
-        if (!projectIds.isEmpty()) {
-            return dao.getByIds(projectIds);
-        }
-        return new ArrayList<>();
+    private String getProjectsForCurrentUserQuery() {
+        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
+        int sessionClientId = serviceManager.getUserService().getSessionClientId();
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForUserId(currentUserId));
+        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
+        return query.toString();
     }
 }

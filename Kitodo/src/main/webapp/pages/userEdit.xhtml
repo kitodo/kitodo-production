@@ -27,7 +27,9 @@
     <ui:param name="isCreateMode"
               value="#{UserForm.userObject.id eq null and SecurityAccessController.hasAuthorityToAddUser()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser()}"/>
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewUser() and not SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
+    <ui:param name="isConfigMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToConfigUser(UserForm.userObject.id)}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -41,11 +43,13 @@
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.userView}"
                           rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.userConfiguration}"
+                          rendered="#{isConfigMode}"/>
         </h3>
         <p:commandButton value="#{msgs.save}"
                          action="#{UserForm.save}"
                          id="save"
-                         rendered="#{isEditMode || isCreateMode}"
+                         rendered="#{isEditMode || isCreateMode || isConfigMode}"
                          widgetVar="save"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -63,92 +67,33 @@
     <ui:define name="pageTabView">
         <p:tabView id="userTabView">
             <p:tab id="detailsTab" title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/userEdit/details.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/details.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                    <ui:param name="isConfigMode" value="#{isConfigMode}" />
+                </ui:include>
             </p:tab>
-            <!-- user groups -->
+
             <p:tab id="roleTab" title="#{msgs.roles}">
-                <p:dataTable id="roleDatatable" var="item" value="#{UserForm.userObject.roles}">
-                    <p:column headerText="#{msgs.role}">
-                        <h:outputText value="#{item.title}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromRole"
-                                       rendered="#{isEditMode || isCreateMode}"
-                                       action="#{UserForm.deleteFromRole}"
-                                       title="#{msgs.ausGruppeLoeschen}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{item.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addRoleDialog').show()"
-                                 id="addRoleButton"
-                                 value="#{msgs.rolesAdd}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="callto m-1em">
-                </p:commandButton>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/roleList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
-            <!-- projects -->
+
             <p:tab id="projectTab" title="#{msgs.projectList}">
-                <p:dataTable id="projectDatatable" var="item" value="#{UserForm.userObject.projects}">
-                    <p:column headerText="#{msgs.projectList}">
-                        <h:outputText value="#{item.title}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromProject"
-                                       action="#{UserForm.deleteFromProject}"
-                                       title="#{msgs.deleteFromProject}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{item.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addProjectDialog').show()"
-                                 id="addProjectButton"
-                                 value="#{msgs.addProjects}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="callto m-1em">
-                </p:commandButton>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/projectList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
-            <!-- clients -->
+
             <p:tab id="clientTab" title="#{msgs.clientList}">
-                <p:dataTable id="clientDatatable" var="client" value="#{UserForm.userObject.clients}">
-                    <p:column headerText="#{msgs.clientList}">
-                        <h:outputText value="#{client.name}"/>
-                    </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                        <p:commandLink id="deleteFromClient"
-                                       action="#{UserForm.deleteFromClient}"
-                                       title="#{msgs.clientDeleteFrom}"
-                                       immediate="true"
-                                       oncomplete="toggleSave()"
-                                       update="@form">
-                            <i class="fa fa-trash-o fa-lg"/>
-                            <f:param name="ID" value="#{client.id}"/>
-                        </p:commandLink>
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton onclick="PF('addClientDialog').show()"
-                                 id="addClientButton"
-                                 value="#{msgs.clientAdd}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 rendered="#{isEditMode || isCreateMode}"
-                                 class="callto m-1em">
-                </p:commandButton>
+                <ui:include src="/WEB-INF/templates/includes/userEdit/clientList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -167,14 +112,17 @@
                 <ui:fragment rendered="#{isViewMode}">
                     #{msgs.userView}
                 </ui:fragment>
+                <ui:fragment rendered="#{isConfigMode}">
+                    #{msgs.userConfiguration}
+                </ui:fragment>
             </a>
         </li>
     </ui:define>
     <!-- add user groups dialog -->
     <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditChangePasswordPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditClientsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addRolesPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addProjectsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/addClientsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/changePasswordPopup.xhtml"/>
     </ui:define>
 </ui:composition>

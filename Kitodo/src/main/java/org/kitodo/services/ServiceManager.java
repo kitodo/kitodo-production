@@ -32,11 +32,12 @@ import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.dataformat.MetsService;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.image.ImageService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
 import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
-import org.kitodo.services.validation.LongTimePreservationValidationService;
+import org.kitodo.services.validation.LongTermPreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -48,6 +49,7 @@ public class ServiceManager {
     private DataEditorService dataEditorService;
     private DocketService docketService;
     private FilterService filterService;
+    private ImageService imageService;
     private LdapGroupService ldapGroupService;
     private LdapServerService ldapServerService;
     private MetsService metsService;
@@ -66,7 +68,7 @@ public class ServiceManager {
     private SchemaService schemaService;
     private SecurityAccessService securityAccessService;
     private FileStructureValidationService fileStructureValidationService;
-    private LongTimePreservationValidationService longTimePreservationValidationService;
+    private LongTermPreservationValidationService longTermPreservationValidationService;
     private MetadataValidationService metadataValidationService;
     private SessionService sessionService;
     private WorkflowControllerService workflowControllerService;
@@ -104,6 +106,12 @@ public class ServiceManager {
     private void initializeFilterService() {
         if (filterService == null) {
             filterService = FilterService.getInstance();
+        }
+    }
+
+    private void initializeImageService() {
+        if (imageService == null) {
+            imageService = ImageService.getInstance();
         }
     }
 
@@ -221,9 +229,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeLongTimePreservationValidationService() {
-        if (longTimePreservationValidationService == null) {
-            longTimePreservationValidationService = new LongTimePreservationValidationService();
+    private void initializeLongTermPreservationValidationService() {
+        if (longTermPreservationValidationService == null) {
+            longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
@@ -321,6 +329,17 @@ public class ServiceManager {
     public LdapServerService getLdapServerService() {
         initializeLdapServerService();
         return ldapServerService;
+    }
+
+    /**
+     * Initialize ImageService if it is not yet initialized and next return
+     * it.
+     *
+     * @return ImageService object
+     */
+    public ImageService getImageService() {
+        initializeImageService();
+        return imageService;
     }
 
     /**
@@ -504,14 +523,14 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize LongTimePreservationValidationService if it is not yet
+     * Initialize LongTermPreservationValidationService if it is not yet
      * initialized and next return it.
      *
-     * @return LongTimePreservationValidationService object
+     * @return LongTermPreservationValidationService object
      */
-    public LongTimePreservationValidationService getLongTimePreservationValidationService() {
-        initializeLongTimePreservationValidationService();
-        return longTimePreservationValidationService;
+    public LongTermPreservationValidationService getLongTermPreservationValidationService() {
+        initializeLongTermPreservationValidationService();
+        return longTermPreservationValidationService;
     }
 
     /**

@@ -340,6 +340,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return createQueryAllActiveUsersForCurrentUser().toString();
+        }
+        return null;
+    }
+
+    @Override
     public List<User> getAllNotIndexed() {
         return getByQuery("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }

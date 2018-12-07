@@ -99,7 +99,7 @@ public class ProcessServiceIT {
         boolean condition = process.getTitle().equals("First process") && process.getWikiField().equals("field");
         assertTrue("Process was not found in database!", condition);
 
-        assertEquals("Process was found but tasks were not inserted!", 3, process.getTasks().size());
+        assertEquals("Process was found but tasks were not inserted!", 5, process.getTasks().size());
     }
 
     @Test
@@ -356,11 +356,11 @@ public class ProcessServiceIT {
     public void shouldGetTasksSize() throws Exception {
         Process process = processService.getById(1);
         int actual = processService.getTasksSize(process);
-        assertEquals("Tasks' size is incorrect!", 3, actual);
+        assertEquals("Tasks' size is incorrect!", 5, actual);
 
         process = processService.getById(2);
         actual = processService.getTasksSize(process);
-        assertEquals("Tasks' size is incorrect!", 2, actual);
+        assertEquals("Tasks' size is incorrect!", 3, actual);
 
         process = processService.getById(3);
         actual = processService.getTasksSize(process);
@@ -392,8 +392,7 @@ public class ProcessServiceIT {
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
-        Integer expected = 2;
-        assertEquals("Task doesn't match to given task!", expected, actual.getId());
+        assertEquals("Task doesn't match to given task!", 8, actual.getId().intValue());
     }
 
     @Test
@@ -401,7 +400,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         String progress = processService.getProgress(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
+        assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
     }
 
     @Test
@@ -409,7 +408,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         int condition = processService.getProgressClosed(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 0, condition);
+        assertEquals("Progress doesn't match given plain text!", 40, condition);
     }
 
     @Test
@@ -417,7 +416,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         int condition = processService.getProgressInProcessing(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 33, condition);
+        assertEquals("Progress doesn't match given plain text!", 20, condition);
     }
 
     @Test
@@ -425,7 +424,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         int condition = processService.getProgressOpen(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 33, condition);
+        assertEquals("Progress doesn't match given plain text!", 20, condition);
     }
 
     @Test
@@ -433,7 +432,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
 
         int condition = processService.getProgressLocked(process.getTasks(), null);
-        assertEquals("Progress doesn't match given plain text!", 33, condition);
+        assertEquals("Progress doesn't match given plain text!", 20, condition);
     }
 
     @Test

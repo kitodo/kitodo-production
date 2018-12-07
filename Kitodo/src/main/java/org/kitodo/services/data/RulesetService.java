@@ -82,11 +82,14 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        return getRulesetsForCurrentUserQuery();
+    }
+
+    @Override
     public List<RulesetDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-            serviceManager.getUserService().getSessionClientId(), true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getRulesetsForCurrentUserQuery(), sort, offset, size),
+            false);
     }
 
     @Override
@@ -98,6 +101,24 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     public List<Ruleset> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        RulesetDTO rulesetDTO = new RulesetDTO();
+        rulesetDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
+        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setOrderMetadataByRuleset(
+            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(rulesetJSONObject));
+        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(rulesetJSONObject));
+
+        rulesetDTO.setClientDTO(clientDTO);
+        return rulesetDTO;
     }
 
     /**
@@ -179,24 +200,6 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         return searcher.findDocuments(query.toString());
     }
 
-    @Override
-    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        RulesetDTO rulesetDTO = new RulesetDTO();
-        rulesetDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
-        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
-        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
-        rulesetDTO.setOrderMetadataByRuleset(
-            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
-
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(rulesetJSONObject));
-        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(rulesetJSONObject));
-
-        rulesetDTO.setClientDTO(clientDTO);
-        return rulesetDTO;
-    }
-
     /**
      * Get preferences.
      *
@@ -212,5 +215,12 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
             logger.error(e.getMessage(), e);
         }
         return myPreferences;
+    }
+
+    private String getRulesetsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 }

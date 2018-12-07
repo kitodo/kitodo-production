@@ -33,8 +33,6 @@ public class WorkflowFormTest {
 
     @BeforeClass
     public static void createDiagrams() throws Exception {
-        fileService.createDirectory(URI.create(""), "diagrams");
-
         FileLoader.createDiagramBaseFile();
         FileLoader.createDiagramTestFile();
     }
@@ -46,8 +44,6 @@ public class WorkflowFormTest {
 
         FileLoader.deleteDiagramBaseFile();
         FileLoader.deleteDiagramTestFile();
-
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
@@ -62,6 +58,9 @@ public class WorkflowFormTest {
 
     @Test
     public void shouldSaveXMLDiagram() {
+        String fileName = "test";
+        String fileNameWithExtension = fileName + ".bpmn20.xml";
+
         String xmlDiagram = "<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">\n" +
                 "  <bpmn:process id=\"say_hello\" name=\"say-hello\" isExecutable=\"true\">\n" +
                 "    <bpmn:startEvent id=\"StartEvent_1\" name=\"Start Event\">\n" +
@@ -88,20 +87,25 @@ public class WorkflowFormTest {
                 "  </bpmn:process>\n" +
                 "</bpmn:definitions>\n";
 
-        URI xmlDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml").toURI();
+        File file = new File(ConfigCore.getKitodoDiagramDirectory() + fileNameWithExtension);
+
+        URI xmlDiagramURI = file.toURI();
 
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(xmlDiagram);
-        modelerForm.setWorkflow(new Workflow("test", "test"));
+        modelerForm.setWorkflow(new Workflow(fileName, fileName));
         modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
 
         assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
-        assertTrue("Diagram SVG was not saved!",
-            new File(ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml").exists());
+        assertTrue("Diagram XML was not saved!", file.exists());
+
+        file.deleteOnExit();
     }
 
     @Test
     public void shouldSaveSVGDiagram() {
+        String fileName = "testSVG";
+        String fileNameWithExtension = fileName + ".svg";
         String svgDiagram = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<!-- created with bpmn-js / http://bpmn.io -->\n" +
                 "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
@@ -166,15 +170,18 @@ public class WorkflowFormTest {
                 "stroke: white; stroke-width: 15px;\"/><rect x=\"-6\" y=\"-6\" width=\"12\" height=\"24\" " +
                 "class=\"djs-outline\" style=\"fill: none;\"/></g></g></svg>";
 
-        URI svgDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + "testSVG.svg").toURI();
+        File file = new File(ConfigCore.getKitodoDiagramDirectory() + fileNameWithExtension);
+
+        URI svgDiagramURI = file.toURI();
 
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setSvgDiagram(svgDiagram);
-        modelerForm.setWorkflow(new Workflow("test", "testSVG"));
+        modelerForm.setWorkflow(new Workflow("test", fileName));
         modelerForm.saveFile(svgDiagramURI, svgDiagram);
 
         assertEquals("Diagram SVG was not saved!", svgDiagram, modelerForm.getSvgDiagram());
-        assertTrue("Diagram SVG was not saved!",
-            new File(ConfigCore.getKitodoDiagramDirectory() + "testSVG.svg").exists());
+        assertTrue("Diagram SVG was not saved!", file.exists());
+
+        file.deleteOnExit();
     }
 }

@@ -496,7 +496,7 @@ public class SecurityAccessService {
      * @return true if the current user has the authority to view the docket
      */
     public boolean hasAuthorityToViewDocket() {
-        return hasAnyAuthorityForClient("viewDocket, addWorkflow, editDocket");
+        return hasAnyAuthorityForClient("viewDocket, addDocket, editDocket");
     }
 
     /**
@@ -517,6 +517,18 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToViewUser() {
         return hasAnyAuthorityGlobalOrForClient("viewUser, addUser, editUser");
+    }
+
+    /**
+     * Check if the current user has the authority to change the user config. It is
+     * true if current user is logged user.
+     *
+     * @param userId
+     *            id of the viewed user
+     * @return true if the current user has the authority to change the user config
+     */
+    public boolean hasAuthorityToConfigUser(int userId) {
+        return serviceManager.getUserService().getAuthenticatedUser().getId().equals(userId);
     }
 
     /**
@@ -547,6 +559,16 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToViewIndex() {
         return hasAnyAuthorityGlobal("viewIndex, editIndex");
+    }
+
+    /**
+     * Check if current user has authority to view task list. It returns true if
+     * user has "viewAllTasks" authority for client.
+     *
+     * @return true if user has authority 'viewAllTasks' for client
+     */
+    public boolean hasAuthorityToViewTaskList() {
+        return hasAuthorityForClient("viewAllTasks");
     }
 
     /**
@@ -667,5 +689,15 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToViewLdapServerList() {
         return hasAuthorityForClient("viewAllLdapServers");
+    }
+
+    /**
+     * Checks if current user has global authority for add or edit role. If yes,
+     * current client is not assigned to created or edited role.
+     *
+     * @return true if current user has global authority for add or edit role
+     */
+    public boolean hasAuthorityGlobalToAddOrEditRole() {
+        return hasAnyAuthorityGlobal("addRole, editRole");
     }
 }

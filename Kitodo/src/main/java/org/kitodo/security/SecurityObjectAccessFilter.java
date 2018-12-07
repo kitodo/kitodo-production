@@ -95,7 +95,8 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/userEdit")
-                    && !securityAccessService.hasAuthorityToViewUser()) {
+                    && !securityAccessService.hasAuthorityToViewUser()
+                    && !securityAccessService.hasAuthorityToConfigUser(Integer.parseInt(id))) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }

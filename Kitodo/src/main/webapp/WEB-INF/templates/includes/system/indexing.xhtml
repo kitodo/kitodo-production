@@ -136,7 +136,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <h:outputText value="Indexing started by '#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}' at #{indexingForm.indexingStartedTime}" rendered="#{not empty indexingForm.indexingStartedTime}"/>
+                    <h:outputText value="Indexing started by '#{LoginForm.loggedUser.surname}, #{LoginForm.loggedUser.name}' at #{indexingForm.indexingStartedTime}" rendered="#{not empty indexingForm.indexingStartedTime}"/>
                 </p:panel>
                 <p:commandButton class="refreshTable" update="indexingTable" style="visibility: hidden;"/>
                 <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>

@@ -73,11 +73,14 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        return getDocketsForCurrentUserQuery();
+    }
+
+    @Override
     public List<DocketDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-            serviceManager.getUserService().getSessionClientId(), true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getDocketsForCurrentUserQuery(), sort, offset, size),
+            false);
     }
 
     @Override
@@ -89,6 +92,22 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        DocketDTO docketDTO = new DocketDTO();
+        docketDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
+        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
+        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
+
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(docketJSONObject));
+        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(docketJSONObject));
+
+        docketDTO.setClientDTO(clientDTO);
+        return docketDTO;
     }
 
     /**
@@ -158,19 +177,10 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         return searcher.findDocuments(query.toString());
     }
 
-    @Override
-    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        DocketDTO docketDTO = new DocketDTO();
-        docketDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
-        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
-        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
-
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(docketJSONObject));
-        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(docketJSONObject));
-
-        docketDTO.setClientDTO(clientDTO);
-        return docketDTO;
+    private String getDocketsForCurrentUserQuery() {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
+            serviceManager.getUserService().getSessionClientId(), true));
+        return query.toString();
     }
 }

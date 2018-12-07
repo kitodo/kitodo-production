@@ -84,7 +84,7 @@ public class KitodoConfig extends Config {
      * @throws NoSuchElementException
      *             if parameter taken from config file is null or exception occurred
      */
-    //TODO: there is still ImageManagementModule where it is needed
+    //TODO: there is still image management where it is needed
     public static String getParameter(String key) {
         try {
             return getConfig().getString(key);

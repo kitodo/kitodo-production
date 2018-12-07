@@ -19,10 +19,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
-import org.kitodo.api.validation.longtimepreservation.FileType;
+import org.kitodo.api.validation.longtermpreservation.FileType;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.model.Subfolder;
-import org.kitodo.services.validation.LongTimePreservationValidationService;
+import org.kitodo.services.validation.LongTermPreservationValidationService;
 
 /**
  * A filter predicate that checks if the file exists in the folder and can be
@@ -96,7 +96,7 @@ public class MissingOrDamagedImagesFilterPredicate implements Predicate<Subfolde
         } else {
             Optional<FileType> fileType = folder.getFileFormat().getFileType();
             if (fileType.isPresent()) {
-                LongTimePreservationValidationService serviceLoader = new LongTimePreservationValidationService();
+                LongTermPreservationValidationService serviceLoader = new LongTermPreservationValidationService();
                 ValidationResult validated = serviceLoader.validate(imageURI.get(), fileType.get());
                 if (validated.getState().equals(State.SUCCESS)) {
                     logger.info(VALIDATION_SUCCESS, canonical, folder, validated.getState());

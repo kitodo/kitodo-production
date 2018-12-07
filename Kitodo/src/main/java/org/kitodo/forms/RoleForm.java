@@ -42,24 +42,16 @@ public class RoleForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(RoleForm.class);
     private Role role = new Role();
 
-    @Named("UserForm")
-    private UserForm userForm;
-
     private String roleListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
 
     /**
-     * Default constructor with inject user form that also sets the LazyDTOModel
-     * instance of this bean.
-     * 
-     * @param userForm
-     *            UserForm managed bean
+     * Default constructor that also sets the LazyDTOModel instance of this bean.
      */
     @Inject
-    public RoleForm(UserForm userForm) {
+    public RoleForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRoleService()));
-        this.userForm = userForm;
     }
 
     /**
@@ -70,9 +62,11 @@ public class RoleForm extends BaseForm {
     public String newRole() {
         this.role = new Role();
 
-        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        if (Objects.nonNull(sessionClient)) {
-            this.role.setClient(sessionClient);
+        if (!serviceManager.getSecurityAccessService().hasAuthorityGlobalToAddOrEditRole()) {
+            Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+            if (Objects.nonNull(sessionClient)) {
+                this.role.setClient(sessionClient);
+            }
         }
 
         return roleEditPath;
@@ -88,8 +82,7 @@ public class RoleForm extends BaseForm {
             this.serviceManager.getRoleService().save(this.role);
             return roleListPath;
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger,
-                e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -117,8 +110,7 @@ public class RoleForm extends BaseForm {
             }
             this.serviceManager.getRoleService().remove(this.role);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() },
-                logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -135,8 +127,8 @@ public class RoleForm extends BaseForm {
                 setRole(this.serviceManager.getRoleService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.ROLE.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), id },
+                logger, e);
         }
         setSaveDisabled(true);
     }
@@ -170,8 +162,8 @@ public class RoleForm extends BaseForm {
         try {
             setRole(serviceManager.getRoleService().getById(roleID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), roleID },
+                logger, e);
         }
     }
 
