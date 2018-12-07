@@ -22,7 +22,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -88,7 +87,6 @@ public class ExportMetsIT {
         }
     }
 
-    @Test
     public void exportMetsTest() throws Exception {
         if (SystemUtils.IS_OS_WINDOWS) {
             // This is a workaround for the problem that the startExport method
