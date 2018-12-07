@@ -45,6 +45,8 @@
             <xs:element type="SubdivisionByDateElement" minOccurs="0" maxOccurs="1" name="subdivisionByDate"/>
         </xs:sequence>
         <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
+        <xs:attribute type="xs:NMTOKEN" name="dates"/>
+        <xs:attribute type="xs:string" name="scheme"/>
     </xs:complexType>
 
     <xs:simpleType name="DomainAttribute">
@@ -118,10 +120,14 @@
             </xs:element>
             <xs:element name="editing" minOccurs="0" maxOccurs="1" type="EditingElement"/>
             </xs:sequence>
+            <xs:attribute type="xs:string" name="lang"/>
         </xs:complexType>
     </xs:element>
 
     <xs:complexType name="Setting">
+        <xs:sequence>
+            <xs:element name="declaration" minOccurs="0" maxOccurs="unbounded" type="Setting"/>
+        </xs:sequence>
         <xs:attribute type="xs:NMTOKEN" name="key"/>
         <xs:attribute type="xs:boolean" name="alwaysShowing" default="false"/>
         <xs:attribute type="xs:boolean" name="editable" default="true"/>
@@ -129,15 +135,9 @@
         <xs:attribute type="xs:boolean" name="multiline" default="false"/>
     </xs:complexType>
 
-    <xs:complexType name="SubdivisionByDateDivisionElement">
-        <xs:attribute use="required" type="xs:NMTOKEN" name="id"/>
-        <xs:attribute use="required" type="xs:NMTOKEN" name="dates"/>
-        <xs:attribute use="required" type="xs:string" name="scheme"/>
-    </xs:complexType>
-
     <xs:complexType name="SubdivisionByDateElement">
         <xs:sequence>
-            <xs:element name="declaration" minOccurs="1" maxOccurs="unbounded" type="SubdivisionByDateDivisionElement"/>
+            <xs:element name="declaration" minOccurs="1" maxOccurs="unbounded" type="Division"/>
         </xs:sequence>
         <xs:attribute name="yearBegin">
             <xs:simpleType>

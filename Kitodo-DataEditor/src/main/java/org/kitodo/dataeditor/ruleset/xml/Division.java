@@ -34,7 +34,7 @@ public class Division {
      * The key used to store the part of the date relevant to this division, to
      * which the described subtree dates.
      */
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String dates;
 
     /**
@@ -45,7 +45,7 @@ public class Division {
      * other than January 1. This works in conjunction with
      * {@link SubdivisionByDateElement#yearBegin}.
      */
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String scheme;
 
     /**
