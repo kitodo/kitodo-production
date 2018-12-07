@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -44,15 +46,17 @@ public class Client extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Client) {
+            Client client = (Client) object;
+            return Objects.equals(this.getId(), client.getId());
         }
-        Client client = (Client) o;
-        return name != null ? name.equals(client.name) : client.name == null;
+
+        return false;
     }
 
     @Override

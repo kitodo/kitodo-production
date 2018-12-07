@@ -120,18 +120,17 @@ public class Ruleset extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Ruleset) {
+            Ruleset ruleset = (Ruleset) object;
+            return Objects.equals(this.getId(), ruleset.getId());
         }
-        Ruleset ruleset = (Ruleset) o;
-        return Objects.equals(title, ruleset.title)
-            && Objects.equals(file, ruleset.file)
-            && Objects.equals(orderMetadataByRuleset, ruleset.orderMetadataByRuleset)
-            && Objects.equals(active, ruleset.active);
+
+        return false;
     }
 
     @Override

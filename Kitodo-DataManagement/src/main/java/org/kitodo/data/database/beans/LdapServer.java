@@ -334,31 +334,21 @@ public class LdapServer extends BaseBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof LdapServer) {
+            LdapServer ldapServer = (LdapServer) object;
+            return Objects.equals(this.getId(), ldapServer.getId());
         }
-        LdapServer that = (LdapServer) o;
-        return useSsl == that.useSsl
-            && readOnly == that.readOnly
-            && Objects.equals(title, that.title)
-            && Objects.equals(url, that.url)
-            && Objects.equals(managerLogin, that.managerLogin)
-            && Objects.equals(managerPassword, that.managerPassword)
-            && Objects.equals(nextFreeUnixIdPattern, that.nextFreeUnixIdPattern)
-            && Objects.equals(passwordEncryption, that.passwordEncryption)
-            && Objects.equals(rootCertificate, that.rootCertificate)
-            && Objects.equals(pdcCertificate, that.pdcCertificate)
-            && Objects.equals(keystore, that.keystore)
-            && Objects.equals(keystorePassword, that.keystorePassword);
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, url, managerLogin, managerPassword, nextFreeUnixIdPattern, useSsl, readOnly,
-            passwordEncryption, rootCertificate, pdcCertificate, keystore, keystorePassword);
+        return Objects.hash(title, url, managerLogin, managerPassword, nextFreeUnixIdPattern);
     }
 }

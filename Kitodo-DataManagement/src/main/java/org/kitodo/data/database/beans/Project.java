@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -656,11 +657,16 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Project)) {
-            return false;
+        if (this == object) {
+            return true;
         }
-        Project other = (Project) object;
-        return this.title == null ? other.title == null : this.title.equals(other.title);
+
+        if (object instanceof Project) {
+            Project project = (Project) object;
+            return Objects.equals(this.getId(), project.getId());
+        }
+
+        return false;
     }
 
     @Override

@@ -233,31 +233,12 @@ public class Batch extends BaseIndexedBean {
         if (this == object) {
             return true;
         }
-        if (object == null) {
-            return false;
+
+        if (object instanceof Batch) {
+            Batch batch = (Batch) object;
+            return Objects.equals(this.getId(), batch.getId());
         }
-        if (!(object instanceof Batch)) {
-            return false;
-        }
-        Batch other = (Batch) object;
-        if (this.getId() != null && this.getId().equals(other.getId())) {
-            return true;
-        }
-        if (title == null) {
-            if (other.title != null) {
-                return false;
-            }
-        } else if (!title.equals(other.title)) {
-            return false;
-        }
-        if (type != other.type) {
-            return false;
-        }
-        if (processes == null) {
-            return other.processes == null;
-        } else {
-            return processes.equals(other.processes);
-        }
+        return false;
     }
 
     @Override

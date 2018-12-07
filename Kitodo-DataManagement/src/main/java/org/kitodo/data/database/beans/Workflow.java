@@ -189,18 +189,17 @@ public class Workflow extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Workflow) {
+            Workflow workflow = (Workflow) object;
+            return Objects.equals(this.getId(), workflow.getId());
         }
-        Workflow workflow = (Workflow) o;
-        return Objects.equals(title, workflow.title)
-            && Objects.equals(fileName, workflow.fileName)
-            && Objects.equals(active, workflow.active)
-            && Objects.equals(ready, workflow.ready);
+
+        return false;
     }
 
     @Override

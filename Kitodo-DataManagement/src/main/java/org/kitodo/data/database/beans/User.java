@@ -415,31 +415,22 @@ public class User extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof User) {
+            User user = (User) object;
+            return Objects.equals(this.getId(), user.getId());
         }
 
-        User user = (User) o;
-
-        if (name != null ? !name.equals(user.name) : user.name != null) {
-            return false;
-        }
-        if (surname != null ? !surname.equals(user.surname) : user.surname != null) {
-            return false;
-        }
-        return login != null ? login.equals(user.login) : user.login == null;
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (surname != null ? surname.hashCode() : 0);
-        result = 31 * result + (login != null ? login.hashCode() : 0);
-        return result;
+        return Objects.hash(login, name, surname);
     }
 
 }
