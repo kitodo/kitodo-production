@@ -124,10 +124,11 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        Optional<MetadataViewInterface> zz = divisionView
+        Optional<MetadataViewInterface> optionalKeyView = divisionView
                 .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
-                .filter(x -> x.getId().equals(metadata.getMetadataType().getName())).findFirst();
-        Optional<Domain> optionalDomain = zz.isPresent() ? zz.get().getDomain() : Optional.empty();
+                .filter(keyView -> keyView.getId().equals(metadata.getMetadataType().getName())).findFirst();
+        Optional<Domain> optionalDomain = optionalKeyView.isPresent() ? optionalKeyView.get().getDomain()
+                : Optional.empty();
         if (!optionalDomain.isPresent() || !optionalDomain.get().equals(Domain.METS_DIV)) {
             MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadata();
             metadataEntry.setType(metadata.getMetadataType().getName());
@@ -147,7 +148,6 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     @Override
     public DocStructInterface addMetadata(String metadataType, String value) throws MetadataTypeNotAllowedException {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: this
     }
 
     @Override
@@ -179,7 +179,6 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
             PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return the child
     }
 
     @Override
@@ -260,18 +259,14 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     @Override
     public List<MetadataInterface> getAllMetadata() {
         List<MetadataInterface> result = new LinkedList<>();
-        // sortieren
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-
-        // ausgabe
-
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
-            if (x.getMetadata().isPresent()) {
-                MetadataViewInterface key = x.getMetadata().get();
-                for (MetadataAccessInterface value : x.getValues()) {
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+            if (entryView.getMetadata().isPresent()) {
+                MetadataViewInterface key = entryView.getMetadata().get();
+                for (MetadataAccessInterface value : entryView.getValues()) {
                     if (value instanceof MetadataXmlElementAccessInterface) {
                         result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                 ((MetadataXmlElementAccessInterface) value).getValue()));
@@ -285,19 +280,15 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
         List<MetadataInterface> result = new LinkedList<>();
-        // sortieren
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-
-        // ausgabe
-
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
-            if (x.getMetadata().isPresent()) {
-                MetadataViewInterface key = x.getMetadata().get();
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+            if (entryView.getMetadata().isPresent()) {
+                MetadataViewInterface key = entryView.getMetadata().get();
                 if (key.getId().equals(metadataType.getName())) {
-                    for (MetadataAccessInterface value : x.getValues()) {
+                    for (MetadataAccessInterface value : entryView.getValues()) {
                         if (value instanceof MetadataXmlElementAccessInterface) {
                             result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
                                     ((MetadataXmlElementAccessInterface) value).getValue()));
@@ -364,13 +355,11 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     @Override
     public Object getAllVisibleMetadata() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null -> false, new Object() -> true
     }
 
     @Override
     public String getAnchorClass() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null (none)
     }
 
     @Override
@@ -381,17 +370,13 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
     @Override
     public List<MetadataTypeInterface> getDisplayMetadataTypes() {
         List<MetadataTypeInterface> result = new LinkedList<>();
-        // sortieren
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> a = divisionView
+        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-
-        // ausgabe
-
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> x : a) {
-            if (x.getMetadata().isPresent()) {
-                MetadataViewInterface key = x.getMetadata().get();
+        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+            if (entryView.getMetadata().isPresent()) {
+                MetadataViewInterface key = entryView.getMetadata().get();
                 result.add(new LegacyMetadataTypeHelper(key));
             }
         }
@@ -415,8 +400,10 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<MetadataTypeInterface> getPossibleMetadataTypes() {
-        // The method is a doublet (in the interface, as well as doubled code in
-        // the legacy implementation)
+        /*
+         * The method is a doublet (in the interface, as well as doubled code in
+         * the legacy implementation)
+         */
         return getAddableMetadataTypes();
     }
 
@@ -489,8 +476,9 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
         while (areaXmlElementAccessInterfaceIterator.hasNext()) {
             FileXmlElementAccessInterface fileXmlElementAccessInterface = areaXmlElementAccessInterfaceIterator.next()
                     .getFile();
-            if (fileXmlElementAccessInterface.equals(mediaUnit))
+            if (fileXmlElementAccessInterface.equals(mediaUnit)) {
                 areaXmlElementAccessInterfaceIterator.remove();
+            }
         }
     }
 

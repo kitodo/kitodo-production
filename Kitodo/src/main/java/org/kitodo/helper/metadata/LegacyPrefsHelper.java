@@ -88,12 +88,13 @@ public class LegacyPrefsHelper implements PrefsInterface {
                         .parse(metadataLanguage != null ? metadataLanguage : "en");
                 StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("", "edit",
                     priorityList);
-                List<MetadataViewWithValuesInterface<Void>> svm = divisionView
+                List<MetadataViewWithValuesInterface<Void>> entryViews = divisionView
                         .getSortedVisibleMetadata(Collections.emptyMap(), Arrays.asList(identifier));
-                MetadataViewInterface v = svm.parallelStream().map(x -> x.getMetadata()).filter(Optional::isPresent)
-                        .map(Optional::get).filter(mv -> mv.getId().equals(identifier)).findFirst()
+                MetadataViewInterface resultKeyView = entryViews.parallelStream()
+                        .map(entryView -> entryView.getMetadata()).filter(Optional::isPresent).map(Optional::get)
+                        .filter(keyView -> keyView.getId().equals(identifier)).findFirst()
                         .orElseThrow(IllegalStateException::new);
-                return new LegacyMetadataTypeHelper(v);
+                return new LegacyMetadataTypeHelper(resultKeyView);
         }
     }
 

@@ -133,7 +133,6 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
             PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // returns the child
     }
 
     @Override
@@ -153,8 +152,10 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildren() {
-        // Although the method is called because the same loop is used for
-        // logical and physical structure elements, it must come back empty.
+        /*
+         * Although the method is called because the same loop is used for
+         * logical and physical structure elements, it must come back empty.
+         */
         return Collections.emptyList();
     }
 
@@ -207,8 +208,10 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<PersonInterface> getAllPersons() {
-        // Although the method is called because the same loop is used for
-        // logical and physical structure elements, it must come back empty.
+        /*
+         * Although the method is called because the same loop is used for
+         * logical and physical structure elements, it must come back empty.
+         */
         return Collections.emptyList();
     }
 
@@ -219,8 +222,10 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<ReferenceInterface> getAllReferences(String direction) {
-        // Although the method is called because the same loop is used for
-        // logical and physical structure elements, it must come back empty.
+        /*
+         * Although the method is called because the same loop is used for
+         * logical and physical structure elements, it must come back empty.
+         */
         return Collections.emptyList();
     }
 
@@ -237,7 +242,6 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
     @Override
     public Object getAllVisibleMetadata() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null -> false, new Object() -> true
     }
 
     @Override

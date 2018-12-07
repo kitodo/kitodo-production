@@ -56,8 +56,6 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         this.mediaUnits = mediaUnits;
     }
 
-    // FileSetInterface methods ==============================================
-
     @Override
     public void addFile(ContentFileInterface contentFile) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -77,8 +75,6 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     public void removeFile(ContentFileInterface contentFile) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
-
-    // DocStructInterface methods ============================================
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
@@ -103,7 +99,6 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     @Override
     public DocStructInterface addMetadata(String metadataType, String value) throws MetadataTypeNotAllowedException {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: this
     }
 
     @Override
@@ -208,8 +203,10 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
 
     @Override
     public List<ReferenceInterface> getAllReferences(String direction) {
-        // Although the method is called because the same loop is used for
-        // logical and physical structure elements, it must come back empty.
+        /*
+         * Although the method is called because the same loop is used for
+         * logical and physical structure elements, it must come back empty.
+         */
         return Collections.emptyList();
     }
 
@@ -226,7 +223,6 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     @Override
     public Object getAllVisibleMetadata() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null -> false, new Object() -> true
     }
 
     @Override
@@ -257,7 +253,6 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     @Override
     public DocStructInterface getParent() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null
     }
 
     @Override

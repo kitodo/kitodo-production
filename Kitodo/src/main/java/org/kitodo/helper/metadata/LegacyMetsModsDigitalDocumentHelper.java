@@ -97,10 +97,12 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
 
     @Override
     public void addAllContentFiles() {
-        // In the legacy implementation, this method must be called to fully
-        // build the object-internal data structure after reading a file. Since
-        // in the new implementation each method does everything it should from
-        // the start, and not just half of it, this function is empty.
+        /*
+         * In the legacy implementation, this method must be called to fully
+         * build the object-internal data structure after reading a file. Since
+         * in the new implementation each method does everything it should from
+         * the start, and not just half of it, this function is empty.
+         */
     }
 
     @Override

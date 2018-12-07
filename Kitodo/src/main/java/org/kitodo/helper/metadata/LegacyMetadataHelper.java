@@ -39,7 +39,8 @@ public class LegacyMetadataHelper implements MetadataInterface {
      */
     private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
-    LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper, MetadataTypeInterface type, String value) {
+    LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
+            MetadataTypeInterface type, String value) {
         this.type = type;
         this.value = value;
         this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
