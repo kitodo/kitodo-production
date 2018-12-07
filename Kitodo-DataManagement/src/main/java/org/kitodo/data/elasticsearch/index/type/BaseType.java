@@ -84,15 +84,13 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      */
     <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
         JsonArrayBuilder result = Json.createArrayBuilder();
-        if (objects != null) {
-            for (F property : objects) {
-                JsonObjectBuilder jsonObject = Json.createObjectBuilder();
-                jsonObject.add(AuthorityTypeField.ID.getKey(), property.getId());
-                if (addAdditionalProperties) {
-                    getAdditionalProperties(jsonObject, property);
-                }
-                result.add(jsonObject.build());
+        for (F property : objects) {
+            JsonObjectBuilder jsonObject = Json.createObjectBuilder();
+            jsonObject.add(AuthorityTypeField.ID.getKey(), property.getId());
+            if (addAdditionalProperties) {
+                getAdditionalProperties(jsonObject, property);
             }
+            result.add(jsonObject.build());
         }
         return result.build();
     }
@@ -104,7 +102,6 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            list
      * @return JSONArray
      */
-    @SuppressWarnings("unchecked")
     <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects) {
         return addObjectRelation(objects, false);
     }
