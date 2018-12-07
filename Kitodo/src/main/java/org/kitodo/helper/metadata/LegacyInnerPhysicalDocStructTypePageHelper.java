@@ -47,7 +47,6 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
     @Override
     public String getAnchorClass() {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
-        // return: null (none)
     }
 
     @Override

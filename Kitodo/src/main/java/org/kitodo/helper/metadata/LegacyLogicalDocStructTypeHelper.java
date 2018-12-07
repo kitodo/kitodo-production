@@ -49,7 +49,7 @@ public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface 
 
     @Override
     public String getAnchorClass() {
-        return null; // muss null sein = keine
+        return null;
     }
 
     @Override
