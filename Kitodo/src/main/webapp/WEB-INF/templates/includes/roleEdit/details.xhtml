@@ -26,7 +26,7 @@
                                  required="#{empty param['editForm:saveButtonToggler']}"/>
                 </div>
             </p:row>
-            <p:row rendered="#{SessionClientController.currentSessionClient eq null}">
+            <p:row rendered="#{SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}">
                 <div>
                     <p:outputLabel for="client" value="#{msgs.client}"/>
                     <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{RoleForm.role.client}">
@@ -35,7 +35,7 @@
                     </p:selectOneMenu>
                 </div>
             </p:row>
-            <p:row rendered="#{SessionClientController.currentSessionClient ne null}" />
+            <p:row rendered="#{not SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}" />
         </p:panelGrid>
             <div>
                 <p:panelGrid columns="2" layout="grid">

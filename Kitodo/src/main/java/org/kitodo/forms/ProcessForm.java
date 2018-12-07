@@ -731,7 +731,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status up.
      */
     public void setTaskStatusUp() throws DataException, IOException {
-        setTask(workflowControllerService.setTaskStatusUp(this.task));
+        workflowControllerService.setTaskStatusUp(this.task);
         save();
         deleteSymlinksFromUserHomes();
     }
@@ -740,7 +740,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Task status down.
      */
     public void setTaskStatusDown() {
-        setTask(workflowControllerService.setTaskStatusDown(this.task));
+        workflowControllerService.setTaskStatusDown(this.task);
         save();
         deleteSymlinksFromUserHomes();
     }

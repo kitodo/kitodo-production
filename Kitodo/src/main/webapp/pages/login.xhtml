@@ -41,7 +41,7 @@
                     <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
                         <h:panelGroup>
                             <h:outputText style="font-weight: normal"
-                                          value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
+                                          value="#{LoginForm.loggedUser.surname}, #{LoginForm.loggedUser.name}"/>
                         </h:panelGroup>
                         <h:panelGroup>
                             <form action="${request.contextPath}/logout" method="POST">
@@ -74,7 +74,7 @@
                         #{msgs.loginNoteText}
                     </div>
 
-                    <h:panelGroup rendered="#{LoginForm.myBenutzer == null and LoginForm.alreadyLoggedIn}">
+                    <h:panelGroup rendered="#{LoginForm.loggedUser == null and LoginForm.alreadyLoggedIn}">
                         <h:outputText value="#{msgs.alreadyLoggedIn}"/>
                         <br/>
                     </h:panelGroup>

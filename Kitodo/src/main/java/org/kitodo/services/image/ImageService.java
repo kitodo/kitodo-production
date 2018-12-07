@@ -14,6 +14,7 @@ package org.kitodo.services.image;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
 
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
@@ -26,8 +27,9 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class ImageService {
 
     private ImageManagementInterface imageManagement;
+    private static ImageService instance = null;
 
-    public ImageService() {
+    private ImageService() {
         imageManagement = new KitodoServiceLoader<ImageManagementInterface>(ImageManagementInterface.class)
                 .loadModule();
     }
@@ -99,5 +101,21 @@ public class ImageService {
      */
     Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws IOException {
         return imageManagement.getSizedWebImage(imageFileUri, pixelWidth);
+    }
+
+    /**
+     * Return singleton variable of type ImageService.
+     *
+     * @return unique instance of ImageService
+     */
+    public static ImageService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (ImageService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new ImageService();
+                }
+            }
+        }
+        return instance;
     }
 }

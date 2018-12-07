@@ -688,7 +688,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
+        int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }

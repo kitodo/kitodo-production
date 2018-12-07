@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
@@ -41,6 +42,7 @@ import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecuritySession;
 import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.security.password.ValidPassword;
+import org.kitodo.services.data.UserService;
 
 @Named("UserForm")
 @SessionScoped
@@ -50,20 +52,30 @@ public class UserForm extends BaseForm {
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private transient UserService userService = serviceManager.getUserService();
 
     @ValidPassword
     private String passwordToEncrypt;
+
+    @Named("LoginForm")
+    private LoginForm loginForm;
 
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of
-     * this bean.
+     * Default constructor with inject login form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param loginForm
+     *            is used for update logged user in case updated user is currently
+     *            logged user
      */
-    public UserForm() {
+    @Inject
+    public UserForm(LoginForm loginForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserService()));
+        super.setLazyDTOModel(new LazyDTOModel(userService));
+        this.loginForm = loginForm;
     }
 
     /**
@@ -100,11 +112,16 @@ public class UserForm extends BaseForm {
         }
 
         try {
-            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
+            if (userService.getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
                 if (Objects.nonNull(this.passwordToEncrypt)) {
                     this.userObject.setPassword(passwordEncoder.encrypt(this.passwordToEncrypt));
                 }
-                this.serviceManager.getUserService().save(this.userObject);
+                userService.save(this.userObject);
+
+                if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
+                    loginForm.setLoggedUser(this.userObject);
+                }
+
                 return userListPath;
             } else {
                 Helper.setErrorMessage("loginInUse");
@@ -117,7 +134,7 @@ public class UserForm extends BaseForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        return serviceManager.getUserService().isLoginValid(inLogin);
+        return userService.isLoginValid(inLogin);
     }
 
     private boolean isMissingClient() {
@@ -141,7 +158,7 @@ public class UserForm extends BaseForm {
      */
     public void delete() {
         try {
-            serviceManager.getUserService().remove(userObject);
+            userService.remove(userObject);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         }
@@ -289,7 +306,7 @@ public class UserForm extends BaseForm {
      */
     public void setUserObject(User userObject) {
         try {
-            this.userObject = serviceManager.getUserService().getById(userObject.getId());
+            this.userObject = userService.getById(userObject.getId());
         } catch (DAOException e) {
             this.userObject = userObject;
         }
@@ -303,7 +320,7 @@ public class UserForm extends BaseForm {
      */
     public void setUserById(int userID) {
         try {
-            setUserObject(serviceManager.getUserService().getById(userID));
+            setUserObject(userService.getById(userID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), userID },
                 logger, e);
@@ -342,7 +359,7 @@ public class UserForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setUserObject(this.serviceManager.getUserService().getById(id));
+                setUserObject(userService.getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -375,8 +392,8 @@ public class UserForm extends BaseForm {
         try {
             return serviceManager.getRoleService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
+                e);
             return new LinkedList<>();
         }
     }
@@ -425,7 +442,7 @@ public class UserForm extends BaseForm {
             if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
                 serviceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
             }
-            serviceManager.getUserService().changeUserPassword(userObject, this.passwordToEncrypt);
+            userService.changeUserPassword(userObject, this.passwordToEncrypt);
             Helper.setMessage("passwordChanged");
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);

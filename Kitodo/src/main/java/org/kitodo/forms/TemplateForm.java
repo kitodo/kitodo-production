@@ -34,11 +34,12 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.data.TaskService;
-import org.kitodo.workflow.model.Reader;
+import org.kitodo.workflow.model.Converter;
 
 @Named("TemplateForm")
 @SessionScoped
@@ -151,14 +152,17 @@ public class TemplateForm extends TemplateBaseForm {
         if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
             try {
                 if (this.template.getTasks().isEmpty()) {
-                    Reader reader = new Reader(this.template.getWorkflow().getFileName());
-                    this.template = reader.convertWorkflowToTemplate(this.template);
+                    Converter converter = new Converter(this.template.getWorkflow().getFileName());
+                    converter.convertWorkflowToTemplate(this.template);
                 }
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
                 return this.stayOnCurrentPage;
             } catch (IOException e) {
                 Helper.setErrorMessage("errorDiagramFile", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                return this.stayOnCurrentPage;
+            } catch (WorkflowException e) {
+                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
                 return this.stayOnCurrentPage;
             }
 

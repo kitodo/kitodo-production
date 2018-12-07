@@ -57,6 +57,7 @@ public class ImageGenerator implements Runnable {
     private static final Logger logger = LogManager.getLogger(ImageGenerator.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private final ImageService imageService = serviceManager.getImageService();    
 
     /**
      * Output folders.
@@ -151,11 +152,10 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
+    private void createDerivative(URI sourceImage, Folder imageProperties, ImageFileFormat imageFileFormat,
             URI destinationImage) throws IOException {
 
-        ImageService imageGenerator = new ImageService();
-        imageGenerator.createDerivative(sourceImage, imageProperties.getDerivative().get(), destinationImage,
+        imageService.createDerivative(sourceImage, imageProperties.getDerivative().get(), destinationImage,
             imageFileFormat);
     }
 
@@ -344,16 +344,13 @@ public class ImageGenerator implements Runnable {
      * @throws IOException
      *             if an underlying disk operation fails
      */
-    private static Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
-
-        ImageService imageManagementServiceProvider = new ImageService();
-
+    private Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
         if (imageProperties.getDpi().isPresent()) {
-            return imageManagementServiceProvider.changeDpi(sourceImage, imageProperties.getDpi().get());
+            return imageService.changeDpi(sourceImage, imageProperties.getDpi().get());
         } else if (imageProperties.getImageScale().isPresent()) {
-            return imageManagementServiceProvider.getScaledWebImage(sourceImage, imageProperties.getImageScale().get());
+            return imageService.getScaledWebImage(sourceImage, imageProperties.getImageScale().get());
         } else if (imageProperties.getImageSize().isPresent()) {
-            return imageManagementServiceProvider.getSizedWebImage(sourceImage, imageProperties.getImageSize().get());
+            return imageService.getSizedWebImage(sourceImage, imageProperties.getImageSize().get());
         }
         throw new IllegalArgumentException(imageProperties + " does not give any method to create a java image");
     }

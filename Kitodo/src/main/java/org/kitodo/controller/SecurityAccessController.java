@@ -484,7 +484,7 @@ public class SecurityAccessController {
      * @return true if user has authority 'viewAllTasks' for client
      */
     public boolean hasAuthorityToViewTaskPage() {
-        return securityAccessService.hasAuthorityForClient("viewAllTasks");
+        return hasAuthorityToViewTaskList();
     }
 
     /**
@@ -508,7 +508,7 @@ public class SecurityAccessController {
      * @return true if user has authority 'viewAllTasks' for client
      */
     public boolean hasAuthorityToViewTaskList() {
-        return hasAuthorityToViewTaskPage();
+        return securityAccessService.hasAuthorityToViewTaskList();
     }
 
     /**
@@ -629,5 +629,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewLdapServerList() {
         return securityAccessService.hasAuthorityToViewLdapServerList();
+    }
+
+    /**
+     * Checks if current user has global authority for add or edit role. If yes,
+     * current client is not assigned to created or edited role.
+     *
+     * @return true if current user has global authority for add or edit role
+     */
+    public boolean hasAuthorityGlobalToAddOrEditRole() {
+        return securityAccessService.hasAuthorityGlobalToAddOrEditRole();
     }
 }

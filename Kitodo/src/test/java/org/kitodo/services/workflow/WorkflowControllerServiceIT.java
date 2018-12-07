@@ -80,10 +80,11 @@ public class WorkflowControllerServiceIT {
     public void shouldSetTaskStatusUp() throws Exception {
         Task task = taskService.getById(10);
 
-        task = workflowService.setTaskStatusUp(task);
+        workflowService.setTaskStatusUp(task);
         assertEquals("Task status was not set up!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
-        taskService.save(workflowService.setTaskStatusDown(task));
+        workflowService.setTaskStatusDown(task);
+        taskService.save(task);
     }
 
     @Test
@@ -102,7 +103,9 @@ public class WorkflowControllerServiceIT {
         }
 
         // set up task to previous state
-        taskService.save(workflowService.setTaskStatusDown(taskService.getById(6)));
+        Task task = taskService.getById(6);
+        workflowService.setTaskStatusDown(task);
+        taskService.save(task);
     }
 
     @Test
@@ -117,7 +120,9 @@ public class WorkflowControllerServiceIT {
         assertEquals("Task status was not set down!", TaskStatus.OPEN, tasks.get(3).getProcessingStatusEnum());
 
         // set up task to previous state
-        taskService.save(workflowService.setTaskStatusUp(taskService.getById(8)));
+        Task task = taskService.getById(8);
+        workflowService.setTaskStatusUp(task);
+        taskService.save(task);
     }
 
     @Test
@@ -125,15 +130,99 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(9);
 
         workflowService.close(task);
-        task = serviceManager.getTaskService().getById(9);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
         Task nextTask = serviceManager.getTaskService().getById(10);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
-        taskService.save(workflowService.setTaskStatusDown(task));
-        taskService.save(workflowService.setTaskStatusDown(nextTask));
+        workflowService.setTaskStatusDown(task);
+        workflowService.setTaskStatusDown(nextTask);
+
+        taskService.save(task);
+        taskService.save(nextTask);
+    }
+
+    @Test
+    public void shouldCloseForProcessWithParallelTasks() throws Exception {
+        Task task = taskService.getById(19);
+
+        workflowService.close(task);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        Task nextTask = serviceManager.getTaskService().getById(20);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(21);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(22);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(23);
+        assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void shouldCloseForInWorkProcessWithParallelTasks() throws Exception {
+        Task task = taskService.getById(25);
+
+        workflowService.close(task);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        Task nextTask = serviceManager.getTaskService().getById(26);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(27);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(28);
+        assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void shouldCloseForInWorkProcessWithBlockingParallelTasks() throws Exception {
+        Task task = taskService.getById(30);
+
+        workflowService.close(task);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        Task nextTask = serviceManager.getTaskService().getById(31);
+        assertEquals("Task is not in work!", TaskStatus.INWORK, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(32);
+        assertEquals("Task was not set to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(33);
+        assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void shouldCloseForInWorkProcessWithNonBlockingParallelTasks() throws Exception {
+        Task task = taskService.getById(35);
+
+        workflowService.close(task);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        Task nextTask = serviceManager.getTaskService().getById(36);
+        assertEquals("Task is not in work!", TaskStatus.INWORK, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(37);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
+
+        nextTask = serviceManager.getTaskService().getById(38);
+        assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void shouldCloseForAlmostFinishedProcessWithParallelTasks() throws Exception {
+        Task task = taskService.getById(42);
+
+        workflowService.close(task);
+        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        Task nextTask = serviceManager.getTaskService().getById(43);
+        assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
     }
 
     @Test
