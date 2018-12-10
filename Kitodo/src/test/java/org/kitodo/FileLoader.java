@@ -250,13 +250,9 @@ public class FileLoader {
         content.add("<mets:dmdSec ID=\"DMDLOG_0000\">");
         content.add("<mets:mdWrap MDTYPE=\"MODS\">");
         content.add("<mets:xmlData>");
-        content.add("<mods:mods xmlns:mods=\"http://www.loc.gov/mods/v3\">");
-        content.add("<mods:extension>");
-        content.add("<goobi:goobi xmlns:goobi=\"http://meta.goobi.org/v1.5.1/\">");
-        content.add("<goobi:metadata name=\"TitleDocMain\">First process</goobi:metadata>");
-        content.add("</goobi:goobi>");
-        content.add("</mods:extension>");
-        content.add("</mods:mods>");
+        content.add("<kitodo:kitodo xmlns:kitodo=\"http://meta.kitodo.org/v1/\">");
+        content.add("<kitodo:metadata name=\"TitleDocMain\">First process</kitodo:metadata>");
+        content.add("</kitodo:kitodo>");
         content.add("</mets:xmlData>");
         content.add("</mets:mdWrap>");
         content.add("</mets:dmdSec>");
