@@ -15,7 +15,6 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid layout="grid" columns="1" cellpadding="10">
@@ -31,29 +30,34 @@
                 <p:ajax update="editForm:processFromTemplateTabView:selectedCatalog"/>
             </p:selectOneMenu>
         </div>
-        <h:panelGrid id="selectedCatalog">
+        <p:panelGrid id="selectedCatalog">
             <p:panel rendered="#{ImportForm.selectedCatalog ne null}">
-        <div>
-            <p:outputLabel for="fieldSelectMenu" value="#{msgs.field}"/>
-            <p:selectOneMenu id="fieldSelectMenu"
-                             required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
-                             value="#{ImportForm.selectedField}">
-                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectSearchField} --" noSelectionOption="true"/>
-                <f:selectItems value="#{ImportForm.searchFields}" var="field" />
-            </p:selectOneMenu>
-        </div>
-        <div>
-            <p:outputLabel for="searchTerm" value="#{msgs.value}"/>
-            <p:inputText id="searchTerm" value="#{ImportForm.searchTerm}"
-                         class="input" required="true"/>
-        </div>
-        <p:commandButton id="performCatalogSearch"
-                         action="#{ImportForm.search}"
-                         value="#{msgs.searchOPAC}"
-                         title="#{msgs.searchOPAC}"
-                         icon="fa fa-search" iconPos="right"
-                         update="editForm hitlist"/>
+                <p:row>
+                    <div>
+                        <p:outputLabel for="fieldSelectMenu" value="#{msgs.field}"/>
+                        <p:selectOneMenu id="fieldSelectMenu" style="width:500px"
+                                         required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
+                                         value="#{ImportForm.selectedField}">
+                            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectSearchField} --"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{ImportForm.searchFields}" var="field"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div>
+                        <p:outputLabel for="searchTerm" value="#{msgs.value}"/>
+                        <p:inputText id="searchTerm" value="#{ImportForm.searchTerm}"
+                                     class="input" required="true"/>
+                    </div>
+                    <div>
+                        <p:commandButton id="performCatalogSearch"
+                                         action="#{ImportForm.search}"
+                                         value="#{msgs.searchOPAC}"
+                                         title="#{msgs.searchOPAC}"
+                                         icon="fa fa-search" iconPos="right"
+                                         update="editForm hitlist"/>
+                    </div>
+                </p:row>
             </p:panel>
-        </h:panelGrid>
+        </p:panelGrid>
     </p:panelGrid>
 </ui:composition>

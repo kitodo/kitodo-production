@@ -22,6 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -34,6 +36,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 class ResponseHandler {
+
+    private static final Logger logger = LogManager.getLogger(ResponseHandler.class);
 
     private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private static XMLOutputter xmlOutputter = new XMLOutputter();
@@ -71,13 +75,13 @@ class ResponseHandler {
      * @param response HttpResponse that is transformed into a Document
      * @return Document into which given HttpResponse has been transformed
      */
-    private static Document transformResponseToDocument(HttpResponse response) {
+    public static Document transformResponseToDocument(HttpResponse response) {
         HttpEntity entity = response.getEntity();
         if (Objects.nonNull(entity)) {
             try {
                 return parseXML(entity.getContent());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
         return null;
@@ -90,7 +94,7 @@ class ResponseHandler {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(new InputSource(xmlSteam));
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
         return document;

@@ -54,6 +54,10 @@
                 iktlist="IKTLIST-ZDB.xml" port="80"/>
     </catalogue>
     <catalogue title="Kalliope" description="Kalliope Verbundkatalog">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <metadataFormat>MODS</metadataFormat>
+        <mappingFile>kalliope2kitodo.xsl</mappingFile>
         <config>
             <param name="host" value="kalliope-verbund.info" />
             <param name="scheme" value="http" />

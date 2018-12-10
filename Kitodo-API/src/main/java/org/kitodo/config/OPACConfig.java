@@ -11,6 +11,11 @@
 
 package org.kitodo.config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -21,25 +26,25 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterAPI;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
     private static XMLConfiguration config;
 
     public static HierarchicalConfiguration getOPACConfiguration(String catalogName) {
-                return getCatalog(catalogName).configurationAt("config");
+        return getCatalog(catalogName).configurationAt("config");
     }
 
     public static HierarchicalConfiguration getSearchFields(String catalogName) {
-                return getCatalog(catalogName).configurationAt("searchFields");
+        return getCatalog(catalogName).configurationAt("searchFields");
     }
 
     public static HierarchicalConfiguration getUrlParameters(String catalogName) {
-                return getCatalog(catalogName).configurationAt("urlParameters");
+        return getCatalog(catalogName).configurationAt("urlParameters");
+    }
+
+    public static String getXsltMappingFile(String catalogName) {
+        return getCatalog(catalogName).getString("mappingFile");
     }
 
     public static List<String> getCatalogs() {
@@ -68,7 +73,8 @@ public class OPACConfig {
         if (config != null) {
             return config;
         }
-        String configPfad = FilenameUtils.concat(KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG), KitodoConfigFile.OPAC_CONFIGURATION.getName());
+        String configPfad = FilenameUtils.concat(KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG),
+                KitodoConfigFile.OPAC_CONFIGURATION.getName());
         if (!new File(configPfad).exists()) {
             String message = "File not found: ".concat(configPfad);
             throw new RuntimeException(message, new FileNotFoundException(message));

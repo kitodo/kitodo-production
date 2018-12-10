@@ -26,8 +26,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -65,6 +63,13 @@ public class SRUImport implements ExternalDataImportInterface {
     @Override
     public Document getFullRecordById(String catalogId, String id) {
         loadOPACConfiguration(catalogId);
+        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+        try {
+            URI queryURL = createQueryURI(queryParameters);
+            return performQuerytoDocument(queryURL.toString() + "&query=ead.id==" + id);
+        } catch (URISyntaxException e) {
+            logger.error(e.getLocalizedMessage());
+        }
         // TODO: transform hit to Kitodo internal format using SchemaConverter!
         return null;
     }
@@ -121,6 +126,18 @@ public class SRUImport implements ExternalDataImportInterface {
             logger.error(e.getLocalizedMessage());
         }
         return new SearchResult();
+    }
+
+    private Document performQuerytoDocument(String queryURL) {
+        try {
+            HttpResponse response = sruClient.execute(new HttpGet(queryURL));
+            if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
+                return ResponseHandler.transformResponseToDocument(response);
+            }
+        } catch (IOException e) {
+            logger.error(e.getLocalizedMessage());
+        }
+        return null;
     }
 
     private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {
