@@ -27,6 +27,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
+import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 
 /**
@@ -221,17 +222,28 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      *            optionally a universal rule
      * @param universalKeys
      *            all universal keys
+     * @param additionalKeys
+     *            which keys the user has additionally selected
      * @return an auxiliary table for additional keys yet to be sorted
      */
     private final <V> HashMap<String, AuxiliaryTableRow<V>> cerateAuxiliaryTableWithKeysToBeSorted(
             LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable, UniversalRule universalRule,
-            Collection<UniversalKey> universalKeys) {
+            Collection<UniversalKey> universalKeys, Collection<String> additionalKeys) {
         HashMap<String, AuxiliaryTableRow<V>> toBeSorted = new HashMap<>();
         if (universalRule.isUnspecifiedUnrestricted()) {
             for (UniversalKey universalKey : universalKeys) {
                 if (!auxiliaryTable.containsKey(universalKey.getId())) {
                     toBeSorted.put(universalKey.getId(), new AuxiliaryTableRow<>(universalKey, settings));
                 }
+            }
+        }
+        for (String additionalKey : additionalKeys) {
+            if (!auxiliaryTable.containsKey(additionalKey) && !toBeSorted.containsKey(additionalKey)) {
+                Optional<Key> optionalKey = universalRule.isUnspecifiedUnrestricted() ? Optional.empty()
+                        : ruleset.getKey(additionalKey);
+                UniversalKey universalKey = optionalKey.isPresent() ? new UniversalKey(ruleset, optionalKey.get())
+                        : new UniversalKey(ruleset, additionalKey);
+                toBeSorted.put(additionalKey, new AuxiliaryTableRow<>(universalKey, settings));
             }
         }
         return toBeSorted;
@@ -254,7 +266,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
         LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable = createAuxiliaryTableWithPreSortedKeys(
             universalRule.getExplicitlyPermittedUniversalKeys(universal));
         HashMap<String, AuxiliaryTableRow<V>> auxiliaryTableToBeSorted = cerateAuxiliaryTableWithKeysToBeSorted(
-            auxiliaryTable, universalRule, universal.getUniversalKeys());
+            auxiliaryTable, universalRule, universal.getUniversalKeys(), additionalKeys);
         storeValues(currentEntries, auxiliaryTable, auxiliaryTableToBeSorted);
         appendRowsToAuxiliaryTable(sort(auxiliaryTableToBeSorted, priorityList), auxiliaryTable);
         addAnyUniversalRules(auxiliaryTable);
