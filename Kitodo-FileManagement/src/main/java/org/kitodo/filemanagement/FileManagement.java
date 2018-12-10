@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -34,10 +36,14 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
+import org.kitodo.api.filemanagement.LockResult;
+import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterFileManagement;
+import org.kitodo.filemanagement.locking.GrantedAccess;
+import org.kitodo.filemanagement.locking.LockManagement;
 
 public class FileManagement implements FileManagementInterface {
 
@@ -45,6 +51,7 @@ public class FileManagement implements FileManagementInterface {
     private static final FileMapper fileMapper = new FileMapper();
 
     private static final String IMAGES_DIRECTORY_NAME = "images";
+    private static final String SYSTEM_USER = "System";
 
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
@@ -73,16 +80,37 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
+    @Deprecated
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return new FileOutputStream(new File(uri));
+        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, true);
+        return LockManagement.getInstance().reportGrant(uri, new FileOutputStream(new File(uri)), permissions);
     }
 
     @Override
+    public OutputStream write(URI uri, LockResult permissions) throws IOException {
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
+        LockManagement lockManagement = LockManagement.getInstance();
+        lockManagement.checkPermission(permissions, uri, true);
+        return lockManagement.reportGrant(uri, new FileOutputStream(new File(uri)), permissions);
+    }
+
+    @Override
+    @Deprecated
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         URL url = uri.toURL();
-        return url.openStream();
+        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, false);
+        return LockManagement.getInstance().reportGrant(uri, url.openStream(), permissions);
+    }
+
+    @Override
+    public InputStream read(URI uri, LockResult permissions) throws IOException {
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
+        LockManagement lockManagement = LockManagement.getInstance();
+        uri = lockManagement.checkPermission(permissions, uri, false);
+        URL url = uri.toURL();
+        return lockManagement.reportGrant(uri, url.openStream(), permissions);
     }
 
     @Override
@@ -179,7 +207,8 @@ public class FileManagement implements FileManagementInterface {
         do {
             if (SystemUtils.IS_OS_WINDOWS && millisWaited == sleepIntervalMilliseconds) {
                 logger.warn("Renaming {} failed. This is Windows. Running the garbage collector may yield good"
-                        + " results. Forcing immediate garbage collection now!", fileToRename.getName());
+                        + " results. Forcing immediate garbage collection now!",
+                    fileToRename.getName());
                 System.gc();
             }
             success = fileToRename.renameTo(renamedFile);
@@ -529,5 +558,43 @@ public class FileManagement implements FileManagementInterface {
     public File getFile(URI uri) {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri);
+    }
+
+    /**
+     * Gets a self-releasing exclusive lock with the meaningless username
+     * “System”. This lock is used to facilitate simplified read and write
+     * accesses. It should be abolished at times.
+     * 
+     * @param uri
+     *            URI to lock
+     * @param write
+     *            whether write access is required
+     * @return the lock object
+     * @throws IOException
+     *             if the file does not exist or if an error occurs in disk
+     *             access, e.g. because the write permission for the directory
+     *             is missing
+     * @deprecated This method creates an exclusive lock with a username that is
+     *             not meaningful. In addition, an exclusive lock is always
+     *             requested, which is not always mandatory. Therefore this
+     *             method should not be used anymore. To create a lock, use
+     *             {@link #tryLock(String, Map)} with the actual username. To
+     *             read or write a file using this lock, use
+     *             {@link #read(URI, LockingResult)} or
+     *             {@link #write(URI, LockingResult)}.
+     */
+    @Deprecated
+    private LockResult getASelfReleasingExclusiveSystemLock(URI uri, boolean write) throws IOException {
+        Map<URI, LockingMode> request = new TreeMap<>();
+        request.put(uri, LockingMode.EXCLUSIVE);
+        LockResult lockingResult = tryLock(SYSTEM_USER, request);
+        LockManagement.getInstance().checkPermission(lockingResult, uri, write);
+        ((GrantedAccess) lockingResult).setSelfClosing();
+        return lockingResult;
+    }
+
+    @Override
+    public LockResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException {
+        return LockManagement.getInstance().tryLock(user, null, requests);
     }
 }
