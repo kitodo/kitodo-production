@@ -221,6 +221,7 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
         }
         buffer.append(" unexpectedly called unimplemented ");
         buffer.append(stackTrace[0].getMethodName());
+        buffer.append("()");
         if (exception.getMessage() != null) {
             buffer.append(": ");
             buffer.append(exception.getMessage());

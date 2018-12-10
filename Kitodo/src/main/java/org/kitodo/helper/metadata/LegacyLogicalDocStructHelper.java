@@ -359,7 +359,8 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public String getAnchorClass() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        // The replacement of the UGH library has no concept of anchor classes.
+        return null;
     }
 
     @Override
@@ -516,6 +517,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
         }
         buffer.append(" unexpectedly called unimplemented ");
         buffer.append(stackTrace[0].getMethodName());
+        buffer.append("()");
         if (exception.getMessage() != null) {
             buffer.append(": ");
             buffer.append(exception.getMessage());
