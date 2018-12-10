@@ -21,13 +21,19 @@ import javax.inject.Named;
 
 import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.helper.AdditionalField;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
+import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 @Named("ImportForm")
 @ViewScoped
 public class ImportForm implements Serializable {
+    private ProzesskopieForm prozesskopieForm;
 
     private String selectedCatalog;
     private String selectedField;
@@ -59,8 +65,17 @@ public class ImportForm implements Serializable {
         this.selectedField = field;
     }
 
+    public ProzesskopieForm getProzesskopieForm() {
+        return prozesskopieForm;
+    }
+
+    public void setProzesskopieForm(ProzesskopieForm prozesskopieForm) {
+        this.prozesskopieForm = prozesskopieForm;
+    }
+
     /**
      * Get list of catalogs.
+     *
      * @return list of catalogs
      */
     public List<String> getCatalogs() {
@@ -74,6 +89,7 @@ public class ImportForm implements Serializable {
 
     /**
      * Get list of search fields.
+     *
      * @return list of search fields
      */
     public List<String> getSearchFields() {
@@ -100,6 +116,7 @@ public class ImportForm implements Serializable {
 
     /**
      * Get retrieved hits. Returns empty list if searchResult instance is null.
+     *
      * @return hits
      */
     public List<Record> getHits() {
@@ -113,6 +130,7 @@ public class ImportForm implements Serializable {
 
     /**
      * Get total number of hits for performed query. Returns 0 if searchResult instance is null.
+     *
      * @return total number of hits
      */
     public int getNumberOfHits() {
@@ -122,5 +140,36 @@ public class ImportForm implements Serializable {
             return 0;
         }
 
+    }
+
+    /**
+     * Get the full record with the given ID from the catalog.
+     *
+     */
+    public void getselectedRecord() {
+        String recordId = Helper.getRequestParameter("ID");
+        Document record = serviceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+
+        List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
+        Element root = record.getDocumentElement();
+        NodeList metadataNodes = root.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "metadata");
+        String authors = "";
+        for (int i = 0; i < metadataNodes.getLength(); i++) {
+            Element metadataNode = (Element) metadataNodes.item(i);
+            if (metadataNode.getAttribute("type").equals("person")) {
+                authors = authors + " " + metadataNode.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "displayName").item(0).getTextContent();
+            }
+            for (AdditionalField fa : actualFields) {
+                if (Objects.nonNull(fa.getMetadata())) {
+                    if (fa.getMetadata().equalsIgnoreCase(metadataNode.getAttribute("name"))) {
+                        fa.setValue(metadataNode.getTextContent());
+                    } else if (fa.getMetadata().equals("ListOfCreators")) {
+                        fa.setValue(authors);
+                    }
+                }
+            }
+        }
+        Ajax.update("editForm");
+        this.prozesskopieForm.setActiveTabId(1);
     }
 }
