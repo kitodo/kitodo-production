@@ -89,10 +89,19 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         this.ruleset = rulesetManagementService.getRulesetManagement();
         this.workpiece = metsService.createMets();
 
-        User user = new Metadaten().getCurrentUser();
-        String metadataLanguage = user != null ? user.getMetadataLanguage()
-                : Helper.getRequestParameter("Accept-Language");
-        this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
+        try {
+            User user = new Metadaten().getCurrentUser();
+            String metadataLanguage = user != null ? user.getMetadataLanguage()
+                    : Helper.getRequestParameter("Accept-Language");
+            this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
+        } catch (NullPointerException e) {
+            /*
+             * new Metadaten() throws a NullPointerException in JUnit tests
+             * because there is no Faces context then.
+             */
+            logger.catching(e);
+            this.priorityList = LanguageRange.parse("en");
+        }
     }
 
     @Override

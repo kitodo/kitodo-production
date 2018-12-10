@@ -127,13 +127,19 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            METS XML structure to read
      */
     private Workpiece(Mets mets) {
-        createdate = mets.getMetsHdr().getCREATEDATE().toGregorianCalendar();
-        for (Agent agent : mets.getMetsHdr().getAgent()) {
-            editHistory.add(new ProcessingNote(agent));
-        }
-        MetsDocumentID metsDocumentID = mets.getMetsHdr().getMetsDocumentID();
-        if (Objects.nonNull(metsDocumentID)) {
-            id = metsDocumentID.getID();
+        MetsHdr metsHdr = mets.getMetsHdr();
+        if (metsHdr != null) {
+            XMLGregorianCalendar createDate = metsHdr.getCREATEDATE();
+            if (createDate != null) {
+                createdate = createDate.toGregorianCalendar();
+            }
+            for (Agent agent : metsHdr.getAgent()) {
+                editHistory.add(new ProcessingNote(agent));
+            }
+            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
+            if (Objects.nonNull(metsDocumentID)) {
+                id = metsDocumentID.getID();
+            }
         }
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> mediaVariants = fileSec != null ? fileSec.getFileGrp().parallelStream()
@@ -304,14 +310,16 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     /**
-     * Creates the header of the METS file. The header area stores the
-     * timestamp, the ID and the processing notes.
+     * Creates the header of the METS file. The header area stores the time
+     * stamp, the ID and the processing notes.
      * 
      * @return the header of the METS file
      */
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
-        metsHdr.setCREATEDATE(convertDate(createdate));
+        if (createdate != null) {
+            metsHdr.setCREATEDATE(convertDate(createdate));
+        }
         metsHdr.setLASTMODDATE(convertDate(new GregorianCalendar()));
         if (this.id != null) {
             MetsDocumentID id = new MetsDocumentID();
