@@ -29,7 +29,6 @@ import org.kitodo.services.ServiceManager;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopierData {
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * A metadata selector relative to which the data shall be read during
@@ -134,7 +133,7 @@ public class CopierData {
      * @return the required ruleset.
      */
     public PrefsInterface getPreferences() {
-        return serviceManager.getRulesetService().getPreferences((process).getRuleset());
+        return ServiceManager.getRulesetService().getPreferences((process).getRuleset());
     }
 
     /**

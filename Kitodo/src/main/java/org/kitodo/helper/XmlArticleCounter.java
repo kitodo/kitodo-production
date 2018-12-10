@@ -28,7 +28,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class XmlArticleCounter {
-    private final ServiceManager serviceManager = new ServiceManager();
+
     private static final Logger logger = LogManager.getLogger(XmlArticleCounter.class);
 
     public enum CountType {
@@ -48,7 +48,7 @@ public class XmlArticleCounter {
         // read document
         FileformatInterface gdzfile;
         try {
-            gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
+            gdzfile = ServiceManager.getProcessService().readMetadataFile(myProcess);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
             Helper.setErrorMessage("xml error", logger, e);
             return -1;
@@ -68,7 +68,7 @@ public class XmlArticleCounter {
         // save the determined number in the process
         myProcess.setSortHelperArticles(result);
         try {
-            serviceManager.getProcessService().save(myProcess);
+            ServiceManager.getProcessService().save(myProcess);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }

@@ -60,6 +60,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -113,14 +114,14 @@ public class MassImportForm extends BaseForm {
      */
     public String prepare(int templateId, int projectId) {
         try {
-            this.template = serviceManager.getTemplateService().getById(templateId);
-            this.project = serviceManager.getProjectService().getById(projectId);
+            this.template = ServiceManager.getTemplateService().getById(templateId);
+            this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return this.stayOnCurrentPage;
         }
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return this.stayOnCurrentPage;
         }
         initializePossibleDigitalCollections();
@@ -227,7 +228,7 @@ public class MassImportForm extends BaseForm {
             List<ImportObject> answer = new ArrayList<>();
 
             // found list with ids
-            PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             String tempFolder = ConfigCore.getParameter(ParameterCore.DIR_TEMP);
             this.plugin.setImportFolder(tempFolder);
             this.plugin.setPrefs(prefs);
@@ -312,10 +313,10 @@ public class MassImportForm extends BaseForm {
         if (basename.contains("\\")) {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
-        URI temporalFile = serviceManager.getFileService().createResource(
+        URI temporalFile = ServiceManager.getFileService().createResource(
             FilenameUtils.concat(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_TEMP), basename));
 
-        serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
+        ServiceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }
 
     public UploadedFile getUploadedFile() {
@@ -373,7 +374,7 @@ public class MassImportForm extends BaseForm {
         Process process = JobCreation.generateProcess(io, this.template);
         if (process == null) {
             if (Objects.nonNull(importFileName)
-                    && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+                    && !ServiceManager.getFileService().getFileName(importFileName).isEmpty()
                     && selectedFilenames != null && !selectedFilenames.isEmpty()) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
@@ -388,7 +389,7 @@ public class MassImportForm extends BaseForm {
     private void removeImportFileNameFromSelectedFileNames(ImportObject io) {
         URI importFileName = io.getImportFileName();
         Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage() });
-        if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+        if (Objects.nonNull(importFileName) && !ServiceManager.getFileService().getFileName(importFileName).isEmpty()
                 && selectedFilenames != null && !selectedFilenames.isEmpty()) {
             selectedFilenames.remove(importFileName.getRawPath());
         }
@@ -609,7 +610,7 @@ public class MassImportForm extends BaseForm {
                 if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
                     this.allFilenames = this.plugin.getAllFilenames();
                 }
-                this.plugin.setPrefs(serviceManager.getRulesetService().getPreferences(template.getRuleset()));
+                this.plugin.setPrefs(ServiceManager.getRulesetService().getPreferences(template.getRuleset()));
             }
         }
     }
@@ -774,7 +775,7 @@ public class MassImportForm extends BaseForm {
      */
     public void downloadDocket() {
         try {
-            serviceManager.getProcessService().downloadDocket(this.processList);
+            ServiceManager.getProcessService().downloadDocket(this.processList);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

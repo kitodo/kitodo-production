@@ -58,8 +58,7 @@ public class WorkflowControllerService {
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private static WorkflowControllerService instance = null;
-    private ServiceManager serviceManager = new ServiceManager();
-    private TaskService taskService = serviceManager.getTaskService();
+    private TaskService taskService = ServiceManager.getTaskService();
 
     /**
      * Return singleton variable of type TaskService.
@@ -194,8 +193,8 @@ public class WorkflowControllerService {
             // metadata validation
             if (task.isTypeMetadata()
                     && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
-                serviceManager.getMetadataValidationService().setAutoSave(true);
-                if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
+                ServiceManager.getMetadataValidationService().setAutoSave(true);
+                if (!ServiceManager.getMetadataValidationService().validate(task.getProcess())) {
                     return;
                 }
             }
@@ -203,7 +202,7 @@ public class WorkflowControllerService {
             // image validation
             if (task.isTypeImagesWrite()) {
                 ImagesHelper mih = new ImagesHelper(null, null);
-                URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
+                URI imageFolder = ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");
                     return;
@@ -252,11 +251,11 @@ public class WorkflowControllerService {
         }
 
         Process process = task.getProcess();
-        URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, process);
-        Integer numberOfFiles = serviceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
+        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOrigDirectory(true, process);
+        Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
             process.setSortHelperImages(numberOfFiles);
-            serviceManager.getProcessService().save(process);
+            ServiceManager.getProcessService().save(process);
         }
 
         updateProcessSortHelperStatus(process);
@@ -297,7 +296,7 @@ public class WorkflowControllerService {
                 if (!concurrentTasks.isEmpty()) {
                     for (Task concurrentTask : concurrentTasks) {
                         concurrentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-                        serviceManager.getTaskService().save(concurrentTask);
+                        taskService.save(concurrentTask);
                     }
                 }
 
@@ -428,9 +427,9 @@ public class WorkflowControllerService {
                 closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
                 openTaskForProcessing(correctionTask);
                 Property processProperty = prepareSolveMessageProperty(property, currentTask);
-                serviceManager.getPropertyService().save(processProperty);
+                ServiceManager.getPropertyService().save(processProperty);
                 updateProcessSortHelperStatus(
-                    serviceManager.getProcessService().getById(currentTask.getProcess().getId()));
+                    ServiceManager.getProcessService().getById(currentTask.getProcess().getId()));
                 currentTask = correctionTask;
             }
         }
@@ -495,7 +494,7 @@ public class WorkflowControllerService {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
         processProperty.setValue("[" + Helper.getDateAsFormattedString(date) + ", "
-                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: "
+                + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: "
                 + currentTask.getId().toString() + " CorrectionTask: " + correctionTask.getId().toString() + ") "
                 + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
@@ -505,18 +504,18 @@ public class WorkflowControllerService {
     private Property prepareSolveMessageProperty(Property property, Task correctionTask) {
         property.setTitle(Helper.getTranslation("correctionPerformed"));
         property.setValue("[" + Helper.getDateAsFormattedString(new Date()) + ", "
-                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] "
+                + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] "
                 + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
         property.setType(PropertyType.MESSAGE_IMPORTANT);
         return property;
     }
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser()) + " "
+        String message = "Red K " + ServiceManager.getUserService().getFullName(getCurrentUser()) + " "
                 + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
                 + this.problem.getMessage();
 
-        serviceManager.getProcessService().addToWikiField(message, process);
+        ServiceManager.getProcessService().addToWikiField(message, process);
         return process.getWikiField();
     }
 
@@ -616,9 +615,9 @@ public class WorkflowControllerService {
      *            object
      */
     private void updateProcessSortHelperStatus(Process process) throws DataException {
-        String value = serviceManager.getProcessService().getProgress(process.getTasks(), null);
+        String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
         process.setSortHelperStatus(value);
-        serviceManager.getProcessService().save(process);
+        ServiceManager.getProcessService().save(process);
     }
 
     /**
@@ -629,13 +628,13 @@ public class WorkflowControllerService {
      */
     private void downloadToHome(Task task) {
         task.setProcessingTime(new Date());
-        if (serviceManager.getSecurityAccessService().isAuthenticated()) {
+        if (ServiceManager.getSecurityAccessService().isAuthenticated()) {
             taskService.replaceProcessingUser(task, getCurrentUser());
             this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
         }
     }
 
     private User getCurrentUser() {
-        return serviceManager.getUserService().getCurrentUser();
+        return ServiceManager.getUserService().getCurrentUser();
     }
 }

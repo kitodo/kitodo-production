@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 public class UserServiceTest {
 
-    private static final UserService userService = new ServiceManager().getUserService();
+    private static final UserService userService = ServiceManager.getUserService();
 
     @Test
     public void shouldCheckIfIsLoginValid() {

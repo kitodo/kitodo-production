@@ -51,7 +51,6 @@ import org.kitodo.services.ServiceManager;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The field batchLabel is set in addToBatches() on the first function call
@@ -298,7 +297,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             String publicationRun) {
 
         // initialise
-        PrefsInterface ruleset = serviceManager.getRulesetService()
+        PrefsInterface ruleset = ServiceManager.getRulesetService()
                 .getPreferences(newProcess.getProzessKopie().getRuleset());
         DigitalDocumentInterface document;
         try {
@@ -425,9 +424,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            the title of the process
      */
     private void flushLogisticsBatch(String processTitle) throws DataException {
-        if (serviceManager.getBatchService().size(logisticsBatch) > 0) {
+        if (ServiceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
-            serviceManager.getBatchService().save(logisticsBatch);
+            ServiceManager.getBatchService().save(logisticsBatch);
             logisticsBatch = new Batch(Type.LOGISTIC);
         }
         currentBreakMark = null;
@@ -453,7 +452,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      */
     private void saveFullBatch(String theProcessTitle) throws DataException {
         fullBatch.setTitle(firstGroupFrom(theProcessTitle));
-        serviceManager.getBatchService().save(fullBatch);
+        ServiceManager.getBatchService().save(fullBatch);
     }
 
     /**

@@ -36,10 +36,7 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
 public class ExportMets {
-    private final ServiceManager serviceManager = new ServiceManager();
-
-    private final FileService fileService = serviceManager.getFileService();
-    protected Helper help = new Helper();
+    private final FileService fileService = ServiceManager.getFileService();
     protected PrefsInterface myPrefs;
 
     private static final Logger logger = LogManager.getLogger(ExportMets.class);
@@ -52,8 +49,8 @@ public class ExportMets {
      */
     public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, JAXBException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
-        URI userHome = serviceManager.getUserService().getHomeDirectory(user);
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
+        URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
     }
 
@@ -71,11 +68,11 @@ public class ExportMets {
         /*
          * Read Document
          */
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
-        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
+        this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        String atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        FileformatInterface gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
 
-        if (serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
+        if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
         }
 
@@ -100,7 +97,7 @@ public class ExportMets {
      *            the folder to prove and maybe create it
      */
     protected void prepareUserDirectory(URI targetFolder) {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         try {
             fileService.createDirectoryForUser(targetFolder, user.getLogin());
         } catch (IOException | RuntimeException e) {
@@ -127,7 +124,7 @@ public class ExportMets {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
-        mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
+        mm = ServiceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {
             mm.write(metaFile.getRawPath());
             Helper.setMessage(process.getTitle() + ": ", "exportFinished");

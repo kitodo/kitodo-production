@@ -29,7 +29,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named
 public class ProcessConverter implements Converter {
-    private final ServiceManager serviceManager = new ServiceManager();
+
     private static final Logger logger = LogManager.getLogger(ProcessConverter.class);
 
     @Override
@@ -38,7 +38,7 @@ public class ProcessConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getProcessService().getById(Integer.valueOf(value));
+                return ServiceManager.getProcessService().getById(Integer.valueOf(value));
             } catch (NumberFormatException | DAOException e) {
                 logger.error(e.getMessage(), e);
                 return "0";

@@ -22,7 +22,7 @@ public class ProjectGenerator {
         project.setTitle("MockProject");
         project.setNumberOfPages(300);
         project.setNumberOfVolumes(10);
-        project.setClient(new ServiceManager().getClientService().getById(1));
+        project.setClient(ServiceManager.getClientService().getById(1));
         project.setActive(true);
 
         return project;

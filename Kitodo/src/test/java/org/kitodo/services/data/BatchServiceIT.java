@@ -34,7 +34,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class BatchServiceIT {
 
-    private static final BatchService batchService = new ServiceManager().getBatchService();
+    private static final BatchService batchService = ServiceManager.getBatchService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

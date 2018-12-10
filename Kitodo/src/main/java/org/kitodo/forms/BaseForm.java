@@ -23,7 +23,6 @@ import org.primefaces.event.TabChangeEvent;
 public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
-    protected transient ServiceManager serviceManager = new ServiceManager();
     String stayOnCurrentPage = null;
     protected String filter = "";
     protected User user;
@@ -94,7 +93,7 @@ public class BaseForm implements Serializable {
      */
     public User getUser() {
         if (Objects.isNull(this.user)) {
-            this.user = serviceManager.getUserService().getCurrentUser();
+            this.user = ServiceManager.getUserService().getCurrentUser();
         }
         return this.user;
     }
@@ -114,14 +113,14 @@ public class BaseForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        serviceManager.getUserService().addFilter(getUser(), this.filter);
+        ServiceManager.getUserService().addFilter(getUser(), this.filter);
     }
 
     /**
      * Get user filters.
      */
     public List<String> getUserFilters() {
-        return serviceManager.getUserService().getFilters(getUser());
+        return ServiceManager.getUserService().getFilters(getUser());
     }
 
     /**
@@ -131,7 +130,7 @@ public class BaseForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        serviceManager.getUserService().removeFilter(getUser(), this.filter);
+        ServiceManager.getUserService().removeFilter(getUser(), this.filter);
     }
 
     /**

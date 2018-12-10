@@ -33,7 +33,6 @@ import org.kitodo.services.ServiceManager;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FinaliseStepProcessor extends ActiveMQProcessor {
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The default constructor looks up the queue name to use in
@@ -60,12 +59,12 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {
         CurrentTaskForm dialog = new CurrentTaskForm();
         Integer stepID = ticket.getMandatoryInteger("id");
-        dialog.setCurrentTask(serviceManager.getTaskService().getById(stepID));
+        dialog.setCurrentTask(ServiceManager.getTaskService().getById(stepID));
         if (ticket.hasField("properties")) {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
         if (ticket.hasField("message")) {
-            serviceManager.getProcessService().addToWikiField(ticket.getString("message"),
+            ServiceManager.getProcessService().addToWikiField(ticket.getString("message"),
                     dialog.getCurrentTask().getProcess());
         }
         dialog.closeTaskByUser();

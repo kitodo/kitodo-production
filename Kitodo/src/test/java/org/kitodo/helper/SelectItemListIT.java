@@ -42,15 +42,13 @@ import static org.junit.Assert.assertThat;
 
 public class SelectItemListIT {
 
-    private static ServiceManager serviceManager = new ServiceManager();
-
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
 
-        SecurityTestUtils.addUserDataToSecurityContext(serviceManager.getUserService().getById(1), 1);
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     @AfterClass
@@ -63,7 +61,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetBatches() throws Exception {
-        BatchService batchService = serviceManager.getBatchService();
+        BatchService batchService = ServiceManager.getBatchService();
 
         await().untilAsserted(() -> assertEquals("Incorrect amount of select items!", 4,
             SelectItemList.getBatches(batchService.getAll()).size()));
@@ -84,7 +82,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetClients() throws Exception {
-        ClientService clientService = serviceManager.getClientService();
+        ClientService clientService = ServiceManager.getClientService();
 
         await().untilAsserted(
             () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getClients(clientService.getAll()).size()));
@@ -101,7 +99,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetDockets() throws Exception {
-        DocketService docketService = serviceManager.getDocketService();
+        DocketService docketService = ServiceManager.getDocketService();
 
         await().untilAsserted(
             () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets(docketService.getAll()).size()));
@@ -142,7 +140,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetProjects() throws Exception {
-        ProjectService projectService = serviceManager.getProjectService();
+        ProjectService projectService = ServiceManager.getProjectService();
 
         await().untilAsserted(
             () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getProjects(projectService.getAll()).size()));
@@ -158,7 +156,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetRulesets() throws Exception {
-        RulesetService rulesetService = serviceManager.getRulesetService();
+        RulesetService rulesetService = ServiceManager.getRulesetService();
 
         await().untilAsserted(
             () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets(rulesetService.getAll()).size()));
@@ -175,7 +173,7 @@ public class SelectItemListIT {
 
     @Test
     public void shouldGetWorkflows() throws Exception {
-        WorkflowService workflowService = serviceManager.getWorkflowService();
+        WorkflowService workflowService = ServiceManager.getWorkflowService();
 
         await().untilAsserted(
             () -> assertEquals("Incorrect amount of select items!", 2, SelectItemList.getWorkflows(workflowService.getAll()).size()));

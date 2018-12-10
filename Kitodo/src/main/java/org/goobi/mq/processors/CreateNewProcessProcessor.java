@@ -72,7 +72,6 @@ import org.kitodo.services.ServiceManager;
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);
-    private static final ServiceManager serviceManager = new ServiceManager();
     private static final String ERROR_CREATE = "errorCreating";
 
     public CreateNewProcessProcessor() {
@@ -181,7 +180,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             templateTitle
      */
     private static Template getTemplateByTitle(String templateTitle) {
-        List<Template> response = serviceManager.getTemplateService().getProcessTemplatesWithTitle(templateTitle);
+        List<Template> response = ServiceManager.getTemplateService().getProcessTemplatesWithTitle(templateTitle);
 
         if (!response.isEmpty()) {
             return response.get(0);

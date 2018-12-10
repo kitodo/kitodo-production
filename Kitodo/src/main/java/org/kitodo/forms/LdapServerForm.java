@@ -25,6 +25,7 @@ import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 
 @Named("LdapServerForm")
 @SessionScoped
@@ -56,7 +57,7 @@ public class LdapServerForm extends BaseForm {
      */
     public List<LdapServer> getLdapServers() {
         try {
-            return serviceManager.getLdapServerService().getAll();
+            return ServiceManager.getLdapServerService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
             return new ArrayList<>();
@@ -70,7 +71,7 @@ public class LdapServerForm extends BaseForm {
      */
     public String save() {
         try {
-            this.serviceManager.getLdapServerService().saveToDatabase(this.ldapServer);
+            ServiceManager.getLdapServerService().saveToDatabase(this.ldapServer);
             return ldapServerListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
@@ -84,7 +85,7 @@ public class LdapServerForm extends BaseForm {
      */
     public void delete() {
         try {
-            this.serviceManager.getLdapServerService().removeFromDatabase(this.ldapServer);
+            ServiceManager.getLdapServerService().removeFromDatabase(this.ldapServer);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {LDAP_SERVER }, logger, e);
         }
@@ -99,7 +100,7 @@ public class LdapServerForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                this.ldapServer = this.serviceManager.getLdapServerService().getById(id);
+                this.ldapServer = ServiceManager.getLdapServerService().getById(id);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, id }, logger,
@@ -116,7 +117,7 @@ public class LdapServerForm extends BaseForm {
      */
     public void setLdapServerById(int ldapServerID) {
         try {
-            this.ldapServer = this.serviceManager.getLdapServerService().getById(ldapServerID);
+            this.ldapServer = ServiceManager.getLdapServerService().getById(ldapServerID);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, ldapServerID }, logger, e);
         }

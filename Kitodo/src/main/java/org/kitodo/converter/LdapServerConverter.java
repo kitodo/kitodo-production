@@ -28,7 +28,6 @@ import org.kitodo.services.ServiceManager;
 @Named
 public class LdapServerConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(LdapServerConverter.class);
-    private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
@@ -36,7 +35,7 @@ public class LdapServerConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getLdapServerService().getById(Integer.parseInt(value));
+                return ServiceManager.getLdapServerService().getById(Integer.parseInt(value));
             } catch (DAOException e) {
                 logger.error(e.getMessage());
                 return "0";

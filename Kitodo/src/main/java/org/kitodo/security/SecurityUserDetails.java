@@ -41,8 +41,6 @@ public class SecurityUserDetails extends User implements UserDetails {
     private Client sessionClient;
     private User user;
 
-    private transient ServiceManager serviceManager = new ServiceManager();
-
     public SecurityUserDetails(final User user) {
         super(user);
         this.user = user;
@@ -57,10 +55,10 @@ public class SecurityUserDetails extends User implements UserDetails {
             List<Authority> authorities = role.getAuthorities();
             int clientId = role.getClient().getId();
             for (Authority authority : authorities) {
-                if (authority.getTitle().contains(serviceManager.getAuthorityService().getGlobalAuthoritySuffix())) {
+                if (authority.getTitle().contains(ServiceManager.getAuthorityService().getGlobalAuthoritySuffix())) {
                     insertGlobalAuthorities(userAuthorities, authority);
                 }
-                if (authority.getTitle().contains(serviceManager.getAuthorityService().getClientAuthoritySuffix())) {
+                if (authority.getTitle().contains(ServiceManager.getAuthorityService().getClientAuthoritySuffix())) {
                     insertClientAuthorities(userAuthorities, authority, clientId);
                 }
             }
@@ -70,7 +68,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     private void insertGlobalAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority) {
         String authorityTitle = authority.getTitle()
-                .replace(serviceManager.getAuthorityService().getGlobalAuthoritySuffix(), "");
+                .replace(ServiceManager.getAuthorityService().getGlobalAuthoritySuffix(), "");
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_GLOBAL");
         if (!userAuthorities.contains(simpleGrantedAuthority)) {
             userAuthorities.add(simpleGrantedAuthority);
@@ -80,7 +78,7 @@ public class SecurityUserDetails extends User implements UserDetails {
     private void insertClientAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
             int clientId) {
         String authorityTitle = authority.getTitle()
-                .replace(serviceManager.getAuthorityService().getClientAuthoritySuffix(), "");
+                .replace(ServiceManager.getAuthorityService().getClientAuthoritySuffix(), "");
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
         if (!userAuthorities.contains(simpleGrantedAuthority)) {

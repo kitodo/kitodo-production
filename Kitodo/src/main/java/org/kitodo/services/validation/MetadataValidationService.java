@@ -55,7 +55,6 @@ public class MetadataValidationService {
     private boolean autoSave = false;
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
     private static final String VALIDATE_METADATA = "validate.metadata";
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Validate.
@@ -65,10 +64,10 @@ public class MetadataValidationService {
      * @return boolean
      */
     public boolean validate(Process process) {
-        PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         FileformatInterface gdzfile;
         try {
-            gdzfile = serviceManager.getProcessService().readMetadataFile(process);
+            gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
@@ -88,7 +87,7 @@ public class MetadataValidationService {
      * @return boolean
      */
     public boolean validate(FileformatInterface gdzfile, PrefsInterface prefs, Process process) {
-        String metadataLanguage = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String metadataLanguage = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         this.process = process;
         boolean result = true;
 
@@ -194,7 +193,7 @@ public class MetadataValidationService {
         ImagesHelper mih = new ImagesHelper(prefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
-                serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
+                ServiceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 result = false;
             }
         } catch (IOException | RuntimeException e) {
@@ -429,7 +428,7 @@ public class MetadataValidationService {
     private void saveMetadataFile(FileformatInterface gdzfile, Process process) {
         try {
             if (this.autoSave) {
-                serviceManager.getFileService().writeMetadataFile(gdzfile, process);
+                ServiceManager.getFileService().writeMetadataFile(gdzfile, process);
             }
         } catch (PreferencesException | WriteException | IOException | RuntimeException e) {
             Helper.setErrorMessage("Error while writing metadata: ", process.getTitle(), logger, e);

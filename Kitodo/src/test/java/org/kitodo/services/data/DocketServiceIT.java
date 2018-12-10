@@ -35,7 +35,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class DocketServiceIT {
 
-    private static final DocketService docketService = new ServiceManager().getDocketService();
+    private static final DocketService docketService = ServiceManager.getDocketService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

@@ -40,7 +40,6 @@ public class SearchResultGeneration {
     private String filter;
     private boolean showClosedProcesses;
     private boolean showInactiveProjects;
-    private static ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 
     /**
@@ -70,29 +69,29 @@ public class SearchResultGeneration {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         try {
-            query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
+            query = ServiceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
                     false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
         if (!this.showClosedProcesses) {
-            query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));
+            query.mustNot(ServiceManager.getProcessService().getQuerySortHelperStatus(true));
         }
         if (!this.showInactiveProjects) {
-            query.mustNot(serviceManager.getProcessService().getQueryProjectActive(false));
+            query.mustNot(ServiceManager.getProcessService().getQueryProjectActive(false));
         }
 
         try {
-            processDTOS = serviceManager.getProcessService().findByQuery(query,
-                    serviceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+            processDTOS = ServiceManager.getProcessService().findByQuery(query,
+                    ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
         List<Process> processes = new ArrayList<>();
         try {
-            processes = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
+            processes = ServiceManager.getProcessService().convertDtosToBeans(processDTOS);
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
         }

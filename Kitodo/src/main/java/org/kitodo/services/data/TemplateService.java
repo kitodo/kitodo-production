@@ -52,7 +52,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
     private boolean showInactiveTemplates = false;
     private boolean showInactiveProjects = false;
@@ -123,9 +122,9 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         for (Project project : template.getProjects()) {
             if (template.getIndexAction().equals(IndexAction.DELETE)) {
                 project.getTemplates().remove(template);
-                serviceManager.getProjectService().saveToIndex(project, false);
+                ServiceManager.getProjectService().saveToIndex(project, false);
             } else {
-                serviceManager.getProjectService().saveToIndex(project, false);
+                ServiceManager.getProjectService().saveToIndex(project, false);
             }
         }
     }
@@ -141,7 +140,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             throws CustomResponseException, DAOException, IOException, DataException {
         if (template.getIndexAction().equals(IndexAction.DELETE)) {
             for (Task task : template.getTasks()) {
-                serviceManager.getTaskService().removeFromIndex(task, false);
+                ServiceManager.getTaskService().removeFromIndex(task, false);
             }
         } else {
             saveOrRemoveTasksInIndex(template);
@@ -162,10 +161,10 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
         for (Task task : template.getTasks()) {
             database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task, false);
+            ServiceManager.getTaskService().saveToIndex(task, false);
         }
 
-        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(template.getId());
+        List<JsonObject> searchResults = ServiceManager.getTaskService().findByProcessId(template.getId());
         for (JsonObject object : searchResults) {
             index.add(getIdFromJSONObject(object));
         }
@@ -173,11 +172,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         List<Integer> missingInIndex = findMissingValues(database, index);
         List<Integer> notNeededInIndex = findMissingValues(index, database);
         for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
+            ServiceManager.getTaskService().saveToIndex(ServiceManager.getTaskService().getById(missing), false);
         }
 
         for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
+            ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
         }
     }
 
@@ -212,7 +211,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query.must(serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
+            query.must(ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
         }
         return query;
     }
@@ -233,10 +232,10 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             Map<String, String> filterMap = (Map<String, String>) filters;
             query.must(readFilters(filterMap));
         }
-        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
 
         if (!showInactiveTemplates) {
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+            query.must(ServiceManager.getProcessService().getQuerySortHelperStatus(false));
         }
 
         if (!this.showInactiveProjects) {
@@ -261,7 +260,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
-        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
     }
 
@@ -300,15 +299,15 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(templateJSONObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
         templateDTO.setDocket(
-            serviceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));
+            ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));
         templateDTO.setRuleset(
-            serviceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(templateJSONObject)));
+            ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(templateJSONObject)));
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
         templateDTO.setWorkflow(workflowDTO);
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
-            serviceManager.getTaskService()));
+            ServiceManager.getTaskService()));
         templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
@@ -320,7 +319,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
         templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
-            serviceManager.getProjectService()));
+            ServiceManager.getProjectService()));
     }
 
     /**
@@ -382,12 +381,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      * @return true or false
      */
     public boolean containsUnreachableTasks(List<Task> tasks) {
-        TaskService taskService = serviceManager.getTaskService();
         if (tasks.isEmpty()) {
             return true;
         }
         for (Task task : tasks) {
-            if (taskService.getRolesSize(task) == 0) {
+            if (ServiceManager.getTaskService().getRolesSize(task) == 0) {
                 return true;
             }
         }

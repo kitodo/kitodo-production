@@ -37,8 +37,6 @@ import static org.junit.Assume.assumeTrue;
 
 public class WorkingST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private static CurrentTasksEditPage currentTasksEditPage;
     private static ProcessesPage processesPage;
     private static TasksPage tasksPage;
@@ -68,19 +66,19 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void takeOpenTaskAndGiveItBackTest() throws Exception {
-        Task task = serviceManager.getTaskService().getById(9);
+        Task task = ServiceManager.getTaskService().getById(9);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
         tasksPage.goTo().takeOpenTask("Open", "First process");
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
-        task = serviceManager.getTaskService().getById(9);
+        task = ServiceManager.getTaskService().getById(9);
         assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
 
         currentTasksEditPage.releaseTask();
         assertTrue("Redirection after click release task was not successful", tasksPage.isAt());
 
-        task = serviceManager.getTaskService().getById(9);
+        task = ServiceManager.getTaskService().getById(9);
         assertEquals("Task was not released by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
     }
 
@@ -92,7 +90,7 @@ public class WorkingST extends BaseTestSelenium {
         currentTasksEditPage.closeTask();
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
-        Task task = serviceManager.getTaskService().getById(12);
+        Task task = ServiceManager.getTaskService().getById(12);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
     }
 
@@ -104,25 +102,25 @@ public class WorkingST extends BaseTestSelenium {
         currentTasksEditPage.closeTask();
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
-        Task task = serviceManager.getTaskService().getById(19);
+        Task task = ServiceManager.getTaskService().getById(19);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        task = serviceManager.getTaskService().getById(20);
+        task = ServiceManager.getTaskService().getById(20);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
-        task = serviceManager.getTaskService().getById(21);
+        task = ServiceManager.getTaskService().getById(21);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
-        task = serviceManager.getTaskService().getById(22);
+        task = ServiceManager.getTaskService().getById(22);
         assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
 
         tasksPage.takeOpenTask("Task3", "Parallel");
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
-        task = serviceManager.getTaskService().getById(21);
+        task = ServiceManager.getTaskService().getById(21);
         assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
 
-        task = serviceManager.getTaskService().getById(20);
+        task = ServiceManager.getTaskService().getById(20);
         assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
-        task = serviceManager.getTaskService().getById(22);
+        task = ServiceManager.getTaskService().getById(22);
         assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
     }
 

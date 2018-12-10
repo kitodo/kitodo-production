@@ -55,9 +55,8 @@ import org.kitodo.services.file.FileService;
  */
 public class ImageGenerator implements Runnable {
     private static final Logger logger = LogManager.getLogger(ImageGenerator.class);
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
-    private final ImageService imageService = serviceManager.getImageService();    
+    private final FileService fileService = ServiceManager.getFileService();
+    private final ImageService imageService = ServiceManager.getImageService();
 
     /**
      * Output folders.
@@ -360,7 +359,7 @@ public class ImageGenerator implements Runnable {
      * start the export on the ExportDms. This task instance is passed in
      * addition so that the ExportDms can update the task’s state.
      *
-     * @see de.sub.goobi.helper.tasks.EmptyTask#run()
+     * @see org.kitodo.helper.tasks.EmptyTask#run()
      */
     @Override
     public void run() {

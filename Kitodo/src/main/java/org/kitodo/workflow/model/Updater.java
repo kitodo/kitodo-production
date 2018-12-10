@@ -21,7 +21,6 @@ import org.kitodo.services.ServiceManager;
 public class Updater {
 
     private Template template;
-    private ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Public constructor.
@@ -40,7 +39,7 @@ public class Updater {
         List<Process> processes = this.template.getProcesses();
 
         for (Process process : processes) {
-            serviceManager.getProcessService().save(process);
+            ServiceManager.getProcessService().save(process);
         }
     }
 

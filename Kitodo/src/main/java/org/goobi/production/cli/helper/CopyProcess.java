@@ -83,7 +83,6 @@ public class CopyProcess extends ProzesskopieForm {
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
-    private final transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Prepare import object.
@@ -94,12 +93,12 @@ public class CopyProcess extends ProzesskopieForm {
      */
     // TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             return "";
         }
 
         clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -121,15 +120,15 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String prepare(int templateId, int projectId) {
         try {
-            this.template = serviceManager.getTemplateService().getById(templateId);
-            this.project = serviceManager.getProjectService().getById(projectId);
+            this.template = ServiceManager.getTemplateService().getById(templateId);
+            this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getRolesSize(s) == 0) {
+                if (ServiceManager.getTaskService().getRolesSize(s) == 0) {
                     Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
                 }
             }
@@ -137,7 +136,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -236,7 +235,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -281,7 +280,7 @@ public class CopyProcess extends ProzesskopieForm {
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
                             MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
@@ -328,7 +327,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     @Override
     public String templateAuswahlAuswerten() {
-        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+        if (ServiceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
             for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
@@ -338,7 +337,7 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+        if (ServiceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
             for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
@@ -349,7 +348,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         try {
-            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
+            this.myRdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
@@ -424,7 +423,7 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
-        serviceManager.getProcessService().evict(this.prozessKopie);
+        ServiceManager.getProcessService().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
 
@@ -432,16 +431,16 @@ public class CopyProcess extends ProzesskopieForm {
         updateTasks(this.prozessKopie);
 
         try {
-            serviceManager.getProcessService().save(this.prozessKopie);
-            serviceManager.getProcessService().refresh(this.prozessKopie);
+            ServiceManager.getProcessService().save(this.prozessKopie);
+            ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
             logger.error("error on save: ", e);
             return this.prozessKopie;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+        String baseProcessDirectory = ServiceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
                 .toString();
-        boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        boolean successful = ServiceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
                     + ConfigCore.getKitodoDataDirectory() + " was not created!";
@@ -458,12 +457,12 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+        ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        serviceManager.getProcessService().refresh(this.prozessKopie);
+        ServiceManager.getProcessService().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
@@ -476,7 +475,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     public Process createProcess(ImportObject io)
             throws ReadException, IOException, PreferencesException, WriteException {
-        serviceManager.getProcessService().evict(this.prozessKopie);
+        ServiceManager.getProcessService().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
         addProperties(io);
@@ -486,8 +485,8 @@ public class CopyProcess extends ProzesskopieForm {
             this.prozessKopie.getBatches().addAll(io.getBatches());
         }
         try {
-            serviceManager.getProcessService().save(this.prozessKopie);
-            serviceManager.getProcessService().refresh(this.prozessKopie);
+            ServiceManager.getProcessService().save(this.prozessKopie);
+            ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
             logger.error("error on save: ", e);
             return this.prozessKopie;
@@ -501,19 +500,19 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+        ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        serviceManager.getProcessService().refresh(this.prozessKopie);
+        ServiceManager.getProcessService().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
     @Override
     public void createNewFileformat() {
 
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
         FileformatInterface ff;
         try {

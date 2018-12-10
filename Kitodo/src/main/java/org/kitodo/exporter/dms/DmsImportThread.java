@@ -33,7 +33,6 @@ public class DmsImportThread extends Thread {
     private long timeFileSuccess;
     private long timeFileError;
     private String result = "";
-    private static final ServiceManager serviceManager = new ServiceManager();
     private boolean stop = false;
 
     /**
@@ -61,7 +60,7 @@ public class DmsImportThread extends Thread {
         this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(), ats + ".xml");
         if (process.getProject().isDmsImportCreateProcessFolder()) {
             this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(),
-                    serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + File.separator + ats
+                    ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + File.separator + ats
                             + ".xml");
         }
 
@@ -125,7 +124,7 @@ public class DmsImportThread extends Thread {
     private String readErrorFile() throws IOException {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append("Beim Import ist ein Importfehler aufgetreten: ");
-        try (InputStream inputStream = serviceManager.getFileService().read(this.fileError.toURI());
+        try (InputStream inputStream = ServiceManager.getFileService().read(this.fileError.toURI());
                 BufferedReader r = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = r.readLine();
             while (line != null) {
@@ -140,7 +139,7 @@ public class DmsImportThread extends Thread {
     private void removeImages() {
         if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
             try {
-                serviceManager.getFileService().delete(folderImages.toURI());
+                ServiceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {
                 logger.warn("IOException. Could not delete image folder");
             }

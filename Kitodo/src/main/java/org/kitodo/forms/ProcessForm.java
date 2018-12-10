@@ -83,6 +83,7 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.helper.WebDav;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -108,9 +109,8 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private String addToWikiField = "";
-    private transient FileService fileService = serviceManager.getFileService();
-    private transient WorkflowControllerService workflowControllerService = serviceManager
-            .getWorkflowControllerService();
+    private transient FileService fileService = ServiceManager.getFileService();
+    private transient WorkflowControllerService workflowControllerService = ServiceManager.getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String EXPORT_FINISHED = "exportFinished";
     private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
@@ -131,7 +131,7 @@ public class ProcessForm extends TemplateBaseForm {
         this.anzeigeAnpassen.put("selectionBoxes", false);
         this.anzeigeAnpassen.put("processId", false);
         this.anzeigeAnpassen.put("batchId", false);
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProcessService()));
         /*
          * Vorgangsdatum generell anzeigen?
          */
@@ -161,7 +161,7 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                serviceManager.getProcessService().save(this.process);
+                ServiceManager.getProcessService().save(this.process);
                 return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
@@ -188,9 +188,9 @@ public class ProcessForm extends TemplateBaseForm {
             for (Batch batch : batches) {
                 batch.getProcesses().remove(this.process);
                 this.process.getBatches().remove(batch);
-                serviceManager.getBatchService().save(batch);
+                ServiceManager.getBatchService().save(batch);
             }
-            serviceManager.getProcessService().remove(this.process);
+            ServiceManager.getProcessService().remove(this.process);
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                 e);
@@ -205,9 +205,9 @@ public class ProcessForm extends TemplateBaseForm {
     public InputStream getTasksDiagram() {
         Workflow workflow = this.process.getTemplate().getWorkflow();
         if (Objects.nonNull(workflow)) {
-            return serviceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
+            return ServiceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
         }
-        return serviceManager.getTemplateService().getTasksDiagram("");
+        return ServiceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**
@@ -298,7 +298,7 @@ public class ProcessForm extends TemplateBaseForm {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
         for (String processDir : processDirs) {
             // TODO: check it out
-            URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
+            URI processDirAbsolute = ServiceManager.getProcessService().getProcessDataDirectory(process)
                     .resolve(processDir.replace("(processtitle)", process.getTitle()));
 
             File dir = new File(processDirAbsolute);
@@ -318,7 +318,7 @@ public class ProcessForm extends TemplateBaseForm {
             deleteSymlinksFromUserHomes();
         }
         try {
-            fileService.delete(serviceManager.getProcessService().getProcessDataDirectory(this.process));
+            fileService.delete(ServiceManager.getProcessService().getProcessDataDirectory(this.process));
             URI ocrDirectory = fileService.getOcrDirectory(this.process);
             if (fileService.fileExist(ocrDirectory)) {
                 fileService.delete(ocrDirectory);
@@ -399,7 +399,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getTaskService());
+        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getTaskService());
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -458,7 +458,7 @@ public class ProcessForm extends TemplateBaseForm {
         int roleId = 0;
         try {
             roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role role = serviceManager.getRoleService().getById(roleId);
+            Role role = ServiceManager.getRoleService().getById(roleId);
 
             if (!this.task.getRoles().contains(role)) {
                 this.task.getRoles().add(role);
@@ -544,7 +544,7 @@ public class ProcessForm extends TemplateBaseForm {
         ExportDms export = new ExportDms();
         for (ProcessDTO process : processes) {
             try {
-                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(process.getId());
                 export.startExport(processBean);
                 Helper.setMessage(EXPORT_FINISHED);
             } catch (DAOException e) {
@@ -586,15 +586,15 @@ public class ProcessForm extends TemplateBaseForm {
          * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
          * ansonsten Download
          */
-        if (!serviceManager.getProcessService().isImageFolderInUse(this.process)) {
+        if (!ServiceManager.getProcessService().isImageFolderInUse(this.process)) {
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, false);
         } else {
             Helper.setMessage(
                 Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
                         + Helper.getTranslation("isInUse"),
-                serviceManager.getUserService()
-                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
+                ServiceManager.getUserService()
+                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(this.process)));
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, true);
         }
@@ -639,15 +639,15 @@ public class ProcessForm extends TemplateBaseForm {
 
     private void download(WebDav webDav, ProcessDTO processDTO) {
         try {
-            Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
-            if (!serviceManager.getProcessService().isImageFolderInUse(processDTO)) {
+            Process process = ServiceManager.getProcessService().convertDtoToBean(processDTO);
+            if (!ServiceManager.getProcessService().isImageFolderInUse(processDTO)) {
                 webDav.downloadToHome(process, false);
             } else {
                 Helper.setMessage(
                     Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
-                    serviceManager.getUserService()
-                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
+                    ServiceManager.getUserService()
+                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         } catch (DAOException e) {
@@ -681,9 +681,9 @@ public class ProcessForm extends TemplateBaseForm {
     private void setTaskStatusUpForProcesses(List<ProcessDTO> processes) {
         for (ProcessDTO process : processes) {
             try {
-                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(process.getId());
                 workflowControllerService.setTasksStatusUp(processBean);
-                serviceManager.getProcessService().save(processBean);
+                ServiceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("up"), process.getId() }, logger, e);
@@ -717,9 +717,9 @@ public class ProcessForm extends TemplateBaseForm {
     private void setTaskStatusDownForProcesses(List<ProcessDTO> processes) {
         for (ProcessDTO process : processes) {
             try {
-                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(process.getId());
                 workflowControllerService.setTasksStatusDown(processBean);
-                serviceManager.getProcessService().save(processBean);
+                ServiceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("down"), process.getId() }, logger, e);
@@ -762,7 +762,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setProcessByID(int processID) {
         try {
-            setProcess(serviceManager.getProcessService().getById(processID));
+            setProcess(ServiceManager.getProcessService().getById(processID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID }, logger, e);
@@ -800,7 +800,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setTask(Task task) {
         this.task = task;
-        this.task.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
+        this.task.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
     }
 
     public Property getTemplateProperty() {
@@ -823,8 +823,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Reload task and process.
      */
     private void reload() {
-        reload(this.task, ObjectType.TASK.getTranslationSingular(), serviceManager.getTaskService());
-        reload(this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getProcessService());
+        reload(this.task, ObjectType.TASK.getTranslationSingular(), ServiceManager.getTaskService());
+        reload(this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getProcessService());
     }
 
     /**
@@ -965,7 +965,7 @@ public class ProcessForm extends TemplateBaseForm {
     private void executeKitodoScriptForProcesses(List<ProcessDTO> processes) {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(processes), this.kitodoScript);
+            gs.execute(ServiceManager.getProcessService().convertDtosToBeans(processes), this.kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1077,9 +1077,9 @@ public class ProcessForm extends TemplateBaseForm {
     public void createXML() {
         try {
             ExportXmlLog xmlExport = new ExportXmlLog();
-            String directory = new File(serviceManager.getUserService().getHomeDirectory(getUser())).getPath();
+            String directory = new File(ServiceManager.getUserService().getHomeDirectory(getUser())).getPath();
             String destination = directory + "/"
-                    + serviceManager.getProcessService().getNormalizedTitle(this.process.getTitle()) + "_log.xml";
+                    + ServiceManager.getProcessService().getNormalizedTitle(this.process.getTitle()) + "_log.xml";
             xmlExport.startExport(this.process, destination);
         } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);
@@ -1142,7 +1142,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void downloadDocket() {
         try {
-            serviceManager.getProcessService().downloadDocket(this.process);
+            ServiceManager.getProcessService().downloadDocket(this.process);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1252,7 +1252,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
-        serviceManager.getProcessService().setShowClosedProcesses(showClosedProcesses);
+        ServiceManager.getProcessService().setShowClosedProcesses(showClosedProcesses);
     }
 
     /**
@@ -1265,7 +1265,7 @@ public class ProcessForm extends TemplateBaseForm {
     @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
-        serviceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
+        ServiceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
     }
 
     /**
@@ -1311,12 +1311,12 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(getUser()) + ")";
+            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(getUser()) + ")";
             this.process.setWikiField(
                 WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
             this.addToWikiField = "";
             try {
-                serviceManager.getProcessService().save(process);
+                ServiceManager.getProcessService().save(process);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation("wikiField") }, logger, e);
             }
@@ -1450,7 +1450,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Duplicate property.
      */
     public void duplicateProperty() {
-        Property newProperty = serviceManager.getPropertyService().transfer(this.property);
+        Property newProperty = ServiceManager.getPropertyService().transfer(this.property);
         newProperty.getProcesses().add(this.process);
         this.process.getProperties().add(newProperty);
         loadProcessProperties();
@@ -1472,7 +1472,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of dockets as SelectItem objects
      */
     public List<SelectItem> getDockets() {
-        return SelectItemList.getDockets(serviceManager.getDocketService().getAllForSelectedClient());
+        return SelectItemList.getDockets(ServiceManager.getDocketService().getAllForSelectedClient());
     }
 
     /**
@@ -1481,7 +1481,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of projects as SelectItem objects
      */
     public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects(serviceManager.getProjectService().getAllForSelectedClient());
+        return SelectItemList.getProjects(ServiceManager.getProjectService().getAllForSelectedClient());
     }
 
     /**
@@ -1490,7 +1490,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return list of rulesets as SelectItem objects
      */
     public List<SelectItem> getRulesets() {
-        return SelectItemList.getRulesets(serviceManager.getRulesetService().getAllForSelectedClient());
+        return SelectItemList.getRulesets(ServiceManager.getRulesetService().getAllForSelectedClient());
     }
 
     /**
@@ -1504,7 +1504,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void load(int id) {
         try {
             if (id != 0) {
-                setProcess(this.serviceManager.getProcessService().getById(id));
+                setProcess(ServiceManager.getProcessService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -1519,7 +1519,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void loadTask(int id) {
         try {
             if (id != 0) {
-                setTask(this.serviceManager.getTaskService().getById(id));
+                setTask(ServiceManager.getTaskService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -1535,7 +1535,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<UserDTO> getActiveUsers() {
         try {
-            return serviceManager.getUserService().findAllActiveUsers();
+            return ServiceManager.getUserService().findAllActiveUsers();
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER.getTranslationPlural() }, logger,
                 e);
@@ -1550,7 +1550,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<RoleDTO> getRoles() {
         try {
-            return serviceManager.getRoleService().findAll();
+            return ServiceManager.getRoleService().findAll();
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
                 logger, e);

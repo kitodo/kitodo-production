@@ -42,6 +42,7 @@ import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecuritySession;
 import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.security.password.ValidPassword;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.UserService;
 
 @Named("UserForm")
@@ -52,7 +53,7 @@ public class UserForm extends BaseForm {
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
-    private transient UserService userService = serviceManager.getUserService();
+    private transient UserService userService = ServiceManager.getUserService();
 
     @ValidPassword
     private String passwordToEncrypt;
@@ -192,7 +193,7 @@ public class UserForm extends BaseForm {
         int roleId = 0;
         try {
             roleId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Role role = serviceManager.getRoleService().getById(roleId);
+            Role role = ServiceManager.getRoleService().getById(roleId);
 
             if (!this.userObject.getRoles().contains(role)) {
                 this.userObject.getRoles().add(role);
@@ -234,7 +235,7 @@ public class UserForm extends BaseForm {
         int clientId = 0;
         try {
             clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Client client = serviceManager.getClientService().getById(clientId);
+            Client client = ServiceManager.getClientService().getById(clientId);
 
             if (!this.userObject.getClients().contains(client)) {
                 this.userObject.getClients().add(client);
@@ -276,7 +277,7 @@ public class UserForm extends BaseForm {
         int projectId = 0;
         try {
             projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Project project = serviceManager.getProjectService().getById(projectId);
+            Project project = ServiceManager.getProjectService().getById(projectId);
 
             if (!this.userObject.getProjects().contains(project)) {
                 this.userObject.getProjects().add(project);
@@ -332,7 +333,7 @@ public class UserForm extends BaseForm {
      */
     public String writeUserAtLdapServer() {
         try {
-            serviceManager.getLdapServerService().createNewUser(this.userObject,
+            ServiceManager.getLdapServerService().createNewUser(this.userObject,
                 passwordEncoder.decrypt(this.userObject.getPassword()));
         } catch (NameAlreadyBoundException e) {
             Helper.setErrorMessage("Ldap entry already exists", logger, e);
@@ -375,7 +376,7 @@ public class UserForm extends BaseForm {
      */
     public List<ProjectDTO> getProjects() {
         try {
-            return serviceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject.getId());
+            return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject.getId());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
@@ -390,7 +391,7 @@ public class UserForm extends BaseForm {
      */
     public List<RoleDTO> getRoles() {
         try {
-            return serviceManager.getRoleService().findAll();
+            return ServiceManager.getRoleService().findAll();
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);
@@ -425,7 +426,7 @@ public class UserForm extends BaseForm {
      * @return whether given UserDTO is checked in
      */
     public boolean checkUserLoggedIn(UserDTO user) {
-        for (SecuritySession securitySession : serviceManager.getSessionService().getActiveSessions()) {
+        for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {
             if (securitySession.getUserName().equals(user.getLogin())) {
                 return true;
             }
@@ -440,7 +441,7 @@ public class UserForm extends BaseForm {
     public void changePasswordForCurrentUser() {
         try {
             if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
-                serviceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
+                ServiceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
             }
             userService.changeUserPassword(userObject, this.passwordToEncrypt);
             Helper.setMessage("passwordChanged");

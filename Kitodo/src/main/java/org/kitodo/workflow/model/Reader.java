@@ -53,7 +53,7 @@ public class Reader {
      */
     public Reader(String diagramName) throws IOException {
         String diagramPath = ConfigCore.getKitodoDiagramDirectory() + diagramName + ".bpmn20.xml";
-        loadProcess(new ServiceManager().getFileService().read(Paths.get(diagramPath).toUri()));
+        loadProcess(ServiceManager.getFileService().read(Paths.get(diagramPath).toUri()));
     }
 
     /**

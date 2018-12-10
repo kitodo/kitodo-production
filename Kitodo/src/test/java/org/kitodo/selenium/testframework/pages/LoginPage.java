@@ -63,6 +63,6 @@ public class LoginPage extends Page<LoginPage> {
     }
 
     public void performLoginAsAdmin() throws InterruptedException, DAOException {
-        performLogin(new ServiceManager().getUserService().getById(1));
+        performLogin(ServiceManager.getUserService().getById(1));
     }
 }

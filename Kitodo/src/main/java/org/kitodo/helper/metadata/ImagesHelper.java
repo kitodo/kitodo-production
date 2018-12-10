@@ -69,8 +69,7 @@ public class ImagesHelper {
     private final PrefsInterface myPrefs;
     private final DigitalDocumentInterface mydocument;
     private int myLastImage = 0;
-    private static final ServiceManager serviceManager = new ServiceManager();
-    private static final FileService fileService = serviceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
 
     public ImagesHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
         this.myPrefs = inPrefs;
@@ -101,7 +100,7 @@ public class ImagesHelper {
 
         if (directory == null) {
             checkIfImagesValid(process.getTitle(),
-                serviceManager.getProcessService().getImagesTifDirectory(true, process));
+                ServiceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
                     directory);
@@ -129,7 +128,7 @@ public class ImagesHelper {
                 if (page.getImageName() != null) {
                     URI imageFile;
                     if (directory == null) {
-                        imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
+                        imageFile = ServiceManager.getProcessService().getImagesTifDirectory(true, process)
                                 .resolve(page.getImageName());
                     } else {
                         imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null)
@@ -250,7 +249,7 @@ public class ImagesHelper {
         MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
             MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
-            URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
+            URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process);
             String pathString = new File(pathURI).getPath();
             mdForPath.setStringValue(pathString);
             physicalStructure.addMetadata(mdForPath);
@@ -546,7 +545,7 @@ public class ImagesHelper {
     public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;
         try {
-            dir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
+            dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
         } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }

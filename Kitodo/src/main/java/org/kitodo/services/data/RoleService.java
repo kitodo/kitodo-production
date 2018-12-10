@@ -46,7 +46,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static RoleService instance = null;
     private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllRoles";
 
@@ -118,10 +117,10 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return findAll(sort, offset, size, false);
         }
-        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return convertJSONObjectsToDTOs(
                     searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
         }
@@ -140,7 +139,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     @Override
     public String createCountQuery(Map filters) {
-        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return createQueryRolesForCurrentUser(filters).toString();
         }
         return null;
@@ -154,7 +153,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     @Override
     public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     /**
@@ -182,11 +181,11 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         if (role.getIndexAction() == IndexAction.DELETE) {
             for (Authority authority : role.getAuthorities()) {
                 authority.getRoles().remove(role);
-                serviceManager.getAuthorityService().saveToIndex(authority, false);
+                ServiceManager.getAuthorityService().saveToIndex(authority, false);
             }
         } else {
             for (Authority authority : role.getAuthorities()) {
-                serviceManager.getAuthorityService().saveToIndex(authority, false);
+                ServiceManager.getAuthorityService().saveToIndex(authority, false);
             }
         }
     }
@@ -202,11 +201,11 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         if (role.getIndexAction() == IndexAction.DELETE) {
             for (Task task : role.getTasks()) {
                 task.getRoles().remove(role);
-                serviceManager.getTaskService().saveToIndex(task, false);
+                ServiceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
             for (Task task : role.getTasks()) {
-                serviceManager.getTaskService().saveToIndex(task, false);
+                ServiceManager.getTaskService().saveToIndex(task, false);
             }
         }
     }
@@ -222,11 +221,11 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         if (role.getIndexAction() == IndexAction.DELETE) {
             for (User user : role.getUsers()) {
                 user.getRoles().remove(role);
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             for (User user : role.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
         }
     }
@@ -302,7 +301,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO roleDTO) throws DataException {
         roleDTO.setUsers(
-            convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(), serviceManager.getUserService()));
+            convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(), ServiceManager.getUserService()));
     }
 
     private void addBasicAuthorizationsRelation(RoleDTO roleDTO, JsonObject jsonObject) {
@@ -339,7 +338,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
                     user.setName(relatedProperty.getValues().get(0));
                     user.setSurname(relatedProperty.getValues().get(1));
                 }
-                user.setFullName(serviceManager.getUserService().getFullName(user));
+                user.setFullName(ServiceManager.getUserService().getFullName(user));
                 users.add(user);
             }
             roleDTO.setUsers(users);
@@ -364,7 +363,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     // TODO: filtering functionality
     private QueryBuilder createQueryRolesForCurrentUser(Map filters) {
-        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), serviceManager.getUserService().getSessionClientId(), true);
+        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), ServiceManager.getUserService().getSessionClientId(), true);
     }
 
     /**

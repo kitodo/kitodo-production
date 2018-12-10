@@ -58,7 +58,6 @@ import org.kitodo.services.ServiceManager;
 public class SchemaService {
 
     private static final Logger logger = LogManager.getLogger(SchemaService.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private List<DocStructInterface> docStructsWithoutPages = new ArrayList<>();
 
     /**
@@ -78,7 +77,7 @@ public class SchemaService {
     public <T extends ExportMets> MetsModsImportExportInterface tempConvert(FileformatInterface gdzfile, T exportMets,
             MetsModsImportExportInterface metsMods, PrefsInterface prefs, Process process)
             throws IOException, PreferencesException, JAXBException {
-        URI imageFolder = serviceManager.getFileService().getImagesDirectory(process);
+        URI imageFolder = ServiceManager.getFileService().getImagesDirectory(process);
 
         /*
          * before creating mets file, change relative path to absolute -
@@ -204,9 +203,9 @@ public class SchemaService {
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
-                if (serviceManager.getFileService().fileExist(folderUri)
-                        && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
+                URI folderUri = ServiceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
+                if (ServiceManager.getFileService().fileExist(folderUri)
+                        && !ServiceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
                             .addVirtualFileGroup(setVirtualFileGroup(folder, variableReplacer));
                 }

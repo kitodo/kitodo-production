@@ -23,7 +23,6 @@ import org.kitodo.services.ServiceManager;
 public class HelperComparator implements Comparator<Object>, Serializable {
 
     private static final long serialVersionUID = -1124724462982810327L;
-    private static ServiceManager serviceManager = new ServiceManager();
     private SortType sortType;
 
     @Override
@@ -55,7 +54,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         MetadataTypeInterface firstMetadata = (MetadataTypeInterface) firstObject;
         MetadataTypeInterface secondMetadata = (MetadataTypeInterface) secondObject;
 
-        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
         String firstName = firstMetadata.getLanguage(language);
         String secondName = secondMetadata.getLanguage(language);
@@ -72,7 +71,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         MetadataInterface firstMetadata = (MetadataInterface) firstObject;
         MetadataInterface secondMetadata = (MetadataInterface) secondObject;
 
-        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
         String firstName = firstMetadata.getMetadataType().getNameByLanguage(language);
         String secondName = secondMetadata.getMetadataType().getNameByLanguage(language);
@@ -89,7 +88,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         DocStructTypeInterface firstDocStructType = (DocStructTypeInterface) firstObject;
         DocStructTypeInterface secondDocStructType = (DocStructTypeInterface) secondObject;
 
-        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
         String firstName = firstDocStructType.getNameByLanguage(language);
         String secondName = secondDocStructType.getNameByLanguage(language);

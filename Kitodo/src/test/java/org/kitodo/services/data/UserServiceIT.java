@@ -50,8 +50,8 @@ import org.kitodo.services.file.FileService;
  */
 public class UserServiceIT {
 
-    private static final FileService fileService = new ServiceManager().getFileService();
-    private static final UserService userService = new ServiceManager().getUserService();
+    private static final FileService fileService = ServiceManager.getFileService();
+    private static final UserService userService = ServiceManager.getUserService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -155,7 +155,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldRemoveUserButNotRole() throws Exception {
-        RoleService roleService = new ServiceManager().getRoleService();
+        RoleService roleService = ServiceManager.getRoleService();
 
         Role role = new Role();
         role.setTitle("Cascade Group");

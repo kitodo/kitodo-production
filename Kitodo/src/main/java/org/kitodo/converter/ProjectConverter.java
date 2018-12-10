@@ -30,7 +30,6 @@ import org.kitodo.services.ServiceManager;
 @Named
 public class ProjectConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(ProjectConverter.class);
-    private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
@@ -38,7 +37,7 @@ public class ProjectConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getProjectService().getById(Integer.valueOf(value));
+                return ServiceManager.getProjectService().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e.getMessage(), e);
                 return "0";

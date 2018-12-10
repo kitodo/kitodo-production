@@ -29,7 +29,7 @@ import org.kitodo.services.file.FileService;
 
 public class WorkflowFormTest {
 
-    private static FileService fileService = new ServiceManager().getFileService();
+    private static FileService fileService = ServiceManager.getFileService();
 
     @BeforeClass
     public static void createDiagrams() throws Exception {

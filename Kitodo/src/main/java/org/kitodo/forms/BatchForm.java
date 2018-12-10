@@ -49,6 +49,7 @@ import org.kitodo.helper.tasks.ExportNewspaperBatchTask;
 import org.kitodo.helper.tasks.ExportSerialBatchTask;
 import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
 @SessionScoped
@@ -76,7 +77,7 @@ public class BatchForm extends BaseForm {
      */
     public BatchForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getBatchService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getBatchService()));
         filterAll();
     }
 
@@ -86,7 +87,7 @@ public class BatchForm extends BaseForm {
     public void loadBatchData() {
         if (this.selectedProcesses.isEmpty()) {
             try {
-                this.currentBatches = serviceManager.getBatchService().getAll();
+                this.currentBatches = ServiceManager.getBatchService().getAll();
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.BATCH.getTranslationPlural() },
                     logger, e);
@@ -122,7 +123,7 @@ public class BatchForm extends BaseForm {
 
         if (this.processfilter != null) {
             try {
-                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
+                query = ServiceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
                     false);
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -132,17 +133,17 @@ public class BatchForm extends BaseForm {
         Integer batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         try {
             if (batchMaxSize > 0) {
-                processDTOS = serviceManager.getProcessService().findByQuery(query,
-                    serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
+                processDTOS = ServiceManager.getProcessService().findByQuery(query,
+                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
             } else {
-                processDTOS = serviceManager.getProcessService().findByQuery(query,
-                    serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
+                processDTOS = ServiceManager.getProcessService().findByQuery(query,
+                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
-            this.currentProcesses = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
+            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processDTOS);
         } catch (DAOException e) {
             this.currentProcesses = new ArrayList<>();
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -156,12 +157,12 @@ public class BatchForm extends BaseForm {
         currentBatches = new ArrayList<>();
         List<Batch> batches = new ArrayList<>();
         try {
-            batches = serviceManager.getBatchService().getAll();
+            batches = ServiceManager.getBatchService().getAll();
         } catch (DAOException e) {
             logger.error(e);
         }
         for (Batch batch : batches) {
-            if (serviceManager.getBatchService().contains(batch, batchfilter)) {
+            if (ServiceManager.getBatchService().contains(batch, batchfilter)) {
                 currentBatches.add(batch);
             }
         }
@@ -261,7 +262,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
-                serviceManager.getProcessService().downloadDocket(selectedBatches.get(0).getProcesses());
+                ServiceManager.getProcessService().downloadDocket(selectedBatches.get(0).getProcesses());
             } catch (IOException e) {
                 //TODO: needed message for case of IOException
                 Helper.setErrorMessage(e.getMessage(), new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
@@ -284,7 +285,7 @@ public class BatchForm extends BaseForm {
         }
 
         try {
-            serviceManager.getBatchService().removeAll(this.selectedBatches);
+            ServiceManager.getBatchService().removeAll(this.selectedBatches);
             filterAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
@@ -306,13 +307,13 @@ public class BatchForm extends BaseForm {
         try {
             for (Batch selectedBatch : this.selectedBatches) {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
-                serviceManager.getBatchService().save(selectedBatch);
+                ServiceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
-                        serviceManager.getProcessService().addToWikiField(
-                            Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
+                        ServiceManager.getProcessService().addToWikiField(
+                            Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(selectedBatch)), p);
                     }
-                    this.serviceManager.getProcessService().saveList(this.selectedProcesses);
+                    ServiceManager.getProcessService().saveList(this.selectedProcesses);
                 }
             }
         } catch (DAOException e) {
@@ -338,13 +339,13 @@ public class BatchForm extends BaseForm {
 
         for (Batch selectedBatch : this.selectedBatches) {
             selectedBatch.getProcesses().removeAll(this.selectedProcesses);
-            serviceManager.getBatchService().save(selectedBatch);
+            ServiceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(
-                        Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
+                    ServiceManager.getProcessService().addToWikiField(
+                        Helper.getTranslation("removeFromBatch", ServiceManager.getBatchService().getLabel(selectedBatch)), p);
                 }
-                this.serviceManager.getProcessService().saveList(this.selectedProcesses);
+                ServiceManager.getProcessService().saveList(this.selectedProcesses);
             }
         }
         filterAll();
@@ -364,7 +365,7 @@ public class BatchForm extends BaseForm {
                 for (Batch batch : currentBatches) {
                     if (selectedBatch.getId().equals(batch.getId())) {
                         batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
-                        serviceManager.getBatchService().save(batch);
+                        ServiceManager.getBatchService().save(batch);
                         batchTitle = "";
                         return;
                     }
@@ -390,13 +391,13 @@ public class BatchForm extends BaseForm {
                 batch = new Batch(Type.LOGISTIC, selectedProcesses);
             }
 
-            serviceManager.getBatchService().save(batch);
+            ServiceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(
-                        Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
+                    ServiceManager.getProcessService().addToWikiField(
+                        Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(batch)), p);
                 }
-                this.serviceManager.getProcessService().saveList(selectedProcesses);
+                ServiceManager.getProcessService().saveList(selectedProcesses);
             }
         }
         batchTitle = "";
@@ -413,7 +414,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
-                setBatchHelper(new BatchProcessHelper(serviceManager.getBatchService().getById(id)));
+                setBatchHelper(new BatchProcessHelper(ServiceManager.getBatchService().getById(id)));
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
@@ -507,7 +508,7 @@ public class BatchForm extends BaseForm {
             for (Batch batch : currentBatches) {
                 if (selectedBatches.contains(batch)) {
                     batch.setType(type);
-                    serviceManager.getBatchService().save(batch);
+                    ServiceManager.getBatchService().save(batch);
                 }
             }
         } catch (DataException e) {

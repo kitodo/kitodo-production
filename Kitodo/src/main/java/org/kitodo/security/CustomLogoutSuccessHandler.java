@@ -30,7 +30,6 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
  */
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private String onSuccessUrl;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -45,7 +44,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 UserDetails user = (UserDetails) principal;
-                serviceManager.getSessionService().expireSessionsOfUser(user);
+                ServiceManager.getSessionService().expireSessionsOfUser(user);
             }
         }
         redirectStrategy.sendRedirect(request, response, onSuccessUrl);

@@ -28,8 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityAccessServiceIT {
 
-    private static ServiceManager serviceManager = new ServiceManager();
-
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
@@ -49,7 +47,7 @@ public class SecurityAccessServiceIT {
 
     @Test
     public void shouldGetAuthorities() throws DAOException {
-        User user = serviceManager.getUserService().getByLogin("kowal");
+        User user = ServiceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities();
@@ -59,17 +57,17 @@ public class SecurityAccessServiceIT {
 
     @Test
     public void hasAuthorityTest() throws DAOException {
-        User user = serviceManager.getUserService().getByLogin("kowal");
+        User user = ServiceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         Assert.assertTrue("The authority \"editClient\" was not found for authenticated user",
-            serviceManager.getSecurityAccessService().hasAuthorityGlobal("editClient"));
+            ServiceManager.getSecurityAccessService().hasAuthorityGlobal("editClient"));
     }
 
     @Test
     public void hasAuthorityForClientTest() throws DAOException {
-        User user = serviceManager.getUserService().getByLogin("kowal");
+        User user = ServiceManager.getUserService().getByLogin("kowal");
         SecurityTestUtils.addUserDataToSecurityContext(user,1);
         Assert.assertTrue("Checking if user has edit project authority for first client returned wrong value",
-            serviceManager.getSecurityAccessService().hasAuthorityForClient("editProject"));
+            ServiceManager.getSecurityAccessService().hasAuthorityForClient("editProject"));
     }
 }

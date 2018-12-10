@@ -42,7 +42,7 @@ public class ProjectServiceTest {
 
     @Test
     public void testProjectForCompletness() throws IOException {
-        ProjectService projectService = new ServiceManager().getProjectService();
+        ProjectService projectService = ServiceManager.getProjectService();
 
         // A project without dmsExportFormat, internal format or templates
         Project project = new Project();

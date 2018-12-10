@@ -26,7 +26,6 @@ public class LoginForm implements Serializable {
     private static final long serialVersionUID = 7732045664713555233L;
     private User loggedUser;
     private boolean alreadyLoggedIn = false;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private boolean firstVisit = true;
 
     /**
@@ -38,7 +37,7 @@ public class LoginForm implements Serializable {
         if (loggedUser != null) {
             return this.loggedUser;
         } else {
-            this.loggedUser = serviceManager.getUserService().getAuthenticatedUser();
+            this.loggedUser = ServiceManager.getUserService().getAuthenticatedUser();
             return this.loggedUser;
         }
     }

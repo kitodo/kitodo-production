@@ -32,8 +32,6 @@ import org.kitodo.services.ServiceManager;
 public class ConfigCore extends KitodoConfig {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);
     private static URI imagesPath = null;
-    private static ServiceManager serviceManager = new ServiceManager();
-    public static final String IMAGES_TEMP = "/pages/imagesTemp/";
 
     /**
      * Private constructor to hide the implicit public one.
@@ -58,7 +56,7 @@ public class ConfigCore extends KitodoConfig {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
             fileName = session.getServletContext().getRealPath("/pages") + File.separator;
             try {
-                uri = serviceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
+                uri = ServiceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(Helper.getTranslation("couldNotCreateImageFolder"), logger, e);
             }

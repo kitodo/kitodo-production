@@ -22,7 +22,7 @@ import org.kitodo.services.file.FileService;
 
 public class MetadataImageComparator implements Comparator<Object> {
 
-    private FileService fileService = new ServiceManager().getFileService();
+    private FileService fileService = ServiceManager.getFileService();
 
     @Override
     public int compare(Object firstObject, Object secondObject) {

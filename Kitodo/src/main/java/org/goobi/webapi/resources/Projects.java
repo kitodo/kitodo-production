@@ -49,7 +49,7 @@ public class Projects {
         Map<Project, Set<Template>> data = new HashMap<>();
 
         try {
-            List<Template> processTemplates = new ServiceManager().getTemplateService().getAll();
+            List<Template> processTemplates = ServiceManager.getTemplateService().getAll();
             for (Template processTemplate : processTemplates) {
                 List<Project> projects = processTemplate.getProjects();
                 for (Project project : projects) {

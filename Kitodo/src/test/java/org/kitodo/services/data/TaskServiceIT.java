@@ -36,7 +36,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class TaskServiceIT {
 
-    private static final TaskService taskService = new ServiceManager().getTaskService();
+    private static final TaskService taskService = ServiceManager.getTaskService();
     private static final int AMOUNT_TASKS = 13;
 
     @BeforeClass
@@ -118,7 +118,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldReplaceProcessingUser() throws Exception {
-        UserService userService = new ServiceManager().getUserService();
+        UserService userService = ServiceManager.getUserService();
 
         int size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
@@ -210,7 +210,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetCorrectionStep() throws Exception {
         Task task = taskService.getById(8);
-        boolean result = new ServiceManager().getWorkflowControllerService().isCorrectionTask(task);
+        boolean result = ServiceManager.getWorkflowControllerService().isCorrectionTask(task);
         assertTrue("Task is not correction task!", result);
     }
 

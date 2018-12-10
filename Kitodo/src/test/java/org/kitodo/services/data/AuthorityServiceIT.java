@@ -29,7 +29,7 @@ import org.kitodo.services.ServiceManager;
 
 public class AuthorityServiceIT {
 
-    private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
+    private static final AuthorityService authorityService = ServiceManager.getAuthorityService();
     private final int EXPECTED_AUTHORITIES_COUNT = 82;
 
     @BeforeClass

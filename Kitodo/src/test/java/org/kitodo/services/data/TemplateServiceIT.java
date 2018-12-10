@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TemplateServiceIT {
 
-    private static final TemplateService templateService = new ServiceManager().getTemplateService();
+    private static final TemplateService templateService = ServiceManager.getTemplateService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

@@ -34,7 +34,7 @@ public class UpdaterIT {
 
     @Test
     public void shouldUpdateProcessesAssignedToTemplate() throws Exception {
-        Template template = new ServiceManager().getTemplateService().getById(1);
+        Template template = ServiceManager.getTemplateService().getById(1);
 
         Updater updater = new Updater(template);
         updater.updateProcessesAssignedToTemplate();

@@ -52,7 +52,6 @@ public class LanguageForm implements Serializable {
     private static final String SESSION_LOCALE_FIELD_ID = "lang";
     private static final long serialVersionUID = -8766724454080390450L;
     private static final Logger logger = LogManager.getLogger(LanguageForm.class);
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The constructor of this class loads the required MessageBundle.
@@ -73,11 +72,11 @@ public class LanguageForm implements Serializable {
      */
     private void setSessionLocaleFieldId() {
         String key = "";
-        if (Objects.isNull(serviceManager.getUserService().getAuthenticatedUser())) {
+        if (Objects.isNull(ServiceManager.getUserService().getAuthenticatedUser())) {
             key = ConfigCore.getParameterOrDefaultValue(ParameterCore.LANGUAGE_DEFAULT);
         } else {
             try {
-                User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
+                User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
                 key = user.getLanguage();
             } catch (DAOException e) {
                 Helper.setErrorMessage("Error in retrieving user ", logger, e);
@@ -129,7 +128,6 @@ public class LanguageForm implements Serializable {
     public List<Map<String, Object>> getSupportedLocales() {
         List<Map<String, Object>> result = new ArrayList<>();
         Locale currentDisplayLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        @SuppressWarnings("unchecked")
         // It seems we have an old Faces API, Faces 2.1’s getSupportedLocales()
         // returns Iterator<Locale>
         // TODO: Update JSF API
@@ -158,7 +156,6 @@ public class LanguageForm implements Serializable {
      *            This parameter can be either of form “‹language›” or of form
      *            “‹language›_‹country›”, e.g. “en” or “en_GB” are valid values.
      */
-    @SuppressWarnings("unchecked")
     public void switchLanguage(String langCodeCombined) throws IOException {
         String[] languageCode = langCodeCombined.split("_");
         Locale locale;
@@ -168,9 +165,9 @@ public class LanguageForm implements Serializable {
             locale = new Locale(languageCode[0]);
         }
         try {
-            User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
+            User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
             user.setLanguage(locale.toString());
-            serviceManager.getUserService().save(user);
+            ServiceManager.getUserService().save(user);
         } catch (DataException e) {
             Helper.setErrorMessage("Error in saving user", logger, e);
         } catch (DAOException e) {

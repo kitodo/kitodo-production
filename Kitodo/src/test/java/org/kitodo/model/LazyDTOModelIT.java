@@ -25,8 +25,7 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
 
-    private static final ServiceManager serviceManager = new ServiceManager();
-    private static ClientService clientService = serviceManager.getClientService();
+    private static ClientService clientService = ServiceManager.getClientService();
     private static LazyDTOModel lazyDTOModel = null;
 
     @BeforeClass

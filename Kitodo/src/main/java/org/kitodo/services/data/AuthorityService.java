@@ -38,7 +38,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO, AuthorityDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
     private static final String GLOBAL_AUTHORITY_SUFFIX = "_globalAssignable";
@@ -167,11 +166,11 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         if (authority.getIndexAction() == IndexAction.DELETE) {
             for (Role role : authority.getRoles()) {
                 role.getAuthorities().remove(authority);
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
             for (Role role : authority.getRoles()) {
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -259,7 +258,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO) throws DataException {
         authorityDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.ROLES.getKey(),
-            serviceManager.getRoleService()));
+            ServiceManager.getRoleService()));
     }
 
     private void addBasicRoleRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {

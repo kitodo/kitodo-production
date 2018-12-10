@@ -33,8 +33,6 @@ import org.kitodo.services.ServiceManager;
 
 public class SelectItemList {
 
-    private static ServiceManager serviceManager = new ServiceManager();
-
     /**
      * Private constructor to hide public one.
      */
@@ -96,7 +94,7 @@ public class SelectItemList {
      */
     public static List<SelectItem> getLdapGroups() {
         List<SelectItem> selectItems = new ArrayList<>();
-        List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
+        List<LdapGroup> ldapGroups = ServiceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
         for (LdapGroup ldapGroup : ldapGroups) {
             selectItems.add(new SelectItem(ldapGroup, ldapGroup.getTitle(), null));
         }
@@ -112,7 +110,7 @@ public class SelectItemList {
     // templates
     public static List<SelectItem> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        User currentUser = ServiceManager.getUserService().getAuthenticatedUser();
         if (Objects.nonNull(currentUser)) {
             for (Project project : currentUser.getProjects()) {
                 processes.addAll(project.getProcesses());

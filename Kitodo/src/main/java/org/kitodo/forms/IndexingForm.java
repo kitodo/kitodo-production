@@ -103,8 +103,6 @@ public class IndexingForm {
 
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private ObjectType currentIndexState = ObjectType.NONE;
 
     private boolean indexingAll = false;
@@ -583,46 +581,46 @@ public class IndexingForm {
         if (!searchServices.containsKey(objectType) || searchServices.get(objectType) == null) {
             switch (objectType) {
                 case AUTHORITY:
-                    searchServices.put(objectType, serviceManager.getAuthorityService());
+                    searchServices.put(objectType, ServiceManager.getAuthorityService());
                     break;
                 case BATCH:
-                    searchServices.put(objectType, serviceManager.getBatchService());
+                    searchServices.put(objectType, ServiceManager.getBatchService());
                     break;
                 case CLIENT:
-                    searchServices.put(objectType, serviceManager.getClientService());
+                    searchServices.put(objectType, ServiceManager.getClientService());
                     break;
                 case DOCKET:
-                    searchServices.put(objectType, serviceManager.getDocketService());
+                    searchServices.put(objectType, ServiceManager.getDocketService());
                     break;
                 case PROCESS:
-                    searchServices.put(objectType, serviceManager.getProcessService());
+                    searchServices.put(objectType, ServiceManager.getProcessService());
                     break;
                 case PROJECT:
-                    searchServices.put(objectType, serviceManager.getProjectService());
+                    searchServices.put(objectType, ServiceManager.getProjectService());
                     break;
                 case PROPERTY:
-                    searchServices.put(objectType, serviceManager.getPropertyService());
+                    searchServices.put(objectType, ServiceManager.getPropertyService());
                     break;
                 case RULESET:
-                    searchServices.put(objectType, serviceManager.getRulesetService());
+                    searchServices.put(objectType, ServiceManager.getRulesetService());
                     break;
                 case TASK:
-                    searchServices.put(objectType, serviceManager.getTaskService());
+                    searchServices.put(objectType, ServiceManager.getTaskService());
                     break;
                 case TEMPLATE:
-                    searchServices.put(objectType, serviceManager.getTemplateService());
+                    searchServices.put(objectType, ServiceManager.getTemplateService());
                     break;
                 case USER:
-                    searchServices.put(objectType, serviceManager.getUserService());
+                    searchServices.put(objectType, ServiceManager.getUserService());
                     break;
                 case ROLE:
-                    searchServices.put(objectType, serviceManager.getRoleService());
+                    searchServices.put(objectType, ServiceManager.getRoleService());
                     break;
                 case WORKFLOW:
-                    searchServices.put(objectType, serviceManager.getWorkflowService());
+                    searchServices.put(objectType, ServiceManager.getWorkflowService());
                     break;
                 case FILTER:
-                    searchServices.put(objectType, serviceManager.getFilterService());
+                    searchServices.put(objectType, ServiceManager.getFilterService());
                     break;
                 default:
                     return null;

@@ -25,7 +25,6 @@ public class ExportDmsCorrectRusdml {
     private final PrefsInterface prefs;
     private final Process process;
     private final DigitalDocumentInterface digitalDocument;
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor.
@@ -51,9 +50,7 @@ public class ExportDmsCorrectRusdml {
      */
     public String correctionStart() throws ExportFileException, MetadataTypeNotAllowedException {
         String atsPpnBand = generateAtsPpnBand();
-
-        serviceManager.getSchemaService().tempConvertRusdml(digitalDocument, prefs, process, atsPpnBand);
-
+        ServiceManager.getSchemaService().tempConvertRusdml(digitalDocument, prefs, process, atsPpnBand);
         return atsPpnBand;
     }
 

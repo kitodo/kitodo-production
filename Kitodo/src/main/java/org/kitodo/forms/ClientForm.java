@@ -25,6 +25,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 
 @Named("ClientForm")
 @SessionScoped
@@ -42,7 +43,7 @@ public class ClientForm extends BaseForm {
      */
     public ClientForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getClientService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getClientService()));
     }
 
     /**
@@ -52,7 +53,7 @@ public class ClientForm extends BaseForm {
      */
     public String save() {
         try {
-            this.serviceManager.getClientService().save(this.client);
+            ServiceManager.getClientService().save(this.client);
             return clientListPath;
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
@@ -67,7 +68,7 @@ public class ClientForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                this.client = this.serviceManager.getClientService().getById(id);
+                this.client = ServiceManager.getClientService().getById(id);
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -113,7 +114,7 @@ public class ClientForm extends BaseForm {
      */
     public void setClientById(int clientID) {
         try {
-            setClient(this.serviceManager.getClientService().getById(clientID));
+            setClient(ServiceManager.getClientService().getById(clientID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientID }, logger, e);
         }
@@ -124,7 +125,7 @@ public class ClientForm extends BaseForm {
      */
     public void delete() {
         try {
-            this.serviceManager.getClientService().remove(this.client);
+            ServiceManager.getClientService().remove(this.client);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }

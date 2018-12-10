@@ -33,14 +33,13 @@ public class TiffHeader {
     private String artist = "";
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der
      * Eigenschaften des Werkstücks bzw. der Scanvorlage
      */
     public TiffHeader(Process process) {
-        if (serviceManager.getProcessService().getWorkpiecesSize(process) > 0) {
+        if (ServiceManager.getProcessService().getWorkpiecesSize(process) > 0) {
             for (Property workpieceProperty : process.getWorkpieces()) {
                 if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
                     this.tifHeaderDocumentName = workpieceProperty.getValue();

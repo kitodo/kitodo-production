@@ -59,6 +59,7 @@ import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.model.Subfolder;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.file.SubfolderFactoryService;
 import org.kitodo.services.image.ImageGenerator;
@@ -97,7 +98,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public CurrentTaskForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getTaskService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTaskService()));
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("selectionBoxes", false);
@@ -126,9 +127,9 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
-            serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask);
+            ServiceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask);
             try {
-                serviceManager.getTaskService().save(this.currentTask);
+                ServiceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
@@ -143,7 +144,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return page
      */
     public String editTask() {
-        serviceManager.getTaskService().refresh(this.currentTask);
+        ServiceManager.getTaskService().refresh(this.currentTask);
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
@@ -155,14 +156,14 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
+        List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
 
         if (batches.isEmpty()) {
             return takeOverTask();
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
-            List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
+            List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
@@ -193,16 +194,16 @@ public class CurrentTaskForm extends BaseForm {
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
             User user = getUser();
-            serviceManager.getTaskService().replaceProcessingUser(task, user);
+            ServiceManager.getTaskService().replaceProcessingUser(task, user);
             if (task.getProcessingBegin() == null) {
                 task.setProcessingBegin(new Date());
             }
 
             if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                 try {
-                    URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
+                    URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOrigDirectory(false,
                         task.getProcess());
-                    if (!serviceManager.getFileService().fileExist(imagesOrigDirectory)) {
+                    if (!ServiceManager.getFileService().fileExist(imagesOrigDirectory)) {
                         Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory });
                     }
                 } catch (Exception e) {
@@ -214,7 +215,7 @@ public class CurrentTaskForm extends BaseForm {
         }
 
         try {
-            this.serviceManager.getTaskService().save(task);
+            ServiceManager.getTaskService().save(task);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
@@ -228,14 +229,14 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
-        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
+        List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
 
         if (batches.isEmpty()) {
             return taskEditPath + "&id=" + getTaskIdForPath();
         } else if (batches.size() == 1) {
             Integer batchId = batches.get(0).getId();
-            List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
+            List<Task> currentTasksOfBatch = ServiceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
                 return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
@@ -258,7 +259,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String releaseTask() {
         try {
-            serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
+            ServiceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
@@ -273,7 +274,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public String closeTaskByUser() {
         try {
-            serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
+            ServiceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask);
         } catch (DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
@@ -298,7 +299,7 @@ public class CurrentTaskForm extends BaseForm {
      * Korrekturmeldung an vorherige Schritte.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(this.currentTask.getOrdering(),
+        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(this.currentTask.getOrdering(),
             this.currentTask.getProcess().getId());
     }
 
@@ -312,13 +313,13 @@ public class CurrentTaskForm extends BaseForm {
      * @return problem as String
      */
     public String reportProblem() {
-        serviceManager.getWorkflowControllerService().setProblem(getProblem());
+        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            serviceManager.getWorkflowControllerService().reportProblem(this.currentTask);
+            ServiceManager.getWorkflowControllerService().reportProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
-        setProblem(serviceManager.getWorkflowControllerService().getProblem());
+        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
     }
 
@@ -326,7 +327,7 @@ public class CurrentTaskForm extends BaseForm {
      * Problem-behoben-Meldung an nachfolgende Schritte.
      */
     public List<Task> getNextStepsForProblemSolution() {
-        return serviceManager.getTaskService().getNextTasksForProblemSolution(this.currentTask.getOrdering(),
+        return ServiceManager.getTaskService().getNextTasksForProblemSolution(this.currentTask.getOrdering(),
             this.currentTask.getProcess().getId());
     }
 
@@ -340,13 +341,13 @@ public class CurrentTaskForm extends BaseForm {
      * @return String
      */
     public String solveProblem() {
-        serviceManager.getWorkflowControllerService().setSolution(getSolution());
+        ServiceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            serviceManager.getWorkflowControllerService().solveProblem(this.currentTask);
+            ServiceManager.getWorkflowControllerService().solveProblem(this.currentTask);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
-        setSolution(serviceManager.getWorkflowControllerService().getSolution());
+        setSolution(ServiceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
     }
 
@@ -416,7 +417,7 @@ public class CurrentTaskForm extends BaseForm {
         for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
             Task task = new Task();
             try {
-                task = serviceManager.getTaskService().getById(taskDTO.getId());
+                task = ServiceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.TASK.getTranslationSingular(), taskDTO.getId() }, logger, e);
@@ -426,11 +427,11 @@ public class CurrentTaskForm extends BaseForm {
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 task.setProcessingTime(new Date());
                 User user = getUser();
-                serviceManager.getTaskService().replaceProcessingUser(task, user);
+                ServiceManager.getTaskService().replaceProcessingUser(task, user);
                 task.setProcessingBegin(new Date());
                 Process process = task.getProcess();
                 try {
-                    this.serviceManager.getProcessService().save(process);
+                    ServiceManager.getProcessService().save(process);
                 } catch (DataException e) {
                     Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                         logger, e);
@@ -493,8 +494,8 @@ public class CurrentTaskForm extends BaseForm {
      * Execute script.
      */
     public void executeScript() throws DAOException, DataException {
-        Task task = serviceManager.getTaskService().getById(this.currentTask.getId());
-        serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
+        Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
+        ServiceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
     public int getAllImages() {
@@ -511,11 +512,11 @@ public class CurrentTaskForm extends BaseForm {
         if (user != null && user.isWithMassDownload()) {
             for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
                 try {
-                    Task task = serviceManager.getTaskService().getById(taskDTO.getId());
+                    Task task = ServiceManager.getTaskService().getById(taskDTO.getId());
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                        this.gesamtAnzahlImages += serviceManager.getFileService()
+                        this.gesamtAnzahlImages += ServiceManager.getFileService()
                                 .getSubUris(
-                                    serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
+                                    ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
                                 .size();
                     }
                 } catch (DAOException | IOException e) {
@@ -542,7 +543,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setCurrentTask(Task task) {
         this.currentTask = task;
-        this.currentTask.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
+        this.currentTask.setLocalizedTitle(ServiceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         this.myProcess = this.currentTask.getProcess();
         loadProcessProperties();
         setAttributesForProcess();
@@ -598,9 +599,9 @@ public class CurrentTaskForm extends BaseForm {
 
     private void setAttributesForProcess() {
         Process process = this.currentTask.getProcess();
-        process.setBlockedUser(serviceManager.getProcessService().getBlockedUser(process));
-        process.setBlockedMinutes(serviceManager.getProcessService().getBlockedMinutes(process));
-        process.setBlockedSeconds(serviceManager.getProcessService().getBlockedSeconds(process));
+        process.setBlockedUser(ServiceManager.getProcessService().getBlockedUser(process));
+        process.setBlockedMinutes(ServiceManager.getProcessService().getBlockedMinutes(process));
+        process.setBlockedSeconds(ServiceManager.getProcessService().getBlockedSeconds(process));
     }
 
     /**
@@ -668,7 +669,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setOnlyOpenTasks(boolean onlyOpenTasks) {
         this.onlyOpenTasks = onlyOpenTasks;
-        serviceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
+        ServiceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
     }
 
     /**
@@ -688,7 +689,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
         this.onlyOwnTasks = onlyOwnTasks;
-        serviceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
+        ServiceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
     }
 
     /**
@@ -720,7 +721,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
         this.showAutomaticTasks = showAutomaticTasks;
-        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
+        ServiceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
     }
 
     /**
@@ -740,7 +741,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
         this.hideCorrectionTasks = hideCorrectionTasks;
-        serviceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
+        ServiceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
     }
 
     public Map<String, Boolean> getAnzeigeAnpassen() {
@@ -787,10 +788,10 @@ public class CurrentTaskForm extends BaseForm {
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             this.currentTask.setProcess(
-                serviceManager.getProcessService().addToWikiField(this.addToWikiField, this.currentTask.getProcess()));
+                ServiceManager.getProcessService().addToWikiField(this.addToWikiField, this.currentTask.getProcess()));
             this.addToWikiField = "";
             try {
-                this.serviceManager.getProcessService().save(this.currentTask.getProcess());
+                ServiceManager.getProcessService().save(this.currentTask.getProcess());
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
@@ -846,7 +847,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     private void loadProcessProperties() {
-        serviceManager.getProcessService().refresh(this.myProcess);
+        ServiceManager.getProcessService().refresh(this.myProcess);
         setProperties(this.myProcess.getProperties());
     }
 
@@ -855,11 +856,11 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void saveCurrentProperty() {
         try {
-            serviceManager.getPropertyService().save(this.property);
+            ServiceManager.getPropertyService().save(this.property);
             if (!this.myProcess.getProperties().contains(this.property)) {
                 this.myProcess.getProperties().add(this.property);
             }
-            serviceManager.getProcessService().save(this.myProcess);
+            ServiceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
@@ -871,11 +872,11 @@ public class CurrentTaskForm extends BaseForm {
      * Duplicate property.
      */
     public void duplicateProperty() {
-        Property newProperty = serviceManager.getPropertyService().transfer(this.property);
+        Property newProperty = ServiceManager.getPropertyService().transfer(this.property);
         try {
             newProperty.getProcesses().add(this.myProcess);
             this.myProcess.getProperties().add(newProperty);
-            serviceManager.getPropertyService().save(newProperty);
+            ServiceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
@@ -910,7 +911,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void loadTaskById(int id) {
         try {
-            setCurrentTask(serviceManager.getTaskService().getById(id));
+            setCurrentTask(ServiceManager.getTaskService().getById(id));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                 logger, e);
@@ -925,7 +926,7 @@ public class CurrentTaskForm extends BaseForm {
      *         currently in progress.
      */
     public List<Task> getTasksInProgress() {
-        return serviceManager.getUserService().getTasksInProgress(this.user);
+        return ServiceManager.getUserService().getTasksInProgress(this.user);
     }
 
     /**

@@ -49,7 +49,6 @@ public class MetadataHelper {
     private static final Logger logger = LogManager.getLogger(MetadataHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
-    private static ServiceManager serviceManager = new ServiceManager();
     private PrefsInterface prefs;
     private DigitalDocumentInterface digitalDocument;
 
@@ -125,7 +124,7 @@ public class MetadataHelper {
 
         // und anschliessend alle Elemente in das Array packen
         zaehler = 0;
-        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         for (DocStructTypeInterface docStructType : newTypes) {
             String label = docStructType.getNameByLanguage(language);
             if (label == null) {
@@ -288,7 +287,7 @@ public class MetadataHelper {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
+        try (InputStreamReader input = new InputStreamReader(ServiceManager.getFileService().read((file)),
                 StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input)) {
             char[] buffer = new char[200];
             while (bufRead.read(buffer) >= 0) {
@@ -311,7 +310,7 @@ public class MetadataHelper {
      * @return localized Title of metadata type
      */
     public String getMetadatatypeLanguage(MetadataTypeInterface inMdt) {
-        String label = inMdt.getLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+        String label = inMdt.getLanguage(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = inMdt.getName();
         }

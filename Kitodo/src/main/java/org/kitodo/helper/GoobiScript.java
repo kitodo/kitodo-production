@@ -48,8 +48,7 @@ import org.kitodo.services.file.FileService;
 public class GoobiScript {
     private HashMap<String, String> parameters;
     private static final Logger logger = LogManager.getLogger(GoobiScript.class);
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
     private static final String RULESET = "ruleset";
@@ -164,9 +163,9 @@ public class GoobiScript {
     private void updateContentFiles(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = serviceManager.getProcessService().readMetadataFile(process);
+                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 rdf.getDigitalDocument().addAllContentFiles();
-                serviceManager.getFileService().writeMetadataFile(rdf, process);
+                fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
             } catch (PreferencesException | IOException | ReadException | WriteException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
@@ -196,7 +195,7 @@ public class GoobiScript {
             if (!contentOnly) {
                 try {
                     deleteMetadataDirectory(process);
-                    serviceManager.getProcessService().remove(process);
+                    ServiceManager.getProcessService().remove(process);
                     Helper.setMessage("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
@@ -207,7 +206,7 @@ public class GoobiScript {
     }
 
     private void deleteMetadataDirectory(Process process) throws IOException {
-        serviceManager.getFileService().deleteProcessContent(process);
+        fileService.deleteProcessContent(process);
     }
 
     private void runScript(List<Process> processes, String taskName, String scriptName) throws DataException {
@@ -217,10 +216,10 @@ public class GoobiScript {
                     if (scriptName != null) {
                         if (task.getScriptName().equals(scriptName)) {
                             String path = task.getScriptPath();
-                            serviceManager.getTaskService().executeScript(task, path, false);
+                            ServiceManager.getTaskService().executeScript(task, path, false);
                         }
                     } else {
-                        serviceManager.getTaskService().executeScript(task, false);
+                        ServiceManager.getTaskService().executeScript(task, false);
                     }
                 }
             }
@@ -248,7 +247,7 @@ public class GoobiScript {
             for (Process process : processes) {
                 Integer processId = process.getId();
                 String processTitle = process.getTitle();
-                URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, process);
+                URI imagesFolder = ServiceManager.getProcessService().getImagesOrigDirectory(false, process);
                 if (!fileService.getSubUris(imagesFolder).isEmpty()) {
                     Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
                         "The process " + processTitle + " [" + processId + "] has already data in image folder");
@@ -283,7 +282,7 @@ public class GoobiScript {
         }
 
         try {
-            List<Ruleset> rulesets = serviceManager.getRulesetService()
+            List<Ruleset> rulesets = ServiceManager.getRulesetService()
                     .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
             if (rulesets.isEmpty()) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
@@ -293,7 +292,7 @@ public class GoobiScript {
 
             for (Process process : processes) {
                 process.setRuleset(ruleset);
-                serviceManager.getProcessService().save(process);
+                ServiceManager.getProcessService().save(process);
             }
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(e);
@@ -430,7 +429,7 @@ public class GoobiScript {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                     task.setProcessingStatus(
-                        serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
+                        ServiceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
                     saveTask(process.getTitle(), task);
                     Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
                     break;
@@ -452,7 +451,7 @@ public class GoobiScript {
 
         // check if role exists
         Role role;
-        List<Role> foundRoles = serviceManager.getRoleService()
+        List<Role> foundRoles = ServiceManager.getRoleService()
                 .getByQuery("FROM Role WHERE title='" + this.parameters.get(ROLE) + "'");
         if (!foundRoles.isEmpty()) {
             role = foundRoles.get(0);
@@ -489,8 +488,7 @@ public class GoobiScript {
     public void deleteTiffHeaderFile(List<Process> processes) {
         for (Process process : processes) {
             try {
-                File tiffHeaderFile = new File(
-                        serviceManager.getFileService().getImagesDirectory(process) + "tiffwriter.conf");
+                File tiffHeaderFile = new File(fileService.getImagesDirectory(process) + "tiffwriter.conf");
                 if (tiffHeaderFile.exists()) {
                     Files.delete(tiffHeaderFile.toPath());
                 }
@@ -511,7 +509,7 @@ public class GoobiScript {
     public void updateImagePath(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = serviceManager.getProcessService().readMetadataFile(process);
+                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(process, "pathimagefiles");
                 List<? extends MetadataInterface> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
@@ -520,14 +518,14 @@ public class GoobiScript {
                 }
                 MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newMetadata.setStringValue("file:/" + serviceManager.getFileService().getImagesDirectory(process)
+                    newMetadata.setStringValue("file:/" + fileService.getImagesDirectory(process)
                             + process.getTitle() + DIRECTORY_SUFFIX);
                 } else {
-                    newMetadata.setStringValue("file://" + serviceManager.getFileService().getImagesDirectory(process)
+                    newMetadata.setStringValue("file://" + fileService.getImagesDirectory(process)
                             + process.getTitle() + DIRECTORY_SUFFIX);
                 }
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
-                serviceManager.getFileService().writeMetadataFile(rdf, process);
+                fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
             } catch (UghHelperException | MetadataTypeNotAllowedException | PreferencesException | IOException
                     | ReadException | WriteException | RuntimeException e) {
@@ -564,7 +562,7 @@ public class GoobiScript {
 
     private void saveProcess(Process process) {
         try {
-            serviceManager.getProcessService().save(process);
+            ServiceManager.getProcessService().save(process);
         } catch (DataException e) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), logger, e);
         }
@@ -572,7 +570,7 @@ public class GoobiScript {
 
     private void saveTask(String processTitle, Task task) {
         try {
-            serviceManager.getTaskService().save(task);
+            ServiceManager.getTaskService().save(task);
         } catch (DataException e) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, logger, e);
         }

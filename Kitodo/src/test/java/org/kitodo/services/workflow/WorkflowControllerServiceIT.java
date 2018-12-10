@@ -43,16 +43,15 @@ public class WorkflowControllerServiceIT {
     private static final File scriptCreateDirUserHome = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
     private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
-    private static final ServiceManager serviceManager = new ServiceManager();
-    private static final FileService fileService = serviceManager.getFileService();
-    private static final TaskService taskService = serviceManager.getTaskService();
-    private static final WorkflowControllerService workflowService = serviceManager.getWorkflowControllerService();
+    private static final FileService fileService = ServiceManager.getFileService();
+    private static final TaskService taskService = ServiceManager.getTaskService();
+    private static final WorkflowControllerService workflowService = ServiceManager.getWorkflowControllerService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
-        SecurityTestUtils.addUserDataToSecurityContext(serviceManager.getUserService().getById(1), 1);
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
 
         fileService.createDirectory(URI.create(""), "users");
 
@@ -89,7 +88,7 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldSetTasksStatusUp() throws Exception {
-        Process process = serviceManager.getProcessService().getById(1);
+        Process process = ServiceManager.getProcessService().getById(1);
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
@@ -110,7 +109,7 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldSetTasksStatusDown() throws Exception {
-        Process process = serviceManager.getProcessService().getById(1);
+        Process process = ServiceManager.getProcessService().getById(1);
 
         workflowService.setTasksStatusDown(process);
         List<Task> tasks = process.getTasks();
@@ -132,7 +131,7 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(10);
+        Task nextTask = taskService.getById(10);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
@@ -150,16 +149,16 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(20);
+        Task nextTask = taskService.getById(20);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(21);
+        nextTask = taskService.getById(21);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(22);
+        nextTask = taskService.getById(22);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(23);
+        nextTask = taskService.getById(23);
         assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
     }
 
@@ -170,13 +169,13 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(26);
+        Task nextTask = taskService.getById(26);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(27);
+        nextTask = taskService.getById(27);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(28);
+        nextTask = taskService.getById(28);
         assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
     }
 
@@ -187,13 +186,13 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(31);
+        Task nextTask = taskService.getById(31);
         assertEquals("Task is not in work!", TaskStatus.INWORK, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(32);
+        nextTask = taskService.getById(32);
         assertEquals("Task was not set to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(33);
+        nextTask = taskService.getById(33);
         assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
     }
 
@@ -204,13 +203,13 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(36);
+        Task nextTask = taskService.getById(36);
         assertEquals("Task is not in work!", TaskStatus.INWORK, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(37);
+        nextTask = taskService.getById(37);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
-        nextTask = serviceManager.getTaskService().getById(38);
+        nextTask = taskService.getById(38);
         assertEquals("Task was set up to open!", TaskStatus.LOCKED, nextTask.getProcessingStatusEnum());
     }
 
@@ -221,7 +220,7 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(43);
+        Task nextTask = taskService.getById(43);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
     }
 

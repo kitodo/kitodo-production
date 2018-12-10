@@ -25,7 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityAccessService {
 
     private static SecurityAccessService instance = null;
-    private static ServiceManager serviceManager = new ServiceManager();
     private static final String GLOBAL_IDENTIFIER = "GLOBAL";
     private static final String CLIENT_IDENTIFIER = "CLIENT";
 
@@ -140,7 +139,7 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityForClient(String authorityTitle) {
         String clientAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_"
-                + serviceManager.getUserService().getSessionClientId();
+                + ServiceManager.getUserService().getSessionClientId();
         return hasAuthority(clientAuthority);
     }
 
@@ -528,7 +527,7 @@ public class SecurityAccessService {
      * @return true if the current user has the authority to change the user config
      */
     public boolean hasAuthorityToConfigUser(int userId) {
-        return serviceManager.getUserService().getAuthenticatedUser().getId().equals(userId);
+        return ServiceManager.getUserService().getAuthenticatedUser().getId().equals(userId);
     }
 
     /**

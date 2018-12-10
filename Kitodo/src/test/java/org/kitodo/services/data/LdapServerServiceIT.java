@@ -23,7 +23,7 @@ import org.kitodo.services.ServiceManager;
 
 public class LdapServerServiceIT {
 
-    private static final LdapServerService ldapServerService = new ServiceManager().getLdapServerService();
+    private static final LdapServerService ldapServerService = ServiceManager.getLdapServerService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

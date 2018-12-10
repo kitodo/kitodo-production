@@ -47,7 +47,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static ProjectService instance = null;
 
     /**
@@ -95,11 +94,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, IOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (Process process : project.getProcesses()) {
-                serviceManager.getProcessService().removeFromIndex(process, false);
+                ServiceManager.getProcessService().removeFromIndex(process, false);
             }
         } else {
             for (Process process : project.getProcesses()) {
-                serviceManager.getProcessService().saveToIndex(process, false);
+                ServiceManager.getProcessService().saveToIndex(process, false);
             }
         }
     }
@@ -114,11 +113,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (User user : project.getUsers()) {
                 user.getProjects().remove(project);
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             for (User user : project.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
         }
     }
@@ -146,7 +145,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     public List<Project> getAllForSelectedClient() {
         return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -169,7 +168,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private List<ProjectDTO> findAvailableForAssignToUser(Integer userId) throws DataException {
-        int sessionClientId = serviceManager.getUserService().getSessionClientId();
+        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(userId, false));
@@ -213,7 +212,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of JSON objects with projects for specific process title
      */
     List<JsonObject> findByProcessTitle(String title) throws DataException {
-        List<JsonObject> processes = serviceManager.getProcessService().findByTitle(title, true);
+        List<JsonObject> processes = ServiceManager.getProcessService().findByTitle(title, true);
 
         return searcher.findDocuments(createSetQuery("processes.id", processes, true).toString());
     }
@@ -241,7 +240,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of search result with projects for specific user login
      */
     List<JsonObject> findByUserLogin(String login) throws DataException {
-        JsonObject user = serviceManager.getUserService().findByLogin(login);
+        JsonObject user = ServiceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
     }
 
@@ -312,7 +311,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-            serviceManager.getTemplateService()));
+                ServiceManager.getTemplateService()));
     }
 
     /**
@@ -396,8 +395,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private String getProjectsForCurrentUserQuery() {
-        int currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
-        int sessionClientId = serviceManager.getUserService().getSessionClientId();
+        int currentUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
+        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(currentUserId));

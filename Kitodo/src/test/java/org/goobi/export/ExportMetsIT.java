@@ -39,8 +39,7 @@ public class ExportMetsIT {
 
     private static final File scriptCreateDirUserHome = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-    private static ServiceManager serviceManager = new ServiceManager();
-    private static FileService fileService = serviceManager.getFileService();
+    private static FileService fileService = ServiceManager.getFileService();
     private static String userDirectory;
     private static String metadataDirectory;
     private static URI exportUri;
@@ -53,8 +52,8 @@ public class ExportMetsIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
 
-        User user = serviceManager.getUserService().getById(1);
-        process = serviceManager.getProcessService().getById(1);
+        User user = ServiceManager.getUserService().getById(1);
+        process = ServiceManager.getProcessService().getById(1);
         metadataDirectory = process.getId().toString();
         userDirectory = user.getLogin();
         exportUri = ConfigCore.getUriParameter(ParameterCore.DIR_USERS, userDirectory);
@@ -103,7 +102,7 @@ public class ExportMetsIT {
 
         exportMets.startExport(process, exportUri);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
-                + "/" + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
+                + "/" + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
 
         Assert.assertTrue("Export of metadata was wrong",
             strings.get(1).contains("<mods:publisher>Test Publisher</mods:publisher>"));

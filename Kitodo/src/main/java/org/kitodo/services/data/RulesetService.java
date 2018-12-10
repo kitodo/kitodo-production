@@ -45,7 +45,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private static RulesetService instance = null;
 
     /**
@@ -100,7 +99,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public List<Ruleset> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -220,7 +219,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     private String getRulesetsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-            serviceManager.getUserService().getSessionClientId(), true));
+                ServiceManager.getUserService().getSessionClientId(), true));
         return query.toString();
     }
 }

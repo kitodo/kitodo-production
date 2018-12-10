@@ -47,6 +47,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -58,7 +59,7 @@ public class WorkflowForm extends BaseForm {
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private transient FileService fileService = serviceManager.getFileService();
+    private transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
@@ -73,7 +74,7 @@ public class WorkflowForm extends BaseForm {
      * Constructor.
      */
     public WorkflowForm() {
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getWorkflowService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
     }
 
     /**
@@ -127,7 +128,7 @@ public class WorkflowForm extends BaseForm {
             Helper.setErrorMessage("templateAssignedError");
         } else {
             try {
-                serviceManager.getWorkflowService().remove(this.workflow);
+                ServiceManager.getWorkflowService().remove(this.workflow);
 
                 String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
                 URI svgDiagramURI = new File(
@@ -229,9 +230,9 @@ public class WorkflowForm extends BaseForm {
                 Workflow newWorkflow = new Workflow(diagram.getId(), decodedXMLDiagramName);
                 newWorkflow.setActive(this.workflow.isActive());
                 newWorkflow.setReady(this.workflow.isReady());
-                serviceManager.getWorkflowService().save(newWorkflow);
+                ServiceManager.getWorkflowService().save(newWorkflow);
             }
-            serviceManager.getWorkflowService().save(this.workflow);
+            ServiceManager.getWorkflowService().save(this.workflow);
         } catch (DataException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -248,7 +249,7 @@ public class WorkflowForm extends BaseForm {
      */
     public String newWorkflow() {
         this.workflow = new Workflow();
-        this.workflow.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
     }
 
@@ -263,21 +264,21 @@ public class WorkflowForm extends BaseForm {
      */
     public String duplicate(Integer itemId) {
         try {
-            Workflow baseWorkflow = serviceManager.getWorkflowService().getById(itemId);
+            Workflow baseWorkflow = ServiceManager.getWorkflowService().getById(itemId);
 
             Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow);
 
             URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
             URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
-            this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
+            this.workflow = ServiceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             Map<String, URI> diagramsCopyUris = getDiagramUris();
 
             URI svgDiagramCopyURI = diagramsCopyUris.get(SVG_DIAGRAM_URI);
             URI xmlDiagramCopyURI = diagramsCopyUris.get(XML_DIAGRAM_URI);
 
-            try (InputStream svgInputStream = serviceManager.getFileService().read(svgDiagramURI);
-                    InputStream xmlInputStream = serviceManager.getFileService().read(xmlDiagramURI)) {
+            try (InputStream svgInputStream = ServiceManager.getFileService().read(svgDiagramURI);
+                    InputStream xmlInputStream = ServiceManager.getFileService().read(xmlDiagramURI)) {
                 saveFile(svgDiagramCopyURI, IOUtils.toString(svgInputStream, StandardCharsets.UTF_8));
                 this.xmlDiagram = IOUtils.toString(xmlInputStream, StandardCharsets.UTF_8);
                 saveFile(xmlDiagramCopyURI, this.xmlDiagram);
@@ -301,7 +302,7 @@ public class WorkflowForm extends BaseForm {
      */
     public void setWorkflowById(int id) {
         try {
-            setWorkflow(serviceManager.getWorkflowService().getById(id));
+            setWorkflow(ServiceManager.getWorkflowService().getById(id));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
                 logger, e);
@@ -319,7 +320,7 @@ public class WorkflowForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setWorkflow(this.serviceManager.getWorkflowService().getById(id));
+                setWorkflow(ServiceManager.getWorkflowService().getById(id));
                 readXMLDiagram();
             }
             setSaveDisabled(false);
@@ -356,8 +357,8 @@ public class WorkflowForm extends BaseForm {
     public List<SelectItem> getRoles() {
         List<SelectItem> selectItems = new ArrayList<>();
 
-        List<Role> roles = serviceManager.getRoleService()
-                .getAllRolesByClientId(serviceManager.getUserService().getSessionClientId());
+        List<Role> roles = ServiceManager.getRoleService()
+                .getAllRolesByClientId(ServiceManager.getUserService().getSessionClientId());
         for (Role role : roles) {
             selectItems.add(new SelectItem(role.getId(), role.getTitle(), null));
         }

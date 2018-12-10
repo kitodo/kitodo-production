@@ -45,6 +45,7 @@ import org.kitodo.dto.TemplateDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 
 @Named("ProjectForm")
 @SessionScoped
@@ -89,7 +90,7 @@ public class ProjectForm extends BaseForm {
      */
     public ProjectForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProjectService()));
     }
 
     /**
@@ -146,7 +147,7 @@ public class ProjectForm extends BaseForm {
      */
     public String newProject() {
         this.project = new Project();
-        this.project.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.project.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return projectEditPath;
     }
 
@@ -162,8 +163,8 @@ public class ProjectForm extends BaseForm {
     public String duplicate(Integer itemId) {
         setCopyTemplates(true);
         try {
-            this.baseProject = serviceManager.getProjectService().getById(itemId);
-            this.project = serviceManager.getProjectService().duplicateProject(baseProject);
+            this.baseProject = ServiceManager.getProjectService().getById(itemId);
+            this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
             return projectEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
@@ -178,7 +179,7 @@ public class ProjectForm extends BaseForm {
      * @return page or null
      */
     public String save() {
-        serviceManager.getProjectService().evict(this.project);
+        ServiceManager.getProjectService().evict(this.project);
         // call this to make saving and deleting permanent
         this.commitFolders();
         if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
@@ -188,12 +189,12 @@ public class ProjectForm extends BaseForm {
             try {
                 addFirstUserToNewProject();
 
-                serviceManager.getProjectService().save(this.project);
+                ServiceManager.getProjectService().save(this.project);
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
                         template.getProjects().add(this.project);
                         this.project.getTemplates().add(template);
-                        serviceManager.getTemplateService().save(template);
+                        ServiceManager.getTemplateService().save(template);
                     }
                     setCopyTemplates(false);
                 }
@@ -213,11 +214,11 @@ public class ProjectForm extends BaseForm {
 
     private void addFirstUserToNewProject() throws DAOException, DataException {
         if (this.project.getUsers().isEmpty()) {
-            User user = serviceManager.getUserService().getCurrentUser();
+            User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
-            serviceManager.getProjectService().save(this.project);
-            serviceManager.getUserService().save(user);
+            ServiceManager.getProjectService().save(this.project);
+            ServiceManager.getUserService().save(user);
         }
     }
 
@@ -229,7 +230,7 @@ public class ProjectForm extends BaseForm {
             Helper.setErrorMessage("userAssignedError");
         } else {
             try {
-                serviceManager.getProjectService().remove(this.project);
+                ServiceManager.getProjectService().remove(this.project);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
@@ -282,7 +283,7 @@ public class ProjectForm extends BaseForm {
      */
     public List<TemplateDTO> getTemplates() {
         try {
-            return serviceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
+            return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
                 logger, e);
@@ -299,7 +300,7 @@ public class ProjectForm extends BaseForm {
         int templateId = 0;
         try {
             templateId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Template template = serviceManager.getTemplateService().getById(templateId);
+            Template template = ServiceManager.getTemplateService().getById(templateId);
 
             if (!this.project.getTemplates().contains(template)) {
                 this.project.getTemplates().add(template);
@@ -361,7 +362,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setProjectById(int projectID) {
         try {
-            setProject(serviceManager.getProjectService().getById(projectID));
+            setProject(ServiceManager.getProjectService().getById(projectID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
@@ -522,7 +523,7 @@ public class ProjectForm extends BaseForm {
     public void loadProject(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setProject(this.serviceManager.getProjectService().getById(id));
+                setProject(ServiceManager.getProjectService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -539,7 +540,7 @@ public class ProjectForm extends BaseForm {
      */
     public List<ProjectDTO> getProjects() {
         try {
-            return serviceManager.getProjectService().findAll();
+            return ServiceManager.getProjectService().findAll();
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);

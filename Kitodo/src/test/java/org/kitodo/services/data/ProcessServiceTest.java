@@ -63,7 +63,7 @@ public class ProcessServiceTest {
         processDTO.getProperties().add(fourthPropertyDTO);
         processDTO.getProperties().add(fifthPropertyDTO);
 
-        List<PropertyDTO> propertiesDTO = new ServiceManager().getProcessService().getSortedCorrectionSolutionMessages(processDTO);
+        List<PropertyDTO> propertiesDTO = ServiceManager.getProcessService().getSortedCorrectionSolutionMessages(processDTO);
 
         assertEquals("Size of sorted correction messages is not equal to given size!", 4, propertiesDTO.size());
         assertNull("Sorted correction messages are not sorted correctly!", propertiesDTO.get(0).getCreationDate());

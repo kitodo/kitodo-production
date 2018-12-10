@@ -25,13 +25,12 @@ import org.kitodo.services.ServiceManager;
 @Named
 public class AuthorityConverter implements Converter {
 
-    private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(AuthorityConverter.class);
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         try {
-            return serviceManager.getAuthorityService().getById(Integer.parseInt(s));
+            return ServiceManager.getAuthorityService().getById(Integer.parseInt(s));
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;

@@ -35,7 +35,6 @@ import org.kitodo.services.data.base.SearchService;
 public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
     private static WorkflowService instance = null;
-    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Private constructor with Searcher and Indexer assigning.
@@ -89,7 +88,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     @Override
     public List<Workflow> getAllForSelectedClient() {
         return dao.getByQuery("SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -107,7 +106,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     private String getWorkflowsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
-            serviceManager.getUserService().getSessionClientId(), true));
+            ServiceManager.getUserService().getSessionClientId(), true));
         return query.toString();
     }
 
@@ -151,6 +150,6 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
      * @return list of available Workflow objects
      */
     public List<Workflow> getAvailableWorkflows() {
-        return dao.getAvailableWorkflows(serviceManager.getUserService().getSessionClientId());
+        return dao.getAvailableWorkflows(ServiceManager.getUserService().getSessionClientId());
     }
 }

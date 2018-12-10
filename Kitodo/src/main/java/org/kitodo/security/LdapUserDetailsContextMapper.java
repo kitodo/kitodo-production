@@ -28,12 +28,10 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
  */
 public class LdapUserDetailsContextMapper extends LdapUserDetailsMapper implements UserDetailsContextMapper {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
         try {
-            User user = serviceManager.getUserService().getByLdapLoginWithFallback(username);
+            User user = ServiceManager.getUserService().getByLdapLoginWithFallback(username);
             SecurityLdapUserDetails securityLdapUserDetails = new SecurityLdapUserDetails(user);
             securityLdapUserDetails.setDn(ctx.getDn().toString());
             return securityLdapUserDetails;

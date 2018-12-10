@@ -114,8 +114,7 @@ import org.kitodo.services.file.FileService;
 public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
 
     private final MetadataLock msp = new MetadataLock();
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static ProcessService instance = null;
     private boolean showClosedProcesses = false;
@@ -175,7 +174,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
             query.must(
-                serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
+                ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
         }
         return query;
     }
@@ -197,7 +196,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             query.must(readFilters(filterMap));
         }
 
-        query.must(getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()));
+        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
 
         if (!this.showClosedProcesses) {
             query.must(getQuerySortHelperStatus(false));
@@ -239,11 +238,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Batch batch : process.getBatches()) {
                 batch.getProcesses().remove(process);
-                serviceManager.getBatchService().saveToIndex(batch, false);
+                ServiceManager.getBatchService().saveToIndex(batch, false);
             }
         } else {
             for (Batch batch : process.getBatches()) {
-                serviceManager.getBatchService().saveToIndex(batch, false);
+                ServiceManager.getBatchService().saveToIndex(batch, false);
             }
         }
     }
@@ -256,7 +255,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageProjectDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getProject() != null) {
-            serviceManager.getProjectService().saveToIndex(process.getProject(), false);
+            ServiceManager.getProjectService().saveToIndex(process.getProject(), false);
         }
     }
 
@@ -270,11 +269,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void managePropertiesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property property : process.getProperties()) {
-                serviceManager.getPropertyService().removeFromIndex(property, false);
+                ServiceManager.getPropertyService().removeFromIndex(property, false);
             }
         } else {
             for (Property property : process.getProperties()) {
-                serviceManager.getPropertyService().saveToIndex(property, false);
+                ServiceManager.getPropertyService().saveToIndex(property, false);
             }
         }
     }
@@ -290,7 +289,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throws CustomResponseException, DAOException, IOException, DataException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Task task : process.getTasks()) {
-                serviceManager.getTaskService().removeFromIndex(task, false);
+                ServiceManager.getTaskService().removeFromIndex(task, false);
             }
         } else {
             saveOrRemoveTasksInIndex(process);
@@ -311,10 +310,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (Task task : process.getTasks()) {
             database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task, false);
+            ServiceManager.getTaskService().saveToIndex(task, false);
         }
 
-        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
+        List<JsonObject> searchResults = ServiceManager.getTaskService().findByProcessId(process.getId());
         for (JsonObject object : searchResults) {
             index.add(getIdFromJSONObject(object));
         }
@@ -322,11 +321,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<Integer> missingInIndex = findMissingValues(database, index);
         List<Integer> notNeededInIndex = findMissingValues(index, database);
         for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
+            ServiceManager.getTaskService().saveToIndex(ServiceManager.getTaskService().getById(missing), false);
         }
 
         for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
+            ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
         }
     }
 
@@ -340,11 +339,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property template : process.getTemplates()) {
-                serviceManager.getPropertyService().removeFromIndex(template, false);
+                ServiceManager.getPropertyService().removeFromIndex(template, false);
             }
         } else {
             for (Property template : process.getTemplates()) {
-                serviceManager.getPropertyService().saveToIndex(template, false);
+                ServiceManager.getPropertyService().saveToIndex(template, false);
             }
         }
     }
@@ -359,11 +358,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property workpiece : process.getWorkpieces()) {
-                serviceManager.getPropertyService().removeFromIndex(workpiece, false);
+                ServiceManager.getPropertyService().removeFromIndex(workpiece, false);
             }
         } else {
             for (Property workpiece : process.getWorkpieces()) {
-                serviceManager.getPropertyService().saveToIndex(workpiece, false);
+                ServiceManager.getPropertyService().saveToIndex(workpiece, false);
             }
         }
     }
@@ -420,7 +419,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     List<JsonObject> findForCurrentSessionClient() throws DataException {
         return searcher.findDocuments(
-            getQueryProjectIsAssignedToSelectedClient(serviceManager.getUserService().getSessionClientId()).toString());
+            getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()).toString());
     }
 
     /**
@@ -580,11 +579,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throws DataException {
         List<JsonObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
+            properties = ServiceManager.getPropertyService().findByTitle(title, type, contains);
         } else if (title == null) {
-            properties = serviceManager.getPropertyService().findByValue(value, type, contains);
+            properties = ServiceManager.getPropertyService().findByValue(value, type, contains);
         } else {
-            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
+            properties = ServiceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
         return searcher.findDocuments(createSetQuery(key, properties, true).toString());
@@ -639,7 +638,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return bean object
      */
     public Process convertDtoToBean(ProcessDTO processDTO) throws DAOException {
-        return serviceManager.getProcessService().getById(processDTO.getId());
+        return ServiceManager.getProcessService().getById(processDTO.getId());
     }
 
     /**
@@ -666,7 +665,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
         processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
         processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getKey(),
-            serviceManager.getPropertyService()));
+            ServiceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(processJSONObject));
         processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getKey()));
@@ -690,13 +689,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
-            processDTO.setProject(serviceManager.getProjectService().findById(project));
+            processDTO.setProject(ServiceManager.getProjectService().findById(project));
         }
 
         processDTO.setBatchID(getBatchID(processDTO));
         // TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
-            serviceManager.getTaskService()));
+            ServiceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
@@ -769,7 +768,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (MetadataLock.isLocked(process.getId())) {
             String userID = this.msp.getLockUser(process.getId());
             try {
-                result = serviceManager.getUserService().findById(Integer.valueOf(userID));
+                result = ServiceManager.getUserService().findById(Integer.valueOf(userID));
             } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage("userNotFound", logger, e);
             }
@@ -787,7 +786,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (MetadataLock.isLocked(process.getId())) {
             String userID = this.msp.getLockUser(process.getId());
             try {
-                result = serviceManager.getUserService().getById(Integer.valueOf(userID));
+                result = ServiceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (DAOException | RuntimeException e) {
                 Helper.setErrorMessage("userNotFound", logger, e);
             }
@@ -1023,12 +1022,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return null;
         }
         StringBuilder result = new StringBuilder();
-        BatchService batchService = serviceManager.getBatchService();
         for (BatchDTO batch : process.getBatches()) {
             if (result.length() > 0) {
                 result.append(", ");
             }
-            result.append(batchService.getLabel(batch));
+            result.append(ServiceManager.getBatchService().getLabel(batch));
         }
         return result.toString();
     }
@@ -1261,7 +1259,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public FileformatInterface readMetadataFile(Process process)
             throws ReadException, IOException, PreferencesException {
-        URI metadataFileUri = serviceManager.getFileService().getMetadataFilePath(process);
+        URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
         }
@@ -1272,7 +1270,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         FileformatInterface ff = determineFileFormat(type, process);
         try {
-            ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
+            ff.read(ServiceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setErrorMessage("metadataCorrupt", logger, e);
@@ -1317,7 +1315,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
         FileformatInterface fileFormat;
-        RulesetService rulesetService = serviceManager.getRulesetService();
+        RulesetService rulesetService = ServiceManager.getRulesetService();
 
         switch (type) {
             case "metsmods":
@@ -1425,12 +1423,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI rootPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri();
         URI xsltFile;
         if (process.getDocket() != null) {
-            xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
+            xsltFile = ServiceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
             if (!fileService.fileExist(xsltFile)) {
                 Helper.setErrorMessage("docketMissing");
             }
         } else {
-            xsltFile = serviceManager.getFileService().createResource(rootPath, "docket.xsl");
+            xsltFile = ServiceManager.getFileService().createResource(rootPath, "docket.xsl");
         }
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
@@ -1454,11 +1452,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public void downloadDocket(List<Process> processes) throws IOException {
         logger.debug("generate docket for processes {}", processes);
         URI rootPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri();
-        URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
+        URI xsltFile = ServiceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             DocketInterface module = initialiseDocketModule();
-            File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
+            File file = module.generateMultipleDockets(ServiceManager.getProcessService().getDocketData(processes),
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
@@ -1722,7 +1720,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException, JAXBException {
-        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = getNormalizedTitle(process.getTitle());
 
         // read document
@@ -1735,7 +1733,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // validate metadata
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
-                && !serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
+                && !ServiceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
             return false;
         }
 
@@ -2008,7 +2006,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                  * wenn kein Agora-Import, dann den Ordner mit
                  * Benutzerberechtigung neu anlegen
                  */
-                User user = serviceManager.getUserService().getAuthenticatedUser();
+                User user = ServiceManager.getUserService().getAuthenticatedUser();
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {
@@ -2039,7 +2037,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
-        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
@@ -2114,7 +2112,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
                 URI folderUri = new File(folder.getRelativePath()).toURI();
                 if (fileService.fileExist(folderUri)
-                        && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
+                        && !ServiceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()
                             .addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
                 }

@@ -103,7 +103,6 @@ public class ProzesskopieForm implements Serializable {
     private static final String BOUND_BOOK = "boundbook";
     private static final String FIRST_CHILD = "firstchild";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     private int activeTabId = 0;
 
@@ -289,15 +288,15 @@ public class ProzesskopieForm implements Serializable {
     public String prepare(int templateId, int projectId) {
         atstsl = "";
         try {
-            this.template = serviceManager.getTemplateService().getById(templateId);
-            this.project = serviceManager.getProjectService().getById(projectId);
+            this.template = ServiceManager.getTemplateService().getById(templateId);
+            this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage("Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return null;
         }
 
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return null;
         }
 
@@ -463,7 +462,7 @@ public class ProzesskopieForm implements Serializable {
             return false;
         } else {
             importCatalogue
-                    .setPreferences(serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset()));
+                    .setPreferences(ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset()));
             importCatalogue.useCatalogue(catalogue);
             return true;
         }
@@ -550,7 +549,7 @@ public class ProzesskopieForm implements Serializable {
             } else {
                 // evaluate the content in normal fields
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                    ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     field.getMetadata());
                 MetadataInterface md = UghHelper.getMetadata(docStruct, mdt);
                 if (md != null) {
@@ -606,7 +605,7 @@ public class ProzesskopieForm implements Serializable {
      * Auswahl des Prozesses auswerten.
      */
     public String templateAuswahlAuswerten() throws DAOException {
-        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+        if (ServiceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
             for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
@@ -619,7 +618,7 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+        if (ServiceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
             for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
@@ -629,7 +628,7 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getPropertiesSize(this.processForChoice) > 0) {
+        if (ServiceManager.getProcessService().getPropertiesSize(this.processForChoice) > 0) {
             for (Property processProperty : this.processForChoice.getProperties()) {
                 if (processProperty.getTitle().equals("digitalCollection")) {
                     digitalCollections.add(processProperty.getValue());
@@ -638,7 +637,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         try {
-            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
+            this.rdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
         }
@@ -734,7 +733,7 @@ public class ProzesskopieForm implements Serializable {
     protected boolean isProcessTitleAvailable(String title) {
         long amount;
         try {
-            amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
+            amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation("process") }, logger, e);
             return false;
@@ -753,7 +752,7 @@ public class ProzesskopieForm implements Serializable {
     public String createNewProcess() {
 
         // evict set up id to null
-        serviceManager.getProcessService().evict(this.prozessKopie);
+        ServiceManager.getProcessService().evict(this.prozessKopie);
         if (!isContentValid()) {
             return null;
         }
@@ -763,18 +762,18 @@ public class ProzesskopieForm implements Serializable {
 
         try {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
-            serviceManager.getProcessService().save(this.prozessKopie);
-            serviceManager.getProcessService().refresh(this.prozessKopie);
+            ServiceManager.getProcessService().save(this.prozessKopie);
+            ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("process") }, logger, e);
             return null;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+        String baseProcessDirectory = ServiceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
                 .toString();
         boolean successful = false;
         try {
-            successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+            successful = ServiceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -814,8 +813,8 @@ public class ProzesskopieForm implements Serializable {
             }
 
             // Create configured directories
-            serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
-            serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+            ServiceManager.getProcessService().createProcessDirs(this.prozessKopie);
+            ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
             startTaskScriptThreads();
 
@@ -853,7 +852,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             // except for the authors, take all additional into the metadata
             if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-                PrefsInterface prefs = serviceManager.getRulesetService()
+                PrefsInterface prefs = ServiceManager.getRulesetService()
                         .getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
@@ -883,7 +882,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
+                PrefsInterface ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 DocStructTypeInterface docStructType = populizer.getDocStructType();
                 while (docStructType.getAnchorClass() != null) {
                     populizer = populizer.createChild(docStructType.getAllAllowedDocStructTypes().get(0),
@@ -932,7 +931,7 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
             MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
-            String path = serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+            String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)
                     + this.prozessKopie.getTitle().trim() + "_" + DIRECTORY_SUFFIX;
             if (SystemUtils.IS_OS_WINDOWS) {
                 newMetadata.setStringValue("file:/" + path);
@@ -942,7 +941,7 @@ public class ProzesskopieForm implements Serializable {
             digitalDocument.getPhysicalDocStruct().addMetadata(newMetadata);
 
             // write Rdf file
-            serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
+            ServiceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
         } catch (DocStructHasNoTypeException e) {
             Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
         } catch (UghHelperException e) {
@@ -957,8 +956,8 @@ public class ProzesskopieForm implements Serializable {
             // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            User user = serviceManager.getUserService().getAuthenticatedUser();
-            serviceManager.getTaskService().replaceProcessingUser(task, user);
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            ServiceManager.getTaskService().replaceProcessingUser(task, user);
 
             // only if its done, set edit start and end date
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
@@ -1053,7 +1052,7 @@ public class ProzesskopieForm implements Serializable {
 
     private void startTaskScriptThreads() {
         /* damit die Sortierung stimmt nochmal einlesen */
-        serviceManager.getProcessService().refresh(this.prozessKopie);
+        ServiceManager.getProcessService().refresh(this.prozessKopie);
 
         List<Task> tasks = this.prozessKopie.getTasks();
         for (Task task : tasks) {
@@ -1068,7 +1067,7 @@ public class ProzesskopieForm implements Serializable {
         for (String s : this.digitalCollections) {
             try {
                 MetadataInterface md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                    ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setStringValue(s);
                 md.setDocStruct(colStruct);
@@ -1085,7 +1084,7 @@ public class ProzesskopieForm implements Serializable {
     protected void removeCollections(DocStructInterface colStruct, Process process) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                serviceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
+                ServiceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
             ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             for (MetadataInterface md : myCollections) {
                 colStruct.removeMetadata(md);
@@ -1099,7 +1098,7 @@ public class ProzesskopieForm implements Serializable {
      * Create new file format.
      */
     public void createNewFileformat() {
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
         try {
             DigitalDocumentInterface dd = UghImplementation.INSTANCE.createDigitalDocument();
             FileformatInterface ff = UghImplementation.INSTANCE.createXStream(myPrefs);
@@ -1799,7 +1798,7 @@ public class ProzesskopieForm implements Serializable {
      */
     public String downloadDocket() {
         try {
-            serviceManager.getProcessService().downloadDocket(this.prozessKopie);
+            ServiceManager.getProcessService().downloadDocket(this.prozessKopie);
         } catch (IOException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("docket") }, logger, e);
         }
@@ -1842,8 +1841,8 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setWikiField(this.template.getWikiField());
         this.addToWikiField = addToWikiField;
         if (addToWikiField != null && !addToWikiField.equals("")) {
-            User user = serviceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             this.prozessKopie
                     .setWikiField(WikiFieldHelper.getWikiMessage(prozessKopie.getWikiField(), "info", message));
         }

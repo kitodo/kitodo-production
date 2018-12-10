@@ -53,7 +53,6 @@ import org.kitodo.services.ServiceManager;
 public class ExportSerialBatchTask extends EmptyTask {
 
     private static final Logger logger = LogManager.getLogger(ExportSerialBatchTask.class);
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The batch to export.
@@ -157,8 +156,8 @@ public class ExportSerialBatchTask extends EmptyTask {
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     exporter.setExportDmsTask(this);
-                    exporter.startExport(process, serviceManager.getUserService()
-                            .getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),
+                    exporter.startExport(process, ServiceManager.getUserService()
+                            .getHomeDirectory(ServiceManager.getUserService().getAuthenticatedUser()),
                         out);
                     stepcounter++;
                     setProgress(100 * stepcounter / maxsize);
@@ -206,7 +205,7 @@ public class ExportSerialBatchTask extends EmptyTask {
     private static DigitalDocumentInterface buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
             TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-        DigitalDocumentInterface result = serviceManager.getProcessService().readMetadataFile(process)
+        DigitalDocumentInterface result = ServiceManager.getProcessService().readMetadataFile(process)
                 .getDigitalDocument();
         DocStructInterface root = result.getLogicalDocStruct();
         String type = "Volume";
@@ -216,7 +215,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             logger.error(e.getMessage(), e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-        PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface ruleset = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
                 root.createChild(type, result, ruleset)

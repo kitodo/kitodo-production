@@ -30,7 +30,7 @@ import org.kitodo.services.file.FileService;
 
 public class BaseTestSelenium {
 
-    private static final FileService fileService = new ServiceManager().getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
 
     @BeforeClass
     public static void setUp() throws Exception {

@@ -43,205 +43,211 @@ import org.kitodo.services.workflow.WorkflowControllerService;
 
 public class ServiceManager {
 
-    private AuthorityService authorityService;
-    private BatchService batchService;
-    private ClientService clientService;
-    private DataEditorService dataEditorService;
-    private DocketService docketService;
-    private FilterService filterService;
-    private ImageService imageService;
-    private LdapGroupService ldapGroupService;
-    private LdapServerService ldapServerService;
-    private PropertyService propertyService;
-    private ProcessService processService;
-    private FolderService folderService;
-    private ProjectService projectService;
-    private RulesetService rulesetService;
-    private TaskService taskService;
-    private TemplateService templateService;
-    private RoleService roleService;
-    private RulesetManagementService rulesetManagementService;
-    private UserService userService;
-    private WorkflowService workflowService;
-    private FileService fileService;
-    private CommandService commandService;
-    private SchemaService schemaService;
-    private SecurityAccessService securityAccessService;
-    private FileStructureValidationService fileStructureValidationService;
-    private LongTermPreservationValidationService longTermPreservationValidationService;
-    private MetadataValidationService metadataValidationService;
-    private SessionService sessionService;
-    private WorkflowControllerService workflowControllerService;
+    private static AuthorityService authorityService;
+    private static BatchService batchService;
+    private static ClientService clientService;
+    private static DataEditorService dataEditorService;
+    private static DocketService docketService;
+    private static FilterService filterService;
+    private static ImageService imageService;
+    private static LdapGroupService ldapGroupService;
+    private static LdapServerService ldapServerService;
+    private static PropertyService propertyService;
+    private static ProcessService processService;
+    private static FolderService folderService;
+    private static ProjectService projectService;
+    private static RulesetService rulesetService;
+    private static TaskService taskService;
+    private static TemplateService templateService;
+    private static RoleService roleService;
+    private static UserService userService;
+    private static WorkflowService workflowService;
+    private static FileService fileService;
+    private static CommandService commandService;
+    private static SchemaService schemaService;
+    private static SecurityAccessService securityAccessService;
+    private static FileStructureValidationService fileStructureValidationService;
+    private static LongTermPreservationValidationService longTermPreservationValidationService;
+    private static MetadataValidationService metadataValidationService;
+    private static RulesetManagementService rulesetManagementService;
+    private static SessionService sessionService;
+    private static WorkflowControllerService workflowControllerService;
 
-    private void initializeAuthorizationService() {
+    /**
+     * Private constructor.
+     */
+    private ServiceManager() {
+    }
+
+    private static void initializeAuthorizationService() {
         if (authorityService == null) {
             authorityService = AuthorityService.getInstance();
         }
     }
 
-    private void initializeBatchService() {
+    private static void initializeBatchService() {
         if (batchService == null) {
             batchService = BatchService.getInstance();
         }
     }
 
-    private void initializeClientService() {
+    private static void initializeClientService() {
         if (clientService == null) {
             clientService = ClientService.getInstance();
         }
     }
 
-    private void initializeDataEditorService() {
+    private static void initializeDataEditorService() {
         if (dataEditorService == null) {
             dataEditorService = new DataEditorService();
         }
     }
 
-    private void initializeDocketService() {
+    private static void initializeDocketService() {
         if (docketService == null) {
             docketService = DocketService.getInstance();
         }
     }
 
-    private void initializeFilterService() {
+    private static void initializeFilterService() {
         if (filterService == null) {
             filterService = FilterService.getInstance();
         }
     }
 
-    private void initializeImageService() {
+    private static void initializeImageService() {
         if (imageService == null) {
             imageService = ImageService.getInstance();
         }
     }
 
-    private void initializeLdapGroupService() {
+    private static void initializeLdapGroupService() {
         if (ldapGroupService == null) {
             ldapGroupService = new LdapGroupService();
         }
     }
 
-    private void initializeLdapServerService() {
+    private static void initializeLdapServerService() {
         if (ldapServerService == null) {
             ldapServerService = LdapServerService.getInstance();
         }
     }
 
-    private void initializePropertyService() {
+    private static void initializePropertyService() {
         if (propertyService == null) {
             propertyService = PropertyService.getInstance();
         }
     }
 
-    private void initializeProcessService() {
+    private static void initializeProcessService() {
         if (processService == null) {
             processService = ProcessService.getInstance();
         }
     }
 
-    private void initializeFolderService() {
+    private static void initializeFolderService() {
         if (folderService == null) {
             folderService = new FolderService();
         }
     }
 
-    private void initializeProjectService() {
+    private static void initializeProjectService() {
         if (projectService == null) {
             projectService = ProjectService.getInstance();
         }
     }
 
-    private void initializeRulesetService() {
+    private static void initializeRulesetService() {
         if (rulesetService == null) {
             rulesetService = RulesetService.getInstance();
         }
     }
 
-    private void initializeSessionService() {
+    private static void initializeSessionService() {
         if (sessionService == null) {
             sessionService = SessionService.getInstance();
         }
     }
 
-    private void initializeSecurityAccessService() {
+    private static void initializeSecurityAccessService() {
         if (securityAccessService == null) {
             securityAccessService = SecurityAccessService.getInstance();
         }
     }
 
-    private void initializeTaskService() {
+    private static void initializeTaskService() {
         if (taskService == null) {
             taskService = TaskService.getInstance();
         }
     }
 
-    private void initializeTemplateService() {
+    private static void initializeTemplateService() {
         if (templateService == null) {
             templateService = TemplateService.getInstance();
         }
     }
 
-    private void initializeRoleService() {
+    private static void initializeRoleService() {
         if (roleService == null) {
             roleService = RoleService.getInstance();
         }
     }
 
-    private void initializeRulesetManagementService() {
-        if (rulesetManagementService == null) {
-            rulesetManagementService = RulesetManagementService.getInstance();
-        }
-    }
-
-    private void initializeUserService() {
+    private static void initializeUserService() {
         if (userService == null) {
             userService = UserService.getInstance();
         }
     }
 
-    private void initializeWorkflowService() {
+    private static void initializeWorkflowService() {
         if (workflowService == null) {
             workflowService = WorkflowService.getInstance();
         }
     }
 
-    private void initializeFileService() {
+    private static void initializeFileService() {
         if (fileService == null) {
             fileService = new FileService();
         }
     }
 
-    private void initializeCommandService() {
+    private static void initializeCommandService() {
         if (commandService == null) {
             commandService = new CommandService();
         }
     }
 
-    private void initializeSchemaService() {
+    private static void initializeSchemaService() {
         if (schemaService == null) {
             schemaService = new SchemaService();
         }
     }
 
-    private void initializeFileStructureValidationService() {
+    private static void initializeFileStructureValidationService() {
         if (fileStructureValidationService == null) {
             fileStructureValidationService = new FileStructureValidationService();
         }
     }
 
-    private void initializeLongTermPreservationValidationService() {
+    private static void initializeLongTermPreservationValidationService() {
         if (longTermPreservationValidationService == null) {
             longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
-    private void initializeMetadataValidationService() {
+    private static void initializeMetadataValidationService() {
         if (metadataValidationService == null) {
             metadataValidationService = new MetadataValidationService();
         }
     }
 
-    private void initializeWorkflowControllerService() {
+    private static void initializeRulesetManagementService() {
+        if (rulesetManagementService == null) {
+            rulesetManagementService = RulesetManagementService.getInstance();
+        }
+    }
+
+    private static void initializeWorkflowControllerService() {
         if (workflowControllerService == null) {
             workflowControllerService = new WorkflowControllerService();
         }
@@ -253,7 +259,7 @@ public class ServiceManager {
      *
      * @return AuthorityService object
      */
-    public AuthorityService getAuthorityService() {
+    public static AuthorityService getAuthorityService() {
         initializeAuthorizationService();
         return authorityService;
     }
@@ -263,7 +269,7 @@ public class ServiceManager {
      *
      * @return BatchService object
      */
-    public BatchService getBatchService() {
+    public static BatchService getBatchService() {
         initializeBatchService();
         return batchService;
     }
@@ -273,7 +279,7 @@ public class ServiceManager {
      *
      * @return ClientService object
      */
-    public ClientService getClientService() {
+    public static ClientService getClientService() {
         initializeClientService();
         return clientService;
     }
@@ -284,7 +290,7 @@ public class ServiceManager {
      *
      * @return DataEditorService object
      */
-    public DataEditorService getDataEditorService() {
+    public static DataEditorService getDataEditorService() {
         initializeDataEditorService();
         return dataEditorService;
     }
@@ -294,7 +300,7 @@ public class ServiceManager {
      *
      * @return DocketService object
      */
-    public DocketService getDocketService() {
+    public static DocketService getDocketService() {
         initializeDocketService();
         return docketService;
     }
@@ -304,7 +310,7 @@ public class ServiceManager {
      *
      * @return FilterService object
      */
-    public FilterService getFilterService() {
+    public static FilterService getFilterService() {
         initializeFilterService();
         return filterService;
     }
@@ -315,7 +321,7 @@ public class ServiceManager {
      *
      * @return LdapGroupService object
      */
-    public LdapGroupService getLdapGroupService() {
+    public static LdapGroupService getLdapGroupService() {
         initializeLdapGroupService();
         return ldapGroupService;
     }
@@ -326,7 +332,7 @@ public class ServiceManager {
      *
      * @return LdapServerService object
      */
-    public LdapServerService getLdapServerService() {
+    public static LdapServerService getLdapServerService() {
         initializeLdapServerService();
         return ldapServerService;
     }
@@ -337,7 +343,7 @@ public class ServiceManager {
      *
      * @return ImageService object
      */
-    public ImageService getImageService() {
+    public static ImageService getImageService() {
         initializeImageService();
         return imageService;
     }
@@ -348,7 +354,7 @@ public class ServiceManager {
      *
      * @return PropertyService object
      */
-    public PropertyService getPropertyService() {
+    public static PropertyService getPropertyService() {
         initializePropertyService();
         return propertyService;
     }
@@ -359,7 +365,7 @@ public class ServiceManager {
      *
      * @return ProcessService object
      */
-    public ProcessService getProcessService() {
+    public static ProcessService getProcessService() {
         initializeProcessService();
         return processService;
     }
@@ -369,7 +375,7 @@ public class ServiceManager {
      *
      * @return FolderService object
      */
-    public FolderService getFolderService() {
+    public static FolderService getFolderService() {
         initializeFolderService();
         return folderService;
     }
@@ -380,7 +386,7 @@ public class ServiceManager {
      *
      * @return ProjectService object
      */
-    public ProjectService getProjectService() {
+    public static ProjectService getProjectService() {
         initializeProjectService();
         return projectService;
     }
@@ -391,9 +397,147 @@ public class ServiceManager {
      *
      * @return RulesetService object
      */
-    public RulesetService getRulesetService() {
+    public static RulesetService getRulesetService() {
         initializeRulesetService();
         return rulesetService;
+    }
+
+    /**
+     * Initialize SessionService if it is not yet initialized and next return
+     * it.
+     *
+     * @return SessionService object
+     */
+    public static SessionService getSessionService() {
+        initializeSessionService();
+        return sessionService;
+    }
+
+    /**
+     * Initialize SecurityAccessService if it is not yet initialized and next
+     * return it.
+     *
+     * @return SecurityAccessService object
+     */
+    public static SecurityAccessService getSecurityAccessService() {
+        initializeSecurityAccessService();
+        return securityAccessService;
+    }
+
+    /**
+     * Initialize TaskService if it is not yet initialized and next return it.
+     *
+     * @return TaskService object
+     */
+    public static TaskService getTaskService() {
+        initializeTaskService();
+        return taskService;
+    }
+
+    /**
+     * Initialize TemplateService if it is not yet initialized and next return
+     * it.
+     *
+     * @return TemplateService object
+     */
+    public static TemplateService getTemplateService() {
+        initializeTemplateService();
+        return templateService;
+    }
+
+    /**
+     * Initialize RoleService if it is not yet initialized and next return it.
+     *
+     * @return RoleService object
+     */
+    public static RoleService getRoleService() {
+        initializeRoleService();
+        return roleService;
+    }
+
+    /**
+     * Initialize UserService if it is not yet initialized and next return it.
+     *
+     * @return UserService object
+     */
+    public static UserService getUserService() {
+        initializeUserService();
+        return userService;
+    }
+
+    /**
+     * Initialize WorkflowService if it is not yet initialized and next return
+     * it.
+     *
+     * @return WorkflowService object
+     */
+    public static WorkflowService getWorkflowService() {
+        initializeWorkflowService();
+        return workflowService;
+    }
+
+    /**
+     * Initialize FileService if it is not yet initialized and next return it.
+     *
+     * @return FileService object
+     */
+    public static FileService getFileService() {
+        initializeFileService();
+        return fileService;
+    }
+
+    /**
+     * Initialize CommandService if it is not yet initialized and next return
+     * it.
+     *
+     * @return CommandService object
+     */
+    public static CommandService getCommandService() {
+        initializeCommandService();
+        return commandService;
+    }
+
+    /**
+     * Initialize SchemaService if it is not yet initialized and next return it.
+     *
+     * @return SchemaService object
+     */
+    public static SchemaService getSchemaService() {
+        initializeSchemaService();
+        return schemaService;
+    }
+
+    /**
+     * Initialize FileStructureValidationService if it is not yet initialized
+     * and next return it.
+     *
+     * @return FileStructureValidationService object
+     */
+    public static FileStructureValidationService getFileStructureValidationService() {
+        initializeFileStructureValidationService();
+        return fileStructureValidationService;
+    }
+
+    /**
+     * Initialize LongTermPreservationValidationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return LongTermPreservationValidationService object
+     */
+    public static LongTermPreservationValidationService getLongTermPreservationValidationService() {
+        initializeLongTermPreservationValidationService();
+        return longTermPreservationValidationService;
+    }
+
+    /**
+     * Initialize MetadataValidationService if it is not yet initialized and
+     * next return it.
+     *
+     * @return MetadataValidationService object
+     */
+    public static MetadataValidationService getMetadataValidationService() {
+        initializeMetadataValidationService();
+        return metadataValidationService;
     }
 
     /**
@@ -408,150 +552,12 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize SessionService if it is not yet initialized and next return
-     * it.
-     *
-     * @return SessionService object
-     */
-    public SessionService getSessionService() {
-        initializeSessionService();
-        return sessionService;
-    }
-
-    /**
-     * Initialize SecurityAccessService if it is not yet initialized and next
-     * return it.
-     *
-     * @return SecurityAccessService object
-     */
-    public SecurityAccessService getSecurityAccessService() {
-        initializeSecurityAccessService();
-        return securityAccessService;
-    }
-
-    /**
-     * Initialize TaskService if it is not yet initialized and next return it.
-     *
-     * @return TaskService object
-     */
-    public TaskService getTaskService() {
-        initializeTaskService();
-        return taskService;
-    }
-
-    /**
-     * Initialize TemplateService if it is not yet initialized and next return
-     * it.
-     *
-     * @return TemplateService object
-     */
-    public TemplateService getTemplateService() {
-        initializeTemplateService();
-        return templateService;
-    }
-
-    /**
-     * Initialize RoleService if it is not yet initialized and next return it.
-     *
-     * @return RoleService object
-     */
-    public RoleService getRoleService() {
-        initializeRoleService();
-        return roleService;
-    }
-
-    /**
-     * Initialize UserService if it is not yet initialized and next return it.
-     *
-     * @return UserService object
-     */
-    public UserService getUserService() {
-        initializeUserService();
-        return userService;
-    }
-
-    /**
-     * Initialize WorkflowService if it is not yet initialized and next return
-     * it.
-     *
-     * @return WorkflowService object
-     */
-    public WorkflowService getWorkflowService() {
-        initializeWorkflowService();
-        return workflowService;
-    }
-
-    /**
-     * Initialize FileService if it is not yet initialized and next return it.
-     *
-     * @return FileService object
-     */
-    public FileService getFileService() {
-        initializeFileService();
-        return fileService;
-    }
-
-    /**
-     * Initialize CommandService if it is not yet initialized and next return
-     * it.
-     *
-     * @return CommandService object
-     */
-    public CommandService getCommandService() {
-        initializeCommandService();
-        return commandService;
-    }
-
-    /**
-     * Initialize SchemaService if it is not yet initialized and next return it.
-     *
-     * @return SchemaService object
-     */
-    public SchemaService getSchemaService() {
-        initializeSchemaService();
-        return schemaService;
-    }
-
-    /**
-     * Initialize FileStructureValidationService if it is not yet initialized
-     * and next return it.
-     *
-     * @return FileStructureValidationService object
-     */
-    public FileStructureValidationService getFileStructureValidationService() {
-        initializeFileStructureValidationService();
-        return fileStructureValidationService;
-    }
-
-    /**
-     * Initialize LongTermPreservationValidationService if it is not yet
-     * initialized and next return it.
-     *
-     * @return LongTermPreservationValidationService object
-     */
-    public LongTermPreservationValidationService getLongTermPreservationValidationService() {
-        initializeLongTermPreservationValidationService();
-        return longTermPreservationValidationService;
-    }
-
-    /**
-     * Initialize MetadataValidationService if it is not yet initialized and
-     * next return it.
-     *
-     * @return MetadataValidationService object
-     */
-    public MetadataValidationService getMetadataValidationService() {
-        initializeMetadataValidationService();
-        return metadataValidationService;
-    }
-
-    /**
      * Initialize WorkflowControllerService if it is not yet initialized and
      * next return it.
      *
      * @return WorkflowControllerService object
      */
-    public WorkflowControllerService getWorkflowControllerService() {
+    public static WorkflowControllerService getWorkflowControllerService() {
         initializeWorkflowControllerService();
         return workflowControllerService;
     }
