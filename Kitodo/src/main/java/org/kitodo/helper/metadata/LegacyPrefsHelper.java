@@ -103,7 +103,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
      * 
      * @return the ruleset
      */
-    RulesetManagementInterface getRuleset() {
+    public RulesetManagementInterface getRuleset() {
         return ruleset;
     }
 

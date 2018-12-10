@@ -72,17 +72,6 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
     private List<LanguageRange> priorityList;
 
     /**
-     * Creates a new legacy METS MODS digital document helper with a ruleset.
-     * 
-     * @param ruleset
-     *            ruleset to set
-     */
-    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset) {
-        this();
-        this.ruleset = ruleset;
-    }
-
-    /**
      * Creates a new legacy METS MODS digital document helper.
      */
     public LegacyMetsModsDigitalDocumentHelper() {
@@ -102,6 +91,32 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
             logger.catching(e);
             this.priorityList = LanguageRange.parse("en");
         }
+    }
+
+    /**
+     * Creates a new legacy METS MODS digital document helper with a ruleset.
+     * 
+     * @param ruleset
+     *            ruleset to set
+     */
+    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset) {
+        this();
+        this.ruleset = ruleset;
+    }
+
+    /**
+     * Creates a new legacy METS MODS digital document helper with a workpiece.
+     * 
+     * @param ruleset
+     *            ruleset to set
+     * @param workpiece
+     *            workpiece to set
+     */
+    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset,
+            MetsXmlElementAccessInterface workpiece) {
+
+        this(ruleset);
+        this.workpiece = workpiece;
     }
 
     @Override
