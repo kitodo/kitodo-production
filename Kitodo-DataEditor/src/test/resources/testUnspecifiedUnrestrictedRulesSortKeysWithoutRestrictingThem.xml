@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="article">
+            <label>Article</label>
+        </division>
+        <key id="abstract">
+            <label>Abstract</label>
+        </key>
+        <key id="author">
+            <label>Author</label>
+            <key id="city">
+                <label>City</label>
+            </key>
+            <key id="dept">
+                <label>Department</label>
+            </key>
+            <key id="firstName">
+                <label>First name</label>
+            </key>
+            <key id="institution">
+                <label>Institution</label>
+            </key>
+            <key id="lastName">
+                <label>Last name</label>
+            </key>
+            <key id="notes">
+                <label>Notes</label>
+            </key>
+        </key>
+        <key id="issue">
+            <label>Issue</label>
+            <codomain type="integer" />
+        </key>
+        <key id="journal">
+            <label>Journal title</label>
+        </key>
+        <key id="journalAbbr">
+            <label>Journal title abbreviated</label>
+        </key>
+        <key id="title">
+            <label>Title</label>
+        </key>
+        <key id="year">
+            <label>Publication year</label>
+        </key>
+    </declaration>
+    <correlation>
+        <restriction division="article">
+            <permit key="author"/>
+            <permit key="year"/>
+            <permit key="title"/>
+            <permit key="journal"/>
+            <permit key="journalAbbr"/>
+            <permit key="issue"/>
+        </restriction>
+        <restriction key="author">
+            <permit key="lastName"/>
+            <permit key="firstName"/>
+            <permit key="dept"/>
+            <permit key="institution"/>
+            <permit key="city"/>
+        </restriction>
+    </correlation>
+</ruleset>

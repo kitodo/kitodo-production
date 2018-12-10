@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="newspaper">
+            <label>Newspaper ‹complete edition›</label>
+            <label lang="de">Zeitung ‹Gesamtausgabe›</label>
+            <subdivisionByDate>
+                <division id="newspaperYear" dates="ORDERLABEL" scheme="yyyy">
+                    <label>Year’s issues ‹newspaper›</label>
+                    <label lang="de">Jahrgang ‹Zeitung›</label>
+                </division>
+                <division id="newspaperMonth" dates="ORDERLABEL" scheme="M">
+                    <label>Month’s issues ‹newspaper›</label>
+                    <label lang="de">Monat ‹Zeitung›</label>
+                </division>
+                <division id="newspaperDay" dates="ORDERLABEL" scheme="d">
+                    <label>Day’s issues ‹newspaper›</label>
+                    <label lang="de">Tag ‹Zeitung›</label>
+                </division>
+            </subdivisionByDate>
+        </division>
+        <division id="newspaperLimitedTest">
+            <label>Newspaper ‹complete edition›—limited test</label>
+            <subdivisionByDate>
+                <division id="newspaperYearLimitedTest" dates="ORDERLABEL" scheme="yyyy">
+                    <label>Year’s issues ‹newspaper›—limited test</label>
+                </division>
+                <division id="newspaperMonthLimitedTest" dates="ORDERLABEL" scheme="M">
+                    <label>Month’s issues ‹newspaper›—limited test</label>
+                </division>
+                <division id="newspaperDayLimitedTest" dates="ORDERLABEL" scheme="d">
+                    <label>Day’s issues ‹newspaper›—limited test</label>
+                </division>
+            </subdivisionByDate>
+        </division>
+        <division id="newspaperIssue">
+            <label>Issue ‹newspaper›</label>
+            <label lang="de">Ausgabe ‹Zeitung›</label>
+        </division>
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>METS order label</label>
+            <label lang="de">METS Reihenfolge-Etikett</label>
+        </key>
+    </declaration>
+    <correlation>
+        <restriction division="newspaperDayLimitedTest" unspecified="forbidden">
+            <permit division="newspaperIssue"/>
+        </restriction>
+    </correlation>
+</ruleset>

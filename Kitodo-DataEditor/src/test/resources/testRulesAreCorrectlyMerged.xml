@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="personContributor">
+            <label>Contributor (natural person)</label>
+            <key id="dateOfBirth">
+                <label>Date of birth</label>
+                <codomain type="date"/>
+            </key>
+            <key id="dateOfDeath">
+                <label>Date of death</label>
+                <codomain type="date"/>
+            </key>
+            <key id="disambiguationAddition">
+                <label>Disambiguation addition</label>
+            </key>
+            <key id="givenName">
+                <label>Given name</label>
+            </key>
+            <key id="gndRecord">
+                <label>GND record</label>
+                <codomain type="anyURI"/>
+            </key>
+            <key id="role">
+                <label>Role</label>
+                <option value="author"><label>Author</label></option>
+                <option value="censor"><label>Censor</label></option>
+                <option value="composer"><label>Composer</label></option>
+                <option value="editor"><label>Editor</label></option>
+                <option value="involvedPerson"><label>Involved person</label></option>
+                <option value="librettist"><label>Librettist</label></option>
+                <option value="photographer"><label>Photographer</label></option>
+                <option value="uninvolvedPerson"><label>Uninvolved person</label></option>
+            </key>
+            <key id="surname">
+                <label>Surname</label>
+            </key>
+            <key id="ppn">
+                <label>Local system ID</label>
+            </key>
+        </key>
+    </declaration>
+    <correlation>
+        <restriction key="personContributor">
+            <permit key="role" minOccurs="1"/>
+            <permit key="gndRecord"/>
+            <permit key="givenName"/>
+            <permit key="surname"/>
+            <permit key="disambiguationAddition"/>
+        </restriction>
+        <restriction division="book" unspecified="forbidden">
+            <permit key="personContributor">
+                <permit key="role" unspecified="forbidden">
+                    <permit value="author"/>
+                    <permit value="editor"/>
+                </permit>
+            </permit>
+        </restriction>
+    </correlation>
+    <editing>
+        <setting key="personContributor" alwaysShowing="true">
+            <setting key="role" alwaysShowing="true"/>
+            <setting key="gndRecord" alwaysShowing="true"/>
+            <setting key="givenName" alwaysShowing="true"/>
+            <setting key="surname" alwaysShowing="true"/>
+        </setting>
+    </editing>
+</ruleset>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="testAlwaysShowing">
+            <label>Test always showing</label>
+        </key>
+        <key id="testEditable">
+            <label>Test editable</label>
+        </key>
+        <key id="testExcluded">
+            <label>Test excluded</label>
+        </key>
+        <key id="testMultiline">
+            <label>Test multi-line</label>
+        </key>
+        <key id="testAlwaysShowingEditable">
+            <label>Test always showing</label>
+        </key>
+        <key id="testAlwaysShowingExcluded">
+            <label>Test always showing</label>
+        </key>
+        <key id="testAlwaysShowingMultiline">
+            <label>Test always showing</label>
+        </key>
+        <key id="testEditableExcluded">
+            <label>Test always showing</label>
+        </key>
+        <key id="testEditableMultiline">
+            <label>Test always showing</label>
+        </key>
+        <key id="testExcludedMultiline">
+            <label>Test always showing</label>
+        </key>
+        <key id="testNestedSettings">
+            <label>Test nested settings</label>
+            <key id="testAlwaysShowing">
+                <label>Test nested always showing</label>
+            </key>
+            <key id="testEditable">
+                <label>Test nested editable</label>
+            </key>
+            <key id="testExcluded">
+                <label>Test nested excluded</label>
+            </key>
+            <key id="testMultiline">
+                <label>Test nested multi-line</label>
+            </key>
+        </key>
+    </declaration>
+    <editing>
+        <setting key="testAlwaysShowing" alwaysShowing="true" />
+        <setting key="testEditable" editable="false" />
+        <setting key="testExcluded" excluded="true" />
+        <setting key="testMultiline" multiline="true" />
+        <setting key="testAlwaysShowingEditable" alwaysShowing="true" editable="false" />
+        <setting key="testAlwaysShowingExcluded" alwaysShowing="true" excluded="true" />
+        <setting key="testAlwaysShowingMultiline" alwaysShowing="true" multiline="true" />
+        <setting key="testEditableExcluded" editable="false" excluded="true" />
+        <setting key="testEditableMultiline" editable="false" multiline="true" />
+        <setting key="testExcludedMultiline" excluded="true" multiline="true" />
+        <setting key="testNestedSettings">
+            <setting key="testAlwaysShowing" alwaysShowing="true" />
+            <setting key="testEditable" editable="false" />
+            <setting key="testExcluded" excluded="true" />
+            <setting key="testMultiline" multiline="true" />
+        </setting>
+        <acquisitionStage name="Acquisition stage">
+            <setting key="testAlwaysShowing" alwaysShowing="false" />
+            <setting key="testEditable" editable="true" />
+            <setting key="testExcluded" excluded="false" />
+            <setting key="testMultiline" multiline="false" />
+            <setting key="testAlwaysShowingEditable" alwaysShowing="false" editable="true" />
+            <setting key="testAlwaysShowingExcluded" alwaysShowing="false" excluded="false" />
+            <setting key="testAlwaysShowingMultiline" alwaysShowing="false" multiline="false" />
+            <setting key="testEditableExcluded" editable="true" excluded="false" />
+            <setting key="testEditableMultiline" editable="true" multiline="false" />
+            <setting key="testExcludedMultiline" excluded="false" multiline="false" />
+            <setting key="testNestedSettings">
+                <setting key="testAlwaysShowing" alwaysShowing="false" />
+                <setting key="testEditable" editable="true" />
+                <setting key="testExcluded" excluded="false" />
+                <setting key="testMultiline" multiline="false" />
+            </setting>
+        </acquisitionStage>
+    </editing>
+</ruleset>

@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <!--
+        'declaration' tag:
+            Declares the object classes of the divisions and keys.
+
+            - possible member tags, in order as mentioned:
+                    division            (repeatable, min. quantity: 1)
+                    key                 (optional, repeatable)
+
+        'correlation' tag:
+            Declares correlations between divisions and keys.
+
+            - possible member tag:
+                    restriction         (optional, repeatable)
+         
+        'editing' tag:
+            Describes how the program should behave when editing the data.
+
+            - possible member tags, in order as mentioned:
+                    compose             (optional, repeatable)
+                    setting             (optional, repeatable)
+                    acquisitionStage    (optional, repeatable)
+    -->
+    <declaration>
+        <!--
+            'division' tag:
+                Declares a subclass of mets:div.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        subdivisionByDate   (optional, not repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'subdivisionByDate' tag:
+                Determines how this division is broken down by date.
+                
+                - optional attribute 'yearBegin':
+                        Annual first day of the operating year, if the annual
+                        accounts do not coincide with the turn of the year.
+                        Format: Two hyphens, the month as a two-digit number,
+                                one hyphen, the day as a two-digit number.
+
+                - required member tag:
+                        division            (repeatable, min. quantity: 1)
+
+            'division' tag, as child of 'subdivisionByDate':
+                Declares a subclass of mets:div for temporal breakdown.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+
+                - required attribute 'dates':
+                        meta-data key containing the date value
+
+                - required attribute 'scheme':
+                        Formatting pattern for the date value. Either
+                        "yyyy/yyyy" to indicate a double year in conjunction
+                        with the attribute yearBegin, otherwise any formatting
+                        that is understood by Java’s date formatter.
+        -->
+        <division id="Graphics">
+            <label>Graphics</label>
+            <label lang="de">Graphik</label>
+        </division>
+        <division id="Portrait">
+            <label>Portrait</label>
+        </division>
+        <division id="Acknowledgment">
+            <label>Acknowledgment</label>
+            <label lang="de">Danksagung</label>
+        </division>
+        <division id="List">
+            <label>List of Works</label>
+            <label lang="de">Verzeichnis</label>
+        </division>
+        <division id="Article">
+            <label>Article</label>
+            <label lang="de">Zeitschriften-Artikel</label>
+        </division>
+        <division id="Periodical">
+            <label>periodical</label>
+            <label lang="de">Zeitschrift</label>
+        </division>
+        <division id="PeriodicalVolume">
+            <label>Periodical Volume</label>
+            <label lang="de">Zeitschriften-Band</label>
+        </division>
+        <division id="Figure">
+            <label>Figure</label>
+            <label lang="de">Abbildung</label>
+        </division>
+        <division id="Table">
+            <label>Table</label>
+            <label lang="de">Tabelle</label>
+        </division>
+        <division id="Map">
+            <label>Map</label>
+            <label lang="de">Karte</label>
+        </division>
+        <division id="Addendum">
+            <label>Addendum</label>
+            <label lang="de">Nachtrag</label>
+        </division>
+        <division id="Cover">
+            <label>Cover</label>
+            <label lang="de">Einband</label>
+        </division>
+        <division id="Remarks">
+            <label>Remarks</label>
+            <label lang="de">Anmerkungen</label>
+        </division>
+        <division id="ListOfMaps">
+            <label>List of maps</label>
+            <label lang="de">Kartenverzeichnis</label>
+        </division>
+        <division id="ListOfIllustrations">
+            <label>List of illustrations</label>
+            <label lang="de">Abbildungsverzeichnis</label>
+        </division>
+        <division id="ListOfTables">
+            <label>List of tables</label>
+            <label lang="de">Tabellenverzeichnis</label>
+        </division>
+        <division id="TableOfContents">
+            <label>Table of Contents</label>
+            <label lang="de">Inhaltsverzeichnis</label>
+        </division>
+        <division id="TableOfAbbreviations">
+            <label>Table of abbreviations</label>
+            <label lang="de">Abkürzungsverzeichnis</label>
+        </division>
+        <division id="IndexAuthor">
+            <label>index of authors</label>
+            <label lang="de">Autorenindex</label>
+        </division>
+        <division id="IndexPersons">
+            <label>person's index</label>
+            <label lang="de">Personenindex</label>
+        </division>
+        <division id="IndexLocation">
+            <label>location index</label>
+            <label lang="de">Ortsindex</label>
+        </division>
+        <division id="IndexSubject">
+            <label>subject index</label>
+            <label lang="de">Sachregister</label>
+        </division>
+        <division id="Notification">
+            <label>Notification</label>
+            <label lang="de">Mitteilung</label>
+        </division>
+        <division id="EditorialPage">
+            <label>Editorial Page</label>
+            <label lang="de">Redaktionelle Seite</label>
+        </division>
+        <division id="Review">
+            <label>Remarks</label>
+            <label lang="de">Rezension</label>
+        </division>
+        <division id="ReportLiterature">
+            <label/>
+            <label lang="de">Literaturbericht</label>
+        </division>
+ 
+        <!--
+            'key' tag:
+                Declare a subclass of kitodo:metadata or kitodo:metadataGroup.
+
+                - required attribute 'id':
+                        Internal name of the key. This should be a xsd:NMTOKEN
+                        (that is, do not include spaces).
+     
+                - optional attribute 'domain':
+                        location where to store entries with that key in the
+                        METS file. Defaults to 'description'. Possible values:
+
+                        description         saves the entry in the associated
+                                            dmdSec
+                        digitalProvenance   saves the entry in the associated
+                                            amdSec in the element digiprovMD
+                        rights              saves the entry in the associated
+                                            amdSec in the element rightsMD
+                        source              saves the entry in the associated
+                                            amdSec in the element sourceMD
+                        technical           saves the entry in the associated
+                                            amdSec in the element techMD
+                        mets:div            saves the entry in element div of
+                                            the METS structure
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        codomain            (optional, not repeatable)
+                        option              (optional, repeatable)
+                        pattern             (optional, not repeatable)
+                        preset              (optional, repeatable)
+                        key                 (optional, repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'codomain' tag:
+                Defines the codomain (value space) of the data type.
+                
+                - optional attribute 'type':
+                        Sets the XML Schema Datatype of which this key is a
+                        subclass (cf. https://www.w3.org/TR/xmlschema-2/ ).
+                        Defaults to 'string'. Possible values:
+
+                        anyURI              represents a Uniform Resource
+                                            Identifier Reference (URI)
+                        boolean             the mathematical concept of
+                                            binary-valued logic (*)
+                        date                a top-open interval of exactly one
+                                            day in length on the timeline,
+                                            beginning on the beginning moment
+                                            of the day 
+                        integer             the standard mathematical concept
+                                            of the integer numbers
+                        string              character strings
+                  (*) see also the explanation at the boolean example below
+
+                - optional attribute 'namespace':
+                        Specifies that the value is a URI and must be in the
+                        specified namespace.
+
+            'option' tag:
+                Specifies that the data type is an enumerated type and defines
+                the possible values of the enumeration type.
+
+                - required attribute 'value':
+                        A possible value of the enumeration type. This is a
+                        xsd:string (that is, it may include spaces).
+     
+                - optional member tag:
+                        label               Sets a human readable label for the
+                                            option. Labels for options are
+                                            optional. If absent, the value is
+                                            also used as a label. The label can
+                                            be repeated for multilingualism.
+
+            'pattern' tag:
+                Sets a regular expression to which the string representation of
+                the values must correspond.
+
+                - text content:
+                        the regular expression to which the string
+                        representation must correspond
+
+            'key' tag:
+                If present, declares the containing element to be a subclass of
+                kitodo:metadataGroup (otherwise the element is a subclass of
+                kitodo:metatadata). For attributes and member tags, the
+                definition given above applies, with the exception of the
+                domain, which can only be set on the very outer key tag and is
+                inherited by all sub-keys. A key that groups other keys should
+                not contain any other elements than key and preset. Keys can be
+                nested repeatedly.
+
+            'preset' tag:
+                Sets the pre-filled value when creating a new entry using this
+                key. A repetition of the element is only appropriate if it is
+                an enumerated type and its use allows multiple selections.
+
+                - optional attribute 'key':
+                        With grouped keys, the sub-key to which this preset
+                        should apply.
+
+                - optional member tag:
+                        preset              With multiple-grouped keys, the key
+                                            is set to a sub-key.
+
+                - text content:
+                        the value
+        -->
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>physical page number</label>
+            <label lang="de">physische Seitenzahl (Imagenummer)</label>
+        </key>
+        <key id="LABEL" domain="mets:div">
+            <label>logical page number</label>
+            <label lang="de">logische Seitenzahl (gedruckte Zeitenzahl)</label>
+        </key>
+        <key id="pagesize" domain="source">
+            <label>Format of book</label>
+            <label lang="de">Seitengröße / Format</label>
+        </key>
+        <key id="mediumsource" domain="source">
+            <label>Medium of source</label>
+            <label lang="de">Vorlagenform</label>
+        </key>
+        <key id="shelfmarkarchiveimageset" domain="digitalProvenance">
+            <label>Shelfmark of archive imageset</label>
+            <label lang="de">Signatur des Archivierungsimagesets</label>
+        </key>
+        <key id="imagedescr" domain="technical">
+            <label>Image description of tiff header</label>
+            <label lang="de">ImageDescription (TIFF-Header)</label>
+        </key>
+        <key id="datedigit" domain="digitalProvenance">
+            <label>Date digitalization</label>
+            <label lang="de">Datum Digitalisierung</label>
+            <codomain type="date"/>
+        </key>
+        <key id="pathimagefiles" domain="technical">
+            <label>Path of image data</label>
+            <label lang="de">Pfad der Imagedaten</label>
+        </key>
+        <key id="Sponsorship" domain="rights">
+            <label>Sponsorship</label>
+            <label lang="de">Digitalisierungspate</label>
+        </key>
+        <key id="ReportingYear" domain="source">
+            <label>reporting year</label>
+            <label lang="de">Berichtsjahr</label>
+        </key>
+        <key id="PublisherName" domain="source">
+            <label>publisher</label>
+            <label lang="de">Verleger/Verlag</label>
+        </key>
+        <key id="PlaceOfPublication" domain="source">
+            <label>place of publication</label>
+            <label lang="de">Erscheinungsort</label>
+        </key>
+        <key id="TitleDocSub1" domain="source">
+            <label>subtitle</label>
+            <label lang="de">UnterTitel</label>
+        </key>
+        <key id="TitleDocMain" domain="source">
+            <label>maint title</label>
+            <label lang="de">HauptTitel</label>
+        </key>
+        <key id="IdentifierRelatedWork">
+            <label>Identifier rel. work</label>
+            <label lang="de">Identifier Bezugswerk</label>
+        </key>
+        <key id="CurrentNoSorting" domain="technical">
+            <label>sorting number</label>
+            <label lang="de">BandNr-Sortierung</label>
+        </key>
+        <key id="CatalogIDSource" domain="source">
+            <label>PPN (of source)</label>
+            <label lang="de">PPN (Vorlage)</label>
+            <pattern>(?:PPN ?)?\d{3,10}-?[0-9Xx]</pattern>
+        </key>
+        <key id="TitleDocMainShort" domain="technical">
+            <label>main title (sorting)</label>
+            <label lang="de">Haupttitel (Sortierung)</label>
+        </key>
+        <key id="CatalogIDDigital">
+            <label>PPN</label>
+            <label lang="de">PPN (digital)</label>
+            <pattern>(?:PPN ?)?\d{3,10}-?[0-9Xx]</pattern>
+        </key>
+        <key id="ISSN" domain="source">
+            <label>ISSN</label>
+            <pattern>(ISSN )?\d{4}-\d{3}[0-9Xx]?</pattern>
+        </key>
+        <key id="CatalogIDSuccessorPeriodical" domain="technical">
+            <label>CatalogID successor</label>
+            <label lang="de">PPN Nachf.</label>
+        </key>
+        <key id="CatalogIDPredecessorPeriodical" domain="technical">
+            <label>CatalogID predecessor</label>
+            <label lang="de">PPN Vorg.</label>
+        </key>
+ 
+        <!-- the digital collections -->
+        <key id="singleDigCollection">
+            <label>Digital collection</label>
+            <label lang="de">Digitale Kollektion</label>
+            <option value="eins">
+                <label>Collection 1</label>
+            </option>
+            <option value="zwei">
+                <label>Collection 2</label>
+            </option>
+            <option value="drei">
+                <label>Collection 3</label>
+            </option>
+            <preset>eins</preset>
+        </key>
+ 
+        <key id="DocLanguage" domain="source">
+            <label>language</label>
+            <label lang="de">Sprache</label>
+        </key>
+        <key id="TitleDocParallel" domain="source">
+            <label>parallel title</label>
+            <label lang="de">ParallelSachtitel</label>
+        </key>
+        <key id="PublicationYear" domain="source">
+            <label>publication year</label>
+            <label lang="de">Erscheinungsjahr Band</label>
+            <codomain type="integer"/>
+            <pattern>\d{4}</pattern>
+        </key>
+        <key id="Copyright" domain="rights">
+            <label>Copyright</label>
+        </key>
+        <key id="CurrentNo" domain="source">
+            <label>Item number</label>
+            <label lang="de">BandHeft-NummerJahr</label>
+            <codomain type="integer"/>
+        </key>
+        <key id="PublicationRun" domain="source">
+            <label lang="de">Erscheinungsverlauf</label>
+        </key>
+        <key id="PublicationStart" domain="source">
+            <label>First year of publication</label>
+            <label lang="de">erstes Erscheinungsjahr</label>
+            <codomain type="integer"/>
+            <pattern>\d{4}</pattern>
+        </key>
+        <key id="PublicationEnd" domain="source">
+            <label>Last year of publication</label>
+            <label lang="de">letztes Erscheinungsjahr</label>
+            <codomain type="integer"/>
+            <pattern>\d{4}</pattern>
+        </key>
+        <key id="FormatSourcePrint" domain="source">
+            <label>Dimensions</label>
+            <label lang="de">Ausmaße/Dimension (Quelle)</label>
+        </key>
+        <key id="SizeSourcePrint" domain="source">
+            <label>size of source</label>
+            <label lang="de">Größe der Vorlage</label>
+        </key>
+        <key id="shelfmarksource" domain="source">
+            <label lang="de">Signatur der Quelle</label>
+        </key>
+        <key id="shelfmark">
+            <label lang="de">Signatur</label>
+        </key>
+        <key id="copyrightimageset" domain="rights">
+            <label>Copyright</label>
+            <label lang="de">copyright</label>
+        </key>
+        <key id="CreatorsAllOrigin" domain="source">
+            <label>all creators (original version)</label>
+            <label lang="de">Alle Autoren u. Beteiligte (orig.)</label>
+        </key>
+ 
+        <!-- persons as meta-data group -->
+        <key id="Person">
+            <key id="Role">
+                <label>role</label>
+                <label lang="de">Rolle</label>
+                <option value="Editor">
+                    <label>Editor</label>
+                    <label lang="de">Herausgeber</label>
+                </option>
+                <option value="Author">
+                    <label>Author</label>
+                    <label lang="de">Autor</label>
+                </option>
+                <option value="Honoree"/>
+                <option value="Artist">
+                    <label>Artist</label>
+                    <label lang="de">Künstler</label>
+                </option>
+                <option value="DepictedPerson">
+                    <label>DepictedPerson</label>
+                    <label lang="de">Dargestellte Person</label>
+                </option>
+                <option value="AuthorReviewedAct">
+                    <label>Verfasser des rezensierten Werks</label>
+                </option>
+            </key>
+            <key id="IdentifierURI">
+                <label>Identifier (URI)</label>
+                <label lang="de">GND-Nummer</label>
+                <codomain namespace="http://d-nb.info/gnd/"/>
+                <preset>http://d-nb.info/gnd/</preset>
+            </key>
+            <key id="FirstName">
+                <label>First name</label>
+                <label lang="de">Vorname</label>
+            </key>
+            <key id="LastName">
+                <label>Last name</label>
+                <label lang="de">Nachname</label>
+            </key>
+            <key id="DateOfDeath">
+                <label>Date of death</label>
+                <label lang="de">Sterbedatum</label>
+                <codomain type="date"/>
+            </key>
+        </key>
+ 
+        <key id="TSL_ATS">
+            <label>TSL/ATS</label>
+        </key>
+        <key id="_purl">
+            <label>PURL</label>
+        </key>
+        <key id="Citation">
+            <label>Citation</label>
+            <label lang="de">Vollständige Quelle</label>
+        </key>
+        <key id="Keyword">
+            <label>Keyword</label>
+            <label lang="de">Schlagwort</label>
+        </key>
+        <key id="ParallelCounter">
+            <label>Parallel Counter</label>
+            <label lang="de">Parallelzählung</label>
+        </key>
+        <key id="Link">
+            <label lang="de">Link zum rezensierten Werk</label>
+            <codomain type="anyURI"/>
+        </key>
+        <key id="ReviewedAct">
+            <label lang="de">rezensiertes Werk</label>
+        </key>
+        <key id="Owner">
+            <label>Owner</label>
+            <label lang="de">Besitzer</label>
+        </key>
+         
+        <!-- A meta-data type of yes/no type ("boolean")
+        
+        Yes/no is implemented here as follows: If the value is set to yes, the
+        value of the option is saved as an entry, if no, no entry is saved. The
+        label may be displayed on the input element, in this example something
+        like the following could appear in the list:
+        
+        Hinweistext:        [checkbox] Hinweistext einfügen
+        
+        If the checkbox is checked, the kitodo:metadata 'NotePreImport' with
+        the value 'Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der
+        Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenban-
+        des, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird
+        nachträglich erfolgen.' is written to the METS file. If you explicitly
+        want to save the value no, you must not use the codomain type boolean,
+        but create a enumeration type with two options, one for yes and one
+        for no. -->
+        <key id="NotePreImport" domain="rights">
+            <label>Hinweistext</label>
+            <codomain type="boolean"/>
+            <option value="Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenbandes, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird nachträglich erfolgen.">
+                <label>Hinweistext einfügen</label>
+            </option>
+        </key>
+ 
+        <!-- some enumeration types key -->
+        <key id="AccessLicenseGlobal" domain="rights">
+            <label>AccessLicenseGlobal</label>
+            <codomain/>
+            <option value="Gesamtabo">
+                <label>DigiZeitschriften Abo</label>
+            </option>
+            <option value="free">
+                <label>Open Access</label>
+            </option>
+            <option value="gesperrt">
+                <label>Gesperrt</label>
+            </option>
+        </key>
+        <key id="AccessLicensePublisher" domain="rights">
+            <label>AccessLicensePublisher</label>
+            <codomain/>
+            <option value="AbtHerwegenInstitutMariaLaach">
+                <label>Abt Herwegen Institut Maria Laach</label>
+            </option>
+            <option value="GAU">
+                <label>Altägypthisches Seminar GAU</label>
+            </option>
+            <option value="Alber"/>
+            <option value="ArchivfuerLiturgiewissenschaften">
+                <label>Archiv für Liturgiewissenschaften</label>
+            </option>
+            <option value="BayNM">
+                <label>Bayerisches Nationalmuseum</label>
+            </option>
+            <option value="Birkhäuser"/>
+            <option value="Böhlau"/>
+            <option value="BöhlauWien">
+                <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+            </option>
+            <option value="Buske"/>
+            <option value="Carl">
+                <label>Hans Carl Verlag</label>
+            </option>
+            <option value="DeutscherKunstverlag">
+                <label>Deutscher Kunstverlag</label>
+            </option>
+            <option value="editionsigma">
+                <label>edition sigma</label>
+            </option>
+            <option value="Finanzarchiv"/>
+            <option value="Fink"/>
+            <option value="GesellschaftfürErdkundeZuBerlin">
+                <label>Gesellschaft Für Erdkunde Zu Berlin</label>
+            </option>
+            <option value="GutenbergGesellschaft">
+                <label>Gutenberg Gesellschaft</label>
+            </option>
+            <option value="GutenbergJahrbuch">
+                <label>Gutenberg-Jahrbuch</label>
+            </option>
+            <option value="Harrassowitz"/>
+            <option value="Hirzel"/>
+            <option value="InstitutFürWeltwirtschaft">
+                <label>Institut Für Weltwirtschaft</label>
+            </option>
+            <option value="Juventa"/>
+            <option value="Kamp"/>
+            <option value="KlartextVerlag">
+                <label>Klartext-Verlag</label>
+            </option>
+            <option value="KGInstPUM">
+                <label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+            </option>
+            <option value="Klostermann"/>
+            <option value="Liber"/>
+            <option value="LuciusLucius">
+                <label>Lucius &amp;Lucius</label>
+            </option>
+            <option value="Mann">
+                <label>Gebr. Mann Verlag</label>
+            </option>
+            <option value="Meiner"/>
+            <option value="Metzler"/>
+            <option value="MGH">
+                <label>Monumenta Germaniae Historica</label>
+            </option>
+            <option value="MohrSiebeck">
+                <label>Mohr Siebeck</label>
+            </option>
+            <option value="Niemeyer"/>
+            <option value="Oldenbourg">
+                <label>Oldenbourg Verlag</label>
+            </option>
+            <option value="Saur"/>
+            <option value="SchäfferPoeschelMetzler">
+                <label>Schäffer-Poeschel, Metzler</label>
+            </option>
+            <option value="Schott"/>
+            <option value="Springer"/>
+            <option value="StatistischesBundesamtWiesbaden">
+                <label>Statistisches Bundesamt Wiesbaden</label>
+            </option>
+            <option value="Steiner"/>
+            <option value="VandenhoeckRuprecht">
+                <label>Vandenhoeck &amp; Ruprecht</label>
+            </option>
+            <option value="VSeV">
+                <label>Verband Sonderpädagogik e.V.</label>
+            </option>
+            <option value="Winter"/>
+        </key>
+        <key id="AccessLicenseMainCollection" domain="rights">
+            <label>AccessLicenseGlobal</label>
+            <codomain/>
+            <option value="Egyptology">
+                <label>Aegyptologie und Koptologie</label>
+            </option>
+            <option value="Anglistik"/>
+            <option value="Librarianship">
+                <label>Buch- / Bibliothekswesen</label>
+            </option>
+            <option value="Education">
+                <label>Erziehungswissenschaften</label>
+            </option>
+            <option value="Geology">
+                <label>Geowissenschaften</label>
+            </option>
+            <option value="Germanistik"/>
+            <option value="History">
+                <label>Geschichte</label>
+            </option>
+            <option value="Jewish Studies">
+                <label>Judaistik</label>
+            </option>
+            <option value="Arts">
+                <label>Kunst</label>
+            </option>
+            <option value="Mathematics">
+                <label>Mathematik</label>
+            </option>
+            <option value="Musicology">
+                <label>Musikwissenschaft</label>
+            </option>
+            <option value="Sciences">
+                <label>Naturwissenschaften</label>
+            </option>
+            <option value="Orientalistik"/>
+            <option value="Philology">
+                <label>Philologie</label>
+            </option>
+            <option value="Philosophy">
+                <label>Philosophie</label>
+            </option>
+            <option value="Law">
+                <label>Rechtswissenschaften</label>
+            </option>
+            <option value="Religion"/>
+            <option value="Romanistik"/>
+            <option value="Sociology">
+                <label>Soziologie</label>
+            </option>
+            <option value="History of Technology">
+                <label>Technikgeschichte</label>
+            </option>
+            <option value="Economics">
+                <label>Wirtschaftswissenschaften</label>
+            </option>
+        </key>
+    </declaration>
+
+    <correlation>
+        <!--
+            'restriction' tag:
+                Defines restrictions within grouped keys or in the interaction
+                of divisions and keys.
+
+                - attribute 'division':
+                        Name of the division for which restrictions are to be
+                        set.
+
+                - attribute 'key':
+                        Name of the grouped key for which restrictions are to
+                        be set. 
+
+                Exactly one of the two attributes key or division must be
+                specified (either ... or).
+
+                - optional attribute 'unspecified':
+                        what should apply to divisions, keys and options that
+                        are not mentioned within the rule. Defaults to
+                        'unrestricted'. Possible values:
+
+                        unrestricted        there are no further restrictions
+
+                        forbidden           the item is not allowed
+
+                - required member tag:
+                        permit              (repeatable, min. quantity: 1)
+
+            'permit' tag:
+                Defines what is allowed.
+
+                - attribute 'division':
+                        name of the allowed division
+
+                - attribute 'key':
+                        name of the allowed key
+
+                - attribute 'value':
+                        allowed value of an enumeration type
+
+                Exactly one of the three attributes division, key or value must
+                be specified (either ... or).
+
+                - optional attribute 'minOccurs':
+                        a minimum number of this item is required
+
+                - optional attribute 'maxOccurs':
+                        a maximum number of this item is required
+
+                - optional attribute 'unspecified':
+                        What should apply to divisions, keys, and options below
+                        this key that are not mentioned within the permit tag
+                        (for grouped keys). Defaults to 'unrestricted'. Possible
+                        values as above.
+
+                - optional member tag:      
+                        permit              (optional, repeatable)
+        -->
+        <!-- Restrictions on grouped keys -->
+        <restriction key="Person">
+            <permit key="Role" minOccurs="1" maxOccurs="1"/>
+            <permit key="LastName" minOccurs="1"/>
+            <permit key="DateOfDeath" maxOccurs="1"/>
+        </restriction>
+ 
+        <!-- Restrictions on structural elements -->
+        <restriction division="Graphics" unspecified="forbidden">
+            <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="shelfmarksource" maxOccurs="1"/>
+            <permit key="CatalogIDSource" maxOccurs="1"/>
+            <permit key="singleDigCollection"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Artist"/>
+                    <permit value="Author"/>
+                    <permit value="DepictedPerson"/>
+                </permit>
+            </permit>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="PublisherName"/>
+            <permit key="PlaceOfPublication"/>
+            <permit key="Owner" maxOccurs="1"/>
+            <permit key="shelfmark" maxOccurs="1"/>
+            <permit key="SizeSourcePrint" maxOccurs="1"/>
+            <permit key="FormatSourcePrint" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Portrait" unspecified="forbidden">
+            <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="shelfmarksource" maxOccurs="1"/>
+            <permit key="CatalogIDSource" maxOccurs="1"/>
+            <permit key="singleDigCollection"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Artist"/>
+                    <permit value="Author"/>
+                    <permit value="DepictedPerson"/>
+                </permit>
+            </permit>
+            <permit key="PublicationYear"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="PlaceOfPublication" minOccurs="1"/>
+            <permit key="Owner" maxOccurs="1"/>
+            <permit key="shelfmark" minOccurs="1"/>
+            <permit key="SizeSourcePrint" maxOccurs="1"/>
+            <permit key="FormatSourcePrint" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Acknowledgment" unspecified="forbidden">
+            <permit division="OtherDocStrct"/>
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+        </restriction>
+        <restriction division="List" unspecified="forbidden">
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                    <permit value="Editor"/>
+                </permit>
+            </permit>
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+            <permit key="TitleDocSub1"/>
+            <permit key="TitleDocParallel"/>
+            <permit key="DocLanguage"/>
+        </restriction>
+        <restriction division="Article" unspecified="forbidden">
+            <permit division="Acknowledgment"/>
+            <permit division="Appendix"/>
+            <permit division="Bibliography"/>
+            <permit division="Chapter"/>
+            <permit division="Errata"/>
+            <permit division="Epilogue"/>
+            <permit division="Figure"/>
+            <permit division="Index"/>
+            <permit division="TitlePage"/>
+            <permit division="TableOfContents"/>
+            <permit division="Preface"/>
+            <permit division="ListOfIllustrations"/>
+            <permit division="ListOfMaps"/>
+            <permit division="ListOfTables"/>
+            <permit division="Remarks"/>
+            <permit division="Table"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+            <permit key="Citation"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="CatalogIDDigital" maxOccurs="1"/>
+            <permit key="_purl" maxOccurs="1"/>
+            <permit key="DocLanguage"/>
+            <permit key="Copyright" maxOccurs="1"/>
+            <permit key="TitleDocParallel" maxOccurs="1"/>
+            <permit key="Keyword"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                    <permit value="Editor"/>
+                </permit>
+            </permit>
+            <permit key="CatalogIDSource" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Periodical" unspecified="forbidden">
+            <permit division="PeriodicalVolume"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="CatalogIDDigital" maxOccurs="1"/>
+            <permit key="PublicationRun"/>
+            <permit key="_purl" maxOccurs="1"/>
+            <permit key="TSL_ATS" minOccurs="1"/>
+            <permit key="DocLanguage"/>
+            <permit key="Copyright"/>
+            <permit key="TitleDocParallel" maxOccurs="1"/>
+            <permit key="PlaceOfPublication"/>
+            <permit key="singleDigCollection"/>
+            <permit key="ISSN"/>
+            <permit key="CatalogIDPredecessorPeriodical"/>
+            <permit key="CatalogIDSuccessorPeriodical"/>
+            <permit key="Owner" maxOccurs="1"/>
+            <permit key="shelfmark" maxOccurs="1"/>
+            <permit key="PublisherName"/>
+        </restriction>
+        <restriction division="PeriodicalVolume" unspecified="forbidden">
+            <permit division="Addendum"/>
+            <permit division="Advertising"/>
+            <permit division="Appendix"/>
+            <permit division="Article"/>
+            <permit division="Bibliography"/>
+            <permit division="Chapter"/>
+            <permit division="Cover"/>
+            <permit division="Dedication"/>
+            <permit division="EditorialPage"/>
+            <permit division="Errata"/>
+            <permit division="Figure"/>
+            <permit division="Imprint"/>
+            <permit division="Introduction"/>
+            <permit division="Index"/>
+            <permit division="List"/>
+            <permit division="Map"/>
+            <permit division="Notification"/>
+            <permit division="OtherDocStrct"/>
+            <permit division="PeriodicalIssue"/>
+            <permit division="PeriodicalPart"/>
+            <permit division="Preface"/>
+            <permit division="Prepage"/>
+            <permit division="Remarks"/>
+            <permit division="Review"/>
+            <permit division="ReportLiterature"/>
+            <permit division="Supplement"/>
+            <permit division="Table"/>
+            <permit division="TableOfAbbreviations"/>
+            <permit division="TableOfContents"/>
+            <permit division="TitlePage"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+            <permit key="CatalogIDDigital" minOccurs="1" maxOccurs="1"/>
+            <permit key="CurrentNo" maxOccurs="1"/>
+            <permit key="CurrentNoSorting" maxOccurs="1"/>
+            <permit key="DocLanguage" maxOccurs="1"/>
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="Owner" maxOccurs="1"/>
+            <permit key="shelfmark" maxOccurs="1"/>
+            <permit key="CatalogIDSource"/>
+            <permit key="CreatorsAllOrigin" maxOccurs="1"/>
+            <permit key="Editor" maxOccurs="1"/>
+            <permit key="FormatSourcePrint"/>
+            <permit key="PlaceOfPublication" maxOccurs="1"/>
+            <permit key="PublicationYear" maxOccurs="1"/>
+            <permit key="PublisherName" maxOccurs="1"/>
+            <permit key="SizeSourcePrint" maxOccurs="1"/>
+            <permit key="Sponsorship" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="TSL_ATS" maxOccurs="1"/>
+            <permit key="shelfmarksource" maxOccurs="1"/>
+            <permit key="singleDigCollection"/>
+            <permit key="_purl" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Figure" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+        </restriction>
+        <restriction division="Table" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+        </restriction>
+        <restriction division="Map" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+        </restriction>
+        <restriction division="Addendum" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+            <permit key="PublicationYear" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Cover" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+        </restriction>
+        <restriction division="Remarks" unspecified="forbidden">
+            <permit division="Chapter"/>
+            <permit division="Figure"/>
+            <permit division="OtherDocStrct"/>
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+        </restriction>
+        <restriction division="ListOfMaps" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+        </restriction>
+        <restriction division="ListOfIllustrations" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+        </restriction>
+        <restriction division="ListOfTables" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+        </restriction>
+        <restriction division="TableOfContents" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocMainShort" maxOccurs="1"/>
+        </restriction>
+        <restriction division="TableOfAbbreviations" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="TitleDocSub1" maxOccurs="1"/>
+        </restriction>
+        <restriction division="IndexAuthor" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit division="OtherDocStrct"/>
+        </restriction>
+        <restriction division="IndexPersons" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit division="OtherDocStrct"/>
+        </restriction>
+        <restriction division="IndexLocation" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit division="OtherDocStrct"/>
+        </restriction>
+        <restriction division="IndexSubject" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit division="OtherDocStrct"/>
+        </restriction>
+        <restriction division="Notification" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="DocLanguage" maxOccurs="1"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+            <permit key="CatalogIDSource"/>
+            <permit key="Keyword"/>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="AuthorReviewedAct"/>
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+            <permit key="Person">
+                <permit key="Role" unspecified="forbidden">
+                    <permit value="Author"/>
+                </permit>
+            </permit>
+        </restriction>
+        <restriction division="EditorialPage" unspecified="forbidden">
+            <permit key="TitleDocMain"/>
+        </restriction>
+        <restriction division="Review" unspecified="forbidden">
+            <permit key="TitleDocMain" maxOccurs="1"/>
+            <permit key="DocLanguage" maxOccurs="1"/>
+            <permit key="Link"/>
+            <permit key="ReviewedAct"/>
+            <permit key="TitleDocParallel"/>
+        </restriction>
+        <restriction division="IndexSubject" unspecified="forbidden">
+            <permit division="Remarks"/>
+            <permit division="Review"/>
+            <permit key="TitleDocMain" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+    </correlation>
+    <editing>
+        <!--
+            'setting' tag:
+                Sets display preferences for meta-data keys.
+
+                - required attribute 'key':
+                        meta-data key whose display properties you want to 
+                        configure
+
+                - optional attribute 'alwaysShowing':
+                        If true, a form field for this meta-data key is always 
+                        displayed by default. By default, no empty form fields
+                        are displayed, but must first be selected from a list
+                        and added to the display. Defaults to false.
+
+                - optional attribute 'editable':
+                        If false, this meta-data key is displayed if a value
+                        has been entered, but the value cannot be changed,
+                        deleted, and no other entry can be created using this
+                        key. Defaults to true.
+                        This setting is intended to write-protect individual
+                        keys. If the entire document is to be displayed as
+                        immutable, the meta-data editor should be started in
+                        read-only mode instead.
+
+                - optional attribute 'excluded':
+                        If true, this metadata key will not be displayed,
+                        even if a value has been entered for it. This implies
+                        that no entry can be created with this key. Defaults
+                        to false.
+
+                - optional attribute 'multiline':
+                        If true, a multi-line input field is displayed for this
+                        meta-data key. For enumerated types, a multi-line
+                        selection list is displayed, otherwise a multi-line
+                        text field.
+
+                - optional member tag:
+                        setting             (optional, repeatable)
+                                            To define settings on sub-keys of
+                                            grouped keys.
+
+                At least one of the optional attributes should be assigned or
+                at least one child setting tag should be present.
+        -->
+        <!-- Some meta-data keys for which fields should be displayed by
+             default -->
+        <setting key="singleDigCollection" alwaysShowing="true"/>
+        <setting key="Person" alwaysShowing="true"/>
+        <setting key="TitleDocMain" alwaysShowing="true"/>
+        <setting key="TitleDocMainShort" alwaysShowing="true"/>
+        <setting key="TitleDocSub1" alwaysShowing="true"/>
+        <setting key="TitleDocParallel" alwaysShowing="true"/>
+        <setting key="PublisherName" alwaysShowing="true"/>
+        <setting key="PlaceOfPublication" alwaysShowing="true"/>
+        <setting key="DocLanguage" alwaysShowing="true"/>
+        <setting key="shelfmark" alwaysShowing="true"/>
+        <setting key="CurrentNo" alwaysShowing="true"/>
+        <setting key="CurrentNoSorting" alwaysShowing="true"/>
+        <setting key="CatalogIDPredecessorPeriodical" alwaysShowing="true"/>
+        <setting key="CatalogIDSuccessorPeriodical" alwaysShowing="true"/>
+        <setting key="Owner" alwaysShowing="true"/>
+        <setting key="ReviewedAct" alwaysShowing="true"/>
+ 
+        <!-- Use of acquisition stages -->
+        <setting key="ScanningInformation" excluded="true" multiline="true"/>
+        <!--
+            'acquisitionStage' tag:
+                Defines settings for the editor that only apply at a certain
+                stage of the acquisition process.
+
+                - required attribute 'name':
+                        acquisition stage name (configured in step)
+
+                - required member tag:
+                        setting             (repeatable, min. quantity: 1)
+
+                The settings for the acquisition level are merged with the
+                general settings. The specific settings of the acquisition
+                level apply before the general settings, otherwise the default
+                value applies.
+        -->
+        <acquisitionStage name="Scanning">
+            <setting key="ScanningInformation" excluded="false"/>
+        </acquisitionStage>
+        <acquisitionStage name="Quality control">
+            <setting key="ScanningInformation" editable="false" excluded="false"/>
+        </acquisitionStage>
+    </editing>
+</ruleset>

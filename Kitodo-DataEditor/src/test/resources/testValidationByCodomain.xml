@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="default">
+            <label>Default</label>
+        </key>
+        <key id="defaultOpt">
+            <label>Default</label>
+            <option value="val1"/>
+            <option value="val2"/>
+            <option value="val3"/>
+        </key>
+        <key id="anyUri">
+            <label>Any URI</label>
+            <codomain type="anyURI"/>
+        </key>
+        <key id="boolean">
+            <label>Boolean</label>
+            <codomain type="boolean"/>
+            <option value="on"/>
+        </key>
+        <key id="date">
+            <label>Date</label>
+            <codomain type="date"/>
+        </key>
+        <key id="integer">
+            <label>Integer</label>
+            <codomain type="integer"/>
+        </key>
+        <key id="namespaceDefault">
+            <label>Namespace default, external</label>
+            <codomain namespace="http://test.example/testValidation/"/>
+        </key>
+        <key id="namespaceString">
+            <label>Namespace string</label>
+            <codomain type="string" namespace="http://test.example/testValidation/"/>
+        </key>
+        <key id="namespaceDefaultOpt">
+            <label>Namespace default with options</label>
+            <codomain namespace="http://test.example/testValidation/"/>
+            <option value="http://test.example/testValidation/value1"/>
+            <option value="http://test.example/testValidation/value2"/>
+            <option value="http://test.example/testValidation/value3"/>
+        </key>
+        <key id="namespaceStringOpt">
+            <label>Namespace string with options</label>
+            <codomain type="string" namespace="http://test.example/testValidation/"/>
+            <option value="http://test.example/testValidation/value1"/>
+            <option value="http://test.example/testValidation/value2"/>
+            <option value="http://test.example/testValidation/value3"/>
+        </key>
+        <key id="namespaceDefaultExternal">
+            <label>Namespace default external</label>
+            <codomain namespace="http://test.example/testValidationByCodomainNamespace"/>
+        </key>
+        <key id="namespaceStringExternal">
+            <label>Namespace string external</label>
+            <codomain type="string" namespace="http://test.example/testValidationByCodomainNamespace#"/>
+        </key>
+    </declaration>
+</ruleset>

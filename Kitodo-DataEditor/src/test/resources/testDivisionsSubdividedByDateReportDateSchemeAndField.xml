@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="playtime">
+            <label>Playtime ‹complete edition›</label>
+            <subdivisionByDate yearBegin="--08-01">
+                <division id="playtimeYear" dates="ORDERLABEL" scheme="yyyy/yyyy">
+                    <label>Year’s issues ‹playtime›</label>
+                </division>
+                <division id="playtimeMonth" dates="ORDERLABEL" scheme="yyyy-MM">
+                    <label>Month’s issues ‹playtime›</label>
+                </division>
+                <division id="playtimeDay" dates="ORDERLABEL" scheme="yyyy-MM-dd">
+                    <label>Day’s issues ‹playtime›</label>
+                </division>
+            </subdivisionByDate>
+        </division>
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>METS order label</label>
+        </key>
+    </declaration>
+</ruleset>

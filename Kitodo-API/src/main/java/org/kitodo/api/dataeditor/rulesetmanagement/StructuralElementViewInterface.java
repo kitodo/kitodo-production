@@ -12,6 +12,7 @@
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Provides an interface for the division view service. The division view
@@ -26,4 +27,13 @@ public interface StructuralElementViewInterface extends ComplexMetadataViewInter
      * @return which child types are allowed, as map from IDs to labels
      */
     Map<String, String> getAllowedSubstructuralElements();
+
+    /**
+     * Returns view on the meta-data key that is used to store on which date the
+     * division dates, if any.
+     * 
+     * @return a view on the key that stores on which date the division dates,
+     *         if any
+     */
+    Optional<DatesSimpleMetadataViewInterface> getDatesSimpleMetadata();
 }

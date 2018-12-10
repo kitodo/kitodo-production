@@ -56,7 +56,8 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      * @return the default value
      */
     default String getDefaultValue() {
-        return getDefaultItems().iterator().next();
+        Collection<String> defaultItems = getDefaultItems();
+        return defaultItems.isEmpty() ? "" : defaultItems.iterator().next();
     }
 
     /**

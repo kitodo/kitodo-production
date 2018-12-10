@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="description" domain="description">
+            <label>Description</label>
+        </key>
+        <key id="digitalProvenance" domain="digitalProvenance">
+            <label>Digital provenance</label>
+        </key>
+        <key id="noDomainSpecified">
+            <label>No domain specified</label>
+        </key>
+        <key id="rights" domain="rights">
+            <label>Rights</label>
+        </key>
+        <key id="source" domain="source">
+            <label>Source</label>
+        </key>
+        <key id="technical" domain="technical">
+            <label>Technical</label>
+        </key>
+        <key id="metsDiv" domain="mets:div">
+            <label>METS div</label>
+        </key>
+    </declaration>
+</ruleset>

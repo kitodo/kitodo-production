@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <key id="mandatoryMultiLineSingleSelection">
+            <label>Mandatory multi-line single selection</label>
+            <option value="dan">
+                <label>Danish</label>
+                <label lang="de">Dänisch</label>
+            </option>
+            <option value="dut">
+                <label>Dutch</label>
+                <label lang="de">Niederländisch</label>
+            </option>
+            <option value="eng">
+                <label>English</label>
+                <label lang="de">Englisch</label>
+            </option>
+            <option value="fre">
+                <label>French</label>
+                <label lang="de">Französisch</label>
+            </option>
+            <option value="ger">
+                <label>German</label>
+                <label lang="de">Deutsch</label>
+            </option>
+        </key>
+        <key id="mandatoryOneLineSingleSelection">
+            <label>Mandatory one-line single selection</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+        <key id="mandatoryMultipleSelection">
+            <label>Multiple selection</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+        <key id="optionalMultipleSelection">
+            <label>Multiple selection</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+        <key id="optionalMultiLineSingleSelection">
+            <label>Optional multi-line single selection</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+        <key id="optionalOneLineSingleSelection">
+            <label>Optional one-line single selection</label>
+            <option value="opt1"/>
+            <option value="opt2"/>
+            <option value="opt3"/>
+        </key>
+    </declaration>
+    <correlation>
+        <restriction division="book">
+            <permit key="mandatoryMultiLineSingleSelection" minOccurs="1" maxOccurs="1"/>
+            <permit key="mandatoryOneLineSingleSelection" minOccurs="1" maxOccurs="1"/>
+            <permit key="mandatoryMultipleSelection" minOccurs="1"/>
+            <permit key="optionalMultiLineSingleSelection" maxOccurs="1"/>
+            <permit key="optionalOneLineSingleSelection" maxOccurs="1"/>
+        </restriction>
+    </correlation>
+    <editing>
+        <setting key="mandatoryMultiLineSingleSelection" multiline="true"/>
+        <setting key="optionalMultiLineSingleSelection" multiline="true"/>
+    </editing>
+</ruleset>

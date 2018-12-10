@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset>
+    <declaration>
+        <division id="phonographicRecord">
+            <label>Record</label>
+        </division>
+        <division id="article">
+            <label>Article</label>
+        </division>
+        <division id="book">
+            <label>Book</label>
+        </division>
+        <division id="cassette">
+            <label>Cassette</label>
+        </division>
+        <division id="chalcography">
+            <label>Chalcography</label>
+        </division>
+        <division id="cd">
+            <label>CD</label>
+        </division>
+        <division id="serial">
+            <label>Serial publication</label>
+        </division>
+        <division id="colorChart">
+            <label>Color chart</label>
+        </division>
+        <division id="frontCover">
+            <label>Front cover</label>
+        </division>
+        <division id="side">
+            <label>Side</label>
+        </division>
+        <division id="box">
+            <label>Box</label>
+        </division>
+        <division id="videoTape">
+            <label>Video tape</label>
+        </division>
+        <division id="multiVolume">
+            <label>Multi-volume work</label>
+        </division>
+        <division id="gramophoneRecord">
+            <label>Gramophone record</label>
+        </division>
+        <division id="pianoRoll">
+            <label>Piano roll</label>
+        </division>
+        <division id="dvd">
+            <label>DVD</label>
+        </division>
+        <division id="wireRecording">
+            <label>Wire recording</label>
+        </division>
+        <division id="film">
+            <label>Motion picture film</label>
+        </division>
+    </declaration>
+    <correlation>
+        <restriction division="box">
+            <permit division="phonographicRecord"/>
+            <permit division="cassette"/>
+            <permit division="cd"/>
+            <permit division="gramophoneRecord"/>
+            <permit division="pianoRoll"/>
+        </restriction>
+    </correlation>
+</ruleset>
