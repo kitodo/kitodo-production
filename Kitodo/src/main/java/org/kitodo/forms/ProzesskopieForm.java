@@ -44,6 +44,9 @@ import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
@@ -56,7 +59,6 @@ import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
@@ -81,11 +83,14 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.helper.UghHelper;
 import org.kitodo.helper.WikiFieldHelper;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.dataformat.MetsService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.context.RequestContext;
 
@@ -103,6 +108,7 @@ public class ProzesskopieForm implements Serializable {
     private static final String BOUND_BOOK = "boundbook";
     private static final String FIRST_CHILD = "firstchild";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
+    private transient MetsService metsService = ServiceManager.getMetsService();
 
     private int activeTabId = 0;
 
@@ -1091,68 +1097,55 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Create new file format.
+     * Creates a new file format. When a new process is created, an empty METS
+     * file must be created for it.
      */
     public void createNewFileformat() {
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        RulesetManagementInterface ruleset = ((LegacyPrefsHelper) ServiceManager.getRulesetService()
+                .getPreferences(this.prozessKopie.getRuleset())).getRuleset();
         try {
-            DigitalDocumentInterface dd = UghImplementation.INSTANCE.createDigitalDocument();
-            FileformatInterface ff = UghImplementation.INSTANCE.createXStream(myPrefs);
-            ff.setDigitalDocument(dd);
-            // add BoundBook
-            DocStructTypeInterface dst = myPrefs.getDocStrctTypeByName("BoundBook");
-            DocStructInterface dsBoundBook = dd.createDocStruct(dst);
-            dd.setPhysicalDocStruct(dsBoundBook);
-
+            MetsXmlElementAccessInterface workpiece = metsService.createMets();
+            DivXmlElementAccessInterface structure = workpiece.getStructMap();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
-
             if (configOpacDoctype != null) {
-                // Monographie
+                // monograph
                 if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
-                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName(configOpacDoctype.getRulesetType());
-                    DocStructInterface ds = dd.createDocStruct(dsty);
-                    dd.setLogicalDocStruct(ds);
-                    this.rdf = ff;
+                    workpiece.getStructMap().setType(configOpacDoctype.getRulesetType());
+                    this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isPeriodical()) {
-                    // Zeitschrift
-                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("Periodical");
-                    DocStructInterface ds = dd.createDocStruct(dsty);
-                    dd.setLogicalDocStruct(ds);
-
-                    DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
-                    DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
-                    ds.addChild(dsvolume);
-                    this.rdf = ff;
+                    // journal
+                    structure.setType("Periodical");
+                    addChild(structure, "PeriodicalVolume");
+                    this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isMultiVolume()) {
-                    // MultivolumeBand
-                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
-                    DocStructInterface ds = dd.createDocStruct(dsty);
-                    dd.setLogicalDocStruct(ds);
-
-                    DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
-                    DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
-                    ds.addChild(dsvolume);
-                    this.rdf = ff;
+                    // volume of a multi-volume publication
+                    structure.setType("MultiVolumeWork");
+                    addChild(structure, "Volume");
+                    this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 }
-            } else {
-                // TODO: what should happen if configOpacDoctype is null?
             }
-
             if (this.docType.equals("volumerun")) {
-                DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
-                DocStructInterface ds = dd.createDocStruct(dsty);
-                dd.setLogicalDocStruct(ds);
-
-                DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Record");
-                DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
-                ds.addChild(dsvolume);
-                this.rdf = ff;
+                structure.setType("VolumeRun");
+                addChild(structure, "Record");
+                this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
             }
-        } catch (TypeNotAllowedAsChildException | PreferencesException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
+    }
+
+    /**
+     * Adds a child node to a part of the logical structure tree.
+     * 
+     * @param structure
+     *            tree to add to
+     * @param type
+     *            type of child to create
+     */
+    private void addChild(DivXmlElementAccessInterface structure, String type) {
+        DivXmlElementAccessInterface volume = metsService.createDiv();
+        volume.setType(type);
+        structure.getChildren().add(volume);
     }
 
     private void addProperties() {
