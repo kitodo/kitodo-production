@@ -184,45 +184,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    List<Double> getAverage(String query, Map<String, Object> parameters) {
-        try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
-            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-                q.setParameter(parameter.getKey(), parameter.getValue());
-            }
-            List<Double> result = q.list();
-            if (Objects.isNull(result)) {
-                result = new ArrayList<>();
-            }
-            return result;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    List<Long> getCount(String query, Map<String, Object> parameters) {
-        return getLongList(query, parameters);
-    }
-
-    List<Long> getSum(String query, Map<String, Object> parameters) {
-        return getLongList(query, parameters);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Long> getLongList(String query, Map<String, Object> parameters) {
-        try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
-            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-                q.setParameter(parameter.getKey(), parameter.getValue());
-            }
-            List<Long> result = q.list();
-            if (Objects.isNull(result)) {
-                result = new ArrayList<>();
-            }
-            return result;
-        }
-    }
-
     /**
      * Count all rows in database.
      *
