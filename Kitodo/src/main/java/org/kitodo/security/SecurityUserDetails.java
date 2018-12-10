@@ -39,16 +39,18 @@ public class SecurityUserDetails extends User implements UserDetails {
      * The client which was selected by user after login.
      */
     private Client sessionClient;
+    private User user;
 
     private transient ServiceManager serviceManager = new ServiceManager();
 
     public SecurityUserDetails(final User user) {
         super(user);
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<Role> roles = super.getRoles();
+        List<Role> roles = this.user.getRoles();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
         for (Role role : roles) {

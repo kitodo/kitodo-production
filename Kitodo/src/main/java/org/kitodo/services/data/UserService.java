@@ -279,10 +279,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     /**
      * Get the current authenticated user as User bean.
      *
-     * @return the User object or null if no user is authenticated.
+     * @return the User object
      */
-    public User getCurrentUser() throws DAOException {
-        return getById(getAuthenticatedUser().getId());
+    public User getCurrentUser() {
+        return new User(getAuthenticatedUser());
     }
 
     /**

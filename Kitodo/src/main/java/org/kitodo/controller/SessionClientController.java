@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -36,7 +37,7 @@ public class SessionClientController {
      * Gets the name of the current session client. In case that no session client
      * has been set, an empty string is returned and a dialog to select a client is
      * shown.
-     * 
+     *
      * @return The current session clients name or empty string case that no session
      *         client has been set.
      */
@@ -102,7 +103,7 @@ public class SessionClientController {
 
     /**
      * Checks if clients are available for current user.
-     * 
+     *
      * @return true if if clients are available for current user.
      */
     public boolean areClientsAvailableForUser() {
@@ -130,7 +131,7 @@ public class SessionClientController {
 
     /**
      * Sets the given client object as new session client.
-     * 
+     *
      * @param sessionClient
      *            The client object that is to be the new session client.
      */
@@ -144,9 +145,10 @@ public class SessionClientController {
      *
      * @return The list of clients.
      */
-    public List<Client> getAvailableClientsOfCurrentUser() {
-        List<Client> clients = serviceManager.getUserService().getAuthenticatedUser().getClients();
-        for (Project project : serviceManager.getUserService().getAuthenticatedUser().getProjects()) {
+    public List<Client> getAvailableClientsOfCurrentUser()  {
+        User currentUser = serviceManager.getUserService().getCurrentUser();
+        List<Client> clients = currentUser.getClients();
+        for (Project project : currentUser.getProjects()) {
             if (!clients.contains(project.getClient())) {
                 clients.add(project.getClient());
             }
