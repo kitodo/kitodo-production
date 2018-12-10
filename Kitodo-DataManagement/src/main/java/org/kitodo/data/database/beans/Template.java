@@ -211,25 +211,25 @@ public class Template extends BaseTemplateBean {
 
     /**
      * Determines whether or not two processes are equal. Two instances of
-     * {@code Process} are equal if the values of their {@code Id}, {@code Title},
-     * {@code OutputName} and {@code CreationDate} member fields are the same.
+     * {@code Template} are equal if the values of their {@code Id} member fields are the same.
      *
-     * @param o
-     *            An object to be compared with this {@code Process}.
+     * @param object
+     *            An object to be compared with this {@code Template}.
      * @return {@code true} if the object to be compared is an instance of
-     *         {@code Process} and has the same values; {@code false} otherwise.
+     *         {@code Template} and has the same values; {@code false} otherwise.
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Template) {
+            Template template = (Template) object;
+            return Objects.equals(this.getId(), template.getId());
         }
-        Process process = (Process) o;
-        return Objects.equals(getTitle(), process.getTitle()) && Objects.equals(getId(), process.getId())
-                && Objects.equals(getCreationDate(), process.getCreationDate());
+
+        return false;
     }
 
     @Override

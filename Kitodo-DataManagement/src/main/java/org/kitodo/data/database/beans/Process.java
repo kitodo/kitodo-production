@@ -408,28 +408,28 @@ public class Process extends BaseTemplateBean {
      * {@code Process} are equal if the values of their {@code Id}, {@code Title},
      * {@code OutputName} and {@code CreationDate} member fields are the same.
      *
-     * @param o
+     * @param object
      *            An object to be compared with this {@code Process}.
      * @return {@code true} if the object to be compared is an instance of
      *         {@code Process} and has the same values; {@code false} otherwise.
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Process) {
+            Process process = (Process) object;
+            return Objects.equals(this.getId(), process.getId());
         }
-        Process process = (Process) o;
-        return Objects.equals(getTitle(), process.getTitle()) && Objects.equals(getId(), process.getId())
-                && Objects.equals(getCreationDate(), process.getCreationDate());
+
+        return false;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(sortHelperImages, sortHelperArticles, sortHelperMetadata, sortHelperDocstructs,
-            processBaseUri, docket, project, ruleset, template, tasks, properties, templates, workpieces, batches,
-            blockedUser, blockedMinutes, blockedSeconds);
+            processBaseUri, docket, project, ruleset, template, tasks, properties, templates, workpieces);
     }
 }

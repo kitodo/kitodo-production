@@ -294,20 +294,17 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Property) {
+            Property property = (Property) object;
+            return Objects.equals(this.getId(), property.getId());
         }
-        Property property = (Property) o;
-        return Objects.equals(title, property.title)
-            && Objects.equals(value, property.value)
-            && Objects.equals(obligatory, property.obligatory)
-            && Objects.equals(dataType, property.dataType)
-            && Objects.equals(choice, property.choice)
-            && Objects.equals(creationDate, property.creationDate);
+
+        return false;
     }
 
     @Override

@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -100,15 +101,17 @@ public class Authority extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Authority) {
+            Authority authority = (Authority) object;
+            return Objects.equals(this.getId(), authority.getId());
         }
-        Authority authority = (Authority) o;
-        return title != null ? title.equals(authority.title) : authority.title == null;
+
+        return false;
     }
 
     @Override

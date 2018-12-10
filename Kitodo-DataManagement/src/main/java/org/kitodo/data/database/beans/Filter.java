@@ -98,17 +98,17 @@ public class Filter extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Filter) {
+            Filter filter = (Filter) object;
+            return Objects.equals(this.getId(), filter.getId());
         }
-        Filter filter = (Filter) o;
-        return Objects.equals(value, filter.value)
-            && Objects.equals(creationDate, filter.creationDate)
-            && Objects.equals(user, filter.user);
+
+        return false;
     }
 
     @Override

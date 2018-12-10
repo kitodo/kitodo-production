@@ -170,23 +170,6 @@ public class Folder extends BaseBean {
     @Column(name = "urlStructure")
     private String urlStructure;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Folder that = (Folder) o;
-        return Objects.equals(fileGroup, that.fileGroup) && Objects.equals(urlStructure, that.urlStructure)
-                && Objects.equals(mimeType, that.mimeType) && Objects.equals(path, that.path)
-                && Objects.equals(project, that.project) && copyFolder == that.copyFolder
-                && createFolder == that.createFolder && Objects.equals(derivative, that.derivative)
-                && Objects.equals(dpi, that.dpi) && Objects.equals(imageScale, that.imageScale)
-                && Objects.equals(imageSize, that.imageSize) && Objects.equals(linkingMode, that.linkingMode);
-    }
-
     /**
      * Returns the scale factor to create the contents of the folder as
      * derivative form the content of another folder, if any. If absent, the
@@ -359,15 +342,6 @@ public class Folder extends BaseBean {
     }
 
     /**
-     * Returns a hash code value for the object.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi,
-            imageScale, imageSize, linkingMode);
-    }
-
-    /**
      * Returns whether the folder is copy folder.
      *
      * @return whether the folder is copy folder
@@ -514,6 +488,29 @@ public class Folder extends BaseBean {
      */
     public void setUrlStructure(String urlStructure) {
         this.urlStructure = urlStructure;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object instanceof Folder) {
+            Folder folder = (Folder) object;
+            return Objects.equals(this.getId(), folder.getId());
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a hash code value for the object.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi,
+                imageScale, imageSize, linkingMode);
     }
 
     @Override

@@ -96,17 +96,17 @@ public class Docket extends BaseIndexedBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        if (object instanceof Docket) {
+            Docket docket = (Docket) object;
+            return Objects.equals(this.getId(), docket.getId());
         }
-        Docket docket = (Docket) o;
-        return Objects.equals(title, docket.title)
-            && Objects.equals(file, docket.file)
-            && Objects.equals(active, docket.active);
+
+        return false;
     }
 
     @Override

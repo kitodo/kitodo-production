@@ -286,39 +286,21 @@ public class LdapGroup extends BaseBean {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (Objects.isNull(o) || !Objects.equals(getClass(), o.getClass())) {
-            return false;
+
+        if (object instanceof LdapGroup) {
+            LdapGroup ldapGroup = (LdapGroup) object;
+            return Objects.equals(this.getId(), ldapGroup.getId());
         }
-        LdapGroup ldapGroup = (LdapGroup) o;
-        return Objects.equals(title, ldapGroup.title)
-                && Objects.equals(homeDirectory, ldapGroup.homeDirectory)
-                && Objects.equals(gidNumber, ldapGroup.gidNumber)
-                && Objects.equals(userDN, ldapGroup.userDN)
-                && Objects.equals(objectClasses, ldapGroup.objectClasses)
-                && Objects.equals(sambaSID, ldapGroup.sambaSID)
-                && Objects.equals(sn, ldapGroup.sn)
-                && Objects.equals(uid, ldapGroup.uid)
-                && Objects.equals(description, ldapGroup.description)
-                && Objects.equals(displayName, ldapGroup.displayName)
-                && Objects.equals(gecos, ldapGroup.gecos)
-                && Objects.equals(loginShell, ldapGroup.loginShell)
-                && Objects.equals(sambaAcctFlags, ldapGroup.sambaAcctFlags)
-                && Objects.equals(sambaLogonScript, ldapGroup.sambaLogonScript)
-                && Objects.equals(sambaPrimaryGroupSID, ldapGroup.sambaPrimaryGroupSID)
-                && Objects.equals(sambaPwdMustChange, ldapGroup.sambaPwdMustChange)
-                && Objects.equals(sambaPasswordHistory, ldapGroup.sambaPasswordHistory)
-                && Objects.equals(sambaLogonHours, ldapGroup.sambaLogonHours)
-                && Objects.equals(sambaKickoffTime, ldapGroup.sambaKickoffTime);
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, homeDirectory, gidNumber, userDN, objectClasses, sambaSID, sn, uid, description,
-            displayName, gecos, loginShell, sambaAcctFlags, sambaLogonScript, sambaPrimaryGroupSID, sambaPwdMustChange,
-            sambaPasswordHistory, sambaLogonHours, sambaKickoffTime, ldapServer);
+        return Objects.hash(title, homeDirectory, gidNumber, userDN);
     }
 }

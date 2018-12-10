@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -166,12 +167,17 @@ public class Role extends BaseIndexedBean implements Comparable<Role> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Role)) {
-            return false;
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
         }
-        Role other = (Role) obj;
-        return this.getTitle().equals(other.getTitle());
+
+        if (object instanceof Role) {
+            Role role = (Role) object;
+            return Objects.equals(this.getId(), role.getId());
+        }
+
+        return false;
     }
 
     @Override
