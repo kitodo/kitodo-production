@@ -53,7 +53,7 @@ public class WorkflowControllerService {
     private List<Task> tasksToFinish;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
-    private Boolean flagWait = false;
+    private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
@@ -636,6 +636,6 @@ public class WorkflowControllerService {
     }
 
     private User getCurrentUser() {
-        return serviceManager.getUserService().getAuthenticatedUser();
+        return serviceManager.getUserService().getCurrentUser();
     }
 }

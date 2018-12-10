@@ -13,6 +13,7 @@ package org.kitodo.forms;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.model.LazyDTOModel;
@@ -92,8 +93,8 @@ public class BaseForm implements Serializable {
      * @return User
      */
     public User getUser() {
-        if (this.user == null) {
-            this.user = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.isNull(this.user)) {
+            this.user = serviceManager.getUserService().getCurrentUser();
         }
         return this.user;
     }
