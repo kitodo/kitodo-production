@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -145,16 +147,22 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         Map<String, MediaVariant> mediaVariants = fileSec != null ? fileSec.getFileGrp().parallelStream()
                 .map(MediaVariant::new).collect(Collectors.toMap(MediaVariant::getUse, Function.identity()))
                 : new HashMap<>();
-        List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
-        Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
-        for (DivType div : physicalDivs) {
-            MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
-            mediaUnits.add(mediaUnit);
-            divIDsToMediaUnits.put(div.getID(), mediaUnit);
+        Optional<StructMapType> optionalPhysical = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
+        Map<String, Set<MediaUnit>> mediaUnitsMap;
+        if (!optionalPhysical.isPresent()) {
+            mediaUnitsMap = Collections.emptyMap();
+        } else {
+            List<DivType> physicalDivs = optionalPhysical.get().getDiv().getDiv();
+            Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
+            for (DivType div : physicalDivs) {
+                MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
+                mediaUnits.add(mediaUnit);
+                divIDsToMediaUnits.put(div.getID(), mediaUnit);
+            }
+            mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
+                    .filter(SmLink.class::isInstance).map(SmLink.class::cast).collect(
+                        new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         }
-        Map<String, Set<MediaUnit>> mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
-                .filter(SmLink.class::isInstance).map(SmLink.class::cast)
-                .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         structure = getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new Structure(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
                 .iterator().next();
