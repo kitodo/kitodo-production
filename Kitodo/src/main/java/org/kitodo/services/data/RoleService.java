@@ -47,7 +47,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     private static RoleService instance = null;
-    private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllRoles";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -117,10 +116,10 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     @Override
     public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
             return findAll(sort, offset, size, false);
         }
-        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return convertJSONObjectsToDTOs(
                     searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
         }
@@ -139,7 +138,10 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     @Override
     public String createCountQuery(Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return null;
+        }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return createQueryRolesForCurrentUser(filters).toString();
         }
         return null;
