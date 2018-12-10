@@ -14,7 +14,6 @@ package org.kitodo.helper;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -110,11 +109,9 @@ public class SelectItemList {
     // templates
     public static List<SelectItem> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
-        User currentUser = ServiceManager.getUserService().getAuthenticatedUser();
-        if (Objects.nonNull(currentUser)) {
-            for (Project project : currentUser.getProjects()) {
-                processes.addAll(project.getProcesses());
-            }
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        for (Project project : currentUser.getProjects()) {
+            processes.addAll(project.getProcesses());
         }
         processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
 

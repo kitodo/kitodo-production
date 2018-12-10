@@ -750,14 +750,10 @@ public class ProzesskopieForm implements Serializable {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public String createNewProcess() {
-
-        // evict set up id to null
-        ServiceManager.getProcessService().evict(this.prozessKopie);
         if (!isContentValid()) {
             return null;
         }
         addProperties();
-
         updateTasks(this.prozessKopie);
 
         try {
@@ -956,7 +952,7 @@ public class ProzesskopieForm implements Serializable {
             // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            User user = ServiceManager.getUserService().getCurrentUser();
             ServiceManager.getTaskService().replaceProcessingUser(task, user);
 
             // only if its done, set edit start and end date
