@@ -11,23 +11,13 @@
 
 package org.kitodo.forms;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,25 +25,14 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
-import org.goobi.production.flow.helper.SearchResultGeneration;
-import org.jdom.transform.XSLTransformException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -1087,25 +1066,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * transforms xml logfile with given xslt and provides download. //TODO: why
-     * this whole stuff is not used?
-     */
-    public void transformXml() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "export.xml");
-            try (OutputStream out = response.getResponseOutputStream()) {
-                ExportXmlLog export = new ExportXmlLog();
-                export.startTransformation(out, this.process, this.selectedXslt);
-                out.flush();
-            } catch (IOException | XSLTransformException e) {
-                Helper.setErrorMessage("Error transforming XML", logger, e);
-            }
-            facesContext.responseComplete();
-        }
-    }
-
-    /**
      * Get XSLT list.
      *
      * @return list of Strings
@@ -1152,85 +1112,14 @@ public class ProcessForm extends TemplateBaseForm {
      * Generate result as PDF.
      */
     public void generateResultAsPdf() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
-            try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
-                        this.showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
-                List<List<HSSFCell>> rowList = new ArrayList<>();
-                HSSFSheet mySheet = wb.getSheetAt(0);
-                Iterator<Row> rowIter = mySheet.rowIterator();
-                while (rowIter.hasNext()) {
-                    HSSFRow myRow = (HSSFRow) rowIter.next();
-                    Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<HSSFCell> row = new ArrayList<>();
-                    while (cellIter.hasNext()) {
-                        HSSFCell myCell = (HSSFCell) cellIter.next();
-                        row.add(myCell);
-                    }
-                    rowList.add(row);
-                }
-                Document document = new Document();
-                // create formatter for cells with default locale
-                DataFormatter formatter = new DataFormatter();
-                Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
-                PdfWriter.getInstance(document, out);
-                document.setPageSize(rectangle);
-                document.open();
-                if (!rowList.isEmpty()) {
-                    Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
-                    document.add(p);
-                    PdfPTable table = new PdfPTable(9);
-                    table.setSpacingBefore(20);
-                    for (List<HSSFCell> row : rowList) {
-                        for (HSSFCell hssfCell : row) {
-                            String stringCellValue = formatter.formatCellValue(hssfCell);
-                            table.addCell(stringCellValue);
-                        }
-                    }
-                    document.add(table);
-                }
-
-                document.close();
-                out.flush();
-                facesContext.responseComplete();
-            } catch (IOException | DocumentException | RuntimeException e) {
-                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
-            }
-        }
+        serviceManager.getProcessService().generateResultAsPdf(this.filter);
     }
 
     /**
      * Generate result set.
      */
     public void generateResult() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
-            try (OutputStream out = response.getResponseOutputStream()) {
-                SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
-                        this.showInactiveProjects);
-                HSSFWorkbook wb = sr.getResult();
-                wb.write(out);
-                out.flush();
-                facesContext.responseComplete();
-            } catch (IOException e) {
-                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
-            }
-        }
-    }
-
-    private ExternalContext prepareHeaderInformation(FacesContext facesContext, String outputFileName) {
-        ExternalContext externalContext = facesContext.getExternalContext();
-        externalContext.responseReset();
-
-        String contentType = externalContext.getMimeType(outputFileName);
-        externalContext.setResponseContentType(contentType);
-        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
-
-        return externalContext;
+        serviceManager.getProcessService().generateResult(this.filter);
     }
 
     /**

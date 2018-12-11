@@ -11,6 +11,14 @@
 
 package org.kitodo.services.data;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
 import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.File;
@@ -28,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,12 +55,20 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -124,6 +141,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
     private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
+    private static final String ERROR_CREATING = "errorCreating";
     private static final String ERROR_EXPORT = "errorExport";
     private static final String CLOSED = "closed";
     private static final String IN_PROCESSING = "inProcessing";
@@ -1013,8 +1031,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1467,6 +1485,76 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Generate result as PDF.
+     * 
+     * @param filter
+     *            for generating search results
+     */
+    public void generateResultAsPdf(String filter) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (!facesContext.getResponseComplete()) {
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
+            try (OutputStream out = response.getResponseOutputStream()) {
+                SearchResultGeneration sr = new SearchResultGeneration(filter, this.showClosedProcesses,
+                        this.showInactiveProjects);
+                HSSFWorkbook wb = sr.getResult();
+                List<List<HSSFCell>> rowList = new ArrayList<>();
+                HSSFSheet mySheet = wb.getSheetAt(0);
+                Iterator<Row> rowIter = mySheet.rowIterator();
+                while (rowIter.hasNext()) {
+                    HSSFRow myRow = (HSSFRow) rowIter.next();
+                    Iterator<Cell> cellIter = myRow.cellIterator();
+                    List<HSSFCell> row = new ArrayList<>();
+                    while (cellIter.hasNext()) {
+                        HSSFCell myCell = (HSSFCell) cellIter.next();
+                        row.add(myCell);
+                    }
+                    rowList.add(row);
+                }
+                Document document = new Document();
+                Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
+                PdfWriter.getInstance(document, out);
+                document.setPageSize(rectangle);
+                document.open();
+                if (!rowList.isEmpty()) {
+                    Paragraph paragraph = new Paragraph(rowList.get(0).get(0).toString());
+                    document.add(paragraph);
+                    document.add(getPdfTable(rowList));
+                }
+
+                document.close();
+                out.flush();
+                facesContext.responseComplete();
+            } catch (IOException | DocumentException | RuntimeException e) {
+                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+            }
+        }
+    }
+
+    /**
+     * Generate result set.
+     * 
+     * @param filter
+     *            for generating search results
+     */
+    public void generateResult(String filter) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (!facesContext.getResponseComplete()) {
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
+            try (OutputStream out = response.getResponseOutputStream()) {
+                SearchResultGeneration sr = new SearchResultGeneration(filter, this.showClosedProcesses,
+                        this.showInactiveProjects);
+                HSSFWorkbook wb = sr.getResult();
+                wb.write(out);
+                out.flush();
+                facesContext.responseComplete();
+            } catch (IOException e) {
+                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
+            }
+        }
+    }
+
+    /**
      * Good explanation how it should be implemented:
      * https://stackoverflow.com/a/9394237/2701807.
      * 
@@ -1478,12 +1566,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            name of the new docket file
      */
     private void writeToOutputStream(FacesContext facesContext, File file, String fileName) throws IOException {
-        ExternalContext externalContext = facesContext.getExternalContext();
-        externalContext.responseReset();
-
-        String contentType = externalContext.getMimeType(fileName);
-        externalContext.setResponseContentType(contentType);
-        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+        ExternalContext externalContext = prepareHeaderInformation(facesContext, fileName);
 
         try (OutputStream outputStream = externalContext.getResponseOutputStream();
                 FileInputStream fileInputStream = new FileInputStream(file)) {
@@ -1492,6 +1575,33 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             outputStream.flush();
         }
         facesContext.responseComplete();
+    }
+
+    private ExternalContext prepareHeaderInformation(FacesContext facesContext, String outputFileName) {
+        ExternalContext externalContext = facesContext.getExternalContext();
+        externalContext.responseReset();
+
+        String contentType = externalContext.getMimeType(outputFileName);
+        externalContext.setResponseContentType(contentType);
+        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
+
+        return externalContext;
+    }
+
+    private PdfPTable getPdfTable(List<List<HSSFCell>> rowList) {
+        // create formatter for cells with default locale
+        DataFormatter formatter = new DataFormatter();
+
+        PdfPTable table = new PdfPTable(9);
+        table.setSpacingBefore(20);
+        for (List<HSSFCell> row : rowList) {
+            for (HSSFCell hssfCell : row) {
+                String stringCellValue = formatter.formatCellValue(hssfCell);
+                table.addCell(stringCellValue);
+            }
+        }
+
+        return table;
     }
 
     private DocketInterface initialiseDocketModule() {
