@@ -31,7 +31,7 @@
 
     <properties>
         <phase.prop>install</phase.prop>
-        <maxAllowedViolations>9</maxAllowedViolations>
+        <maxAllowedViolations>4</maxAllowedViolations>
     </properties>
 
     <dependencies>

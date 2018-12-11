@@ -28,10 +28,6 @@
     <url>https://github.com/kitodo/kitodo-production</url>
     <artifactId>kitodo-file-management</artifactId>
 
-    <properties>
-        <maxAllowedViolations>4</maxAllowedViolations>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
