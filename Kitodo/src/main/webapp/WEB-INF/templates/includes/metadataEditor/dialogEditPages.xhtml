@@ -26,22 +26,22 @@
             <h:panelGrid columns="2">
 
                 <h:outputText value="#{msgs.firstPage}:"/>
-                <p:selectOneMenu id="selectFirstPage" value="#{Metadaten.allPagesSelectionFirstPage}" filter="true"
+                <p:selectOneMenu id="selectFirstPage" value="#{MetadataProcessor.allPagesSelectionFirstPage}" filter="true"
                                  filterMatchMode="startsWith">
-                    <f:selectItems value="#{Metadaten.allPages}"/>
+                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
                 </p:selectOneMenu>
 
                 <h:outputText value="#{msgs.lastPage}:"/>
-                <p:selectOneMenu id="selectLastPage" value="#{Metadaten.allPagesSelectionLastPage}" filter="true"
+                <p:selectOneMenu id="selectLastPage" value="#{MetadataProcessor.allPagesSelectionLastPage}" filter="true"
                                  filterMatchMode="startsWith">
-                    <f:selectItems value="#{Metadaten.allPages}"/>
+                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
                 </p:selectOneMenu>
 
                 <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                 action="#{Metadaten.takePagesFromChildren}"
+                                 action="#{MetadataProcessor.takePagesFromChildren}"
                                  update="structureTreeForm,paginationSubSelection"/>
                 <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.pageAssign}"
-                                 action="#{Metadaten.setPageStartAndEnd}"
+                                 action="#{MetadataProcessor.setPageStartAndEnd}"
                                  update="structureTreeForm,paginationSubSelection"/>
             </h:panelGrid>
 
@@ -49,16 +49,16 @@
             <p:panelGrid columns="3" columnClasses="alignTop45wide,buttonColumn,alignTop45wide">
                 <h:panelGroup>
                     <h:outputText value="#{msgs.allPages}"/>
-                    <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}">
-                        <f:selectItems value="#{Metadaten.allPages}"/>
+                    <p:selectManyMenu id="paginationSelection" value="#{MetadataProcessor.allPagesSelection}">
+                        <f:selectItems value="#{MetadataProcessor.allPages}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
                 <h:panelGroup>
                     <h:panelGrid columns="1">
-                        <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="fa fa-arrow-right"
+                        <p:commandButton id="addPageBtn" action="#{MetadataProcessor.addPages}" icon="fa fa-arrow-right"
                                          update="structureTreeForm,paginationSubSelection"/>
-                        <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}"
+                        <p:commandButton id="removePageBtn" action="#{MetadataProcessor.removePages}"
                                          icon="fa fa-arrow-left"
                                          update="structureTreeForm,paginationSubSelection"/>
                     </h:panelGrid>
@@ -66,8 +66,8 @@
 
                 <h:panelGroup>
                     <h:outputText value="#{msgs.relatedPages}"/>
-                    <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}">
-                        <f:selectItems value="#{Metadaten.structSeiten}"/>
+                    <p:selectManyMenu id="paginationSubSelection" value="#{MetadataProcessor.structSeitenAuswahl}">
+                        <f:selectItems value="#{MetadataProcessor.structSeiten}"/>
                         <p:ajax update="structureTreeForm"/>
                     </p:selectManyMenu>
                 </h:panelGroup>

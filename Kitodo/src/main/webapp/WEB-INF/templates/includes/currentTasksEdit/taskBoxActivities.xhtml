@@ -85,10 +85,10 @@
 
                     <!-- Metadaten-button -->
                     <h:commandLink id="readXml" rendered="#{task.typeMetadata and process.blockedUser == null}"
-                                   action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                                   action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}">
                         <h:outputText><i class="fa fa-file-o"/> #{msgs.metadataEdit}</h:outputText>
                         <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}"
-                                                     target="#{Metadaten.referringView}"/>
+                                                     target="#{MetadataProcessor.referringView}"/>
                         <f:param name="ProzesseID" value="#{process.id}"/>
                         <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                         <f:param name="stayOnCurrentPage" value="AktuelleSchritteBearbeiten"/>

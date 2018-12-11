@@ -25,17 +25,17 @@
 
             <h:panelGrid columns="2">
                 <h:outputLabel value="#{msgs.position}:" for="docStructPositionSelection"/>
-                <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}" style="width: 180px">
+                <p:selectOneMenu id="docStructPositionSelection" value="#{MetadataProcessor.positionOfNewDocStrucElement}" style="width: 180px">
                     <!--TODO check addable types-->
-                    <f:selectItems value="#{Metadaten.positionsOfNewDocStrucElement}" var="positionSelection"
+                    <f:selectItems value="#{MetadataProcessor.positionsOfNewDocStrucElement}" var="positionSelection"
                                    itemValue="#{positionSelection}" itemLabel="#{positionSelection.label}"/>
                     <p:ajax update="docStructAddTypeSelection"/>
                 </p:selectOneMenu>
 
                 <h:outputLabel value="#{msgs.typ}:" for="docStructAddTypeSelection"/>
-                <p:selectOneMenu id="docStructAddTypeSelection" value="#{Metadaten.tempTyp}" style="width: 180px">
+                <p:selectOneMenu id="docStructAddTypeSelection" value="#{MetadataProcessor.tempTyp}" style="width: 180px">
                     <!--TODO check addable types-->
-                    <f:selectItems value="#{Metadaten.addableDocStructTypes}"/>
+                    <f:selectItems value="#{MetadataProcessor.addableDocStructTypes}"/>
                     <p:ajax update="selectAddableMetadataTypes"/>
                 </p:selectOneMenu>
             </h:panelGrid>
@@ -46,7 +46,7 @@
                 <h:outputText value="#{msgs.defaults}:"/>
 
                 <h:panelGroup>
-                    <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
+                    <p:selectOneRadio layout="grid" columns="1" value="#{MetadataProcessor.addServeralStructuralElementsMode}">
                         <f:selectItem itemLabel="#{msgs.pageAllocation}" itemValue="#{false}" />
                         <f:selectItem itemLabel="#{msgs.metadata}" itemValue="#{true}" />
                         <p:ajax event="click" update="AddDocStrucTypeSpecs" />
@@ -55,51 +55,51 @@
             </h:panelGrid>
 
             <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
-                <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
+                <h:panelGroup rendered="#{!MetadataProcessor.addServeralStructuralElementsMode}">
                     <p:panelGrid columns="2">
                         <p:row>
                             <h:outputText value="#{msgs.firstPage}:"/>
-                            <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
-                                             filterMatchMode="startsWith">
+                            <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{MetadataProcessor.pagesStart}"
+                                             filter="true" filterMatchMode="startsWith">
                                 <f:selectItem itemLabel="#{msgs.firstPage}" itemValue="" />
-                                <f:selectItems value="#{Metadaten.allPages}"/>
+                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
                             </p:selectOneMenu>
                         </p:row>
 
                         <p:row>
                             <h:outputText value="#{msgs.lastPage}:"/>
-                            <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
-                                             filterMatchMode="startsWith">
+                            <p:selectOneMenu id="selectLastPageOnAddNode" value="#{MetadataProcessor.pagesEnd}"
+                                             filter="true" filterMatchMode="startsWith">
                                 <f:selectItem itemLabel="#{msgs.lastPage}" itemValue="" />
-                                <f:selectItems value="#{Metadaten.allPages}"/>
+                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
                             </p:selectOneMenu>
                         </p:row>
 
                         <p:row>
-                            <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
+                            <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}"
+                                             action="#{MetadataProcessor.addSingleNodeWithPages}"
                                              update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                                              oncomplete="PF('dialogAddDocStrucType').hide();"/>
                         </p:row>
                     </p:panelGrid>
                 </h:panelGroup>
 
-                <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                <h:panelGroup rendered="#{MetadataProcessor.addServeralStructuralElementsMode}">
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
-                        <p:spinner value="#{Metadaten.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
+                        <p:spinner value="#{MetadataProcessor.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
 
                         <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
-                        <p:selectOneMenu id="selectAddableMetadataTypes" value="#{Metadaten.addMetaDataType}" style="width: 180px">
-                            <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
+                        <p:selectOneMenu id="selectAddableMetadataTypes" value="#{MetadataProcessor.addMetaDataType}" style="width: 180px">
+                            <f:selectItems value="#{MetadataProcessor.addableMetadataTypesFromTempType}" />
                         </p:selectOneMenu>
 
                         <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
-                        <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
+                        <h:inputTextarea id="inputMetaDataValue" value="#{MetadataProcessor.addMetaDataValue}"/>
 
-
-                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSeveralNodesWithMetadata}"
-                                         update="structureTreeForm"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.apply}"
+                                         action="#{MetadataProcessor.addSeveralNodesWithMetadata}"
+                                         update="structureTreeForm" oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
                 </h:panelGroup>
             </h:panelGrid>
