@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.export;
+package org.kitodo.exporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,29 +68,29 @@ public class ExportXmlLog {
     /**
      * This method exports the production metadata as xml to a given directory.
      *
-     * @param p
+     * @param process
      *            the process to export
      * @param destination
      *            the destination to write the file
      */
 
-    public void startExport(Process p, String destination) throws IOException {
+    public void startExport(Process process, String destination) throws IOException {
         try (FileOutputStream ostream = new FileOutputStream(destination)) {
-            startExport(p, ostream);
+            startExport(process, ostream);
         }
     }
 
     /**
      * Start export.
      *
-     * @param p
+     * @param process
      *            Process object
      * @param dest
      *            File
      */
-    public void startExport(Process p, File dest) throws IOException {
+    public void startExport(Process process, File dest) throws IOException {
         try (FileOutputStream ostream = new FileOutputStream(dest)) {
-            startExport(p, ostream);
+            startExport(process, ostream);
         }
     }
 
@@ -136,8 +136,7 @@ public class ExportXmlLog {
         Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         root.addNamespaceDeclaration(xsi);
         root.setNamespace(xmlns);
-        Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
-                xsi);
+        Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
         root.setAttribute(attSchema);
         for (Process p : processList) {
             Document doc = createDocument(p, false);
@@ -186,8 +185,7 @@ public class ExportXmlLog {
         if (addNamespace) {
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             processElm.addNamespaceDeclaration(xsi);
-            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
-                    xsi);
+            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
             processElm.setAttribute(attSchema);
         }
         // process information
@@ -295,11 +293,11 @@ public class ExportXmlLog {
             }
 
             HashMap<String, String> fields = getMetsFieldsFromConfig(false);
-            metadataElements = prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+            prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
 
             if (anchorDoc != null) {
                 fields = getMetsFieldsFromConfig(true);
-                metadataElements = prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
+                prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
             }
 
             metsElement.addContent(metadataElements);
@@ -411,8 +409,8 @@ public class ExportXmlLog {
         return preparedProperties;
     }
 
-    private List<Element> prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields,
-            Document document, HashMap<String, Namespace> namespaces, Namespace xmlns) throws JaxenException {
+    private void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
+            HashMap<String, Namespace> namespaces, Namespace xmlns) throws JaxenException {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             List<Element> metsValues = getMetsValues(entry.getValue(), document, namespaces);
@@ -423,7 +421,6 @@ public class ExportXmlLog {
                 metadataElements.add(ele);
             }
         }
-        return metadataElements;
     }
 
     /**
@@ -449,8 +446,8 @@ public class ExportXmlLog {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new
-     * window with the output file.
+     * This method transforms the xml log using a xslt file and opens a new window
+     * with the output file.
      *
      * @param out
      *            ServletOutputStream
@@ -551,16 +548,16 @@ public class ExportXmlLog {
     }
 
     /**
-     * Check step for non-open step state and step has a reqular user assigned.
+     * Check task for non-open step state and step has a regular user assigned.
      *
-     * @param s
-     *            step to check
+     * @param task
+     *            task to check
      * @return boolean
      */
-    private boolean isNonOpenStateAndHasRegularUser(Task s) {
-        return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum())) && (s.getProcessingUser() != null)
-                && (s.getProcessingUser().getId() != 0)
-                && (ServiceManager.getUserService().getFullName(s.getProcessingUser()) != null);
+    private boolean isNonOpenStateAndHasRegularUser(Task task) {
+        return (!TaskStatus.OPEN.equals(task.getProcessingStatusEnum())) && (task.getProcessingUser() != null)
+                && (task.getProcessingUser().getId() != 0)
+                && (ServiceManager.getUserService().getFullName(task.getProcessingUser()) != null);
     }
 
 }
