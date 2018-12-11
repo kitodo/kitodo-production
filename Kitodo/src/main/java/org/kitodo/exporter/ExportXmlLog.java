@@ -102,19 +102,13 @@ public class ExportXmlLog {
      * @param os
      *            the OutputStream to write the contents to
      */
-    public void startExport(Process process, OutputStream os) throws IOException {
-        try {
-            Document doc = createDocument(process, true);
+    private void startExport(Process process, OutputStream os) throws IOException {
+        Document doc = createDocument(process, true);
 
-            XMLOutputter outp = new XMLOutputter();
-            outp.setFormat(Format.getPrettyFormat());
+        XMLOutputter outp = new XMLOutputter();
+        outp.setFormat(Format.getPrettyFormat());
 
-            outp.output(doc, os);
-            os.close();
-
-        } catch (RuntimeException e) {
-            throw new IOException(e.getMessage(), e);
-        }
+        outp.output(doc, os);
     }
 
     /**
@@ -127,7 +121,7 @@ public class ExportXmlLog {
      * @param xslt
      *            String
      */
-    public void startExport(Iterable<Process> processList, OutputStream outputStream, String xslt) {
+    public void startExport(Iterable<Process> processList, OutputStream outputStream, String xslt) throws IOException {
         Document answer = new Document();
         Element root = new Element("processes");
         answer.setRootElement(root);
@@ -146,23 +140,7 @@ public class ExportXmlLog {
         }
 
         XMLOutputter outp = new XMLOutputter();
-        outp.setFormat(Format.getPrettyFormat());
-
-        try {
-
-            outp.output(answer, outputStream);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    outputStream = null;
-                }
-            }
-        }
-
+        outp.output(answer, outputStream);
     }
 
     /**
@@ -172,25 +150,33 @@ public class ExportXmlLog {
      *            the process to export
      * @return a new xml document
      */
-    public Document createDocument(Process process, boolean addNamespace) {
+    private Document createDocument(Process process, boolean addNamespace) {
+        Element processElement = new Element("process");
 
-        Element processElm = new Element("process");
-        Document doc = new Document(processElm);
-
-        processElm.setAttribute("processID", String.valueOf(process.getId()));
+        processElement.setAttribute("processID", String.valueOf(process.getId()));
 
         Namespace xmlns = Namespace.getNamespace(NAMESPACE);
-        processElm.setNamespace(xmlns);
+        processElement.setNamespace(xmlns);
+
         // namespace declaration
         if (addNamespace) {
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            processElm.addNamespaceDeclaration(xsi);
+            processElement.addNamespaceDeclaration(xsi);
             Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
-            processElm.setAttribute(attSchema);
+            processElement.setAttribute(attSchema);
         }
-        // process information
 
-        ArrayList<Element> processElements = new ArrayList<>();
+        // process information
+        List<Element> processElements = getProcessInformation(xmlns, process);
+
+        processElement.setContent(processElements);
+
+        return new Document(processElement);
+    }
+
+    private List<Element> getProcessInformation(Namespace xmlns, Process process) {
+        List<Element> processElements = new ArrayList<>();
+
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(process.getTitle());
         processElements.add(processTitle);
@@ -237,9 +223,9 @@ public class ExportXmlLog {
             processElements.add(properties);
         }
 
-        // step information
-        Element steps = getTasksElement(process.getTasks(), xmlns);
-        processElements.add(steps);
+        // task information
+        Element tasks = getTasksElement(process.getTasks(), xmlns);
+        processElements.add(tasks);
 
         // template information
         Element templates = new Element("originals", xmlns);
@@ -251,7 +237,6 @@ public class ExportXmlLog {
         processElements.add(templates);
 
         // digital document information
-        Element digdoc = new Element("digitalDocuments", xmlns);
         List<Element> docElements = new ArrayList<>();
 
         Element dd = new Element("digitalDocument", xmlns);
@@ -265,49 +250,18 @@ public class ExportXmlLog {
             dd.addContent(properties);
         }
         docElements.add(dd);
+
+        Element digdoc = new Element("digitalDocuments", xmlns);
         digdoc.addContent(docElements);
         processElements.add(digdoc);
 
         // METS information
         Element metsElement = new Element("metsInformation", xmlns);
-        List<Element> metadataElements = new ArrayList<>();
+        List<Element> metadataElements = getMetadataElements(xmlns, process);
+        metsElement.addContent(metadataElements);
+        processElements.add(metsElement);
 
-        try {
-            URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder()
-                    .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            Document anchorDoc = null;
-            URI anchorFileName = URI.create(ServiceManager.getFileService().getMetadataFilePath(process).toString()
-                    .replace("meta.xml", "meta_anchor.xml"));
-            if (ServiceManager.getFileService().fileExist(anchorFileName)
-                    && ServiceManager.getFileService().canRead(anchorFileName)) {
-                anchorDoc = new SAXBuilder()
-                        .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            }
-            HashMap<String, Namespace> namespaces = new HashMap<>();
-
-            HashMap<String, String> names = getNamespacesFromConfig();
-            for (Map.Entry<String, String> entry : names.entrySet()) {
-                String key = entry.getKey();
-                namespaces.put(key, Namespace.getNamespace(key, entry.getValue()));
-            }
-
-            HashMap<String, String> fields = getMetsFieldsFromConfig(false);
-            prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
-
-            if (anchorDoc != null) {
-                fields = getMetsFieldsFromConfig(true);
-                prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
-            }
-
-            metsElement.addContent(metadataElements);
-            processElements.add(metsElement);
-
-        } catch (IOException | JDOMException | JaxenException e) {
-            logger.error(e.getMessage(), e);
-        }
-        processElm.setContent(processElements);
-        return doc;
+        return processElements;
     }
 
     private Element getTasksElement(List<Task> tasks, Namespace xmlns) {
@@ -390,7 +344,7 @@ public class ExportXmlLog {
     }
 
     private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
-        ArrayList<Element> preparedProperties = new ArrayList<>();
+        List<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
             Element propertyElement = new Element(PROPERTY, xmlns);
             propertyElement.setAttribute(PROPERTY_IDENTIFIER, property.getTitle());
@@ -423,6 +377,41 @@ public class ExportXmlLog {
         }
     }
 
+    private List<Element> getMetadataElements(Namespace xmlns, Process process) {
+        List<Element> metadataElements = new ArrayList<>();
+        try {
+            URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+            Document metsDoc = new SAXBuilder()
+                    .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
+            Document anchorDoc = null;
+            URI anchorFileName = URI.create(ServiceManager.getFileService().getMetadataFilePath(process).toString()
+                    .replace("meta.xml", "meta_anchor.xml"));
+            if (ServiceManager.getFileService().fileExist(anchorFileName)
+                    && ServiceManager.getFileService().canRead(anchorFileName)) {
+                anchorDoc = new SAXBuilder()
+                        .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
+            }
+            HashMap<String, Namespace> namespaces = new HashMap<>();
+
+            HashMap<String, String> names = getNamespacesFromConfig();
+            for (Map.Entry<String, String> entry : names.entrySet()) {
+                String key = entry.getKey();
+                namespaces.put(key, Namespace.getNamespace(key, entry.getValue()));
+            }
+
+            HashMap<String, String> fields = getMetsFieldsFromConfig(false);
+            prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+
+            if (anchorDoc != null) {
+                fields = getMetsFieldsFromConfig(true);
+                prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
+            }
+        } catch (IOException | JDOMException | JaxenException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return metadataElements;
+    }
+
     /**
      * Get METS values.
      *
@@ -435,7 +424,7 @@ public class ExportXmlLog {
      * @return list of elements
      */
     @SuppressWarnings("unchecked")
-    public List<Element> getMetsValues(String expr, Object element, Map<String, Namespace> namespaces)
+    private List<Element> getMetsValues(String expr, Object element, Map<String, Namespace> namespaces)
             throws JaxenException {
         JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
         // Add all namespaces
@@ -457,7 +446,7 @@ public class ExportXmlLog {
      *            the filename of the xslt
      */
 
-    public void xmlTransformation(OutputStream out, Document doc, String filename)
+    private void xmlTransformation(OutputStream out, Document doc, String filename)
             throws XSLTransformException, IOException {
         Document docTrans;
         if (filename != null && filename.equals("")) {
@@ -472,7 +461,6 @@ public class ExportXmlLog {
         XMLOutputter xmlOut = new XMLOutputter(format);
 
         xmlOut.output(docTrans, out);
-
     }
 
     public void startTransformation(OutputStream out, Process p, String filename)
@@ -480,7 +468,7 @@ public class ExportXmlLog {
         startTransformation(p, out, filename);
     }
 
-    public void startTransformation(Process p, OutputStream out, String filename)
+    private void startTransformation(Process p, OutputStream out, String filename)
             throws XSLTransformException, IOException {
         Document doc = createDocument(p, true);
         xmlTransformation(out, doc, filename);
