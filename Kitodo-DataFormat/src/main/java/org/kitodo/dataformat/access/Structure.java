@@ -46,7 +46,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
  */
 public class Structure implements DivXmlElementAccessInterface {
     /**
-     * The name of the Q of Kitodo. This parameter is needed to assemble the
+     * The qualified name of the Kitodo meta-data format, needed to assemble the
      * meta-data entries in METS using JAXB.
      */
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
@@ -148,18 +148,20 @@ public class Structure implements DivXmlElementAccessInterface {
     }
 
     /**
-     * Determined from a METS data structure of which type is a meta-data
-     * section. It could be parallelized, it would be worth it, but the chunk
-     * that would come out of it would be so extreme that it would be difficult
-     * to understand it properly. That’s why I let it stay.
+     * Determines from a METS data structure of which type is a meta-data
+     * section.
+     * 
+     * <p>
+     * Implementation note: This method would be a good candidate for
+     * parallelization.
      * 
      * @param mets
-     *            METS data structure that determines what type of metadata
+     *            METS data structure that determines what type of meta-data
      *            section is
      * @param mdSec
      *            administrative meta-data section whose type is to be
      *            determined
-     * @return the type of administrative metadata section
+     * @return the type of administrative meta-data section
      */
     private final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
         for (AmdSecType amdSec : mets.getAmdSec()) {

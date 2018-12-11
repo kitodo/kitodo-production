@@ -16,14 +16,10 @@ import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 
 /**
- * A meta-data entry. This is probably the most important Java class of all
- * Production. Production serves to capture meta-data about a digital
- * representation of a cultural work. Everything finally boils down to this
- * class, which represents a single meta-data entry. A meta-data entry consists
- * of a key and a value. The key is stored in the superclass {@link Metadata}.
- * Then there is the domain, that is the container within the METS file, in
- * which the meta-data entry is stored. There is nothing more to say about it.
- * The most important things are always very simple.
+ * A meta-data entry. A meta-data entry consists of a key and a value. The key
+ * is stored in the superclass {@link Metadata}. There is also the domain, that
+ * is an indication in which container within the METS file the meta-data entry
+ * is stored.
  */
 public class MetadataEntry extends Metadata implements MetadataXmlElementAccessInterface {
     /**

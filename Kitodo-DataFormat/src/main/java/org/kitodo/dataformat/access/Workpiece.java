@@ -95,7 +95,13 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     private String id;
 
     /**
-     * The media units that belong to this workpiece.
+     * The media units that belong to this workpiece. The order of this
+     * collection is meaningful, but only describes the order in which the media
+     * units are displayed on the workstation of the compiler. The order of this
+     * list is described by the order of the {@code <div>} elements in the
+     * {@code <structMap TYPE="PHYSICAL">} in the METS file. It is independent
+     * of the display order of the media units for the later viewer, which is
+     * determined by the ORDER attribute of the {@code <file>} elements.
      */
     private List<FileXmlElementAccessInterface> mediaUnits = new LinkedList<>();
 
@@ -149,17 +155,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     /**
-     * Returns the media units of this workpiece. An ordered list of media units
-     * is used to digitally represent a cultural work. The order is of minor
-     * importance at this point. It rather describes the order in which the
-     * media units are displayed on the workstation of the compiler, which
-     * determines the presentation form intended for the consumer (and thus also
-     * their presentation order). Mostly this is the order in which each digital
-     * part was recorded. The order of this list is described by the order of
-     * the {@code <div>} elements in the {@code <structMap TYPE="PHYSICAL">} in
-     * the METS file and need not necessarily be the same as the order of the
-     * media units when referenced from the structure, which is determined by
-     * the ORDER attribute of the {@code <file>} elements.
+     * Returns the media units of this workpiece.
      * 
      * @return the media units
      */
