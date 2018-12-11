@@ -9,10 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.cli.helper;
+package org.kitodo.helper;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,7 @@ public class WikiFieldHelper {
     /**
      * Get wiki messages.
      *
-     * @param p
+     * @param process
      *            Process object
      * @param currentWikiFieldContent
      *            String
@@ -48,7 +49,7 @@ public class WikiFieldHelper {
      *            String
      * @return String
      */
-    public static String getWikiMessage(Process p, String currentWikiFieldContent, String type, String value) {
+    public static String getWikiMessage(Process process, String currentWikiFieldContent, String type, String value) {
         String message = "";
         if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
             message += currentWikiFieldContent;
@@ -59,8 +60,8 @@ public class WikiFieldHelper {
 
         String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
         String processName = "";
-        if (p != null) {
-            processName = "processname: " + p.getTitle() + ", message: ";
+        if (Objects.nonNull(process)) {
+            processName = "processname: " + process.getTitle() + ", message: ";
         }
         logger.info("{} {} {}", timestamp, processName, value);
         message = message + timestamp + ": " + value + TAG_END;
@@ -79,18 +80,7 @@ public class WikiFieldHelper {
      * @return String
      */
     public static String getWikiMessage(String currentWikiFieldContent, String type, String value) {
-        String message = "";
-        if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
-            message += currentWikiFieldContent;
-            message += BREAK;
-        }
-
-        message += addMatchingTagMessage(type);
-
-        String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
-
-        message = message + timestamp + ": " + value + TAG_END;
-        return message;
+        return WikiFieldHelper.getWikiMessage(null, currentWikiFieldContent, type, value);
     }
 
     private static String addMatchingTagMessage(String type) {
