@@ -68,7 +68,9 @@ public class LegacyMetadataHelper implements MetadataInterface {
 
     @Override
     public void setDocStruct(DocStructInterface docStruct) {
-        this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
+        if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
+            this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
+        }
     }
 
     @Override
