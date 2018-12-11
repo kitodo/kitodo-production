@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata;
 
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class MetaPerson {
     }
 
     public void setRecord(String record) {
-        String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
+        String[] authorityFile = MetadataProcessor.parseAuthorityFileArgs(record);
         this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
     }
 

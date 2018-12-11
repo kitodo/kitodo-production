@@ -11,7 +11,6 @@
 
 package org.kitodo.helper.metadata;
 
-import de.sub.goobi.metadaten.Metadaten;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
@@ -60,6 +59,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.MetadataProcessor;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -521,7 +521,7 @@ public class ImagesHelper {
         if (pagesList != null) {
             for (DocStructInterface page : pagesList) {
                 String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
+                String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
                 for (URI currentImage : dataList) {
                     String currentFileName = fileService.getFileName(currentImage);
                     if (currentFileName.equals(fileNamePrefix)) {

@@ -11,8 +11,6 @@
 
 package org.kitodo.metadata.elements.renderable;
 
-import de.sub.goobi.metadaten.Metadaten;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +30,7 @@ import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.MetadataProcessor;
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata
@@ -91,7 +90,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      * is needed to forward list operations, like deleting the metadata group
      * represented by this instance from the logical document structure node.
      */
-    private final Metadaten container;
+    private final MetadataProcessor container;
 
     /**
      * Creates a RenderableMetadataGroup instance able to add any metadata group
@@ -146,8 +145,8 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    public RenderableMetadataGroup(MetadataGroupInterface data, Metadaten container, String language,
-            String projectName) throws ConfigurationException {
+    public RenderableMetadataGroup(MetadataGroupInterface data, MetadataProcessor container, String language,
+                                   String projectName) throws ConfigurationException {
         super(data.getMetadataGroupType().getAllLanguages(), data);
         this.possibleTypes = Collections.emptyMap();
         this.type = data.getMetadataGroupType();

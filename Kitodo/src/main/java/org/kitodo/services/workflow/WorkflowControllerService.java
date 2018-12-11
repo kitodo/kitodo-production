@@ -11,8 +11,6 @@
 
 package org.kitodo.services.workflow;
 
-import de.sub.goobi.metadaten.MetadataLock;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -40,6 +38,7 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.helper.tasks.TaskManager;
+import org.kitodo.metadata.MetadataLock;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
