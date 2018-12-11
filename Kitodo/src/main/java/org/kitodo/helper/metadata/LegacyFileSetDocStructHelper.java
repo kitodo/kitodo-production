@@ -93,7 +93,10 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
 
     @Override
     public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        /*
+         * Legacy code tries to add (empty) meta-data entries here. I guess this
+         * is a bug.
+         */
     }
 
     @Override
@@ -183,7 +186,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
 
     @Override
     public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        return Collections.emptyList();
     }
 
     @Override
