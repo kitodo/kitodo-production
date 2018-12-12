@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.plugin.CataloguePlugin;
+package org.goobi.production.plugin.catalogue;
 
 import java.util.Map;
 import java.util.regex.Matcher;
