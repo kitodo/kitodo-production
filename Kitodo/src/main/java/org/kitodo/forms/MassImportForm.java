@@ -47,7 +47,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DigitalCollections;
+import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -126,13 +126,13 @@ public class MassImportForm extends BaseForm {
         }
 
         try {
-            DigitalCollections.possibleDigitalCollectionsForProcess(this.project);
+            DigitalCollection.possibleDigitalCollectionsForProcess(this.project);
         } catch (IOException | JDOMException e) {
             Helper.setErrorMessage("Error while parsing digital collections", logger, e);
         }
 
-        this.digitalCollections = DigitalCollections.getDigitalCollections();
-        this.possibleDigitalCollections = DigitalCollections.getPossibleDigitalCollection();
+        this.digitalCollections = DigitalCollection.getDigitalCollections();
+        this.possibleDigitalCollections = DigitalCollection.getPossibleDigitalCollection();
 
         return massImportPath;
     }

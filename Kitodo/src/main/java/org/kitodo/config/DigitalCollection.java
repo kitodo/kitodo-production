@@ -23,7 +23,7 @@ import org.jdom.input.SAXBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Project;
 
-public class DigitalCollections {
+public class DigitalCollection {
 
     private static List<String> digitalCollections;
     private static List<String> possibleDigitalCollection;
@@ -32,7 +32,7 @@ public class DigitalCollections {
     /**
      * Private constructor to hide the implicit public one.
      */
-    private DigitalCollections() {
+    private DigitalCollection() {
 
     }
 
@@ -57,7 +57,7 @@ public class DigitalCollections {
         if (possibleDigitalCollection == null) {
             possibleDigitalCollection = new ArrayList<>();
         }
-        return DigitalCollections.possibleDigitalCollection;
+        return DigitalCollection.possibleDigitalCollection;
     }
 
     /**
