@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -294,9 +295,6 @@ public class Structure implements DivXmlElementAccessInterface {
     /**
      * Creates a METS {@code <div>} element from this structure.
      * 
-     * @param identifierProvider
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param mediaUnitIDs
      *            the assigned identifier for each media unit so that the link
      *            pairs of the struct link section can be formed later
@@ -307,10 +305,10 @@ public class Structure implements DivXmlElementAccessInterface {
      *            the METS structure in which the meta-data is added
      * @return a METS {@code <div>} element
      */
-    DivType toDiv(IdentifierProvider identifierProvider, Map<MediaUnit, String> mediaUnitIDs,
+    DivType toDiv(Map<MediaUnit, String> mediaUnitIDs,
             LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
-        String divId = identifierProvider.next();
+        String divId = UUID.randomUUID().toString();
         div.setID(divId);
         div.setLABEL(label);
         div.setORDERLABEL(orderlabel);
@@ -321,18 +319,18 @@ public class Structure implements DivXmlElementAccessInterface {
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            dmdSec.setID(identifierProvider.next());
+            dmdSec.setID(UUID.randomUUID().toString());
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
-        Optional<AmdSecType> optionalAmdSec = createAmdSec(identifierProvider, div);
+        Optional<AmdSecType> optionalAmdSec = createAmdSec(div);
         if (optionalAmdSec.isPresent()) {
             AmdSecType admSec = optionalAmdSec.get();
             mets.getAmdSec().add(admSec);
         }
 
         for (DivXmlElementAccessInterface substructure : substructures) {
-            div.getDiv().add(((Structure) substructure).toDiv(identifierProvider, mediaUnitIDs, smLinkData, mets));
+            div.getDiv().add(((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }
@@ -375,20 +373,17 @@ public class Structure implements DivXmlElementAccessInterface {
      * case all sections are generated, which would not be the case with logical
      * OR.
      * 
-     * @param identifierProvider
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param div
      *            div where ADMID references must be added to the generated
      *            meta-data sections
      * @return an {@code <amdSec>}, if necessary
      */
-    private Optional<AmdSecType> createAmdSec(IdentifierProvider identifierProvider, DivType div) {
+    private Optional<AmdSecType> createAmdSec(DivType div) {
         AmdSecType amdSec = new AmdSecType();
-        return addMdSec(createMdSec(MdSec.SOURCE_MD), AmdSecType::getSourceMD, identifierProvider, amdSec, div)
-                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), AmdSecType::getDigiprovMD, identifierProvider, amdSec, div)
-                | addMdSec(createMdSec(MdSec.RIGHTS_MD), AmdSecType::getRightsMD, identifierProvider, amdSec, div)
-                | addMdSec(createMdSec(MdSec.TECH_MD), AmdSecType::getTechMD, identifierProvider, amdSec, div)
+        return addMdSec(createMdSec(MdSec.SOURCE_MD), AmdSecType::getSourceMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), AmdSecType::getDigiprovMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.RIGHTS_MD), AmdSecType::getRightsMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.TECH_MD), AmdSecType::getTechMD, amdSec, div)
                         ? Optional.of(amdSec)
                         : Optional.empty();
     }
@@ -403,9 +398,6 @@ public class Structure implements DivXmlElementAccessInterface {
      * @param mdSecTypeGetter
      *            the getter via which the meta-data section can be added to the
      *            administrative meta-data section
-     * @param identifierProvider
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param amdSec
      *            administrative meta-data section to which the meta-data
      *            section should be added, if any
@@ -416,14 +408,14 @@ public class Structure implements DivXmlElementAccessInterface {
      *         section
      */
     private static boolean addMdSec(Optional<MdSecType> optionalMdSec,
-            Function<AmdSecType, List<MdSecType>> mdSecTypeGetter, IdentifierProvider identifierProvider,
+            Function<AmdSecType, List<MdSecType>> mdSecTypeGetter,
             AmdSecType amdSec, DivType div) {
 
         if (!optionalMdSec.isPresent()) {
             return false;
         } else {
             MdSecType mdSec = optionalMdSec.get();
-            mdSec.setID(identifierProvider.next());
+            mdSec.setID(UUID.randomUUID().toString());
             mdSecTypeGetter.apply(amdSec).add(mdSec);
             div.getADMID().add(mdSec);
             return true;

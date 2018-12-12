@@ -13,6 +13,7 @@ package org.kitodo.dataformat.access;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.FileType;
@@ -75,16 +76,14 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      * Creates a new METS {@code <file>} element with this media file reference
      * in it.
      * 
-     * @param fileId
-     *            Identifier for the METS file element
      * @param mimeType
      *            possible Internet MIME type of a computer file that can be
      *            obtained when the URI is downloaded
      * @return a METS {@code <file>} element
      */
-    FileType toFile(String fileId, String mimeType) {
+    FileType toFile(String mimeType) {
         FileType file = new FileType();
-        file.setID(fileId);
+        file.setID(UUID.randomUUID().toString());
         file.setMIMETYPE(mimeType);
         FLocat fLocat = new FLocat();
         fLocat.setLOCTYPE("URL");

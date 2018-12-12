@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
@@ -188,11 +189,11 @@ public class MediaUnit implements FileXmlElementAccessInterface {
      *            the link pairs of the struct link section
      * @return a new {@code <div>} element for this media unit
      */
-    DivType toDiv(IdentifierProvider identifierProvider, Map<MediaFile, FileType> mediaFilesToIDFiles,
+    DivType toDiv(Map<MediaFile, FileType> mediaFilesToIDFiles,
             Map<MediaUnit, String> mediaUnitIDs) {
 
         DivType div = new DivType();
-        String divId = identifierProvider.next();
+        String divId = UUID.randomUUID().toString();
         div.setID(divId);
         mediaUnitIDs.put(this, divId);
         div.setORDER(BigInteger.valueOf(order));

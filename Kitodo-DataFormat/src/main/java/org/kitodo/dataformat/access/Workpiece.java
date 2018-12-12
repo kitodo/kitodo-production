@@ -287,17 +287,16 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         Mets mets = new Mets();
         mets.setMetsHdr(generateMetsHdr());
 
-        IdentifierProvider identifierProvider = new IdentifierProvider();
         Map<MediaFile, FileType> mediaFilesToIDFiles = new HashMap<>();
-        mets.setFileSec(generateFileSec(identifierProvider, mediaFilesToIDFiles));
+        mets.setFileSec(generateFileSec(mediaFilesToIDFiles));
 
         Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
-        mets.getStructMap().add(generatePhysicalStructMap(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
+        mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, mediaUnitIDs));
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(structure.toDiv(identifierProvider, mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(structure.toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));
@@ -354,15 +353,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      * Therefore, the media units are first resolved according to their media
      * variants, then the corresponding XML elements are generated.
      * 
-     * @param idp
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param mediaFilesToIDFiles
      *            In this map, for each media unit, the corresponding XML file
      *            element is added, so that it can be used for linking later.
      * @return
      */
-    private FileSec generateFileSec(IdentifierProvider idp, Map<MediaFile, FileType> mediaFilesToIDFiles) {
+    private FileSec generateFileSec(Map<MediaFile, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();
 
         Map<MediaVariant, Set<MediaFile>> useToMediaUnits = new HashMap<>();
@@ -381,7 +377,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
             fileGrp.setUSE(mediaVariant.getUse());
             String mimeType = mediaVariant.getMimeType();
             Map<MediaFile, FileType> files = fileGrpData.getValue().parallelStream()
-                    .map(mediaFile -> Pair.of(mediaFile, mediaFile.toFile(idp.next(), mimeType)))
+                    .map(mediaFile -> Pair.of(mediaFile, mediaFile.toFile(mimeType)))
                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
             mediaFilesToIDFiles.putAll(files);
             fileGrp.getFile().addAll(files.values());
@@ -394,9 +390,6 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      * Creates the physical struct map. In the physical struct map, the
      * individual files with their variants are enumerated and labeled.
      * 
-     * @param identifierProvider
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param mediaFilesToIDFiles
      *            A map of the media files to the XML file elements used to
      *            declare them in the file section. To output a link to the ID,
@@ -407,14 +400,14 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            section can be formed later.
      * @return the physical struct map
      */
-    private StructMapType generatePhysicalStructMap(IdentifierProvider identifierProvider,
+    private StructMapType generatePhysicalStructMap(
             Map<MediaFile, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
         DivType boundBook = new DivType();
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
             boundBook.getDiv()
-                    .add(((MediaUnit) mediaUnit).toDiv(identifierProvider, mediaFilesToIDFiles, mediaUnitIDs));
+                    .add(((MediaUnit) mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
         }
         physical.setDiv(boundBook);
         return physical;
