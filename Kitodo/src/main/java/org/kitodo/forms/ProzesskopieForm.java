@@ -1392,7 +1392,6 @@ public class ProzesskopieForm implements Serializable {
         return this.possibleDigitalCollection;
     }
 
-    @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
         try {
             DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie);

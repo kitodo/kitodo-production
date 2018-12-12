@@ -301,7 +301,6 @@ public class Helper implements Observer, Serializable {
      */
     public static Map<String, String> getAllStrings(String key) {
         Map<String, String> result = new HashMap<>((int) Math.ceil(commonMessages.entrySet().size() / 0.75));
-        @SuppressWarnings("unchecked")
         Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
         while (languages.hasNext()) {
             Locale language = languages.next();

@@ -205,7 +205,6 @@ public class MetadataHelper {
      * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
      * DefaultDisplay-Metadaten ergänzen.
      */
-    @SuppressWarnings("deprecation")
     public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(DocStructInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
         List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();

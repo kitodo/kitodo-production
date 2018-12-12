@@ -71,7 +71,6 @@ public class NLAIdentity {
         eac = node;
 
         // Identity
-        @SuppressWarnings("unchecked")
         List<Node> otherIds = eac.selectNodes("eac:eac-cpf/eac:control/eac:otherRecordId");
         for (Node idNode : otherIds) {
             String otherId = idNode.getText();
@@ -130,7 +129,6 @@ public class NLAIdentity {
         returnList.add(idMap);
 
         // All name entities from contributing institutions
-        @SuppressWarnings("unchecked")
         List<Node> sourceIdentities = eac.selectNodes("eac:eac-cpf/eac:cpfDescription//eac:eac-cpf");
         for (Node identity : sourceIdentities) {
             // Institution for this ID
@@ -140,7 +138,6 @@ public class NLAIdentity {
                 institutionString = institutionNode.getText();
 
                 // Any names for this ID
-                @SuppressWarnings("unchecked")
                 List<Node> idNodes = identity.selectNodes("*//eac:identity");
                 for (Node idNode : idNodes) {
                     // A Map for each name
@@ -165,7 +162,6 @@ public class NLAIdentity {
         List<Map<String, String>> nameList = new ArrayList<>();
 
         // Any names for this ID
-        @SuppressWarnings("unchecked")
         List<Node> names = node.selectNodes("eac:nameEntry");
         for (Node name : names) {
             Map<String, String> nameMap = getNameMap(name);
@@ -221,7 +217,6 @@ public class NLAIdentity {
         // from recommended values. So just concatenate what we can see.
         if (Objects.isNull(thisDisplay)) {
             // Find every part
-            @SuppressWarnings("unchecked")
             List<Node> parts = name.selectNodes("eac:part");
             for (Node part : parts) {
                 String value = getValueFromPart((Element) part);

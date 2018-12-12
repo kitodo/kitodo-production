@@ -344,7 +344,6 @@ public class SearchForm {
      *
      * @return String
      */
-    @SuppressWarnings("unchecked")
     public String filter() {
         String search = "";
         if (!this.processTitle.isEmpty()) {

@@ -63,7 +63,6 @@ public class SearchResultGeneration {
      *
      * @return HSSFWorkbook
      */
-    @SuppressWarnings("deprecation")
     public HSSFWorkbook getResult() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         BoolQueryBuilder query = new BoolQueryBuilder();

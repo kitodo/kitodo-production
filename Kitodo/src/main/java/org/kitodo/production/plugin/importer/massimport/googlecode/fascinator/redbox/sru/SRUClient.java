@@ -688,16 +688,15 @@ public class SRUClient {
      *
      * @param id
      *            The identifier to search for
-     * @return String The record matching this identifier. Null if not found
+     * @return the record matching this identifier, empty String if not found
      */
     public String nlaGetNationalId(String id) {
         Node node = nlaGetRecordNodeById(id);
 
         if (node == null) {
-            return null;
+            return "";
         }
 
-        @SuppressWarnings("unchecked")
         List<Node> otherIds = node.selectNodes("eac:control/eac:otherRecordId");
         for (Node idNode : otherIds) {
             String otherId = idNode.getText();
@@ -706,7 +705,7 @@ public class SRUClient {
             }
         }
 
-        return null;
+        return "";
     }
 
     /**
