@@ -620,7 +620,6 @@ public class CopyProcess extends ProzesskopieForm {
         return this.possibleDigitalCollection;
     }
 
-    @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
         try {
             DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie);

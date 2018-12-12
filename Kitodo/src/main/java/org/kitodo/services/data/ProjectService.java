@@ -149,7 +149,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         return convertJSONObjectsToDTOs(searcher.findDocuments(getProjectsForCurrentUserQuery(), sort, offset, size),
             false);

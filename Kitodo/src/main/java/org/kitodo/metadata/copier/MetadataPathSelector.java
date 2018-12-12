@@ -42,8 +42,8 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     private static final String ANY_METADATA_TYPE_SYMBOL = "*";
 
-    @SuppressWarnings("javadoc")
     private static final Logger logger = LogManager.getLogger(MetadataPathSelector.class);
+
     /**
      * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
      * to extract the first metadata path segment.

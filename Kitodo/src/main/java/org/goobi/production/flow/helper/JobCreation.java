@@ -57,7 +57,6 @@ public class JobCreation {
      *            Template object
      * @return Process object
      */
-    @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Template template) throws DataException, IOException {
         String processTitle = io.getProcessTitle();
         logger.trace("processtitle is {}", processTitle);
@@ -166,7 +165,6 @@ public class JobCreation {
      * @param p
      *            Process object
      */
-    @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p) throws IOException {
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.IMPORT_USE_OLD_CONFIGURATION)) {
             URI imagesFolder = basepath;

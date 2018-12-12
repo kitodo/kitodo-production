@@ -113,7 +113,6 @@ public class ConfigOpac {
     /**
      * get doctype from title.
      */
-    @SuppressWarnings("unchecked")
     public static ConfigOpacDoctype getDoctypeByName(String inTitle) throws FileNotFoundException {
         int countCatalogues = getConfig().getMaxIndex(DOCTYPES_TYPE);
         for (int i = 0; i <= countCatalogues; i++) {
@@ -166,7 +165,6 @@ public class ConfigOpac {
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
         List<String> result = new LinkedList<>();
-        @SuppressWarnings("unchecked")
         List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt(CATALOGUE);
         for (HierarchicalConfiguration catalogue : catalogues) {
             if (title.equals(catalogue.getString("[@title]"))) {

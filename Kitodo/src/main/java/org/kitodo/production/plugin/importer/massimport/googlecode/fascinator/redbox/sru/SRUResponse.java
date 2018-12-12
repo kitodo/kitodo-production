@@ -52,8 +52,6 @@ public class SRUResponse {
      * @throws SRUException
      *             If any of the XML structure does not look like expected
      */
-
-    @SuppressWarnings("unchecked")
     public SRUResponse(Document searchResponse) throws SRUException {
         // Results total
         Node number = searchResponse.selectSingleNode("//srw:numberOfRecords");

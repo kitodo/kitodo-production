@@ -148,7 +148,6 @@ public class ConfigProjects {
      *
      * @return Parameter als List
      */
-    @SuppressWarnings("unchecked")
     public List<String> getParamList(String inParameter) {
         try {
             List<Object> configs = this.config.getList(this.projektTitel + inParameter);
