@@ -9,10 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.io;
+package org.kitodo.file;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -223,26 +224,20 @@ public class BackupFileRotationTest {
         InputStreamReader inputStreamReader = new InputStreamReader(fileService.read(URI.create(fileName)));
         BufferedReader br = new BufferedReader(inputStreamReader);
         String line;
-        String content = "";
+        StringBuilder content = new StringBuilder();
         while ((line = br.readLine()) != null) {
-            content += line;
+            content.append(line);
         }
         br.close();
-        assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
+        assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content.toString());
     }
 
     private void assertFileExists(String fileName) {
-        boolean fileExist = fileService.fileExist(URI.create(fileName));
-        if (!fileExist) {
-            fail("File " + fileName + " does not exist.");
-        }
+        assertTrue("File " + fileName + " does not exist.", fileService.fileExist(URI.create(fileName)));
     }
 
     private void assertFileNotExists(String fileName) {
-        File newFile = new File(fileName);
-        if (newFile.exists()) {
-            fail("File " + fileName + " should not exist.");
-        }
+        assertFalse("File " + fileName + " should not exist.", fileService.fileExist(URI.create(fileName)));
     }
 
     private void writeFile(URI uri, String content) throws IOException {
