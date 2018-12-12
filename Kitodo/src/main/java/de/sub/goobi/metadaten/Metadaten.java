@@ -1113,9 +1113,9 @@ public class Metadaten {
         int zaehler = 0;
         int imageNr = 0;
         if (references != null) {
-            Collections.sort(references, (firstObject, secondObject) -> {
+            references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;
-                Integer secondPage = 0;
+                int secondPage = 0;
 
                 MetadataTypeInterface mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
                 List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
@@ -2506,6 +2506,7 @@ public class Metadaten {
      * @param docStruct DocStructInterfaces for which page file paths are returned.
      * @return list of file paths of pages assigned to given DocStructInterface 'docStruct'.
      */
+    @SuppressWarnings("unchecked")
     private List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
         List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");

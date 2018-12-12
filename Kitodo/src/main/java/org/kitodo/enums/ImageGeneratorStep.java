@@ -86,5 +86,5 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
                 return;
             }
         }
-    };
+    }
 }

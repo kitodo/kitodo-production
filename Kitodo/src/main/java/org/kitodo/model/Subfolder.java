@@ -100,18 +100,14 @@ public class Subfolder {
      * @return a mapping function for the key of the map
      */
     private static Function<URI, String> createKeyMapperForPattern(final Pattern pattern) {
-        Function<URI, String> result = new Function<URI, String>() {
-            @Override
-            public String apply(URI uri) {
-                Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
-                if (!matcher.matches()) {
-                    throw new IllegalStateException(
-                            "At this point may only arrive files where the pattern had already matched.");
-                }
-                return matcher.group(1);
+        return uri -> {
+            Matcher matcher = pattern.matcher(FilenameUtils.getName(uri.getPath()));
+            if (!matcher.matches()) {
+                throw new IllegalStateException(
+                        "At this point may only arrive files where the pattern had already matched.");
             }
+            return matcher.group(1);
         };
-        return result;
     }
 
     /**

@@ -112,7 +112,7 @@ public class CommandService {
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());
             Flowable<CommandResult> commandResultListener = commandBackgroundWorker.observeOn(Schedulers.single());
-            commandResultListener.subscribe(commandResult -> handleCommandResult(commandResult));
+            commandResultListener.subscribe(this::handleCommandResult);
         }
     }
 
