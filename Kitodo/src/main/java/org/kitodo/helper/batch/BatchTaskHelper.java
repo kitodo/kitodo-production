@@ -21,7 +21,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -40,6 +39,7 @@ import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
+import org.kitodo.helper.WikiFieldHelper;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
