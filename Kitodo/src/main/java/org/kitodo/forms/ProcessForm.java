@@ -1116,7 +1116,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void generateResultAsPdf() {
         try {
-            serviceManager.getProcessService().generateResultAsPdf(this.filter);
+            ServiceManager.getProcessService().generateResultAsPdf(this.filter);
         } catch (IOException | DocumentException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
         }
@@ -1127,7 +1127,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void generateResult() {
         try {
-            serviceManager.getProcessService().generateResult(this.filter);
+            ServiceManager.getProcessService().generateResult(this.filter);
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_CREATING, new Object[]{Helper.getTranslation("resultSet")}, logger, e);
         }
