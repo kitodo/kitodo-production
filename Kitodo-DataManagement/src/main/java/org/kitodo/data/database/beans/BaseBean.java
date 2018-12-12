@@ -22,7 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
 import org.kitodo.data.database.persistence.BaseDAO;
 
 /**
@@ -49,11 +48,7 @@ public abstract class BaseBean implements Serializable {
     @SuppressWarnings("unchecked")
     void initialize(BaseDAO baseDAO, List<? extends BaseBean> list) {
         if (Objects.nonNull(this.id) && !Hibernate.isInitialized(list)) {
-            try {
-                Hibernate.initialize(list);
-            } catch (HibernateException e) {
-                baseDAO.initialize(this, list);
-            }
+            baseDAO.initialize(this, list);
         }
     }
 }
