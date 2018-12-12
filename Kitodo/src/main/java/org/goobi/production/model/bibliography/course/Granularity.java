@@ -70,7 +70,7 @@ public enum Granularity {
                 return ISODateTimeFormat.yearMonth().print(date);
             case QUARTERS:
                 return ISODateTimeFormat.year().print(date) + "/Q"
-                        + Integer.toString(((date.getMonthOfYear() - 1) / 3) + 1);
+                        + ((date.getMonthOfYear() - 1) / 3) + 1;
             case WEEKS:
                 return ISODateTimeFormat.weekyearWeek().print(date);
             case YEARS:

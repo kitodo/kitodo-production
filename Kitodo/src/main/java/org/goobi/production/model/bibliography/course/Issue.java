@@ -12,6 +12,7 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.joda.time.DateTimeConstants;
@@ -538,7 +539,7 @@ public class Issue {
      *            heading to be used
      */
     public void setHeading(String heading) {
-        if (this.heading == null ? heading != null : !this.heading.equals(heading)) {
+        if (!Objects.equals(this.heading, heading)) {
             course.clearProcesses();
         }
         this.heading = heading;

@@ -942,8 +942,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public static Stream<Folder> generatableFoldersFromProjects(Stream<Project> projects) {
         Stream<Project> projectsWithSourceFolder = skipProjectsWithoutSourceFolder(projects);
         Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
-        Stream<Folder> generatableFolders = removeFoldersThatCannotBeGenerated(allowedFolders);
-        return generatableFolders;
+        return removeFoldersThatCannotBeGenerated(allowedFolders);
     }
 
     /**
@@ -970,9 +969,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             project -> project.getFolders().stream().map(folder -> Pair.of(folder, project.getGeneratorSource())));
         Stream<Pair<Folder, Folder>> filteredWithSources = withSources.filter(
             destinationAndSource -> !destinationAndSource.getLeft().equals(destinationAndSource.getRight()));
-        Stream<Folder> filteredFolders = filteredWithSources
-                .map(destinationAndSource -> destinationAndSource.getLeft());
-        return filteredFolders;
+        return filteredWithSources.map(Pair::getLeft);
     }
 
     /**
