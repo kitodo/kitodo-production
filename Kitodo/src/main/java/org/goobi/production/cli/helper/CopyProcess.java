@@ -39,7 +39,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -159,9 +159,9 @@ public class CopyProcess extends ProzesskopieForm {
     private void readProjectConfigs() {
         // depending on the project configuration display the correct fields in
         // the GUI
-        ConfigProjects cp;
+        ConfigProject cp;
         try {
-            cp = new ConfigProjects(this.project.getTitle());
+            cp = new ConfigProject(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -800,9 +800,9 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void calculateTiffHeader() {
         String tifDefinition;
-        ConfigProjects cp;
+        ConfigProject cp;
         try {
-            cp = new ConfigProjects(this.project.getTitle());
+            cp = new ConfigProject(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;

@@ -21,14 +21,14 @@ import org.kitodo.FileLoader;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConfigProjectsTest {
+public class ConfigProjectTest {
 
-    private static ConfigProjects configProjects;
+    private static ConfigProject configProject;
 
     @BeforeClass
     public static void setUp() throws Exception {
         FileLoader.createConfigProjectsFile();
-        configProjects = new ConfigProjects("default");
+        configProject = new ConfigProject("default");
     }
 
     @AfterClass
@@ -38,19 +38,19 @@ public class ConfigProjectsTest {
 
     @Test
     public void shouldGetConfigProjectsForItems() {
-        List<String> items = configProjects.getParamList("createNewProcess.itemlist.item");
+        List<String> items = configProject.getParamList("createNewProcess.itemlist.item");
         assertEquals("Incorrect amount of items!", 10, items.size());
     }
 
     @Test
     public void shouldGetConfigProjectsForSelectItems() {
-        List<String> items = configProjects.getParamList("createNewProcess.itemlist.item(1).select");
+        List<String> items = configProject.getParamList("createNewProcess.itemlist.item(1).select");
         assertEquals("Incorrect amount of select items for second element!", 3, items.size());
     }
 
     @Test
     public void shouldGetConfigProjectsForProcessTitles() {
-        List<String> processTitles = configProjects.getParamList("createNewProcess.itemlist.processtitle");
+        List<String> processTitles = configProject.getParamList("createNewProcess.itemlist.processtitle");
         assertEquals("Incorrect amount of process titles!", 5, processTitles.size());
     }
 }
