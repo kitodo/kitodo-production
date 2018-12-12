@@ -11,7 +11,6 @@
 
 package org.goobi.mq;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ReportLevel;
 import org.kitodo.helper.Helper;
 
@@ -49,8 +47,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      *            A MapMessage which can be processor-specific except that it
      *            requires to have a field “id”.
      */
-    protected abstract void process(MapMessageObjectReader ticket)
-            throws DAOException, DataException, IOException, JMSException;
+    protected abstract void process(MapMessageObjectReader ticket) throws DAOException, JMSException;
 
     /**
      * Instantiating the class ActiveMQProcessor always requires to pass the

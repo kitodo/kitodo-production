@@ -204,15 +204,11 @@ public class ProjectForm extends BaseForm {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular() },
-                    logger, e);
-                return this.stayOnCurrentPage;
             }
         }
     }
 
-    private void addFirstUserToNewProject() throws DAOException, DataException {
+    private void addFirstUserToNewProject() throws DataException {
         if (this.project.getUsers().isEmpty()) {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);

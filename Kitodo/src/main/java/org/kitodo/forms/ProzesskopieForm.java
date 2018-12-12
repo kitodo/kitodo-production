@@ -604,7 +604,7 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String templateAuswahlAuswerten() throws DAOException {
+    public String templateAuswahlAuswerten() {
         if (ServiceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
             for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
