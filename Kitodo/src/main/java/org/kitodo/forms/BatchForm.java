@@ -296,14 +296,10 @@ public class BatchForm extends BaseForm {
      * Add processes to Batch.
      */
     public void addProcessesToBatch() {
-        if (this.selectedBatches.isEmpty()) {
-            Helper.setErrorMessage(NO_BATCH_SELECTED);
+        if (areSelectedListsEmpty()) {
             return;
         }
-        if (this.selectedProcesses.isEmpty()) {
-            Helper.setErrorMessage(NO_PROCESS_SELECTED);
-            return;
-        }
+
         try {
             for (Batch selectedBatch : this.selectedBatches) {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
@@ -328,12 +324,7 @@ public class BatchForm extends BaseForm {
      * Remove processes from Batch.
      */
     public void removeProcessesFromBatch() throws DAOException, DataException {
-        if (this.selectedBatches.isEmpty()) {
-            Helper.setErrorMessage(NO_BATCH_SELECTED);
-            return;
-        }
-        if (this.selectedProcesses.isEmpty()) {
-            Helper.setErrorMessage(NO_PROCESS_SELECTED);
+        if (areSelectedListsEmpty()) {
             return;
         }
 
@@ -349,6 +340,18 @@ public class BatchForm extends BaseForm {
             }
         }
         filterAll();
+    }
+
+    private boolean areSelectedListsEmpty() {
+        if (this.selectedBatches.isEmpty()) {
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
+            return true;
+        }
+        if (this.selectedProcesses.isEmpty()) {
+            Helper.setErrorMessage(NO_PROCESS_SELECTED);
+            return true;
+        }
+        return false;
     }
 
     /**
