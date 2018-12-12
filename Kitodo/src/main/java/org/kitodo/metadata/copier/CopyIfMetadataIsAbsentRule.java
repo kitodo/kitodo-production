@@ -49,7 +49,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     /**
      * This method actually applies the rule to the given fileformat.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataCopyrule#apply(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public void apply(CopierData data) {
@@ -63,7 +63,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     /**
      * Returns the maximum number of objects this rule can accept, always 1.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMaxObjects()
      */
     @Override
     protected int getMaxObjects() {
@@ -73,7 +73,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     /**
      * Returns the minimum number of objects this rule requires, always 1.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMinObjects()
      */
     @Override
     protected int getMinObjects() {
@@ -84,7 +84,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
      * Saves the source object path and creates a selector for it. The source
      * selector can be arbitrary DataSelector, which may be read-only.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setObjects(java.util.List)
      */
     @Override
     protected void setObjects(List<String> objects) throws ConfigurationException {
@@ -95,7 +95,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
      * Saves the destination object path and creates a selector for it. The
      * destination selector must be a writable MetadataSelector.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setSubject(java.lang.String)
      */
     @Override
     protected void setSubject(String subject) throws ConfigurationException {

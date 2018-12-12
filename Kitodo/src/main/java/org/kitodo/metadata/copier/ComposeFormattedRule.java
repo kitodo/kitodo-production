@@ -119,7 +119,7 @@ public class ComposeFormattedRule extends DataCopyrule {
      *
      * @param data
      *            data to apply the rule on
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataCopyrule#apply(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public void apply(CopierData data) {
@@ -147,7 +147,7 @@ public class ComposeFormattedRule extends DataCopyrule {
      * expected, that is unlimited.
      *
      * @return Integer.MAX_VALUE
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMaxObjects()
      */
     @Override
     protected int getMaxObjects() {
@@ -159,7 +159,7 @@ public class ComposeFormattedRule extends DataCopyrule {
      * expected, that is 2.
      *
      * @return always 2
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMinObjects()
      */
     @Override
     protected int getMinObjects() {
@@ -169,7 +169,7 @@ public class ComposeFormattedRule extends DataCopyrule {
     /**
      * Saves the source object path.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setObjects(java.util.List)
      */
     @Override
     protected void setObjects(List<String> objects) throws ConfigurationException {
@@ -183,7 +183,7 @@ public class ComposeFormattedRule extends DataCopyrule {
     /**
      * Saves the destination object path.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setSubject(java.lang.String)
      */
     @Override
     protected void setSubject(String subject) throws ConfigurationException {

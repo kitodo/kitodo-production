@@ -65,8 +65,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      *            document structure node to check and enrich
      * @param value
      *            value to write if no metadatum of this type is available
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
-     *      de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct,
+     * @see org.kitodo.metadata.copier.MetadataSelector#createIfPathExistsOnly(
+     *      org.kitodo.metadata.copier.CopierData, org.kitodo.api.ugh.DocStructInterface,
      *      java.lang.String)
      */
     @Override
@@ -88,8 +88,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      *            document structure node to check and enrich
      * @param value
      *            value to write if no metadatum of this type is available
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
-     *      de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct,
+     * @see org.kitodo.metadata.copier.MetadataSelector#createIfPathExistsOnly(
+     *      org.kitodo.metadata.copier.CopierData, org.kitodo.api.ugh.DocStructInterface,
      *      java.lang.String)
      */
 
@@ -110,7 +110,7 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param node
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
+     * @see org.kitodo.metadata.copier.MetadataSelector#findAll(org.kitodo.api.ugh.DocStructInterface)
      */
     @Override
     protected Iterable<MetadataSelector> findAll(DocStructInterface node) {
@@ -134,7 +134,7 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param node
      *            document structure node to examine
      * @return the value of the metadata, or null if absent
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+     * @see org.kitodo.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.DocStructInterface)
      */
     @Override
     protected String findIn(DocStructInterface node) {
@@ -149,7 +149,7 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param node
      *            document structure node to examine
      * @return the metadata, or null if absent
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+     * @see org.kitodo.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.DocStructInterface)
      */
     private MetadataInterface findMetadatumIn(DocStructInterface node) {
         List<? extends MetadataInterface> metadata = node.getAllMetadataByType(selector);
