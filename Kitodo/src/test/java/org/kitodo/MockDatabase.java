@@ -488,7 +488,6 @@ public class MockDatabase {
 
         Template firstTemplate = new Template();
         firstTemplate.setTitle("First template");
-        firstTemplate.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstTemplate.setCreationDate(localDate.toDate());
         firstTemplate.setInChoiceListShown(true);
@@ -500,7 +499,6 @@ public class MockDatabase {
         Project thirdProject = ServiceManager.getProjectService().getById(3);
         Template secondTemplate = new Template();
         secondTemplate.setTitle("Second template");
-        secondTemplate.setWikiField("works");
         localDate = new LocalDate(2017, 2, 10);
         secondTemplate.setCreationDate(localDate.toDate());
         secondTemplate.setDocket(ServiceManager.getDocketService().getById(1));
@@ -513,7 +511,6 @@ public class MockDatabase {
         thirdProject = ServiceManager.getProjectService().getById(3);
         Template thirdTemplate = new Template();
         thirdTemplate.setTitle("Third template");
-        thirdTemplate.setWikiField("problem");
         localDate = new LocalDate(2018, 2, 10);
         thirdTemplate.setCreationDate(localDate.toDate());
         thirdTemplate.setDocket(ServiceManager.getDocketService().getById(1));

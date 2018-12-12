@@ -17,7 +17,6 @@ import java.util.List;
 public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
-    private String wikiField;
     private String creationDate;
     private DocketDTO docket;
     private RulesetDTO ruleset;
@@ -40,25 +39,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get wiki field.
-     *
-     * @return wiki field as String
-     */
-    public String getWikiField() {
-        return wikiField;
-    }
-
-    /**
-     * Set wiki field.
-     *
-     * @param wikiField
-     *            as String
-     */
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
     }
 
     /**

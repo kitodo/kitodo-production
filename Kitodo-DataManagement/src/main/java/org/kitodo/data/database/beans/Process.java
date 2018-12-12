@@ -55,6 +55,9 @@ public class Process extends BaseTemplateBean {
     @Column(name = "sortHelperDocstructs")
     private Integer sortHelperDocstructs;
 
+    @Column(name = "wikiField", columnDefinition = "longtext")
+    private String wikiField = "";
+
     @Column(name = "processBaseUri")
     private URI processBaseUri;
 
@@ -181,6 +184,24 @@ public class Process extends BaseTemplateBean {
 
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
+    }
+
+    /**
+     * Get wikiField.
+     *
+     * @return value of wikiField
+     */
+    public String getWikiField() {
+        return this.wikiField;
+    }
+
+    /**
+     * Set wikiField.
+     *
+     * @param wikiField as java.lang.String
+     */
+    public void setWikiField(String wikiField) {
+        this.wikiField = wikiField;
     }
 
     /**

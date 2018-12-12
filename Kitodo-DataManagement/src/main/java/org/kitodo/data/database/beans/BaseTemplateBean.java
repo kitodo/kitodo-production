@@ -34,11 +34,8 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
     @Column(name = "sortHelperStatus")
     private String sortHelperStatus;
 
-    @Column(name = "wikiField", columnDefinition = "longtext")
-    private String wikiField = "";
-
     @Column(name = "inChoiceListShown")
-    protected Boolean inChoiceListShown;
+    Boolean inChoiceListShown;
 
     /**
      * Get title.
@@ -93,24 +90,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    /**
-     * Get wikiField.
-     *
-     * @return value of wikiField
-     */
-    public String getWikiField() {
-        return this.wikiField;
-    }
-
-    /**
-     * Set wikiField.
-     *
-     * @param wikiField as java.lang.String
-     */
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
     }
 
     /**
