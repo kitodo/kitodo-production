@@ -623,7 +623,7 @@ public class CopyProcess extends ProzesskopieForm {
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
         try {
-            DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie);
+            DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie.getProject());
         } catch (JDOMException | IOException e) {
             Helper.setErrorMessage("Error while parsing digital collections", logger, e);
         }

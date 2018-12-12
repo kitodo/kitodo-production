@@ -18,7 +18,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 
 import static org.junit.Assert.assertEquals;
@@ -40,10 +39,7 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("NonExisting");
 
-        Process process = new Process();
-        process.setProject(project);
-
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
+        DigitalCollections.possibleDigitalCollectionsForProcess(project);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
@@ -57,10 +53,7 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("Project A");
 
-        Process process = new Process();
-        process.setProject(project);
-
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
+        DigitalCollections.possibleDigitalCollectionsForProcess(project);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
@@ -74,10 +67,7 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("Project B");
 
-        Process process = new Process();
-        process.setProject(project);
-
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
+        DigitalCollections.possibleDigitalCollectionsForProcess(project);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
