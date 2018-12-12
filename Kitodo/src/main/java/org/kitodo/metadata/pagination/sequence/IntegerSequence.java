@@ -9,34 +9,37 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.pagination;
+package org.kitodo.metadata.pagination.sequence;
 
 import java.util.ArrayList;
 
-import org.kitodo.api.ugh.RomanNumeralInterface;
-import org.kitodo.legacy.UghImplementation;
-
-public class RomanNumberSequence extends ArrayList<String> {
+public class IntegerSequence extends ArrayList<Integer> {
 
     /**
      * Constructor.
      *
      * @param start
-     *            as int
+     *            int
      * @param end
-     *            as int
-     * @param increment
-     *            as int
+     *            int
      */
-    public RomanNumberSequence(int start, int end, int increment) {
+    public IntegerSequence(int start, int end) {
+        generateElements(start, end, 1);
+    }
+
+    public IntegerSequence(int start, int end, int increment) {
         generateElements(start, end, increment);
     }
 
     private void generateElements(int start, int end, int increment) {
-        RomanNumeralInterface r = UghImplementation.INSTANCE.createRomanNumeral();
+        if (start > end) {
+            throw new IllegalArgumentException("Sequence end value cannot be smaller than start value.");
+        }
+
+        this.ensureCapacity(end - start);
+
         for (int i = start; i <= end; i = (i + increment)) {
-            r.setValue(i);
-            this.add(r.toString());
+            this.add(i);
         }
     }
 

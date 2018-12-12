@@ -18,13 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.goobi.pagination.IntegerSequence;
-import org.goobi.pagination.RomanNumberSequence;
 import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.pagination.enums.Mode;
 import org.kitodo.metadata.pagination.enums.Scope;
 import org.kitodo.metadata.pagination.enums.Type;
+import org.kitodo.metadata.pagination.sequence.IntegerSequence;
+import org.kitodo.metadata.pagination.sequence.RomanNumberSequence;
 
 /**
  * Sets new labels to a given set of pages.
