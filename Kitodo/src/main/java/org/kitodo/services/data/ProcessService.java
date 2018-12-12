@@ -141,7 +141,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
     private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
-    private static final String ERROR_CREATING = "errorCreating";
     private static final String ERROR_EXPORT = "errorExport";
     private static final String CLOSED = "closed";
     private static final String IN_PROCESSING = "inProcessing";
@@ -1490,7 +1489,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param filter
      *            for generating search results
      */
-    public void generateResultAsPdf(String filter) {
+    public void generateResultAsPdf(String filter) throws DocumentException, IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
@@ -1525,8 +1524,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 document.close();
                 out.flush();
                 facesContext.responseComplete();
-            } catch (IOException | DocumentException | RuntimeException e) {
-                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
             }
         }
     }
@@ -1537,7 +1534,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param filter
      *            for generating search results
      */
-    public void generateResult(String filter) {
+    public void generateResult(String filter) throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
@@ -1548,8 +1545,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 wb.write(out);
                 out.flush();
                 facesContext.responseComplete();
-            } catch (IOException e) {
-                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
             }
         }
     }

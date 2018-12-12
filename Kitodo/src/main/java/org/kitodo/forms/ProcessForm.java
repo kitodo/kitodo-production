@@ -11,6 +11,8 @@
 
 package org.kitodo.forms;
 
+import com.lowagie.text.DocumentException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,6 +93,7 @@ public class ProcessForm extends TemplateBaseForm {
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();
     private String doneDirectoryName;
+    private static final String ERROR_CREATING = "errorCreating";
     private static final String EXPORT_FINISHED = "exportFinished";
     private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
@@ -1112,14 +1115,22 @@ public class ProcessForm extends TemplateBaseForm {
      * Generate result as PDF.
      */
     public void generateResultAsPdf() {
-        serviceManager.getProcessService().generateResultAsPdf(this.filter);
+        try {
+            serviceManager.getProcessService().generateResultAsPdf(this.filter);
+        } catch (IOException | DocumentException e) {
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+        }
     }
 
     /**
      * Generate result set.
      */
     public void generateResult() {
-        serviceManager.getProcessService().generateResult(this.filter);
+        try {
+            serviceManager.getProcessService().generateResult(this.filter);
+        } catch (IOException e) {
+            Helper.setErrorMessage(ERROR_CREATING, new Object[]{Helper.getTranslation("resultSet")}, logger, e);
+        }
     }
 
     /**
