@@ -59,7 +59,6 @@ import org.kitodo.services.data.base.SearchService;
 public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private static FilterService instance = null;
 
     /**
@@ -240,7 +239,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder taskQuery = limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
 
         if (onlyOpenTasks && onlyUserAssignedTasks) {
-            List<ProcessDTO> processDTOS = serviceManager.getProcessService().findAll();
+            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findAll();
             taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true));
         }
         return taskQuery;
@@ -418,7 +417,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder query = new BoolQueryBuilder();
         UserDTO currentUser = null;
         try {
-            currentUser = serviceManager.getUserService().findAuthenticatedUser();
+            currentUser = ServiceManager.getUserService().findAuthenticatedUser();
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -441,7 +440,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask) {
         // identify current user
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         // hits by user groups
         BoolQueryBuilder taskQuery = new BoolQueryBuilder();
@@ -463,7 +462,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // only assigned projects
         List<ProjectDTO> assignedProjects = new ArrayList<>();
         try {
-            userDTO = serviceManager.getUserService().findById(user.getId());
+            userDTO = ServiceManager.getUserService().findById(user.getId());
             assignedProjects = userDTO.getProjects();
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
@@ -472,7 +471,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // only processes which are not templates and are part of assigned
         // projects
         try {
-            List<ProcessDTO> processDTOS = serviceManager.getProcessService()
+            List<ProcessDTO> processDTOS = ServiceManager.getProcessService()
                     .findByProjectIds(collectIds(assignedProjects), true);
             taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true));
         } catch (DataException e) {
@@ -530,7 +529,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder createProcessTitleFilter(String filter, ObjectType objectType) {
         String processTitle = getFilterValueFromFilterString(filter, FilterString.PROCESS);
         if (objectType == ObjectType.PROCESS) {
-            return serviceManager.getProcessService().getQueryTitle(processTitle, true);
+            return ServiceManager.getProcessService().getQueryTitle(processTitle, true);
         } else if (objectType == ObjectType.TASK) {
             return createSimpleQuery(TaskTypeField.PROCESS_TITLE.getKey(), processTitle, true, Operator.AND);
         }
@@ -541,7 +540,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true);
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(
+            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findByQuery(
                 createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
             return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true);
         }
@@ -846,8 +845,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<TaskDTO> taskDTOS = new ArrayList<>();
         String login = getFilterValueFromFilterString(filter, FilterString.TASKDONEUSER);
         try {
-            JsonObject user = serviceManager.getUserService().findByLogin(login);
-            UserDTO userDTO = serviceManager.getUserService().convertJSONObjectToDTO(user, false);
+            JsonObject user = ServiceManager.getUserService().findByLogin(login);
+            UserDTO userDTO = ServiceManager.getUserService().convertJSONObjectToDTO(user, false);
             taskDTOS = userDTO.getProcessingTasks();
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
@@ -934,10 +933,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<JsonObject> processes;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
-            processes = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
+            processes = ServiceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
                 !negate);
         } else {
-            processes = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
+            processes = ServiceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
         }
 
         QueryBuilder projectQuery = createSetQuery("_id", processes, true);
@@ -958,7 +957,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterProject(String filter, boolean negate, ObjectType objectType) throws DataException {
         // filter according to linked project
         String projectTitle = getFilterValueFromFilterString(filter, FilterString.PROJECT);
-        QueryBuilder projectQuery = serviceManager.getProcessService().getQueryProjectTitle(projectTitle);
+        QueryBuilder projectQuery = ServiceManager.getProcessService().getQueryProjectTitle(projectTitle);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
 
@@ -978,10 +977,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<JsonObject> templates;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
-            templates = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
+            templates = ServiceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
                 templateProperty.get(1), !negate);
         } else {
-            templates = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
+            templates = ServiceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
                 !negate);
         }
 
@@ -990,7 +989,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
-        QueryBuilder titleQuery = serviceManager.getProcessService().getQueryTitle(filter, !negate);
+        QueryBuilder titleQuery = ServiceManager.getProcessService().getQueryTitle(filter, !negate);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
     }
 
@@ -1011,10 +1010,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
             FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {
-            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
+            workpieces = ServiceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
                 workpieceProperty.get(1), !negate);
         } else {
-            workpieces = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
+            workpieces = ServiceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
                 !negate);
         }
 
@@ -1035,7 +1034,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInTask(ObjectType objectType, QueryBuilder query)
             throws DataException {
         if (objectType == ObjectType.PROCESS) {
-            List<TaskDTO> taskDTOS = serviceManager.getTaskService().findByQuery(query, true);
+            List<TaskDTO> taskDTOS = ServiceManager.getTaskService().findByQuery(query, true);
             return createSetQuery("tasks.id", collectIds(taskDTOS), true);
         } else if (objectType == ObjectType.TASK) {
             return query;
@@ -1048,7 +1047,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return query;
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(query, true);
+            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findByQuery(query, true);
             return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();

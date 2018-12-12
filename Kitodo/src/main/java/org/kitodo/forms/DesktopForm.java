@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 
 @Named("DesktopForm")
 @ViewScoped
@@ -54,8 +55,8 @@ public class DesktopForm extends BaseForm {
      */
     public List getTasks() {
         try {
-            if (serviceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
-                return serviceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
+                return ServiceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
@@ -71,8 +72,8 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
-                return serviceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
+                return ServiceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
@@ -88,8 +89,8 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            if (serviceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
-                return serviceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
+                return ServiceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
@@ -111,33 +112,33 @@ public class DesktopForm extends BaseForm {
                 case NONE:
                     return 0L;
                 case TASK:
-                    return serviceManager.getTaskService().count();
+                    return ServiceManager.getTaskService().count();
                 case USER:
-                    return serviceManager.getUserService().count();
+                    return ServiceManager.getUserService().count();
                 case BATCH:
-                    return serviceManager.getBatchService().count();
+                    return ServiceManager.getBatchService().count();
                 case CLIENT:
-                    return serviceManager.getClientService().count();
+                    return ServiceManager.getClientService().count();
                 case DOCKET:
-                    return serviceManager.getDocketService().count();
+                    return ServiceManager.getDocketService().count();
                 case FILTER:
-                    return serviceManager.getFilterService().count();
+                    return ServiceManager.getFilterService().count();
                 case PROCESS:
-                    return serviceManager.getProcessService().count();
+                    return ServiceManager.getProcessService().count();
                 case PROJECT:
-                    return serviceManager.getProjectService().count();
+                    return ServiceManager.getProjectService().count();
                 case RULESET:
-                    return serviceManager.getRulesetService().count();
+                    return ServiceManager.getRulesetService().count();
                 case AUTHORITY:
-                    return serviceManager.getAuthorityService().count();
+                    return ServiceManager.getAuthorityService().count();
                 case PROPERTY:
-                    return serviceManager.getPropertyService().count();
+                    return ServiceManager.getPropertyService().count();
                 case TEMPLATE:
-                    return serviceManager.getTemplateService().count();
+                    return ServiceManager.getTemplateService().count();
                 case ROLE:
-                    return serviceManager.getRoleService().count();
+                    return ServiceManager.getRoleService().count();
                 case WORKFLOW:
-                    return serviceManager.getWorkflowService().count();
+                    return ServiceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }

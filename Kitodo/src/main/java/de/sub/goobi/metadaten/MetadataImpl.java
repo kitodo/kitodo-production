@@ -35,7 +35,7 @@ import org.kitodo.services.ServiceManager;
  */
 
 public class MetadataImpl implements Metadata {
-    private ServiceManager serviceManager = new ServiceManager();
+
     private MetadataInterface md;
     private int identifier;
     private PrefsInterface myPrefs;
@@ -58,7 +58,7 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public String getTyp() {
-        String label = this.md.getMetadataType().getLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+        String label = this.md.getMetadataType().getLanguage(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = this.md.getMetadataType().getName();
         }

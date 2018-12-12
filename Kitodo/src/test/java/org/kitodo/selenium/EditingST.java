@@ -33,8 +33,6 @@ import org.kitodo.services.ServiceManager;
 
 public class EditingST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
@@ -70,7 +68,7 @@ public class EditingST extends BaseTestSelenium {
         Pages.getProcessEditPage().save();
         assertTrue("Redirection after save was not successful", processesPage.isAt());
 
-        Process processAfterEdit = serviceManager.getProcessService().getById(1);
+        Process processAfterEdit = ServiceManager.getProcessService().getById(1);
 
         assertEquals("Incorrect amount of template properties", 4,
                 processAfterEdit.getTemplates().size());
@@ -80,9 +78,9 @@ public class EditingST extends BaseTestSelenium {
     public void editBatchTest() throws Exception {
         processesPage.editBatch();
         await().untilAsserted(() -> assertEquals("Batch was not renamed!", 1,
-            serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+            ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
 
-        assertEquals("Process was not removed from batch", 1, serviceManager.getBatchService()
+        assertEquals("Process was not removed from batch", 1, ServiceManager.getBatchService()
                 .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
     }
 

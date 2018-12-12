@@ -29,8 +29,6 @@ import org.kitodo.services.ServiceManager;
 
 public class ListingSessionClientST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private static ProjectsPage projectsPage;
 
     @Rule
@@ -43,7 +41,7 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @Before
     public void login() throws Exception {
-        Pages.getLoginPage().goTo().performLogin(serviceManager.getUserService().getById(2));
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getById(2));
     }
 
     @After
@@ -56,14 +54,14 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @Test
     public void listProjectsForUserWithFirstSessionClientTest() throws Exception {
-        User user = serviceManager.getUserService().getById(2);
+        User user = ServiceManager.getUserService().getById(2);
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
 
         Pages.getTopNavigation().selectSessionClient(0);
 
         // user will see only projects page as this one right he has for First client
         projectsPage.goTo();
-        int projectsInDatabase = serviceManager.getProjectService()
+        int projectsInDatabase = ServiceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 1").size();
         int projectsDisplayed = projectsPage.countListedProjects();
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
@@ -76,27 +74,27 @@ public class ListingSessionClientST extends BaseTestSelenium {
 
     @Test
     public void listProjectsForUserWithSecondSessionClientTest() throws Exception {
-        User user = serviceManager.getUserService().getById(2);
+        User user = ServiceManager.getUserService().getById(2);
         SecurityTestUtils.addUserDataToSecurityContext(user, 2);
 
         Pages.getTopNavigation().selectSessionClient(1);
 
         // user will see first four tabs as this rights he has for Second client
         projectsPage.goTo();
-        int projectsInDatabase = serviceManager.getProjectService()
+        int projectsInDatabase = ServiceManager.getProjectService()
                 .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 2 INNER JOIN p.client AS c WITH c.id = 2").size();
         int projectsDisplayed = projectsPage.countListedProjects();
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
-        int templatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
+        int templatesInDatabase = ServiceManager.getTemplateService().getActiveTemplates().size();
         int templatesDisplayed = projectsPage.countListedTemplates();
         assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
-        int workflowsInDatabase = serviceManager.getWorkflowService().getAllForSelectedClient().size();
+        int workflowsInDatabase = ServiceManager.getWorkflowService().getAllForSelectedClient().size();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 
-        int docketsInDatabase = serviceManager.getDocketService().getAllForSelectedClient().size();
+        int docketsInDatabase = ServiceManager.getDocketService().getAllForSelectedClient().size();
         int docketsDisplayed = projectsPage.countListedDockets();
         assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
 

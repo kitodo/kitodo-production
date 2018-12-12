@@ -27,7 +27,7 @@ import org.kitodo.services.ServiceManager;
 
 public class ClientServiceIT {
 
-    private static final ClientService clientService = new ServiceManager().getClientService();
+    private static final ClientService clientService = ServiceManager.getClientService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

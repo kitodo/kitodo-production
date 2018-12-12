@@ -28,7 +28,6 @@ import org.kitodo.services.ServiceManager;
 @Named
 public class WorkflowConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(WorkflowConverter.class);
-    private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
@@ -36,7 +35,7 @@ public class WorkflowConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getWorkflowService().getById(Integer.valueOf(value));
+                return ServiceManager.getWorkflowService().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e.getMessage(), e);
                 return "0";

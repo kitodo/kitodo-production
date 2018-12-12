@@ -75,8 +75,6 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private ProcessForm processForm;
 
     /**
@@ -103,7 +101,7 @@ public class SearchForm {
     protected void initMasterpiecePropertyTitles() {
         List<String> workpiecePropertiesTitlesDistinct = new ArrayList<>();
         try {
-            workpiecePropertiesTitlesDistinct = serviceManager.getPropertyService()
+            workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService()
                     .findWorkpiecePropertiesTitlesDistinct();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -115,7 +113,7 @@ public class SearchForm {
      * Initialise drop down list of projects.
      */
     protected void initProjects() {
-        List<Project> projectsSortedByTitle  = serviceManager.getProjectService().getAllProjectsSortedByTitle();
+        List<Project> projectsSortedByTitle  = ServiceManager.getProjectService().getAllProjectsSortedByTitle();
 
         for (Project projectSortedByTitle : projectsSortedByTitle) {
             this.projects.add(projectSortedByTitle.getTitle());
@@ -128,7 +126,7 @@ public class SearchForm {
     protected void initProcessPropertyTitles() {
         List<String> processPropertiesTitlesDistinct = new ArrayList<>();
         try {
-            processPropertiesTitlesDistinct = serviceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
+            processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -148,7 +146,7 @@ public class SearchForm {
     protected void initStepTitles() {
         List<String> taskTitles = new ArrayList<>();
         try {
-            taskTitles = serviceManager.getTaskService().findTaskTitlesDistinct();
+            taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -161,7 +159,7 @@ public class SearchForm {
     protected void initTemplatePropertyTitles() {
         List<String> templatePropertiesTitlesDistinct = new ArrayList<>();
         try {
-            templatePropertiesTitlesDistinct = serviceManager.getPropertyService()
+            templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
                     .findTemplatePropertiesTitlesDistinct();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -174,7 +172,7 @@ public class SearchForm {
      */
     protected void initUserList() {
         try {
-            this.user.addAll(serviceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
+            this.user.addAll(ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
         } catch (RuntimeException e) {
             logger.warn("RuntimeException caught. List of users could be empty!");
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);

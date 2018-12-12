@@ -37,6 +37,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 
 @Named("DocketForm")
 @SessionScoped
@@ -61,7 +62,7 @@ public class DocketForm extends BaseForm {
     @Inject
     public DocketForm(ProjectForm projectForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getDocketService()));
         this.projectForm = projectForm;
     }
 
@@ -72,7 +73,7 @@ public class DocketForm extends BaseForm {
      */
     public String newDocket() {
         this.myDocket = new Docket();
-        this.myDocket.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.myDocket.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return docketEditPath;
     }
 
@@ -88,7 +89,7 @@ public class DocketForm extends BaseForm {
                     Helper.setErrorMessage("docketTitleDuplicated");
                     return this.stayOnCurrentPage;
                 }
-                serviceManager.getDocketService().save(myDocket);
+                ServiceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {
                 Helper.setErrorMessage("docketNotFound");
@@ -113,7 +114,7 @@ public class DocketForm extends BaseForm {
             if (hasAssignedProcessesOrTemplates(this.myDocket.getId())) {
                 Helper.setErrorMessage("docketInUse");
             } else {
-                this.serviceManager.getDocketService().remove(this.myDocket);
+                ServiceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger,
@@ -122,7 +123,7 @@ public class DocketForm extends BaseForm {
     }
 
     private boolean existsDocketWithSameName() {
-        List<Docket> dockets = serviceManager.getDocketService().getByTitle(this.myDocket.getTitle());
+        List<Docket> dockets = ServiceManager.getDocketService().getByTitle(this.myDocket.getTitle());
         if (dockets.isEmpty()) {
             return false;
         } else {
@@ -139,8 +140,8 @@ public class DocketForm extends BaseForm {
     }
 
     private boolean hasAssignedProcessesOrTemplates(int docketId) throws DataException {
-        return !serviceManager.getProcessService().findByDocket(docketId).isEmpty()
-                || !serviceManager.getTemplateService().findByDocket(docketId).isEmpty();
+        return !ServiceManager.getProcessService().findByDocket(docketId).isEmpty()
+                || !ServiceManager.getTemplateService().findByDocket(docketId).isEmpty();
     }
 
     /**
@@ -152,7 +153,7 @@ public class DocketForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setMyDocket(this.serviceManager.getDocketService().getById(id));
+                setMyDocket(ServiceManager.getDocketService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -178,7 +179,7 @@ public class DocketForm extends BaseForm {
      */
     public void setDocketById(int docketID) {
         try {
-            setMyDocket(serviceManager.getDocketService().getById(docketID));
+            setMyDocket(ServiceManager.getDocketService().getById(docketID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.DOCKET.getTranslationSingular(), docketID }, logger, e);

@@ -69,7 +69,6 @@ import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapServerService.class);
     private static LdapServerService instance = null;
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
@@ -165,7 +164,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             ctx.close();
             setNextUidNumber(user.getLdapGroup().getLdapServer());
             Helper.setMessage(
-                Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user));
+                Helper.getTranslation("ldapWritten") + " " + ServiceManager.getUserService().getFullName(user));
             /*
              * check if HomeDir exists, else create it
              */
@@ -175,7 +174,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             if (!new File(homePath).exists()) {
                 logger.debug("HomeVerzeichnis existiert noch nicht");
-                serviceManager.getFileService().createDirectoryForUser(homePath, user.getLogin());
+                ServiceManager.getFileService().createDirectoryForUser(homePath, user.getLogin());
                 logger.debug("HomeVerzeichnis angelegt");
             } else {
                 logger.debug("HomeVerzeichnis existiert schon");
@@ -371,7 +370,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
         if (userFolderPath != null && !userFolderPath.isAbsolute()) {
             if (userFolderPath.getPath().startsWith("/")) {
-                userFolderPath = serviceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
+                userFolderPath = ServiceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
             }
             return Paths.get(userFolderBasePath, userFolderPath.getRawPath()).toUri();
         } else {
@@ -552,7 +551,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         /* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
         File myPfad = new File(path);
         if (!myPfad.exists()) {
-            try (FileOutputStream ksos = (FileOutputStream) serviceManager.getFileService().write(myPfad.toURI());
+            try (FileOutputStream ksos = (FileOutputStream) ServiceManager.getFileService().write(myPfad.toURI());
                     // TODO: Rename parameters to something more meaningful,
                     // this is quite specific for the GDZ
                     FileInputStream cacertFile = new FileInputStream(ldapServer.getRootCertificate());

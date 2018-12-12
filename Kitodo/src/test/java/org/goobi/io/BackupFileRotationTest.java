@@ -33,7 +33,7 @@ import org.kitodo.services.file.FileService;
 public class BackupFileRotationTest {
 
     private static final String BACKUP_FILE_NAME = "testMeta.xml";
-    private static ProcessService processService = new ServiceManager().getProcessService();
+    private static ProcessService processService = ServiceManager.getProcessService();
     private static FileService fileService = new FileService();
 
     @Before

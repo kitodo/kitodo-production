@@ -57,7 +57,6 @@ import org.kitodo.services.ServiceManager;
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Name of the structural element used to represent the day of month in the
@@ -158,7 +157,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         collectedYears = new HashMap<>();
         dividend = 0;
         divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
-        DocStructInterface dsNewspaper = serviceManager.getProcessService()
+        DocStructInterface dsNewspaper = ServiceManager.getProcessService()
                 .getDigitalDocument(batch.getProcesses().iterator().next()).getLogicalDocStruct();
         DocStructInterface dsYear = dsNewspaper.getAllChildren().get(0);
         yearLevelName = dsYear.getDocStructType().getName();
@@ -204,7 +203,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     public void run() {
         try {
             if (processesIterator == null) {
-                batch = serviceManager.getBatchService().getById(batchId);
+                batch = ServiceManager.getBatchService().getById(batchId);
                 processesIterator = batch.getProcesses().iterator();
             }
 
@@ -230,11 +229,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 return;
             }
             process = processesIterator.next();
-            Integer processesYear = getYear(serviceManager.getProcessService().getDigitalDocument(process));
+            Integer processesYear = getYear(ServiceManager.getProcessService().getDigitalDocument(process));
             if (!collectedYears.containsKey(processesYear)) {
                 collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
             }
-            aggregation.addAll(getIssueDates(serviceManager.getProcessService().getDigitalDocument(process)),
+            aggregation.addAll(getIssueDates(ServiceManager.getProcessService().getDigitalDocument(process)),
                 getMetsPointerURL(process));
             setProgress(++dividend / divisor);
         }
@@ -255,8 +254,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
             new ExportDms(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES)).startExport(process,
-                serviceManager.getUserService().getHomeDirectory(
-                    serviceManager.getUserService().getAuthenticatedUser()),
+                ServiceManager.getUserService().getHomeDirectory(
+                    ServiceManager.getUserService().getAuthenticatedUser()),
                 extendedData.getDigitalDocument());
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
         }
@@ -346,8 +345,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private static String getMetsYearAnchorPointerURL(Process process)
             throws PreferencesException, ReadException, IOException {
-        VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
-                serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
+        VariableReplacer replacer = new VariableReplacer(ServiceManager.getProcessService().getDigitalDocument(process),
+                ServiceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
         if (metsPointerPathAnchor.contains(Project.ANCHOR_SEPARATOR)) {
             metsPointerPathAnchor = metsPointerPathAnchor.split(Project.ANCHOR_SEPARATOR)[1];
@@ -409,7 +408,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -433,8 +432,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             file fails
      */
     static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, IOException {
-        VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
-                serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
+        VariableReplacer replacer = new VariableReplacer(ServiceManager.getProcessService().getDigitalDocument(process),
+                ServiceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
     }
 
@@ -474,10 +473,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, IOException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
-        PrefsInterface ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsModsInterface result = UghImplementation.INSTANCE.createMetsMods(ruleSet);
-        URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
-        result.read(serviceManager.getFileService().getFile(metadataFilePath).toString());
+        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+        result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
 
         DigitalDocumentInterface caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(
@@ -715,7 +714,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public ExportNewspaperBatchTask replace() {

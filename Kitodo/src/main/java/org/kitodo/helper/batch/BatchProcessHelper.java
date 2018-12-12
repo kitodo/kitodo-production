@@ -22,6 +22,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 
 public class BatchProcessHelper extends BatchHelper {
     private final List<Process> processes;
@@ -99,7 +100,7 @@ public class BatchProcessHelper extends BatchHelper {
      */
     public void saveForChosenProcess() {
         try {
-            serviceManager.getProcessService().save(this.currentProcess);
+            ServiceManager.getProcessService().save(this.currentProcess);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
@@ -113,7 +114,7 @@ public class BatchProcessHelper extends BatchHelper {
     public void saveForAllProcesses() {
         for (Process process : this.processes) {
             try {
-                serviceManager.getProcessService().save(process);
+                ServiceManager.getProcessService().save(process);
                 Helper.setMessage("propertiesSaved");
             } catch (DataException e) {
                 List<String> param = new ArrayList<>();
@@ -210,7 +211,7 @@ public class BatchProcessHelper extends BatchHelper {
         this.properties = this.currentProcess.getProperties();
 
         for (Process process : this.processes) {
-            serviceManager.getProcessService().refresh(process);
+            ServiceManager.getProcessService().refresh(process);
         }
     }
 }

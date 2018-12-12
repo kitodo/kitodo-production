@@ -36,14 +36,14 @@ import org.kitodo.services.ServiceManager;
  */
 public class FilterServiceIT {
 
-    private static final FilterService filterService = new ServiceManager().getFilterService();
+    private static final FilterService filterService = ServiceManager.getFilterService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1), 1);
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     @AfterClass
@@ -94,7 +94,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProcessId() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"id:2\"", ObjectType.PROCESS, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2!", 1,
@@ -117,7 +117,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProjectTitle() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"project:First\"", ObjectType.PROCESS, false, false);
         await().untilAsserted(
@@ -150,7 +150,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProcessTitle() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"process:process\"", ObjectType.PROCESS, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'process'!", 2,
@@ -163,7 +163,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByTaskTitle() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"step:Finished\"", ObjectType.PROCESS, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of processes for title containing 'Finished'!", 0,
@@ -177,7 +177,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByBatchId() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"batch:1\"", ObjectType.PROCESS, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1!", 1,
@@ -195,7 +195,7 @@ public class FilterServiceIT {
     // TODO: filters are not working for search only by title
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProperty() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"processproperty:fix\"", ObjectType.PROCESS, false,
             false);
@@ -236,7 +236,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByMultipleConditions() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
+        ProcessService processService = ServiceManager.getProcessService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"project:First\" \"processproperty:fix\"",
             ObjectType.PROCESS, false, false);
@@ -259,7 +259,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProcessId() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"id:1\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks for process with id equal 1!", 2,
@@ -276,7 +276,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProjectTitle() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"project:First\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks for project with title containing 'First'!",
@@ -302,7 +302,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProcessTitle() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"process:First\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks for process with title containing 'First'!",
@@ -327,7 +327,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByTaskTitle() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         // TODO: why "step" creates something called historical filter?
         QueryBuilder query = filterService.queryBuilder("\"step:Finished\"", ObjectType.TASK, false, false);
@@ -345,7 +345,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProperty() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"processproperty:fix\"", ObjectType.TASK, false, false);
         await().untilAsserted(
@@ -384,7 +384,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByClosedTasks() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepdone:1\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of closed tasks with ordering 1!", 0,
@@ -402,7 +402,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:4\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of open tasks with ordering 4!", 1,
@@ -420,7 +420,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByInProgressTasks() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepinwork:3\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks in progress with ordering 3!", 1,
@@ -440,7 +440,7 @@ public class FilterServiceIT {
     @Ignore("problem with steplocked")
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByLockedTasks() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"steplocked:2\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of locked tasks with ordering 2!", 1,
@@ -457,7 +457,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"id:1\" \"-stepdone:3\"", ObjectType.TASK, false, false);
         await().untilAsserted(
@@ -473,8 +473,8 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryForDefaultConditions() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
-        TaskService taskService = new ServiceManager().getTaskService();
+        ProcessService processService = ServiceManager.getProcessService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"First\"", ObjectType.TASK, false, false);
         await().untilAsserted(() -> assertEquals("Incorrect amount of tasks with default condition!", 2,
@@ -496,8 +496,8 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryForEmptyConditions() throws Exception {
-        ProcessService processService = new ServiceManager().getProcessService();
-        TaskService taskService = new ServiceManager().getTaskService();
+        ProcessService processService = ServiceManager.getProcessService();
+        TaskService taskService = ServiceManager.getTaskService();
 
         // empty condition is not allowed and returns no results
         QueryBuilder query = filterService.queryBuilder("\"steplocked:\"", ObjectType.TASK, false, false);

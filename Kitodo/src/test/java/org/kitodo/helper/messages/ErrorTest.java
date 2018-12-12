@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ErrorTest {
 
-    private static final FileService fileService = new ServiceManager().getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
     private final Locale locale = new Locale("EN");
     private final String customBundle = "errors";
     private final String defaultBundle = "messages.errors";

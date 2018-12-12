@@ -77,7 +77,6 @@ import org.kitodo.services.image.ImageGenerator;
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private static TaskService instance = null;
     private boolean onlyOpenTasks = false;
     private boolean onlyOwnTasks = false;
@@ -111,11 +110,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * Creates and returns a query to retrieve tasks for which the currently
      * logged in user is eligible.
      *
-     * @param user
-     *            currently logged in user
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(User user) throws DataException {
+    private BoolQueryBuilder createUserTaskQuery() throws DataException {
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
+
         Set<Integer> processingStatuses = new HashSet<>();
         processingStatuses.add(TaskStatus.OPEN.getValue());
         processingStatuses.add(TaskStatus.INWORK.getValue());
@@ -147,7 +146,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
 
-        List<JsonObject> processes = serviceManager.getProcessService().findForCurrentSessionClient();
+        List<JsonObject> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
         query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
 
         return query;
@@ -155,15 +154,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
-        BoolQueryBuilder query = createUserTaskQuery(user);
+        BoolQueryBuilder query = createUserTaskQuery();
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
     @Override
     public String createCountQuery(Map filters) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
-        BoolQueryBuilder query = createUserTaskQuery(user);
+        BoolQueryBuilder query = createUserTaskQuery();
         return query.toString();
     }
 
@@ -188,11 +185,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Process process = task.getProcess();
             if (process != null) {
                 process.getTasks().remove(task);
-                serviceManager.getProcessService().saveToIndex(process, false);
+                ServiceManager.getProcessService().saveToIndex(process, false);
             }
         } else {
             Process process = task.getProcess();
-            serviceManager.getProcessService().saveToIndex(process, false);
+            ServiceManager.getProcessService().saveToIndex(process, false);
         }
     }
 
@@ -201,11 +198,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Template template = task.getTemplate();
             if (Objects.nonNull(template)) {
                 template.getTasks().remove(task);
-                serviceManager.getTemplateService().saveToIndex(template, false);
+                ServiceManager.getTemplateService().saveToIndex(template, false);
             }
         } else {
             Template template = task.getTemplate();
-            serviceManager.getTemplateService().saveToIndex(template, false);
+            ServiceManager.getTemplateService().saveToIndex(template, false);
         }
     }
 
@@ -215,12 +212,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             User user = task.getProcessingUser();
             if (user != null) {
                 user.getProcessingTasks().remove(task);
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             User user = task.getProcessingUser();
             if (user != null) {
-                serviceManager.getUserService().saveToIndex(user, false);
+                ServiceManager.getUserService().saveToIndex(user, false);
             }
             reIndexUserAfterRemoveFromProcessing(task);
         }
@@ -228,9 +225,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private void reIndexUserAfterRemoveFromProcessing(Task task)
             throws CustomResponseException, DAOException, DataException, IOException {
-        List<UserDTO> userDTOS = serviceManager.getUserService().findByProcessingTask(task.getId(), true);
+        List<UserDTO> userDTOS = ServiceManager.getUserService().findByProcessingTask(task.getId(), true);
         for (UserDTO userDTO : userDTOS) {
-            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()),
+            ServiceManager.getUserService().saveToIndex(ServiceManager.getUserService().getById(userDTO.getId()),
                 false);
         }
     }
@@ -239,11 +236,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (task.getIndexAction() == IndexAction.DELETE) {
             for (Role role : task.getRoles()) {
                 role.getTasks().remove(task);
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
             for (Role role : task.getRoles()) {
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -444,8 +441,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
          */
         int process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
-            taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
-            taskDTO.setBatchAvailable(serviceManager.getProcessService()
+            taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
+            taskDTO.setBatchAvailable(ServiceManager.getProcessService()
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
         }
 
@@ -458,10 +455,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
         int processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
         if (processingUser != 0) {
-            taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
+            taskDTO.setProcessingUser(ServiceManager.getUserService().findById(processingUser, true));
         }
         taskDTO.setRoles(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), serviceManager.getRoleService()));
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), ServiceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {
@@ -565,10 +562,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public String getTitleWithUserName(Task task) {
         String result = task.getTitle();
-        UserService userService = serviceManager.getUserService();
         if (task.getProcessingUser() != null && task.getProcessingUser().getId() != null
                 && task.getProcessingUser().getId() != 0) {
-            result += " (" + userService.getFullName(task.getProcessingUser()) + ")";
+            result += " (" + ServiceManager.getUserService().getFullName(task.getProcessingUser()) + ")";
         }
         return result;
     }
@@ -614,11 +610,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         DigitalDocumentInterface dd = null;
         Process po = task.getProcess();
 
-        PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
+        PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(po.getRuleset());
 
         try {
-            dd = serviceManager.getProcessService()
-                    .readMetadataFile(serviceManager.getFileService().getMetadataFilePath(po), prefs)
+            dd = ServiceManager.getProcessService()
+                    .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(po), prefs)
                     .getDigitalDocument();
         } catch (PreferencesException | ReadException | IOException e2) {
             logger.error(e2);
@@ -630,7 +626,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         try {
             logger.info("Calling the shell: {}", script);
 
-            CommandService commandService = serviceManager.getCommandService();
+            CommandService commandService = ServiceManager.getCommandService();
             CommandResult commandResult = commandService.runCommand(script);
             executedSuccessful = commandResult.isSuccessful();
             finishOrReturnAutomaticTask(task, automatic, commandResult.isSuccessful());
@@ -680,7 +676,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             task.setEditType(TaskEditType.AUTOMATIC.getValue());
             if (successful) {
                 task.setProcessingStatus(TaskStatus.DONE.getValue());
-                serviceManager.getWorkflowControllerService().close(task);
+                ServiceManager.getWorkflowControllerService().close(task);
             } else {
                 task.setProcessingStatus(TaskStatus.OPEN.getValue());
                 save(task);
@@ -733,10 +729,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 .getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
         Process process = task.getProcess();
         try {
-            boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
+            boolean validate = ServiceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
                 automaticExportWithOcr);
             if (validate) {
-                serviceManager.getWorkflowControllerService().close(task);
+                ServiceManager.getWorkflowControllerService().close(task);
             } else {
                 abortTask(task);
             }
@@ -795,7 +791,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -809,7 +805,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -823,7 +819,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
             sort);
         return convertJSONObjectsToDTOs(results, false);
@@ -838,7 +834,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
             10, false, sort);
         return convertJSONObjectsToDTOs(results, false);

@@ -50,8 +50,7 @@ public class BackupFileRotation {
     private String format;
     private Process process;
 
-    private final ServiceManager serviceManager = new ServiceManager();
-    public final FileService fileService = serviceManager.getFileService();
+    public final FileService fileService = ServiceManager.getFileService();
 
     /**
      * Start the configured backup.
@@ -74,7 +73,7 @@ public class BackupFileRotation {
 
         if (metaFiles.isEmpty()) {
             logger.info("No files matching format '{}' in directory {} found.",
-                    this.format, serviceManager.getProcessService().getProcessDataDirectory(process));
+                    this.format, ServiceManager.getProcessService().getProcessDataDirectory(process));
             return;
         }
 
@@ -148,7 +147,7 @@ public class BackupFileRotation {
     private List<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
 
-        URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+        URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
         return fileService.getSubUris(filter, processDataDirectory);
     }
 

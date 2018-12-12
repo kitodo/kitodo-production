@@ -33,7 +33,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class PropertyServiceIT {
 
-    private static final PropertyService propertyService = new ServiceManager().getPropertyService();
+    private static final PropertyService propertyService = ServiceManager.getPropertyService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

@@ -59,8 +59,7 @@ import org.kitodo.services.file.FileService;
  * institutions to migrate the files.
  */
 public class Subfolder {
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
     /**
      * The general metrics of this kind of subfolder. So to say its type.
      */

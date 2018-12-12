@@ -27,7 +27,6 @@ import org.kitodo.services.ServiceManager;
 
 public class UghHelper {
     private static final Logger logger = LogManager.getLogger(UghHelper.class);
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Private constructor to hide the implicit public one.
@@ -46,7 +45,7 @@ public class UghHelper {
      * @return MetadataType
      */
     public static MetadataTypeInterface getMetadataType(Process inProzess, String inName) throws UghHelperException {
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
+        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return getMetadataType(myPrefs, inName);
     }
 

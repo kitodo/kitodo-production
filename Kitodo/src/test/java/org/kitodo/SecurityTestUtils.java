@@ -34,7 +34,7 @@ public class SecurityTestUtils {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
         Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
                 securityUserDetails.getAuthorities());
-        securityUserDetails.setSessionClient(new ServiceManager().getClientService().getById(clientId));
+        securityUserDetails.setSessionClient(ServiceManager.getClientService().getById(clientId));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

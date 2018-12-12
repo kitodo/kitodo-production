@@ -32,7 +32,7 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProcessesPage extends Page<ProcessesPage> {
 
-    private ProcessService processService = new ServiceManager().getProcessService();
+    private ProcessService processService = ServiceManager.getProcessService();
 
     private static final String PROCESSES_TAB_VIEW = "processesTabView";
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";

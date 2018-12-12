@@ -30,7 +30,6 @@ import org.kitodo.services.ServiceManager;
 @Named
 public class ClientConverter implements Converter {
 
-    private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientConverter.class);
 
     @Override
@@ -39,7 +38,7 @@ public class ClientConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getClientService().getById(Integer.parseInt(value));
+                return ServiceManager.getClientService().getById(Integer.parseInt(value));
             } catch (DAOException e) {
                 logger.error(e.getMessage());
                 return "0";

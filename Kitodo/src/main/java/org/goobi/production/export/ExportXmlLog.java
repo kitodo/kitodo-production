@@ -56,7 +56,7 @@ import org.kitodo.services.ServiceManager;
  *
  */
 public class ExportXmlLog {
-    private final ServiceManager serviceManager = new ServiceManager();
+
     private static final Logger logger = LogManager.getLogger(ExportXmlLog.class);
     private static final String LABEL = "label";
     private static final String NAMESPACE = "http://www.kitodo.org/logfile";
@@ -217,13 +217,13 @@ public class ExportXmlLog {
         StringBuilder batches = new StringBuilder();
         for (Batch batch : process.getBatches()) {
             if (batch.getType() != null) {
-                batches.append(serviceManager.getBatchService().getTypeTranslated(batch));
+                batches.append(ServiceManager.getBatchService().getTypeTranslated(batch));
                 batches.append(": ");
             }
             if (batches.length() != 0) {
                 batches.append(", ");
             }
-            batches.append(serviceManager.getBatchService().getLabel(batch));
+            batches.append(ServiceManager.getBatchService().getLabel(batch));
         }
         if (batches.length() != 0) {
             Element batch = new Element("batch", xmlns);
@@ -275,16 +275,16 @@ public class ExportXmlLog {
         List<Element> metadataElements = new ArrayList<>();
 
         try {
-            URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
+            URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder()
-                    .build(serviceManager.getFileService().getFile(metadataFilePath).toString());
+                    .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
             Document anchorDoc = null;
-            URI anchorFileName = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
+            URI anchorFileName = URI.create(ServiceManager.getFileService().getMetadataFilePath(process).toString()
                     .replace("meta.xml", "meta_anchor.xml"));
-            if (serviceManager.getFileService().fileExist(anchorFileName)
-                    && serviceManager.getFileService().canRead(anchorFileName)) {
+            if (ServiceManager.getFileService().fileExist(anchorFileName)
+                    && ServiceManager.getFileService().canRead(anchorFileName)) {
                 anchorDoc = new SAXBuilder()
-                        .build(serviceManager.getFileService().getFile(metadataFilePath).toString());
+                        .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<>();
 
@@ -325,7 +325,7 @@ public class ExportXmlLog {
             stepElement.addContent(stepTitle);
 
             Element state = new Element("processingstatus", xmlns);
-            state.setText(serviceManager.getTaskService().getProcessingStatusAsString(task));
+            state.setText(ServiceManager.getTaskService().getProcessingStatusAsString(task));
             stepElement.addContent(state);
 
             Element begin = new Element("time", xmlns);
@@ -335,12 +335,12 @@ public class ExportXmlLog {
 
             Element end = new Element("time", xmlns);
             end.setAttribute("type", "end time");
-            end.setText(String.valueOf(serviceManager.getTaskService().getProcessingEndAsFormattedString(task)));
+            end.setText(String.valueOf(ServiceManager.getTaskService().getProcessingEndAsFormattedString(task)));
             stepElement.addContent(end);
 
             if (isNonOpenStateAndHasRegularUser(task)) {
                 Element user = new Element("user", xmlns);
-                user.setText(serviceManager.getUserService().getFullName(task.getProcessingUser()));
+                user.setText(ServiceManager.getUserService().getFullName(task.getProcessingUser()));
                 stepElement.addContent(user);
             }
             Element editType = new Element("edittype", xmlns);
@@ -560,7 +560,7 @@ public class ExportXmlLog {
     private boolean isNonOpenStateAndHasRegularUser(Task s) {
         return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum())) && (s.getProcessingUser() != null)
                 && (s.getProcessingUser().getId() != 0)
-                && (serviceManager.getUserService().getFullName(s.getProcessingUser()) != null);
+                && (ServiceManager.getUserService().getFullName(s.getProcessingUser()) != null);
     }
 
 }

@@ -178,8 +178,7 @@ public class Metadaten {
     private String pagesEnd = "";
     private Map<String, Boolean> treeProperties;
     private final ReentrantLock xmlReadingLock = new ReentrantLock();
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
     private Paginator paginator = new Paginator();
     private TreeNode selectedTreeNode;
     private PositionOfNewDocStrucElement positionOfNewDocStrucElement = PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT;
@@ -506,7 +505,7 @@ public class Metadaten {
         Modes.setBindState(BindState.EDIT);
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
-            this.process = serviceManager.getProcessService().getById(id);
+            this.process = ServiceManager.getProcessService().getById(id);
         } catch (NumberFormatException | DAOException e) {
             Helper.setErrorMessage("error while loading process data" + e.getMessage(), logger, e);
         }
@@ -531,7 +530,7 @@ public class Metadaten {
      */
     public void readXmlStart() throws ReadException, IOException, PreferencesException {
         currentRepresentativePage = "";
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(this.process.getRuleset());
+        this.myPrefs = ServiceManager.getRulesetService().getPreferences(this.process.getRuleset());
         // TODO: Make file pattern configurable
         this.image = null;
         this.imageNumber = 1;
@@ -542,7 +541,7 @@ public class Metadaten {
         /*
          * Dokument einlesen
          */
-        this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
+        this.gdzfile = ServiceManager.getProcessService().readMetadataFile(this.process);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
         this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
@@ -610,8 +609,8 @@ public class Metadaten {
         this.process.setSortHelperMetadata(counter.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
             this.process.setSortHelperImages(fileService
-                    .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
-            serviceManager.getProcessService().save(this.process);
+                    .getNumberOfFiles(ServiceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
+            ServiceManager.getProcessService().save(this.process);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);
         } catch (IOException e) {
@@ -679,7 +678,7 @@ public class Metadaten {
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
         List<? extends MetadataInterface> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(
-            inStrukturelement, serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false,
+            inStrukturelement, ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false,
             this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
@@ -693,7 +692,7 @@ public class Metadaten {
          * alle Personen und die DefaultDisplay-Werte ermitteln
          */
         tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
-            serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), true, this.process);
+            ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), true, this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
                 lsPers.add(new MetaPerson((PersonInterface) metadata, 0, this.myPrefs, inStrukturelement));
@@ -731,7 +730,7 @@ public class Metadaten {
          * Die Struktur als Tree3 aufbereiten
          */
         String label = this.logicalTopstruct.getDocStructType()
-                .getNameByLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+                .getNameByLanguage(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = this.logicalTopstruct.getDocStructType().getName();
         }
@@ -787,7 +786,7 @@ public class Metadaten {
 
         // vom aktuellen Strukturelement alle Kinder in den Tree packen
         List<DocStructInterface> children = inStrukturelement.getAllChildren();
-        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         if (children != null) {
             // es gibt Kinder-Strukturelemente
             for (DocStructInterface child : children) {
@@ -1277,7 +1276,7 @@ public class Metadaten {
         }
 
         if (!this.allTifFolders.contains(this.currentTifFolder)) {
-            this.currentTifFolder = serviceManager.getProcessService().getImagesTifDirectory(true, this.process);
+            this.currentTifFolder = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process);
         }
     }
 
@@ -1361,12 +1360,12 @@ public class Metadaten {
                 URI tifFile = this.currentTifFolder.resolve(this.image);
                 logger.trace("tiffconverterpfad: {}", tifFile);
                 if (!fileService.fileExist(tifFile)) {
-                    tifFile = serviceManager.getProcessService().getImagesTifDirectory(true, this.process)
+                    tifFile = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process)
                             .resolve(this.image);
                     Helper.setErrorMessage("formularOrdner:TifFolders", "",
                         "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                 + ", using image from "
-                                + new File(serviceManager.getProcessService().getImagesTifDirectory(true, this.process))
+                                + new File(ServiceManager.getProcessService().getImagesTifDirectory(true, this.process))
                                         .getName());
                 }
 
@@ -1428,7 +1427,7 @@ public class Metadaten {
      * Metadata validation.
      */
     public void validate() {
-        serviceManager.getMetadataValidationService().validate(this.gdzfile, this.myPrefs, this.process);
+        ServiceManager.getMetadataValidationService().validate(this.gdzfile, this.myPrefs, this.process);
         saveMetadataAsBean(this.docStruct);
     }
 
@@ -1992,7 +1991,7 @@ public class Metadaten {
             removeFiles(fileService.getImagesDirectory(process).resolve(folder), fileToDeletePrefix);
         }
 
-        URI ocr = serviceManager.getFileService().getOcrDirectory(process);
+        URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
@@ -2230,7 +2229,7 @@ public class Metadaten {
      */
     public void addNewImagesAndPaginate() {
         try {
-            serviceManager.getFileService().createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
+            fileService.createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
             createPagination();
             this.digitalDocument = this.gdzfile.getDigitalDocument();
             this.digitalDocument.addAllContentFiles();
@@ -2661,7 +2660,7 @@ public class Metadaten {
      */
     public User getCurrentUser() {
         if (this.user == null) {
-            this.user = serviceManager.getUserService().getAuthenticatedUser();
+            this.user = ServiceManager.getUserService().getAuthenticatedUser();
         }
         return this.user;
     }
@@ -2712,11 +2711,11 @@ public class Metadaten {
     public void addToWikiField() {
 
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            String comment =  serviceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
-            serviceManager.getProcessService().addToWikiField(comment, this.process);
+            String comment =  ServiceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
+            ServiceManager.getProcessService().addToWikiField(comment, this.process);
             this.addToWikiField = "";
             try {
-                serviceManager.getProcessService().save(process);
+                ServiceManager.getProcessService().save(process);
                 refreshProcess(process);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorReloading", new Object[]{Helper.getTranslation("wikiField")}, logger, e);
@@ -2772,8 +2771,8 @@ public class Metadaten {
      */
     public List<Task> getPreviousStepsForProblemReporting() {
         refreshProcess(this.process);
-        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(
-                serviceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
+        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
+                ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
                 this.process.getId());
     }
 
@@ -2788,7 +2787,7 @@ public class Metadaten {
      */
     public void reportProblem() {
         List<Task> taskList = new  ArrayList<>();
-        taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
+        taskList.add(ServiceManager.getProcessService().getCurrentTask(this.process));
         BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
         batchStepHelper.setProblem(getProblem());
         batchStepHelper.reportProblemForSingle();
@@ -2803,13 +2802,13 @@ public class Metadaten {
      */
     public void solveProblem(String comment) {
         BatchTaskHelper batchStepHelper = new BatchTaskHelper();
-        batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
+        batchStepHelper.solveProblemForSingle(ServiceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
         wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
-        serviceManager.getProcessService().setWikiField(wikiField, this.process);
+        ServiceManager.getProcessService().setWikiField(wikiField, this.process);
         try {
-            serviceManager.getProcessService().save(process);
+            ServiceManager.getProcessService().save(process);
         } catch (DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
@@ -2825,10 +2824,8 @@ public class Metadaten {
     public void refreshProcess(Process process) {
         try {
             if (process.getId() != 0) {
-                serviceManager.getProcessService().refresh(process);
-
-                setProcess(this.serviceManager.getProcessService().getById(process.getId()));
-
+                ServiceManager.getProcessService().refresh(process);
+                setProcess(ServiceManager.getProcessService().getById(process.getId()));
             }
 
         } catch (DAOException e) {

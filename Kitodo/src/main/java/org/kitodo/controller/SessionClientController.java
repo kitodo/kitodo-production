@@ -30,7 +30,6 @@ import org.primefaces.PrimeFaces;
 @RequestScoped
 public class SessionClientController {
 
-    private ServiceManager serviceManager = new ServiceManager();
     private Client selectedClient;
 
     /**
@@ -91,7 +90,7 @@ public class SessionClientController {
      * @return current session client
      */
     public Client getCurrentSessionClient() {
-        return serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        return ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
     }
 
     /**
@@ -136,7 +135,7 @@ public class SessionClientController {
      *            The client object that is to be the new session client.
      */
     public void setSessionClient(Client sessionClient) {
-        serviceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
+        ServiceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
     }
 
     /**
@@ -146,7 +145,7 @@ public class SessionClientController {
      * @return The list of clients.
      */
     public List<Client> getAvailableClientsOfCurrentUser()  {
-        User currentUser = serviceManager.getUserService().getCurrentUser();
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
         List<Client> clients = currentUser.getClients();
         for (Project project : currentUser.getProjects()) {
             if (!clients.contains(project.getClient())) {

@@ -34,8 +34,6 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
  */
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private static DynamicAuthenticationProvider instance = null;
     private AuthenticationProvider authenticationProvider = null;
 
@@ -71,7 +69,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) {
         if (ldapAuthentication) {
             try {
-                User user = serviceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
+                User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
                 configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(),
                     user.getLdapGroup().getUserDN());
             } catch (DAOException e) {
@@ -125,7 +123,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(serviceManager.getUserService());
+        daoAuthenticationProvider.setUserDetailsService(ServiceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
         this.authenticationProvider = daoAuthenticationProvider;
     }

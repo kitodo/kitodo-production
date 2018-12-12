@@ -63,7 +63,6 @@ public class FileService {
     private static final String SYSTEM_LOCKING_USER = "System";
     private static final Logger logger = LogManager.getLogger(FileService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Creates a MetaDirectory.
@@ -78,7 +77,7 @@ public class FileService {
      */
     public boolean createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
-            CommandService commandService = serviceManager.getCommandService();
+            CommandService commandService = ServiceManager.getCommandService();
             String path = FileSystems.getDefault()
                     .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
                     .normalize().toAbsolutePath().toString();
@@ -122,8 +121,8 @@ public class FileService {
      *             If an I/O error occurs.
      */
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
-        if (!serviceManager.getFileService().fileExist(dirName)) {
-            CommandService commandService = serviceManager.getCommandService();
+        if (!ServiceManager.getFileService().fileExist(dirName)) {
+            CommandService commandService = ServiceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getAbsolutePath());
             commandService.runCommand(new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME)),
                 commandParameter);
@@ -200,7 +199,7 @@ public class FileService {
      * @return the user name for locks
      */
     private String getCurrentLockingUser() {
-        UserService userService = serviceManager.getUserService();
+        UserService userService = ServiceManager.getUserService();
         User currentUser = userService.getAuthenticatedUser();
         return Objects.nonNull(currentUser) ? userService.getFullName(currentUser) : SYSTEM_LOCKING_USER;
     }
@@ -512,7 +511,7 @@ public class FileService {
      */
     public void writeMetadataFile(FileformatInterface gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        RulesetService rulesetService = serviceManager.getRulesetService();
+        RulesetService rulesetService = ServiceManager.getRulesetService();
         FileformatInterface ff;
 
         Ruleset ruleset = process.getRuleset();
@@ -722,8 +721,8 @@ public class FileService {
             ProcessSubType processSubType, String resourceName) throws DAOException {
 
         if (processDataDirectory == null) {
-            Process process = serviceManager.getProcessService().getById(processId);
-            processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+            Process process = ServiceManager.getProcessService().getById(processId);
+            processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
         }
 
         if (resourceName == null) {
@@ -749,14 +748,14 @@ public class FileService {
      */
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
-        URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+        URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
 
         if (resourceName == null) {
             resourceName = "";
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
-            serviceManager.getProcessService().getNormalizedTitle(process.getTitle()), processSubType, resourceName);
+                ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 
     /**
@@ -917,7 +916,7 @@ public class FileService {
     public void createDummyImagesForProcess(Process process, int numberOfNewImages)
             throws IOException, URISyntaxException {
         URI imagesDirectory = getSourceDirectory(process);
-        int startValue = serviceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
+        int startValue = ServiceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
         URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames

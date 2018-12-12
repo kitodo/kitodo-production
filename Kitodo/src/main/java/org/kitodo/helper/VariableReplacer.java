@@ -56,9 +56,8 @@ public class VariableReplacer {
 
     private Process process;
     private Task task;
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
-    private final ProcessService processService = serviceManager.getProcessService();
+    private final FileService fileService = ServiceManager.getFileService();
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     protected VariableReplacer() {
     }

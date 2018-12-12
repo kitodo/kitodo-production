@@ -29,8 +29,6 @@ import org.kitodo.services.ServiceManager;
 
 public class GoobiScriptIT {
 
-    private final ServiceManager serviceManager = new ServiceManager();
-
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
@@ -47,15 +45,15 @@ public class GoobiScriptIT {
     public void shouldExecuteAddRoleScript() throws Exception {
         GoobiScript goobiScript = new GoobiScript();
 
-        Task task = serviceManager.getTaskService().getById(8);
+        Task task = ServiceManager.getTaskService().getById(8);
         int amountOfRoles = task.getRoles().size();
 
         String script = "action:addRole \"steptitle:Progress\" role:General";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
+        processes.add(ServiceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
-        task = serviceManager.getTaskService().getById(8);
+        task = ServiceManager.getTaskService().getById(8);
         assertEquals("Role was not correctly added to task!", amountOfRoles + 1, task.getRoles().size());
     }
 
@@ -68,10 +66,10 @@ public class GoobiScriptIT {
 
         String script = "action:setStepStatus \"steptitle:Progress\" status:3";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
+        processes.add(ServiceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
-        Task task = serviceManager.getTaskService().getById(8);
+        Task task = ServiceManager.getTaskService().getById(8);
         assertEquals("Processing status was not correctly changed!", TaskStatus.DONE, task.getProcessingStatusEnum());
     }
 
@@ -81,10 +79,10 @@ public class GoobiScriptIT {
 
         String script = "action:addShellScriptToStep \"steptitle:Progress\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
+        processes.add(ServiceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
-        Task task = serviceManager.getTaskService().getById(8);
+        Task task = ServiceManager.getTaskService().getById(8);
         assertEquals("Script was not added to task - incorrect name!", "script", task.getScriptName());
         assertEquals("Script was not added to task - incorrect path!", "/some/new/path", task.getScriptPath());
     }
@@ -95,10 +93,10 @@ public class GoobiScriptIT {
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
+        processes.add(ServiceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
-        Task task = serviceManager.getTaskService().getById(7);
+        Task task = ServiceManager.getTaskService().getById(7);
         assertTrue("Task property was not set!", task.isTypeCloseVerify());
     }
 
@@ -108,10 +106,10 @@ public class GoobiScriptIT {
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
+        processes.add(ServiceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
-        Task task = serviceManager.getTaskService().getById(7);
+        Task task = ServiceManager.getTaskService().getById(7);
         assertFalse("Task property was set - default value is false!", task.isTypeCloseVerify());
     }
 }

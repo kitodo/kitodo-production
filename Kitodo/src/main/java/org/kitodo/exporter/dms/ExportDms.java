@@ -53,8 +53,7 @@ public class ExportDms extends ExportMets {
     private String atsPpnBand;
     private boolean exportWithImages = true;
     private boolean exportFullText = true;
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
@@ -116,7 +115,7 @@ public class ExportDms extends ExportMets {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
-                serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
+                ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException
                 | JAXBException e) {
             if (exportDmsTask != null) {
@@ -143,8 +142,8 @@ public class ExportDms extends ExportMets {
     public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
             throws IOException, WriteException, PreferencesException, JAXBException {
 
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        this.atsPpnBand = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
         FileformatInterface gdzfile = readDocument(process, newFile);
         if (Objects.isNull(gdzfile)) {
@@ -160,7 +159,7 @@ public class ExportDms extends ExportMets {
 
         // validate metadata
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
-                && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
+                && !ServiceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
             return false;
         }
 
@@ -177,7 +176,7 @@ public class ExportDms extends ExportMets {
             // if necessary, create process folder
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI userHomeProcess = fileService.createResource(userHome,
-                    File.separator + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()));
+                    File.separator + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()));
                 zielVerzeichnis = userHomeProcess;
                 boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getProject(),
                     process.getTitle());
@@ -244,7 +243,7 @@ public class ExportDms extends ExportMets {
 
     private boolean createProcessFolder(URI userHomeProcess, URI userHome, Project project, String processTitle)
             throws IOException {
-        String normalizedTitle = serviceManager.getProcessService().getNormalizedTitle(processTitle);
+        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(processTitle);
 
         // delete old import folder
         if (!fileService.delete(userHomeProcess)) {
@@ -388,7 +387,7 @@ public class ExportDms extends ExportMets {
             // delete success folder again
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/"
-                        + serviceManager.getProcessService().getNormalizedTitle(processTitle));
+                        + ServiceManager.getProcessService().getNormalizedTitle(processTitle));
                 fileService.delete(successFolder);
             }
         }
@@ -473,7 +472,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI sources = serviceManager.getFileService().getSourceDirectory(process);
+        URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
@@ -485,7 +484,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI ocr = serviceManager.getFileService().getOcrDirectory(process);
+        URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
@@ -531,7 +530,7 @@ public class ExportDms extends ExportMets {
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException {
         // determine the source folder
-        URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process);
+        URI tifOrdner = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
 
         // copy the source folder to the destination folder
         if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
@@ -545,7 +544,7 @@ public class ExportDms extends ExportMets {
             } else {
                 // if no async import, then create the folder with user
                 // authorization again
-                User user = serviceManager.getUserService().getAuthenticatedUser();
+                User user = ServiceManager.getUserService().getAuthenticatedUser();
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (IOException e) {
@@ -603,10 +602,10 @@ public class ExportDms extends ExportMets {
      */
     private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
         for (String processDir : processDirs) {
-            URI srcDir = serviceManager.getProcessService().getProcessDataDirectory(process)
+            URI srcDir = ServiceManager.getProcessService().getProcessDataDirectory(process)
                     .resolve(processDir.replace("(processtitle)", normalizedTitle));
             URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", normalizedTitle));
 

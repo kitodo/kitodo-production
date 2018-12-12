@@ -33,6 +33,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 import org.primefaces.model.DualListModel;
 
 @Named("RoleForm")
@@ -51,7 +52,7 @@ public class RoleForm extends BaseForm {
     @Inject
     public RoleForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRoleService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRoleService()));
     }
 
     /**
@@ -62,8 +63,8 @@ public class RoleForm extends BaseForm {
     public String newRole() {
         this.role = new Role();
 
-        if (!serviceManager.getSecurityAccessService().hasAuthorityGlobalToAddOrEditRole()) {
-            Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        if (!ServiceManager.getSecurityAccessService().hasAuthorityGlobalToAddOrEditRole()) {
+            Client sessionClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
             if (Objects.nonNull(sessionClient)) {
                 this.role.setClient(sessionClient);
             }
@@ -79,7 +80,7 @@ public class RoleForm extends BaseForm {
      */
     public String save() {
         try {
-            this.serviceManager.getRoleService().save(this.role);
+            ServiceManager.getRoleService().save(this.role);
             return roleListPath;
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
@@ -92,13 +93,13 @@ public class RoleForm extends BaseForm {
      */
     public void delete() {
         try {
-            this.serviceManager.getRoleService().refresh(this.role);
+            ServiceManager.getRoleService().refresh(this.role);
             if (!this.role.getUsers().isEmpty()) {
                 for (User user : this.role.getUsers()) {
                     user.getRoles().remove(this.role);
                 }
                 this.role.setUsers(new ArrayList<>());
-                this.serviceManager.getRoleService().save(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
             if (!this.role.getTasks().isEmpty()) {
                 Helper.setErrorMessage("roleAssignedError");
@@ -106,9 +107,9 @@ public class RoleForm extends BaseForm {
             }
             if (!this.role.getAuthorities().isEmpty()) {
                 this.role.setAuthorities(new ArrayList<>());
-                this.serviceManager.getRoleService().save(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
-            this.serviceManager.getRoleService().remove(this.role);
+            ServiceManager.getRoleService().remove(this.role);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
         }
@@ -124,7 +125,7 @@ public class RoleForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setRole(this.serviceManager.getRoleService().getById(id));
+                setRole(ServiceManager.getRoleService().getById(id));
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), id },
@@ -160,7 +161,7 @@ public class RoleForm extends BaseForm {
      */
     public void setRoleById(int roleID) {
         try {
-            setRole(serviceManager.getRoleService().getById(roleID));
+            setRole(ServiceManager.getRoleService().getById(roleID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), roleID },
                 logger, e);
@@ -174,7 +175,7 @@ public class RoleForm extends BaseForm {
      */
     public List<SelectItem> getClients() {
         try {
-            return SelectItemList.getClients(serviceManager.getClientService().getAll());
+            return SelectItemList.getClients(ServiceManager.getClientService().getAll());
         } catch (DAOException e) {
             return SelectItemList.getClients(new ArrayList<>());
         }
@@ -189,11 +190,11 @@ public class RoleForm extends BaseForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getGlobalAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+        List<Authority> assignedAuthorities = ServiceManager.getAuthorityService()
                 .filterAssignableGlobal(this.role.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
-            availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
+            availableAuthorities = ServiceManager.getAuthorityService().getAllAssignableGlobal();
             availableAuthorities.removeAll(assignedAuthorities);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -229,11 +230,11 @@ public class RoleForm extends BaseForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getClientAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+        List<Authority> assignedAuthorities = ServiceManager.getAuthorityService()
                 .filterAssignableToClients(this.role.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
-            availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
+            availableAuthorities = ServiceManager.getAuthorityService().getAllAssignableToClients();
             availableAuthorities.removeAll(assignedAuthorities);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

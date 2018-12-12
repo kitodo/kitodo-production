@@ -19,7 +19,7 @@ import org.kitodo.services.ServiceManager;
 
 public class DataEditorServiceTest {
 
-    private DataEditorService dataEditorService = new ServiceManager().getDataEditorService();
+    private DataEditorService dataEditorService = ServiceManager.getDataEditorService();
 
     @Test
     public void shouldReadMetadata() throws IOException {

@@ -35,7 +35,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class RoleServiceIT {
 
-    private static final RoleService roleService = new ServiceManager().getRoleService();
+    private static final RoleService roleService = ServiceManager.getRoleService();
 
     private final int EXPECTED_ROLES_COUNT = 6;
 
@@ -120,7 +120,7 @@ public class RoleServiceIT {
 
     @Test
     public void shouldRemoveRoleButNotUser() throws Exception {
-        UserService userService = new ServiceManager().getUserService();
+        UserService userService = ServiceManager.getUserService();
 
         User user = new User();
         user.setLogin("Cascados");
@@ -251,8 +251,7 @@ public class RoleServiceIT {
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
-        ServiceManager serviceManager = new ServiceManager();
-        serviceManager.getAuthorityService().save(authority);
+        ServiceManager.getAuthorityService().save(authority);
 
         authorities.add(authority);
 

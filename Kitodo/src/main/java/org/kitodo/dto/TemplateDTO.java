@@ -31,9 +31,9 @@ public class TemplateDTO extends BaseTemplateDTO {
      */
     public InputStream getDiagramImage() {
         if (Objects.nonNull(this.workflow)) {
-            return new ServiceManager().getTemplateService().getTasksDiagram(this.workflow.getFileName());
+            return ServiceManager.getTemplateService().getTasksDiagram(this.workflow.getFileName());
         }
-        return new ServiceManager().getTemplateService().getTasksDiagram("");
+        return ServiceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**

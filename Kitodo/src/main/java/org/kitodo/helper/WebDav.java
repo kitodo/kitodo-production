@@ -34,11 +34,13 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.UserService;
 import org.kitodo.services.file.FileService;
 
 public class WebDav implements Serializable {
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+
+    private final FileService fileService = ServiceManager.getFileService();
+    private final UserService userService = ServiceManager.getUserService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger logger = LogManager.getLogger(WebDav.class);
     private static final String ERROR_UPLOADING = "errorUploading";
@@ -56,12 +58,12 @@ public class WebDav implements Serializable {
      * Retrieve all folders from one directory.
      */
     public List<URI> uploadAllFromHome(String inVerzeichnis) {
-        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        User currentUser = userService.getAuthenticatedUser();
         List<URI> files = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter("]");
 
         try {
-            URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
+            URI directoryName = userService.getHomeDirectory(currentUser).resolve(inVerzeichnis);
             files = fileService.getSubUris(filter, directoryName);
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);
@@ -92,9 +94,9 @@ public class WebDav implements Serializable {
      */
     public void removeAllFromHome(List<URI> uris, URI directory) {
         URI verzeichnisAlle;
-        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        User currentUser = userService.getAuthenticatedUser();
         try {
-            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(directory);
+            verzeichnisAlle = userService.getHomeDirectory(currentUser).resolve(directory);
             for (URI name : uris) {
                 fileService.deleteSymLink(verzeichnisAlle.resolve(name));
             }
@@ -110,7 +112,7 @@ public class WebDav implements Serializable {
      *            Process object
      */
     public void uploadFromHome(Process process) {
-        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        User currentUser = userService.getAuthenticatedUser();
         uploadFromHome(currentUser, process);
     }
 
@@ -125,7 +127,7 @@ public class WebDav implements Serializable {
     public void uploadFromHome(User user, Process process) {
         URI destination;
         try {
-            destination = serviceManager.getUserService().getHomeDirectory(user);
+            destination = userService.getHomeDirectory(user);
             if (user.isWithMassDownload()) {
                 destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
                 destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
@@ -155,13 +157,13 @@ public class WebDav implements Serializable {
      */
     public void downloadToHome(Process process, boolean onlyRead) {
         saveTiffHeader(process);
-        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
+        User currentUser = userService.getAuthenticatedUser();
         URI source;
         URI userHome;
 
         try {
-            source = serviceManager.getFileService().getImagesDirectory(process);
-            userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
+            source = fileService.getImagesDirectory(process);
+            userHome = userService.getHomeDirectory(currentUser);
 
             // for mass download, the project and directory must exist
             if (currentUser.isWithMassDownload()) {
@@ -192,7 +194,7 @@ public class WebDav implements Serializable {
      * @return encoded process link name
      */
     private String getEncodedProcessLinkName(Process process) {
-        String processLinkName = serviceManager.getProcessService().getNormalizedTitle(process.getTitle())
+        String processLinkName = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle())
                 + "__[" + process.getId() + "]";
         String encodedProcessLinkName;
         try {
@@ -213,7 +215,7 @@ public class WebDav implements Serializable {
      */
     private void saveTiffHeader(Process inProcess) {
         try {
-            URI imagesDirectory = serviceManager.getFileService().getImagesDirectory(inProcess);
+            URI imagesDirectory = fileService.getImagesDirectory(inProcess);
             String path = ConfigCore.getKitodoDataDirectory() + imagesDirectory;
             URI tiffWriterURI = Paths.get(new File(path).getAbsolutePath(), "tiffwriter.conf").toUri();
             if (new File(tiffWriterURI).exists()) {

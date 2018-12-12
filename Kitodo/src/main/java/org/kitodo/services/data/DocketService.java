@@ -36,7 +36,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static DocketService instance = null;
 
     /**
@@ -91,7 +90,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     @Override
     public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -180,7 +179,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     private String getDocketsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-            serviceManager.getUserService().getSessionClientId(), true));
+                ServiceManager.getUserService().getSessionClientId(), true));
         return query.toString();
     }
 }

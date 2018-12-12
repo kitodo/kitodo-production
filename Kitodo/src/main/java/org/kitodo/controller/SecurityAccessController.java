@@ -23,7 +23,7 @@ import org.kitodo.services.security.SecurityAccessService;
 @Named("SecurityAccessController")
 @RequestScoped
 public class SecurityAccessController {
-    private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
+    private SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     /**
      * Check if the current user has a specified authority globally or for a client.

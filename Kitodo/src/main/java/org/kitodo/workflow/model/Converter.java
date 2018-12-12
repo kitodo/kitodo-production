@@ -30,7 +30,6 @@ import org.kitodo.workflow.model.beans.TaskInfo;
 public class Converter {
 
     private Reader reader;
-    private ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor with diagram name as parameter. It sets up reader for xml file
@@ -113,7 +112,7 @@ public class Converter {
         task.setWorkflowCondition(taskInfo.getCondition());
         Integer userRoleId = kitodoTask.getUserRole();
         if (userRoleId > 0) {
-            task.getRoles().add(serviceManager.getRoleService().getById(userRoleId));
+            task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
         }
 
         if (workflowTask instanceof ScriptTask) {

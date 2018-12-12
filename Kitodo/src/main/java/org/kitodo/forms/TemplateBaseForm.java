@@ -20,6 +20,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class TemplateBaseForm extends BaseForm {
@@ -49,8 +50,8 @@ public class TemplateBaseForm extends BaseForm {
 
     void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
-            serviceManager.getTaskService().save(task);
-            serviceManager.getTaskService().evict(task);
+            ServiceManager.getTaskService().save(task);
+            ServiceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);

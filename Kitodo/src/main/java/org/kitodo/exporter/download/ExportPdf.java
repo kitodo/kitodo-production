@@ -46,20 +46,19 @@ import org.kitodo.services.file.FileService;
 
 public class ExportPdf extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportPdf.class);
-    private final ServiceManager serviceManager = new ServiceManager();
     private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
     private static final String PDF_EXTENSION = ".pdf";
-    private final FileService fileService = serviceManager.getFileService();
+    private final FileService fileService = ServiceManager.getFileService();
 
     @Override
     public boolean startExport(Process process, URI userHome)
             throws ReadException, IOException, PreferencesException, WriteException, JAXBException {
-        String normalizedTitle = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
         // Read Document
-        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
+        FileformatInterface gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
         prepareUserDirectory(userHome);
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
 
         // first of all write mets-file in images-Folder of process
         URI targetFileName = fileService.createResource(normalizedTitle + ".xml");
@@ -117,7 +116,7 @@ public class ExportPdf extends ExportMets {
         String contentServerUrl = ConfigCore.getParameter(ParameterCore.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
-        if (serviceManager.getMetadataValidationService().validate(process)) {
+        if (ServiceManager.getMetadataValidationService().validate(process)) {
             // if no contentServerUrl defined use internal
             // goobiContentServerServlet
             if (contentServerUrl == null || contentServerUrl.length() == 0) {
@@ -125,7 +124,7 @@ public class ExportPdf extends ExportMets {
             }
             return new URL(
                     contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
-                            + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + PDF_EXTENSION);
+                            + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + PDF_EXTENSION);
             // mets data does not exist or is invalid
         } else {
             if (contentServerUrl == null || contentServerUrl.length() == 0) {
@@ -149,8 +148,8 @@ public class ExportPdf extends ExportMets {
 
     private String prepareKitodoContentServerURL(Process process, String contentServerUrl) throws IOException {
         FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
-        String normalizedTitle = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
-        URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
+        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        URI imagesDir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
         List<URI> meta = fileService.getSubUris(filter, imagesDir);
         int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                 + normalizedTitle.length() + PDF_EXTENSION.length();

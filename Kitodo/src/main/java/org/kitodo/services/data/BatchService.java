@@ -38,7 +38,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static BatchService instance = null;
 
     /**
@@ -75,11 +74,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         if (batch.getIndexAction() == IndexAction.DELETE) {
             for (Process process : batch.getProcesses()) {
                 process.getBatches().remove(batch);
-                serviceManager.getProcessService().saveToIndex(process, false);
+                ServiceManager.getProcessService().saveToIndex(process, false);
             }
         } else {
             for (Process process : batch.getProcesses()) {
-                serviceManager.getProcessService().saveToIndex(process, false);
+                ServiceManager.getProcessService().saveToIndex(process, false);
             }
         }
     }
@@ -188,7 +187,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, BatchDTO batchDTO) throws DataException {
         batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
-            serviceManager.getProcessService()));
+            ServiceManager.getProcessService()));
     }
 
     /**

@@ -37,6 +37,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
 @SessionScoped
@@ -61,7 +62,7 @@ public class RulesetForm extends BaseForm {
     @Inject
     public RulesetForm(ProjectForm projectForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRulesetService()));
         this.projectForm = projectForm;
     }
 
@@ -72,7 +73,7 @@ public class RulesetForm extends BaseForm {
      */
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
-        this.ruleset.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.ruleset.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return rulesetEditPath;
     }
 
@@ -88,7 +89,7 @@ public class RulesetForm extends BaseForm {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
                     return this.stayOnCurrentPage;
                 }
-                serviceManager.getRulesetService().save(this.ruleset);
+                ServiceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
                 Helper.setErrorMessage("rulesetNotFound");
@@ -109,7 +110,7 @@ public class RulesetForm extends BaseForm {
             if (hasAssignedProcessesOrTemplates(this.ruleset.getId())) {
                 Helper.setErrorMessage("rulesetInUse");
             } else {
-                this.serviceManager.getRulesetService().remove(this.ruleset);
+                ServiceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
@@ -132,7 +133,7 @@ public class RulesetForm extends BaseForm {
     }
 
     private boolean existsRulesetWithSameName() {
-        List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
+        List<Ruleset> rulesets = ServiceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
         if (rulesets.isEmpty()) {
             return false;
         } else {
@@ -149,8 +150,8 @@ public class RulesetForm extends BaseForm {
     }
 
     private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DataException {
-        return !serviceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
-                || !serviceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
+        return !ServiceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
+                || !ServiceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
     }
 
     /**
@@ -163,7 +164,7 @@ public class RulesetForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setRuleset(this.serviceManager.getRulesetService().getById(id));
+                setRuleset(ServiceManager.getRulesetService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -192,7 +193,7 @@ public class RulesetForm extends BaseForm {
      */
     public void setRulesetById(int rulesetID) {
         try {
-            setRuleset(serviceManager.getRulesetService().getById(rulesetID));
+            setRuleset(ServiceManager.getRulesetService().getById(rulesetID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);

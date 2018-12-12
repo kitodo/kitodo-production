@@ -36,7 +36,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class RulesetServiceIT {
 
-    private static final RulesetService rulesetService = new ServiceManager().getRulesetService();
+    private static final RulesetService rulesetService = ServiceManager.getRulesetService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

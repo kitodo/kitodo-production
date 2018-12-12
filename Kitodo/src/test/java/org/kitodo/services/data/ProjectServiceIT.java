@@ -36,7 +36,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class ProjectServiceIT {
 
-    private static final ProjectService projectService = new ServiceManager().getProjectService();
+    private static final ProjectService projectService = ServiceManager.getProjectService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -203,8 +203,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldDuplicateProject() throws DAOException {
-        ProjectService projectService = new ServiceManager().getProjectService();
-
         Project initialProject = projectService.getById(1);
         Project duplicatedProject = projectService.duplicateProject(initialProject);
 

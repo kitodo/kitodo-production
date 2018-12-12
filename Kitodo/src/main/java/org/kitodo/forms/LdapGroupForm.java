@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.helper.Helper;
+import org.kitodo.services.ServiceManager;
 
 @Named("LdapGroupForm")
 @SessionScoped
@@ -54,7 +55,7 @@ public class LdapGroupForm extends BaseForm {
      */
     public List<LdapGroup> getLdapGroups() {
         try {
-            return serviceManager.getLdapGroupService().getAll();
+            return ServiceManager.getLdapGroupService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapGroups") }, logger, e);
             return new ArrayList<>();
@@ -68,7 +69,7 @@ public class LdapGroupForm extends BaseForm {
      */
     public String save() {
         try {
-            this.serviceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
+            ServiceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
             return ldapGroupListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
@@ -87,8 +88,8 @@ public class LdapGroupForm extends BaseForm {
      */
     public String duplicateLdapGroup(Integer itemId) {
         try {
-            LdapGroup baseLdapGroup = serviceManager.getLdapGroupService().getById(itemId);
-            this.myLdapGruppe = serviceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
+            LdapGroup baseLdapGroup = ServiceManager.getLdapGroupService().getById(itemId);
+            this.myLdapGruppe = ServiceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
             return ldapGroupEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
@@ -107,7 +108,7 @@ public class LdapGroupForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         try {
-            this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
+            ServiceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return this.stayOnCurrentPage;
@@ -124,7 +125,7 @@ public class LdapGroupForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));
+                setMyLdapGruppe(ServiceManager.getLdapGroupService().getById(id));
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(LDAP_GROUP), id }, logger,
@@ -153,7 +154,7 @@ public class LdapGroupForm extends BaseForm {
      */
     public void setLdapGroupById(int ldapGroupID) {
         try {
-            setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(ldapGroupID));
+            setMyLdapGruppe(ServiceManager.getLdapGroupService().getById(ldapGroupID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(LDAP_GROUP), ldapGroupID }, logger, e);
         }

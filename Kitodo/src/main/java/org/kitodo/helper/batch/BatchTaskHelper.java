@@ -41,6 +41,7 @@ import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -124,19 +125,19 @@ public class BatchTaskHelper extends BatchHelper {
 
     private void loadProcessProperties(Task task) {
         Process process = task.getProcess();
-        serviceManager.getProcessService().refresh(process);
+        ServiceManager.getProcessService().refresh(process);
         this.properties = process.getProperties();
     }
 
     private void saveStep() throws DataException, DAOException {
-        Process p = serviceManager.getProcessService().getById(this.currentStep.getProcess().getId());
+        Process p = ServiceManager.getProcessService().getById(this.currentStep.getProcess().getId());
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
             if (processProperty.getTitle() == null) {
                 p.getProperties().remove(processProperty);
             }
         }
-        this.serviceManager.getProcessService().save(p);
+        ServiceManager.getProcessService().save(p);
     }
 
     /**
@@ -144,14 +145,14 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public void reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
-        serviceManager.getWorkflowControllerService().setProblem(getProblem());
+        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
+            ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionReportProblem", logger, e);
         }
-        setProblem(serviceManager.getWorkflowControllerService().getProblem());
+        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
     }
 
     /**
@@ -162,15 +163,15 @@ public class BatchTaskHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.currentStep = task;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
-            serviceManager.getWorkflowControllerService().setProblem(getProblem());
+            ServiceManager.getWorkflowControllerService().setProblem(getProblem());
             try {
-                serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
+                ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionReportProblem", logger, e);
             }
         }
-        setProblem(serviceManager.getWorkflowControllerService().getProblem());
+        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
     }
 
     /**
@@ -180,11 +181,11 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public List<SelectItem> getPreviousStepsForProblemReporting() {
         List<SelectItem> answer = new ArrayList<>();
-        List<Task> previousTasksForProblemReporting = serviceManager.getTaskService()
+        List<Task> previousTasksForProblemReporting = ServiceManager.getTaskService()
                 .getPreviousTasksForProblemReporting(this.currentStep.getOrdering(),
                     this.currentStep.getProcess().getId());
         for (Task task : previousTasksForProblemReporting) {
-            answer.add(new SelectItem(task.getTitle(), serviceManager.getTaskService().getTitleWithUserName(task)));
+            answer.add(new SelectItem(task.getTitle(), ServiceManager.getTaskService().getTitleWithUserName(task)));
         }
         return answer;
     }
@@ -196,10 +197,10 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public List<SelectItem> getNextStepsForProblemSolution() {
         List<SelectItem> answer = new ArrayList<>();
-        List<Task> nextTasksForProblemSolution = serviceManager.getTaskService()
+        List<Task> nextTasksForProblemSolution = ServiceManager.getTaskService()
                 .getNextTasksForProblemSolution(this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
         for (Task task : nextTasksForProblemSolution) {
-            answer.add(new SelectItem(task.getTitle(), serviceManager.getTaskService().getTitleWithUserName(task)));
+            answer.add(new SelectItem(task.getTitle(), ServiceManager.getTaskService().getTitleWithUserName(task)));
         }
         return answer;
     }
@@ -210,7 +211,7 @@ public class BatchTaskHelper extends BatchHelper {
     public void solveProblemForSingle(Task currentStep) {
         this.currentStep = currentStep;
         try {
-            serviceManager.getWorkflowControllerService().solveProblem(this.currentStep);
+            ServiceManager.getWorkflowControllerService().solveProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
@@ -225,15 +226,15 @@ public class BatchTaskHelper extends BatchHelper {
     public String solveProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
-            serviceManager.getWorkflowControllerService().setSolution(getSolution());
+            ServiceManager.getWorkflowControllerService().setSolution(getSolution());
             try {
-                serviceManager.getWorkflowControllerService().solveProblem(this.currentStep);
+                ServiceManager.getWorkflowControllerService().solveProblem(this.currentStep);
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionSolveProblem", logger, e);
             }
         }
-        setSolution(serviceManager.getWorkflowControllerService().getSolution());
+        setSolution(ServiceManager.getWorkflowControllerService().getSolution());
 
         return "";
     }
@@ -318,13 +319,13 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = serviceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                 this.currentStep.getProcess().getWikiField(), "user", message));
             this.addToWikiField = "";
             try {
-                this.serviceManager.getProcessService().save(this.currentStep.getProcess());
+                ServiceManager.getProcessService().save(this.currentStep.getProcess());
             } catch (DataException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -336,13 +337,13 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public void addToWikiFieldForAll() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = serviceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             for (Task task : this.steps) {
                 task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
                     task.getProcess().getWikiField(), "user", message));
                 try {
-                    this.serviceManager.getProcessService().save(task.getProcess());
+                    ServiceManager.getProcessService().save(task.getProcess());
                 } catch (DataException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -366,7 +367,7 @@ public class BatchTaskHelper extends BatchHelper {
         for (Task task : this.steps) {
             if (task.getScriptName().equals(this.script)) {
                 String scriptPath = task.getScriptPath();
-                serviceManager.getTaskService().executeScript(task, scriptPath, false);
+                ServiceManager.getTaskService().executeScript(task, scriptPath, false);
             }
         }
     }
@@ -396,16 +397,16 @@ public class BatchTaskHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
             task.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (serviceManager.getWorkflowControllerService().isCorrectionTask(task)) {
+            if (ServiceManager.getWorkflowControllerService().isCorrectionTask(task)) {
                 task.setProcessingBegin(null);
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
-            User user = serviceManager.getUserService().getAuthenticatedUser();
-            serviceManager.getTaskService().replaceProcessingUser(task, user);
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
+            ServiceManager.getTaskService().replaceProcessingUser(task, user);
 
             try {
-                this.serviceManager.getTaskService().save(task);
+                ServiceManager.getTaskService().save(task);
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
             }
@@ -427,7 +428,7 @@ public class BatchTaskHelper extends BatchHelper {
                 if (valid) {
                     this.myDav.uploadFromHome(task.getProcess());
                     task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                    serviceManager.getWorkflowControllerService().close(task);
+                    ServiceManager.getWorkflowControllerService().close(task);
                 }
             } catch (DataException | IOException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
@@ -460,8 +461,8 @@ public class BatchTaskHelper extends BatchHelper {
     private boolean invalidMetadataExists(Task task) {
         if (task.isTypeMetadata()
                 && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
-            serviceManager.getMetadataValidationService().setAutoSave(true);
-            return !serviceManager.getMetadataValidationService().validate(task.getProcess());
+            ServiceManager.getMetadataValidationService().setAutoSave(true);
+            return !ServiceManager.getMetadataValidationService().validate(task.getProcess());
         }
         return false;
     }
@@ -470,7 +471,7 @@ public class BatchTaskHelper extends BatchHelper {
         if (task.isTypeImagesWrite()) {
             ImagesHelper mih = new ImagesHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
+                ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
                 Helper.setErrorMessage("Error on image validation!");
                 return true;
             }

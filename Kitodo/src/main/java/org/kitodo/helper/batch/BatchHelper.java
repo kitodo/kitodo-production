@@ -16,13 +16,11 @@ import java.util.Objects;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.services.ServiceManager;
 
 public class BatchHelper {
 
     protected List<Property> properties;
     protected Property property;
-    protected final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Get property for process.

@@ -37,7 +37,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static PropertyService instance = null;
 
     /**
@@ -72,13 +71,13 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     @Override
     protected void manageDependenciesForIndex(Property property) throws CustomResponseException, IOException {
         for (Process process : property.getProcesses()) {
-            serviceManager.getProcessService().saveToIndex(process, false);
+            ServiceManager.getProcessService().saveToIndex(process, false);
         }
         for (Process template : property.getTemplates()) {
-            serviceManager.getProcessService().saveToIndex(template, false);
+            ServiceManager.getProcessService().saveToIndex(template, false);
         }
         for (Process workpiece : property.getWorkpieces()) {
-            serviceManager.getProcessService().saveToIndex(workpiece, false);
+            ServiceManager.getProcessService().saveToIndex(workpiece, false);
         }
     }
 

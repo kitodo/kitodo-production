@@ -35,7 +35,7 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
-    private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
+    private SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

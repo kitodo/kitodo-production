@@ -34,12 +34,10 @@ public class DBConnectionTestIT {
 
     @Test
     public void test() throws Exception {
-        ServiceManager serviceManager = new ServiceManager();
-
-        long counted = serviceManager.getProcessService().count();
+        long counted = ServiceManager.getProcessService().count();
         Assert.assertEquals("No Process found", 3, counted);
 
-        String title = serviceManager.getProcessService().getById(3).getTitle();
+        String title = ServiceManager.getProcessService().getById(3).getTitle();
         Assert.assertEquals("DBConnectionTest", title);
     }
 }

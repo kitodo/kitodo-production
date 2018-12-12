@@ -24,8 +24,7 @@ public class TaskScriptThread extends EmptyTask {
 
     private final Task task;
     private static final Logger logger = LogManager.getLogger(TaskScriptThread.class);
-    private ServiceManager serviceManager = new ServiceManager();
-    private TaskService taskService = serviceManager.getTaskService();
+    private TaskService taskService = ServiceManager.getTaskService();
 
     public TaskScriptThread(Task task) {
         super(task.toString());
@@ -67,7 +66,7 @@ public class TaskScriptThread extends EmptyTask {
         }
         if (noScriptToRun && task.isTypeExportDMS()) {
             try {
-                serviceManager.getTaskService().executeDmsExport(this.task);
+                taskService.executeDmsExport(this.task);
             } catch (DataException e) {
                 logger.error("Data Exception occurred", e);
             }
@@ -80,7 +79,7 @@ public class TaskScriptThread extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public TaskScriptThread replace() {
@@ -90,7 +89,7 @@ public class TaskScriptThread extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {

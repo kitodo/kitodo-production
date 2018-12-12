@@ -26,8 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 public class WorkflowServiceIT {
 
-    private ServiceManager serviceManager = new ServiceManager();
-    private WorkflowService workflowService = serviceManager.getWorkflowService();
+    private WorkflowService workflowService = ServiceManager.getWorkflowService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -63,7 +62,7 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldGetAvailableWorkflows() throws Exception {
-        SecurityTestUtils.addUserDataToSecurityContext(serviceManager.getUserService().getById(1), 1);
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
 
         List<Workflow> workflows = workflowService.getAvailableWorkflows();
         assertEquals("Workflows were not found in database!", 1, workflows.size());

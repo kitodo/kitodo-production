@@ -47,8 +47,6 @@ import org.kitodo.services.ServiceManager;
 
 public class AddingST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
-
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
@@ -81,7 +79,7 @@ public class AddingST extends BaseTestSelenium {
     public void addBatchTest() throws Exception {
         processesPage.createNewBatch();
         await().untilAsserted(() -> assertEquals("Batch was inserted!", 1,
-            serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+            ServiceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
     }
 
     @Test
@@ -180,18 +178,18 @@ public class AddingST extends BaseTestSelenium {
                 userEditPage.getHeaderText());
 
         userEditPage.insertUserData(user);
-        userEditPage.addUserToRole(serviceManager.getRoleService().getById(2).getTitle());
-        userEditPage.addUserToClient(serviceManager.getClientService().getById(1).getName());
-        userEditPage.addUserToClient(serviceManager.getClientService().getById(2).getName());
+        userEditPage.addUserToRole(ServiceManager.getRoleService().getById(2).getTitle());
+        userEditPage.addUserToClient(ServiceManager.getClientService().getById(1).getName());
+        userEditPage.addUserToClient(ServiceManager.getClientService().getById(2).getName());
         userEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
 
-        User insertedUser = serviceManager.getUserService().getByLogin(user.getLogin());
+        User insertedUser = ServiceManager.getUserService().getByLogin(user.getLogin());
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(insertedUser);
         Pages.getTopNavigation().selectSessionClient(1);
-        assertEquals(serviceManager.getClientService().getById(2).getName(),
+        assertEquals(ServiceManager.getClientService().getById(2).getName(),
             Pages.getTopNavigation().getSessionClient());
     }
 
@@ -243,7 +241,7 @@ public class AddingST extends BaseTestSelenium {
         List<String> roleTitles = usersPage.getRoleTitles();
         assertTrue("New role was not saved", roleTitles.contains(role.getTitle()));
 
-        int availableGlobalAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
+        int availableGlobalAuthorities = ServiceManager.getAuthorityService().getAllAssignableGlobal().size();
         int assignedGlobalAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedGlobalAuthorities();
         assertEquals("Assigned authorities of the new role were not saved!", availableGlobalAuthorities,
@@ -251,7 +249,7 @@ public class AddingST extends BaseTestSelenium {
         String actualTitle = Pages.getRoleEditPage().getRoleTitle();
         assertEquals("New Name of role was not saved", role.getTitle(), actualTitle);
 
-        int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
+        int availableClientAuthorities = ServiceManager.getAuthorityService().getAllAssignableToClients().size();
         int assignedClientAuthorities = usersPage.editRole(role.getTitle())
                 .countAssignedClientAuthorities();
         assertEquals("Assigned client authorities of the new role were not saved!", availableClientAuthorities,

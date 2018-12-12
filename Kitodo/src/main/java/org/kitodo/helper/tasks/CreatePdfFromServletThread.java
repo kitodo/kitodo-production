@@ -52,8 +52,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     private URI targetFolder;
     private String internalServletPath;
     private URL metsURL;
-    private final ServiceManager serviceManager = new ServiceManager();
-    public final FileService fileService = serviceManager.getFileService();
+    public final FileService fileService = ServiceManager.getFileService();
 
     public CreatePdfFromServletThread() {
     }
@@ -171,7 +170,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
         String contentServerUrl = ConfigCore.getParameter(ParameterCore.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
-        if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
+        if (ServiceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
             // if no contentserverurl defined use internal
             // goobiContentServerServlet
             if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
@@ -185,7 +184,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             }
             StringBuilder url = new StringBuilder();
             FilenameFilter filter = Helper.imageNameFilter;
-            URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
+            URI imagesDir = ServiceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
             List<URI> meta = fileService.getSubUris(filter, imagesDir);
             List<String> fileNames = new ArrayList<>();
             String basePath = ConfigCore.getKitodoDataDirectory();

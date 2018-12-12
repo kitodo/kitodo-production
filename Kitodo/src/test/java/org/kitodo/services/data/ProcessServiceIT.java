@@ -54,7 +54,7 @@ import org.kitodo.services.file.FileService;
 public class ProcessServiceIT {
 
     private static FileService fileService = new FileService();
-    private static final ProcessService processService = new ServiceManager().getProcessService();
+    private static final ProcessService processService = ServiceManager.getProcessService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -226,7 +226,7 @@ public class ProcessServiceIT {
     @Ignore("for second process is attached task which is processed by blocked user")
     @Test
     public void shouldGetBlockedUser() throws Exception {
-        UserService userService = new ServiceManager().getUserService();
+        UserService userService = ServiceManager.getUserService();
 
         ProcessDTO process = processService.findById(1);
         boolean condition = processService.getBlockedUser(process) == null;
@@ -475,7 +475,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         Process process = processService.getById(1);
-        PrefsInterface preferences = new ServiceManager().getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(UghImplementation.INSTANCE.createMetsMods(preferences), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
         assertTrue("It was not possible to write metadata as template file!", condition);
@@ -496,7 +496,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImageFolderInUseUser() throws Exception {
-        UserService userService = new ServiceManager().getUserService();
+        UserService userService = ServiceManager.getUserService();
 
         Process process = processService.getById(1);
         User expected = userService.getById(2);

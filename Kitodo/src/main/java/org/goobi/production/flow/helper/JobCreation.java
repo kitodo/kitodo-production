@@ -39,8 +39,7 @@ import org.kitodo.services.file.FileService;
 
 public class JobCreation {
     private static final Logger logger = LogManager.getLogger(JobCreation.class);
-    private static final ServiceManager serviceManager = new ServiceManager();
-    private static final FileService fileService = serviceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
 
     /**
      * Private constructor to hide the implicit public one.
@@ -127,7 +126,7 @@ public class JobCreation {
     private static void startThreads(Process process, URI basepath, URI metsfile) throws DAOException, IOException {
         if (Objects.nonNull(process) && Objects.nonNull(process.getId())) {
             moveFiles(metsfile, basepath, process);
-            List<Task> tasks = serviceManager.getProcessService().getById(process.getId()).getTasks();
+            List<Task> tasks = ServiceManager.getProcessService().getById(process.getId()).getTasks();
             for (Task task : tasks) {
                 if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
                     Thread thread = new TaskScriptThread(task);
@@ -146,7 +145,7 @@ public class JobCreation {
      */
     private static boolean testTitle(String title) throws DataException {
         if (title != null) {
-            Long amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
+            Long amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
             if (amount > 0) {
                 Helper.setErrorMessage("processTitleAlreadyInUse");
                 return false;
@@ -179,7 +178,7 @@ public class JobCreation {
                 for (URI uri : imageDir) {
                     URI image = fileService.createResource(imagesFolder, uri.toString());
                     URI dest = fileService.createResource(
-                        serviceManager.getProcessService().getImagesOrigDirectory(false, p),
+                        ServiceManager.getProcessService().getImagesOrigDirectory(false, p),
                         fileService.getFileName(image));
                     fileService.moveFile(image, dest);
                 }
@@ -229,7 +228,7 @@ public class JobCreation {
                         }
                     }
                 } else if (fileService.getFileName(directory).contains("ocr")) {
-                    URI ocr = serviceManager.getFileService().getOcrDirectory(p);
+                    URI ocr = fileService.getOcrDirectory(p);
                     if (!fileService.fileExist(ocr)) {
                         fileService.createDirectory(ocr, null);
                     }
@@ -238,7 +237,7 @@ public class JobCreation {
                         moveDirectory(ocrDir, fileService.createResource(ocr, fileService.getFileName(ocrDir)));
                     }
                 } else {
-                    URI i = serviceManager.getFileService().getImportDirectory(p);
+                    URI i = fileService.getImportDirectory(p);
                     if (!fileService.fileExist(i)) {
                         fileService.createResource(i.getPath());
                     }

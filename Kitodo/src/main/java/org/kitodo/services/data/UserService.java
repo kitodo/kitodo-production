@@ -77,7 +77,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserService extends SearchService<User, UserDTO, UserDAO> implements UserDetailsService {
 
-    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
     private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
@@ -144,11 +143,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Project project : user.getProjects()) {
                 project.getUsers().remove(user);
-                serviceManager.getProjectService().saveToIndex(project, false);
+                ServiceManager.getProjectService().saveToIndex(project, false);
             }
         } else {
             for (Project project : user.getProjects()) {
-                serviceManager.getProjectService().saveToIndex(project, false);
+                ServiceManager.getProjectService().saveToIndex(project, false);
             }
         }
     }
@@ -163,11 +162,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private void manageFiltersDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Filter filter : user.getFilters()) {
-                serviceManager.getFilterService().removeFromIndex(filter, false);
+                ServiceManager.getFilterService().removeFromIndex(filter, false);
             }
         } else {
             for (Filter filter : user.getFilters()) {
-                serviceManager.getFilterService().saveToIndex(filter, false);
+                ServiceManager.getFilterService().saveToIndex(filter, false);
             }
         }
     }
@@ -183,11 +182,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Task task : user.getProcessingTasks()) {
                 task.setProcessingUser(null);
-                serviceManager.getTaskService().saveToIndex(task, false);
+                ServiceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
             for (Task task : user.getProcessingTasks()) {
-                serviceManager.getTaskService().saveToIndex(task, false);
+                ServiceManager.getTaskService().saveToIndex(task, false);
             }
         }
     }
@@ -203,11 +202,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Role role : user.getRoles()) {
                 role.getUsers().remove(user);
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         } else {
             for (Role role : user.getRoles()) {
-                serviceManager.getRoleService().saveToIndex(role, false);
+                ServiceManager.getRoleService().saveToIndex(role, false);
             }
         }
     }
@@ -227,9 +226,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public User getByLdapLoginWithFallback(String login) throws DAOException, UsernameNotFoundException {
         User user;
         try {
-            user = serviceManager.getUserService().getByLdapLogin(login);
+            user = ServiceManager.getUserService().getByLdapLogin(login);
         } catch (UsernameNotFoundException e) {
-            user = serviceManager.getUserService().getByLogin(login);
+            user = ServiceManager.getUserService().getByLogin(login);
         }
         return user;
     }
@@ -273,7 +272,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return The SecurityUserDetails object or null if no user is authenticated.
      */
     public SecurityUserDetails getAuthenticatedUser() {
-        return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
+        return ServiceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
     }
 
     /**
@@ -317,8 +316,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return The user dto or null if no user is authenticated.
      */
     public UserDTO findAuthenticatedUser() throws DataException {
-        User user = serviceManager.getUserService().getAuthenticatedUser();
-        return findById(user.getId());
+        return findById(getAuthenticatedUser().getId());
     }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {
@@ -341,7 +339,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     @Override
     public String createCountQuery(Map filters) {
-        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return createQueryAllActiveUsersForCurrentUser().toString();
         }
         return null;
@@ -355,16 +353,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     @Override
     public List<User> getAllForSelectedClient() {
         return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", serviceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (serviceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
             return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
         }
-        if (serviceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
             return convertJSONObjectsToDTOs(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
                 sortByLogin(), offset, size), false);
         }
@@ -524,8 +521,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of JSON objects with users for specific filter
      */
     List<JsonObject> findByFilter(String value) throws DataException {
-        List<JsonObject> filters = serviceManager.getFilterService().findByValue(value, true);
-
+        List<JsonObject> filters = ServiceManager.getFilterService().findByValue(value, true);
         return searcher.findDocuments(createSetQuery("filters.id", filters, true).toString());
     }
 
@@ -625,15 +621,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
         userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.FILTERS.getKey(),
-            serviceManager.getFilterService()));
+            ServiceManager.getFilterService()));
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getKey(),
-            serviceManager.getProjectService()));
+            ServiceManager.getProjectService()));
         userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
-            serviceManager.getClientService()));
+            ServiceManager.getClientService()));
         userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
-            serviceManager.getTaskService()));
+            ServiceManager.getTaskService()));
         userDTO.setRoles(
-            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(), serviceManager.getRoleService()));
+            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(), ServiceManager.getRoleService()));
     }
 
     private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
@@ -781,13 +777,13 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         URI result;
         if (Objects.nonNull(user)) {
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE)) {
-                result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
+                result = Paths.get(ServiceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
             } else {
                 result = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS), user.getLogin()).toUri();
             }
 
             if (!new File(result).exists()) {
-                serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
+                ServiceManager.getFileService().createDirectoryForUser(result, user.getLogin());
             }
         } else {
             throw new IOException("No user for home directory!");
@@ -858,7 +854,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         filter.setValue(userFilter);
         filter.setCreationDate(localDateTime.toDate());
         filter.setUser(user);
-        serviceManager.getFilterService().save(filter);
+        ServiceManager.getFilterService().save(filter);
         refresh(user);
     }
 
@@ -890,7 +886,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         List<Filter> filters = user.getFilters();
         for (Filter filter : filters) {
             if (filter.getValue().equals(userFilter)) {
-                serviceManager.getFilterService().remove(filter);
+                ServiceManager.getFilterService().remove(filter);
             }
         }
         refresh(user);
@@ -932,6 +928,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             userWithNewPassword = user;
         }
         userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
-        serviceManager.getUserService().save(userWithNewPassword);
+        save(userWithNewPassword);
     }
 }
