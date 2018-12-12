@@ -31,13 +31,13 @@ public class TaskImageGeneratorThread extends EmptyTask {
     /**
      * Creates a new process title.
      *
-     * @param processtitle
+     * @param processTitle
      *            process title to generate
      * @param imageGenerator
      *            image generator to run in this thread
      */
-    public TaskImageGeneratorThread(String processtitle, ImageGenerator imageGenerator) {
-        super(processtitle);
+    public TaskImageGeneratorThread(String processTitle, ImageGenerator imageGenerator) {
+        super(processTitle);
         this.imageGenerator = imageGenerator;
     }
 
@@ -55,7 +55,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -67,7 +67,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
      * start the export on the ExportDms. This task instance is passed in
      * addition so that the ExportDms can update the task’s state.
      *
-     * @see de.sub.goobi.helper.tasks.EmptyTask#run()
+     * @see org.kitodo.helper.tasks.EmptyTask#run()
      */
     @Override
     public void run() {
@@ -86,7 +86,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public TaskImageGeneratorThread replace() {

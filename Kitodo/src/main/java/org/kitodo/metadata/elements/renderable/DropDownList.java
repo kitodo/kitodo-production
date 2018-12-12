@@ -50,7 +50,7 @@ public class DropDownList extends RenderableMetadata
      * @param container
      *            metadata group this drop-down list is showing in
      * @param projectName
-     *            project of the process owning this metadatum
+     *            project of the process owning this metadata
      */
     public DropDownList(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
                         RenderableMetadataGroup container, String projectName) {
@@ -70,7 +70,7 @@ public class DropDownList extends RenderableMetadata
      *
      * @param data
      *            data to add
-     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#addContent(ugh.dl.Metadata)
+     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#addContent(org.kitodo.api.ugh.MetadataInterface)
      */
     @Override
     public void addContent(MetadataInterface data) {

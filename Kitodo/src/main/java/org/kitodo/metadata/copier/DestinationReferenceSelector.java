@@ -65,7 +65,7 @@ public class DestinationReferenceSelector extends DataSelector {
      * Returns the document structure level indicated by the index form the
      * respective destination path.
      *
-     * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataSelector#findIn(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public String findIn(CopierData data) {

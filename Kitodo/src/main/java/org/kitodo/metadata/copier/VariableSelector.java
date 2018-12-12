@@ -63,7 +63,7 @@ public class VariableSelector extends DataSelector {
      * @param data
      *            object to inspect
      * @return value of the variable, or null if not found
-     * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(CopierData)
+     * @see org.kitodo.metadata.copier.DataSelector#findIn(CopierData)
      */
     @Override
     public String findIn(CopierData data) {

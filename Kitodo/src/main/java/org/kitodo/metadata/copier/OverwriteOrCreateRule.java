@@ -16,7 +16,7 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * Data copy rule that either overwrites the metadatum described by the selector
+ * Data copy rule that either overwrites the metadata described by the selector
  * on the left hand side or creates it anew, if it isn’t yet present.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -30,7 +30,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
     protected static final String OPERATOR = "=";
 
     /**
-     * Selector for the metadatum to be overwritten or created.
+     * Selector for the metadata to be overwritten or created.
      */
     private MetadataSelector destination;
 
@@ -44,7 +44,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
      *
      * @param data
      *            data to apply the rule on
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataCopyrule#apply(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public void apply(CopierData data) {
@@ -60,7 +60,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
      * expected, that is 1.
      *
      * @return always 1
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMinObjects()
      */
     @Override
     protected int getMinObjects() {
@@ -72,7 +72,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
      * expected, that is 1.
      *
      * @return always 1
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
+     * @see org.kitodo.metadata.copier.DataCopyrule#getMaxObjects()
      */
     @Override
     protected int getMaxObjects() {
@@ -82,7 +82,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
     /**
      * Saves the source object path.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setObjects(java.util.List)
      */
     @Override
     protected void setObjects(List<String> objects) throws ConfigurationException {
@@ -92,7 +92,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
     /**
      * Saves the destination object path.
      *
-     * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
+     * @see org.kitodo.metadata.copier.DataCopyrule#setSubject(java.lang.String)
      */
     @Override
     protected void setSubject(String subject) throws ConfigurationException {

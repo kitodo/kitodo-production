@@ -360,7 +360,7 @@ public class ImageGenerator implements Runnable {
      * start the export on the ExportDms. This task instance is passed in
      * addition so that the ExportDms can update the task’s state.
      *
-     * @see de.sub.goobi.helper.tasks.EmptyTask#run()
+     * @see org.kitodo.helper.tasks.EmptyTask#run()
      */
     @Override
     public void run() {

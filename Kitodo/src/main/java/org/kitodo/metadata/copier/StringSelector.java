@@ -44,7 +44,7 @@ public class StringSelector extends DataSelector {
     /**
      * Returns the value of the string used to create the selector.
      *
-     * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataSelector#findIn(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public String findIn(CopierData data) {

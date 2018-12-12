@@ -16,7 +16,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 
 /**
  * Abstract base class that different types of metadata selectors are based on.
- * Proviedes a factory method to create its subclasses depending on a a given
+ * Provides a factory method to create its subclasses depending on a a given
  * String path, and defines methods that shall be implemented by the
  * implementing metadata selectors.
  * 
@@ -63,7 +63,7 @@ public abstract class MetadataSelector extends DataSelector {
      * @param logicalNode
      *            document structure node to start from, intended for recursion
      * @param value
-     *            value to write if no metadatum is available at the path’s end
+     *            value to write if no metadata is available at the path’s end
      * @throws RuntimeException
      *             if the operation fails for unfulfilled dependencies
      */
@@ -99,7 +99,7 @@ public abstract class MetadataSelector extends DataSelector {
      * @param logicalNode
      *            document structure node to start from, intended for recursion
      * @param value
-     *            value to write if no metadatum is available at the path’s end
+     *            value to write if no metadata is available at the path’s end
      * @throws RuntimeException
      *             if the operation fails for unfulfilled dependencies
      */
@@ -115,7 +115,7 @@ public abstract class MetadataSelector extends DataSelector {
      * @param data
      *            data to work on
      * @param value
-     *            value to write if no metadatum is available at the path’s end
+     *            value to write if no metadata is available at the path’s end
      * @throws RuntimeException
      *             if the operation fails for unfulfilled dependencies
      */
@@ -151,7 +151,7 @@ public abstract class MetadataSelector extends DataSelector {
      * of the path aren’t available.
      *
      * @return the value the path points to, or null if absent
-     * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
+     * @see org.kitodo.metadata.copier.DataSelector#findIn(org.kitodo.metadata.copier.CopierData)
      */
     @Override
     public String findIn(CopierData data) {

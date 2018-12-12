@@ -18,7 +18,7 @@ import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 
 /**
- * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}
+ * The class ExportDmsTask accepts an {@link org.kitodo.exporter.dms.ExportDms}
  * for a process and provides the ability to run the export in the background
  * this way. This is especially valuable if the export has a big load of images
  * to copy.
@@ -65,7 +65,7 @@ public class ExportDmsTask extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -77,7 +77,7 @@ public class ExportDmsTask extends EmptyTask {
      * start the export on the ExportDms. This task instance is passed in
      * addition so that the ExportDms can update the task’s state.
      *
-     * @see de.sub.goobi.helper.tasks.EmptyTask#run()
+     * @see org.kitodo.helper.tasks.EmptyTask#run()
      */
     @Override
     public void run() {
@@ -94,7 +94,7 @@ public class ExportDmsTask extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public ExportDmsTask replace() {

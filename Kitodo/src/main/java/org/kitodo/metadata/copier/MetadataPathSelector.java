@@ -125,9 +125,9 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * Creates a metadatum with the given value if the full path is applied and
-     * no such metadatum is already available under at the path. Leaves the
-     * document structure element unchanged if such a metadatum already exists.
+     * Creates a metadata with the given value if the full path is applied and
+     * no such metadata is already available under at the path. Leaves the
+     * document structure element unchanged if such a metadata already exists.
      * This works recursively, by calling itself on the subnode, if found, or
      * returning null otherwise. Metadata creation is, by definition, always
      * done in a {@link LocalMetadataSelector}.
@@ -137,8 +137,8 @@ public class MetadataPathSelector extends MetadataSelector {
      * @param logicalNode
      *            document structure node to start from, intended for recursion
      * @param value
-     *            value to write if no metadatum is available at the path’s end
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
+     *            value to write if no metadata is available at the path’s end
+     * @see org.kitodo.metadata.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
      *      DocStructInterface, String)
      */
     @Override
@@ -162,7 +162,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            document structure node to start from, intended for recursion
      * @param value
      *            value to write
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#createOrOverwrite(CopierData,
+     * @see org.kitodo.metadata.copier.MetadataSelector#createOrOverwrite(CopierData,
      *      DocStructInterface, String)
      */
     @Override
@@ -203,7 +203,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
      *
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
+     * @see org.kitodo.metadata.copier.MetadataSelector#findAll(org.kitodo.api.ugh.DocStructInterface)
      */
     @Override
     protected Iterable<MetadataSelector> findAll(DocStructInterface logicalNode) {
@@ -226,12 +226,12 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * Returns the value of the metadatum named by the path used to construct
-     * the metadata selector, or null if either the path or the metadatum at the
+     * Returns the value of the metadata named by the path used to construct
+     * the metadata selector, or null if either the path or the metadata at the
      * end of the path aren’t available. This works recursively, by calling
      * itself on the subnode, if found, or returning null otherwise.
      *
-     * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+     * @see org.kitodo.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.DocStructInterface)
      */
     @Override
     protected String findIn(DocStructInterface supernode) {
