@@ -74,7 +74,6 @@ public class TemplateTypeTest {
         firstTemplate.setCreationDate(localDate.toDate());
         firstTemplate.setActive(false);
         firstTemplate.setTasks(tasks);
-        firstTemplate.setWikiField("Wiki");
         firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(ruleset);
         templates.add(firstTemplate);
@@ -82,7 +81,6 @@ public class TemplateTypeTest {
         Template secondTemplate = new Template();
         secondTemplate.setId(2);
         secondTemplate.setTitle("Rendering");
-        secondTemplate.setWikiField("Field");
         secondTemplate.setActive(true);
         secondTemplate.getProjects().add(project);
         secondTemplate.setDocket(docket);
@@ -107,8 +105,6 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key wikiField doesn't match to given value!", "Wiki",
-            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
@@ -151,8 +147,6 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key wikiField doesn't match to given value!", "Field",
-            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
@@ -185,8 +179,6 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key wikiField doesn't match to given value!", "",
-            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
@@ -210,7 +202,7 @@ public class TemplateTypeTest {
         HttpEntity document = templateType.createDocument(template);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 10, actual.keySet().size());
 
         JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         JsonObject project = projects.getJsonObject(0);

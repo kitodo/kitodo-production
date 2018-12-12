@@ -29,6 +29,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer progressInProcessing;
     private Integer progressOpen;
     private Integer progressLocked;
+    private String wikiField;
     private String processBaseUri;
     private String batchID;
     private Integer sortHelperArticles;
@@ -191,6 +192,25 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setProgressLocked(Integer progressLocked) {
         this.progressLocked = progressLocked;
+    }
+
+    /**
+     * Get wiki field.
+     *
+     * @return wiki field as String
+     */
+    public String getWikiField() {
+        return wikiField;
+    }
+
+    /**
+     * Set wiki field.
+     *
+     * @param wikiField
+     *            as String
+     */
+    public void setWikiField(String wikiField) {
+        this.wikiField = wikiField;
     }
 
     /**

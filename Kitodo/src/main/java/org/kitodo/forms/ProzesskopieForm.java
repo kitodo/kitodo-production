@@ -1839,7 +1839,6 @@ public class ProzesskopieForm implements Serializable {
      *            String
      */
     public void setAddToWikiField(String addToWikiField) {
-        this.prozessKopie.setWikiField(this.template.getWikiField());
         this.addToWikiField = addToWikiField;
         if (addToWikiField != null && !addToWikiField.equals("")) {
             User user = serviceManager.getUserService().getAuthenticatedUser();
