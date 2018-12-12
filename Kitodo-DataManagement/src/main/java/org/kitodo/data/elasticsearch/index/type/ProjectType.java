@@ -42,7 +42,7 @@ public class ProjectType extends BaseType<Project> {
             folders.add(folderObject);
         }
 
-        Integer clientId = Objects.nonNull(project.getClient()) ? project.getClient().getId() : 0;
+        int clientId = Objects.nonNull(project.getClient()) ? project.getClient().getId() : 0;
         String clientName = Objects.nonNull(project.getClient()) ? project.getClient().getName() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();

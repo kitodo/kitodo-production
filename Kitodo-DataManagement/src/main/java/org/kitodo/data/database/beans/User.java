@@ -26,6 +26,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.UserDAO;
+
 @Entity
 @Table(name = "user")
 public class User extends BaseIndexedBean {
@@ -257,6 +259,7 @@ public class User extends BaseIndexedBean {
      * @return list of Role objects
      */
     public List<Role> getRoles() {
+        initialize(new UserDAO(), this.roles);
         if (Objects.isNull(this.roles)) {
             this.roles = new ArrayList<>();
         }
@@ -273,8 +276,14 @@ public class User extends BaseIndexedBean {
         this.roles = roles;
     }
 
+    /**
+     * Get tasks processed by this user.
+     *
+     * @return tasks processed by this user
+     */
     public List<Task> getProcessingTasks() {
-        if (this.processingTasks == null) {
+        initialize(new UserDAO(), this.processingTasks);
+        if (Objects.isNull(this.processingTasks)) {
             this.processingTasks = new ArrayList<>();
         }
         return this.processingTasks;
@@ -284,8 +293,14 @@ public class User extends BaseIndexedBean {
         this.processingTasks = processingTasks;
     }
 
+    /**
+     * Get projects to which user is assigned.
+     *
+     * @return projects to which user is assigned
+     */
     public List<Project> getProjects() {
-        if (this.projects == null) {
+        initialize(new UserDAO(), this.projects);
+        if (Objects.isNull(this.projects)) {
             this.projects = new ArrayList<>();
         }
         return this.projects;
@@ -301,10 +316,11 @@ public class User extends BaseIndexedBean {
      * @return The clients.
      */
     public List<Client> getClients() {
-        if (this.clients == null) {
+        initialize(new UserDAO(), this.clients);
+        if (Objects.isNull(this.clients)) {
             this.clients = new ArrayList<>();
         }
-        return clients;
+        return this.clients;
     }
 
     /**
@@ -366,7 +382,8 @@ public class User extends BaseIndexedBean {
      * @return list of user filters
      */
     public List<Filter> getFilters() {
-        if (this.filters == null) {
+        initialize(new UserDAO(), this.filters);
+        if (Objects.isNull(this.filters)) {
             this.filters = new ArrayList<>();
         }
         return this.filters;

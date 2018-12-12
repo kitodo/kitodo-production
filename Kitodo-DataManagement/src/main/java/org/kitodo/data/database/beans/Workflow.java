@@ -24,6 +24,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.WorkflowDAO;
+
 @Entity
 @Table(name = "workflow")
 public class Workflow extends BaseIndexedBean {
@@ -172,6 +174,7 @@ public class Workflow extends BaseIndexedBean {
      * @return list of template assigned to this workflow
      */
     public List<Template> getTemplates() {
+        initialize(new WorkflowDAO(), this.templates);
         if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }

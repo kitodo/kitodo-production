@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity
 @Table(name = "task")
@@ -415,7 +416,8 @@ public class Task extends BaseIndexedBean {
      * @return list of Role objects or empty list
      */
     public List<Role> getRoles() {
-        if (this.roles == null) {
+        initialize(new TaskDAO(), this.roles);
+        if (Objects.isNull(this.roles)) {
             this.roles = new ArrayList<>();
         }
         return this.roles;
@@ -437,7 +439,8 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getContentFolders() {
-        if (this.contentFolders == null) {
+        initialize(new TaskDAO(), this.contentFolders);
+        if (Objects.isNull(this.contentFolders)) {
             this.contentFolders = new ArrayList<>();
         }
         return contentFolders;
@@ -459,7 +462,8 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     public List<Folder> getValidationFolders() {
-        if (this.validationFolders == null) {
+        initialize(new TaskDAO(), this.validationFolders);
+        if (Objects.isNull(this.validationFolders)) {
             this.validationFolders = new ArrayList<>();
         }
         return validationFolders;

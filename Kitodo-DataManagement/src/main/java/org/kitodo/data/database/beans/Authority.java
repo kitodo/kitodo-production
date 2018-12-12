@@ -21,6 +21,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.AuthorityDAO;
+
 @Entity
 @Table(name = "authority")
 public class Authority extends BaseIndexedBean {
@@ -84,7 +86,8 @@ public class Authority extends BaseIndexedBean {
      * @return the roles
      */
     public List<Role> getRoles() {
-        if (this.roles == null) {
+        initialize(new AuthorityDAO(), this.roles);
+        if (Objects.isNull(this.roles)) {
             this.roles = new ArrayList<>();
         }
         return roles;

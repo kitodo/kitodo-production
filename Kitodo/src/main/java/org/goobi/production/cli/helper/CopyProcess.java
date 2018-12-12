@@ -423,10 +423,6 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
-        ServiceManager.getProcessService().evict(this.prozessKopie);
-
-        this.prozessKopie.setId(null);
-
         addProperties(null);
         updateTasks(this.prozessKopie);
 
@@ -434,7 +430,7 @@ public class CopyProcess extends ProzesskopieForm {
             ServiceManager.getProcessService().save(this.prozessKopie);
             ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            logger.error("error on save: ", e);
+            logger.error("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);
             return this.prozessKopie;
         }
 
@@ -475,9 +471,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     public Process createProcess(ImportObject io)
             throws ReadException, IOException, PreferencesException, WriteException {
-        ServiceManager.getProcessService().evict(this.prozessKopie);
 
-        this.prozessKopie.setId(null);
         addProperties(io);
         updateTasks(this.prozessKopie);
 
@@ -488,7 +482,7 @@ public class CopyProcess extends ProzesskopieForm {
             ServiceManager.getProcessService().save(this.prozessKopie);
             ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            logger.error("error on save: ", e);
+            logger.error("errorSaving", new Object[] {Helper.getTranslation("process") }, e);
             return this.prozessKopie;
         }
 

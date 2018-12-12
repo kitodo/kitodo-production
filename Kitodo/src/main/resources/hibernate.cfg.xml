@@ -54,9 +54,6 @@
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
 
-        <!-- Fix org.hibernate.LazyInitializationException: could not initialize proxy - no Session -->
-        <property name="hibernate.enable_lazy_load_no_trans">true</property>
-
         <!-- Don't echo all executed SQL to stdout -->
         <property name="show_sql">false</property>
         <property name="hibernate.bytecode.use_reflection_optimizer">false</property>

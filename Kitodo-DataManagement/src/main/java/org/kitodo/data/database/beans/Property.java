@@ -23,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.helper.enums.PropertyType;
+import org.kitodo.data.database.persistence.PropertyDAO;
 
 @Entity
 @Table(name = "property")
@@ -214,7 +215,8 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * @return value from database or 0
      */
     public List<Process> getProcesses() {
-        if (this.processes == null) {
+        initialize(new PropertyDAO(), this.processes);
+        if (Objects.isNull(this.processes)) {
             this.processes = new ArrayList<>();
         }
         return this.processes;
@@ -236,7 +238,8 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * @return as list of Process objects or new empty list
      */
     public List<Process> getTemplates() {
-        if (this.templates == null) {
+        initialize(new PropertyDAO(), this.templates);
+        if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
         return this.templates;
@@ -258,7 +261,8 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * @return as list of Process objects or new empty list
      */
     public List<Process> getWorkpieces() {
-        if (this.workpieces == null) {
+        initialize(new PropertyDAO(), this.workpieces);
+        if (Objects.isNull(this.workpieces)) {
             this.workpieces = new ArrayList<>();
         }
         return this.workpieces;

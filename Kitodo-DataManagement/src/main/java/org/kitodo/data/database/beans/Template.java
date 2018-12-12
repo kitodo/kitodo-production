@@ -27,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.persistence.TemplateDAO;
+
 @Entity
 @Table(name = "template")
 public class Template extends BaseTemplateBean {
@@ -116,6 +118,7 @@ public class Template extends BaseTemplateBean {
      * @return list of projects
      */
     public List<Project> getProjects() {
+        initialize(new TemplateDAO(), this.projects);
         if (Objects.isNull(this.projects)) {
             this.projects = new ArrayList<>();
         }
@@ -164,6 +167,7 @@ public class Template extends BaseTemplateBean {
      * @return value of processes
      */
     public List<Process> getProcesses() {
+        initialize(new TemplateDAO(), this.processes);
         if (Objects.isNull(this.processes)) {
             this.processes = new ArrayList<>();
         }
@@ -194,7 +198,8 @@ public class Template extends BaseTemplateBean {
      * @return list of Task objects or empty list
      */
     public List<Task> getTasks() {
-        if (this.tasks == null) {
+        initialize(new TemplateDAO(), this.tasks);
+        if (Objects.isNull(this.tasks)) {
             this.tasks = new ArrayList<>();
         }
         return this.tasks;
