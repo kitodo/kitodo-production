@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.encryption;
+package org.kitodo.security.password;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,10 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.kitodo.security.password.SecurityPasswordEncoder;
 
 public class SecurityPasswordEncoderTest {
-    static Map<String, String> testData;
+    private static Map<String, String> testData;
 
     static {
         testData = new HashMap<>();
