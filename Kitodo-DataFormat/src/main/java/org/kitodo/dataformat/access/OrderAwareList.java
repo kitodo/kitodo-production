@@ -27,12 +27,6 @@ class OrderAwareList<T> extends ArrayList<T> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Determines whether the order is ensured when Get is called. During the
-     * order check, this value is set to false to avoid an infinite loop.
-     */
-    private boolean ensureOrderOnGet = true;
-
-    /**
      * Possibility to get an order number for T.
      */
     private Function<T, Integer> orderGetter;
@@ -52,26 +46,9 @@ class OrderAwareList<T> extends ArrayList<T> {
      * occurrences of the same number (unlike a TreeMap). The order of list
      * items is changed only when necessary. The order of list members with the
      * same ordinal number is not affected.
-     * 
-     * <p>
-     * The mathematical complexity of this algorithm is linear (n) if the order
-     * is already correct, which is already given in the vast majority of
-     * invocations of the method.
      */
     private void ensureOrder() {
-        ensureOrderOnGet = false;
-        int i = 0;
-        while (i < super.size() - 2) {
-            if (orderGetter.apply(super.get(i)) <= orderGetter.apply(super.get(i + 1))) {
-                i++;
-            } else {
-                Collections.swap(this, i, i + 1);
-                if (i > 0) {
-                    i--;
-                }
-            }
-        }
-        ensureOrderOnGet = true;
+        Collections.sort(this, (one, another) -> orderGetter.apply(one).compareTo(orderGetter.apply(another)));
     }
 
     @Override
@@ -120,9 +97,7 @@ class OrderAwareList<T> extends ArrayList<T> {
 
     @Override
     public T get(int index) {
-        if (ensureOrderOnGet) {
-            ensureOrder();
-        }
+        ensureOrder();
         return super.get(index);
     }
 
