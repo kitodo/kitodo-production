@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.io;
+package org.kitodo.file;
 
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
