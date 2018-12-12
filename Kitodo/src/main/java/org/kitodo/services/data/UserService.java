@@ -79,7 +79,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
-    private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
     private static final String LOGIN_NOT_VALID = "loginNotValid";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
@@ -339,7 +338,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     @Override
     public String createCountQuery(Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return null;
+        }
+
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return createQueryAllActiveUsersForCurrentUser().toString();
         }
         return null;
@@ -358,10 +361,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     @Override
     public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
             return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
         }
-        if (ServiceManager.getSecurityAccessService().hasAuthorityForClient(AUTHORITY_TITLE_VIEW_ALL)) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return convertJSONObjectsToDTOs(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
                 sortByLogin(), offset, size), false);
         }

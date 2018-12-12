@@ -642,7 +642,7 @@ public class SecurityAccessService {
 
     /**
      * Check if current user has authority to view user list. It returns true if
-     * user has "viewAllUsers" authority for client.
+     * user has "viewAllUsers" authority globally or for client.
      *
      * @return true if user has authority 'viewAllUsers' globally or for client
      */
@@ -652,7 +652,7 @@ public class SecurityAccessService {
 
     /**
      * Check if current user has authority to view role list. It returns true if
-     * user has "viewAllRoles" authority for client.
+     * user has "viewAllRoles" authority globally or for client.
      *
      * @return true if user has authority 'viewAllRoles' globally or for client
      */
@@ -698,5 +698,25 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityGlobalToAddOrEditRole() {
         return hasAnyAuthorityGlobal("addRole, editRole");
+    }
+
+    /**
+     * Check if current user has global authority to view role list. It returns true
+     * if user has "viewAllRoles" authority globally.
+     *
+     * @return true if user has authority 'viewAllRoles' globally
+     */
+    public boolean hasAuthorityGlobalToViewRoleList() {
+        return hasAuthorityGlobal("viewAllRoles");
+    }
+
+    /**
+     * Check if current user has authority to view user list. It returns true if
+     * user has "viewAllUsers" authority globally.
+     *
+     * @return true if user has authority 'viewAllUsers' globally
+     */
+    public boolean hasAuthorityGlobalToViewUserList() {
+        return hasAuthorityGlobal("viewAllUsers");
     }
 }
