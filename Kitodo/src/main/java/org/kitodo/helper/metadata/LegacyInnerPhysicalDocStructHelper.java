@@ -50,8 +50,7 @@ import org.kitodo.services.dataformat.MetsService;
 public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
     private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructHelper.class);
 
-    private final ServiceManager serviceLoader = new ServiceManager();
-    private final MetsService metsService = serviceLoader.getMetsService();
+    private static final MetsService metsService = ServiceManager.getMetsService();
 
     /**
      * A constant for local use. We cannot make this constant constant because

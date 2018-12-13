@@ -43,8 +43,8 @@ import org.kitodo.services.dataeditor.RulesetManagementService;
 public class LegacyPrefsHelper implements PrefsInterface {
     private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
 
-    private final ServiceManager serviceLoader = new ServiceManager();
-    private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
+    private static final RulesetManagementService rulesetManagementService = ServiceManager
+            .getRulesetManagementService();
 
     /**
      * The ruleset accessed via this soldering class.

@@ -64,8 +64,7 @@ import org.kitodo.services.dataformat.MetsService;
 public class LegacyLogicalDocStructHelper implements DocStructInterface {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructHelper.class);
 
-    private final ServiceManager serviceLoader = new ServiceManager();
-    private final MetsService metsService = serviceLoader.getMetsService();
+    private static final MetsService metsService = ServiceManager.getMetsService();
 
     /**
      * The media file accessed via this soldering class.

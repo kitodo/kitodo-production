@@ -51,10 +51,10 @@ import org.kitodo.services.file.FileService;
 public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInterface, MetsModsInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
 
-    private final ServiceManager serviceLoader = new ServiceManager();
-    private final MetsService metsService = serviceLoader.getMetsService();
-    private final FileService fileService = serviceLoader.getFileService();
-    private final RulesetManagementService rulesetManagementService = serviceLoader.getRulesetManagementService();
+    private static final MetsService metsService = ServiceManager.getMetsService();
+    private static final FileService fileService = ServiceManager.getFileService();
+    private static final RulesetManagementService rulesetManagementService = ServiceManager
+            .getRulesetManagementService();
 
     /**
      * The workpiece accessed via this soldering class.
