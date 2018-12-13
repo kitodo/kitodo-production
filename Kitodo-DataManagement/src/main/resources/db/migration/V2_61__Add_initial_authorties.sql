@@ -86,98 +86,98 @@ INSERT IGNORE INTO role (title, client_id) VALUES ('Scanning', 1);
 
 -- 8. Add initial authorities to roles
 --
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title LIKE '%Ldap%';
   INSERT INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Administration'), id FROM authority WHERE title LIKE '%Index%';
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ClientManagement'), (SELECT id FROM authority WHERE title = 'viewAllClients_globalAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ClientManagement'), id FROM authority WHERE title LIKE '%Client_globalAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ClientManagement'), (SELECT id FROM authority WHERE title = 'viewAllUsers_globalAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ClientManagement'), id FROM authority WHERE title LIKE '%User_globalAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ClientManagement'), (SELECT id FROM authority WHERE title = 'viewAllRoles_globalAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ClientManagement'), id FROM authority WHERE title LIKE '%Role_globalAssignable';
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'RoleManagement'), (SELECT id FROM authority WHERE title = 'viewAllRoles_clientAssignable'));
 INSERT INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'RoleManagement'), id FROM authority WHERE title LIKE '%Role_clientAssignable';
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'UserManagement'), (SELECT id FROM authority WHERE title = 'viewAllUsers_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'UserManagement'), id FROM authority WHERE title LIKE '%User_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'UserManagement'), (SELECT id FROM authority WHERE title = 'viewAllRoles_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'UserManagement'), (SELECT id FROM authority WHERE title = 'viewRole_clientAssignable'));
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProcessManagement'), (SELECT id FROM authority WHERE title = 'viewAllTemplates_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ProcessManagement'), id FROM authority WHERE title LIKE '%Template_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProcessManagement'), (SELECT id FROM authority WHERE title = 'viewAllWorkflows_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ProcessManagement'), id FROM authority WHERE title LIKE '%Workflow_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProcessManagement'), (SELECT id FROM authority WHERE title = 'viewAllDockets_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ProcessManagement'), id FROM authority WHERE title LIKE '%Docket_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProcessManagement'), (SELECT id FROM authority WHERE title = 'viewAllRulesets_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ProcessManagement'), id FROM authority WHERE title LIKE '%Ruleset_clientAssignable';
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewAllProjects_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'ProjectManagement'), id FROM authority WHERE title LIKE '%Project_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewAllTemplates_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewTemplate_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewAllWorkflows_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewWorkflow_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewAllDockets_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewDocket_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewAllRulesets_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'ProjectManagement'), (SELECT id FROM authority WHERE title = 'viewRuleset_clientAssignable'));
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'Metadata'), (SELECT id FROM authority WHERE title = 'viewAllProcesses_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'Metadata'), (SELECT id FROM authority WHERE title = 'viewProcess_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Metadata'), id FROM authority WHERE title LIKE '%ProcessMetaData_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Metadata'), id FROM authority WHERE title LIKE '%ProcessStructureData_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Metadata'), id FROM authority WHERE title LIKE '%ProcessPagination_clientAssignable';
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'Metadata'), (SELECT id FROM authority WHERE title = 'viewProcessImages_clientAssignable'));
 
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'Scanning'), (SELECT id FROM authority WHERE title = 'viewAllProcesses_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   VALUES ((SELECT id FROM role WHERE title = 'Scanning'), (SELECT id FROM authority WHERE title = 'viewProcess_clientAssignable'));
-INSERT INTO role_x_authority (role_id, authority_id)
+INSERT IGNORE INTO role_x_authority (role_id, authority_id)
   SELECT (SELECT id FROM role WHERE title = 'Scanning'), id FROM authority WHERE title LIKE '%ProcessImages_clientAssignable';
 
 -- 8. Add admins to client management
 --
-INSERT INTO user_x_role (user_id, role_id)
+INSERT IGNORE  INTO user_x_role (user_id, role_id)
   SELECT (SELECT user_id FROM user_x_role WHERE role_id = (SELECT id FROM role WHERE title = 'Administration')),
   id FROM role WHERE title = 'ClientManagement';
