@@ -58,6 +58,8 @@ public class UserForm extends BaseForm {
     @ValidPassword
     private String passwordToEncrypt;
 
+    private String oldPassword;
+
     @Named("LoginForm")
     private LoginForm loginForm;
 
@@ -439,6 +441,9 @@ public class UserForm extends BaseForm {
      * authentication is active also on ldap server.
      */
     public void changePasswordForCurrentUser() {
+        if (isOldPasswordInvalid()) {
+            Helper.setErrorMessage("passwordsDontMatchOld");
+        }
         try {
             if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
                 ServiceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
@@ -450,5 +455,30 @@ public class UserForm extends BaseForm {
         } catch (NoSuchAlgorithmException e) {
             Helper.setErrorMessage("ldap error", logger, e);
         }
+    }
+
+    private boolean isOldPasswordInvalid() {
+        if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
+            return !Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
+        }
+        return false;
+    }
+
+    /**
+     * Get old password.
+     *
+     * @return value of oldPassword
+     */
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    /**
+     * Set old password.
+     *
+     * @param oldPassword as java.lang.String
+     */
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

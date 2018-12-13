@@ -71,7 +71,15 @@
                                  value="#{msgs.passwordChange}"
                                  icon="fa fa-pencil fa-lg"
                                  immediate="true"
-                                 rendered="#{isEditMode || isConfigMode}"
+                                 rendered="#{isConfigMode}"
+                                 class="button-filled-green">
+                </p:commandButton>
+                <p:commandButton onclick="PF('resetPasswordDialog').show()"
+                                 id="resetPasswordButton"
+                                 value="#{msgs.passwordReset}"
+                                 icon="fa fa-pencil fa-lg"
+                                 immediate="true"
+                                 rendered="#{isEditMode}"
                                  class="button-filled-green">
                 </p:commandButton>
             </div>
