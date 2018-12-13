@@ -42,15 +42,12 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.properties.ImportProperty;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -86,6 +83,8 @@ public class MassImportForm extends BaseForm {
     private File importFile = null;
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
+    private List<String> allFilenames = new ArrayList<>();
+    private List<String> selectedFilenames = new ArrayList<>();
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
     private static final String OPAC_CONFIG = "configurationOPAC";
     private String massImportPath = MessageFormat.format(REDIRECT_PATH, "massImport");
@@ -120,84 +119,25 @@ public class MassImportForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return this.stayOnCurrentPage;
         }
+
         if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return this.stayOnCurrentPage;
         }
-        initializePossibleDigitalCollections();
+
+        try {
+            DigitalCollection.possibleDigitalCollectionsForProcess(this.project);
+        } catch (IOException | JDOMException e) {
+            Helper.setErrorMessage("Error while parsing digital collections", logger, e);
+        }
+
+        this.digitalCollections = DigitalCollection.getDigitalCollections();
+        this.possibleDigitalCollections = DigitalCollection.getPossibleDigitalCollection();
+
         return massImportPath;
     }
 
-    /**
-     * Generate a list with all possible collections for given project.
-     */
-    @SuppressWarnings("unchecked")
-    private void initializePossibleDigitalCollections() {
-        final String defaultString = "default";
-        this.possibleDigitalCollections = new ArrayList<>();
-        List<String> defaultCollections = new ArrayList<>();
-        KitodoConfigFile digitalCollectionsFile = KitodoConfigFile.DIGITAL_COLLECTIONS;
-        if (!(digitalCollectionsFile.exists())) {
-            Helper.setErrorMessage("File not found: ", digitalCollectionsFile.getAbsolutePath());
-            return;
-        }
-        this.digitalCollections = new ArrayList<>();
-        try {
-            // read data and determine the root
-            SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(digitalCollectionsFile.getFile());
-            Element root = doc.getRootElement();
-            // run through all projects
-            List<Element> projects = root.getChildren();
-            for (Element project : projects) {
-                // collect default collections
-                if (project.getName().equals(defaultString)) {
-                    List<Element> myCols = project.getChildren("DigitalCollection");
-                    for (Element digitalCollection : myCols) {
-                        if (digitalCollection.getAttribute(defaultString) != null
-                                && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
-                            digitalCollections.add(digitalCollection.getText());
-                        }
-                        defaultCollections.add(digitalCollection.getText());
-                    }
-                } else {
-                    runThroughProject(project);
-                }
-            }
-        } catch (JDOMException | IOException e1) {
-            Helper.setErrorMessage("Error while parsing digital collections", logger, e1);
-        }
-
-        if (this.possibleDigitalCollections.isEmpty()) {
-            this.possibleDigitalCollections = defaultCollections;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void runThroughProject(Element project) {
-        final String defaultString = "default";
-
-        List<Element> projectNames = project.getChildren("name");
-        for (Element projectName : projectNames) {
-            // all all collections to list
-            if (projectName.getText().equalsIgnoreCase(this.project.getTitle())) {
-                List<Element> myCols = project.getChildren("DigitalCollection");
-                for (Element digitalCollection : myCols) {
-                    if (digitalCollection.getAttribute(defaultString) != null
-                            && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
-                        digitalCollections.add(digitalCollection.getText());
-                    }
-                    this.possibleDigitalCollections.add(digitalCollection.getText());
-                }
-            }
-        }
-    }
-
-    private List<String> allFilenames = new ArrayList<>();
-    private List<String> selectedFilenames = new ArrayList<>();
-
     public List<String> getAllFilenames() {
-
         return this.allFilenames;
     }
 

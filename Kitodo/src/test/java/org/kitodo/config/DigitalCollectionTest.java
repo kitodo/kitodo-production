@@ -18,12 +18,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 
 import static org.junit.Assert.assertEquals;
 
-public class DigitalCollectionsTest {
+public class DigitalCollectionTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -40,15 +39,12 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("NonExisting");
 
-        Process process = new Process();
-        process.setProject(project);
+        DigitalCollection.possibleDigitalCollectionsForProcess(project);
 
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
-
-        List<String> digitalCollections = DigitalCollections.getDigitalCollections();
+        List<String> digitalCollections = DigitalCollection.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
-        List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
+        List<String> possibleDigitalCollection = DigitalCollection.getPossibleDigitalCollection();
         assertEquals("Incorrect amount of possible digital collections!", 3, possibleDigitalCollection.size());
     }
 
@@ -57,15 +53,12 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("Project A");
 
-        Process process = new Process();
-        process.setProject(project);
+        DigitalCollection.possibleDigitalCollectionsForProcess(project);
 
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
-
-        List<String> digitalCollections = DigitalCollections.getDigitalCollections();
+        List<String> digitalCollections = DigitalCollection.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
-        List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
+        List<String> possibleDigitalCollection = DigitalCollection.getPossibleDigitalCollection();
         assertEquals("Incorrect amount of possible digital collections!", 5, possibleDigitalCollection.size());
     }
 
@@ -74,15 +67,12 @@ public class DigitalCollectionsTest {
         Project project = new Project();
         project.setTitle("Project B");
 
-        Process process = new Process();
-        process.setProject(project);
+        DigitalCollection.possibleDigitalCollectionsForProcess(project);
 
-        DigitalCollections.possibleDigitalCollectionsForProcess(process);
-
-        List<String> digitalCollections = DigitalCollections.getDigitalCollections();
+        List<String> digitalCollections = DigitalCollection.getDigitalCollections();
         assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
-        List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
+        List<String> possibleDigitalCollection = DigitalCollection.getPossibleDigitalCollection();
         assertEquals("Incorrect amount of possible digital collections!", 1, possibleDigitalCollection.size());
     }
 }

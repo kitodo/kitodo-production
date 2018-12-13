@@ -21,9 +21,9 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 
-public class DigitalCollections {
+public class DigitalCollection {
 
     private static List<String> digitalCollections;
     private static List<String> possibleDigitalCollection;
@@ -32,7 +32,7 @@ public class DigitalCollections {
     /**
      * Private constructor to hide the implicit public one.
      */
-    private DigitalCollections() {
+    private DigitalCollection() {
 
     }
 
@@ -57,17 +57,17 @@ public class DigitalCollections {
         if (possibleDigitalCollection == null) {
             possibleDigitalCollection = new ArrayList<>();
         }
-        return DigitalCollections.possibleDigitalCollection;
+        return DigitalCollection.possibleDigitalCollection;
     }
 
     /**
      * Prepare digital collections and possible digital collections for process.
      *
-     * @param process
+     * @param projectBean
      *            object
      */
     @SuppressWarnings("unchecked")
-    public static void possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
+    public static void possibleDigitalCollectionsForProcess(Project projectBean) throws JDOMException, IOException {
         digitalCollections = new ArrayList<>();
         possibleDigitalCollection = new ArrayList<>();
 
@@ -89,7 +89,7 @@ public class DigitalCollections {
                     defaultCollections.add(digitalCollection.getText());
                 }
             } else {
-                iterateOverAllProjects(project, process);
+                iterateOverAllProjects(project, projectBean);
             }
         }
 
@@ -111,12 +111,12 @@ public class DigitalCollections {
     }
 
     @SuppressWarnings("unchecked")
-    private static void iterateOverAllProjects(Element project, Process process) {
+    private static void iterateOverAllProjects(Element project, Project projectBean) {
         // run through all project name elements
         List<Element> projectNames = project.getChildren("name");
         for (Element projectName : projectNames) {
             // all all collections to list
-            if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
+            if (projectName.getText().equalsIgnoreCase(projectBean.getTitle())) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
                     if (digitalCollection.getAttribute(DEFAULT) != null

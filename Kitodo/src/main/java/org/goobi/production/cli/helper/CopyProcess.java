@@ -40,7 +40,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProjects;
-import org.kitodo.config.DigitalCollections;
+import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -616,13 +616,13 @@ public class CopyProcess extends ProzesskopieForm {
 
     private void initializePossibleDigitalCollections() {
         try {
-            DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie);
+            DigitalCollection.possibleDigitalCollectionsForProcess(this.prozessKopie.getProject());
         } catch (JDOMException | IOException e) {
             Helper.setErrorMessage("Error while parsing digital collections", logger, e);
         }
 
-        this.possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
-        this.digitalCollections = DigitalCollections.getDigitalCollections();
+        this.possibleDigitalCollection = DigitalCollection.getPossibleDigitalCollection();
+        this.digitalCollections = DigitalCollection.getDigitalCollections();
 
         // if only one collection is possible take it directly
         if (isSingleChoiceCollection()) {
