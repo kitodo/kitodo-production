@@ -20,10 +20,10 @@
 
     <p:panel id="commentWrapperPanel" styleClass="wrapperPanel">
         <h:form id="commentsBox">
-            <p:panelGrid id="comments" columns="1" rendered="#{not Metadaten.showNewComment}">
+            <p:panelGrid id="comments" columns="1" rendered="#{not MetadataProcessor.showNewComment}">
 
-                <p:dataTable id="commentsGrid" value="#{Metadaten.wikiField}" var="item"
-                             rendered="#{!empty Metadaten.wikiField}">
+                <p:dataTable id="commentsGrid" value="#{MetadataProcessor.wikiField}" var="item"
+                             rendered="#{!empty MetadataProcessor.wikiField}">
                     <p:column style="width: 100%" rendered="#{item.contains('Red K')}">
                         <p:outputLabel value="#{msgs.correctionK}" style="color:red;font-weight:bold;"/>
                         <p:inputTextarea value="#{fn:replace(item,'Red K','')}"
@@ -31,7 +31,7 @@
                                          readonly="true"/>
                         <p:commandButton icon="fa fa-check" update="commentsBox"
                                          title="test" styleClass="right" immediate="true"
-                                         action="#{Metadaten.solveProblem(item)}">
+                                         action="#{MetadataProcessor.solveProblem(item)}">
                         </p:commandButton>
                     </p:column>
 
@@ -50,36 +50,36 @@
                 </p:dataTable>
                 <p:column>
                     <p:commandButton id="newButton" value="#{msgs.newElement}"
-                                     action="#{Metadaten.setShowNewComment(true)}"
+                                     action="#{MetadataProcessor.setShowNewComment(true)}"
                                      icon="fa fa-plus-circle fa-lg"
                                      iconPos="right" immediate="true"
                                      update="commentsBox"/>
                 </p:column>
             </p:panelGrid>
             <p:panelGrid id="newComments" columns="1"
-                         rendered="#{(not Metadaten.correctionComment) and (Metadaten.showNewComment)}">
+                         rendered="#{(not MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
 
                 <p:column style="width: 100%">
                     <p:outputLabel value="#{msgs.correctionMessage}"
-                                   rendered="#{Metadaten.sizeOfPreviousStepsForProblemReporting > 0}"/>
-                    <p:selectBooleanCheckbox id="korrekturMeldung" value="#{Metadaten.correctionComment}"
-                                             rendered="#{Metadaten.sizeOfPreviousStepsForProblemReporting > 0}"
+                                   rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"/>
+                    <p:selectBooleanCheckbox id="korrekturMeldung" value="#{MetadataProcessor.correctionComment}"
+                                             rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"
                                              immediate="true" style="width: 100%">
                         <p:ajax event="change" update="commentsBox"/>
                     </p:selectBooleanCheckbox>
                 </p:column>
                 <p:column style="width: 100%">
                     <p:outputLabel value="#{msgs.remark}"/>
-                    <p:inputTextarea id="addToWikiField" value="#{Metadaten.addToWikiField}" style="width:100%;"/>
+                    <p:inputTextarea id="addToWikiField" value="#{MetadataProcessor.addToWikiField}" style="width:100%;"/>
                 </p:column>
                 <p:column style="width: 100%">
-                    <p:commandButton value="#{msgs.cancel}" action="#{Metadaten.setShowNewComment(false)}"
+                    <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
                                      icon="fa fa-times fa-lg" iconPos="right" update="commentsBox"
                                      styleClass="secondary-button" immediate="true">
-                        <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
+                        <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
                     </p:commandButton>
                     <p:commandButton id="saveNewComment"
-                                     action="#{Metadaten.addToWikiField()}"
+                                     action="#{MetadataProcessor.addToWikiField()}"
                                      value="#{msgs.save}"
                                      update="commentsBox"
                                      icon="fa fa-floppy-o fa-lg"
@@ -87,33 +87,31 @@
                 </p:column>
 
             </p:panelGrid>
-            <p:panelGrid columns="1" rendered="#{(Metadaten.correctionComment) and (Metadaten.showNewComment)}">
+            <p:panelGrid columns="1" rendered="#{(MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
                 <p:column style="width: 100%">
                     <p:outputLabel value="#{msgs.remark}"/>
-                    <p:inputTextarea style="width:100%;" value="#{Metadaten.problem.message}">
+                    <p:inputTextarea style="width:100%;" value="#{MetadataProcessor.problem.message}">
                         <p:ajax event="change"/>
                     </p:inputTextarea>
                 </p:column>
                 <p:column style="width: 100%">
                     <p:outputLabel value="#{msgs.backToTask}"/>
-                    <p:selectOneMenu style="width: 100%"
-                                     value="#{Metadaten.problem.id}">
-                        <f:selectItems
-                                value="#{Metadaten.previousStepsForProblemReporting}"
+                    <p:selectOneMenu style="width: 100%" value="#{MetadataProcessor.problem.id}">
+                        <f:selectItems value="#{MetadataProcessor.previousStepsForProblemReporting}"
                                 var="step1" itemLabel="#{step1.titleWithUserName}"
                                 itemValue="#{step1.id}"/>
                         <p:ajax event="change"/>
                     </p:selectOneMenu>
                 </p:column>
                 <p:column style="width: 100%">
-                    <p:commandButton value="#{msgs.cancel}" action="#{Metadaten.setShowNewComment(false)}"
+                    <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
                                      icon="fa fa-times fa-lg" iconPos="right" update="commentsBox" immediate="true"
                                      styleClass="secondary-button">
-                        <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
+                        <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
                     </p:commandButton>
                     <p:commandButton id="sendProblem"
                                      value="#{msgs.correctionMessageSend}"
-                                     action="#{Metadaten.reportProblem()}"
+                                     action="#{MetadataProcessor.reportProblem()}"
                                      title="#{msgs.correctionMessageSend}"
                                      immediate="true"
                                      update="commentsBox"/>

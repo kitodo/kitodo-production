@@ -17,18 +17,18 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
-        <p:tree value="#{Metadaten.treeNodes}" var="element"
+        <p:tree value="#{MetadataProcessor.treeNodes}" var="element"
                 selectionMode="single" id="docStruct"
-                selection="#{Metadaten.selectedTreeNode}"
+                selection="#{MetadataProcessor.selectedTreeNode}"
                 draggable="true" droppable="true" dragdropScope="DocStructTree">
-            <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+            <p:ajax event="select" listener="#{MetadataProcessor.onNodeSelect}"
                     update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages"/>
-            <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
+            <p:ajax event="dragdrop" listener="#{MetadataProcessor.onNodeDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages"/>
             <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
                 <ui:param name="elementType" value="#{element.type.getNameByLanguage(LanguageForm.locale)}"/>
                 <h:outputText value="#{elementType}"/> <h:outputText
-                    value=" #{Metadaten.getLogicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
+                    value=" #{MetadataProcessor.getLogicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
             </p:treeNode>
         </p:tree>
     </p:panel>

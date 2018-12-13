@@ -18,17 +18,17 @@
 
     <!-- ###################  Managed Beans  ######################## -->
 
-    <!-- Bean für Metadaten -->
+    <!-- Bean for metadata processing -->
     <managed-bean>
-        <managed-bean-name>Metadaten</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.metadaten.Metadaten</managed-bean-class>
+        <managed-bean-name>MetadataProcessor</managed-bean-name>
+        <managed-bean-class>org.kitodo.metadata.MetadataProcessor</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- Bean für Metadaten-Sperrung -->
+    <!-- Bean for metadata lock -->
     <managed-bean>
-        <managed-bean-name>MetadatenSperrung</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.metadaten.MetadataLock</managed-bean-class>
+        <managed-bean-name>MetadataLock</managed-bean-name>
+        <managed-bean-class>org.kitodo.metadata.MetadataLock</managed-bean-class>
         <managed-bean-scope>application</managed-bean-scope>
     </managed-bean>
 

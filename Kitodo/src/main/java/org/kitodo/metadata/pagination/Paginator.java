@@ -11,8 +11,6 @@
 
 package org.kitodo.metadata.pagination;
 
-import de.sub.goobi.metadaten.Metadata;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +18,7 @@ import java.util.Objects;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.Metadata;
 import org.kitodo.metadata.pagination.enums.Mode;
 import org.kitodo.metadata.pagination.enums.Scope;
 import org.kitodo.metadata.pagination.enums.Type;

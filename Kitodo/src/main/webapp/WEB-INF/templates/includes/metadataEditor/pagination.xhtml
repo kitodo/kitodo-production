@@ -18,7 +18,7 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
     <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
-        <p:panelGrid id="actionButtons" columns="1" rendered="#{not Metadaten.showPagination}">
+        <p:panelGrid id="actionButtons" columns="1" rendered="#{not MetadataProcessor.showPagination}">
             <p:commandButton id="newButton" value="#{msgs.newElement}"
                              onclick="PF('dialogAddDocStrucType').show();"
                              icon="fa fa-plus-circle fa-lg"
@@ -26,7 +26,7 @@
                 <p:ajax update="dialogAddDocStrucTypeForm"/>
             </p:commandButton>
             <p:commandButton id="deleteButton" value="#{msgs.delete}"
-                             action="#{Metadaten.deleteNode}"
+                             action="#{MetadataProcessor.deleteNode}"
                              update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                              icon="fa fa-minus-circle fa-lg"
                              iconPos="right"/>
@@ -35,33 +35,33 @@
                              onclick="PF('dialogEditPages').show();"
                              iconPos="right"/>
             <p:commandButton id="pagingButton" value="#{msgs.pagination}"
-                             action="#{Metadaten.setShowPagination(true)}"
+                             action="#{MetadataProcessor.setShowPagination(true)}"
                              update="structureTreeForm"
                              icon="fa fa-list-ol fa-lg"
                              iconPos="right"/>
         </p:panelGrid>
         <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
-            <h:panelGroup rendered="#{Metadaten.showPagination}">
-                <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
+            <h:panelGroup rendered="#{MetadataProcessor.showPagination}">
+                <p:selectManyMenu id="paginationSelection" value="#{MetadataProcessor.allPagesSelection}" style="height: 100%"
                                   required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
                                   filter="true" filterMatchMode="contains">
-                    <f:selectItems value="#{Metadaten.allPages}"/>
+                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
 
                 </p:selectManyMenu>
             </h:panelGroup>
             <h:panelGroup>
-                <p:panelGrid id="paginationPanelGrid" columns="2" rendered="#{Metadaten.showPagination}">
+                <p:panelGrid id="paginationPanelGrid" columns="2" rendered="#{MetadataProcessor.showPagination}">
                     <h:outputLabel value="#{msgs.insertNewImages}" for="newPagesCount"/>
 
                     <h:panelGroup>
                         <p:inputText id="newPagesCount"
-                                     value="#{Metadaten.numberOfImagesToAdd}"
+                                     value="#{MetadataProcessor.numberOfImagesToAdd}"
                                      label="#{msgs.paginationStartValue}">
                             <p:ajax event="blur"/>
                         </p:inputText>
 
                         <p:commandButton id="generateDummyImagesButton" value="#{msgs.insert}"
-                                         action="#{Metadaten.addNewImagesAndPaginate}"
+                                         action="#{MetadataProcessor.addNewImagesAndPaginate}"
                                          update="structureTreeForm,galleryWrapperPanel"
                                          immediate="true"/>
                     </h:panelGroup>
@@ -69,8 +69,8 @@
 
                     <h:outputText value="#{msgs.pagination}"/>
                     <p:selectOneMenu id="paginationTypeSelect"
-                                     value="#{Metadaten.paginator.paginationType}">
-                        <f:selectItems value="#{Metadaten.paginator.paginationTypes}"
+                                     value="#{MetadataProcessor.paginator.paginationType}">
+                        <f:selectItems value="#{MetadataProcessor.paginator.paginationTypes}"
                                        var="type"
                                        itemValue="#{type}"
                                        itemLabel="#{type.label}"/>
@@ -78,7 +78,7 @@
 
                     <h:outputLabel value="#{msgs.paginationStartValue}:" for="paginationStartValue"/>
                     <p:inputText id="paginationStartValue" required="true"
-                                 value="#{Metadaten.paginationValue}"
+                                 value="#{MetadataProcessor.paginationValue}"
                                  label="#{msgs.paginationStartValue}"
                                  requiredMessage="#{msgs.paginationStartValueNotSpecified}">
                     </p:inputText>
@@ -86,12 +86,12 @@
                     <p:outputLabel for="fictitiousCheckbox" value="#{msgs.paginationFictitious}"/>
                     <p:selectBooleanCheckbox id="fictitiousCheckbox"
                                              class="input" style="margin-bottom: 0"
-                                             value="#{Metadaten.fictitious}"/>
+                                             value="#{MetadataProcessor.fictitious}"/>
 
                     <h:outputLabel value="#{msgs.counting}:" for="selectPaginationMode"/>
-                    <p:selectOneMenu value="#{Metadaten.paginator.paginationMode}" var="mode"
+                    <p:selectOneMenu value="#{MetadataProcessor.paginator.paginationMode}" var="mode"
                                      id="selectPaginationMode">
-                        <f:selectItems value="#{Metadaten.paginator.paginationModes}" var="modeSelection"
+                        <f:selectItems value="#{MetadataProcessor.paginator.paginationModes}" var="modeSelection"
                                        itemValue="#{modeSelection}" itemLabel="#{modeSelection.label}"/>
                         <p:column style="width:10%">
                             <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
@@ -102,24 +102,24 @@
                     </p:selectOneMenu>
 
                     <h:outputLabel value="#{msgs.paginationScope}:" for="selectPaginationScope"/>
-                    <p:selectOneMenu id="selectPaginationScope" value="#{Metadaten.paginator.paginationScope}">
-                        <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
+                    <p:selectOneMenu id="selectPaginationScope" value="#{MetadataProcessor.paginator.paginationScope}">
+                        <f:selectItems value="#{MetadataProcessor.paginator.paginationScopes}" var="scope"
                                        itemValue="#{scope}" itemLabel="#{scope.label}"/>
                     </p:selectOneMenu>
 
-                    <p:commandButton id="startPagination" action="#{Metadaten.changePagination}"
+                    <p:commandButton id="startPagination" action="#{MetadataProcessor.changePagination}"
                                      update="structureTreeForm:paginationSelection,structureTreeForm:structureWrapperPanel"
                                      value="start">
                     </p:commandButton>
 
                     <p:commandLink id="createPaginationButton"
-                                   action="#{Metadaten.createPagination}"
+                                   action="#{MetadataProcessor.createPagination}"
                                    value="#{msgs.paginationRead}"
                                    update="paginationSelection,structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                                    immediate="true"/>
 
                     <p:commandButton id="okButton" value="#{msgs.back}"
-                                     action="#{Metadaten.setShowPagination(false)}"
+                                     action="#{MetadataProcessor.setShowPagination(false)}"
                                      update="structureTreeForm"
                                      immediate="true"/>
 

@@ -37,9 +37,9 @@
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="desktop"/>
                 </h:link>
-                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}"
+                <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
                                rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
-                    <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>
+                    <f:setPropertyActionListener value="desktop" target="#{MetadataProcessor.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>

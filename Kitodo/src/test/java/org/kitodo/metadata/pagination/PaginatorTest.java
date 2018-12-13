@@ -11,13 +11,12 @@
 
 package org.kitodo.metadata.pagination;
 
-import de.sub.goobi.metadaten.Metadata;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
+import org.kitodo.metadata.Metadata;
 import org.kitodo.metadata.pagination.enums.Mode;
 import org.kitodo.metadata.pagination.enums.Scope;
 import org.kitodo.metadata.pagination.enums.Type;

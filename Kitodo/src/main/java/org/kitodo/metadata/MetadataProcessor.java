@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata;
 
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
@@ -112,8 +112,8 @@ import org.primefaces.model.TreeNode;
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
  */
-public class Metadaten {
-    private static final Logger logger = LogManager.getLogger(Metadaten.class);
+public class MetadataProcessor {
+    private static final Logger logger = LogManager.getLogger(MetadataProcessor.class);
 
     private ImagesHelper imageHelper;
     private MetadataHelper metaHelper;
@@ -210,7 +210,7 @@ public class Metadaten {
     /**
      * Public constructor.
      */
-    public Metadaten() {
+    public MetadataProcessor() {
         this.treeProperties = new HashMap<>();
         this.treeProperties.put("showtreelevel", Boolean.FALSE);
         this.treeProperties.put("showtitle", Boolean.FALSE);
@@ -1116,7 +1116,7 @@ public class Metadaten {
                 Integer firstPage = 0;
                 int secondPage = 0;
 
-                MetadataTypeInterface mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
+                MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
                 List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
                     MetadataInterface page = listMetadata.get(0);

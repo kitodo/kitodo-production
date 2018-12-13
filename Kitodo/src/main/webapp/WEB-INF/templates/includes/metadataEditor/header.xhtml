@@ -17,22 +17,22 @@
         xmlns:p="http://primefaces.org/ui">
     <p:panel styleClass="content-header">
         <h3>
-            <h:outputText value="#{msgs.metadataEdit} (#{Metadaten.process.title})"/>
+            <h:outputText value="#{msgs.metadataEdit} (#{MetadataProcessor.process.title})"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
-                         action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
+                         action="#{MetadataProcessor.saveMetadataToXmlAndGoToProcessPage}"
                          value="#{msgs.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validate}"
-                         action="#{Metadaten.validate}"
+                         action="#{MetadataProcessor.validate}"
                          update="metadataEditor"
                          icon="fa fa-check fa-lg"
                          iconPos="right"
                          styleClass="secondary-button"/>
-        <p:button value="#{msgs.cancel}" outcome="#{Metadaten.referringView}" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        <p:button value="#{msgs.cancel}" outcome="#{MetadataProcessor.referringView}" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </p:panel>
 </ui:composition>

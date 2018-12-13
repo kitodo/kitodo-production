@@ -19,8 +19,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.metadaten.MetadataLock;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -121,6 +119,7 @@ import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.WikiFieldHelper;
 import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.MetadataLock;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
 import org.kitodo.serviceloader.KitodoServiceLoader;

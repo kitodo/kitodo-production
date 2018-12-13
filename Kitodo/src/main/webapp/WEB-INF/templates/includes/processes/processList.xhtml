@@ -47,15 +47,15 @@
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
 
-                <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}"
+                <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
                                rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                     <f:param name="stayOnCurrentPage" value="processList"/>
-                    <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
-                    <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
-                    <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
+                    <f:setPropertyActionListener value="processes" target="#{MetadataProcessor.referringView}"/>
+                    <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
+                    <f:actionListener binding="#{MetadataProcessor.setShowNewComment(false)}"/>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}">

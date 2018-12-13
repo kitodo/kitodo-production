@@ -11,8 +11,6 @@
 
 package org.kitodo.metadata.elements.renderable;
 
-import de.sub.goobi.metadaten.Metadaten;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -30,6 +28,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.MetadataProcessor;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -274,7 +273,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
         String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
         if (normdataRecord != null && normdataRecord.length() > 0
                 && !normdataRecord.equals(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""))) {
-            String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
+            String[] authorityFile = MetadataProcessor.parseAuthorityFileArgs(normdataRecord);
             person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
         }
         person.setFirstName(getField(Field.FIRSTNAME).getValue());

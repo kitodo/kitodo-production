@@ -11,8 +11,6 @@
 
 package org.kitodo.metadata.elements.renderable;
 
-import de.sub.goobi.metadaten.Metadaten;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +21,7 @@ import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.metadata.MetadataProcessor;
 
 /**
  * Backing bean for a single line input box element to edit a metadata
@@ -142,7 +141,7 @@ public class Edit extends RenderableMetadata
                         case NORMDATA_RECORD:
                             if (value != null && value.length() > 0
                                     && !value.equals(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""))) {
-                                String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
+                                String[] authorityFile = MetadataProcessor.parseAuthorityFileArgs(value);
                                 found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
                             }
                             break;
