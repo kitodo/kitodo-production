@@ -226,10 +226,10 @@ public class WorkflowForm extends BaseForm {
             Diagram diagram = reader.getWorkflow();
             this.workflow.setTitle(diagram.getId());
             if (isWorkflowAlreadyInUse(this.workflow)) {
-                this.workflow.setActive(false);
                 Workflow newWorkflow = new Workflow(diagram.getId(), decodedXMLDiagramName);
                 newWorkflow.setActive(this.workflow.isActive());
                 newWorkflow.setReady(this.workflow.isReady());
+                this.workflow.setActive(false);
                 ServiceManager.getWorkflowService().save(newWorkflow);
             }
             ServiceManager.getWorkflowService().save(this.workflow);
