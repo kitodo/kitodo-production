@@ -40,34 +40,74 @@ public class ImportForm implements Serializable {
     private String searchTerm;
     private SearchResult searchResult;
 
+    /**
+     * Getter for selectedCatalog.
+     *
+     * @return value of selectedCatalog
+     */
     public String getSelectedCatalog() {
         return selectedCatalog;
     }
 
+    /**
+     * Setter for selectedCatalog.
+     *
+     * @param catalog as java.lang.String
+     */
     public void setSelectedCatalog(String catalog) {
         this.selectedCatalog = catalog;
     }
 
+    /**
+     * Get searchTerm.
+     *
+     * @return value of searchTerm
+     */
     public String getSearchTerm() {
         return this.searchTerm;
     }
 
+    /**
+     * Set searchTerm.
+     *
+     * @param searchTerm as java.lang.String
+     */
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
     }
 
+    /**
+     * Get selectedField.
+     *
+     * @return value of selectedField
+     */
     public String getSelectedField() {
         return this.selectedField;
     }
 
+    /**
+     * Set selectedField.
+     *
+     * @param field as java.lang.String
+     */
     public void setSelectedField(String field) {
         this.selectedField = field;
     }
 
+    /**
+     * Get prozesskopieForm.
+     *
+     * @return value of prozesskopieForm
+     */
     public ProzesskopieForm getProzesskopieForm() {
         return prozesskopieForm;
     }
 
+    /**
+     * Set prozesskopieForm.
+     *
+     * @param prozesskopieForm as org.kitodo.forms.ProzesskopieForm
+     */
     public void setProzesskopieForm(ProzesskopieForm prozesskopieForm) {
         this.prozesskopieForm = prozesskopieForm;
     }
