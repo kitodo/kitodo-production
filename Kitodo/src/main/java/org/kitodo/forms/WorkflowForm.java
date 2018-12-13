@@ -241,7 +241,7 @@ public class WorkflowForm extends BaseForm {
     }
 
     private boolean isWorkflowAlreadyInUse(Workflow workflow) {
-        return !workflow.getTemplates().isEmpty();
+        return workflow.isReady();
     }
 
     /**
