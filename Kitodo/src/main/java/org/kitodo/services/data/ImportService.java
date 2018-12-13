@@ -82,8 +82,7 @@ public class ImportService {
      * @param catalogName catalog to search
      * @return search result
      */
-    public SearchResult performSearch(String searchField, String searchTerm, String catalogName)
-            throws IllegalArgumentException {
+    public SearchResult performSearch(String searchField, String searchTerm, String catalogName) {
         importModule = initializeImportModule();
         try {
             OPACConfig.getOPACConfiguration(catalogName);
@@ -155,11 +154,11 @@ public class ImportService {
     private Document transformXmlByXslt(String xmlString, File stylesheetFile) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
-        SAXBuilder saxBuilder = new SAXBuilder();
-        DOMOutputter outputter = new DOMOutputter();
-        StreamSource transformSource = new StreamSource(stylesheetFile);
-        TransformerFactoryImpl transformerFactoryImpl = new TransformerFactoryImpl();
         try {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            DOMOutputter outputter = new DOMOutputter();
+            StreamSource transformSource = new StreamSource(stylesheetFile);
+            TransformerFactoryImpl transformerFactoryImpl = new TransformerFactoryImpl();
             File outputFile = File.createTempFile("transformed", "xml");
             FileOutputStream outputStream = new FileOutputStream(outputFile);
             Transformer xsltTransformer = transformerFactoryImpl.newTransformer(transformSource);
@@ -168,6 +167,7 @@ public class ImportService {
             Result saxResult = new SAXResult(handler);
             SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
             xsltTransformer.transform(saxSource, saxResult);
+            outputStream.close();
             return outputter.output(saxBuilder.build(outputFile));
         } catch (JDOMException | IOException | TransformerException e) {
             logger.error("Error in transforming the response in intern format : ", e);
@@ -190,7 +190,7 @@ public class ImportService {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             xmlString = writer.toString();
         } catch (TransformerException e) {
-            e.printStackTrace();
+            logger.error("This document '" + doc.getTextContent() + "' can not be converted to String");
         }
         return xmlString;
     }

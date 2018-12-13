@@ -143,7 +143,7 @@ public class ImportForm implements Serializable {
     /**
      * Call search method of ImportService.
      */
-    public void search() throws IllegalArgumentException {
+    public void search() {
         try {
             this.searchResult = ServiceManager.getImportService().performSearch(
                     this.selectedField, this.searchTerm, this.selectedCatalog);
@@ -185,25 +185,25 @@ public class ImportForm implements Serializable {
      * Get the full record with the given ID from the catalog.
      *
      */
-    public void getselectedRecord() {
+    public void getSelectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
         Document record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
 
         List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
         Element root = record.getDocumentElement();
         NodeList metadataNodes = root.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "metadata");
-        String authors = "";
+        StringBuilder authors = new StringBuilder();
         for (int i = 0; i < metadataNodes.getLength(); i++) {
             Element metadataNode = (Element) metadataNodes.item(i);
             if (metadataNode.getAttribute("type").equals("person")) {
-                authors = authors + " " + metadataNode.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "displayName").item(0).getTextContent();
+                authors.append(metadataNode.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "displayName").item(0).getTextContent()).append(" ");
             }
-            for (AdditionalField fa : actualFields) {
-                if (Objects.nonNull(fa.getMetadata())) {
-                    if (fa.getMetadata().equalsIgnoreCase(metadataNode.getAttribute("name"))) {
-                        fa.setValue(metadataNode.getTextContent());
-                    } else if (fa.getMetadata().equals("ListOfCreators")) {
-                        fa.setValue(authors);
+            for (AdditionalField actualField : actualFields) {
+                if (Objects.nonNull(actualField.getMetadata())) {
+                    if (actualField.getMetadata().equalsIgnoreCase(metadataNode.getAttribute("name"))) {
+                        actualField.setValue(metadataNode.getTextContent());
+                    } else if (actualField.getMetadata().equals("ListOfCreators")) {
+                        actualField.setValue(authors.toString());
                     }
                 }
             }

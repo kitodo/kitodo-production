@@ -35,7 +35,7 @@
                                    onclick="PF('hitlist').hide()"
                                    update="editForm"
                                    immediate="true"
-                                   action="#{ImportForm.getselectedRecord()}">
+                                   action="#{ImportForm.getSelectedRecord()}">
                         <f:param name="ID" value="#{hit.id}"/>
                         <f:setPropertyActionListener target="#{ImportForm.prozesskopieForm}" value="#{ProzesskopieForm}" />
                     </p:commandLink>
