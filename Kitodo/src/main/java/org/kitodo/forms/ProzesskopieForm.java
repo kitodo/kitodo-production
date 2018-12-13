@@ -514,12 +514,6 @@ public class ProzesskopieForm implements Serializable {
                 new DataCopier(rules).process(data);
             } catch (ConfigurationException e) {
                 Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
-            } catch (RuntimeException e) {
-                if (RuntimeException.class.equals(e.getClass())) {
-                    Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
-                } else {
-                    throw e;
-                }
             }
         }
     }

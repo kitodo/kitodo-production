@@ -229,13 +229,6 @@ public class ExportDms extends ExportMets {
                     Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
                 }
                 return false;
-            } catch (RuntimeException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                } else {
-                    Helper.setErrorMessage("dataCopier.runtimeException", e.getMessage(), logger, e);
-                }
-                return false;
             }
         }
         return true;
