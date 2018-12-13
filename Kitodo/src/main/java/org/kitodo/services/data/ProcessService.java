@@ -1983,9 +1983,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             } catch (ConfigurationException e) {
                 Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
                 return true;
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
-                return true;
             }
         }
         return false;
