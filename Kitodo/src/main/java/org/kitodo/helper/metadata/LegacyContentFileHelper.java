@@ -33,7 +33,7 @@ public class LegacyContentFileHelper implements ContentFileInterface {
     private FLocatXmlElementAccessInterface mediaFile;
 
     public LegacyContentFileHelper() {
-        mediaFile = metsService.createFLocat();
+        mediaFile = metsService.createFLocatXmlElementAccess();
     }
 
     @Override

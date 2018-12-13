@@ -15,26 +15,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 
 public class MetsServiceIT {
 
@@ -43,7 +30,7 @@ public class MetsServiceIT {
      */
     @Test
     public void testReadXML() throws Exception {
-        MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMets();
+        MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMetsXmlElementAccess();
         workpiece.read(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml")));
 
         // METS file has 183 associated images

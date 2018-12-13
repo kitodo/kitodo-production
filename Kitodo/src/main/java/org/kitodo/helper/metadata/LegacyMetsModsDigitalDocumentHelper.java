@@ -59,7 +59,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
     /**
      * The workpiece accessed via this soldering class.
      */
-    private MetsXmlElementAccessInterface workpiece = metsService.createMets();
+    private MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
 
     /**
      * The current ruleset.
@@ -76,7 +76,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
      */
     public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
-        this.workpiece = metsService.createMets();
+        this.workpiece = metsService.createMetsXmlElementAccess();
 
         try {
             User user = new Metadaten().getCurrentUser();
@@ -132,7 +132,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
     @Override
     public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
-            return new LegacyLogicalDocStructHelper(metsService.createDiv(), null, ruleset, priorityList);
+            return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
         } else {
             return new LegacyInnerPhysicalDocStructHelper();
         }

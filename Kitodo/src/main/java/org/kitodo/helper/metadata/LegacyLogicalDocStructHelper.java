@@ -129,7 +129,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
         Optional<Domain> optionalDomain = optionalKeyView.isPresent() ? optionalKeyView.get().getDomain()
                 : Optional.empty();
         if (!optionalDomain.isPresent() || !optionalDomain.get().equals(Domain.METS_DIV)) {
-            MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadata();
+            MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadataXmlElementAccess();
             metadataEntry.setType(metadata.getMetadataType().getName());
             metadataEntry.setDomain(domainToMdSec(optionalDomain.orElse(Domain.DESCRIPTION)));
             metadataEntry.setValue(metadata.getValue());
@@ -161,7 +161,7 @@ public class LegacyLogicalDocStructHelper implements DocStructInterface {
 
     @Override
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
-        AreaXmlElementAccessInterface view = metsService.createArea();
+        AreaXmlElementAccessInterface view = metsService.createAreaXmlElementAccess();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
         view.setFile(target.getMediaUnit());
         structure.getAreas().add(view);

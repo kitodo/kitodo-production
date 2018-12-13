@@ -1043,7 +1043,7 @@ public class ProzesskopieForm implements Serializable {
         RulesetManagementInterface ruleset = ((LegacyPrefsHelper) ServiceManager.getRulesetService()
                 .getPreferences(this.prozessKopie.getRuleset())).getRuleset();
         try {
-            MetsXmlElementAccessInterface workpiece = metsService.createMets();
+            MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
             DivXmlElementAccessInterface structure = workpiece.getStructMap();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
             if (configOpacDoctype != null) {
@@ -1082,7 +1082,7 @@ public class ProzesskopieForm implements Serializable {
      *            type of child to create
      */
     private void addChild(DivXmlElementAccessInterface structure, String type) {
-        DivXmlElementAccessInterface volume = metsService.createDiv();
+        DivXmlElementAccessInterface volume = metsService.createDivXmlElementAccess();
         volume.setType(type);
         structure.getChildren().add(volume);
     }
