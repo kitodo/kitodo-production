@@ -11,38 +11,52 @@
 
 package org.kitodo.config;
 
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.forms.ProzesskopieForm;
+import org.kitodo.helper.AdditionalField;
 
 public class ConfigProject {
-    private XMLConfiguration config;
-    private String projectTitle;
+
     private static final Logger logger = LogManager.getLogger(ConfigProject.class);
 
-    public ConfigProject(String projectTitle) throws IOException {
-        this(projectTitle, KitodoConfigFile.PROJECT_CONFIGURATION);
-    }
+    private XMLConfiguration config;
+    private String projectTitle;
+
+    private static final String CREATE_NEW_PROCESS = "createNewProcess";
+    private static final String ITEM_LIST = CREATE_NEW_PROCESS + ".itemlist";
+    private static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
+    private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
 
     /**
-     * Constructor.
-     *
+     * Constructor for ConfigProject.
+     * 
      * @param projectTitle
-     *            project title
-     * @param configFile
-     *            config file as KitodoFile
+     *            for which configuration is going to be read
+     * @throws IOException
+     *             if config file not found
      */
-    public ConfigProject(String projectTitle, KitodoConfigFile configFile) throws IOException {
+    public ConfigProject(String projectTitle) throws IOException {
+        KitodoConfigFile configFile = KitodoConfigFile.PROJECT_CONFIGURATION;
+
         if (!configFile.exists()) {
             throw new IOException("File not found: " + configFile.getAbsolutePath());
         }
@@ -69,39 +83,202 @@ public class ConfigProject {
         } catch (NoSuchElementException e) {
             this.projectTitle = "project(0).";
         }
-
     }
 
     /**
-     * Ermitteln eines bestimmten Parameters der Konfiguration als String.
+     * Get doc type.
+     *
+     * @return value of docType
+     */
+    public String getDocType() {
+        return getParamString(CREATE_NEW_PROCESS + ".defaultdoctype", ConfigOpac.getAllDoctypes().get(0).getTitle());
+    }
+
+    /**
+     * Get use opac.
+     *
+     * @return value of useOpac
+     */
+    public boolean isUseOpac() {
+        return getParamBoolean(CREATE_NEW_PROCESS + ".opac[@use]");
+    }
+
+    /**
+     * Get use templates.
+     *
+     * @return value of useTemplates
+     */
+    public boolean isUseTemplates() {
+        return getParamBoolean(CREATE_NEW_PROCESS + ".templates[@use]");
+    }
+
+    /**
+     * Get opac catalog.
+     *
+     * @return value of opacCatalog
+     */
+    public String getOpacCatalog() {
+        return getParamString(CREATE_NEW_PROCESS + ".opac.catalogue");
+    }
+
+    /**
+     * Get tif definition.
+     *
+     * @return tif definition as String
+     */
+    public String getTifDefinition() {
+        return getParamString("tifheader." + getDocType(), "kitodo");
+    }
+
+    /**
+     * Get title definition.
+     *
+     * @return title definition as String
+     */
+    public String getTitleDefinition() {
+        int count = getParamList(ITEM_LIST_PROCESS_TITLE).size();
+        String titleDefinition = "";
+
+        for (int i = 0; i < count; i++) {
+            String title = getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")");
+            String isDocType = getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
+            String isNotDocType = getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
+
+            title = processNullValues(title);
+            isDocType = processNullValues(isDocType);
+            isNotDocType = processNullValues(isNotDocType);
+
+            titleDefinition = findTitleDefinition(title, getDocType(), isDocType, isNotDocType);
+
+            // break loop after title definition was found
+            if (isTitleDefinitionFound(titleDefinition)) {
+                break;
+            }
+        }
+        return titleDefinition;
+    }
+
+    /**
+     * Get hidden fields which are appended to standard fields with false value.
+     *
+     * @return value of hidden fields
+     */
+    public Map<String, Boolean> getHiddenFields() {
+        Map<String, Boolean> hiddenFields = new HashMap<>();
+        for (String standardField : getParamList(ITEM_LIST + ".hide")) {
+            hiddenFields.put(standardField, false);
+        }
+        return hiddenFields;
+    }
+
+    /**
+     * Get additionalFields.
+     *
+     * @return value of additionalFields
+     */
+    // TODO: remove ProzesskopieForm from constructor AdditionalField
+    public List<AdditionalField> getAdditionalFields(ProzesskopieForm prozesskopieForm) {
+        List<AdditionalField> additionalFields = new ArrayList<>();
+
+        int count = getParamList(ITEM_LIST_ITEM).size();
+        for (int i = 0; i < count; i++) {
+            AdditionalField additionalField = new AdditionalField(prozesskopieForm);
+            additionalField.setFrom(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@from]"));
+            additionalField.setTitle(getParamString(ITEM_LIST_ITEM + "(" + i + ")"));
+            additionalField.setRequired(getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@required]"));
+            additionalField.setIsdoctype(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isdoctype]"));
+            additionalField.setIsnotdoctype(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isnotdoctype]"));
+            // attributes added 30.3.09
+            String test = (getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initStart]"));
+            additionalField.setInitStart(test);
+
+            additionalField.setInitEnd(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initEnd]"));
+
+            // binding to a metadata of a doc struct
+            if (getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@ughbinding]")) {
+                additionalField.setUghbinding(true);
+                additionalField.setDocstruct(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@docstruct]"));
+                additionalField.setMetadata(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@metadata]"));
+            }
+            if (getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@autogenerated]")) {
+                additionalField.setAutogenerated(true);
+            }
+
+            // check whether the current item should become a selection list
+            int selectItemCount = getParamList(ITEM_LIST_ITEM + "(" + i + ").select").size();
+            // go through Children and create SelectItem elements
+            if (selectItemCount > 0) {
+                additionalField.setSelectList(new ArrayList<>());
+                for (int j = 0; j < selectItemCount; j++) {
+                    String svalue = getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
+                    String sid = getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")");
+                    additionalField.getSelectList().add(new SelectItem(sid, svalue, null));
+                }
+            }
+            additionalFields.add(additionalField);
+        }
+
+        return additionalFields;
+    }
+
+    /**
+     * Determine a specific parameter of the configuration as a String.
      *
      * @return Parameter als String
      */
     public String getParamString(String inParameter) {
         try {
             this.config.setListDelimiter('&');
-            String rueckgabe = this.config.getString(this.projectTitle + inParameter);
-            return cleanXmlFormattedString(rueckgabe);
+            String result = this.config.getString(this.projectTitle + inParameter);
+            return cleanXmlFormattedString(result);
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 
     /**
-     * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines
-     * Default-Wertes.
+     * Determining a specific parameter of the configuration with specification of a
+     * default value.
      *
      * @return Parameter als String
      */
-    public String getParamString(String inParameter, String inDefaultIfNull) {
+    public String getParamString(String parameter, String defaultIfNull) {
         try {
             this.config.setListDelimiter('&');
-            String myParam = this.projectTitle + inParameter;
-            String rueckgabe = this.config.getString(myParam, inDefaultIfNull);
-            return cleanXmlFormattedString(rueckgabe);
+            String myParam = this.projectTitle + parameter;
+            String result = this.config.getString(myParam, defaultIfNull);
+            return cleanXmlFormattedString(result);
         } catch (RuntimeException e) {
-            return inDefaultIfNull;
+            return defaultIfNull;
+        }
+    }
+
+    /**
+     * Determine a boolean parameter of the configuration.
+     *
+     * @return Parameter als boolean
+     */
+    public boolean getParamBoolean(String parameter) {
+        try {
+            return this.config.getBoolean(this.projectTitle + parameter);
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Determine a list of configuration parameters.
+     *
+     * @return Parameter als List
+     */
+    public List<String> getParamList(String parameter) {
+        try {
+            List<Object> configs = this.config.getList(this.projectTitle + parameter);
+            return configs.stream().map(object -> Objects.toString(object, null)).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return new ArrayList<>();
         }
     }
 
@@ -117,46 +294,39 @@ public class ConfigProject {
     }
 
     /**
-     * Ermitteln eines boolean-Parameters der Konfiguration.
-     *
-     * @return Parameter als String
+     * Find title definitions. Conditions:
+     * <dl>
+     * <dt>{@code isDocType.equals("") && isNotDocType.equals("")}</dt>
+     * <dd>nothing was specified</dd>
+     * <dt>{@code isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)}</dt>
+     * <dd>only duty was specified</dd>
+     * <dt>{@code isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>only may not was specified</dd>
+     * <dt>{@code !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
+     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>both were specified</dd>
+     * </dl>
      */
-    public boolean getParamBoolean(String inParameter) {
-        try {
-            return this.config.getBoolean(this.projectTitle + inParameter);
-        } catch (RuntimeException e) {
-            return false;
+    private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
+        if ((isDocType.equals("")
+                && (isNotDocType.equals("") || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
+                || (!isDocType.equals("") && !isNotDocType.equals("")
+                        && StringUtils.containsIgnoreCase(isDocType, docType)
+                        && !StringUtils.containsIgnoreCase(isNotDocType, docType))
+                || (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType))) {
+            return title;
         }
+        return "";
     }
 
-    /**
-     * Ermitteln eines long-Parameters der Konfiguration.
-     *
-     * @return Parameter als Long
-     */
-    public long getParamLong(String inParameter) {
-        try {
-            return this.config.getLong(this.projectTitle + inParameter);
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage(), e);
-            return 0;
-        }
+    private boolean isTitleDefinitionFound(String titleDefinition) {
+        return !titleDefinition.equals("");
     }
 
-    /**
-     * Ermitteln einer Liste von Parametern der Konfiguration.
-     *
-     * @return Parameter als List
-     */
-    public List<String> getParamList(String inParameter) {
-        try {
-            List<Object> configs = this.config.getList(this.projectTitle + inParameter);
-            return configs.stream().map(object -> Objects.toString(object, null))
-                    .collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage(), e);
-            return new ArrayList<>();
+    private String processNullValues(String value) {
+        if (value == null) {
+            value = "";
         }
+        return value;
     }
-
 }

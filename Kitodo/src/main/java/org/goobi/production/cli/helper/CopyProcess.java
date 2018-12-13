@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import javax.faces.model.SelectItem;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,10 +70,12 @@ public class CopyProcess extends ProzesskopieForm {
     private boolean useOpac;
     private boolean useTemplates;
     private URI metadataFile;
-    private HashMap<String, Boolean> standardFields;
+    private Map<String, Boolean> standardFields;
     private transient List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
     private StringBuilder tifHeaderImageDescription = new StringBuilder();
+    private String tifDefinition;
+    private String titleDefinition;
     private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Process processForChoice;
@@ -156,77 +156,6 @@ public class CopyProcess extends ProzesskopieForm {
         return this.naviFirstPage;
     }
 
-    private void readProjectConfigs() {
-        // depending on the project configuration display the correct fields in
-        // the GUI
-        ConfigProject cp;
-        try {
-            cp = new ConfigProject(this.project.getTitle());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
-
-        this.docType = cp.getParamString(CREATE_NEW_PROCESS + ".defaultdoctype",
-            ConfigOpac.getAllDoctypes().get(0).getTitle());
-        this.useOpac = cp.getParamBoolean(CREATE_NEW_PROCESS + ".opac[@use]");
-        this.useTemplates = cp.getParamBoolean(CREATE_NEW_PROCESS + ".templates[@use]");
-        this.naviFirstPage = "NewProcess/Page1";
-        if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getParamString(CREATE_NEW_PROCESS + ".opac.catalogue");
-        }
-
-        /*
-         * die auszublendenden Standard-Felder ermitteln
-         */
-        for (String t : cp.getParamList(ITEM_LIST + ".hide")) {
-            this.standardFields.put(t, false);
-        }
-
-        /*
-         * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
-         */
-        int count = cp.getParamList(ITEM_LIST_ITEM).size();
-        for (int i = 0; i < count; i++) {
-            AdditionalField fa = new AdditionalField(this);
-            fa.setFrom(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@from]"));
-            fa.setTitle(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")"));
-            fa.setRequired(cp.getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@required]"));
-            fa.setIsdoctype(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isdoctype]"));
-            fa.setIsnotdoctype(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isnotdoctype]"));
-
-            // attributes added 30.3.09
-            String test = (cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initStart]"));
-            fa.setInitStart(test);
-
-            fa.setInitEnd(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initEnd]"));
-
-            /*
-             * Bindung an ein Metadatum eines Docstructs
-             */
-            if (cp.getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@ughbinding]")) {
-                fa.setUghbinding(true);
-                fa.setDocstruct(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@docstruct]"));
-                fa.setMetadata(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@metadata]"));
-            }
-
-            /*
-             * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
-             */
-            int selectItemCount = cp.getParamList(ITEM_LIST_ITEM + "(" + i + ").select").size();
-            /* Children durchlaufen und SelectItems erzeugen */
-            if (selectItemCount > 0) {
-                fa.setSelectList(new ArrayList<>());
-            }
-            for (int j = 0; j < selectItemCount; j++) {
-                String svalue = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
-                String sid = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")");
-                fa.getSelectList().add(new SelectItem(sid, svalue, null));
-            }
-            this.additionalFields.add(fa);
-        }
-    }
-
     /**
      * OpacAnfrage.
      */
@@ -249,6 +178,32 @@ public class CopyProcess extends ProzesskopieForm {
         } catch (PreferencesException | ReadException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
         }
+    }
+
+    private void readProjectConfigs() {
+        // depending on the project configuration display the correct fields in
+        // the GUI
+        ConfigProject cp;
+        try {
+            cp = new ConfigProject(this.project.getTitle());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return;
+        }
+
+        this.docType = cp.getDocType();
+        this.useOpac = cp.isUseOpac();
+        this.useTemplates = cp.isUseTemplates();
+        this.naviFirstPage = "NewProcess/Page1";
+        if (this.opacKatalog.equals("")) {
+            this.opacKatalog = cp.getOpacCatalog();
+        }
+
+        this.tifDefinition = cp.getTifDefinition();
+        this.titleDefinition = cp.getTitleDefinition();
+
+        this.standardFields.putAll(cp.getHiddenFields());
+        this.additionalFields = cp.getAdditionalFields(this);
     }
 
     /**
@@ -735,14 +690,6 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void calculateProcessTitle() {
         StringBuilder newTitle = new StringBuilder();
-        String titleDefinition;
-        try {
-            titleDefinition = getTitleDefinition(this.project.getTitle(), this.docType);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
-
         StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         /* jetzt den Bandtitel parsen */
         while (tokenizer.hasMoreTokens()) {
@@ -799,20 +746,9 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public void calculateTiffHeader() {
-        String tifDefinition;
-        ConfigProject cp;
-        try {
-            cp = new ConfigProject(this.project.getTitle());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
-
-        tifDefinition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
-
         // possible replacements
-        tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
-        tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
+        this.tifDefinition = this.tifDefinition.replaceAll("\\[\\[", "<");
+        this.tifDefinition = this.tifDefinition.replaceAll("\\]\\]", ">");
 
         /*
          * Documentname ist im allgemeinen = Prozesstitel
@@ -821,7 +757,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.tifHeaderImageDescription = new StringBuilder();
 
         // image description
-        StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(this.tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
             String string = tokenizer.nextToken();
