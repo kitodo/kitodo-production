@@ -38,7 +38,6 @@ public class ImportForm implements Serializable {
     private String selectedCatalog;
     private String selectedField;
     private String searchTerm;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private SearchResult searchResult;
 
     public String getSelectedCatalog() {
@@ -80,7 +79,7 @@ public class ImportForm implements Serializable {
      */
     public List<String> getCatalogs() {
         try {
-            return serviceManager.getImportService().getAvailableCatalogs();
+            return ServiceManager.getImportService().getAvailableCatalogs();
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             return new LinkedList<>();
@@ -94,7 +93,7 @@ public class ImportForm implements Serializable {
      */
     public List<String> getSearchFields() {
         try {
-            return serviceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
+            return ServiceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             return new LinkedList<>();
@@ -106,7 +105,7 @@ public class ImportForm implements Serializable {
      */
     public void search() throws IllegalArgumentException {
         try {
-            this.searchResult = serviceManager.getImportService().performSearch(
+            this.searchResult = ServiceManager.getImportService().performSearch(
                     this.selectedField, this.searchTerm, this.selectedCatalog);
             PrimeFaces.current().executeScript("PF('hitlist').show()");
         } catch (IllegalArgumentException e) {
@@ -148,7 +147,7 @@ public class ImportForm implements Serializable {
      */
     public void getselectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
-        Document record = serviceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
+        Document record = ServiceManager.getImportService().getSelectedRecord(this.selectedCatalog, recordId);
 
         List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
         Element root = record.getDocumentElement();

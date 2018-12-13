@@ -27,11 +27,11 @@
             <p:dataTable id="hitlistDialogTable"
                          value="#{ImportForm.hits}"
                          var="hit"
-                         rows="#{LoginForm.myBenutzer.tableSize}"
+                         rows="#{LoginForm.loggedUser.tableSize}"
                          paginator="true">
                 <p:column headerText="#{msgs.hits}">
-                    <p:commandLink id="test"
-                                    value="#{hit.title}"
+                    <p:commandLink id="selectRecord"
+                                   value="#{hit.title}"
                                    onclick="PF('hitlist').hide()"
                                    update="editForm"
                                    immediate="true"
