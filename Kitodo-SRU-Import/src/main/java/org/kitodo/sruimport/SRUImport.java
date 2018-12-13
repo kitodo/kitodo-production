@@ -69,7 +69,7 @@ public class SRUImport implements ExternalDataImportInterface {
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            return performQuerytoDocument(queryURL.toString() + "&query=ead.id==" + id);
+            return performQueryToDocument(queryURL.toString() + "&query=ead.id==" + id);
         } catch (URISyntaxException e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -131,7 +131,7 @@ public class SRUImport implements ExternalDataImportInterface {
         return new SearchResult();
     }
 
-    private Document performQuerytoDocument(String queryURL) {
+    private Document performQueryToDocument(String queryURL) {
         try {
             HttpResponse response = sruClient.execute(new HttpGet(queryURL));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
