@@ -26,10 +26,15 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterAPI;
 
-
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
     private static XMLConfiguration config;
+
+    /**
+     * Private constructor.
+     */
+    private OPACConfig() {
+    }
 
     /**
      * Retrieve the "config" of the catalog identified by its title.

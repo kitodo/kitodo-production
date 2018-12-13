@@ -12,7 +12,7 @@
 package org.kitodo.api.externaldatamanagement;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
@@ -66,7 +66,7 @@ public interface ExternalDataImportInterface {
      *            number of records to be returned
      * @return Search result of performed query.
      */
-    SearchResult search(String catalogId, HashMap<String, String> searchParameters, int rows);
+    SearchResult search(String catalogId, Map<String, String> searchParameters, int rows);
 
     /**
      * Searches for Data in a given source by term and field.

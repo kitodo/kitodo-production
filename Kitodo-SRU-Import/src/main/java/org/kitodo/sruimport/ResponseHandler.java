@@ -56,6 +56,12 @@ class ResponseHandler {
     private static final String RECORD_TITLE_TAG = "title";
 
     /**
+     * Private constructor.
+     */
+    private ResponseHandler() {
+    }
+
+    /**
      * Create and return SearchResult for given HttpResponse.
      * @param response HttpResponse for which a SearchResult is created
      * @return SearchResult created from given HttpResponse
@@ -121,22 +127,19 @@ class ResponseHandler {
     }
 
     private static String getRecordID(Element record) {
-        NodeList recordIdentifierList = record.getElementsByTagNameNS(MODS_NAMESPACE, RECORD_ID_TAG);
-        assert (recordIdentifierList.getLength() == 1);
-        Element recordIdentifier = (Element) recordIdentifierList.item(0);
+        Element recordIdentifier = getXmlElement(record, MODS_NAMESPACE, RECORD_ID_TAG);
         return recordIdentifier.getTextContent().trim();
     }
 
     private static String getRecordTitle(Element record) {
-        NodeList modsList = record.getElementsByTagNameNS(MODS_NAMESPACE, MODS_TAG);
-        assert modsList.getLength() == 1;
-        Element modsElement = (Element) modsList.item(0);
-
-        NodeList recordTitleList = modsElement.getElementsByTagNameNS(MODS_NAMESPACE, RECORD_TITLE_TAG);
-        assert (recordTitleList.getLength() == 1);
-        Element recordTitle = (Element) recordTitleList.item(0);
-
+        Element modsElement = getXmlElement(record, MODS_NAMESPACE, MODS_TAG);
+        Element recordTitle = getXmlElement(modsElement, MODS_NAMESPACE, RECORD_TITLE_TAG);
         return recordTitle.getTextContent().trim();
+    }
+
+    private static Element getXmlElement(Element parentNode, String nameSpace, String elementTag) {
+        NodeList nodeList = parentNode.getElementsByTagNameNS(nameSpace, elementTag);
+        return (Element) nodeList.item(0);
     }
 
     @SuppressWarnings("unused")

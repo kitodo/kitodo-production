@@ -42,6 +42,9 @@ import org.w3c.dom.Document;
 public class SRUImport implements ExternalDataImportInterface {
 
     private static final Logger logger = LogManager.getLogger(SRUImport.class);
+    private static final String NAME_ATTRIBUTE = "[@name]";
+    private static final String VALUE_ATTRIBUTE = "[@value]";
+    private static final String LABEL_ATTRIBUTE = "[@label]";
 
     private static String protocol;
     private static String host;
@@ -83,7 +86,7 @@ public class SRUImport implements ExternalDataImportInterface {
     }
 
     @Override
-    public SearchResult search(String catalogId, HashMap<String, String> searchParameters, int rows) {
+    public SearchResult search(String catalogId, Map<String, String> searchParameters, int rows) {
         // TODO: check how the fields of hits from SRU interfaces can be configured via CQL (need only title and id!)
         loadOPACConfiguration(catalogId);
         if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
@@ -158,18 +161,18 @@ public class SRUImport implements ExternalDataImportInterface {
         return String.join(" AND ", searchOperands);
     }
 
-    private void loadOPACConfiguration(String opacName) {
+    private static void loadOPACConfiguration(String opacName) {
         try {
             // XML configuration of OPAC
             HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
 
             for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt("param")) {
-                if (queryConfigParam.getString("[@name]").equals("scheme")) {
-                    protocol = queryConfigParam.getString("[@value]");
-                } else if (queryConfigParam.getString("[@name]").equals("host")) {
-                    host = queryConfigParam.getString("[@value]");
-                } else if (queryConfigParam.getString("[@name]").equals("path")) {
-                    path = queryConfigParam.getString("[@value]");
+                if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("scheme")) {
+                    protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("host")) {
+                    host = queryConfigParam.getString(VALUE_ATTRIBUTE);
+                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("path")) {
+                    path = queryConfigParam.getString(VALUE_ATTRIBUTE);
                 }
             }
 
@@ -177,13 +180,13 @@ public class SRUImport implements ExternalDataImportInterface {
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
 
             for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
-                searchFieldMapping.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
+                searchFieldMapping.put(searchField.getString(LABEL_ATTRIBUTE), searchField.getString(VALUE_ATTRIBUTE));
             }
 
             HierarchicalConfiguration urlParameters = OPACConfig.getUrlParameters(opacName);
 
             for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt("param")) {
-                parameters.put(queryParam.getString("[@name]"), queryParam.getString("[@value]"));
+                parameters.put(queryParam.getString(NAME_ATTRIBUTE), queryParam.getString(VALUE_ATTRIBUTE));
             }
         } catch (IllegalArgumentException e) {
             logger.error(e.getLocalizedMessage());
