@@ -31,6 +31,7 @@ import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.dataeditor.RulesetManagementService;
+import org.kitodo.services.dataformat.MetsService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.image.ImageService;
 import org.kitodo.services.schema.SchemaService;
@@ -52,6 +53,7 @@ public class ServiceManager {
     private static ImageService imageService;
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
+    private static MetsService metsService;
     private static PropertyService propertyService;
     private static ProcessService processService;
     private static FolderService folderService;
@@ -130,6 +132,12 @@ public class ServiceManager {
     private static void initializeLdapServerService() {
         if (ldapServerService == null) {
             ldapServerService = LdapServerService.getInstance();
+        }
+    }
+
+    private void initializeMetsService() {
+        if (metsService == null) {
+            metsService = MetsService.getInstance();
         }
     }
 
@@ -346,6 +354,16 @@ public class ServiceManager {
     public static ImageService getImageService() {
         initializeImageService();
         return imageService;
+    }
+
+    /**
+     * Initialize MetsService if it is not yet initialized and next return it.
+     *
+     * @return LdapServerService object
+     */
+    public MetsService getMetsService() {
+        initializeMetsService();
+        return metsService;
     }
 
     /**
