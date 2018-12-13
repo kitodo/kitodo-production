@@ -337,7 +337,7 @@ public class ServiceManager {
      * Initialize ImportService if it is not yet initialized and return it.
      * @return ImportService object
      */
-    public ImportService getImportService() {
+    public static ImportService getImportService() {
         initializeImportService();
         return importService;
     }
