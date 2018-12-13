@@ -167,7 +167,7 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     /**
      * Sets the order label for this media unit.
      * 
-     * @param order
+     * @param orderlabel
      *            order label to set
      */
     @Override
@@ -178,9 +178,6 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     /**
      * Creates a new METS {@code <div>} element for this media unit.
      * 
-     * @param identifierProvider
-     *            an object that generates a new, not yet assigned identifier
-     *            each time it is called
      * @param mediaFilesToIDFiles
      *            map containing the corresponding XML file element for each
      *            media unit, necessary for linking
