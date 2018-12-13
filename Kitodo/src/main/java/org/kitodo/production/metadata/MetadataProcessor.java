@@ -1792,12 +1792,16 @@ public class MetadataProcessor {
         }
 
         if (children != null) {
-            visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
+            Optional<TreeNode> optionalPrimeFacesTreeNode = convertDocstructToPrimeFacesTreeNode(children, visibleRoot);
+            if (optionalPrimeFacesTreeNode.isPresent()) {
+                visibleRoot.getChildren().add(optionalPrimeFacesTreeNode.get());
+            }
         }
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertDocstructToPrimeFacesTreeNode(List<DocStructInterface> elements, TreeNode parentTreeNode) {
+    private Optional<TreeNode> convertDocstructToPrimeFacesTreeNode(List<DocStructInterface> elements,
+            TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
         for (DocStructInterface element : elements) {
@@ -1817,7 +1821,7 @@ public class MetadataProcessor {
                 convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
-        return treeNode;
+        return Optional.ofNullable(treeNode);
     }
 
     private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
