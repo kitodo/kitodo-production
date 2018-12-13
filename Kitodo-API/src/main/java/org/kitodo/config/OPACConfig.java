@@ -31,22 +31,46 @@ public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
     private static XMLConfiguration config;
 
+    /**
+     * Retrieve the "config" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by title
+     * @return HierarchicalConfiguration for catalog's "config"
+     */
     public static HierarchicalConfiguration getOPACConfiguration(String catalogName) {
         return getCatalog(catalogName).configurationAt("config");
     }
 
+    /**
+     * Retrieve the "searchFields" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by title
+     * @return HierarchicalConfiguration for catalog's "searchFields"
+     */
     public static HierarchicalConfiguration getSearchFields(String catalogName) {
         return getCatalog(catalogName).configurationAt("searchFields");
     }
 
+    /**
+     * Retrieve the "urlParameters" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "urlParameters"
+     */
     public static HierarchicalConfiguration getUrlParameters(String catalogName) {
         return getCatalog(catalogName).configurationAt("urlParameters");
     }
 
+    /**
+     * Retrieve the "mappingFile" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "mappingFile"
+     */
     public static String getXsltMappingFile(String catalogName) {
         return getCatalog(catalogName).getString("mappingFile");
     }
 
+    /**
+     * Retrieve the list of catalogs' titles from config file.
+     * @return List of Strings containing all catalog titles.
+     */
     public static List<String> getCatalogs() {
         List<String> catalogueTitles = new ArrayList<>();
         XMLConfiguration conf = getConfig();
@@ -56,6 +80,11 @@ public class OPACConfig {
         return catalogueTitles;
     }
 
+    /**
+     * Retrieve the configuration for the passed catalog name from config file.
+     * @param catalogName String identifying the catalog by attribute "title"
+     * @return HierarchicalConfiguration for single catalog
+     */
     public static HierarchicalConfiguration getCatalog(String catalogName) {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
