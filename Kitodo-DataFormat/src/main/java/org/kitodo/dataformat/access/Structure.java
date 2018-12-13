@@ -107,7 +107,7 @@ public class Structure implements DivXmlElementAccessInterface {
      * property of the {@code MediaUnit}s instead. It is not possible to code
      * several sequences that are in conflict with each other.
      */
-    private final List<AreaXmlElementAccessInterface> views = new OrderAwareList<AreaXmlElementAccessInterface>(
+    private final List<AreaXmlElementAccessInterface> views = new SortedList<AreaXmlElementAccessInterface>(
         areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
 
     /**

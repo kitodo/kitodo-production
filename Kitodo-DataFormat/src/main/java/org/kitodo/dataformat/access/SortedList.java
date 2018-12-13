@@ -23,7 +23,7 @@ import java.util.function.Function;
  * A list that is aware of and enforces the order of its members prescribed by
  * the ordinal number of the media units.
  */
-class OrderAwareList<T> extends ArrayList<T> {
+class SortedList<T> extends ArrayList<T> {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -37,7 +37,7 @@ class OrderAwareList<T> extends ArrayList<T> {
      * @param orderGetter
      *            possibility to get an order number for T
      */
-    public OrderAwareList(Function<T, Integer> orderGetter) {
+    public SortedList(Function<T, Integer> orderGetter) {
         this.orderGetter = orderGetter;
     }
 
