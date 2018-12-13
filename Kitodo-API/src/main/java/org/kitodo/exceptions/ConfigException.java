@@ -16,33 +16,20 @@ public class ConfigException extends RuntimeException {
     /**
      * Constructor with given parameter name for exception message.
      *
-     * @param parameterName
+     * @param name
      *            as String
      */
-    public ConfigException(String parameterName) {
-        super("Default value for key: " + parameterName + " not defined!");
-    }
-
-    /**
-     * Constructor with given parameter name and type for exception message.
-     *
-     * @param parameterName
-     *            as String
-     * @param type
-     *            as String
-     */
-    public ConfigException(String parameterName, String type) {
-        super("Default value for key: " + parameterName + " not defined or have different type than " + type + "!");
+    public ConfigException(String name) {
+        super("The catalog '" + name + "' is not found!");
     }
 
     /**
      * Constructor with given parameter the specified detail message and the cause.
      *
-     * @param message
-     * @param cause
+     * @param message the detail message as String
+     * @param cause the cause
      */
     public ConfigException(String message, Throwable cause) {
         super(message, cause);
     }
 }
-

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterAPI;
+import org.kitodo.exceptions.ConfigException;
 
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
@@ -93,14 +95,18 @@ public class OPACConfig {
     public static HierarchicalConfiguration getCatalog(String catalogName) {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
+        HierarchicalConfiguration catalog = null;
         for (int i = 0; i <= countCatalogues; i++) {
             String title = conf.getString("catalogue(" + i + ")[@title]");
             if (title.equals(catalogName)) {
-                return conf.configurationAt("catalogue(" + i + ")");
+                catalog = conf.configurationAt("catalogue(" + i + ")");
             }
         }
-
-        return null;
+        if (Objects.nonNull(catalog)) {
+            return catalog;
+        } else {
+            throw new ConfigException(catalogName);
+        }
     }
 
     private static XMLConfiguration getConfig() {
@@ -111,7 +117,7 @@ public class OPACConfig {
                 KitodoConfigFile.OPAC_CONFIGURATION.getName());
         if (!new File(configPfad).exists()) {
             String message = "File not found: ".concat(configPfad);
-            throw new RuntimeException(message, new FileNotFoundException(message));
+            throw new ConfigException(message, new FileNotFoundException(message));
         }
         try {
             config = new XMLConfiguration(configPfad);

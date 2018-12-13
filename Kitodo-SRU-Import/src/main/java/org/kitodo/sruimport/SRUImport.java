@@ -52,14 +52,12 @@ public class SRUImport implements ExternalDataImportInterface {
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static HashMap<String, String> searchFieldMapping = new HashMap<>();
     private static String equalsOperand = "==";
-
-    private static HttpClient sruClient;
+    private static HttpClient sruClient = HttpClientBuilder.create().build();
 
     /**
      * Standard constructor.
      */
     public SRUImport() {
-        sruClient = HttpClientBuilder.create().build();
         // TODO: implement SchemaConverter and instantiate here
     }
 

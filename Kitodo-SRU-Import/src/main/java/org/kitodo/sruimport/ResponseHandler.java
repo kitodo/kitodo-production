@@ -141,11 +141,4 @@ class ResponseHandler {
         NodeList nodeList = parentNode.getElementsByTagNameNS(nameSpace, elementTag);
         return (Element) nodeList.item(0);
     }
-
-    @SuppressWarnings("unused")
-    static void prettyPrintXML(Document document) throws IOException {
-        DOMBuilder builder = new DOMBuilder();
-        org.jdom2.Document output = builder.build(document);
-        xmlOutputter.output(output, System.out);
-    }
 }
