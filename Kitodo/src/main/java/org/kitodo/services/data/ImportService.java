@@ -160,14 +160,14 @@ public class ImportService {
             StreamSource transformSource = new StreamSource(stylesheetFile);
             TransformerFactoryImpl transformerFactoryImpl = new TransformerFactoryImpl();
             File outputFile = File.createTempFile("transformed", "xml");
-            FileOutputStream outputStream = new FileOutputStream(outputFile);
-            Transformer xsltTransformer = transformerFactoryImpl.newTransformer(transformSource);
-            TransformerHandler handler = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
-            handler.setResult(new StreamResult(outputStream));
-            Result saxResult = new SAXResult(handler);
-            SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
-            xsltTransformer.transform(saxSource, saxResult);
-            outputStream.close();
+            try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+                Transformer xsltTransformer = transformerFactoryImpl.newTransformer(transformSource);
+                TransformerHandler handler = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
+                handler.setResult(new StreamResult(outputStream));
+                Result saxResult = new SAXResult(handler);
+                SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
+                xsltTransformer.transform(saxSource, saxResult);
+            }
             return outputter.output(saxBuilder.build(outputFile));
         } catch (JDOMException | IOException | TransformerException e) {
             logger.error("Error in transforming the response in intern format : ", e);
