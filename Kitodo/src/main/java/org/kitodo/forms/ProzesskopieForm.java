@@ -1787,20 +1787,6 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Downloads a docket for the process.
-     *
-     * @return the navigation-strign
-     */
-    public String downloadDocket() {
-        try {
-            ServiceManager.getProcessService().downloadDocket(this.prozessKopie);
-        } catch (IOException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("docket") }, logger, e);
-        }
-        return "";
-    }
-
-    /**
      * Set images guessed.
      *
      * @param imagesGuessed
