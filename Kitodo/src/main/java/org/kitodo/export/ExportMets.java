@@ -25,7 +25,6 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
@@ -73,13 +72,6 @@ public class ExportMets {
 
         if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
-        }
-
-        // only for the metadata of the RUSDML project
-        ConfigProject cp = new ConfigProject(process.getProject().getTitle());
-        if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-            ExportDmsCorrectRusdml exportCorrect = new ExportDmsCorrectRusdml(process, this.myPrefs, gdzfile);
-            atsPpnBand = exportCorrect.correctionStart();
         }
 
         prepareUserDirectory(userHome);
