@@ -11,8 +11,6 @@
 
 package org.kitodo.helper.metadata;
 
-import de.sub.goobi.metadaten.Metadaten;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,6 +31,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.helper.Helper;
+import org.kitodo.metadata.MetadataProcessor;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataeditor.RulesetManagementService;
 
@@ -62,7 +61,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
             case "page":
                 return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
             default:
-                User user = new Metadaten().getCurrentUser();
+                User user = new MetadataProcessor().getCurrentUser();
                 String metadataLanguage = user != null ? user.getMetadataLanguage()
                         : Helper.getRequestParameter("Accept-Language");
                 List<LanguageRange> priorityList = LanguageRange
@@ -81,7 +80,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
             case "physPageNumber":
                 return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER;
             default:
-                User user = new Metadaten().getCurrentUser();
+                User user = new MetadataProcessor().getCurrentUser();
                 String metadataLanguage = user != null ? user.getMetadataLanguage()
                         : Helper.getRequestParameter("Accept-Language");
                 List<LanguageRange> priorityList = LanguageRange

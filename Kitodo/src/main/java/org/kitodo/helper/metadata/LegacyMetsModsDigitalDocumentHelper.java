@@ -11,8 +11,6 @@
 
 package org.kitodo.helper.metadata;
 
-import de.sub.goobi.metadaten.Metadaten;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +36,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.helper.Helper;
+import org.kitodo.metadata.MetadataProcessor;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.dataeditor.RulesetManagementService;
 import org.kitodo.services.dataformat.MetsService;
@@ -79,7 +78,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         this.workpiece = metsService.createMetsXmlElementAccess();
 
         try {
-            User user = new Metadaten().getCurrentUser();
+            User user = new MetadataProcessor().getCurrentUser();
             String metadataLanguage = user != null ? user.getMetadataLanguage()
                     : Helper.getRequestParameter("Accept-Language");
             this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
