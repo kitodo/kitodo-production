@@ -17,17 +17,13 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
-import org.jdom.JDOMException;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -37,14 +33,10 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProject;
-import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.UghHelperException;
@@ -63,26 +55,11 @@ public class CopyProcess extends ProzesskopieForm {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
-    private Template template = new Template();
-    private Process prozessKopie = new Process();
-    private Project project;
-    /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
-    private boolean useOpac;
-    private boolean useTemplates;
     private URI metadataFile;
-    private Map<String, Boolean> standardFields;
-    private transient List<AdditionalField> additionalFields;
-    private List<String> digitalCollections;
-    private StringBuilder tifHeaderImageDescription = new StringBuilder();
-    private String tifDefinition;
-    private String titleDefinition;
-    private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Process processForChoice;
-    private String docType;
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
-    private List<String> possibleDigitalCollection;
 
     /**
      * Prepare import object.
@@ -168,42 +145,13 @@ public class CopyProcess extends ProzesskopieForm {
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
-
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getDocStructType().getName();
 
             fillFieldsFromMetadataFile(this.myRdf);
-
             fillFieldsFromConfig();
-
         } catch (PreferencesException | ReadException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
         }
-    }
-
-    private void readProjectConfigs() {
-        // depending on the project configuration display the correct fields in
-        // the GUI
-        ConfigProject cp;
-        try {
-            cp = new ConfigProject(this.project.getTitle());
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return;
-        }
-
-        this.docType = cp.getDocType();
-        this.useOpac = cp.isUseOpac();
-        this.useTemplates = cp.isUseTemplates();
-        this.naviFirstPage = "NewProcess/Page1";
-        if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getOpacCatalog();
-        }
-
-        this.tifDefinition = cp.getTifDefinition();
-        this.titleDefinition = cp.getTitleDefinition();
-
-        this.standardFields.putAll(cp.getHiddenFields());
-        this.additionalFields = cp.getAdditionalFields();
     }
 
     /**
@@ -262,22 +210,6 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Reset all configuration properties and fields.
-     */
-    private void clearValues() {
-        if (this.opacKatalog == null) {
-            this.opacKatalog = "";
-        }
-        this.standardFields = new HashMap<>();
-        this.standardFields.put("collections", true);
-        this.standardFields.put("doctype", true);
-        this.standardFields.put("regelsatz", true);
-        this.additionalFields = new ArrayList<>();
-        this.tifHeaderDocumentName = "";
-        this.tifHeaderImageDescription = new StringBuilder();
-    }
-
-    /**
      * Auswahl des Prozesses auswerten.
      */
     @Override
@@ -324,40 +256,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         return "";
-    }
-
-    /**
-     * Validierung der Eingaben.
-     *
-     * @return sind Fehler bei den Eingaben vorhanden?
-     */
-    private boolean isContentValid() {
-        /*
-         * Vorbedingungen prüfen
-         */
-        boolean valid = isProcessTitleCorrect(this.prozessKopie);
-
-        /*
-         * Prüfung der standard-Eingaben, die angegeben werden müssen
-         */
-        /* keine Collektion ausgewählt */
-        if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
-            valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
-        }
-
-        /*
-         * Prüfung der additional-Eingaben, die angegeben werden müssen
-         */
-        for (AdditionalField field : this.additionalFields) {
-            if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
-                    && (StringUtils.isBlank(field.getValue()))) {
-                valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA,
-                    field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
-            }
-        }
-        return valid;
     }
 
     /**
@@ -409,7 +307,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
-
         ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
@@ -450,7 +347,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
-
         ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
@@ -502,26 +398,6 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String getDocType() {
-        return this.docType;
-    }
-
-    @Override
-    public void setDocType(String docType) {
-        this.docType = docType;
-    }
-
-    @Override
-    public Template getTemplate() {
-        return this.template;
-    }
-
-    @Override
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
-    @Override
     public Process getProcessForChoice() {
         return this.processForChoice;
     }
@@ -529,11 +405,6 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void setProcessForChoice(Process processForChoice) {
         this.processForChoice = processForChoice;
-    }
-
-    @Override
-    public List<AdditionalField> getAdditionalFields() {
-        return this.additionalFields;
     }
 
     /**
@@ -548,43 +419,6 @@ public class CopyProcess extends ProzesskopieForm {
 
     }
 
-    /**
-     * this is needed for GUI, render multiple select only if this is false if
-     * isSingleChoiceCollection is true use this choice.
-     *
-     * @author Wulf
-     */
-    @Override
-    public String getDigitalCollectionIfSingleChoice() {
-        List<String> pdc = getPossibleDigitalCollections();
-        if (pdc.size() == 1) {
-            return pdc.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public List<String> getPossibleDigitalCollections() {
-        return this.possibleDigitalCollection;
-    }
-
-    private void initializePossibleDigitalCollections() {
-        try {
-            DigitalCollection.possibleDigitalCollectionsForProcess(this.prozessKopie.getProject());
-        } catch (JDOMException | IOException e) {
-            Helper.setErrorMessage("Error while parsing digital collections", logger, e);
-        }
-
-        this.possibleDigitalCollection = DigitalCollection.getPossibleDigitalCollection();
-        this.digitalCollections = DigitalCollection.getDigitalCollections();
-
-        // if only one collection is possible take it directly
-        if (isSingleChoiceCollection()) {
-            this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
-        }
-    }
-
     @Override
     public List<String> getAllOpacCatalogues() {
         return ConfigOpac.getAllCatalogueTitles();
@@ -593,65 +427,6 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public List<ConfigOpacDoctype> getAllDoctypes() {
         return ConfigOpac.getAllDoctypes();
-    }
-
-    /*
-     * changed, so that on first request list gets set if there is only one
-     * choice
-     */
-    @Override
-    public List<String> getDigitalCollections() {
-        return this.digitalCollections;
-    }
-
-    @Override
-    public void setDigitalCollections(List<String> digitalCollections) {
-        this.digitalCollections = digitalCollections;
-    }
-
-    @Override
-    public Map<String, Boolean> getStandardFields() {
-        return this.standardFields;
-    }
-
-    @Override
-    public boolean isUseOpac() {
-        return this.useOpac;
-    }
-
-    @Override
-    public boolean isUseTemplates() {
-        return this.useTemplates;
-    }
-
-    @Override
-    public String getTifHeaderDocumentName() {
-        return this.tifHeaderDocumentName;
-    }
-
-    @Override
-    public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
-        this.tifHeaderDocumentName = tifHeaderDocumentName;
-    }
-
-    @Override
-    public String getTifHeaderImageDescription() {
-        return this.tifHeaderImageDescription.toString();
-    }
-
-    @Override
-    public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
-        this.tifHeaderImageDescription = new StringBuilder(tifHeaderImageDescription);
-    }
-
-    @Override
-    public Process getProzessKopie() {
-        return this.prozessKopie;
-    }
-
-    @Override
-    public void setProzessKopie(Process prozessKopie) {
-        this.prozessKopie = prozessKopie;
     }
 
     @Override
@@ -754,7 +529,7 @@ public class CopyProcess extends ProzesskopieForm {
          * Documentname ist im allgemeinen = Prozesstitel
          */
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
-        this.tifHeaderImageDescription = new StringBuilder();
+        StringBuilder tifHeaderImageDescriptionBuilder = new StringBuilder();
 
         // image description
         StringTokenizer tokenizer = new StringTokenizer(this.tifDefinition, "+");
@@ -763,10 +538,9 @@ public class CopyProcess extends ProzesskopieForm {
             String string = tokenizer.nextToken();
             // if the string begins and ends with ', then take over the content
             if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
-                this.tifHeaderImageDescription.append(string, 1, string.length() - 1);
+                tifHeaderImageDescriptionBuilder.append(string, 1, string.length() - 1);
             } else if (string.equals("$Doctype")) {
-
-                this.tifHeaderImageDescription.append(this.docType);
+                tifHeaderImageDescriptionBuilder.append(this.docType);
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
@@ -783,12 +557,12 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription
-                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        tifHeaderImageDescriptionBuilder.append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
         }
+        this.tifHeaderImageDescription = tifHeaderImageDescriptionBuilder.toString();
     }
 
     private void addPropertyForTemplate(Process template, Property property) {
