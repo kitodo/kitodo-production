@@ -585,6 +585,13 @@ section#content-section {
     width:100%;
 }
 
+.input.workflow-editor-checkbox {
+	width: auto;
+	padding-top: 16px;
+	padding-right: 10px;
+	margin-left: 10px;
+}
+
 .password {
     width: 100%;
     min-width: 200px;
