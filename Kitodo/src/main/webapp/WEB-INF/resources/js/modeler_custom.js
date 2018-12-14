@@ -26,5 +26,6 @@ $(window).on("load", function () {
 			var role = { name: $(this).text(), value: $(this).val() };
 			availableUserRoles.push(role);
 		});
+
 	});
 });
