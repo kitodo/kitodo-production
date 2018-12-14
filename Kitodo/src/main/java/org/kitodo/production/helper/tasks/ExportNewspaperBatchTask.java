@@ -47,7 +47,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.exporter.dms.ExportDms;
+import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;

@@ -40,7 +40,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UghHelperException;
-import org.kitodo.production.exporter.dms.ExportDms;
+import org.kitodo.export.ExportDms;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;

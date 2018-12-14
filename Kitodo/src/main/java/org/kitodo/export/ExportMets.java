@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.exporter.download;
+package org.kitodo.export;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,7 +29,6 @@ import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
-import org.kitodo.production.exporter.dms.ExportDmsCorrectRusdml;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
