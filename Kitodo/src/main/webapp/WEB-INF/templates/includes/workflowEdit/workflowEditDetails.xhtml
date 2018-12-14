@@ -24,41 +24,31 @@
 
     <p:panelGrid columns="2" layout="grid">
         <p:row>
-            <div>
-                <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
-                <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input"
-                             value="#{WorkflowForm.workflow.fileName}"
-                             required="true"/>
-                <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
+            <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
+            <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input"
+                         value="#{WorkflowForm.workflow.fileName}"
+                         required="true"/>
+            <div class="workflow-editor-hidden">
+	            <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
 
-                <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}" style="visibility: hidden">
-                    <f:selectItems value="#{WorkflowForm.roles}" />
-                </p:selectOneMenu>
+	            <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}">
+	                <f:selectItems value="#{WorkflowForm.roles}" />
+	            </p:selectOneMenu>
+	            <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
+	                             action="#{WorkflowForm.readXMLDiagram}"
+	                             rendered="#{WorkflowForm.workflow.fileName ne null}"
+	                             immediate="true"/>
             </div>
-
-            <div>
-                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
-                                 action="#{WorkflowForm.readXMLDiagram}"
-                                 rendered="#{WorkflowForm.workflow.fileName ne null}"
-                                 immediate="true"/>
-            </div>
-
         </p:row>
-
         <p:row>
-            <div>
-                <p:outputLabel for="active" value="#{msgs.active}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="input"
-                                         value="#{WorkflowForm.workflow.active}"
-                                         onchange="toggleSave()"/>
-            </div>
-
-            <div>
-                <p:outputLabel for="ready" value="#{msgs.ready}"/>
-                <p:selectBooleanCheckbox id="ready" styleClass="input"
-                                         value="#{WorkflowForm.workflow.ready}"
-                                         onchange="toggleSave()"/>
-            </div>
+            <p:outputLabel for="active" value="#{msgs.active}"/>
+            <p:selectBooleanCheckbox id="active" styleClass="input workflow-editor-checkbox"
+                                     value="#{WorkflowForm.workflow.active}"
+                                     onchange="toggleSave()"/>
+            <p:outputLabel for="ready" value="#{msgs.ready}"/>
+            <p:selectBooleanCheckbox id="ready" styleClass="input workflow-editor-checkbox"
+                                     value="#{WorkflowForm.workflow.ready}"
+                                     onchange="toggleSave()"/>
         </p:row>
     </p:panelGrid>
 
