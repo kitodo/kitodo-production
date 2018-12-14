@@ -29,6 +29,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
+import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -87,23 +88,19 @@ class ResponseHandler {
             try {
                 return parseXML(entity.getContent());
             } catch (IOException e) {
-                logger.error(e);
+                throw new ConfigException(e.getMessage());
             }
         }
-        return null;
+        throw new ConfigException("SRU response is null");
     }
 
     private static Document parseXML(InputStream xmlSteam) {
-        Document document = null;
-
         try {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            document = documentBuilder.parse(new InputSource(xmlSteam));
+            return documentBuilder.parse(new InputSource(xmlSteam));
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            logger.error(e);
+            throw new ConfigException(e.getMessage());
         }
-
-        return document;
     }
 
     private static int extractNumberOfRecords(Document document) {

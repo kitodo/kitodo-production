@@ -46,6 +46,7 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -105,10 +106,8 @@ public class ImportService {
      *
      * @param opac name of catalog whose search fields are loaded
      * @return list containing search fields
-     * @throws IllegalArgumentException thrown when configuration for catalog with name 'opac' cannot be found in
-     *                                  opac configuration file
      */
-    public List<String> getAvailableSearchFields(String opac) throws IllegalArgumentException {
+    public List<String> getAvailableSearchFields(String opac) {
         try {
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
             List<String> fields = new ArrayList<>();
@@ -126,9 +125,8 @@ public class ImportService {
      * Load catalog names from OPAC configuration file and return them as a list of Strings.
      *
      * @return list of catalog names
-     * @throws IllegalArgumentException thrown if no catalogs are configured in OPAC configuration file
      */
-    public List<String> getAvailableCatalogs() throws IllegalArgumentException {
+    public List<String> getAvailableCatalogs() {
         try {
             return OPACConfig.getCatalogs();
         } catch (IllegalArgumentException e) {
@@ -170,8 +168,7 @@ public class ImportService {
             }
             return outputter.output(saxBuilder.build(outputFile));
         } catch (JDOMException | IOException | TransformerException e) {
-            logger.error("Error in transforming the response in intern format : ", e);
-            return null;
+            throw new ConfigException("Error in transforming the response in intern format : ", e);
         }
     }
 
@@ -182,16 +179,14 @@ public class ImportService {
      * @return the String content of the given Document
      */
     private static String convertDocumentToString(Document doc) {
-        String xmlString = "";
         try {
             StringWriter writer = new StringWriter();
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            xmlString = writer.toString();
+            return writer.toString();
         } catch (TransformerException e) {
-            logger.error("This document '" + doc.getTextContent() + "' can not be converted to String");
+            throw new ConfigException("This document '" + doc.getTextContent() + "' can not be converted to String");
         }
-        return xmlString;
     }
 }
