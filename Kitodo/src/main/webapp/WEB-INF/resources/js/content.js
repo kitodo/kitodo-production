@@ -12,6 +12,12 @@
 function setContentHeight() {
     var panelWrapper = $('.ui-tabs-panels');
     panelWrapper.height(window.innerHeight - panelWrapper.offset().top - $('footer').height());
+
+    var editorWrapper = $('#workflow-editor-wrapper');
+    if (editorWrapper.length) {
+	    var sibling = $('#workflow-editor-wrapper').siblings().first();
+		editorWrapper.height(window.innerHeight - panelWrapper.offset().top - $('footer').height() - sibling.height() - 10);
+	}
 }
 
 window.addEventListener('load', setContentHeight);
