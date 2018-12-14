@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.config.OPACConfig;
+import org.kitodo.exceptions.ConfigException;
 import org.w3c.dom.Document;
 
 public class SRUImport implements ExternalDataImportInterface {
@@ -69,10 +70,9 @@ public class SRUImport implements ExternalDataImportInterface {
             URI queryURL = createQueryURI(queryParameters);
             return performQueryToDocument(queryURL.toString() + "&query=ead.id==" + id);
         } catch (URISyntaxException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new ConfigException(e.getLocalizedMessage());
         }
         // TODO: transform hit to Kitodo internal format using SchemaConverter!
-        return null;
     }
 
     @Override
@@ -80,11 +80,11 @@ public class SRUImport implements ExternalDataImportInterface {
         loadOPACConfiguration(catalogId);
         HashMap<String, String> searchFields = new HashMap<>();
         searchFields.put(field, term);
-        return search(catalogId, searchFields, rows);
+        return search(catalogId, searchFields);
     }
 
-    @Override
-    public SearchResult search(String catalogId, Map<String, String> searchParameters, int rows) {
+
+    private SearchResult search(String catalogId, Map<String, String> searchParameters) {
         // TODO: check how the fields of hits from SRU interfaces can be configured via CQL (need only title and id!)
         loadOPACConfiguration(catalogId);
         if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
@@ -135,10 +135,10 @@ public class SRUImport implements ExternalDataImportInterface {
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
                 return ResponseHandler.transformResponseToDocument(response);
             }
+            throw new ConfigException("SRU Request Failed");
         } catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new ConfigException(e.getLocalizedMessage());
         }
-        return null;
     }
 
     private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {

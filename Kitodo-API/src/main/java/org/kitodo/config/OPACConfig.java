@@ -113,14 +113,13 @@ public class OPACConfig {
         if (config != null) {
             return config;
         }
-        String configPfad = FilenameUtils.concat(KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG),
-                KitodoConfigFile.OPAC_CONFIGURATION.getName());
-        if (!new File(configPfad).exists()) {
-            String message = "File not found: ".concat(configPfad);
+        KitodoConfigFile kitodoConfigOpacFile = KitodoConfigFile.OPAC_CONFIGURATION;
+        if (!kitodoConfigOpacFile.exists()) {
+            String message = "File not found: " + kitodoConfigOpacFile.getAbsolutePath();
             throw new ConfigException(message, new FileNotFoundException(message));
         }
         try {
-            config = new XMLConfiguration(configPfad);
+            config = new XMLConfiguration(kitodoConfigOpacFile.getFile());
         } catch (ConfigurationException e) {
             logger.error(e);
             config = new XMLConfiguration();
