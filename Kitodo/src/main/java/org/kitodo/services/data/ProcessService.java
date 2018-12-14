@@ -2365,7 +2365,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the process to create the docket data for.
      * @return A List of DocketData objects
      */
-    public List<DocketData> getDocketData(List<Process> processes) {
+    private List<DocketData> getDocketData(List<Process> processes) {
         List<DocketData> docketData = new ArrayList<>();
         for (Process process : processes) {
             docketData.add(getDocketData(process));
