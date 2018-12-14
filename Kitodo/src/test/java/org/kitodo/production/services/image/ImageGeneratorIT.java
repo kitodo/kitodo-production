@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.service.image;
+package org.kitodo.production.services.image;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +40,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.model.Subfolder;
-import org.kitodo.production.services.image.ImageGenerator;
 
 public class ImageGeneratorIT {
 

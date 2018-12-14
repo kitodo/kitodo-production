@@ -54,7 +54,6 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.exporter.dms.ExportDms;
 import org.kitodo.production.exporter.download.ExportMets;
-import org.kitodo.production.exporter.download.ExportPdf;
 import org.kitodo.production.helper.GoobiScript;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
@@ -479,15 +478,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Export PDF.
      */
     public void exportPdf() {
-        ExportPdf export = new ExportPdf();
-        try {
-            export.startExport(this.process);
-            Helper.setMessage(EXPORT_FINISHED);
-        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
-                | ExportFileException | RuntimeException | JAXBException e) {
-            Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
-                logger, e);
-        }
+        Helper.setErrorMessage("Not implemented");
     }
 
     /**

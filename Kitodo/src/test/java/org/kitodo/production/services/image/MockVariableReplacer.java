@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.service.image;
+package org.kitodo.production.services.image;
 
 import org.kitodo.production.helper.VariableReplacer;
 
