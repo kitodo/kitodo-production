@@ -33,7 +33,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.export.ExportXmlLog;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -55,6 +54,7 @@ import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.ExportXmlLog;
 import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.exporter.download.ExportPdf;
