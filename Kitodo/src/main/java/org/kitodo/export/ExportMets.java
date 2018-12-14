@@ -78,7 +78,7 @@ public class ExportMets {
 
         String targetFileName = atsPpnBand + "_mets.xml";
         URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
-        return writeMetsFile(process, metaFile, gdzfile, false);
+        return writeMetsFile(process, metaFile, gdzfile);
     }
 
     /**
@@ -110,11 +110,10 @@ public class ExportMets {
      *            true or false
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, JAXBException {
+    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile)
+            throws PreferencesException, WriteException, IOException, JAXBException {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
-        mm.setWriteLocal(writeLocalFilegroup);
         mm = ServiceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {
             mm.write(metaFile.getRawPath());

@@ -321,8 +321,7 @@ public class ExportDms extends ExportMets {
         }
         if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS) {
             // if METS, then write by writeMetsFile...
-            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile,
-                false);
+            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
         } else {
             // ...if not, just write a fileformat
             gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
@@ -331,7 +330,7 @@ public class ExportDms extends ExportMets {
         // if necessary, METS and RDF should be written in the export
         if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS_AND_RDF) {
             writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".mets.xml"),
-                gdzfile, false);
+                gdzfile);
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
@@ -390,8 +389,7 @@ public class ExportDms extends ExportMets {
             throws IOException, PreferencesException, WriteException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile,
-                false);
+            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);
         } else {
             gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
         }
