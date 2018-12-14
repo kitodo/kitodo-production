@@ -36,7 +36,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -354,9 +354,9 @@ public class MetadataValidationService {
     private List<String> checkConfiguredValidationValues(DocStructInterface docStruct, ArrayList<String> errorList,
             PrefsInterface prefs, String language) {
         // open configuration and read the validation details
-        ConfigProjects cp;
+        ConfigProject cp;
         try {
-            cp = new ConfigProjects(this.process.getProject().getTitle());
+            cp = new ConfigProject(this.process.getProject().getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(process.getTitle(), logger, e);
             return errorList;

@@ -25,12 +25,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
 
-public class ConfigProjects {
+public class ConfigProject {
     private XMLConfiguration config;
-    private String projektTitel;
-    private static final Logger logger = LogManager.getLogger(ConfigProjects.class);
+    private String projectTitle;
+    private static final Logger logger = LogManager.getLogger(ConfigProject.class);
 
-    public ConfigProjects(String projectTitle) throws IOException {
+    public ConfigProject(String projectTitle) throws IOException {
         this(projectTitle, KitodoConfigFile.PROJECT_CONFIGURATION);
     }
 
@@ -42,7 +42,7 @@ public class ConfigProjects {
      * @param configFile
      *            config file as KitodoFile
      */
-    public ConfigProjects(String projectTitle, KitodoConfigFile configFile) throws IOException {
+    public ConfigProject(String projectTitle, KitodoConfigFile configFile) throws IOException {
         if (!configFile.exists()) {
             throw new IOException("File not found: " + configFile.getAbsolutePath());
         }
@@ -59,15 +59,15 @@ public class ConfigProjects {
         for (int i = 0; i <= countProjects; i++) {
             String title = this.config.getString("project(" + i + ")[@name]");
             if (title.equals(projectTitle)) {
-                this.projektTitel = "project(" + i + ").";
+                this.projectTitle = "project(" + i + ").";
                 break;
             }
         }
 
         try {
-            this.config.getBoolean(this.projektTitel + "createNewProcess.opac[@use]");
+            this.config.getBoolean(this.projectTitle + "createNewProcess.opac[@use]");
         } catch (NoSuchElementException e) {
-            this.projektTitel = "project(0).";
+            this.projectTitle = "project(0).";
         }
 
     }
@@ -80,7 +80,7 @@ public class ConfigProjects {
     public String getParamString(String inParameter) {
         try {
             this.config.setListDelimiter('&');
-            String rueckgabe = this.config.getString(this.projektTitel + inParameter);
+            String rueckgabe = this.config.getString(this.projectTitle + inParameter);
             return cleanXmlFormattedString(rueckgabe);
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
@@ -97,7 +97,7 @@ public class ConfigProjects {
     public String getParamString(String inParameter, String inDefaultIfNull) {
         try {
             this.config.setListDelimiter('&');
-            String myParam = this.projektTitel + inParameter;
+            String myParam = this.projectTitle + inParameter;
             String rueckgabe = this.config.getString(myParam, inDefaultIfNull);
             return cleanXmlFormattedString(rueckgabe);
         } catch (RuntimeException e) {
@@ -123,7 +123,7 @@ public class ConfigProjects {
      */
     public boolean getParamBoolean(String inParameter) {
         try {
-            return this.config.getBoolean(this.projektTitel + inParameter);
+            return this.config.getBoolean(this.projectTitle + inParameter);
         } catch (RuntimeException e) {
             return false;
         }
@@ -136,7 +136,7 @@ public class ConfigProjects {
      */
     public long getParamLong(String inParameter) {
         try {
-            return this.config.getLong(this.projektTitel + inParameter);
+            return this.config.getLong(this.projectTitle + inParameter);
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             return 0;
@@ -150,7 +150,7 @@ public class ConfigProjects {
      */
     public List<String> getParamList(String inParameter) {
         try {
-            List<Object> configs = this.config.getList(this.projektTitel + inParameter);
+            List<Object> configs = this.config.getList(this.projectTitle + inParameter);
             return configs.stream().map(object -> Objects.toString(object, null))
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {

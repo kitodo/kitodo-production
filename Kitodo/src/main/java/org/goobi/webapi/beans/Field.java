@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
-import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Project;
 
 @XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })
@@ -51,7 +51,7 @@ public class Field {
     public static List<Field> getFieldConfigForProject(Project project) throws IOException {
         List<Field> fields = new ArrayList<>();
 
-        ConfigProjects projectConfig = new ConfigProjects(project.getTitle());
+        ConfigProject projectConfig = new ConfigProject(project.getTitle());
         Integer numFields = projectConfig.getParamList("createNewProcess.itemlist.item").size();
 
         for (Integer field = 0; field < numFields; field++) {

@@ -60,7 +60,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.ConfigProject;
 import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -320,9 +320,9 @@ public class ProzesskopieForm implements Serializable {
 
     private void readProjectConfigs() {
         // projektabhängig die richtigen Felder in der Gui anzeigen
-        ConfigProjects cp;
+        ConfigProject cp;
         try {
-            cp = new ConfigProjects(this.project.getTitle());
+            cp = new ConfigProject(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -1583,7 +1583,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     protected String getTitleDefinition(String projectTitle, String docType) throws IOException {
-        ConfigProjects cp = new ConfigProjects(projectTitle);
+        ConfigProject cp = new ConfigProject(projectTitle);
         int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
         String titleDefinition = "";
 
@@ -1699,9 +1699,9 @@ public class ProzesskopieForm implements Serializable {
      * Calculate tiff header.
      */
     public void calculateTiffHeader() {
-        ConfigProjects cp;
+        ConfigProject cp;
         try {
-            cp = new ConfigProjects(this.project.getTitle());
+            cp = new ConfigProject(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
