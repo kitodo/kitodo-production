@@ -179,6 +179,15 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
+    /**
+     * Returns the workpiece of the legacy METS/MODS digital document helper.
+     * 
+     * @return the workpiece
+     */
+    public MetsXmlElementAccessInterface getWorkpiece() {
+        return workpiece;
+    }
+
     @Override
     public void overrideContentFiles(List<String> images) {
         //TODO remove

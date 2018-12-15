@@ -175,6 +175,18 @@ public class Subfolder {
     }
 
     /**
+     * Returns the canonical part of the file name for a given URI.
+     * 
+     * @param uri
+     *            URI for which the canonical part of the file name should be
+     *            returned
+     * @return the canonical part of the file name
+     */
+    public String getCanonical(URI uri) {
+        return createKeyMapperForPattern(determineDirectoryAndFileNamePattern().getRight()).apply(uri);
+    }
+
+    /**
      * Returns a file format by its MIME type, if any.
      */
     public FileFormat getFileFormat() {

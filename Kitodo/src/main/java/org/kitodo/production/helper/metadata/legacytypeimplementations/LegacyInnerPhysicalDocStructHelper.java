@@ -56,7 +56,7 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
      * A constant for local use. We cannot make this constant constant because
      * the service loader is an instance variable.
      */
-    private final UseXmlAttributeAccessInterface local = metsService.createUseXmlAttributeAccess();
+    public final UseXmlAttributeAccessInterface local = metsService.createUseXmlAttributeAccess();
 
     {
         local.setUse("LOCAL");
