@@ -40,13 +40,13 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.UghHelperException;
-import org.kitodo.forms.ProzesskopieForm;
-import org.kitodo.helper.AdditionalField;
-import org.kitodo.helper.BeanHelper;
-import org.kitodo.helper.Helper;
-import org.kitodo.helper.UghHelper;
-import org.kitodo.legacy.UghImplementation;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.forms.ProzesskopieForm;
+import org.kitodo.production.helper.AdditionalField;
+import org.kitodo.production.helper.BeanHelper;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.UghHelper;
+import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.services.ServiceManager;
 
 public class CopyProcess extends ProzesskopieForm {
 

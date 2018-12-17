@@ -31,7 +31,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.helper.Helper;
+import org.kitodo.production.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {

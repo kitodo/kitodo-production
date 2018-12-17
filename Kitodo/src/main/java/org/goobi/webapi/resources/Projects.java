@@ -27,7 +27,7 @@ import org.goobi.webapi.beans.ProjectsRootNode;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * The CatalogueConfiguration class provides the Jersey API URL pattern

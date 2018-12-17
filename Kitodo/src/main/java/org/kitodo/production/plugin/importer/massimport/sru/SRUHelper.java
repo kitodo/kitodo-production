@@ -41,7 +41,7 @@ import org.kitodo.api.ugh.PicaPlusInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.legacy.UghImplementation;
+import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;

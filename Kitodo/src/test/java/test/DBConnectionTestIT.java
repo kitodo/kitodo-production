@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.services.ServiceManager;
 
 public class DBConnectionTestIT {
 

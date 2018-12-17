@@ -26,8 +26,8 @@ import org.joda.time.Duration;
 import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.ConfigParameterException;
-import org.kitodo.helper.Helper;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 
 public class ConfigCore extends KitodoConfig {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);

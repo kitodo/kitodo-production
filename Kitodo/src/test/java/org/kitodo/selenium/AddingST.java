@@ -43,7 +43,7 @@ import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.services.ServiceManager;
 
 public class AddingST extends BaseTestSelenium {
 

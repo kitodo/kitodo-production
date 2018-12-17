@@ -294,7 +294,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *
      * @param preferences
      *            UGH preferences
-     * @see org.kitodo.services.data.RulesetService#getPreferences(org.kitodo.data.database.beans.Ruleset)
+     * @see org.kitodo.production.services.data.RulesetService#getPreferences(org.kitodo.data.database.beans.Ruleset)
      */
     public void setPreferences(PrefsInterface preferences) {
         invokeQuietly(plugin, setPreferences, preferences, null);

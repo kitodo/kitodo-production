@@ -21,21 +21,21 @@
     <!-- Bean for metadata processing -->
     <managed-bean>
         <managed-bean-name>MetadataProcessor</managed-bean-name>
-        <managed-bean-class>org.kitodo.metadata.MetadataProcessor</managed-bean-class>
+        <managed-bean-class>org.kitodo.production.metadata.MetadataProcessor</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean for metadata lock -->
     <managed-bean>
         <managed-bean-name>MetadataLock</managed-bean-name>
-        <managed-bean-class>org.kitodo.metadata.MetadataLock</managed-bean-class>
+        <managed-bean-class>org.kitodo.production.metadata.MetadataLock</managed-bean-class>
         <managed-bean-scope>application</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für lang laufende (administrative) Aufgaben -->
     <managed-bean>
         <managed-bean-name>LongRunningTasksForm</managed-bean-name>
-        <managed-bean-class>org.kitodo.forms.LongRunningTasksForm</managed-bean-class>
+        <managed-bean-class>org.kitodo.production.forms.LongRunningTasksForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 

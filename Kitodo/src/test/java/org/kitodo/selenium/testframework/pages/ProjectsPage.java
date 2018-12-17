@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.enums.ObjectType;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;

@@ -29,7 +29,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

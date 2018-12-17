@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.model.bibliography.Citation;
+import org.kitodo.production.model.bibliography.Citation;
 
 /**
  * The class Hit represents a hit retrieved from the search plug-in.

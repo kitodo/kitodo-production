@@ -25,7 +25,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.services.ServiceManager;
 
 public class ListingSessionClientST extends BaseTestSelenium {
 
