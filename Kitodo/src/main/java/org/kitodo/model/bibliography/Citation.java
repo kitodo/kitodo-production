@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.model.bibliography;
+package org.kitodo.model.bibliography;
 
 import java.util.ArrayList;
 import java.util.Collection;

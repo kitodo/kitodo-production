@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.model.bibliography.course;
+package org.kitodo.model.bibliography.course;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.ISODateTimeFormat;
