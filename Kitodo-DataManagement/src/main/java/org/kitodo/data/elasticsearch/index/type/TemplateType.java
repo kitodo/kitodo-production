@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 
 public class TemplateType extends BaseType<Template> {
@@ -39,6 +40,9 @@ public class TemplateType extends BaseType<Template> {
         int docket = template.getDocket() != null ? template.getDocket().getId() : 0;
         jsonObjectBuilder.add(TemplateTypeField.DOCKET.getKey(), docket);
         jsonObjectBuilder.add(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
+        if (template.getProjects().isEmpty()) {
+            jsonObjectBuilder.add(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID, 0);
+        }
         jsonObjectBuilder.add(TemplateTypeField.TASKS.getKey(), addObjectRelation(template.getTasks(), true));
 
         return jsonObjectBuilder.build();

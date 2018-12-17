@@ -1162,7 +1162,6 @@ public class ProcessForm extends TemplateBaseForm {
      *            boolean flag signaling whether inactive projects should be
      *            displayed or not
      */
-    @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
         ServiceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
@@ -1174,7 +1173,6 @@ public class ProcessForm extends TemplateBaseForm {
      * @return parameter controlling whether inactive projects should be displayed
      *         or not
      */
-    @Override
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }

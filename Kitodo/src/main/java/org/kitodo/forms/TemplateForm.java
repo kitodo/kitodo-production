@@ -48,7 +48,6 @@ public class TemplateForm extends TemplateBaseForm {
 
     private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
-    private boolean showInactiveProjects = false;
     private Template template;
     private Task task;
     private boolean showInactiveTemplates = false;
@@ -80,28 +79,6 @@ public class TemplateForm extends TemplateBaseForm {
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
         ServiceManager.getTemplateService().setShowInactiveTemplates(showInactiveTemplates);
-    }
-
-    /**
-     * Check if inactive projects should be shown.
-     *
-     * @return true or false
-     */
-    @Override
-    public boolean isShowInactiveProjects() {
-        return this.showInactiveProjects;
-    }
-
-    /**
-     * Set if inactive projects should be shown.
-     *
-     * @param showInactiveProjects
-     *            true or false
-     */
-    @Override
-    public void setShowInactiveProjects(boolean showInactiveProjects) {
-        this.showInactiveProjects = showInactiveProjects;
-        ServiceManager.getTemplateService().setShowInactiveProjects(showInactiveProjects);
     }
 
     /**

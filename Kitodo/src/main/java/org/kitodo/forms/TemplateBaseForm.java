@@ -23,30 +23,10 @@ import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class TemplateBaseForm extends BaseForm {
+class TemplateBaseForm extends BaseForm {
 
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
-    private boolean showInactiveProjects = false;
-
-    /**
-     * Check if inactive projects should be shown.
-     *
-     * @return true or false
-     */
-    public boolean isShowInactiveProjects() {
-        return this.showInactiveProjects;
-    }
-
-    /**
-     * Set if inactive projects should be shown.
-     *
-     * @param showInactiveProjects
-     *            true or false
-     */
-    public void setShowInactiveProjects(boolean showInactiveProjects) {
-        this.showInactiveProjects = showInactiveProjects;
-    }
 
     void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {

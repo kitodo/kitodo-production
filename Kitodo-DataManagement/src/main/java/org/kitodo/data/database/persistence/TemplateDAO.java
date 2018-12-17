@@ -93,21 +93,6 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     /**
-     * Get process templates for users.
-     *
-     * @param projects
-     *            list of project ids fof user's projects
-     * @return list of all process templates for user as Process objects
-     */
-    public List<Template> getTemplatesForUser(List<Integer> projects) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projects", projects);
-        return getByQuery(
-            "SELECT t FROM Template AS t JOIN t.projects AS p WHERE p.id IN (:projects) ORDER BY t.title ASC",
-            parameters);
-    }
-
-    /**
      * Get all active templates.
      *
      * @return list of all active templates as Template objects

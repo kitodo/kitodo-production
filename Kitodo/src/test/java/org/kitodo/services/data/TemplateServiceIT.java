@@ -11,7 +11,6 @@
 
 package org.kitodo.services.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -74,14 +73,6 @@ public class TemplateServiceIT {
     public void shouldGetTemplatesWithTitle() {
         List<Template> templates = templateService.getProcessTemplatesWithTitle("First template");
         assertEquals("Incorrect size of templates with given title!", 1, templates.size());
-    }
-
-    @Test
-    public void shouldGetTemplatesForUser() {
-        List<Integer> projects = new ArrayList<>();
-        projects.add(1);
-        List<Template> templates = templateService.getProcessTemplatesForUser(projects);
-        assertEquals("Incorrect size of templates for given projects", 1, templates.size());
     }
 
     @Test
