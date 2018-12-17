@@ -68,7 +68,6 @@ class OpacCatalogues {
                 if (config.getString("catalogue(" + i + ").config[@scheme]") != null) {
                     scheme = config.getString("catalogue(" + i + ").config[@scheme]");
                 }
-                config.getString("catalogue(" + i + ").config[@scheme]");
                 String address = config.getString("catalogue(" + i + ").config[@address]");
                 String database = config.getString("catalogue(" + i + ").config[@database]");
                 String ucnf = config.getString("catalogue(" + i + ").config[@ucnf]", "");
