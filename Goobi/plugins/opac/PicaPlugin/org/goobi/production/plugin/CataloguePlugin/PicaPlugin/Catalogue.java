@@ -34,6 +34,7 @@ class Catalogue {
     private static final Logger logger = Logger.getLogger(Catalogue.class);
     private final String title;
     private final String description;
+    private final String scheme;
     private final String address;
     private final String database;
     private final int port;
@@ -42,11 +43,12 @@ class Catalogue {
     private final List<Setvalue> beautify;
     private final Map<String,ResolveRule> resolveRules = new HashMap<>();
 
-    Catalogue(String title, String description, String address, String database, int port, String charset,
+    Catalogue(String title, String description, String scheme, String address, String database, int port, String charset,
             String ucnf, List<Setvalue> beautifySetList, Collection<ResolveRule> resolveRules) {
 
         this.title = title;
         this.description = description;
+        this.scheme = scheme;
         this.address = address;
         this.database = database;
         this.port = port;
@@ -64,6 +66,10 @@ class Catalogue {
 
     String getDescription() {
         return description;
+    }
+
+    String getScheme() {
+        return scheme;
     }
 
     String getAddress() {
