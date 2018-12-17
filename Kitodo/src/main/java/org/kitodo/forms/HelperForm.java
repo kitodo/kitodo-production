@@ -18,12 +18,12 @@ import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.production.version.KitodoVersion;
 
 /**
  * Helper form - used for some single methods which don't match yet to other
@@ -35,7 +35,7 @@ public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
 
     public String getVersion() {
-        return GoobiVersion.getBuildversion();
+        return KitodoVersion.getBuildVersion();
     }
 
     public boolean getAnonymized() {

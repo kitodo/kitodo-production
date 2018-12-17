@@ -9,26 +9,26 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production;
+package org.kitodo.production.version;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-public class GoobiVersion {
+public class KitodoVersion {
 
     private static String version = "N/A";
-    private static String buildversion = "N/A";
-    private static String builddate = "N/A";
+    private static String buildVersion = "N/A";
+    private static String buildDate = "N/A";
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private GoobiVersion() {
+    private KitodoVersion() {
 
     }
 
     /**
-     * Setup GoobiVersion form manifest.
+     * Setup KitodoVersion form manifest.
      *
      * @param manifest as Manifest
      */
@@ -36,8 +36,8 @@ public class GoobiVersion {
         Attributes mainAttributes = manifest.getMainAttributes();
 
         version = getValueOrThrowException(mainAttributes, "Implementation-Version");
-        buildversion = version;
-        builddate = getValueOrThrowException(mainAttributes, "Implementation-Build-Date");
+        buildVersion = version;
+        buildDate = getValueOrThrowException(mainAttributes, "Implementation-Build-Date");
     }
 
     private static String getValueOrThrowException(Attributes attributes, String attributeName) {
@@ -53,11 +53,11 @@ public class GoobiVersion {
         return version;
     }
 
-    public static String getBuildversion() {
-        return buildversion;
+    public static String getBuildVersion() {
+        return buildVersion;
     }
 
-    public static String getBuilddate() {
-        return builddate;
+    public static String getBuildDate() {
+        return buildDate;
     }
 }
