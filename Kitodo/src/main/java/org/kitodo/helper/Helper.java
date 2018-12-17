@@ -87,7 +87,7 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setErrorMessage(String message, String description) {
-        setMessage(null, message, description != null ? description : "", false);
+        setMessage(null, message, description, false);
     }
 
     /**
@@ -101,7 +101,7 @@ public class Helper implements Observer, Serializable {
      *            additional information to message
      */
     public static void setErrorMessage(String control, String message, String description) {
-        setMessage(control, message, description != null ? description : "", false);
+        setMessage(control, message, description, false);
     }
 
     /**
