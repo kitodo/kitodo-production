@@ -17,6 +17,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -188,10 +189,18 @@ public class Subfolder {
 
     /**
      * Returns a file format by its MIME type, if any.
+     * 
+     * @return the file format, if any
      */
     public FileFormat getFileFormat() {
         try {
-            return FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
+            Optional<FileFormat> optionalFileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType());
+            if (optionalFileFormat.isPresent()) {
+                return optionalFileFormat.get();
+            } else {
+                throw new NoSuchElementException(
+                        "kitodo_fileFormats.xml has no <fileFormat mimeType=\"" + folder.getMimeType() + "\">");
+            }
         } catch (JAXBException e) {
             throw new UndeclaredThrowableException(e);
         }

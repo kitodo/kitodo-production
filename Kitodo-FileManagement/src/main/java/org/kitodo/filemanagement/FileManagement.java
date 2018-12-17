@@ -116,10 +116,13 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public void copy(URI sourceUri, URI targetUri) throws IOException {
         sourceUri = fileMapper.mapUriToKitodoDataDirectoryUri(sourceUri);
+        boolean isDirectory = targetUri.getPath().endsWith("/");
         targetUri = fileMapper.mapUriToKitodoDataDirectoryUri(targetUri);
+        String targetPath = targetUri.getPath();
+        File targetFile = new File(targetPath);
         if (!fileExist(sourceUri)) {
             throw new FileNotFoundException();
-        } else if (isFile(sourceUri) && targetUri.getPath().contains(".")) {
+        } else if (isFile(sourceUri) && ((targetFile.exists() && !targetFile.isDirectory()) || !isDirectory)) {
             copyFile(new File(sourceUri), new File(targetUri));
         } else if (isFile(sourceUri)) {
             copyFileToDirectory(new File(sourceUri), new File(targetUri));

@@ -116,16 +116,18 @@ public class ExportMets {
 
         MetsXmlElementAccessInterface workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();
         ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
-
         /*
          * We write to the user’s home directory or to the hotfolder here, not
          * to a content repository, therefore no use of file service.
-         * 
-         * TODO: Add XSLT processing here. E.g., save() the workpiece to a
-         * ByteArrayOutputStream and pass its content to the XSLT processor,
-         * then write the result of the XSLT processor to the file.
          */
-        workpiece.save(new BufferedOutputStream(new FileOutputStream(new File(metaFile))));
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
+            /*
+             * TODO: Add XSLT processing here. E.g., save() the workpiece to a
+             * ByteArrayOutputStream and pass its content to the XSLT processor,
+             * then write the result of the XSLT processor to the file.
+             */
+            workpiece.save(out);
+        }
 
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;

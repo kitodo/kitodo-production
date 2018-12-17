@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Optional;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
@@ -81,11 +82,22 @@ public class LegacyPrefsHelper implements PrefsInterface {
             case "physPageNumber":
                 return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER;
             default:
-                User user = new MetadataProcessor().getCurrentUser();
-                String metadataLanguage = user != null ? user.getMetadataLanguage()
-                        : Helper.getRequestParameter("Accept-Language");
-                List<LanguageRange> priorityList = LanguageRange
-                        .parse(metadataLanguage != null ? metadataLanguage : "en");
+                List<LanguageRange> priorityList;
+
+                try {
+                    User user = new MetadataProcessor().getCurrentUser();
+                    String metadataLanguage = user != null ? user.getMetadataLanguage()
+                            : Helper.getRequestParameter("Accept-Language");
+                    priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
+                } catch (NullPointerException e) {
+                    /*
+                     * new Metadaten() throws a NullPointerException in
+                     * asynchronous export because there is no Faces context
+                     * then.
+                     */
+                    logger.catching(Level.TRACE, e);
+                    priorityList = LanguageRange.parse("en");
+                }
                 StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("", "edit",
                     priorityList);
                 List<MetadataViewWithValuesInterface<Void>> entryViews = divisionView

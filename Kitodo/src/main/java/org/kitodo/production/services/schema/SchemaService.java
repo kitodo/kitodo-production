@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
@@ -30,6 +29,7 @@ import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyInnerPhysicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -63,8 +63,8 @@ public class SchemaService {
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(
-                new LegacyMetsModsDigitalDocumentHelper((RulesetManagementInterface) prefs, workpiece), prefs, process,
-                null);
+                new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset(), workpiece), prefs,
+                process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece, process);
 
@@ -108,9 +108,9 @@ public class SchemaService {
              * linking mode NO or has linking mode EXISTING but the file does
              * not exist, remove it.
              */
-            for (Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface> fileForVariant : mediaUnit
-                    .getAllUsesWithFLocats()) {
-                String use = fileForVariant.getKey().getUse();
+            for (Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface> mediaFileForMediaVariant
+                    : mediaUnit.getAllUsesWithFLocats()) {
+                String use = mediaFileForMediaVariant.getKey().getUse();
                 Optional<Folder> optionalFolderForUse = folders.parallelStream()
                         .filter(folder -> use.equals(folder.getFileGroup())).findAny();
                 if (!optionalFolderForUse.isPresent()
@@ -118,7 +118,7 @@ public class SchemaService {
                         || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
                                 && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
                                         .isPresent())) {
-                    mediaUnit.removeFLocatForUse(fileForVariant.getKey());
+                    mediaUnit.removeFLocatForUse(mediaFileForMediaVariant.getKey());
                 }
             }
 
@@ -176,7 +176,6 @@ public class SchemaService {
         mediaVariant.setUse(useFolder.getFolder().getFileGroup());
         mediaVariant.setMimeType(useFolder.getFolder().getMimeType());
         FLocatXmlElementAccessInterface mediaFile = METS_SERVICE.createFLocatXmlElementAccess();
-        useFolder.getUri(canonical);
         mediaFile.setUri(useFolder.getUri(canonical));
         mediaUnit.putFLocatForUse(mediaVariant, mediaFile);
     }

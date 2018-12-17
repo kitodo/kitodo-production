@@ -11,6 +11,10 @@
 
 package org.kitodo.filemanagement;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -32,10 +36,6 @@ import org.junit.Test;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 public class FileManagementTest {
 
@@ -167,7 +167,7 @@ public class FileManagementTest {
         assertTrue(fileManagement.fileExist(oldUri));
         assertEquals(resource, oldUri);
 
-        fileManagement.copy(resource, URI.create("fileTest/newDirectory"));
+        fileManagement.copy(resource, URI.create("fileTest/newDirectory/"));
         URI newUri = URI.create("fileTest/newDirectory/fileToCopy.xml");
         assertTrue(fileManagement.fileExist(oldUri));
         assertTrue(fileManagement.fileExist(newUri));

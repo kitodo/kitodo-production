@@ -16,11 +16,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -170,7 +172,7 @@ public class ExportDms extends ExportMets {
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
             // TODO: I have got here value usr/local/kitodo/hotfolder
-            zielVerzeichnis = URI.create(process.getProject().getDmsImportImagesPath());
+            zielVerzeichnis = new File(process.getProject().getDmsImportImagesPath()).toURI();
             userHome = zielVerzeichnis;
 
             // if necessary, create process folder
@@ -218,18 +220,23 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
-        String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
-        if (Objects.nonNull(rules)) {
-            try {
-                new DataCopier(rules).process(new CopierData(gdzfile, process));
-            } catch (ConfigurationException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                } else {
-                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+        try {
+            String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
+            if (Objects.nonNull(rules)) {
+                try {
+                    new DataCopier(rules).process(new CopierData(gdzfile, process));
+                } catch (ConfigurationException e) {
+                    if (exportDmsTask != null) {
+                        exportDmsTask.setException(e);
+                    } else {
+                        Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+                    }
+                    return false;
                 }
-                return false;
             }
+        } catch (NoSuchElementException e) {
+            logger.catching(Level.TRACE, e);
+            // no configuration simply means here is nothing to do
         }
         return true;
     }
@@ -465,7 +472,7 @@ public class ExportDms extends ExportMets {
     private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
-            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            URI destination = userHome.resolve(atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
@@ -500,7 +507,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setWorkDetail(fileService.getFileName(file));
                 }
-                URI target = destination.resolve(File.separator + fileService.getFileName(file));
+                URI target = destination.resolve(fileService.getFileName(file));
                 fileService.copyFile(file, target);
             }
         }

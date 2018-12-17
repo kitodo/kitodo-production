@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -30,6 +31,7 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileSetInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -47,7 +49,8 @@ import org.kitodo.production.services.file.FileService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInterface, MetsModsInterface {
+public class LegacyMetsModsDigitalDocumentHelper
+        implements DigitalDocumentInterface, MetsModsInterface, MetsModsImportExportInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
 
     private static final MetsService metsService = ServiceManager.getMetsService();
@@ -84,10 +87,10 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
             this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
         } catch (NullPointerException e) {
             /*
-             * new Metadaten() throws a NullPointerException in JUnit tests
-             * because there is no Faces context then.
+             * new Metadaten() throws a NullPointerException in asynchronous
+             * export because there is no Faces context then.
              */
-            logger.catching(e);
+            logger.catching(Level.TRACE, e);
             this.priorityList = LanguageRange.parse("en");
         }
     }
@@ -279,5 +282,109 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
         }
         logger.error(buffer.toString());
         return exception;
+    }
+
+    @Override
+    public void setContentIDs(String contentIDs) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setDigiprovPresentation(String digiprovPresentation) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setDigiprovReference(String digiprovReference) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setMptrAnchorUrl(String mptrAnchorUrl) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setMptrUrl(String mptrUrl) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setPurlUrl(String purlUrl) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setRightsOwner(String rightsOwner) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setRightsOwnerContact(String rightsOwnerContact) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setRightsOwnerLogo(String rightsOwnerLogo) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
+    }
+
+    @Override
+    public void setWriteLocal(boolean writeLocalFileGroup) {
+        /*
+         * This is already done by the schema service. There is nothing to do
+         * here.
+         */
     }
 }
