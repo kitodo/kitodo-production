@@ -459,7 +459,7 @@ class CatalogueClient {
      *             If the connection failed
      */
     private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
-        String request = catalogue.getSchema() + "://" + catalogue.getAddress()
+        String request = catalogue.getScheme() + "://" + catalogue.getAddress()
                 + (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url
                 + catalogue.getUncf();
 
