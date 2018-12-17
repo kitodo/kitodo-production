@@ -124,11 +124,11 @@ public class FileLoader {
         content.add("<bpmn:sequenceFlow id=\"SequenceFlow_0f2vwms\" sourceRef=\"StartEvent_1\" targetRef=\"Task_1\" />");
         content.add("<bpmn:sequenceFlow id=\"SequenceFlow_1jf1dm1\" sourceRef=\"Task_1\" targetRef=\"ScriptTask_1\" />");
         content.add("<bpmn:sequenceFlow id=\"SequenceFlow_1jf1dm2\" sourceRef=\"ScriptTask_1\" targetRef=\"EndEvent_1\" />");
-        content.add("<bpmn:task id=\"Task_1\" name=\"Say hello\" template:priority=\"1\">");
+        content.add("<bpmn:task id=\"Task_1\" name=\"Say hello\" template:priority=\"1\" template:permittedUserRole=\"1\">");
         content.add("<bpmn:incoming>SequenceFlow_0f2vwms</bpmn:incoming>");
         content.add("<bpmn:outgoing>SequenceFlow_1jf1dm1</bpmn:outgoing>");
         content.add("</bpmn:task>");
-        content.add("<bpmn:scriptTask id=\"ScriptTask_1\" name=\"Execute script\" template:priority=\"2\" template:scriptName=\"Test script\">");
+        content.add("<bpmn:scriptTask id=\"ScriptTask_1\" name=\"Execute script\" template:permittedUserRole=\"1\" template:priority=\"2\" template:scriptName=\"Test script\">");
         content.add("<bpmn:incoming>SequenceFlow_1jf1dm1</bpmn:incoming>");
         content.add("<bpmn:outgoing>SequenceFlow_1jf1dm2</bpmn:outgoing>");
         content.add("</bpmn:scriptTask>");
@@ -270,7 +270,7 @@ public class FileLoader {
     private static List<String> prepareDiagram() {
         List<String> content = new ArrayList<>();
         content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        content.add("<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">");
+        content.add("<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" xmlns:template=\"http://www.kitodo.org/template\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">");
         content.add("<bpmn:process id=\"say_hello\" name=\"say-hello\" isExecutable=\"true\">");
         content.add("<bpmn:startEvent id=\"StartEvent_1\" name=\"Start Event\">");
         content.add("<bpmn:outgoing>SequenceFlow_0f2vwms</bpmn:outgoing>");
@@ -280,7 +280,7 @@ public class FileLoader {
         content.add("</bpmn:endEvent>");
         content.add("<bpmn:sequenceFlow id=\"SequenceFlow_0f2vwms\" sourceRef=\"StartEvent_1\" targetRef=\"ScriptTask_1\" />");
         content.add("<bpmn:sequenceFlow id=\"SequenceFlow_1jf1dm1\" sourceRef=\"ScriptTask_1\" targetRef=\"EndEvent_1\" />");
-        content.add("<bpmn:scriptTask id=\"ScriptTask_1\" name=\"Say hello\">");
+        content.add("<bpmn:scriptTask id=\"ScriptTask_1\" name=\"Say hello\" template:permittedUserRole=\"1\">");
         content.add("<bpmn:extensionElements>");
         content.add("<camunda:inputOutput>");
         content.add("<camunda:inputParameter name=\"name\" />");

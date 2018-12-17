@@ -61,7 +61,7 @@ public class WorkflowFormTest {
         String fileName = "test";
         String fileNameWithExtension = fileName + ".bpmn20.xml";
 
-        String xmlDiagram = "<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">\n" +
+        String xmlDiagram = "<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:template=\"http://www.kitodo.org/template\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">\n" +
                 "  <bpmn:process id=\"say_hello\" name=\"say-hello\" isExecutable=\"true\">\n" +
                 "    <bpmn:startEvent id=\"StartEvent_1\" name=\"Start Event\">\n" +
                 "      <bpmn:outgoing>SequenceFlow_0f2vwms</bpmn:outgoing>\n" +
@@ -71,7 +71,7 @@ public class WorkflowFormTest {
                 "    </bpmn:endEvent>\n" +
                 "    <bpmn:sequenceFlow id=\"SequenceFlow_0f2vwms\" sourceRef=\"StartEvent_1\" targetRef=\"ScriptTask_1\" />\n" +
                 "    <bpmn:sequenceFlow id=\"SequenceFlow_1jf1dm1\" sourceRef=\"ScriptTask_1\" targetRef=\"EndEvent_1\" />\n" +
-                "    <bpmn:scriptTask id=\"ScriptTask_1\" name=\"Say hello\">\n" +
+                "    <bpmn:scriptTask id=\"ScriptTask_1\" name=\"Say hello\" template:permittedUserRole=\"1\">\n" +
                 "      <bpmn:extensionElements>\n" +
                 "        <camunda:inputOutput>\n" +
                 "          <camunda:inputParameter name=\"name\" />\n" +

@@ -31,7 +31,7 @@ public class KitodoTask {
     private boolean typeAcceptClose;
     private boolean typeCloseVerify;
     private boolean batchStep;
-    private Integer userRole;
+    private String userRoles;
 
     static final String NAMESPACE = "http://www.kitodo.org/template";
 
@@ -56,7 +56,7 @@ public class KitodoTask {
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
-        this.userRole = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "permittedUserRole"));
+        this.userRoles = task.getAttributeValueNs(NAMESPACE, "permittedUserRole");
     }
 
     private Boolean getBooleanValue(String value) {
@@ -320,21 +320,21 @@ public class KitodoTask {
     }
 
     /**
-     * Get user role.
+     * Get user roles as String '1, 2, 3,'.
      *
      * @return value of userRole
      */
-    public Integer getUserRole() {
-        return userRole;
+    public String getUserRoles() {
+        return userRoles;
     }
 
     /**
      * Set user role.
      *
-     * @param userRole
+     * @param userRoles
      *            as java.lang.Integer
      */
-    public void setUserRole(Integer userRole) {
-        this.userRole = userRole;
+    public void setUserRoles(String userRoles) {
+        this.userRoles = userRoles;
     }
 }

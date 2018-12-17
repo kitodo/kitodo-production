@@ -39,7 +39,7 @@
                             targetRef="Task3">
             <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${type==2}</bpmn2:conditionExpression>
         </bpmn2:sequenceFlow>
-        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1">
+        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1, 2">
             <bpmn2:incoming>SequenceFlow_0r2wyjn</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1wv3bob</bpmn2:outgoing>
         </bpmn2:task>
