@@ -88,7 +88,7 @@ import org.kitodo.helper.HelperComparator;
 import org.kitodo.helper.XmlArticleCounter;
 import org.kitodo.helper.XmlArticleCounter.CountType;
 import org.kitodo.helper.batch.BatchTaskHelper;
-import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
@@ -115,7 +115,7 @@ import org.primefaces.model.TreeNode;
 public class MetadataProcessor {
     private static final Logger logger = LogManager.getLogger(MetadataProcessor.class);
 
-    private ImagesHelper imageHelper;
+    private ImageHelper imageHelper;
     private MetadataHelper metaHelper;
     private FileformatInterface gdzfile;
     private DocStructInterface docStruct;
@@ -545,7 +545,7 @@ public class MetadataProcessor {
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
         this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
-        this.imageHelper = new ImagesHelper(this.myPrefs, this.digitalDocument);
+        this.imageHelper = new ImageHelper(this.myPrefs, this.digitalDocument);
 
         /*
          * Das Hauptelement ermitteln

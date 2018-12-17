@@ -35,6 +35,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -183,7 +184,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
             }
             StringBuilder url = new StringBuilder();
-            FilenameFilter filter = Helper.imageNameFilter;
+            FilenameFilter filter = ImageHelper.imageNameFilter;
             URI imagesDir = ServiceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
             List<URI> meta = fileService.getSubUris(filter, imagesDir);
             List<String> fileNames = new ArrayList<>();

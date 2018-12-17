@@ -36,7 +36,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
-import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.metadata.MetadataLock;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -200,7 +200,7 @@ public class WorkflowControllerService {
 
             // image validation
             if (task.isTypeImagesWrite()) {
-                ImagesHelper mih = new ImagesHelper(null, null);
+                ImageHelper mih = new ImageHelper(null, null);
                 URI imageFolder = ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");

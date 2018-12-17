@@ -38,6 +38,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.helper.tasks.ExportDmsTask;
 import org.kitodo.helper.tasks.TaskManager;
@@ -558,7 +559,7 @@ public class ExportDms extends ExportMets {
 
     private void copyTifFilesForProcess(URI tifSourceDirectory, URI tifDestinationDirectory)
             throws IOException, InterruptedException {
-        List<URI> files = fileService.getSubUris(Helper.dataFilter, tifSourceDirectory);
+        List<URI> files = fileService.getSubUris(ImageHelper.dataFilter, tifSourceDirectory);
         for (int i = 0; i < files.size(); i++) {
             if (exportDmsTask != null) {
                 exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
