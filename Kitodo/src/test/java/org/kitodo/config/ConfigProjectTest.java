@@ -53,4 +53,21 @@ public class ConfigProjectTest {
         List<String> processTitles = configProject.getParamList("createNewProcess.itemlist.processtitle");
         assertEquals("Incorrect amount of process titles!", 5, processTitles.size());
     }
+
+    @Test
+    public void shouldGetDocType() {
+        assertEquals("Document type is incorrect!", "monograph", configProject.getDocType());
+    }
+
+    @Test
+    public void shouldGetTifDefinition() {
+        assertEquals("Tif definition is incorrect!", "kitodo", configProject.getTifDefinition());
+    }
+
+    @Test
+    public void shouldGetTitleDefinition() {
+        String titleDefinition = configProject.getTitleDefinition();
+        String expected = "ATS+TSL+'_'+PPN digital a-Satz";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+    }
 }
