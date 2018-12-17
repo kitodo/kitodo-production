@@ -14,6 +14,7 @@ package org.kitodo.workflow.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.beans.KitodoScriptTask;
 import org.kitodo.workflow.model.beans.KitodoTask;
@@ -119,7 +121,8 @@ public class Converter {
                 task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
             }
         } catch (NullPointerException e) {
-            throw new WorkflowException("No roles assigned to the workflow task with title: '" + task.getTitle() + "'.");
+            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingRole",
+                    Collections.singletonList(task.getTitle())));
         }
 
         if (workflowTask instanceof ScriptTask) {
