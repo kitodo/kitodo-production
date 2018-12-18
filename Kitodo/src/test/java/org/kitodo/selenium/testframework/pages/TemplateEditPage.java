@@ -22,6 +22,7 @@ import org.openqa.selenium.support.FindBy;
 public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
     private static final String TEMPLATE_TAB_VIEW = EDIT_FORM + ":templateTabView";
+    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TAB_VIEW)
@@ -50,8 +51,6 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = EDIT_FORM + ":tabs:j_id_44:0:validator")
     private WebElement firstValidatorCheckbox;
-
-    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     public TemplateEditPage() {
         super("pages/templateEdit.jsf");

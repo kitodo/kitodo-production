@@ -123,6 +123,19 @@ public class AddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void addProcessFromCatalogTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
+        projectsPage.createNewProcess();
+        assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
+                Pages.getProcessFromTemplatePage().getHeaderText());
+
+        String generatedTitle = Pages.getProcessFromTemplatePage().createProcessFromCatalog();
+        boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
+        assertTrue("Created Process was not listed at processes table!", processAvailable);
+    }
+
+    @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
         workflow.setFileName("testWorkflow");
