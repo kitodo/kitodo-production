@@ -1300,6 +1300,12 @@ footer {
     border-radius: 3px;
 }
 
+.ui-datatable tr td span.task-status {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
 
 .ui-row-toggler {
     display: inline;

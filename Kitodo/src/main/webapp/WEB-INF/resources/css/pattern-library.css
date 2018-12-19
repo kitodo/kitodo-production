@@ -28,6 +28,11 @@
     --progress-open: #ee7e5b;
     --progress-blocked: #f94a15;
 
+    --task-closed: #42ba37;
+    --task-inwork: #c1d800;
+    --task-open: #f4ffa1;
+    --task-blocked: #f94a15;
+
     --input-height: 36px;
     --input-padding: 10px;
     --input-padding-none: 0;

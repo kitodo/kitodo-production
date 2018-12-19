@@ -45,8 +45,14 @@
         </p:column>
 
         <p:column headerText="#{msgs.status}">
-            <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
-                            title="#{item.processingStatusTitle}" style="margin-right:10px;"/>
+            <h:panelGroup class="task-status"
+                          title="#{item.processingStatus.title}"
+                          style="margin-right:10px; background-color:
+                            #{item.processingStatus.title == 'statusDone' ? 'var(--task-closed)' : ''}
+                            #{item.processingStatus.title == 'statusInProcessing' ? 'var(--task-inwork)' : ''}
+                            #{item.processingStatus.title == 'statusOpen' ? 'var(--task-open)' : ''}
+                            #{item.processingStatus.title == 'statusLocked' ? 'var(--task-blocked)' : ''};"
+            />
             <h:outputText value="!" rendered="#{item.priority == 1}"/>
             <h:outputText value="!!" rendered="#{item.priority == 2}"/>
             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
