@@ -14,6 +14,7 @@ package org.kitodo.metadata.display.helper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ import org.kitodo.metadata.display.enums.DisplayType;
 
 public final class ConfigDisplayRules {
 
-    private static ConfigDisplayRules instance = new ConfigDisplayRules();
-    private static XMLConfiguration config;
-    private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<>();
+    private static ConfigDisplayRules instance;
+    private XMLConfiguration config;
+    private final Map<String, Map<String, Map<String, Map<String, List<Item>>>>> allValues = new HashMap<>();
     private static final String CONTEXT = "context";
     private static final String INPUT = "input";
     private static final String READ_ONLY = "readonly";
@@ -80,8 +81,8 @@ public final class ConfigDisplayRules {
             for (int i = 0; i <= countRuleSet; i++) {
                 int projectContext = config.getMaxIndex(RULESET + "(" + i + ")." + CONTEXT);
                 for (int j = 0; j <= projectContext; j++) {
-                    HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = new HashMap<>();
-                    HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bindState = new HashMap<>();
+                    Map<String, Map<String, List<Item>>> itemsByType = new HashMap<>();
+                    Map<String, Map<String, Map<String, List<Item>>>> bindState = new HashMap<>();
                     String projectName = config
                             .getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")[@projectName]");
                     String bind = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ").bind");
@@ -103,65 +104,65 @@ public final class ConfigDisplayRules {
         }
     }
 
-    private HashMap<String, ArrayList<Item>> getSelectOneItems(int i, int j, String projectName, String bind) {
+    private Map<String, List<Item>> getSelectOneItems(int i, int j, String projectName, String bind) {
         int countAnotherSelect = getAmountOfElements(i, j, SELECT_ONE);
-        HashMap<String, ArrayList<Item>> selectOne = new HashMap<>();
+        Map<String, List<Item>> selectOne = new HashMap<>();
 
         for (int k = 0; k <= countAnotherSelect; k++) {
             String elementName = getElementName(i, j, k, SELECT_ONE);
-            ArrayList<Item> items = getSelectOneByElementName(projectName, bind, elementName);
+            List<Item> items = getSelectOneByElementName(projectName, bind, elementName);
             selectOne.put(elementName, items);
         }
 
         return selectOne;
     }
 
-    private HashMap<String, ArrayList<Item>> getSelectItems(int i, int j, String projectName, String bind) {
+    private Map<String, List<Item>> getSelectItems(int i, int j, String projectName, String bind) {
         int countSelect = getAmountOfElements(i, j, SELECT);
-        HashMap<String, ArrayList<Item>> select = new HashMap<>();
+        HashMap<String, List<Item>> select = new HashMap<>();
 
         for (int k = 0; k <= countSelect; k++) {
             String elementName = getElementName(i, j, k, SELECT);
-            ArrayList<Item> items = getSelectByElementName(projectName, bind, elementName);
+            List<Item> items = getSelectByElementName(projectName, bind, elementName);
             select.put(elementName, items);
         }
 
         return select;
     }
 
-    private HashMap<String, ArrayList<Item>> getInputItems(int i, int j, String projectName, String bind) {
+    private Map<String, List<Item>> getInputItems(int i, int j, String projectName, String bind) {
         int countInput = getAmountOfElements(i, j, INPUT);
-        HashMap<String, ArrayList<Item>> input = new HashMap<>();
+        Map<String, List<Item>> input = new HashMap<>();
 
         for (int k = 0; k <= countInput; k++) {
             String elementName = getElementName(i, j, k, INPUT);
-            ArrayList<Item> items = getInputByElementName(projectName, bind, elementName);
+            List<Item> items = getInputByElementName(projectName, bind, elementName);
             input.put(elementName, items);
         }
 
         return input;
     }
 
-    private HashMap<String, ArrayList<Item>> getTextAreaItems(int i, int j, String projectName, String bind) {
+    private Map<String, List<Item>> getTextAreaItems(int i, int j, String projectName, String bind) {
         int countTextArea = getAmountOfElements(i, j, TEXTAREA);
-        HashMap<String, ArrayList<Item>> textarea = new HashMap<>();
+        Map<String, List<Item>> textarea = new HashMap<>();
 
         for (int k = 0; k <= countTextArea; k++) {
             String elementName = getElementName(i, j, k, TEXTAREA);
-            ArrayList<Item> items = getTextareaByElementName(projectName, bind, elementName);
+            List<Item> items = getTextareaByElementName(projectName, bind, elementName);
             textarea.put(elementName, items);
         }
 
         return textarea;
     }
 
-    private HashMap<String, ArrayList<Item>> getReadOnlyItems(int i, int j, String projectName, String bind) {
+    private Map<String, List<Item>> getReadOnlyItems(int i, int j, String projectName, String bind) {
         int countReadOnly = getAmountOfElements(i, j, READ_ONLY);
-        HashMap<String, ArrayList<Item>> readOnly = new HashMap<>();
+        Map<String, List<Item>> readOnly = new HashMap<>();
 
         for (int k = 0; k <= countReadOnly; k++) {
             String elementName = getElementName(i, j, k, READ_ONLY);
-            ArrayList<Item> items = getReadOnlyByElementName(projectName, bind, elementName);
+            List<Item> items = getReadOnlyByElementName(projectName, bind, elementName);
             readOnly.put(elementName, items);
         }
         return readOnly;
@@ -186,7 +187,7 @@ public final class ConfigDisplayRules {
      *            name of the select1 element
      * @return ArrayList with all items and its values of given select1 element.
      */
-    private ArrayList<Item> getSelectOneByElementName(String project, String bind, String elementName) {
+    private List<Item> getSelectOneByElementName(String project, String bind, String elementName) {
         return getSelectByElementName(project, bind, elementName, SELECT_ONE);
     }
 
@@ -201,12 +202,12 @@ public final class ConfigDisplayRules {
      *            name of the select element
      * @return ArrayList with all items and its values of given select element.
      */
-    private ArrayList<Item> getSelectByElementName(String project, String bind, String elementName) {
+    private List<Item> getSelectByElementName(String project, String bind, String elementName) {
         return getSelectByElementName(project, bind, elementName, SELECT);
     }
 
-    private ArrayList<Item> getSelectByElementName(String project, String bind, String elementName, String select) {
-        ArrayList<Item> listOfItems = new ArrayList<>();
+    private List<Item> getSelectByElementName(String project, String bind, String elementName, String select) {
+        List<Item> listOfItems = new ArrayList<>();
         int count = config.getMaxIndex(RULESET_CONTEXT);
         for (int i = 0; i <= count; i++) {
             String myProject = getProject(i);
@@ -249,7 +250,7 @@ public final class ConfigDisplayRules {
      *            name of the input element
      * @return item of given input element.
      */
-    private ArrayList<Item> getInputByElementName(String project, String bind, String elementName) {
+    private List<Item> getInputByElementName(String project, String bind, String elementName) {
         return getListOfItems(project, bind, elementName, INPUT);
     }
 
@@ -264,16 +265,16 @@ public final class ConfigDisplayRules {
      *            name of the textarea element
      * @return item of given textarea element.
      */
-    private ArrayList<Item> getTextareaByElementName(String project, String bind, String elementName) {
+    private List<Item> getTextareaByElementName(String project, String bind, String elementName) {
         return getListOfItems(project, bind, elementName, TEXTAREA);
     }
 
-    private ArrayList<Item> getReadOnlyByElementName(String project, String bind, String elementName) {
+    private List<Item> getReadOnlyByElementName(String project, String bind, String elementName) {
         return getListOfItems(project, bind, elementName, READ_ONLY);
     }
 
-    private ArrayList<Item> getListOfItems(String project, String bind, String elementName, String label) {
-        ArrayList<Item> listOfItems = new ArrayList<>();
+    private List<Item> getListOfItems(String project, String bind, String elementName, String label) {
+        List<Item> listOfItems = new ArrayList<>();
         int count = config.getMaxIndex(RULESET_CONTEXT);
         for (int i = 0; i <= count; i++) {
             String myProject = getProject(i);
@@ -285,8 +286,8 @@ public final class ConfigDisplayRules {
         return listOfItems;
     }
 
-    private ArrayList<Item> getListOfItems(int i, String elementName, String label) {
-        ArrayList<Item> listOfItems = new ArrayList<>();
+    private List<Item> getListOfItems(int i, String elementName, String label) {
+        List<Item> listOfItems = new ArrayList<>();
         int type = getAmountOfElements(i, label);
         for (int j = 0; j <= type; j++) {
             String readElementName = config
@@ -332,17 +333,17 @@ public final class ConfigDisplayRules {
             } else if (config == null) {
                 return DisplayType.TEXTAREA;
             }
-            HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = this.allValues.get(myproject);
+            Map<String, Map<String, Map<String, List<Item>>>> bind = this.allValues.get(myproject);
             if (bind == null) {
                 return DisplayType.TEXTAREA;
             }
-            HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = bind.get(mybind);
+            Map<String, Map<String, List<Item>>> itemsByType = bind.get(mybind);
             if (itemsByType == null) {
                 return DisplayType.TEXTAREA;
             }
             Set<String> itemTypes = itemsByType.keySet();
             for (String type : itemTypes) {
-                HashMap<String, ArrayList<Item>> typeList = itemsByType.get(type);
+                Map<String, List<Item>> typeList = itemsByType.get(type);
                 Set<String> names = typeList.keySet();
                 for (String name : names) {
                     if (name.equals(myelementName)) {
@@ -377,17 +378,17 @@ public final class ConfigDisplayRules {
                 values.add(new Item(myelementName, "", false));
                 return values;
             }
-            HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = this.allValues.get(myproject);
+            Map<String, Map<String, Map<String, List<Item>>>> bind = this.allValues.get(myproject);
             if (bind.isEmpty()) {
                 values.add(new Item(myelementName, "", false));
                 return values;
             }
-            HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = bind.get(mybind);
+            Map<String, Map<String, List<Item>>> itemsByType = bind.get(mybind);
             if (itemsByType.isEmpty()) {
                 values.add(new Item(myelementName, "", false));
                 return values;
             }
-            HashMap<String, ArrayList<Item>> typeList = itemsByType.get(mydisplayType.getTitle());
+            Map<String, List<Item>> typeList = itemsByType.get(mydisplayType.getTitle());
             if (typeList.isEmpty()) {
                 values.add(new Item(myelementName, "", false));
                 return values;
