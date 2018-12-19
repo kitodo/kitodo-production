@@ -30,9 +30,13 @@ public final class ConfigDisplayRules {
     private static ConfigDisplayRules instance;
     private XMLConfiguration config;
     private final Map<String, Map<String, Map<String, Map<String, List<Item>>>>> allValues = new HashMap<>();
+    private static final String BIND = "bind";
     private static final String CONTEXT = "context";
+    private static final String ITEM = "item";
+    private static final String LABEL = "label";
     private static final String RULESET = "ruleSet";
     private static final String RULESET_CONTEXT = RULESET + "." + CONTEXT;
+    private static final String VALUE = "value";
 
     /**
      * Reads given xml file into XMLConfiguration.
@@ -80,7 +84,7 @@ public final class ConfigDisplayRules {
                     Map<String, Map<String, Map<String, List<Item>>>> bindState = new HashMap<>();
                     String projectName = config
                             .getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")[@projectName]");
-                    String bind = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ").bind");
+                    String bind = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")." + BIND);
 
                     itemsByType.put(DisplayType.SELECT1.getTitle(), getSelectOneItems(i, j, projectName, bind));
                     itemsByType.put(DisplayType.SELECT.getTitle(), getSelectItems(i, j, projectName, bind));
@@ -167,6 +171,10 @@ public final class ConfigDisplayRules {
         return config.getMaxIndex(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")." + label);
     }
 
+    private int getAmountOfElements(int i, String label) {
+        return config.getMaxIndex(RULESET_CONTEXT + "(" + i + ")." + label);
+    }
+
     private String getElementName(int i, int j, int k, String label) {
         return config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")." + label + "(" + k + ")[@tns:ref]");
     }
@@ -213,18 +221,19 @@ public final class ConfigDisplayRules {
                     String myElementName = config
                             .getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")[@tns:ref]");
                     if (myElementName.equals(elementName)) {
-                        int item = config.getMaxIndex(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ").item");
+                        int item = config
+                                .getMaxIndex(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM);
                         for (int k = 0; k <= item; k++) {
                             Item myItem = new Item(
                                     // the displayed value
-                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ").item(" + k
-                                            + ").label"),
+                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
+                                            + "(" + k + ")." + LABEL),
                                     // the internal value, which will be taken if label is selected
-                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ").item(" + k
-                                            + ").value"),
-                                    // indicated wheter given item is preselected or not
-                                    config.getBoolean(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ").item("
-                                            + k + ")[@tns:selected]"));
+                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
+                                            + "(" + k + ")." + VALUE),
+                                    // indicated whether given item is preselected or not
+                                    config.getBoolean(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
+                                            + "(" + k + ")[@tns:selected]"));
                             listOfItems.add(myItem);
                         }
                     }
@@ -290,8 +299,9 @@ public final class ConfigDisplayRules {
             if (readElementName.equals(elementName)) {
                 // the displayed value
                 // TODO: here two times label is read - why?
-                Item item = new Item(config.getString(RULESET_CONTEXT + "(" + i + ")." + label + "(" + j + ").label"),
-                        config.getString(RULESET_CONTEXT + "(" + i + ")." + label + "(" + j + ").label"), false);
+                Item item = new Item(
+                        config.getString(RULESET_CONTEXT + "(" + i + ")." + label + "(" + j + ")." + LABEL),
+                        config.getString(RULESET_CONTEXT + "(" + i + ")." + label + "(" + j + ")." + LABEL), false);
                 listOfItems.add(item);
             }
         }
@@ -303,11 +313,7 @@ public final class ConfigDisplayRules {
     }
 
     private String getBind(int i) {
-        return config.getString(RULESET_CONTEXT + "(" + i + ").bind");
-    }
-
-    private int getAmountOfElements(int i, String label) {
-        return config.getMaxIndex(RULESET_CONTEXT + "(" + i + ")." + label);
+        return config.getString(RULESET_CONTEXT + "(" + i + ")." + BIND);
     }
 
     /**
