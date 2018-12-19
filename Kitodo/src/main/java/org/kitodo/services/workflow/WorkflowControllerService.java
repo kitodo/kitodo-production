@@ -228,7 +228,11 @@ public class WorkflowControllerService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        taskService.replaceProcessingUser(task, getCurrentUser());
+        User user = null;
+        if (!task.isTypeAutomatic()) {
+            user = getCurrentUser();
+        }
+        taskService.replaceProcessingUser(task, user);
         task.setProcessingEnd(new Date());
 
         taskService.save(task);
