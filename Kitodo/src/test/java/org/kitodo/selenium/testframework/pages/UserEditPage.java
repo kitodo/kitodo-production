@@ -29,6 +29,7 @@ import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 public class UserEditPage extends EditPage<UserEditPage> {
 
     private static final String USER_TAB_VIEW = EDIT_FORM + ":userTabView";
+    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW)
@@ -61,6 +62,10 @@ public class UserEditPage extends EditPage<UserEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":table-size")
     private WebElement tableSizeInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":languages")
+    private WebElement languageSelect;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":addRoleButton")
@@ -158,8 +163,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
         tableSizeInput.sendKeys("50");
         metadataLanguageInput.clear();
         metadataLanguageInput.sendKeys("en");
-        Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(1).click();
-        Browser.getDriver().findElement(By.id(USER_TAB_VIEW + ":languages_1")).click();
+        clickElement(languageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(languageSelect.getAttribute("id") + "_1")));
         save();
     }
 
