@@ -9,15 +9,15 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.api.display;
+package org.kitodo.metadata.display;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.api.display.enums.BindState;
-import org.goobi.api.display.enums.DisplayType;
-import org.goobi.api.display.helper.ConfigDisplayRules;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.metadata.display.enums.BindState;
+import org.kitodo.metadata.display.enums.DisplayType;
+import org.kitodo.metadata.display.helper.ConfigDisplayRules;
 
 public class DisplayCase {
     private DisplayType displayType;

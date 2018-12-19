@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.api.display;
+package org.kitodo.metadata.display;
 
 public class Item {
     private String myLabel;

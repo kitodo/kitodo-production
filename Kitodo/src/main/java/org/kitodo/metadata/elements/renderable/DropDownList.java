@@ -17,11 +17,11 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.api.display.Item;
-import org.goobi.api.display.enums.DisplayType;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.enums.DisplayType;
 
 /**
  * Backing bean for a drop-down style select element to edit a single-select

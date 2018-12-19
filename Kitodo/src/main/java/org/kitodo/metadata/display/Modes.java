@@ -9,9 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.api.display;
+package org.kitodo.metadata.display;
 
-import org.goobi.api.display.enums.BindState;
+import org.kitodo.metadata.display.enums.BindState;
 
 public class Modes {
 

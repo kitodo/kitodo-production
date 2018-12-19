@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.api.display.helper;
+package org.kitodo.metadata.display.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +19,9 @@ import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.goobi.api.display.Item;
-import org.goobi.api.display.enums.DisplayType;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.enums.DisplayType;
 
 public final class ConfigDisplayRules {
 
