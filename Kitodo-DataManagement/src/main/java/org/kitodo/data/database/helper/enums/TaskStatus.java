@@ -20,33 +20,31 @@ public enum TaskStatus {
     /**
      * Locked = step not startable.
      */
-    LOCKED(0, "statusLocked", "red_15a.gif", "steplocked"),
+    LOCKED(0, "statusLocked", "steplocked"),
     /**
      * Open = someone can begin with this step.
      */
-    OPEN(1, "statusOpen", "orange_15a.gif", "stepopen"),
+    OPEN(1, "statusOpen", "stepopen"),
     /**
      * Inwork = someone is currently working on that step.
      */
-    INWORK(2, "statusInProcessing", "yellow_15a.gif", "stepinwork"),
+    INWORK(2, "statusInProcessing", "stepinwork"),
     /**
      * Done = step is executed.
      */
-    DONE(3, "statusDone", "green_15a.gif", "stepdone");
+    DONE(3, "statusDone", "stepdone");
 
     private int value;
     private String title;
-    private String imageBig;
     private String searchString;
 
     /**
      * Private constructor, initializes integer value, title and big
      * image.
      */
-    TaskStatus(int inValue, String inTitle, String bigImage, String searchString) {
+    TaskStatus(int inValue, String inTitle, String searchString) {
         this.value = inValue;
         this.title = inTitle;
-        this.imageBig = bigImage;
         this.searchString = searchString;
     }
 
@@ -66,15 +64,6 @@ public enum TaskStatus {
      */
     public String getTitle() {
         return this.title;
-    }
-
-    /**
-     * Get file name for big image.
-     *
-     * @return file name for big image
-     */
-    public String getBigImagePath() {
-        return "/pages/images/status/" + this.imageBig;
     }
 
     /**
