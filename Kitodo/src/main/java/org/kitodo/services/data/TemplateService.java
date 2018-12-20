@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.json.JsonObject;
 
@@ -54,7 +56,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static TemplateService instance = null;
     private boolean showInactiveTemplates = false;
-    private boolean showInactiveProjects = false;
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -211,7 +212,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query.must(ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
+            query.must(
+                ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
         }
         return query;
     }
@@ -236,10 +238,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
         if (!showInactiveTemplates) {
             query.must(ServiceManager.getProcessService().getQuerySortHelperStatus(false));
-        }
-
-        if (!this.showInactiveProjects) {
-            query.must(getQueryProjectActive(true));
         }
 
         return query;
@@ -412,16 +410,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Set show inactive projects.
-     *
-     * @param showInactiveProjects
-     *            as boolean
-     */
-    public void setShowInactiveProjects(boolean showInactiveProjects) {
-        this.showInactiveProjects = showInactiveProjects;
-    }
-
-    /**
      * Set show inactive templates.
      *
      * @param showInactiveTemplates
@@ -432,17 +420,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Get query for active projects.
-     *
-     * @param active
-     *            true or false
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryProjectActive(boolean active) {
-        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.ACTIVE, active, true);
-    }
-
-    /**
      * Get query for projects assigned to selected client.
      *
      * @param id
@@ -450,8 +427,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      * @return query as QueryBuilder
      */
     private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
-        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id,
-                true);
+        return createSetQuery(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID,
+            Stream.of(0, id).collect(Collectors.toSet()), true);
     }
 
     /**
@@ -463,17 +440,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     public List<Template> getProcessTemplatesWithTitle(String title) {
         return dao.getTemplatesWithTitle(title);
-    }
-
-    /**
-     * Get process templates for users.
-     *
-     * @param projects
-     *            list of project ids for user's projects
-     * @return list of all process templates for user as Template objects
-     */
-    public List<Template> getProcessTemplatesForUser(List<Integer> projects) {
-        return dao.getTemplatesForUser(projects);
     }
 
     /**
