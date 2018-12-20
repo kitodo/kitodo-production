@@ -24,6 +24,7 @@ import org.openqa.selenium.support.FindBy;
 public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
+    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW)
@@ -54,6 +55,26 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement ppnDigitalInput;
 
     @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":catalogueSelectMenu")
+    private WebElement catalogSelect;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":fieldSelectMenu")
+    private WebElement fieldSelect;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":searchTerm")
+    private WebElement searchTermInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TAB_VIEW + ":performCatalogSearch")
+    private WebElement performCatalogSearchButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "hitlistDialogForm:hitlistDialogTable:0:selectRecord")
+    private WebElement selectRecord;
+
+    @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW + ":generateTitleButton")
     private WebElement generateTitleButton;
 
@@ -68,15 +89,44 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     public String createProcess() throws Exception {
         guessImagesInput.sendKeys("299");
+
         switchToTabByIndex(1);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
         ppnAnalogInput.sendKeys("12345");
         ppnDigitalInput.sendKeys("12345");
+
         switchToTabByIndex(0);
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(titleInput));
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
+        String generatedTitle = processTitleInput.getAttribute("value");
+        save();
+        return generatedTitle;
+    }
+
+    public String createProcessFromCatalog() throws Exception {
+        guessImagesInput.sendKeys("299");
+
+        switchToTabByIndex(3);
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_3")));
+
+        clickElement(fieldSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(fieldSelect.getAttribute("id") + "_1")));
+
+        searchTermInput.sendKeys("test");
+        performCatalogSearchButton.click();
+        selectRecord.click();
+
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        titleSortInput.sendKeys("Test");
+        ppnAnalogInput.sendKeys("12345");
+
+        switchToTabByIndex(0);
+        generateTitleButton.click();
+        await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;
