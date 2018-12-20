@@ -22,10 +22,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
-import org.goobi.production.model.bibliography.course.Course;
-import org.goobi.production.model.bibliography.course.CourseToGerman;
-import org.goobi.production.model.bibliography.course.Granularity;
-import org.goobi.production.model.bibliography.course.IndividualIssue;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -42,6 +38,10 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.Helper;
+import org.kitodo.model.bibliography.course.Course;
+import org.kitodo.model.bibliography.course.CourseToGerman;
+import org.kitodo.model.bibliography.course.Granularity;
+import org.kitodo.model.bibliography.course.IndividualIssue;
 import org.kitodo.services.ServiceManager;
 
 /**

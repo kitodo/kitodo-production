@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.goobi.production.model.bibliography.Citation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.model.bibliography.Citation;
 
 /**
  * The class Hit represents a hit retrieved from the search plug-in.

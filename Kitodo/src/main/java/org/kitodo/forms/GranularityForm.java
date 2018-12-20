@@ -24,13 +24,13 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.model.bibliography.course.Course;
-import org.goobi.production.model.bibliography.course.Granularity;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.FacesUtils;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.XMLUtils;
+import org.kitodo.model.bibliography.course.Course;
+import org.kitodo.model.bibliography.course.Granularity;
 import org.w3c.dom.Document;
 
 /**

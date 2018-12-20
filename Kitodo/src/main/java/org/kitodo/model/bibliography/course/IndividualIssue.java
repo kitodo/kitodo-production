@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production.model.bibliography.course;
+package org.kitodo.model.bibliography.course;
 
 import java.util.HashMap;
 import java.util.Map;
