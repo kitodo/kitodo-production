@@ -60,9 +60,16 @@ public class WorkflowControllerService {
     private TaskService taskService = ServiceManager.getTaskService();
 
     /**
-     * Return singleton variable of type TaskService.
+     * Empty private constructor to override default one.
+     */
+    private WorkflowControllerService() {
+
+    }
+
+    /**
+     * Return singleton variable of type WorkflowControllerService.
      *
-     * @return unique instance of TaskService
+     * @return unique instance of WorkflowControllerService
      */
     public static WorkflowControllerService getInstance() {
         if (Objects.equals(instance, null)) {
