@@ -29,8 +29,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.LazyInitializationException;
-import org.kitodo.helper.Helper;
 
 /**
  * Use this filter to synchronize requests to your web application and reduce
@@ -160,8 +158,6 @@ public class RequestControlFilter implements Filter {
         // any exceptions thrown farther down the chain.
         try {
             chain.doFilter(request, response);
-        } catch (LazyInitializationException e) {
-            Helper.setErrorMessage(Helper.getTranslation("errorLazyInitialization"), logger, e);
         } finally {
             releaseQueuedRequest(httpRequest);
         }
