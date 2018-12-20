@@ -88,7 +88,7 @@ public interface DivXmlElementAccessInterface {
     /**
      * Sets the variant of the human-readable name of this outline element,
      * which has been normalized so that it can be properly sorted by primitive
-     * sorting algorithms
+     * sorting algorithms.
      *
      * @param orderlabel
      *            order label to set
