@@ -64,6 +64,10 @@ class OpacCatalogues {
             String title = config.getString("catalogue(" + i + ")[@title]");
             if (title.equals(inTitle)) {
                 String description = config.getString("catalogue(" + i + ").config[@description]");
+                String scheme = "http";
+                if (config.getString("catalogue(" + i + ").config[@scheme]") != null) {
+                    scheme = config.getString("catalogue(" + i + ").config[@scheme]");
+                }
                 String address = config.getString("catalogue(" + i + ").config[@address]");
                 String database = config.getString("catalogue(" + i + ").config[@database]");
                 String ucnf = config.getString("catalogue(" + i + ").config[@ucnf]", "");
@@ -109,7 +113,7 @@ class OpacCatalogues {
                     resolveRules.add(new ResolveRule(resolve));
                 }
 
-                return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList,
+                return new Catalogue(title, description, scheme, address, database, port, charset, ucnf, beautyList,
                         resolveRules);
             }
         }

@@ -40,7 +40,7 @@
         </type>
     </doctypes>
     <catalogue title="GBV">
-        <config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" port="80" ucnf="UCNF=NFC" />
+        <config scheme="http" address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" port="80" ucnf="UCNF=NFC" />
         <searchFields>
             <searchField label="Title" value="4" />
             <searchField label="Identifier" value="12" />
@@ -100,7 +100,7 @@
 
     </catalogue>
     <catalogue title="ZDB">
-        <config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" port="80" />
+        <config scheme="http" address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" port="80" />
         <searchFields>
             <searchField label="Title" value="4" />
             <searchField label="Identifier" value="12" />
