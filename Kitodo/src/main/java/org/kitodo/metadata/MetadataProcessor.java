@@ -1802,7 +1802,7 @@ public class MetadataProcessor {
         for (DocStructInterface element : elements) {
 
             treeNode = new DefaultTreeNode(element, parentTreeNode);
-            if (this.selectedTreeNode != null && this.selectedTreeNode.getData().equals(element)) {
+            if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element)) {
                 treeNode.setSelected(true);
             }
             List<DocStructInterface> children = element.getAllChildren();
