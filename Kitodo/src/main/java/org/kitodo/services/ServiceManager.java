@@ -145,7 +145,7 @@ public class ServiceManager {
         }
     }
 
-    private void initializeMetsService() {
+    private static void initializeMetsService() {
         if (metsService == null) {
             metsService = MetsService.getInstance();
         }
@@ -378,9 +378,9 @@ public class ServiceManager {
     /**
      * Initialize MetsService if it is not yet initialized and next return it.
      *
-     * @return LdapServerService object
+     * @return MetsService object
      */
-    public MetsService getMetsService() {
+    public static MetsService getMetsService() {
         initializeMetsService();
         return metsService;
     }
