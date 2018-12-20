@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production;
+package org.kitodo.production.version;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +25,11 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 /**
- * Listener to set up Goobi versioning information from Manifest on application
+ * Listener to set up Kitodo versioning information from Manifest on application
  * startup.
  */
 @WebListener
-public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
+public class KitodoVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -40,7 +40,7 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
         if (rs != null) {
             try {
                 Manifest m = new Manifest(rs);
-                GoobiVersion.setupFromManifest(m);
+                KitodoVersion.setupFromManifest(m);
             } catch (IOException e) {
                 context.log(e.getMessage());
             }
