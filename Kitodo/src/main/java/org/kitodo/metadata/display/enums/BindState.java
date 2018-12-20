@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.api.display.enums;
+package org.kitodo.metadata.display.enums;
 
 public enum BindState {
 

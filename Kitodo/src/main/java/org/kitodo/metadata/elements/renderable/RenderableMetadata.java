@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.goobi.api.display.Item;
-import org.goobi.api.display.enums.BindState;
-import org.goobi.api.display.enums.DisplayType;
-import org.goobi.api.display.helper.ConfigDisplayRules;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.enums.BindState;
+import org.kitodo.metadata.display.enums.DisplayType;
+import org.kitodo.metadata.display.helper.ConfigDisplayRules;
 
 /**
  * Abstract base class for all kinds of backing beans usable to render input

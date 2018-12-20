@@ -17,14 +17,14 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.api.display.DisplayCase;
-import org.goobi.api.display.Item;
-import org.goobi.api.display.Modes;
-import org.goobi.api.display.enums.BindState;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.metadata.display.DisplayCase;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.Modes;
+import org.kitodo.metadata.display.enums.BindState;
 import org.kitodo.services.ServiceManager;
 
 /**
