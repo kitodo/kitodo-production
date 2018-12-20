@@ -40,7 +40,7 @@ import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.WikiFieldHelper;
-import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
@@ -469,7 +469,7 @@ public class BatchTaskHelper extends BatchHelper {
 
     private boolean invalidImageExists(Task task) throws IOException {
         if (task.isTypeImagesWrite()) {
-            ImagesHelper mih = new ImagesHelper(null, null);
+            ImageHelper mih = new ImageHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
                 ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
                 Helper.setErrorMessage("Error on image validation!");

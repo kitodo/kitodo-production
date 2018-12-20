@@ -48,7 +48,7 @@ import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.helper.BeanHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
-import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -86,7 +86,7 @@ public class SchemaService {
         if (digitalDocument.getFileSet() == null) {
             Helper.setMessage(process.getTitle()
                     + ": digital document does not contain images; temporarily adding them for mets file creation");
-            ImagesHelper mih = new ImagesHelper(prefs, digitalDocument);
+            ImageHelper mih = new ImageHelper(prefs, digitalDocument);
             mih.createPagination(process, null);
         }
 
@@ -236,7 +236,7 @@ public class SchemaService {
             Process process) {
         try {
             // TODO: do not replace other file groups with image names
-            List<URI> images = new ImagesHelper(prefs, digitalDocument).getDataFiles(process);
+            List<URI> images = new ImageHelper(prefs, digitalDocument).getDataFiles(process);
             List<String> imageStrings = new ArrayList<>();
             for (URI uri : images) {
                 imageStrings.add(uri.toString());

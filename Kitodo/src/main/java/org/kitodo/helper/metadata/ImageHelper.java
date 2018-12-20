@@ -20,6 +20,7 @@ import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -64,14 +65,14 @@ import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
-public class ImagesHelper {
-    private static final Logger logger = LogManager.getLogger(ImagesHelper.class);
+public class ImageHelper {
+    private static final Logger logger = LogManager.getLogger(ImageHelper.class);
     private final PrefsInterface myPrefs;
     private final DigitalDocumentInterface mydocument;
     private int myLastImage = 0;
     private static final FileService fileService = ServiceManager.getFileService();
 
-    public ImagesHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public ImageHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
         this.myPrefs = inPrefs;
         this.mydocument = inDocument;
     }
@@ -241,6 +242,246 @@ public class ImagesHelper {
         }
     }
 
+    /**
+     * scale given image file to png using internal embedded content server.
+     */
+    public void scaleFile(URI inFileName, URI outFileName, int inSize, int intRotation)
+            throws ImageManagerException, IOException, ImageManipulatorException {
+        logger.trace("start scaleFile");
+        int tmpSize = inSize / 3;
+        if (tmpSize < 1) {
+            tmpSize = 1;
+        }
+        logger.trace("tmpSize: {}", tmpSize);
+        Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(ParameterCore.KITODO_CONTENT_SERVER_URL);
+        if (kitodoContentServerUrl.isPresent()) {
+            if (kitodoContentServerUrl.get().isEmpty()) {
+                logger.trace("api");
+                // TODO source image files are locked under windows forever after
+                // converting to png begins.
+                ImageManager imageManager = new ImageManager(inFileName.toURL());
+                logger.trace("im");
+                RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize,
+                    ImageManager.SCALE_BY_PERCENT, intRotation);
+                logger.trace("ri");
+                JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
+                logger.trace("pi");
+                FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
+                logger.trace("output");
+                jpegInterpreter.writeToStream(null, outputFileStream);
+                logger.trace("write stream");
+                outputFileStream.flush();
+                outputFileStream.close();
+                logger.trace("close stream");
+            } else {
+                String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
+                    + "&format=jpg";
+                cs = cs.replace("\\", "/");
+                logger.trace("url: {}", cs);
+                URL csUrl = new URL(cs);
+                HttpClient httpclient = new HttpClient();
+                GetMethod method = new GetMethod(csUrl.toString());
+                logger.trace("get");
+                Integer contentServerTimeOut = ConfigCore
+                        .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
+                method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
+                int statusCode = httpclient.executeMethod(method);
+                if (statusCode != HttpStatus.SC_OK) {
+                    return;
+                }
+                logger.trace("statusCode: {}", statusCode);
+                InputStream inStream = method.getResponseBodyAsStream();
+                logger.trace("inStream");
+                try (BufferedInputStream bis = new BufferedInputStream(inStream);
+                     OutputStream fos = fileService.write(outFileName)) {
+                    logger.trace("BufferedInputStream");
+                    logger.trace("FileOutputStream");
+                    byte[] bytes = new byte[8192];
+                    int count = bis.read(bytes);
+                    while (count != -1 && count <= 8192) {
+                        fos.write(bytes, 0, count);
+                        count = bis.read(bytes);
+                    }
+                    if (count != -1) {
+                        fos.write(bytes, 0, count);
+                    }
+                }
+                logger.trace("write");
+                inStream.close();
+            }
+            logger.trace("end scaleFile");
+        }
+    }
+
+    // Add a method to validate the image files
+
+    /**
+     * Die Images eines Prozesses auf Vollständigkeit prüfen.
+     */
+    public boolean checkIfImagesValid(String title, URI folder) {
+        boolean isValid = true;
+        this.myLastImage = 0;
+
+        /*
+         * alle Bilder durchlaufen und dafür die Seiten anlegen
+         */
+        if (fileService.fileExist(folder)) {
+            List<URI> files = fileService.getSubUris(dataFilter, folder);
+            if (files.isEmpty()) {
+                Helper.setErrorMessage("[" + title + "] No objects found");
+                return false;
+            }
+
+            this.myLastImage = files.size();
+            if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX)
+                    .equals("\\d{8}")) {
+                Collections.sort(files);
+                int counter = 1;
+                int myDiff = 0;
+                String currentFileName = null;
+                try {
+                    for (Iterator<URI> iterator = files.iterator(); iterator.hasNext(); counter++) {
+                        currentFileName = fileService.getFileName(iterator.next());
+                        int curFileNumber = Integer.parseInt(currentFileName);
+                        if (curFileNumber != counter + myDiff) {
+                            Helper.setErrorMessage("[" + title + "] expected Image " + (counter + myDiff)
+                                    + " but found File " + currentFileName);
+                            myDiff = curFileNumber - counter;
+                            isValid = false;
+                        }
+                    }
+                } catch (NumberFormatException e1) {
+                    isValid = false;
+                    Helper.setErrorMessage(
+                        "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
+                }
+                return isValid;
+            }
+            return true;
+        }
+        Helper.setErrorMessage("[" + title + "] No image-folder found");
+        return false;
+    }
+
+    /**
+     * Get image files.
+     *
+     * @param directory
+     *            current folder
+     * @return sorted list with strings representing images of process
+     */
+    public List<URI> getImageFiles(URI directory) {
+        /* Verzeichnis einlesen */
+        List<URI> files = fileService.getSubUris(imageNameFilter, directory);
+        ArrayList<URI> finalFiles = new ArrayList<>();
+        for (URI file : files) {
+            String newURI = file.toString().replace(directory.toString(), "");
+            finalFiles.add(URI.create(newURI));
+        }
+
+        List<URI> dataList = new ArrayList<>(finalFiles);
+
+        if (!dataList.isEmpty()) {
+            List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
+
+            if (orderedFileNameList.size() == dataList.size()) {
+                return orderedFileNameList;
+            } else {
+                dataList.sort(new MetadataImageComparator());
+                return dataList;
+            }
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Get image files.
+     *
+     * @param physical
+     *            DocStruct object
+     * @return list of Strings
+     */
+    public List<URI> getImageFiles(DocStructInterface physical) {
+        List<URI> orderedFileList = new ArrayList<>();
+        List<DocStructInterface> pages = physical.getAllChildren();
+        if (pages != null) {
+            for (DocStructInterface page : pages) {
+                URI filename = URI.create(page.getImageName());
+                orderedFileList.add(filename);
+            }
+        }
+        return orderedFileList;
+    }
+
+    /**
+     * Get data files. First read them all and next if their size is bigger than
+     * zero sort them with use of GoobiImageFileComparator.
+     *
+     * @param process
+     *            Process object
+     * @return list of URIs
+     */
+    public List<URI> getDataFiles(Process process) throws InvalidImagesException {
+        URI dir;
+        try {
+            dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
+        } catch (IOException | RuntimeException e) {
+            throw new InvalidImagesException(e);
+        }
+        /* Verzeichnis einlesen */
+        ArrayList<URI> dataList = new ArrayList<>();
+        List<URI> files = fileService.getSubUris(dataFilter, dir);
+        if (!files.isEmpty()) {
+            dataList.addAll(files);
+            dataList.sort(new MetadataImageComparator());
+        }
+        return dataList;
+    }
+
+    public static final FilenameFilter imageNameFilter = (dir, name) -> {
+        List<String> regexList = getImageNameRegexList();
+
+        for (String regex : regexList) {
+            if (name.matches(regex)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    public static final FilenameFilter dataFilter = (dir, name) -> {
+        List<String> regexList = getDataRegexList();
+
+        for (String regex : regexList) {
+            if (name.matches(regex)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
+        List<URI> orderedFileNameList = new ArrayList<>();
+        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        if (pagesList != null) {
+            for (DocStructInterface page : pagesList) {
+                String fileName = page.getImageName();
+                String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
+                for (URI currentImage : dataList) {
+                    String currentFileName = fileService.getFileName(currentImage);
+                    if (currentFileName.equals(fileNamePrefix)) {
+                        orderedFileNameList.add(currentImage);
+                        break;
+                    }
+                }
+            }
+        }
+        return orderedFileNameList;
+    }
+
     private DocStructInterface createPhysicalStructure(Process process) throws IOException {
         DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
         DocStructInterface physicalStructure = this.mydocument.createDocStruct(dst);
@@ -343,220 +584,37 @@ public class ImagesHelper {
         }
     }
 
-    /**
-     * scale given image file to png using internal embedded content server.
-     */
-    public void scaleFile(URI inFileName, URI outFileName, int inSize, int intRotation)
-            throws ImageManagerException, IOException, ImageManipulatorException {
-        logger.trace("start scaleFile");
-        int tmpSize = inSize / 3;
-        if (tmpSize < 1) {
-            tmpSize = 1;
-        }
-        logger.trace("tmpSize: {}", tmpSize);
-        Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(ParameterCore.KITODO_CONTENT_SERVER_URL);
-        if (kitodoContentServerUrl.isPresent()) {
-            if (kitodoContentServerUrl.get().isEmpty()) {
-                logger.trace("api");
-                // TODO source image files are locked under windows forever after
-                // converting to png begins.
-                ImageManager imageManager = new ImageManager(inFileName.toURL());
-                logger.trace("im");
-                RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize,
-                    ImageManager.SCALE_BY_PERCENT, intRotation);
-                logger.trace("ri");
-                JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
-                logger.trace("pi");
-                FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
-                logger.trace("output");
-                jpegInterpreter.writeToStream(null, outputFileStream);
-                logger.trace("write stream");
-                outputFileStream.flush();
-                outputFileStream.close();
-                logger.trace("close stream");
-            } else {
-                String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
-                    + "&format=jpg";
-                cs = cs.replace("\\", "/");
-                logger.trace("url: {}", cs);
-                URL csUrl = new URL(cs);
-                HttpClient httpclient = new HttpClient();
-                GetMethod method = new GetMethod(csUrl.toString());
-                logger.trace("get");
-                Integer contentServerTimeOut = ConfigCore
-                        .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
-                method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
-                int statusCode = httpclient.executeMethod(method);
-                if (statusCode != HttpStatus.SC_OK) {
-                    return;
-                }
-                logger.trace("statusCode: {}", statusCode);
-                InputStream inStream = method.getResponseBodyAsStream();
-                logger.trace("inStream");
-                try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                     OutputStream fos = fileService.write(outFileName)) {
-                    logger.trace("BufferedInputStream");
-                    logger.trace("FileOutputStream");
-                    byte[] bytes = new byte[8192];
-                    int count = bis.read(bytes);
-                    while (count != -1 && count <= 8192) {
-                        fos.write(bytes, 0, count);
-                        count = bis.read(bytes);
-                    }
-                    if (count != -1) {
-                        fos.write(bytes, 0, count);
-                    }
-                }
-                logger.trace("write");
-                inStream.close();
-            }
-            logger.trace("end scaleFile");
-        }
+    private static List<String> getImageNameRegexList() {
+        String prefix = ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX);
+
+        List<String> regexList = new ArrayList<>();
+        regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
+        regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
+        regexList.add(prefix + "\\.[jJ][pP][2]");
+        regexList.add(prefix + "\\.[pP][nN][gG]");
+        regexList.add(prefix + "\\.[gG][iI][fF]");
+        return regexList;
     }
 
-    // Add a method to validate the image files
+    private static List<String> getDataRegexList() {
+        String prefix = ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX);
 
-    /**
-     * Die Images eines Prozesses auf Vollständigkeit prüfen.
-     */
-    public boolean checkIfImagesValid(String title, URI folder) {
-        boolean isValid = true;
-        this.myLastImage = 0;
-
-        /*
-         * alle Bilder durchlaufen und dafür die Seiten anlegen
-         */
-        if (fileService.fileExist(folder)) {
-            List<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-            if (files.isEmpty()) {
-                Helper.setErrorMessage("[" + title + "] No objects found");
-                return false;
-            }
-
-            this.myLastImage = files.size();
-            if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX)
-                    .equals("\\d{8}")) {
-                Collections.sort(files);
-                int counter = 1;
-                int myDiff = 0;
-                String currentFileName = null;
-                try {
-                    for (Iterator<URI> iterator = files.iterator(); iterator.hasNext(); counter++) {
-                        currentFileName = fileService.getFileName(iterator.next());
-                        int curFileNumber = Integer.parseInt(currentFileName);
-                        if (curFileNumber != counter + myDiff) {
-                            Helper.setErrorMessage("[" + title + "] expected Image " + (counter + myDiff)
-                                    + " but found File " + currentFileName);
-                            myDiff = curFileNumber - counter;
-                            isValid = false;
-                        }
-                    }
-                } catch (NumberFormatException e1) {
-                    isValid = false;
-                    Helper.setErrorMessage(
-                        "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
-                }
-                return isValid;
-            }
-            return true;
-        }
-        Helper.setErrorMessage("[" + title + "] No image-folder found");
-        return false;
-    }
-
-    /**
-     * Get image files.
-     *
-     * @param directory
-     *            current folder
-     * @return sorted list with strings representing images of process
-     */
-    public List<URI> getImageFiles(URI directory) {
-        /* Verzeichnis einlesen */
-        List<URI> files = fileService.getSubUris(Helper.imageNameFilter, directory);
-        ArrayList<URI> finalFiles = new ArrayList<>();
-        for (URI file : files) {
-            String newURI = file.toString().replace(directory.toString(), "");
-            finalFiles.add(URI.create(newURI));
-        }
-
-        List<URI> dataList = new ArrayList<>(finalFiles);
-
-        if (!dataList.isEmpty()) {
-            List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
-
-            if (orderedFileNameList.size() == dataList.size()) {
-                return orderedFileNameList;
-            } else {
-                dataList.sort(new MetadataImageComparator());
-                return dataList;
-            }
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Get image files.
-     *
-     * @param physical
-     *            DocStruct object
-     * @return list of Strings
-     */
-    public List<URI> getImageFiles(DocStructInterface physical) {
-        List<URI> orderedFileList = new ArrayList<>();
-        List<DocStructInterface> pages = physical.getAllChildren();
-        if (pages != null) {
-            for (DocStructInterface page : pages) {
-                URI filename = URI.create(page.getImageName());
-                orderedFileList.add(filename);
-            }
-        }
-        return orderedFileList;
-    }
-
-    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
-        List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-        if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
-                String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
-                for (URI currentImage : dataList) {
-                    String currentFileName = fileService.getFileName(currentImage);
-                    if (currentFileName.equals(fileNamePrefix)) {
-                        orderedFileNameList.add(currentImage);
-                        break;
-                    }
-                }
-            }
-        }
-        return orderedFileNameList;
-    }
-
-    /**
-     * Get data files. First read them all and next if their size is bigger than
-     * zero sort them with use of GoobiImageFileComparator.
-     *
-     * @param process
-     *            Process object
-     * @return list of URIs
-     */
-    public List<URI> getDataFiles(Process process) throws InvalidImagesException {
-        URI dir;
-        try {
-            dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
-        } catch (IOException | RuntimeException e) {
-            throw new InvalidImagesException(e);
-        }
-        /* Verzeichnis einlesen */
-        ArrayList<URI> dataList = new ArrayList<>();
-        List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
-        if (!files.isEmpty()) {
-            dataList.addAll(files);
-            dataList.sort(new MetadataImageComparator());
-        }
-        return dataList;
+        List<String> regexList = getImageNameRegexList();
+        regexList.add(prefix + "\\.[pP][dD][fF]");
+        regexList.add(prefix + "\\.[aA][vV][iI]");
+        regexList.add(prefix + "\\.[mM][pP][gG]");
+        regexList.add(prefix + "\\.[mM][pP]4");
+        regexList.add(prefix + "\\.[mM][pP]3");
+        regexList.add(prefix + "\\.[wW][aA][vV]");
+        regexList.add(prefix + "\\.[wW][mM][vV]");
+        regexList.add(prefix + "\\.[fF][lL][vV]");
+        regexList.add(prefix + "\\.[oO][gG][gG]");
+        regexList.add(prefix + "\\.docx");
+        regexList.add(prefix + "\\.xls");
+        regexList.add(prefix + "\\.xlsx");
+        regexList.add(prefix + "\\.pptx");
+        regexList.add(prefix + "\\.ppt");
+        return regexList;
     }
 
 }

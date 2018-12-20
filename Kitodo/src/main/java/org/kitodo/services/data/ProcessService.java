@@ -117,6 +117,7 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.WikiFieldHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.MetadataLock;
@@ -2116,7 +2117,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             // jetzt den eigentlichen Kopiervorgang
-            List<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            List<URI> dateien = fileService.getSubUris(ImageHelper.dataFilter, tifOrdner);
             for (URI file : dateien) {
                 if (fileService.isFile(file)) {
                     URI target = zielTif.resolve(File.separator + fileService.getFileNameWithExtension(file));
@@ -2325,7 +2326,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         List<URI> dataList = new ArrayList<>();
-        List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        List<URI> files = fileService.getSubUris(ImageHelper.dataFilter, dir);
         if (!files.isEmpty()) {
             dataList.addAll(files);
             Collections.sort(dataList);

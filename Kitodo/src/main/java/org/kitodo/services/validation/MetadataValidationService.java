@@ -43,7 +43,7 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.UghHelper;
-import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -190,7 +190,7 @@ public class MetadataValidationService {
             result = false;
         }
 
-        ImagesHelper mih = new ImagesHelper(prefs, dd);
+        ImageHelper mih = new ImageHelper(prefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
                 ServiceManager.getProcessService().getImagesTifDirectory(true, process))) {

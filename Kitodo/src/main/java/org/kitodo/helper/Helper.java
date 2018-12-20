@@ -11,7 +11,6 @@
 
 package org.kitodo.helper;
 
-import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -38,8 +37,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.enums.ReportLevel;
 import org.kitodo.helper.messages.Error;
 import org.kitodo.helper.messages.Message;
@@ -471,68 +468,6 @@ public class Helper implements Observer, Serializable {
         } else {
             Helper.setErrorMessage((String) arg);
         }
-    }
-
-    public static final FilenameFilter imageNameFilter = (dir, name) -> {
-        List<String> regexList = getImageNameRegexList();
-
-        for (String regex : regexList) {
-            if (name.matches(regex)) {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    public static final FilenameFilter dataFilter = (dir, name) -> {
-        List<String> regexList = getDataRegexList();
-
-        for (String regex : regexList) {
-            if (name.matches(regex)) {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    private static List<String> getImageNameRegexList() {
-        String prefix = ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX);
-
-        List<String> regexList = new ArrayList<>();
-        regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
-        regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
-        regexList.add(prefix + "\\.[jJ][pP][2]");
-        regexList.add(prefix + "\\.[pP][nN][gG]");
-        regexList.add(prefix + "\\.[gG][iI][fF]");
-        return regexList;
-    }
-
-    private static List<String> getDataRegexList() {
-        String prefix = ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX);
-
-        List<String> regexList = new ArrayList<>();
-        regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
-        regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
-        regexList.add(prefix + "\\.[jJ][pP][2]");
-        regexList.add(prefix + "\\.[pP][nN][gG]");
-        regexList.add(prefix + "\\.[gG][iI][fF]");
-        regexList.add(prefix + "\\.[pP][dD][fF]");
-        regexList.add(prefix + "\\.[aA][vV][iI]");
-        regexList.add(prefix + "\\.[mM][pP][gG]");
-        regexList.add(prefix + "\\.[mM][pP]4");
-        regexList.add(prefix + "\\.[mM][pP]3");
-        regexList.add(prefix + "\\.[wW][aA][vV]");
-        regexList.add(prefix + "\\.[wW][mM][vV]");
-        regexList.add(prefix + "\\.[fF][lL][vV]");
-        regexList.add(prefix + "\\.[oO][gG][gG]");
-        regexList.add(prefix + "\\.docx");
-        regexList.add(prefix + "\\.xls");
-        regexList.add(prefix + "\\.xlsx");
-        regexList.add(prefix + "\\.pptx");
-        regexList.add(prefix + "\\.ppt");
-        return regexList;
     }
 
     /**

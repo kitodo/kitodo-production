@@ -50,7 +50,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.file.BackupFileRotation;
-import org.kitodo.helper.Helper;
+import org.kitodo.helper.metadata.ImageHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -279,7 +279,7 @@ public class FileService {
      */
     public Integer getNumberOfImageFiles(URI directory) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getNumberOfFiles(Helper.imageNameFilter, directory);
+        return fileManagementModule.getNumberOfFiles(ImageHelper.imageNameFilter, directory);
     }
 
     /**
