@@ -218,10 +218,7 @@ public class ProzesskopieForm implements Serializable {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
-    private transient List<AdditionalField> additionalFields;
     private String atstsl = "";
-    private List<String> digitalCollections;
-    private String docType;
     private Integer guessedImages = 0;
     private Process processForChoice;
 
@@ -254,22 +251,25 @@ public class ProzesskopieForm implements Serializable {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
-    private List<String> possibleDigitalCollection;
-    private Template template = new Template();
-    private Process prozessKopie = new Process();
-    private Project project;
-    private boolean useOpac;
-    private boolean useTemplates;
-    private Map<String, Boolean> standardFields;
-    private String tifDefinition;
-    private String titleDefinition;
-    private String tifHeaderImageDescription = "";
-    private String tifHeaderDocumentName = "";
     private List<String> workflowConditions = new ArrayList<>();
     private static final String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
-
     private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
+
+    protected String docType;
+    protected Template template = new Template();
+    protected Process prozessKopie = new Process();
+    protected Project project;
+    protected boolean useOpac;
+    protected boolean useTemplates;
+    protected transient List<AdditionalField> additionalFields;
+    protected transient Map<String, Boolean> standardFields;
+    protected String tifDefinition;
+    protected String titleDefinition;
+    protected String tifHeaderImageDescription = "";
+    protected String tifHeaderDocumentName = "";
+    protected transient List<String> digitalCollections;
+    protected List<String> possibleDigitalCollection;
 
     protected static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
@@ -369,8 +369,10 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void readProjectConfigs() {
-        // projektabhängig die richtigen Felder in der Gui anzeigen
+    /**
+     * Read project configs for display in GUI.
+     */
+    protected void readProjectConfigs() {
         ConfigProject cp;
         try {
             cp = new ConfigProject(this.project.getTitle());
@@ -424,9 +426,9 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * alle Konfigurationseigenschaften und Felder zurücksetzen.
+     * Reset all configuration properties and fields.
      */
-    private void clearValues() {
+    protected void clearValues() {
         if (this.opacKatalog == null) {
             this.opacKatalog = "";
         }
@@ -611,16 +613,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    /**
-     * Validierung der Eingaben.
-     *
-     * @return sind Fehler bei den Eingaben vorhanden?
-     */
-    boolean isContentValid() {
-        return isContentValid(true);
-    }
-
-    boolean isContentValid(boolean criticiseEmptyTitle) {
+    private boolean isContentValid(boolean criticiseEmptyTitle) {
         boolean valid = true;
 
         if (criticiseEmptyTitle) {
@@ -699,7 +692,7 @@ public class ProzesskopieForm implements Serializable {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public String createNewProcess() {
-        if (!isContentValid()) {
+        if (!isContentValid(true)) {
             return null;
         }
         addProperties();
@@ -1338,7 +1331,7 @@ public class ProzesskopieForm implements Serializable {
         return this.possibleDigitalCollection;
     }
 
-    private void initializePossibleDigitalCollections() {
+    protected void initializePossibleDigitalCollections() {
         try {
             DigitalCollection.possibleDigitalCollectionsForProcess(this.prozessKopie.getProject());
         } catch (JDOMException | IOException e) {
@@ -1349,7 +1342,6 @@ public class ProzesskopieForm implements Serializable {
         this.digitalCollections = DigitalCollection.getDigitalCollections();
 
         // if only one collection is possible take it directly
-
         if (isSingleChoiceCollection()) {
             this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
         }
@@ -1602,7 +1594,7 @@ public class ProzesskopieForm implements Serializable {
 
         // Documentname ist im allgemeinen = Prozesstitel
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
-        this.tifHeaderImageDescription = "";
+        StringBuilder tifHeaderImageDescriptionBuilder = new StringBuilder();
         // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         // jetzt den Tiffheader parsen
@@ -1614,11 +1606,11 @@ public class ProzesskopieForm implements Serializable {
              * übernehmen
              */
             if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
-                this.tifHeaderImageDescription += token.substring(1, token.length() - 1);
+                tifHeaderImageDescriptionBuilder.append(token.substring(1, token.length() - 1));
             } else if (token.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
-                    this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+                    tifHeaderImageDescriptionBuilder.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
                 } catch (FileNotFoundException | RuntimeException e) {
                     Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
                 }
@@ -1642,13 +1634,14 @@ public class ProzesskopieForm implements Serializable {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription += calculateProcessTitleCheck(additionalField.getTitle(),
-                            additionalField.getValue());
+                        tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(additionalField.getTitle(),
+                            additionalField.getValue()));
                     }
 
                 }
             }
         }
+        this.tifHeaderImageDescription = tifHeaderImageDescriptionBuilder.toString();
         reduceLengthOfTifHeaderImageDescription(title);
     }
 
