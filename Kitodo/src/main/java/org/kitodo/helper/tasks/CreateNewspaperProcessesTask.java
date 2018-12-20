@@ -11,7 +11,6 @@
 
 package org.kitodo.helper.tasks;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -229,7 +228,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             setProgress(((100 * nextProcessToCreate) + 1) / (numberOfProcesses + 2));
             saveFullBatch(currentTitle);
             setProgress(100);
-        } catch (IOException | DataException | RuntimeException e) {
+        } catch (DataException | RuntimeException e) {
             String message = currentTitle != null
                     ? Helper.getTranslation("createNewspaperProcessesTask.MetadataNotAllowedException",
                         currentTitle)

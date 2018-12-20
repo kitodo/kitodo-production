@@ -374,12 +374,12 @@ public class CopyProcess extends ProzesskopieForm {
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+                this.tifHeaderImageDescription);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+                this.tifHeaderImageDescription);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
