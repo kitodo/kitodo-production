@@ -91,7 +91,8 @@ public class Converter {
         }
     }
 
-    private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) throws DAOException {
+    private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo)
+            throws DAOException, WorkflowException {
         org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
         KitodoTask kitodoTask = new KitodoTask(workflowTask);
         task.setWorkflowId(kitodoTask.getWorkflowId());
@@ -110,9 +111,15 @@ public class Converter {
         task.setTypeAcceptClose(kitodoTask.isTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.isTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
-        Integer userRoleId = kitodoTask.getUserRole();
-        if (userRoleId > 0) {
-            task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
+
+        try {
+            String[] userRoleIds = kitodoTask.getUserRoles().split(",");
+            for (int i = 0; i < userRoleIds.length; i++) {
+                int userRoleId = Integer.parseInt(userRoleIds[i].trim());
+                task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
+            }
+        } catch (NullPointerException e) {
+            throw new WorkflowException("No roles assigned to the workflow task with title: '" + task.getTitle() + "'.");
         }
 
         if (workflowTask instanceof ScriptTask) {

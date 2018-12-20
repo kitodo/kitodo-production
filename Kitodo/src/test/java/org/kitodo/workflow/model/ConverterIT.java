@@ -100,6 +100,16 @@ public class ConverterIT {
     }
 
     @Test
+    public void shouldNotConvertWorkflowWithoutRoleToTemplate() throws Exception {
+        Converter converter = new Converter("gateway-test4");
+
+        Template template = new Template();
+        exception.expect(WorkflowException.class);
+        exception.expectMessage("No roles assigned to the workflow task with title: 'Task1'.");
+        converter.convertWorkflowToTemplate(template);
+    }
+
+    @Test
     public void shouldConvertConditionalWorkflowWithTwoEndsToTemplate() throws Exception {
         Converter converter = new Converter("gateway-test3");
 
