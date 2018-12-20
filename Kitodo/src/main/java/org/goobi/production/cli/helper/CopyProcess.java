@@ -203,7 +203,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.titleDefinition = cp.getTitleDefinition();
 
         this.standardFields.putAll(cp.getHiddenFields());
-        this.additionalFields = cp.getAdditionalFields(this);
+        this.additionalFields = cp.getAdditionalFields();
     }
 
     /**

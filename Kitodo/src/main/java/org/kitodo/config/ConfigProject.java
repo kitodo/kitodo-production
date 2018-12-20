@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
 
 public class ConfigProject {
@@ -172,17 +171,16 @@ public class ConfigProject {
     }
 
     /**
-     * Get additionalFields.
+     * Get additional fields.
      *
-     * @return value of additionalFields
+     * @return list of AdditionalField objects
      */
-    // TODO: remove ProzesskopieForm from constructor AdditionalField
-    public List<AdditionalField> getAdditionalFields(ProzesskopieForm prozesskopieForm) {
+    public List<AdditionalField> getAdditionalFields() {
         List<AdditionalField> additionalFields = new ArrayList<>();
 
         int count = getParamList(ITEM_LIST_ITEM).size();
         for (int i = 0; i < count; i++) {
-            AdditionalField additionalField = new AdditionalField(prozesskopieForm);
+            AdditionalField additionalField = new AdditionalField(getDocType());
             additionalField.setFrom(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@from]"));
             additionalField.setTitle(getParamString(ITEM_LIST_ITEM + "(" + i + ")"));
             additionalField.setRequired(getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@required]"));

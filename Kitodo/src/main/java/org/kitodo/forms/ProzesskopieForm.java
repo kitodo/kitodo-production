@@ -390,7 +390,7 @@ public class ProzesskopieForm implements Serializable {
         this.titleDefinition = cp.getTitleDefinition();
 
         this.standardFields.putAll(cp.getHiddenFields());
-        this.additionalFields = cp.getAdditionalFields(this);
+        this.additionalFields = cp.getAdditionalFields();
     }
 
     /**
