@@ -864,6 +864,18 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   height: 1px !important;
   visibility: hidden;
 }
+/* line 67, styles/modeler_custom.less */
+#js-properties-panel {
+  background-color: #f8f8f8;
+}
+/* line 71, styles/modeler_custom.less */
+.workflow-editor-hidden {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
 
 @font-face {
   font-family: 'bpmn';
