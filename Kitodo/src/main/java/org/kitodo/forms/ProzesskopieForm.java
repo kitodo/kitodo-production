@@ -901,9 +901,6 @@ public class ProzesskopieForm implements Serializable {
             // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            User user = ServiceManager.getUserService().getCurrentUser();
-            ServiceManager.getTaskService().replaceProcessingUser(task, user);
-
             // only if its done, set edit start and end date
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 task.setProcessingBegin(process.getCreationDate());
@@ -1470,7 +1467,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateProcessTitle() {
         try {
             generateTitle(null);
-            Ajax.update("editForm");
+            Ajax.update("editForm:processFromTemplateTabView:processDataTab");
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

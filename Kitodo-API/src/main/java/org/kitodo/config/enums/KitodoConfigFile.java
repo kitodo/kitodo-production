@@ -14,7 +14,7 @@ package org.kitodo.config.enums;
 import java.io.File;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.KitodoConfig;
 
 /**
  * This class collects config files and their names used throughout the code.
@@ -60,7 +60,7 @@ public enum KitodoConfigFile {
      */
     KitodoConfigFile(String name) {
         this.name = name;
-        this.file = new File(ConfigCore.getKitodoConfigDirectory() + this.name);
+        this.file = new File(KitodoConfig.getKitodoConfigDirectory() + this.name);
     }
 
     /**

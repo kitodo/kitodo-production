@@ -36,9 +36,9 @@ public interface ExternalDataImportInterface {
     Document getFullRecordById(String catalogId, String id);
 
     /**
-     * Perform search in catalog with given ID 'catalogId' Map 'searchTerms', which
-     * contains search fields as keys and search terms as values. The parameter rows
-     * controls how many records should be returned.
+     * Perform search in catalog with given ID 'catalogId' with given search fields
+     * 'field' and term 'term'. The parameter rows controls how many records should
+     * be returned.
      *
      * @param catalogId
      *            ID of the catalog that will be queried.

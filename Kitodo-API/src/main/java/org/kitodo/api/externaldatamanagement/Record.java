@@ -25,6 +25,16 @@ public class Record {
     private String id;
 
     /**
+     * Standard constructor setting title and id of record.
+     * @param title title of record
+     * @param id id of record
+     */
+    public Record(String title, String id) {
+        this.title = title;
+        this.id = id;
+    }
+
+    /**
      * Return title of record.
      *
      * @return
