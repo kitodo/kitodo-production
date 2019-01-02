@@ -16,7 +16,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,11 +26,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
 
 public class WorkpieceIT {
+
+    @AfterClass
+    public static void clean() throws Exception {
+        Files.deleteIfExists(new File("src/test/resources/out.xml").toPath());
+    }
 
     /**
      * Tests loading a workpiece from a METS file.
@@ -191,16 +199,18 @@ public class WorkpieceIT {
 
         // read the file and see if everything is in it
         Workpiece reread = new Workpiece();
-        reread.read(new FileInputStream(new File("src/test/resources/out.xml")));
+        try (InputStream inputStream = new FileInputStream(new File("src/test/resources/out.xml"))) {
+            reread.read(inputStream);
 
-        assertEquals(1, reread.getMetsHdr().size());
-        assertEquals(4, reread.getFileGrp().size());
-        for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
-            assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
+            assertEquals(1, reread.getMetsHdr().size());
+            assertEquals(4, reread.getFileGrp().size());
+            for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
+                assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
+            }
+            Structure structureRoot = reread.getStructMap();
+            assertEquals(4, structureRoot.getAreas().size());
+            assertEquals(3, structureRoot.getChildren().size());
+            assertEquals(1, structureRoot.getMetadata().size());
         }
-        Structure structureRoot = reread.getStructMap();
-        assertEquals(4, structureRoot.getAreas().size());
-        assertEquals(3, structureRoot.getChildren().size());
-        assertEquals(1, structureRoot.getMetadata().size());
     }
 }
