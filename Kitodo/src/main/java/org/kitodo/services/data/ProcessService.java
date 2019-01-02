@@ -1747,20 +1747,38 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
+     *
+     * @return list of ProcessProperty objects
+     */
+    public List<PropertyDTO> getSortedCorrectionSolutionMessages(ProcessDTO process) {
+        List<PropertyDTO> filteredList = filterForCorrectionSolutionMessages(process.getProperties());
+
+        if (filteredList.size() > 1) {
+            filteredList.sort(
+                Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
+        }
+
+        return filteredList;
+    }
+
+    /**
      * Filter for correction / solution messages.
      *
      * @param lpe
      *            List of process properties
      * @return List of filtered correction / solution messages
      */
-    protected List<PropertyDTO> filterForCorrectionSolutionMessages(List<PropertyDTO> lpe) {
+    private List<PropertyDTO> filterForCorrectionSolutionMessages(List<PropertyDTO> lpe) {
         List<PropertyDTO> filteredList = new ArrayList<>();
-        List<String> translationList = Arrays.asList("Correction required", "Correction performed",
-            "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         if (lpe.isEmpty()) {
             return filteredList;
         }
+
+        List<String> translationList = Arrays.asList("Correction required", "Correction performed",
+                "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         // filtering for correction and solution messages
         for (PropertyDTO property : lpe) {
@@ -1769,30 +1787,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
         return filteredList;
-    }
-
-    /**
-     * Filter and sort after creation date list of process properties for
-     * correction and solution messages.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<PropertyDTO> getSortedCorrectionSolutionMessages(ProcessDTO process) {
-        List<PropertyDTO> filteredList;
-        List<PropertyDTO> properties = process.getProperties();
-
-        if (properties.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        filteredList = filterForCorrectionSolutionMessages(properties);
-
-        if (filteredList.size() > 1) {
-            filteredList.sort(
-                Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
-        }
-
-        return new ArrayList<>(filteredList);
     }
 
     /**
