@@ -648,17 +648,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Convert DTO to bean object.
-     *
-     * @param processDTO
-     *            DTO object
-     * @return bean object
-     */
-    public Process convertDtoToBean(ProcessDTO processDTO) throws DAOException {
-        return ServiceManager.getProcessService().getById(processDTO.getId());
-    }
-
-    /**
      * Convert list of DTOs to list of beans.
      *
      * @param dtos
@@ -668,7 +657,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public List<Process> convertDtosToBeans(List<ProcessDTO> dtos) throws DAOException {
         List<Process> processes = new ArrayList<>();
         for (ProcessDTO processDTO : dtos) {
-            processes.add(convertDtoToBean(processDTO));
+            processes.add(getById(processDTO.getId()));
         }
         return processes;
     }
