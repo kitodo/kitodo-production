@@ -34,7 +34,7 @@
         <p:column headerText="#{msgs.status}" id="taskStatus">
             <p:panel id="statusColumn" styleClass="statusColumn">
                 <h:panelGroup class="task-status"
-                              title="#{item.processingStatusEnum.title}"
+                              title="#{ProcessForm.getTaskStatusTitle(item.processingStatusEnum.title)}"
                               style="background-color:
                                 #{item.processingStatusEnum.title == 'statusDone' ? 'var(--task-closed)' : ''}
                                 #{item.processingStatusEnum.title == 'statusInProcessing' ? 'var(--task-inwork)' : ''}
