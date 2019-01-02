@@ -47,13 +47,13 @@ public class ProcessServiceTest {
 
         PropertyDTO fourthPropertyDTO = new PropertyDTO();
         fourthPropertyDTO.setId(4);
-        fourthPropertyDTO.setTitle("Korrektur durchgefuehrt");
+        fourthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
         fourthPropertyDTO.setValue("Fixed second");
         fourthPropertyDTO.setCreationDate("2017-12-05");
 
         PropertyDTO fifthPropertyDTO = new PropertyDTO();
         fifthPropertyDTO.setId(5);
-        fifthPropertyDTO.setTitle("Korrektur durchgefuehrt");
+        fifthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
         fifthPropertyDTO.setValue("Fixed first");
         fifthPropertyDTO.setCreationDate("2017-12-03");
 
