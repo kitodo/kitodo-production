@@ -75,8 +75,6 @@ public class ProcessForm extends TemplateBaseForm {
     private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();
-    private transient List<ProcessCounterObject> processCounterObjects;
-    private HashMap<String, Integer> counterSummary;
     private Property templateProperty;
     private Property workpieceProperty;
     private String kitodoScript;
@@ -810,118 +808,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Calculate metadata and images pages.
-     */
-    @SuppressWarnings("unchecked")
-    public void calculateMetadataAndImagesPage() {
-        calculateMetadataAndImages(lazyDTOModel.getEntities());
-    }
-
-    /**
-     * Calculate metadata and images selection.
-     */
-    public void calculateMetadataAndImagesSelection() {
-        calculateMetadataAndImages(this.selectedProcesses);
-    }
-
-    /**
-     * Calculate metadata and images hits.
-     */
-    @SuppressWarnings("unchecked")
-    public void calculateMetadataAndImagesHits() {
-        calculateMetadataAndImages(lazyDTOModel.getEntities());
-    }
-
-    private void calculateMetadataAndImages(List<ProcessDTO> processes) {
-
-        this.processCounterObjects = new ArrayList<>();
-        int allMetadata = 0;
-        int allDocstructs = 0;
-        int allImages = 0;
-
-        int maxImages = 1;
-        int maxDocstructs = 1;
-        int maxMetadata = 1;
-
-        int countOfProcessesWithImages = 0;
-        int countOfProcessesWithMetadata = 0;
-        int countOfProcessesWithDocstructs = 0;
-
-        int averageImages = 0;
-        int averageMetadata = 0;
-        int averageDocstructs = 0;
-
-        for (ProcessDTO proz : processes) {
-            int tempImg = proz.getSortHelperImages();
-            int tempMetadata = proz.getSortHelperMetadata();
-            int tempDocstructs = proz.getSortHelperDocstructs();
-
-            ProcessCounterObject pco = new ProcessCounterObject(proz.getTitle(), tempMetadata, tempDocstructs, tempImg);
-            this.processCounterObjects.add(pco);
-
-            if (tempImg > maxImages) {
-                maxImages = tempImg;
-            }
-            if (tempMetadata > maxMetadata) {
-                maxMetadata = tempMetadata;
-            }
-            if (tempDocstructs > maxDocstructs) {
-                maxDocstructs = tempDocstructs;
-            }
-            if (tempImg > 0) {
-                countOfProcessesWithImages++;
-            }
-            if (tempMetadata > 0) {
-                countOfProcessesWithMetadata++;
-            }
-            if (tempDocstructs > 0) {
-                countOfProcessesWithDocstructs++;
-            }
-
-            /* Werte für die Gesamt- und Durchschnittsberechnung festhalten */
-            allImages += tempImg;
-            allMetadata += tempMetadata;
-            allDocstructs += tempDocstructs;
-        }
-
-        /* die prozentualen Werte anhand der Maximumwerte ergänzen */
-        for (ProcessCounterObject pco : this.processCounterObjects) {
-            pco.setRelImages(pco.getImages() * 100 / maxImages);
-            pco.setRelMetadata(pco.getMetadata() * 100 / maxMetadata);
-            pco.setRelDocstructs(pco.getDocstructs() * 100 / maxDocstructs);
-        }
-
-        if (countOfProcessesWithImages > 0) {
-            averageImages = allImages / countOfProcessesWithImages;
-        }
-
-        if (countOfProcessesWithMetadata > 0) {
-            averageMetadata = allMetadata / countOfProcessesWithMetadata;
-        }
-
-        if (countOfProcessesWithDocstructs > 0) {
-            averageDocstructs = allDocstructs / countOfProcessesWithDocstructs;
-        }
-
-        this.counterSummary = new HashMap<>();
-        this.counterSummary.put("sumProcesses", this.processCounterObjects.size());
-        this.counterSummary.put("sumMetadata", allMetadata);
-        this.counterSummary.put("sumDocstructs", allDocstructs);
-        this.counterSummary.put("sumImages", allImages);
-        this.counterSummary.put("averageImages", averageImages);
-        this.counterSummary.put("averageMetadata", averageMetadata);
-        this.counterSummary.put("averageDocstructs", averageDocstructs);
-    }
-
-    public Map<String, Integer> getCounterSummary() {
-        return this.counterSummary;
-    }
-
-    public List<ProcessCounterObject> getProcessCounterObjects() {
-        return this.processCounterObjects;
-    }
-
-    /**
      * Execute Kitodo script for hits list.
      */
     @SuppressWarnings("unchecked")
@@ -981,76 +867,6 @@ public class ProcessForm extends TemplateBaseForm {
 
     public void setNewProcessTitle(String newProcessTitle) {
         this.newProcessTitle = newProcessTitle;
-    }
-
-    public static class ProcessCounterObject {
-        private String title;
-        private int metadata;
-        private int docstructs;
-        private int images;
-        private int relImages;
-        private int relDocstructs;
-        private int relMetadata;
-
-        /**
-         * Constructor.
-         *
-         * @param title
-         *            String
-         * @param metadata
-         *            int
-         * @param docstructs
-         *            int
-         * @param images
-         *            int
-         */
-        public ProcessCounterObject(String title, int metadata, int docstructs, int images) {
-            super();
-            this.title = title;
-            this.metadata = metadata;
-            this.docstructs = docstructs;
-            this.images = images;
-        }
-
-        public int getImages() {
-            return this.images;
-        }
-
-        public int getMetadata() {
-            return this.metadata;
-        }
-
-        public String getTitle() {
-            return this.title;
-        }
-
-        public int getDocstructs() {
-            return this.docstructs;
-        }
-
-        public int getRelDocstructs() {
-            return this.relDocstructs;
-        }
-
-        public int getRelImages() {
-            return this.relImages;
-        }
-
-        public int getRelMetadata() {
-            return this.relMetadata;
-        }
-
-        public void setRelDocstructs(int relDocstructs) {
-            this.relDocstructs = relDocstructs;
-        }
-
-        public void setRelImages(int relImages) {
-            this.relImages = relImages;
-        }
-
-        public void setRelMetadata(int relMetadata) {
-            this.relMetadata = relMetadata;
-        }
     }
 
     /**
