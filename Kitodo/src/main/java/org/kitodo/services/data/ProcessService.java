@@ -824,53 +824,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param useFallBack
      *            add description
-     * @param process
-     *            object
-     * @return tif directory
-     */
-    public URI getImagesTifDirectory(boolean useFallBack, Process process) throws IOException {
-        URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-
-        /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
-        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
-                "_" + DIRECTORY_SUFFIX);
-        URI tifDirectory = null;
-        List<URI> directories = fileService.getSubUris(filterDirectory, dir);
-        for (URI directory : directories) {
-            tifDirectory = directory;
-        }
-
-        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
-            List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
-            for (URI folder : folderList) {
-                if (folder.toString().endsWith(SUFFIX)) {
-                    tifDirectory = folder;
-                    break;
-                }
-            }
-        }
-
-        tifDirectory = getImageDirectory(useFallBack, dir, tifDirectory);
-
-        URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-
-        if (tifDirectory == null) {
-            tifDirectory = URI
-                    .create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
-        }
-
-        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
-            fileService.createDirectory(result, tifDirectory.getRawPath());
-        }
-
-        return tifDirectory;
-    }
-
-    /**
-     * Get directory for tig images.
-     *
-     * @param useFallBack
-     *            add description
      * @param processId
      *            id of process object
      * @param processTitle
@@ -880,7 +833,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return tif directory
      */
     public URI getImagesTifDirectory(boolean useFallBack, Integer processId, String processTitle, URI processBaseURI)
-            throws DAOException, IOException {
+            throws IOException {
         URI dir = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -934,7 +887,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
                     && !fileService.getSubUris(testMe).isEmpty();
-        } catch (DAOException | IOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
             return false;
         }
@@ -987,7 +940,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
             return origDirectory;
         } else {
-            return getImagesTifDirectory(useFallBack, process);
+            return getImagesTifDirectory(useFallBack, process.getId(), process.getTitle(), process.getProcessBaseUri());
         }
     }
 
@@ -1622,7 +1575,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.debug("exception: " + e);
         }
         try {
-            URI folder = this.getImagesTifDirectory(false, process);
+            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(), process.getProcessBaseUri());
             String folderName = fileService.getFileName(folder);
             folderName = folderName.substring(0, folderName.lastIndexOf('_'));
             folderName = folderName + "_" + methodName;
@@ -2090,7 +2043,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * den Ausgangspfad ermitteln
          */
-        URI tifOrdner = getImagesTifDirectory(true, process);
+        URI tifOrdner = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
@@ -2320,7 +2273,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;
         try {
-            dir = getImagesTifDirectory(true, process);
+            dir = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
         } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }

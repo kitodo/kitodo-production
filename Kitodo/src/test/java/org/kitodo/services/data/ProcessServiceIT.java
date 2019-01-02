@@ -240,11 +240,13 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetImagesTifDirectory() throws Exception {
         Process process = processService.getById(1);
-        URI directory = processService.getImagesTifDirectory(true, process);
+        URI directory = processService.getImagesTifDirectory(true, process.getId(), process.getTitle(),
+            process.getProcessBaseUri());
         boolean condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
 
-        directory = processService.getImagesTifDirectory(false, process);
+        directory = processService.getImagesTifDirectory(false, process.getId(), process.getTitle(),
+            process.getProcessBaseUri());
         condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
         // I don't know what changes this useFallback so I'm testing for both

@@ -524,7 +524,8 @@ public class ExportDms extends ExportMets {
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException {
         // determine the source folder
-        URI tifOrdner = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
+        URI tifOrdner = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
+            process.getTitle(), process.getProcessBaseUri());
 
         // copy the source folder to the destination folder
         if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
