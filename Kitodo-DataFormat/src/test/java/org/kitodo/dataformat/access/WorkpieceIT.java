@@ -26,16 +26,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
 
 public class WorkpieceIT {
 
-    @AfterClass
+    private static final File OUT_FILE = new File("src/test/resources/out.xml");
+
     public static void clean() throws Exception {
-        Files.deleteIfExists(new File("src/test/resources/out.xml").toPath());
+        Files.deleteIfExists(OUT_FILE.toPath());
     }
 
     /**
@@ -195,22 +195,26 @@ public class WorkpieceIT {
         workpiece.getMetsHdr().add(note);
 
         // write file
-        workpiece.save(new FileOutputStream(new File("src/test/resources/out.xml")));
+        try (FileOutputStream out = new FileOutputStream(OUT_FILE)) {
+            workpiece.save(out);
+        }
 
         // read the file and see if everything is in it
         Workpiece reread = new Workpiece();
-        try (InputStream inputStream = new FileInputStream(new File("src/test/resources/out.xml"))) {
+        try (InputStream inputStream = new FileInputStream(OUT_FILE)) {
             reread.read(inputStream);
-
-            assertEquals(1, reread.getMetsHdr().size());
-            assertEquals(4, reread.getFileGrp().size());
-            for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
-                assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
-            }
-            Structure structureRoot = reread.getStructMap();
-            assertEquals(4, structureRoot.getAreas().size());
-            assertEquals(3, structureRoot.getChildren().size());
-            assertEquals(1, structureRoot.getMetadata().size());
         }
+
+        assertEquals(1, reread.getMetsHdr().size());
+        assertEquals(4, reread.getFileGrp().size());
+        for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
+            assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
+        }
+        Structure structureRoot = reread.getStructMap();
+        assertEquals(4, structureRoot.getAreas().size());
+        assertEquals(3, structureRoot.getChildren().size());
+        assertEquals(1, structureRoot.getMetadata().size());
+
+        clean();
     }
 }
