@@ -40,9 +40,6 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
@@ -152,21 +149,6 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 
-    @Override
-    public List<FileXmlElementAccessInterface> getFileGrp() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public List<AgentXmlElementAccessInterface> getMetsHdr() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public DivXmlElementAccessInterface getStructMap() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
     /**
      * Reads METS from an InputStream. JAXB is used to parse the XML.
      * 
@@ -212,11 +194,6 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 throw new IOException(e.getMessage(), e);
             }
         }
-    }
-
-    @Override
-    public void setId(String id) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**

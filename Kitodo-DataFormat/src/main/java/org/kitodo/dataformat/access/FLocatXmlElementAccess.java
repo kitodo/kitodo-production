@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.FileType.FLocat;
 
@@ -23,7 +22,7 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
  * A media file is a reference to a computer file on the data store. Since it is
  * referenced by URI, it can also be in the world wide web.
  */
-public class FLocatXmlElementAccess implements FLocatXmlElementAccessInterface {
+public class FLocatXmlElementAccess {
     /**
      * Some magic numbers that are used in the METS XML file representation of
      * this structure to describe relations between XML elements. They need to
@@ -62,14 +61,8 @@ public class FLocatXmlElementAccess implements FLocatXmlElementAccessInterface {
         }
     }
 
-    @Override
     public URI getUri() {
         return uri;
-    }
-
-    @Override
-    public void setUri(URI href) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**

@@ -11,15 +11,12 @@
 
 package org.kitodo.dataformat.access;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 
 /**
@@ -27,7 +24,7 @@ import org.kitodo.dataformat.metskitodo.MetadataGroupType;
  * with different meta-data entries, which can be groups again. This allows any
  * nesting depths to be achieved.
  */
-public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess implements MetadataGroupXmlElementAccessInterface {
+public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
 
     private final MetadataGroup metadataGroup;
 
@@ -65,11 +62,6 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess imp
 
     MetadataGroupXmlElementAccess(MetadataGroup metadataEntriesGroup) {
         this.metadataGroup = metadataEntriesGroup;
-    }
-
-    @Override
-    public Collection<MetadataAccessInterface> getMetadata() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     MetadataGroup getMetadataGroup() {

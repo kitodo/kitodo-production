@@ -15,21 +15,17 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
-public class FileXmlElementAccess implements FileXmlElementAccessInterface {
+public class FileXmlElementAccess {
 
     /**
      * The data object of this file XML element access.
@@ -77,48 +73,8 @@ public class FileXmlElementAccess implements FileXmlElementAccessInterface {
         this.mediaUnit = mediaUnit;
     }
 
-    @Override
-    public Set<Entry<UseXmlAttributeAccessInterface, FLocatXmlElementAccessInterface>> getAllUsesWithFLocats() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public FLocatXmlElementAccessInterface getFLocatForUse(UseXmlAttributeAccessInterface use) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
     MediaUnit getMediaUnit() {
         return mediaUnit;
-    }
-
-    @Override
-    public int getOrder() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getOrderlabel() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void putFLocatForUse(UseXmlAttributeAccessInterface use, FLocatXmlElementAccessInterface fLocat) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void removeFLocatForUse(UseXmlAttributeAccessInterface use) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setOrder(int order) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setOrderlabel(String orderlabel) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**

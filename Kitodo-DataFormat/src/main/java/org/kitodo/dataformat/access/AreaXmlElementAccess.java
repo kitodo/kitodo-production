@@ -11,10 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
-
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 
 /**
  * A view on a media unit. The individual levels of the {@link DivXmlElementAccess} refer
@@ -23,7 +20,7 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
  * been added here in order to be able to expand it in the future in order to be
  * able to refer to individual parts of a {@code MediaUnit}.
  */
-public class AreaXmlElementAccess implements AreaXmlElementAccessInterface {
+public class AreaXmlElementAccess {
 
     /**
      * The data object of this area XML element access.
@@ -48,17 +45,7 @@ public class AreaXmlElementAccess implements AreaXmlElementAccessInterface {
         view.setMediaUnit(fileXmlElementAccess.getMediaUnit());
     }
 
-    @Override
-    public FileXmlElementAccessInterface getFile() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
     View getView() {
         return view;
-    }
-
-    @Override
-    public void setFile(FileXmlElementAccessInterface file) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 }

@@ -15,13 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.kitodo.api.dataformat.ProcessingNote;
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.Agent;
 
 /**
  * A processing note that can be placed in the header of the XML file.
  */
-public class AgentXmlElementAccess implements AgentXmlElementAccessInterface {
+public class AgentXmlElementAccess {
     /**
      * Known roles in METS. If the role takes one of these values, the
      * {@code ROLE} attribute is set to this value. Otherwise, the role is set
@@ -73,48 +72,8 @@ public class AgentXmlElementAccess implements AgentXmlElementAccessInterface {
         this.processingNote = processingNote;
     }
 
-    @Override
-    public String getName() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getNote() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
     ProcessingNote getProcessingNote() {
         return processingNote;
-    }
-
-    @Override
-    public String getRole() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getType() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setNote(String note) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setRole(String role) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setType(String type) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**
