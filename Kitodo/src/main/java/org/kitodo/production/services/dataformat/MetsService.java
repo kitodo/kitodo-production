@@ -11,31 +11,19 @@
 
 package org.kitodo.production.services.dataformat;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetsService {
 
     private static volatile MetsService instance = null;
-    private KitodoServiceLoader<AgentXmlElementAccessInterface> agentServiceLoader;
-    private KitodoServiceLoader<AreaXmlElementAccessInterface> areaServiceLoader;
-    private KitodoServiceLoader<DivXmlElementAccessInterface> divServiceLoader;
-    private KitodoServiceLoader<FileXmlElementAccessInterface> fileServiceLoader;
-    private KitodoServiceLoader<FLocatXmlElementAccessInterface> fLocatServiceLoader;
-    private KitodoServiceLoader<MetadataGroupXmlElementAccessInterface> metadataGroupServiceLoader;
-    private KitodoServiceLoader<MetadataXmlElementAccessInterface> metadataServiceLoader;
-    private KitodoServiceLoader<MetsXmlElementAccessInterface> metsServiceLoader;
-    private KitodoServiceLoader<UseXmlAttributeAccessInterface> useServiceLoader;
+    private MetsXmlElementAccessInterface metsXmlElementAccess;
 
     /**
      * Return singleton variable of type MetsService.
@@ -54,50 +42,15 @@ public class MetsService {
     }
 
     private MetsService() {
-        agentServiceLoader = new KitodoServiceLoader<>(AgentXmlElementAccessInterface.class);
-        areaServiceLoader = new KitodoServiceLoader<>(AreaXmlElementAccessInterface.class);
-        divServiceLoader = new KitodoServiceLoader<>(DivXmlElementAccessInterface.class);
-        fileServiceLoader = new KitodoServiceLoader<>(FileXmlElementAccessInterface.class);
-        fLocatServiceLoader = new KitodoServiceLoader<>(FLocatXmlElementAccessInterface.class);
-        metadataGroupServiceLoader = new KitodoServiceLoader<>(MetadataGroupXmlElementAccessInterface.class);
-        metadataServiceLoader = new KitodoServiceLoader<>(MetadataXmlElementAccessInterface.class);
-        metsServiceLoader = new KitodoServiceLoader<>(MetsXmlElementAccessInterface.class);
-        useServiceLoader = new KitodoServiceLoader<>(UseXmlAttributeAccessInterface.class);
+        metsXmlElementAccess = (MetsXmlElementAccessInterface) new KitodoServiceLoader<>(
+                MetsXmlElementAccessInterface.class).loadModule();
     }
 
-    public AgentXmlElementAccessInterface createAgent() {
-        return agentServiceLoader.loadModule();
+    public Workpiece load(InputStream in) throws IOException {
+        return metsXmlElementAccess.read(in);
     }
 
-    public AreaXmlElementAccessInterface createArea() {
-        return areaServiceLoader.loadModule();
-    }
-
-    public DivXmlElementAccessInterface createDiv() {
-        return divServiceLoader.loadModule();
-    }
-
-    public FileXmlElementAccessInterface createFile() {
-        return fileServiceLoader.loadModule();
-    }
-
-    public FLocatXmlElementAccessInterface createFLocat() {
-        return fLocatServiceLoader.loadModule();
-    }
-
-    public MetadataGroupXmlElementAccessInterface createMetadataGroup() {
-        return metadataGroupServiceLoader.loadModule();
-    }
-
-    public MetadataXmlElementAccessInterface createMetadata() {
-        return metadataServiceLoader.loadModule();
-    }
-
-    public MetsXmlElementAccessInterface createMets() {
-        return metsServiceLoader.loadModule();
-    }
-
-    public UseXmlAttributeAccessInterface createUse() {
-        return useServiceLoader.loadModule();
+    public void save(Workpiece workpiece, OutputStream out) throws IOException {
+        metsXmlElementAccess.save(workpiece, out);
     }
 }
