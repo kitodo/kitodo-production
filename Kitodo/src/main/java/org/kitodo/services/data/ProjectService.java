@@ -156,7 +156,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Find all projects available to assign to the edited user. It will be
-     * displayed in the userEditProjectsPopup.
+     * displayed in the addProjectsPopup.
      *
      * @param userId
      *            id of user which is going to be edited
@@ -213,7 +213,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     List<JsonObject> findByProcessTitle(String title) throws DataException {
         List<JsonObject> processes = ServiceManager.getProcessService().findByTitle(title, true);
 
-        return searcher.findDocuments(createSetQuery("processes.id", processes, true).toString());
+        return searcher.findDocuments(createSetQuery(ProjectTypeField.PROCESSES + ".id", processes, true).toString());
     }
 
     /**
@@ -224,11 +224,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of JSON objects
      */
     List<JsonObject> findByUserId(Integer id) throws DataException {
-        return searcher.findDocuments(getQueryForUserId(id).toString());
-    }
-
-    private QueryBuilder getQueryForUserId(Integer id) {
-        return createSimpleQuery("users.id", id, true);
+        return searcher.findDocuments(getQueryForUserId(id, true).toString());
     }
 
     /**
@@ -243,8 +239,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return findByUserId(getIdFromJSONObject(user));
     }
 
-    private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
-        return createSimpleQuery(ProjectTypeField.USERS.getKey() + ".id", id, contains);
+    private QueryBuilder getQueryForUserId(int id, boolean contains) {
+        return createSimpleQuery(ProjectTypeField.USERS + ".id", id, contains);
     }
 
     /**
@@ -398,7 +394,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForUserId(currentUserId));
+        query.must(getQueryForUserId(currentUserId, true));
         query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
         return query.toString();
     }

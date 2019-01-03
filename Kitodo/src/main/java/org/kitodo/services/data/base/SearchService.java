@@ -682,6 +682,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return createSetQuery(key, valuesIds, contains);
     }
 
+    protected QueryBuilder createSetQueryForBeans(String key, List<BaseIndexedBean> values, boolean contains) {
+        Set<Integer> valuesIds = new HashSet<>();
+        for (BaseIndexedBean value : values) {
+            valuesIds.add(value.getId());
+        }
+
+        return createSetQuery(key, valuesIds, contains);
+    }
+
     /**
      * Used for cases where operator is not necessary to create query - checking
      * only for one parameter.
