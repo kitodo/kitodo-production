@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.dataformat.MediaVariant;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
 /**
@@ -27,7 +26,7 @@ import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
  * always linked to a MIME type, it is not possible to have mixed MIME types in
  * the same usage variant.
  */
-public class UseXmlAttributeAccess implements UseXmlAttributeAccessInterface {
+public class UseXmlAttributeAccess {
 
     /**
      * The data object of this file XML element access.
@@ -75,26 +74,6 @@ public class UseXmlAttributeAccess implements UseXmlAttributeAccessInterface {
 
     MediaVariant getMediaVariant() {
         return mediaVariant;
-    }
-
-    @Override
-    public String getMimeType() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getUse() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setMimeType(String mimeType) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setUse(String use) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     @Override

@@ -11,7 +11,6 @@
 
 package org.kitodo.dataformat.access;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +32,7 @@ import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -50,7 +46,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
  * structure can be subdivided into arbitrary finely granular
  * {@link #substructures}. It can be described by {@link #metadata}.
  */
-public class DivXmlElementAccess implements DivXmlElementAccessInterface {
+public class DivXmlElementAccess {
     /**
      * The qualified name of the Kitodo meta-data format, needed to assemble the
      * meta-data entries in METS using JAXB.
@@ -164,53 +160,8 @@ public class DivXmlElementAccess implements DivXmlElementAccessInterface {
                             .collect(Collectors.toList()));
     }
 
-    @Override
-    public List<AreaXmlElementAccessInterface> getAreas() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public List<DivXmlElementAccessInterface> getChildren() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getLabel() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public Collection<MetadataAccessInterface> getMetadata() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getOrderlabel() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
     Structure getStructure() {
         return structure;
-    }
-
-    @Override
-    public String getType() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setLabel(String label) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setOrderlabel(String orderlabel) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setType(String type) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**

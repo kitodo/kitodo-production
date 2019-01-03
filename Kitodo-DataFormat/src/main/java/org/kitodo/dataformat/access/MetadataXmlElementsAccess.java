@@ -11,33 +11,10 @@
 
 package org.kitodo.dataformat.access;
 
-import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
-
 /**
  * Abstract superclass of {@code MetadataEntry} and
  * {@code MetadataGroupXmlElementAccess}, to be able to store them together in a
  * list.
  */
-abstract class MetadataXmlElementsAccess implements MetadataAccessInterface {
-
-    @Override
-    public MdSec getDomain() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public String getType() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setDomain(MdSec domain) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setType(String type) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
+abstract class MetadataXmlElementsAccess {
 }

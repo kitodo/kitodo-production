@@ -14,7 +14,6 @@ package org.kitodo.api.dataformat.mets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.kitodo.api.dataformat.Workpiece;
 
@@ -43,50 +42,6 @@ import org.kitodo.api.dataformat.Workpiece;
  */
 public interface MetsXmlElementAccessInterface {
     /**
-     * Returns a service to access the {@code <fileGrp>}. A file grp is an
-     * ordered list of media units used to digitally represent a cultural work.
-     * The order is of minor importance at this point. It rather describes the
-     * order in which the media units are displayed on the workstation of the
-     * compiler, which determines the presentation form intended for the
-     * consumer (and thus also their presentation order). Mostly this is the
-     * order in which each digital part was recorded. The file grp was
-     * abstracted from its use at this point, so there is only one file per
-     * file. The file elements then provide F locats for various uses. The file
-     * grp implements a list of services to access the file.
-     *
-     * @return a service to access the {@code <fileGrp>}
-     */
-    List<FileXmlElementAccessInterface> getFileGrp();
-
-    /**
-     * Returns a service to access the {@code <metsHdr>}. The mets hdr makes it
-     * possible to record editing notes in an ordered list. These can be used by
-     * the editors similar to a diary, to exchange views on the processing
-     * status.
-     * 
-     * @return a service to access the {@code <metsHdr>}
-     */
-    List<AgentXmlElementAccessInterface> getMetsHdr();
-
-    /**
-     * Returns a service to access to the logical {@code <structMap>}. The
-     * logical struct map is a tree-like structure and forms, similar to a
-     * structured table of contents, the entry for the viewer of the finished
-     * digital representation of the work of art.
-     *
-     * <p>
-     * From a technical point of view, there may be several logical struct maps
-     * in a METS file if the digital representations of a work of art can be
-     * combined into several different works of art, as is the case with a
-     * palimpsest. This is not currently supported at this point, but could
-     * later be expanded simply by extending this getter into a collection of
-     * div service interfaces.
-     *
-     * @return service to access to the logical {@code <structMap>}
-     */
-    DivXmlElementAccessInterface getStructMap();
-
-    /**
      * Reads a METS file.
      *
      * @param in
@@ -108,14 +63,4 @@ public interface MetsXmlElementAccessInterface {
      *             if the writing fails
      */
     void save(Workpiece workpiece, OutputStream out) throws IOException;
-
-    /**
-     * Sets / changes the ID of the document. The system-internal ID of the
-     * document should be contained in the document and can therefore be set
-     * with this method. The method should be run before saving to set the ID.
-     * 
-     * @param id
-     *            the ID of the document
-     */
-    void setId(String id);
 }

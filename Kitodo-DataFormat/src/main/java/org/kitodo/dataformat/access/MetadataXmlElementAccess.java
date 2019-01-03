@@ -13,7 +13,6 @@ package org.kitodo.dataformat.access;
 
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 
 /**
@@ -22,7 +21,7 @@ import org.kitodo.dataformat.metskitodo.MetadataType;
  * is an indication in which container within the METS file the meta-data entry
  * is stored.
  */
-public class MetadataXmlElementAccess extends MetadataXmlElementsAccess implements MetadataXmlElementAccessInterface {
+public class MetadataXmlElementAccess extends MetadataXmlElementsAccess {
     /**
      * The data object of this meta-data XML element access.
      */
@@ -57,16 +56,6 @@ public class MetadataXmlElementAccess extends MetadataXmlElementsAccess implemen
 
     MetadataEntry getMetadataEntry() {
         return metadataEntry;
-    }
-
-    @Override
-    public String getValue() {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
-    }
-
-    @Override
-    public void setValue(String value) {
-        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**
