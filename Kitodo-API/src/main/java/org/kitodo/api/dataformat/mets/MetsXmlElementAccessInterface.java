@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.kitodo.api.dataformat.Workpiece;
+
 /**
  * Interface for a service that handles access to the {@code <mets:mets>}
  * element.
@@ -85,24 +87,27 @@ public interface MetsXmlElementAccessInterface {
     DivXmlElementAccessInterface getStructMap();
 
     /**
-     * Reads a METS file into this service.
+     * Reads a METS file.
      *
      * @param in
      *            open input channel for reading the file
+     * @return the read workpiece
      * @throws IOException
      *             if the reading fails
      */
-    void read(InputStream in) throws IOException;
+    Workpiece read(InputStream in) throws IOException;
 
     /**
-     * Writes the current state of this service to a METS file.
+     * Writes the workpiece to a METS file.
      *
+     * @param workpiece
+     *            workpiece to save
      * @param out
      *            open output channel for writing the file
      * @throws IOException
      *             if the writing fails
      */
-    void save(OutputStream out) throws IOException;
+    void save(Workpiece workpiece, OutputStream out) throws IOException;
 
     /**
      * Sets / changes the ID of the document. The system-internal ID of the

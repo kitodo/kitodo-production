@@ -9,35 +9,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataformat.access;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.Agent;
+package org.kitodo.api.dataformat;
 
 /**
- * A processing note that can be placed in the header of the XML file.
+ * A processing note is a comment by an editor to communicate the status of
+ * editing to other editors of the file.
  */
-public class ProcessingNote implements AgentXmlElementAccessInterface {
-    /**
-     * Known roles in METS. If the role takes one of these values, the
-     * {@code ROLE} attribute is set to this value. Otherwise, the role is set
-     * to {@code OTHER} and the {@code OTHERROLE} attribute is set to the value
-     * of the role.
-     */
-    private static final List<String> KNOWN_ROLES = Arrays.asList("CREATOR", "EDITOR", "ARCHIVIST", "PRESERVATION",
-        "DISSEMINATOR", "CUSTODIAN", "IPOWNER");
-
-    /**
-     * Known types in METS. If the type takes one of these values, the
-     * {@code TYPE} attribute is set to this value. Otherwise, the type is set
-     * to {@code OTHER} and the {@code OTHERTYPE} attribute is set to the value
-     * of the type.
-     */
-    private static final List<String> KNOWN_TYPES = Arrays.asList("INDIVIDUAL", "ORGANIZATION");
-
+public class ProcessingNote {
     /**
      * The name of the entity causing the entry.
      */
@@ -49,37 +27,14 @@ public class ProcessingNote implements AgentXmlElementAccessInterface {
     private String note;
 
     /**
-     * The role of the entity causing the entry. For a better understanding cf.
-     * {@link #KNOWN_ROLES}.
+     * The role of the entity causing the entry.
      */
     private String role;
 
     /**
-     * The type of the entity causing the entry. For a better understanding cf.
-     * {@link #KNOWN_TYPES}.
+     * The type of the entity causing the entry.
      */
     private String type;
-
-    /**
-     * Public constructor. This constructor is used to create a new machining
-     * comment via the module loader.
-     */
-    public ProcessingNote() {
-    }
-
-    /**
-     * Constructor with a METS agent. This constructor creates a new processing
-     * note from an agent.
-     * 
-     * @param agent
-     *            agent from which a new constructor is to be created
-     */
-    ProcessingNote(Agent agent) {
-        this.name = agent.getName();
-        this.note = String.join(System.lineSeparator(), agent.getNote());
-        this.role = "OTHER".equals(agent.getROLE()) ? agent.getOTHERROLE() : agent.getROLE();
-        this.type = "OTHER".equals(agent.getTYPE()) ? agent.getOTHERTYPE() : agent.getROLE();
-    }
 
     /**
      * Returns the name of the entity causing the entry.
@@ -185,29 +140,57 @@ public class ProcessingNote implements AgentXmlElementAccessInterface {
         this.type = type;
     }
 
-    /**
-     * Converts this editing note into a METS agent.
-     * 
-     * @return a METS agent for this edit note
-     */
-    Agent toAgent() {
-        Agent agent = new Agent();
-        agent.setName(name);
-        for (String paragraph : note.split(System.lineSeparator())) {
-            agent.getNote().add(paragraph);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((note == null) ? 0 : note.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
-        if (KNOWN_ROLES.contains(role)) {
-            agent.setROLE(role);
-        } else {
-            agent.setROLE("OTHER");
-            agent.setOTHERROLE(role);
+        if (obj == null) {
+            return false;
         }
-        if (KNOWN_TYPES.contains(type)) {
-            agent.setTYPE(type);
-        } else {
-            agent.setTYPE("OTHER");
-            agent.setOTHERTYPE(type);
+        if (getClass() != obj.getClass()) {
+            return false;
         }
-        return agent;
+        ProcessingNote other = (ProcessingNote) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (note == null) {
+            if (other.note != null) {
+                return false;
+            }
+        } else if (!note.equals(other.note)) {
+            return false;
+        }
+        if (role == null) {
+            if (other.role != null) {
+                return false;
+            }
+        } else if (!role.equals(other.role)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        return true;
     }
 }

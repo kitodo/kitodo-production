@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
@@ -26,26 +27,19 @@ import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
  * always linked to a MIME type, it is not possible to have mixed MIME types in
  * the same usage variant.
  */
-public class MediaVariant implements UseXmlAttributeAccessInterface {
-    /**
-     * Specifying the Internet MIME type for this type of use.
-     */
-    private String mimeType;
+public class UseXmlAttributeAccess implements UseXmlAttributeAccessInterface {
 
     /**
-     * Identifier of use. In terms of METS, this is a string, but if the
-     * generated METS file is to be used with the DFG Viewer this string must be
-     * a prescribed value, depending on its intended use.
-     * 
-     * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf#page=12"
+     * The data object of this file XML element access.
      */
-    private String use;
+    private final MediaVariant mediaVariant;
 
     /**
      * Public constructor for a media variant. This constructor can be used with
      * the service loader to create a new variant.
      */
-    public MediaVariant() {
+    public UseXmlAttributeAccess() {
+        mediaVariant = new MediaVariant();
     }
 
     /**
@@ -57,62 +51,79 @@ public class MediaVariant implements UseXmlAttributeAccessInterface {
      * @throws IllegalArgumentException
      *             if the MIME type is mixed within the METS {@code <fileGrp>}
      */
-    MediaVariant(FileGrp fileGrp) {
-        this.use = fileGrp.getUSE();
+    UseXmlAttributeAccess(FileGrp fileGrp) {
+        this();
+        mediaVariant.setUse(fileGrp.getUSE());
         Set<String> mimeTypes = fileGrp.getFile().parallelStream().map(fileType -> fileType.getMIMETYPE())
                 .filter(Objects::nonNull).collect(Collectors.toSet());
         switch (mimeTypes.size()) {
             case 0:
-                throw new IllegalArgumentException("Corrupt file: <mets:fileGrp USE=\"" + this.use
+                throw new IllegalArgumentException("Corrupt file: <mets:fileGrp USE=\"" + mediaVariant.getUse()
                         + "\"> does not have any <mets:file> with a MIMETYPE.");
             case 1:
-                this.mimeType = mimeTypes.iterator().next();
+                mediaVariant.setMimeType(mimeTypes.iterator().next());
                 break;
             default:
-                throw new IllegalArgumentException("Corrupt file: <mets:fileGrp USE=\"" + this.use
+                throw new IllegalArgumentException("Corrupt file: <mets:fileGrp USE=\"" + mediaVariant.getUse()
                         + "\"> contains differing MIMETYPE values: " + String.join(", ", mimeTypes));
         }
     }
 
-    /**
-     * Returns the MIME type of the media variant.
-     * 
-     * @return the MIME type
-     */
+    public UseXmlAttributeAccess(MediaVariant mediaVariant) {
+        this.mediaVariant = mediaVariant;
+    }
+
+    MediaVariant getMediaVariant() {
+        return mediaVariant;
+    }
+
     @Override
     public String getMimeType() {
-        return mimeType;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
-    /**
-     * Returns the use of the media variant.
-     * 
-     * @return the use
-     */
     @Override
     public String getUse() {
-        return use;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
-    /**
-     * Sets the MIME type of the media variant.
-     * 
-     * @param mimeType
-     *            MIME type to set
-     */
     @Override
     public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
-    /**
-     * Sets the use of the media variant.
-     * 
-     * @param use
-     *            use type to set
-     */
     @Override
     public void setUse(String use) {
-        this.use = use;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mediaVariant == null) ? 0 : mediaVariant.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UseXmlAttributeAccess other = (UseXmlAttributeAccess) obj;
+        if (mediaVariant == null) {
+            if (other.mediaVariant != null) {
+                return false;
+            }
+        } else if (!mediaVariant.equals(other.mediaVariant)) {
+            return false;
+        }
+        return true;
     }
 }

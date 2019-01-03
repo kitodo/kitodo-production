@@ -15,26 +15,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 
 public class MetsServiceIT {
 
@@ -43,24 +31,25 @@ public class MetsServiceIT {
      */
     @Test
     public void testReadXML() throws Exception {
-        MetsXmlElementAccessInterface workpiece = MetsService.getInstance().createMets();
-        workpiece.read(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml")));
+        MetsXmlElementAccessInterface metsXmlElementAccess = MetsService.getInstance().createMets();
+        Workpiece workpiece = metsXmlElementAccess
+                .read(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
-        assertEquals(183, workpiece.getFileGrp().size());
+        assertEquals(183, workpiece.getMediaUnits().size());
 
         // all pages are linked to the root element
-        assertEquals(workpiece.getFileGrp().size(), workpiece.getStructMap().getAreas().size());
+        assertEquals(workpiece.getMediaUnits().size(), workpiece.getStructure().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getStructMap().getChildren().size());
+        assertEquals(16, workpiece.getStructure().getChildren().size());
 
         // root node has 11 meta-data entries
-        assertEquals(11, workpiece.getStructMap().getMetadata().size());
+        assertEquals(11, workpiece.getStructure().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getFileGrp().get(0).getAllUsesWithFLocats().iterator().next().getValue().getUri());
+            workpiece.getMediaUnits().get(0).getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -79,7 +68,6 @@ public class MetsServiceIT {
                 "uncounted", "uncounted", "113", "114", "115", "116", "117", "118", "uncounted", "uncounted", "119",
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
-            workpiece.getFileGrp().stream().map(FileXmlElementAccessInterface::getOrderlabel)
-                    .collect(Collectors.toList()));
+            workpiece.getMediaUnits().stream().map(MediaUnit::getOrderlabel).collect(Collectors.toList()));
     }
 }

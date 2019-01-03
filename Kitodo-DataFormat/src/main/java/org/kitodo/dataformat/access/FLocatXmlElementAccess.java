@@ -23,18 +23,14 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
  * A media file is a reference to a computer file on the data store. Since it is
  * referenced by URI, it can also be in the world wide web.
  */
-public class MediaFile implements FLocatXmlElementAccessInterface {
+public class FLocatXmlElementAccess implements FLocatXmlElementAccessInterface {
     /**
      * References computer file.
      */
-    private URI uri;
+    private final URI uri;
 
-    /**
-     * Public constructor for creating a new media file reference. This
-     * constructor can be used with the service manager to create a new instance
-     * of media file.
-     */
-    public MediaFile() {
+    FLocatXmlElementAccess(URI uri) {
+        this.uri = uri;
     }
 
     /**
@@ -43,7 +39,7 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      * @param fLocat
      *            F locat to create a new media file reference from
      */
-    MediaFile(FLocat fLocat) {
+    FLocatXmlElementAccess(FLocat fLocat) {
         try {
             uri = new URI(fLocat.getHref());
         } catch (URISyntaxException e) {
@@ -51,25 +47,14 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
         }
     }
 
-    /**
-     * Returns the URI for accessing the computer file.
-     * 
-     * @return the URI
-     */
     @Override
     public URI getUri() {
         return uri;
     }
 
-    /**
-     * Sets a URI.
-     * 
-     * @param href
-     *            URI to set
-     */
     @Override
     public void setUri(URI href) {
-        this.uri = href;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**
@@ -91,5 +76,4 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
         file.getFLocat().add(fLocat);
         return file;
     }
-
 }

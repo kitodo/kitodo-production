@@ -9,10 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataformat.access;
-
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+package org.kitodo.api.dataformat;
 
 /**
  * A view on a media unit. The individual levels of the {@link Structure} refer
@@ -21,37 +18,18 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
  * been added here in order to be able to expand it in the future in order to be
  * able to refer to individual parts of a {@code MediaUnit}.
  */
-public class View implements AreaXmlElementAccessInterface {
+public class View {
     /**
      * Media unit in view.
      */
     private MediaUnit mediaUnit;
 
     /**
-     * Creates a new view. This constructor can be called via the service loader
-     * to create a new view.
-     */
-    public View() {
-    }
-
-    /**
-     * Creates a new view that points to a media device. This constructor is
-     * called module-internally when loading a METS file.
-     * 
-     * @param mediaUnit
-     *            media unit in view
-     */
-    View(MediaUnit mediaUnit) {
-        this.mediaUnit = mediaUnit;
-    }
-
-    /**
      * Returns the media unit in the view.
      * 
      * @return the media unit
      */
-    @Override
-    public MediaUnit getFile() {
+    public MediaUnit getMediaUnit() {
         return mediaUnit;
     }
 
@@ -61,8 +39,7 @@ public class View implements AreaXmlElementAccessInterface {
      * @param mediaUnit
      *            media unit to insert
      */
-    @Override
-    public void setFile(FileXmlElementAccessInterface mediaUnit) {
-        this.mediaUnit = (MediaUnit) mediaUnit;
+    public void setMediaUnit(MediaUnit mediaUnit) {
+        this.mediaUnit = mediaUnit;
     }
 }

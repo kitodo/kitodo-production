@@ -11,12 +11,13 @@
 
 package org.kitodo.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetadataGroup extends Metadata {
 
     // The value of the metadata is a list of metadata objects.
-    private List<Metadata> group;
+    private List<Metadata> group = new ArrayList<>();
 
     /**
      * Get the grouped metadata.

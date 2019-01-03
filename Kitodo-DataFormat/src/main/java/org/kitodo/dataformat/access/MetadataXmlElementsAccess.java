@@ -15,39 +15,29 @@ import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 
 /**
- * Contains common properties of {@code MetadataEntry} and
- * {@code MetadataEntriesGroup} elements.
+ * Abstract superclass of {@code MetadataEntry} and
+ * {@code MetadataGroupXmlElementAccess}, to be able to store them together in a
+ * list.
  */
-abstract class Metadata implements MetadataAccessInterface {
-    /**
-     * In which conceptual area in the METS file this meta-data entry is stored.
-     */
-    protected MdSec domain;
-
-    /**
-     * The type of the meta-data entry. The type is used to describe the
-     * meta-data entry, i.e. whether the value of the entry is about the title,
-     * the author or a summary of an intellectual work.
-     */
-    protected String type;
+abstract class MetadataXmlElementsAccess implements MetadataAccessInterface {
 
     @Override
     public MdSec getDomain() {
-        return domain;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     @Override
     public String getType() {
-        return type;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     @Override
     public void setDomain(MdSec domain) {
-        this.domain = domain;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     @Override
     public void setType(String type) {
-        this.type = type;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 }
