@@ -66,7 +66,29 @@ public class Structure {
      * encoded by the media units’ {@code order} property. To reorder this list,
      * you must change the order property of the media units.
      */
-    private final Collection<View> views = new SortedList<View>(view -> view.getMediaUnit().getOrder());
+    private final Collection<View> views;
+
+    /**
+     * Creates a new structure.
+     */
+    public Structure() {
+        views = new SortedList<View>(view -> view.getMediaUnit().getOrder());
+    }
+
+    /**
+     * Creates a new subclass of structure from an existing structure.
+     * 
+     * @param in
+     *            structure that serves as data source
+     */
+    protected Structure(Structure in) {
+        label = in.label;
+        metadata = in.metadata;
+        orderlabel = in.orderlabel;
+        substructures = in.substructures;
+        type = in.type;
+        views = in.views;
+    }
 
     /**
      * Returns the substructures associated with this structure.

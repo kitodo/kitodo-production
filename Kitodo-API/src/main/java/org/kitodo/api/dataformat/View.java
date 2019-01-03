@@ -14,7 +14,9 @@ package org.kitodo.api.dataformat;
 /**
  * A view on a media unit. The individual levels of the {@link Structure} refer
  * to {@code View}s on {@link MediaUnit}s. At the moment, each {@code View}
- * refers to exactly one {@code MediaUnit} as a whole.
+ * refers to exactly one {@code MediaUnit} as a whole. This concept level has
+ * been added here in order to be able to expand it in the future in order to be
+ * able to refer to individual parts of a {@code MediaUnit}.
  */
 public class View {
     /**

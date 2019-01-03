@@ -9,4 +9,4 @@
 # GPL3-License.txt file that was distributed with this source code.
 #
 
-org.kitodo.dataformat.access.View
+org.kitodo.dataformat.access.AreaXmlElementAccess

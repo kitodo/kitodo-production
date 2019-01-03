@@ -9,4 +9,4 @@
 # GPL3-License.txt file that was distributed with this source code.
 #
 
-org.kitodo.dataformat.access.ProcessingNote
+org.kitodo.dataformat.access.AgentXmlElementAccess

@@ -14,8 +14,7 @@ package org.kitodo.dataformat.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.net.URI;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,11 +36,14 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.ProcessingNote;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.AgentXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
+import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -62,61 +62,36 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * XML after the ZVDD DFG Viewer Application Profile.
  * 
  * <p>
- * A {@code Workpiece} has two essential characteristics: {@link MediaUnit}s and
- * an outline {@link Structure}. {@code MediaUnit}s are the types of every
+ * A {@code Workpiece} has two essential characteristics: {@link FileXmlElementAccess}s and
+ * an outline {@link DivXmlElementAccess}. {@code MediaUnit}s are the types of every
  * single digital medium on a conceptual level, such as the individual pages of
- * a book. Each {@code MediaUnit} can be in different {@link MediaVariant}s (for
+ * a book. Each {@code MediaUnit} can be in different {@link UseXmlAttributeAccess}s (for
  * example, in different resolutions or file formats). Each {@code MediaVariant}
- * of a {@code MediaUnit} resides in a {@link MediaFile} in the data store.
+ * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
  * 
  * <p>
  * The {@code Structure} is a tree structure that can be finely subdivided, e.g.
  * a book, in which the chapters, in it individual elements such as tables or
  * figures. Each outline level points to the {@code MediaUnit}s that belong to
- * it via {@link View}s. Currently, a {@code View} always contains exactly one
+ * it via {@link AreaXmlElementAccess}s. Currently, a {@code View} always contains exactly one
  * {@code MediaUnit} unit, here a simple expandability is provided, so that in a
  * future version excerpts from {@code MediaUnit}s can be described. Each
- * outline level can be described with any {@link Metadata}.
+ * outline level can be described with any {@link MetadataXmlElementsAccess}.
  * 
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
-public class Workpiece implements MetsXmlElementAccessInterface {
+public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
-     * The time this file was first created.
+     * The data object of this mets XML element access.
      */
-    private GregorianCalendar createdate = new GregorianCalendar();
-
-    /**
-     * The processing history.
-     */
-    private List<AgentXmlElementAccessInterface> editHistory = new ArrayList<>();
-
-    /**
-     * The identifier of the workpiece.
-     */
-    private String id;
-
-    /**
-     * The media units that belong to this workpiece. The order of this
-     * collection is meaningful, but only describes the order in which the media
-     * units are displayed on the workstation of the compiler. The order of this
-     * list is described by the order of the {@code <div>} elements in the
-     * {@code <structMap TYPE="PHYSICAL">} in the METS file. It is independent
-     * of the display order of the media units for the later viewer, which is
-     * determined by the ORDER attribute of the {@code <file>} elements.
-     */
-    private List<FileXmlElementAccessInterface> mediaUnits = new LinkedList<>();
-
-    /**
-     * The logical structure.
-     */
-    private Structure structure = new Structure();
+    private final Workpiece workpiece;
 
     /**
      * Creates an empty workpiece. This is the default state when the editor
      * starts. You can either load a file or create a new one.
      */
-    public Workpiece() {
+    public MetsXmlElementAccess() {
+        workpiece = new Workpiece();
     }
 
     /**
@@ -128,76 +103,40 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      * @param mets
      *            METS XML structure to read
      */
-    private Workpiece(Mets mets) {
-        MetsHdr metsHdr = mets.getMetsHdr();
-        if (metsHdr != null) {
-            XMLGregorianCalendar createDate = metsHdr.getCREATEDATE();
-            if (createDate != null) {
-                createdate = createDate.toGregorianCalendar();
-            }
-            for (Agent agent : metsHdr.getAgent()) {
-                editHistory.add(new ProcessingNote(agent));
-            }
-            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
-            if (Objects.nonNull(metsDocumentID)) {
-                id = metsDocumentID.getID();
-            }
+    private MetsXmlElementAccess(Mets mets) {
+        this();
+        workpiece.setCreationDate(mets.getMetsHdr().getCREATEDATE().toGregorianCalendar());
+        for (Agent agent : mets.getMetsHdr().getAgent()) {
+            workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
+        }
+        MetsDocumentID metsDocumentID = mets.getMetsHdr().getMetsDocumentID();
+        if (Objects.nonNull(metsDocumentID)) {
+            workpiece.setId(metsDocumentID.getID());
         }
         FileSec fileSec = mets.getFileSec();
-        Map<String, MediaVariant> mediaVariants = fileSec != null ? fileSec.getFileGrp().parallelStream()
-                .map(MediaVariant::new).collect(Collectors.toMap(MediaVariant::getUse, Function.identity()))
+        Map<String, MediaVariant> useXmlAttributeAccess = fileSec != null
+                ? fileSec.getFileGrp().parallelStream().map(UseXmlAttributeAccess::new)
+                        .collect(Collectors.toMap(
+                            newUseXmlAttributeAccess -> newUseXmlAttributeAccess.getMediaVariant().getUse(),
+                            UseXmlAttributeAccess::getMediaVariant))
                 : new HashMap<>();
-        Optional<StructMapType> optionalPhysical = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
-        Map<String, Set<MediaUnit>> mediaUnitsMap;
-        if (!optionalPhysical.isPresent()) {
-            mediaUnitsMap = Collections.emptyMap();
-        } else {
-            List<DivType> physicalDivs = optionalPhysical.get().getDiv().getDiv();
-            Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
-            for (DivType div : physicalDivs) {
-                MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
-                mediaUnits.add(mediaUnit);
-                divIDsToMediaUnits.put(div.getID(), mediaUnit);
-            }
-            mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
-                    .filter(SmLink.class::isInstance).map(SmLink.class::cast).collect(
-                        new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
+        List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
+        Map<String, FileXmlElementAccess> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
+        for (DivType div : physicalDivs) {
+            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(div, mets, useXmlAttributeAccess);
+            workpiece.getMediaUnits().add(fileXmlElementAccess.getMediaUnit());
+            divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
         }
-        structure = getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new Structure(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
-                .iterator().next();
+        Map<String, Set<FileXmlElementAccess>> mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
+                .filter(SmLink.class::isInstance).map(SmLink.class::cast)
+                .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
+        workpiece.setStructure(getStructMapsStreamByType(mets, "LOGICAL")
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
+                .iterator().next());
     }
 
-    /**
-     * Returns the media units of this workpiece.
-     * 
-     * @return the media units
-     */
-    @Override
-    public List<FileXmlElementAccessInterface> getFileGrp() {
-        return mediaUnits;
-    }
-
-    /**
-     * Returns the edit history. The head of each METS file has space for
-     * processing notes of the individual editors. In this way, the processing
-     * process of the digital representation can be understood.
-     * 
-     * @return the edit history
-     */
-    @Override
-    public List<AgentXmlElementAccessInterface> getMetsHdr() {
-        return editHistory;
-    }
-
-    /**
-     * Returns the root element of the structure.
-     * 
-     * @return root element of the structure
-     */
-    @Override
-    public Structure getStructMap() {
-        return structure;
+    private MetsXmlElementAccess(Workpiece workpiece) {
+        this.workpiece = workpiece;
     }
 
     /**
@@ -213,6 +152,21 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 
+    @Override
+    public List<FileXmlElementAccessInterface> getFileGrp() {
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
+    }
+
+    @Override
+    public List<AgentXmlElementAccessInterface> getMetsHdr() {
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
+    }
+
+    @Override
+    public DivXmlElementAccessInterface getStructMap() {
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
+    }
+
     /**
      * Reads METS from an InputStream. JAXB is used to parse the XML.
      * 
@@ -220,13 +174,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            InputStream to read from
      */
     @Override
-    public void read(InputStream in) throws IOException {
+    public Workpiece read(InputStream in) throws IOException {
         try {
             JAXBContext jc = JAXBContext.newInstance(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Mets mets = (Mets) unmarshaller.unmarshal(in);
-            Workpiece workpiece = new Workpiece(mets);
-            this.replace(workpiece);
+            return new MetsXmlElementAccess(mets).workpiece;
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -234,23 +187,6 @@ public class Workpiece implements MetsXmlElementAccessInterface {
                 throw new IOException(e.getMessage(), e);
             }
         }
-    }
-
-    /**
-     * Replaces the contents of this workpiece to the contents of another
-     * workpiece. This function does not implement a clone but merely sets the
-     * state variables of this instance to the state variables of the passed
-     * instance.
-     * 
-     * @param workpiece
-     *            content to be set
-     */
-    private void replace(Workpiece workpiece) {
-        this.createdate = workpiece.createdate;
-        this.editHistory = workpiece.editHistory;
-        this.id = workpiece.id;
-        this.mediaUnits = workpiece.mediaUnits;
-        this.structure = workpiece.structure;
     }
 
     /**
@@ -263,12 +199,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *             if the output device has an error
      */
     @Override
-    public void save(OutputStream out) throws IOException {
+    public void save(Workpiece workpiece, OutputStream out) throws IOException {
         try {
             JAXBContext context = JAXBContext.newInstance(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshal.marshal(this.toMets(), out);
+            marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -278,17 +214,9 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         }
     }
 
-    /**
-     * Sets / changes the ID of the document. The system-internal ID of
-     * thedocument should be contained in the document and can therefore be set
-     * with this method. The method should be run before saving to set the ID.
-     * 
-     * @param id
-     *            the ID of the document
-     */
     @Override
     public void setId(String id) {
-        this.id = id;
+        throw new UnsupportedOperationException("discontinued interface method pending removal");
     }
 
     /**
@@ -301,7 +229,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         Mets mets = new Mets();
         mets.setMetsHdr(generateMetsHdr());
 
-        Map<MediaFile, FileType> mediaFilesToIDFiles = new HashMap<>();
+        Map<URI, FileType> mediaFilesToIDFiles = new HashMap<>();
         mets.setFileSec(generateFileSec(mediaFilesToIDFiles));
 
         Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
@@ -310,7 +238,7 @@ public class Workpiece implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(structure.toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));
@@ -325,17 +253,15 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      */
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
-        if (createdate != null) {
-            metsHdr.setCREATEDATE(convertDate(createdate));
-        }
+        metsHdr.setCREATEDATE(convertDate(workpiece.getCreationDate()));
         metsHdr.setLASTMODDATE(convertDate(new GregorianCalendar()));
-        if (this.id != null) {
+        if (workpiece.getId() != null) {
             MetsDocumentID id = new MetsDocumentID();
-            id.setValue(this.id);
+            id.setValue(workpiece.getId());
             metsHdr.setMetsDocumentID(id);
         }
-        for (AgentXmlElementAccessInterface processingNote : editHistory) {
-            metsHdr.getAgent().add(((ProcessingNote) processingNote).toAgent());
+        for (ProcessingNote processingNote : workpiece.getEditHistory()) {
+            metsHdr.getAgent().add(new AgentXmlElementAccess(processingNote).toAgent());
         }
         return metsHdr;
     }
@@ -374,26 +300,25 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            element is added, so that it can be used for linking later.
      * @return
      */
-    private FileSec generateFileSec(Map<MediaFile, FileType> mediaFilesToIDFiles) {
+    private FileSec generateFileSec(Map<URI, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();
 
-        Map<MediaVariant, Set<MediaFile>> useToMediaUnits = new HashMap<>();
-        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
-            for (Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface> variantEntry : mediaUnit
-                    .getAllUsesWithFLocats()) {
-                MediaVariant use = (MediaVariant) variantEntry.getKey();
+        Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits = new HashMap<>();
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            for (Entry<MediaVariant, URI> variantEntry : mediaUnit.getMediaFiles().entrySet()) {
+                UseXmlAttributeAccess use = new UseXmlAttributeAccess(variantEntry.getKey());
                 useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
-                useToMediaUnits.get(use).add((MediaFile) variantEntry.getValue());
+                useToMediaUnits.get(use).add(variantEntry.getValue());
             }
         }
 
-        for (Entry<MediaVariant, Set<MediaFile>> fileGrpData : useToMediaUnits.entrySet()) {
+        for (Entry<UseXmlAttributeAccess, Set<URI>> fileGrpData : useToMediaUnits.entrySet()) {
             FileGrp fileGrp = new FileGrp();
-            MediaVariant mediaVariant = fileGrpData.getKey();
-            fileGrp.setUSE(mediaVariant.getUse());
-            String mimeType = mediaVariant.getMimeType();
-            Map<MediaFile, FileType> files = fileGrpData.getValue().parallelStream()
-                    .map(mediaFile -> Pair.of(mediaFile, mediaFile.toFile(mimeType)))
+            UseXmlAttributeAccess useXmlAttributeAccess = fileGrpData.getKey();
+            fileGrp.setUSE(useXmlAttributeAccess.getMediaVariant().getUse());
+            String mimeType = useXmlAttributeAccess.getMediaVariant().getMimeType();
+            Map<URI, FileType> files = fileGrpData.getValue().parallelStream()
+                    .map(uri -> Pair.of(uri, new FLocatXmlElementAccess(uri).toFile(mimeType)))
                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
             mediaFilesToIDFiles.putAll(files);
             fileGrp.getFile().addAll(files.values());
@@ -417,13 +342,12 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      * @return the physical struct map
      */
     private StructMapType generatePhysicalStructMap(
-            Map<MediaFile, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
+            Map<URI, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
         DivType boundBook = new DivType();
-        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
-            boundBook.getDiv()
-                    .add(((MediaUnit) mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            boundBook.getDiv().add(new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
         }
         physical.setDiv(boundBook);
         return physical;

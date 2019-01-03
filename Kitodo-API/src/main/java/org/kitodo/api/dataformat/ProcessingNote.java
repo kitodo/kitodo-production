@@ -46,6 +46,33 @@ public class ProcessingNote {
     }
 
     /**
+     * Returns the text of the entry.
+     * 
+     * @return the text of the entry
+     */
+    public String getNote() {
+        return note;
+    }
+
+    /**
+     * Returns the role of the entity causing the entry.
+     * 
+     * @return the role of the entity causing the entry
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * Returns the type of the entity causing the entry.
+     * 
+     * @return the type of the entity causing the entry
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
      * Sets the name of the entity causing the entry. This may be the name of a
      * person, an institution, the software, or similar.
      * 
@@ -57,15 +84,6 @@ public class ProcessingNote {
     }
 
     /**
-     * Returns the text of the entry.
-     * 
-     * @return the text of the entry
-     */
-    public String getNote() {
-        return note;
-    }
-
-    /**
      * Sets the text of the processing note.
      * 
      * @param note
@@ -73,15 +91,6 @@ public class ProcessingNote {
      */
     public void setNote(String note) {
         this.note = note;
-    }
-
-    /**
-     * Returns the role of the entity causing the entry.
-     * 
-     * @return the role of the entity causing the entry
-     */
-    public String getRole() {
-        return role;
     }
 
     /**
@@ -111,15 +120,6 @@ public class ProcessingNote {
      */
     public void setRole(String role) {
         this.role = role;
-    }
-
-    /**
-     * Returns the type of the entity causing the entry.
-     * 
-     * @return the type of the entity causing the entry
-     */
-    public String getType() {
-        return type;
     }
 
     /**
