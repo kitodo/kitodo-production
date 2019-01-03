@@ -200,7 +200,7 @@ public class CurrentTaskForm extends BaseForm {
 
             if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                 try {
-                    URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOrigDirectory(false,
+                    URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(false,
                         task.getProcess());
                     if (!ServiceManager.getFileService().fileExist(imagesOrigDirectory)) {
                         Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory });
@@ -515,7 +515,7 @@ public class CurrentTaskForm extends BaseForm {
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         this.gesamtAnzahlImages += ServiceManager.getFileService()
                                 .getSubUris(
-                                    ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
+                                    ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))
                                 .size();
                     }
                 } catch (DAOException | IOException e) {

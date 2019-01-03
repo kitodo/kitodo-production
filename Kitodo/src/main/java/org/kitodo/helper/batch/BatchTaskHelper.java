@@ -471,7 +471,7 @@ public class BatchTaskHelper extends BatchHelper {
         if (task.isTypeImagesWrite()) {
             ImageHelper mih = new ImageHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
+                ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))) {
                 Helper.setErrorMessage("Error on image validation!");
                 return true;
             }

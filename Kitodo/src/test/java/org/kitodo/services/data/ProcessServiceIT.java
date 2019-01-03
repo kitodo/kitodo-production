@@ -266,7 +266,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetImagesOrigDirectory() throws Exception {
         Process process = processService.getById(1);
-        URI directory = processService.getImagesOrigDirectory(false, process);
+        URI directory = processService.getImagesOriginDirectory(false, process);
         boolean condition = directory.getRawPath().contains("orig_First__process_tif");
         assertTrue("Images orig directory doesn't match to given directory!", condition);
     }

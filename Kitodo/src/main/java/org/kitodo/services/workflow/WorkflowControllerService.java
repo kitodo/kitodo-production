@@ -201,7 +201,7 @@ public class WorkflowControllerService {
             // image validation
             if (task.isTypeImagesWrite()) {
                 ImageHelper mih = new ImageHelper(null, null);
-                URI imageFolder = ServiceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
+                URI imageFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");
                     return;
@@ -254,7 +254,7 @@ public class WorkflowControllerService {
         }
 
         Process process = task.getProcess();
-        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOrigDirectory(true, process);
+        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
         Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
             process.setSortHelperImages(numberOfFiles);

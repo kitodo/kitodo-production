@@ -949,7 +949,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return path
      */
-    public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
+    public URI getImagesOriginDirectory(boolean useFallBack, Process process) throws IOException {
         if (USE_ORIG_FOLDER) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
@@ -1860,10 +1860,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // download images
         try {
             if (exportWithImages) {
-                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-                fulltextDownload(process, userHome, atsPpnBand);
+                downloadImages(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
+                downloadFullText(process, userHome, atsPpnBand);
             } else if (exportFullText) {
-                fulltextDownload(process, userHome, atsPpnBand);
+                downloadFullText(process, userHome, atsPpnBand);
             }
 
             directoryDownload(process, targetDirectory);
@@ -2021,7 +2021,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param atsPpnBand
      *            String
      */
-    private void fulltextDownload(Process process, URI userHome, String atsPpnBand) throws IOException {
+    private void downloadFullText(Process process, URI userHome, String atsPpnBand) throws IOException {
         downloadSources(process, userHome, atsPpnBand);
         downloadOCR(process, userHome, atsPpnBand);
     }
@@ -2072,18 +2072,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Download image.
+     * Download images.
      *
      * @param process
      *            process object
      * @param userHome
-     *            safe file
+     *            save file
      * @param atsPpnBand
      *            String
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
+    public void downloadImages(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException {
 
         Project project = process.getProject();

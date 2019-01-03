@@ -247,7 +247,7 @@ public class GoobiScript {
             for (Process process : processes) {
                 Integer processId = process.getId();
                 String processTitle = process.getTitle();
-                URI imagesFolder = ServiceManager.getProcessService().getImagesOrigDirectory(false, process);
+                URI imagesFolder = ServiceManager.getProcessService().getImagesOriginDirectory(false, process);
                 if (!fileService.getSubUris(imagesFolder).isEmpty()) {
                     Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
                         "The process " + processTitle + " [" + processId + "] has already data in image folder");
