@@ -11,54 +11,65 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<ehcache>
 
-    <!-- Sets the path to the directory where cache .data files are created.
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.5.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.5.xsd">
 
-         If the path is a Java System Property it is replaced by
-         its value in the running VM.
+    <service>
+        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="defaultCacheTemplate"/>
+    </service>
 
-         The following properties are translated:
-         user.home - User's home directory
-         user.dir - User's current working directory
-         java.io.tmpdir - Default temp file path -->
-    <diskStore path="java.io.tmpdir"/>
+    <cache-template name="defaultCacheTemplate">
+        <expiry>
+            <tti unit="seconds">1800</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">100000</heap>
+        </resources>
+    </cache-template>
 
-    <!--Default Cache configuration. These will applied to caches programmatically created through
-        the CacheManager.
+    <cache-template name="shortLivedDefaultCacheTemplate">
+        <expiry>
+            <tti unit="seconds">60</tti>
+        </expiry>
+        <resources>
+            <heap unit="entries">1000000</heap>
+        </resources>
+    </cache-template>
 
-        The following attributes are required:
+    <cache alias="org.hibernate.cache.spi.QueryResultsRegion">
+        <expiry>
+            <tti unit="seconds">1200</tti>
+        </expiry>
+        <heap>1024</heap>
+    </cache>
 
-        maxElementsInMemory            - Sets the maximum number of objects that will be created in memory
-        eternal                        - Sets whether elements are eternal. If eternal,  timeouts are ignored and the
-                                         element is never expired.
-        overflowToDisk                 - Sets whether elements can overflow to disk when the in-memory cache
-                                         has reached the maxInMemory limit.
+    <cache alias="org.hibernate.cache.spi.TimestampsRegion">
+        <expiry>
+            <none />
+        </expiry>
+        <heap>4096</heap>
+    </cache>
 
-        The following attributes are optional:
-        timeToIdleSeconds              - Sets the time to idle for an element before it expires.
-                                         i.e. The maximum amount of time between accesses before an element expires
-                                         Is only used if the element is not eternal.
-                                         Optional attribute. A value of 0 means that an Element can idle for infinity.
-                                         The default value is 0.
-        timeToLiveSeconds              - Sets the time to live for an element before it expires.
-                                         i.e. The maximum time between creation time and when an element expires.
-                                         Is only used if the element is not eternal.
-                                         Optional attribute. A value of 0 means that and Element can live for infinity.
-                                         The default value is 0.
-        diskPersistent                 - Whether the disk store persists between restarts of the Virtual Machine.
-                                         The default value is false.
-        diskExpiryThreadIntervalSeconds- The number of seconds between runs of the disk expiry thread. The default value
-                                         is 120 seconds.
-        -->
+    <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
+        <expiry>
+            <none />
+        </expiry>
+        <heap>4096</heap>
+    </cache>
 
-    <defaultCache
-            maxElementsInMemory="10000"
-            eternal="false"
-            overflowToDisk="true"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
-    />
-</ehcache>
+    <cache alias="org.hibernate.cache.internal.StandardQueryCache" uses-template="defaultCacheTemplate"/>
+    <cache alias="checkRulesCompliance" uses-template="defaultCacheTemplate"/>
+    <cache alias="TranslationsToEnglish" uses-template="defaultCacheTemplate"/>
+    <cache alias="TranslationsFromSwedish" uses-template="defaultCacheTemplate"/>
+    <cache alias="Translations" uses-template="defaultCacheTemplate"/>
+    <cache alias="SimplePageCachingFilter" uses-template="defaultCacheTemplate"/>
+    <cache alias="SimpleCachingHeadersPageCachingFilter" uses-template="defaultCacheTemplate"/>
+    <cache alias="AggregatedCountryData" uses-template="defaultCacheTemplate"/>
+    <cache alias="AggregatedBugData" uses-template="defaultCacheTemplate"/>
+
+</config>
