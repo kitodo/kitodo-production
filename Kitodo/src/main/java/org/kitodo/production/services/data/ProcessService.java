@@ -120,7 +120,6 @@ import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
@@ -1256,9 +1255,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         switch (type) {
             case "metsmods":
-                fileFormat = UghImplementation.INSTANCE
-                        .createMetsModsImportExport(rulesetService.getPreferences(process.getRuleset()));
-                break;
             case "mets":
                 fileFormat = new LegacyMetsModsDigitalDocumentHelper(
                         ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
