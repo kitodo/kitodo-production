@@ -76,6 +76,8 @@ chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/
 (cd zip && zip -r ../kitodo-3-config.zip *)
 ```
 
+Note: Create `messages` directory only in the case when you want to add / edit your own translations. Only those translation files will be used, not the one from class path.
+
 ### Results
 
 * war file: `kitodo-3.war`
