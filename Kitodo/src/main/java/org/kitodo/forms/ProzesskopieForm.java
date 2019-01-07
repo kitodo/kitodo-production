@@ -245,7 +245,7 @@ public class ProzesskopieForm implements Serializable {
      * The field importCatalogue holds the catalogue plugin used to access the
      * library catalogue.
      */
-    private CataloguePlugin importCatalogue;
+    private transient CataloguePlugin importCatalogue;
 
     private FileformatInterface rdf;
     private String opacSuchfeld = "12";
@@ -269,7 +269,7 @@ public class ProzesskopieForm implements Serializable {
     protected String tifHeaderImageDescription = "";
     protected String tifHeaderDocumentName = "";
     protected transient List<String> digitalCollections;
-    protected List<String> possibleDigitalCollection;
+    protected transient List<String> possibleDigitalCollection;
 
     protected static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
@@ -1073,8 +1073,6 @@ public class ProzesskopieForm implements Serializable {
                     ds.addChild(dsvolume);
                     this.rdf = ff;
                 }
-            } else {
-                // TODO: what should happen if configOpacDoctype is null?
             }
 
             if (this.docType.equals("volumerun")) {
@@ -1457,12 +1455,8 @@ public class ProzesskopieForm implements Serializable {
      * Prozesstitel und andere Details generieren.
      */
     public void calculateProcessTitle() {
-        try {
-            generateTitle(null);
-            Ajax.update("editForm:processFromTemplateTabView:processDataTab");
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        generateTitle(null);
+        Ajax.update("editForm:processFromTemplateTabView:processDataTab");
     }
 
     /**
@@ -1472,7 +1466,7 @@ public class ProzesskopieForm implements Serializable {
      *            Map of Strings
      * @return String
      */
-    public String generateTitle(Map<String, String> genericFields) throws IOException {
+    public String generateTitle(Map<String, String> genericFields) {
         String currentAuthors = "";
         String currentTitle = "";
         int counter = 0;
@@ -1551,13 +1545,6 @@ public class ProzesskopieForm implements Serializable {
         return newTitle.toString();
     }
 
-    private String processNullValues(String value) {
-        if (value == null) {
-            value = "";
-        }
-        return value;
-    }
-
     private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
         String rueckgabe = inFeldWert;
 
@@ -1606,7 +1593,7 @@ public class ProzesskopieForm implements Serializable {
              * übernehmen
              */
             if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
-                tifHeaderImageDescriptionBuilder.append(token.substring(1, token.length() - 1));
+                tifHeaderImageDescriptionBuilder.append(token, 1, token.length() - 1);
             } else if (token.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {

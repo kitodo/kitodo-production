@@ -273,48 +273,6 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Anlegen des Prozesses und save der Metadaten.
-     */
-    public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
-        addProperties(null);
-        updateTasks(this.prozessKopie);
-
-        try {
-            ServiceManager.getProcessService().save(this.prozessKopie);
-            ServiceManager.getProcessService().refresh(this.prozessKopie);
-        } catch (DataException e) {
-            logger.error("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);
-            return this.prozessKopie;
-        }
-
-        String baseProcessDirectory = ServiceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
-                .toString();
-        boolean successful = ServiceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
-        if (!successful) {
-            String message = "Metadata directory: " + baseProcessDirectory + "in path:"
-                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
-            logger.error(message);
-            Helper.setErrorMessage(message);
-            return null;
-        }
-
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
-        if (this.myRdf == null) {
-            createNewFileformat();
-        }
-
-        ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
-        ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
-
-        /* damit die Sortierung stimmt nochmal einlesen */
-        ServiceManager.getProcessService().refresh(this.prozessKopie);
-        return this.prozessKopie;
-    }
-
-    /**
      * Create Process.
      *
      * @param io
@@ -374,12 +332,12 @@ public class CopyProcess extends ProzesskopieForm {
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+                this.tifHeaderImageDescription);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+                this.tifHeaderImageDescription);
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
