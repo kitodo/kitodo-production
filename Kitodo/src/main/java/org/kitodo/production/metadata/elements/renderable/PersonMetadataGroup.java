@@ -11,7 +11,6 @@
 
 package org.kitodo.production.metadata.elements.renderable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -23,11 +22,8 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.production.legacy.UghImplementation;
-import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -208,21 +204,6 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
     @Override
     public List<PersonInterface> toMetadata() {
         PersonInterface person;
-        try {
-            person = UghImplementation.INSTANCE.createPerson(metadataType);
-        } catch (MetadataTypeNotAllowedException e) {
-            throw new NullPointerException(e.getMessage());
-        }
-        String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
-        if (normdataRecord != null && normdataRecord.length() > 0
-                && !normdataRecord.equals(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""))) {
-            String[] authorityFile = MetadataProcessor.parseAuthorityFileArgs(normdataRecord);
-            person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-        }
-        person.setFirstName(getField(Field.FIRSTNAME).getValue());
-        person.setLastName(getField(Field.LASTNAME).getValue());
-        List<PersonInterface> result = new ArrayList<>(1);
-        result.add(person);
-        return result;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 }

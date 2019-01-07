@@ -88,7 +88,6 @@ import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.helper.ConfigDisplayRules;
@@ -280,20 +279,7 @@ public class MetadataProcessor {
      */
     public void copyPerson() {
         PersonInterface per;
-        try {
-            per = UghImplementation.INSTANCE
-                    .createPerson(this.myPrefs.getMetadataTypeByName(this.curPerson.getP().getRole()));
-            per.setFirstName(this.curPerson.getP().getFirstName());
-            per.setLastName(this.curPerson.getP().getLastName());
-            per.setRole(this.curPerson.getP().getRole());
-
-            this.docStruct.addPerson(per);
-        } catch (IncompletePersonObjectException e) {
-            logger.error("Fehler beim copy von Personen (IncompletePersonObjectException): " + e.getMessage());
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error("Fehler beim copy von Personen (MetadataTypeNotAllowedException): " + e.getMessage());
-        }
-        saveMetadataAsBean(this.docStruct);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -330,21 +316,7 @@ public class MetadataProcessor {
      * Save person.
      */
     public void savePerson() {
-        try {
-            PersonInterface per = UghImplementation.INSTANCE
-                    .createPerson(this.myPrefs.getMetadataTypeByName(this.tempPersonRolle));
-            per.setFirstName(this.tempPersonVorname);
-            per.setLastName(this.tempPersonNachname);
-            per.setRole(this.tempPersonRolle);
-            String[] authorityFile = parseAuthorityFileArgs(tempPersonRecord);
-            per.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-            this.docStruct.addPerson(per);
-            saveMetadataAsBean(this.docStruct);
-        } catch (IncompletePersonObjectException e) {
-            Helper.setErrorMessage("Incomplete data for person", logger, e);
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage("Person is for this structure not allowed", logger, e);
-        }
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
