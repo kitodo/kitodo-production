@@ -19,8 +19,8 @@ import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.exceptions.ImportPluginException;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.helper.metadata.LegacyPrefsHelper;
 
 public interface IImportPlugin extends IPlugin {
@@ -29,7 +29,7 @@ public interface IImportPlugin extends IPlugin {
 
     void setData(Record r);
 
-    FileformatInterface convertData() throws ImportPluginException;
+    LegacyMetsModsDigitalDocumentHelper convertData() throws ImportPluginException;
 
     String getImportFolder();
 

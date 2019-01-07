@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -51,7 +50,7 @@ import org.kitodo.production.services.ServiceManager;
 public class CopyProcess extends ProzesskopieForm {
 
     private static final Logger logger = LogManager.getLogger(CopyProcess.class);
-    private transient FileformatInterface myRdf;
+    private transient LegacyMetsModsDigitalDocumentHelper myRdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -158,7 +157,7 @@ public class CopyProcess extends ProzesskopieForm {
      * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
      * füllen.
      */
-    private void fillFieldsFromMetadataFile(FileformatInterface myRdf) throws PreferencesException {
+    private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) throws PreferencesException {
         if (myRdf != null) {
 
             for (AdditionalField field : this.additionalFields) {
@@ -317,7 +316,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
-        FileformatInterface ff;
+        LegacyMetsModsDigitalDocumentHelper ff;
         try {
             ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             ff.read(this.metadataFile.getPath());

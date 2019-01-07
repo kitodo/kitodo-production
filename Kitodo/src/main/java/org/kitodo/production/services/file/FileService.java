@@ -39,7 +39,6 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
@@ -510,10 +509,10 @@ public class FileService {
      * @throws WriteException
      *             if error occurs
      */
-    public void writeMetadataFile(FileformatInterface gdzfile, Process process)
+    public void writeMetadataFile(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
         RulesetService rulesetService = ServiceManager.getRulesetService();
-        FileformatInterface ff;
+        LegacyMetsModsDigitalDocumentHelper ff;
 
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
@@ -849,7 +848,7 @@ public class FileService {
         return ConfigCore.getUriParameter(ParameterCore.DIR_USERS);
     }
 
-    public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
+    public void writeMetadataAsTemplateFile(LegacyMetsModsDigitalDocumentHelper inFile, Process process)
             throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }

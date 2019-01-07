@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -64,7 +63,7 @@ public class MetadataValidationService {
      */
     public boolean validate(Process process) {
         LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        FileformatInterface gdzfile;
+        LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
@@ -85,7 +84,7 @@ public class MetadataValidationService {
      *            object
      * @return boolean
      */
-    public boolean validate(FileformatInterface gdzfile, LegacyPrefsHelper prefs, Process process) {
+    public boolean validate(LegacyMetsModsDigitalDocumentHelper gdzfile, LegacyPrefsHelper prefs, Process process) {
         String metadataLanguage = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         this.process = process;
         boolean result = true;
@@ -272,7 +271,7 @@ public class MetadataValidationService {
         }
     }
 
-    private List<String> checkSeitenOhneDocstructs(FileformatInterface inRdf) throws PreferencesException {
+    private List<String> checkSeitenOhneDocstructs(LegacyMetsModsDigitalDocumentHelper inRdf) throws PreferencesException {
         List<String> result = new ArrayList<>();
         LegacyDocStructHelperInterface boundBook = inRdf.getDigitalDocument().getPhysicalDocStruct();
         // if boundBook is null
@@ -425,7 +424,7 @@ public class MetadataValidationService {
         return metadataTypes;
     }
 
-    private void saveMetadataFile(FileformatInterface gdzfile, Process process) {
+    private void saveMetadataFile(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
         try {
             if (this.autoSave) {
                 ServiceManager.getFileService().writeMetadataFile(gdzfile, process);

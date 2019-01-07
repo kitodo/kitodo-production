@@ -33,9 +33,9 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.helper.metadata.LegacyPrefsHelper;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
@@ -159,7 +159,7 @@ public class SRUHelper {
      *            Prefs
      * @return Fileformat
      */
-    public static FileformatInterface parsePicaFormat(Node pica, LegacyPrefsHelper prefs)
+    public static LegacyMetsModsDigitalDocumentHelper parsePicaFormat(Node pica, LegacyPrefsHelper prefs)
             throws ReadException, PreferencesException {
 
         throw new UnsupportedOperationException("Dead code pending removal");

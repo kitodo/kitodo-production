@@ -33,7 +33,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.helper.metadata.LegacyPrefsHelper;
 import org.kitodo.config.ConfigCore;
@@ -466,7 +466,7 @@ public class ProcessServiceIT {
         FileLoader.createMetadataTemplateFile();
 
         Process process = processService.getById(1);
-        FileformatInterface fileFormat = processService.readMetadataAsTemplateFile(process);
+        LegacyMetsModsDigitalDocumentHelper fileFormat = processService.readMetadataAsTemplateFile(process);
         assertTrue("Read template file has incorrect file format!", fileFormat instanceof LegacyMetsModsDigitalDocumentHelper);
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
         assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);

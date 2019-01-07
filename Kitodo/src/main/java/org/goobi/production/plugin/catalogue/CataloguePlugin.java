@@ -18,9 +18,9 @@ import java.util.Objects;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.helper.metadata.LegacyPrefsHelper;
 
 /**
@@ -202,7 +202,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *            Prefs object
      * @return UGH preferences
      */
-    public static FileformatInterface getFirstHit(String catalogue, String query, LegacyPrefsHelper preferences) {
+    public static LegacyMetsModsDigitalDocumentHelper getFirstHit(String catalogue, String query, LegacyPrefsHelper preferences) {
         try {
             CataloguePlugin plugin = PluginLoader.getCataloguePluginForCatalogue(catalogue);
             if (Objects.nonNull(plugin)) {

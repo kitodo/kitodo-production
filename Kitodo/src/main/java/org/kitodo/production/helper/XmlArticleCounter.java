@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -46,7 +45,7 @@ public class XmlArticleCounter {
         int result = 0;
 
         // read document
-        FileformatInterface gdzfile;
+        LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(myProcess);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {

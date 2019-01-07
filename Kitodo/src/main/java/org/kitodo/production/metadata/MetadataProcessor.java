@@ -53,7 +53,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -116,7 +115,7 @@ public class MetadataProcessor {
 
     private ImageHelper imageHelper;
     private MetadataHelper metaHelper;
-    private FileformatInterface gdzfile;
+    private LegacyMetsModsDigitalDocumentHelper gdzfile;
     private LegacyDocStructHelperInterface docStruct;
     private List<MetadataImpl> myMetadaten = new LinkedList<>();
     private List<MetaPerson> metaPersonList = new LinkedList<>();

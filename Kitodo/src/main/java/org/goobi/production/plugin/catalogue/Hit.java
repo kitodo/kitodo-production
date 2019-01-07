@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.model.bibliography.Citation;
 
 /**
@@ -149,8 +149,8 @@ public class Hit {
      *
      * @return the full hit record
      */
-    public FileformatInterface getFileformat() {
-        return getAs("fileformat", FileformatInterface.class);
+    public LegacyMetsModsDigitalDocumentHelper getFileformat() {
+        return getAs("fileformat", LegacyMetsModsDigitalDocumentHelper.class);
     }
 
     /**

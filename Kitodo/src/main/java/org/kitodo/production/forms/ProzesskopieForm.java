@@ -47,7 +47,6 @@ import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -250,7 +249,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private transient CataloguePlugin importCatalogue;
 
-    private FileformatInterface rdf;
+    private LegacyMetsModsDigitalDocumentHelper rdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -1130,7 +1129,7 @@ public class ProzesskopieForm implements Serializable {
             this.docType = docType;
             if (rdf != null) {
 
-                FileformatInterface tmp = rdf;
+                LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
                 createNewFileformat();
                 try {
@@ -1843,7 +1842,7 @@ public class ProzesskopieForm implements Serializable {
      *
      * @return the metadata file in memory
      */
-    public FileformatInterface getFileformat() {
+    public LegacyMetsModsDigitalDocumentHelper getFileformat() {
         return rdf;
     }
 

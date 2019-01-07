@@ -26,7 +26,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -44,6 +43,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -165,7 +165,7 @@ public class KitodoScriptService {
     private void updateContentFiles(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
+                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 rdf.getDigitalDocument().addAllContentFiles();
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
@@ -511,7 +511,7 @@ public class KitodoScriptService {
     public void updateImagePath(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
+                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(process, "pathimagefiles");
                 List<? extends LegacyMetadataHelper> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);

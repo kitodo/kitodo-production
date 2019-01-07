@@ -26,7 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -75,7 +74,7 @@ public class ExportMets {
          */
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
-        FileformatInterface gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
 
         if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
@@ -115,7 +114,7 @@ public class ExportMets {
      *            the FileFormat-Object to use for Mets-Writing
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile)
+    protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
             throws IOException {
 
         MetsXmlElementAccessInterface workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();

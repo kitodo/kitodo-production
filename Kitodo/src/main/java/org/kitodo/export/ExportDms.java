@@ -25,7 +25,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -147,7 +146,7 @@ public class ExportDms extends ExportMets {
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
-        FileformatInterface gdzfile = readDocument(process, newFile);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile);
         if (Objects.isNull(gdzfile)) {
             return false;
         }
@@ -219,7 +218,7 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
+    private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
         try {
             String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
             if (Objects.nonNull(rules)) {
@@ -273,8 +272,8 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private FileformatInterface readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
-        FileformatInterface gdzfile;
+    private LegacyMetsModsDigitalDocumentHelper readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
+        LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
@@ -318,7 +317,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
+    private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, PreferencesException, WriteException, JAXBException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
@@ -391,7 +390,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void exportWithoutImport(Process process, FileformatInterface gdzfile, URI destinationDirectory)
+    private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
             throws IOException, PreferencesException, WriteException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {

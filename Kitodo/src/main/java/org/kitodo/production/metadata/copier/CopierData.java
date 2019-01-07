@@ -11,7 +11,6 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
@@ -39,7 +38,7 @@ public class CopierData {
     /**
      * The workspace file to modify.
      */
-    private final FileformatInterface fileformat;
+    private final LegacyMetsModsDigitalDocumentHelper fileformat;
 
     /**
      * The Goobi process corresponding to the workspace file.
@@ -72,7 +71,7 @@ public class CopierData {
      * @param process
      *            the related goobi process
      */
-    public CopierData(FileformatInterface fileformat, Process process) {
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Process process) {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
@@ -87,7 +86,7 @@ public class CopierData {
      * @param template
      *            the related goobi process
      */
-    public CopierData(FileformatInterface fileformat, Template template) {
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
         this.fileformat = fileformat;
         this.template = template;
         this.destination = null;

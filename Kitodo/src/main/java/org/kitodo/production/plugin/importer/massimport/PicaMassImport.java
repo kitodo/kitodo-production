@@ -63,7 +63,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -137,7 +136,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     @Override
-    public FileformatInterface convertData() throws ImportPluginException {
+    public LegacyMetsModsDigitalDocumentHelper convertData() throws ImportPluginException {
 
         currentIdentifier = data;
 
@@ -152,7 +151,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 throw new ImportPluginException(mess);
             }
             pica = addParentDataForVolume(pica);
-            FileformatInterface fileformat = SRUHelper.parsePicaFormat(pica, prefs);
+            LegacyMetsModsDigitalDocumentHelper fileformat = SRUHelper.parsePicaFormat(pica, prefs);
             LegacyMetsModsDigitalDocumentHelper digitalDocument = fileformat.getDigitalDocument();
             boolean multivolue = false;
             LegacyDocStructHelperInterface logicalDS = digitalDocument.getLogicalDocStruct();
@@ -424,7 +423,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             this.data = r.getData();
             this.currentCollectionList = r.getCollections();
             ImportObject io = new ImportObject();
-            FileformatInterface ff = null;
+            LegacyMetsModsDigitalDocumentHelper ff = null;
             try {
                 ff = convertData();
             } catch (ImportPluginException e1) {
