@@ -39,7 +39,6 @@ import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -412,7 +411,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public DocStructTypeInterface getDocStructType() {
+    public LegacyLogicalDocStructTypeHelper getDocStructType() {
         return new LegacyLogicalDocStructTypeHelper(divisionView);
     }
 
@@ -422,7 +421,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
-    public DocStructTypeInterface getType() {
+    public LegacyLogicalDocStructTypeHelper getType() {
         if (!logger.isTraceEnabled()) {
             StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
             logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
@@ -432,7 +431,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         return getDocStructType();
     }
 
-    public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
+    public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -491,7 +490,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void setType(DocStructTypeInterface docStructType) {
+    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

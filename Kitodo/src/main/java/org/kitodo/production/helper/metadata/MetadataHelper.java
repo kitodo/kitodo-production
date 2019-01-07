@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -98,9 +97,9 @@ public class MetadataHelper {
             return myTypes;
         }
 
-        List<DocStructTypeInterface> newTypes = new ArrayList<>();
+        List<LegacyLogicalDocStructTypeHelper> newTypes = new ArrayList<>();
         for (String tempTitel : types) {
-            DocStructTypeInterface dst = this.prefs.getDocStrctTypeByName(tempTitel);
+            LegacyLogicalDocStructTypeHelper dst = this.prefs.getDocStrctTypeByName(tempTitel);
             if (dst != null) {
                 newTypes.add(dst);
             } else {
@@ -124,7 +123,7 @@ public class MetadataHelper {
         // und anschliessend alle Elemente in das Array packen
         zaehler = 0;
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
-        for (DocStructTypeInterface docStructType : newTypes) {
+        for (LegacyLogicalDocStructTypeHelper docStructType : newTypes) {
             String label = docStructType.getNameByLanguage(language);
             if (label == null) {
                 label = docStructType.getName();

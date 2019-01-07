@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
@@ -23,15 +22,16 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
  * named “page”. This is a soldering class to keep legacy code operational which
  * is about to be removed. Do not use this class.
  */
-public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructTypeInterface {
+public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDocStructTypeHelper {
     private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructTypePageHelper.class);
 
     /**
      * The sole doc struct type instance “page”.
      */
-    public static final DocStructTypeInterface INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
+    public static final LegacyLogicalDocStructTypeHelper INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
 
     private LegacyInnerPhysicalDocStructTypePageHelper() {
+        super(null);
     }
 
     @Override

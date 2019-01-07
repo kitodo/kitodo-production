@@ -54,7 +54,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
@@ -79,6 +78,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
+import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
 import org.kitodo.production.helper.XmlArticleCounter;
@@ -86,6 +86,7 @@ import org.kitodo.production.helper.XmlArticleCounter.CountType;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
@@ -433,7 +434,7 @@ public class MetadataProcessor {
      * @return The addable metadata types from tempTyp.
      */
     public List<SelectItem> getAddableMetadataTypesFromTempType() {
-        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        LegacyLogicalDocStructTypeHelper dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         LegacyDocStructHelperInterface ds = this.digitalDocument.createDocStruct(dst);
 
         return getAddableMetadataTypes(ds, this.tempMetadataList);
@@ -855,7 +856,7 @@ public class MetadataProcessor {
      */
     public void addSingleNodeWithPages() {
         LegacyDocStructHelperInterface docStruct = null;
-        DocStructTypeInterface docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
 
         try {
             docStruct = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
@@ -882,7 +883,7 @@ public class MetadataProcessor {
     public void addSeveralNodesWithMetadata() {
         LegacyDocStructHelperInterface ds;
 
-        DocStructTypeInterface docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         try {
             ds = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
                 this.metadataElementsToAdd, this.addMetaDataType, this.addMetaDataValue);
@@ -907,7 +908,7 @@ public class MetadataProcessor {
     }
 
     private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct, DigitalDocumentInterface digitalDocument,
-            DocStructTypeInterface docStructType, PositionOfNewDocStrucElement positionOfNewDocStrucElement,
+            LegacyLogicalDocStructTypeHelper docStructType, PositionOfNewDocStrucElement positionOfNewDocStrucElement,
             int quantity, String metadataType, String value)
             throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 

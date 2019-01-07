@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -330,7 +329,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return the type of this DocStruct
      */
-    DocStructTypeInterface getDocStructType();
+    LegacyLogicalDocStructTypeHelper getDocStructType();
 
     /**
      * Removes a child from this instance.

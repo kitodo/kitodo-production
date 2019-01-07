@@ -21,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -275,7 +274,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public DocStructTypeInterface getDocStructType() {
+    public LegacyLogicalDocStructTypeHelper getDocStructType() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -286,15 +285,15 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
-    public DocStructTypeInterface getType() {
+    public LegacyLogicalDocStructTypeHelper getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
         logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
             stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 
-    public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
-        //TODO remove
+    public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
+        // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -335,7 +334,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void setType(DocStructTypeInterface docStructType) {
+    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

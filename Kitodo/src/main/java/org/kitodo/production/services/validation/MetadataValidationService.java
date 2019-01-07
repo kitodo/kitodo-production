@@ -21,7 +21,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -44,6 +43,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -308,7 +308,7 @@ public class MetadataValidationService {
     }
 
     private List<String> checkMandatoryValues(LegacyDocStructHelperInterface docStruct, ArrayList<String> list, String language) {
-        DocStructTypeInterface dst = docStruct.getDocStructType();
+        LegacyLogicalDocStructTypeHelper dst = docStruct.getDocStructType();
         List<MetadataTypeInterface> allMDTypes = dst.getAllMetadataTypes();
         for (MetadataTypeInterface mdt : allMDTypes) {
             String number = dst.getNumberOfMetadataType(mdt);

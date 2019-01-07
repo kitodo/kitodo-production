@@ -25,7 +25,6 @@ import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -297,7 +296,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public DocStructTypeInterface getDocStructType() {
+    public LegacyLogicalDocStructTypeHelper getDocStructType() {
         return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
     }
 
@@ -307,7 +306,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
-    public DocStructTypeInterface getType() {
+    public LegacyLogicalDocStructTypeHelper getType() {
         if (!logger.isTraceEnabled()) {
             StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
             logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!",
@@ -317,7 +316,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         return getDocStructType();
     }
 
-    public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
+    public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -361,7 +360,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void setType(DocStructTypeInterface docStructType) {
+    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

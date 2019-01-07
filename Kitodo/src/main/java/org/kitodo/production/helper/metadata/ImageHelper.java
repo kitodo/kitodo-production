@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -108,7 +107,7 @@ public class ImageHelper {
         }
 
         // retrieve existing pages/images
-        DocStructTypeInterface newPage = this.myPrefs.getDocStrctTypeByName("page");
+        LegacyLogicalDocStructTypeHelper newPage = this.myPrefs.getDocStrctTypeByName("page");
         List<LegacyDocStructHelperInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
             oldPages = new ArrayList<>();
@@ -484,7 +483,7 @@ public class ImageHelper {
     }
 
     private LegacyDocStructHelperInterface createPhysicalStructure(Process process) throws IOException {
-        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
+        LegacyLogicalDocStructTypeHelper dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
         LegacyDocStructHelperInterface physicalStructure = this.mydocument.createDocStruct(dst);
 
         // problems with FilePath

@@ -26,7 +26,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -52,13 +51,13 @@ public class LegacyPrefsHelper implements PrefsInterface {
     private RulesetManagementInterface ruleset;
 
     @Override
-    public List<DocStructTypeInterface> getAllDocStructTypes() {
+    public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public DocStructTypeInterface getDocStrctTypeByName(String identifier) {
+    public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
                 return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;

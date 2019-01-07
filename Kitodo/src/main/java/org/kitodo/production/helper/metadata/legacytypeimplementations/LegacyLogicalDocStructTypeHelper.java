@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
@@ -25,7 +24,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
  * This is a soldering class to keep legacy code operational which is about to
  * be removed. Do not use this class.
  */
-public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface {
+public class LegacyLogicalDocStructTypeHelper {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructTypeHelper.class);
 
     /**
@@ -37,33 +36,27 @@ public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface 
         this.divisionView = divisionView;
     }
 
-    @Override
     public List<String> getAllAllowedDocStructTypes() {
         return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
-    @Override
     public List<MetadataTypeInterface> getAllMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public String getAnchorClass() {
         return null;
     }
 
-    @Override
     public String getName() {
         return divisionView.getId();
     }
 
-    @Override
     public String getNameByLanguage(String language) {
         return divisionView.getLabel();
     }
 
-    @Override
     public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
