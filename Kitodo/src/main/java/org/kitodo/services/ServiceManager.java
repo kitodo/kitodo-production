@@ -267,7 +267,7 @@ public class ServiceManager {
 
     private static void initializeWorkflowControllerService() {
         if (workflowControllerService == null) {
-            workflowControllerService = new WorkflowControllerService();
+            workflowControllerService = WorkflowControllerService.getInstance();
         }
     }
 
