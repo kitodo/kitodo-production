@@ -85,7 +85,6 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Folder;
@@ -2170,15 +2169,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
             throws JAXBException {
-        VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(folder.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
-        virtualFileGroup.setMimetype(folder.getMimeType());
-        if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
-            virtualFileGroup.setFileSuffix(
-                folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
-        }
-        return virtualFileGroup;
+
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
