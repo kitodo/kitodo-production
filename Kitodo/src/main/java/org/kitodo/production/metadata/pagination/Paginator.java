@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.Metadata;
 import org.kitodo.production.metadata.pagination.enums.Mode;
@@ -96,7 +95,7 @@ public class Paginator {
         }
         // roman numbers
         if (paginationType == Type.ROMAN) {
-            RomanNumeralInterface roman = new LegacyRomanNumeralHelper();
+            LegacyRomanNumeralHelper roman = new LegacyRomanNumeralHelper();
             roman.setValue(paginationStartValue);
         }
     }
@@ -253,7 +252,7 @@ public class Paginator {
         if (paginationType == Type.ARABIC) {
             paginationBaseValue = Integer.parseInt(paginationStartValue);
         } else if (paginationType == Type.ROMAN) {
-            RomanNumeralInterface r = new LegacyRomanNumeralHelper();
+            LegacyRomanNumeralHelper r = new LegacyRomanNumeralHelper();
             r.setValue(paginationStartValue);
             paginationBaseValue = r.intValue();
         }

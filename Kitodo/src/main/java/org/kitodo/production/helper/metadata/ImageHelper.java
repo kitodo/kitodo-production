@@ -41,7 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -55,6 +54,10 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
@@ -574,7 +577,7 @@ public class ImageHelper {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase(
             (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
-            RomanNumeralInterface roman = new LegacyRomanNumeralHelper();
+            LegacyRomanNumeralHelper roman = new LegacyRomanNumeralHelper();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
