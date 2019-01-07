@@ -1238,7 +1238,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         FileformatInterface ff;
         switch (type) {
             case "metsmods":
-                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
+                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
                 break;
             case "mets":
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
@@ -1826,7 +1826,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             gdzFile = readMetadataFile(metadataPath, preferences);
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
-                    newFile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
+                    newFile = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
                     break;
                 case METS_AND_RDF:
                 default:
@@ -2033,7 +2033,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
+        MetsModsImportExportInterface mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
