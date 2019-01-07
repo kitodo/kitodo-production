@@ -168,24 +168,6 @@ public class RoleServiceIT {
     }
 
     @Test
-    public void shouldFindManyByAuthorization() {
-        await().untilAsserted(() -> assertEquals("Role was not found in index!", 3,
-            roleService.findByAuthorizationTitle("viewAllProjects_clientAssignable").size()));
-    }
-
-    @Test
-    public void shouldFindOneByAuthorization() {
-        await().untilAsserted(() -> assertEquals("Role was not found in index!", 1,
-            roleService.findByAuthorizationTitle("viewAllUsers_globalAssignable").size()));
-    }
-
-    @Test
-    public void shouldNotFindByAuthorization() {
-        await().untilAsserted(() -> assertEquals("Role was found in index!", 0,
-            roleService.findByAuthorizationTitle("notExisting").size()));
-    }
-
-    @Test
     public void shouldFindManyByUserId() {
         await().untilAsserted(
                 () -> assertEquals("Role was not found in index!", 2, roleService.findByUserId(1).size()));
@@ -251,7 +233,7 @@ public class RoleServiceIT {
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
-        ServiceManager.getAuthorityService().save(authority);
+        ServiceManager.getAuthorityService().saveToDatabase(authority);
 
         authorities.add(authority);
 

@@ -11,32 +11,16 @@
 
 package org.kitodo.services.data;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.AuthorityDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.AuthorityType;
-import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.AuthorityDTO;
-import org.kitodo.dto.RoleDTO;
-import org.kitodo.helper.RelatedProperty;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO, AuthorityDAO> {
+public class AuthorityService extends SearchDatabaseService<Authority, AuthorityDAO> {
 
     private static AuthorityService instance = null;
 
@@ -44,11 +28,10 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
 
     /**
-     * Constructor with Searcher and Indexer assigning.
+     * Constructor.
      */
     private AuthorityService() {
-        super(new AuthorityDAO(), new AuthorityType(), new Indexer<>(Authority.class), new Searcher(Authority.class));
-        this.indexer = new Indexer<>(Authority.class);
+        super(new AuthorityDAO());
     }
 
     /**
@@ -86,34 +69,6 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Get all authorities from index and covert results to format accepted by
-     * frontend. Right now there is no usage which demands all relations.
-     *
-     * @return list of AuthorityDTO objects
-     */
-    @Override
-    public List<AuthorityDTO> findAll() throws DataException {
-        return findAll(true);
-    }
-
-    /**
-     * Get all authorities from index and covert results to format accepted by
-     * frontend. Right now there is no usage which demands all relations.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return list of AuthorityDTO objects
-     */
-    @Override
-    public List<AuthorityDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return findAll(sort, offset, size, true);
-    }
-
-    /**
      * Refresh user's group object after update.
      *
      * @param authority
@@ -130,49 +85,8 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Authority> getAllNotIndexed() {
-        return getByQuery("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
     public List<Authority> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Method saves roles related to modified authority.
-     *
-     * @param authority
-     *            object
-     */
-    @Override
-    protected void manageDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
-        manageRolesDependenciesForIndex(authority);
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove authority from list of
-     * authorities and re-save role, if false only re-save role object.
-     *
-     * @param authority
-     *            object
-     */
-    private void manageRolesDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
-        if (authority.getIndexAction() == IndexAction.DELETE) {
-            for (Role role : authority.getRoles()) {
-                role.getAuthorities().remove(authority);
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
-        } else {
-            for (Role role : authority.getRoles()) {
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
-        }
     }
 
     /**
@@ -239,44 +153,5 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             }
         }
         return filteredAuthorities;
-    }
-
-    @Override
-    public AuthorityDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        AuthorityDTO authorityDTO = new AuthorityDTO();
-        authorityDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject authorizationJSONObject = jsonObject.getJsonObject("_source");
-        authorityDTO.setTitle(AuthorityTypeField.TITLE.getStringValue(authorizationJSONObject));
-        authorityDTO.setRolesSize(AuthorityTypeField.ROLES.getSizeOfProperty(authorizationJSONObject));
-        if (!related) {
-            convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
-        } else {
-            addBasicRoleRelation(authorityDTO, authorizationJSONObject);
-        }
-        return authorityDTO;
-    }
-
-    private void convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO) throws DataException {
-        authorityDTO.setRoles(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.ROLES.getKey(),
-            ServiceManager.getRoleService()));
-    }
-
-    private void addBasicRoleRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
-        if (authorityDTO.getRolesSize() > 0) {
-            List<RoleDTO> roles = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(RoleTypeField.TITLE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                AuthorityTypeField.ROLES.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                RoleDTO role = new RoleDTO();
-                role.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    role.setTitle(relatedProperty.getValues().get(0));
-                }
-                roles.add(role);
-            }
-            authorityDTO.setRoles(roles);
-        }
     }
 }

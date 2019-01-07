@@ -25,7 +25,7 @@ import org.kitodo.data.database.persistence.AuthorityDAO;
 
 @Entity
 @Table(name = "authority")
-public class Authority extends BaseIndexedBean {
+public class Authority extends BaseBean {
 
     private static final long serialVersionUID = -5187947220333987498L;
 

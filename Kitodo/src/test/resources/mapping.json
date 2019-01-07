@@ -753,27 +753,6 @@
                         }
                     }
                 },
-                "authorities": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                },
-                                "raw": {
-                                    "type": "text",
-                                    "index": false
-                                }
-                            },
-                            "fielddata": true
-                        }
-                    }
-                },
                 "client": {
                     "properties": {
                         "id": {

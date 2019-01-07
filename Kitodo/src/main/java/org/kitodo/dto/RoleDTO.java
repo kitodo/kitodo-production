@@ -22,8 +22,6 @@ public class RoleDTO extends BaseDTO {
     private String title;
     private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
-    private List<AuthorityDTO> authorities = new ArrayList<>();
-    private int authorizationsSize;
     private ClientDTO client;
 
     /**
@@ -81,44 +79,6 @@ public class RoleDTO extends BaseDTO {
      */
     public void setUsersSize(Integer usersSize) {
         this.usersSize = usersSize;
-    }
-
-    /**
-     * Get list of authorities.
-     *
-     * @return list of authorities as AuthorityDTO
-     */
-    public List<AuthorityDTO> getAuthorities() {
-        return authorities;
-    }
-
-    /**
-     * Set list of authorities.
-     *
-     * @param authorities
-     *            list of authorities as AuthorityDTO
-     */
-    public void setAuthorities(List<AuthorityDTO> authorities) {
-        this.authorities = authorities;
-    }
-
-    /**
-     * Get size of authorities.
-     *
-     * @return size of authorities as int
-     */
-    public int getAuthorizationsSize() {
-        return authorizationsSize;
-    }
-
-    /**
-     * Set size of authorities.
-     *
-     * @param authorizationsSize
-     *            as int
-     */
-    public void setAuthorizationsSize(int authorizationsSize) {
-        this.authorizationsSize = authorizationsSize;
     }
 
     /**

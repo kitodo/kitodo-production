@@ -14,7 +14,6 @@ package org.kitodo.enums;
 import org.kitodo.helper.Helper;
 
 public enum ObjectType {
-    AUTHORITY("authority", "authorities"),
     CLIENT("client", "clients"),
     BATCH("batch", "batches"),
     DOCKET("docket", "dockets"),
