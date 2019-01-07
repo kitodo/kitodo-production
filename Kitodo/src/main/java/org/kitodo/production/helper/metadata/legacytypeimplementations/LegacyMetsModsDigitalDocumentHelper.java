@@ -29,7 +29,6 @@ import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.FileSetInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -168,7 +167,7 @@ public class LegacyMetsModsDigitalDocumentHelper
     }
 
     @Override
-    public FileSetInterface getFileSet() {
+    public LegacyFileSetDocStructHelper getFileSet() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 

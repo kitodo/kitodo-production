@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.FileSetInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -43,7 +42,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
  * about to be removed. Do not use this class.
  */
 
-public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDocStructHelperInterface {
+public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterface {
     private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
     /**
@@ -55,13 +54,11 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
         this.mediaUnits = mediaUnits;
     }
 
-    @Override
     public void addFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void addVirtualFileGroup(VirtualFileGroupInterface virtualFileGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
