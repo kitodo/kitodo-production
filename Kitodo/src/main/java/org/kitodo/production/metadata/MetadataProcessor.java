@@ -89,7 +89,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRef
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.helper.ConfigDisplayRules;
-import org.kitodo.production.metadata.elements.renderable.RenderableMetadataGroup;
 import org.kitodo.production.metadata.elements.selectable.SelectOne;
 import org.kitodo.production.metadata.elements.selectable.Separator;
 import org.kitodo.production.metadata.pagination.Paginator;
@@ -1984,7 +1983,7 @@ public class MetadataProcessor {
      *         "SperrungAbgelaufen" to make JSF show the message that the lock
      *         time is up and the user must leave the editor and open it anew
      */
-    public String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+    public String showAddMetadataGroupAsCopy() {
         return !updateBlocked() ? BLOCK_EXPIRED : "";
     }
 
