@@ -27,9 +27,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
@@ -209,7 +206,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void read(String path) throws ReadException {
+    public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
 
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
@@ -219,10 +216,8 @@ public class LegacyMetsModsDigitalDocumentHelper {
                     workpiece.read(in);
                 }
             } else {
-                throw new ReadException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult));
             }
-        } catch (IOException e) {
-            throw new ReadException(e.getMessage(), e);
         }
     }
 
@@ -240,7 +235,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void write(String filename) throws PreferencesException, WriteException {
+    public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
 
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
@@ -250,10 +245,8 @@ public class LegacyMetsModsDigitalDocumentHelper {
                     workpiece.save(out);
                 }
             } else {
-                throw new WriteException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult));
             }
-        } catch (IOException e) {
-            throw new WriteException(e.getMessage(), e);
         }
     }
 

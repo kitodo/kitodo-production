@@ -849,7 +849,7 @@ public class FileService {
     }
 
     public void writeMetadataAsTemplateFile(LegacyMetsModsDigitalDocumentHelper inFile, Process process)
-            throws WriteException, PreferencesException {
+            throws IOException {
         inFile.write(getTemplateFile(process).toString());
     }
 

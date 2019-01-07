@@ -26,7 +26,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
@@ -113,14 +112,10 @@ public class LegacyPrefsHelper {
         return ruleset;
     }
 
-    public void loadPrefs(String fileName) throws PreferencesException {
+    public void loadPrefs(String fileName) throws IOException {
         File rulesetFile = new File(fileName);
         RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();
-        try {
-            ruleset.load(rulesetFile);
-        } catch (IOException e) {
-            throw new PreferencesException("Error reading " + fileName + ": " + e.getMessage(), e);
-        }
+        ruleset.load(rulesetFile);
         this.ruleset = ruleset;
     }
 

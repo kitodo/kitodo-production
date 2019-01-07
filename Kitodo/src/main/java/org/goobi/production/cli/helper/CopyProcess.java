@@ -78,7 +78,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (ReadException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
@@ -116,7 +116,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (ReadException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
@@ -148,7 +148,7 @@ public class CopyProcess extends ProzesskopieForm {
 
             fillFieldsFromMetadataFile(this.myRdf);
             fillFieldsFromConfig();
-        } catch (PreferencesException | ReadException | RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
         }
     }
@@ -157,7 +157,7 @@ public class CopyProcess extends ProzesskopieForm {
      * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
      * füllen.
      */
-    private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) throws PreferencesException {
+    private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) {
         if (myRdf != null) {
 
             for (AdditionalField field : this.additionalFields) {
@@ -318,7 +318,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             ff.read(this.metadataFile.getPath());
-        } catch (ReadException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }

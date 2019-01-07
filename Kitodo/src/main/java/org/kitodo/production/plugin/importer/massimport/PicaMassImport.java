@@ -66,7 +66,6 @@ import org.jdom.output.DOMOutputter;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
@@ -435,10 +434,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     io.setMetsFilename(new File(fileName).toURI());
                     io.setImportReturnValue(ImportReturnValue.EXPORT_FINISHED);
 
-                } catch (PreferencesException e) {
-                    logger.error(currentIdentifier + ": " + e.getMessage(), e);
-                    io.setImportReturnValue(ImportReturnValue.INVALID_DATA);
-                } catch (WriteException e) {
+                } catch (IOException e) {
                     logger.error(currentIdentifier + ": " + e.getMessage(), e);
                     io.setImportReturnValue(ImportReturnValue.WRITE_ERROR);
                 }
