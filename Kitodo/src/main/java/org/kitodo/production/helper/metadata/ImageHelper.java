@@ -558,7 +558,7 @@ public class ImageHelper {
      * @return ContentFile object
      */
     private ContentFileInterface createContentFile(URI image) {
-        ContentFileInterface contentFile = UghImplementation.INSTANCE.createContentFile();
+        ContentFileInterface contentFile = new LegacyContentFileHelper();
         contentFile.setLocation(image.getPath());
         return contentFile;
     }
