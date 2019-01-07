@@ -193,6 +193,17 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
+     * Get translation of task status title.
+     *
+     * @param taskStatusTitle
+     *            'statusDone', 'statusLocked' and so on
+     * @return translated message for given task status title
+     */
+    public String getTaskStatusTitle(String taskStatusTitle) {
+        return Helper.getTranslation(taskStatusTitle);
+    }
+
+    /**
      * Remove content.
      *
      * @return String
