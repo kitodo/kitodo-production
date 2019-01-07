@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1742,14 +1743,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return List of filtered correction / solution messages
      */
     protected List<PropertyDTO> filterForCorrectionSolutionMessages(List<PropertyDTO> lpe) {
-        ArrayList<PropertyDTO> filteredList = new ArrayList<>();
-        List<String> listOfTranslations = new ArrayList<>();
-        String propertyTitle;
-
-        listOfTranslations.add("Korrektur notwendig");
-        listOfTranslations.add("Korrektur durchgefuehrt");
-        listOfTranslations.add(Helper.getTranslation("correctionNecessary"));
-        listOfTranslations.add(Helper.getTranslation("correctionPerformed"));
+        List<PropertyDTO> filteredList = new ArrayList<>();
+        List<String> translationList = Arrays.asList("Correction required", "Correction performed",
+            "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         if (lpe.isEmpty()) {
             return filteredList;
@@ -1757,8 +1753,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // filtering for correction and solution messages
         for (PropertyDTO property : lpe) {
-            propertyTitle = property.getTitle();
-            if (listOfTranslations.contains(propertyTitle)) {
+            if (translationList.contains(property.getTitle())) {
                 filteredList.add(property);
             }
         }
