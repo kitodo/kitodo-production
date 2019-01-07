@@ -18,13 +18,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class XmlArticleCounter {
@@ -124,9 +124,9 @@ public class XmlArticleCounter {
 
     private int countNonEmptyMetadata(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
-        List<MetadataInterface> allMetadata = inStruct.getAllMetadata();
+        List<LegacyMetadataHelper> allMetadata = inStruct.getAllMetadata();
         if (allMetadata != null) {
-            for (MetadataInterface md : allMetadata) {
+            for (LegacyMetadataHelper md : allMetadata) {
                 String value = md.getValue();
                 if (value != null && value.trim().length() > 0) {
                     result++;

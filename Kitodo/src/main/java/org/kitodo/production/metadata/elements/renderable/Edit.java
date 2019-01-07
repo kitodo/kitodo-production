@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
@@ -53,7 +53,7 @@ public class Edit extends RenderableMetadata
 
         super(metadataType, binding, container);
         if (binding != null) {
-            for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
+            for (LegacyMetadataHelper data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);
             }
         }
@@ -68,7 +68,7 @@ public class Edit extends RenderableMetadata
      *            data to add
      */
     @Override
-    public void addContent(MetadataInterface data) {
+    public void addContent(LegacyMetadataHelper data) {
         if (value == null || value.length() == 0) {
             value = data.getValue();
         } else {
@@ -109,8 +109,8 @@ public class Edit extends RenderableMetadata
      * @see RenderableGroupableMetadata#toMetadata()
      */
     @Override
-    public List<MetadataInterface> toMetadata() {
-        List<MetadataInterface> result = new ArrayList<>(1);
+    public List<LegacyMetadataHelper> toMetadata() {
+        List<LegacyMetadataHelper> result = new ArrayList<>(1);
         result.add(getMetadata(value));
         return result;
     }

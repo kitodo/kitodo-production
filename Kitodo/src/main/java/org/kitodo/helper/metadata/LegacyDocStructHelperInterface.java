@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -124,7 +123,7 @@ public interface LegacyDocStructHelperInterface {
      *             case, the meta-data element cannot be added because we cannot
      *             check whether the the meta-data type is allowed or not.
      */
-    void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException;
+    void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException;
 
     /**
      * Adds an outgoing reference to another {@code DocStruct} instance.
@@ -210,7 +209,7 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data from this instance. A return type
      *         {@code Collection<>} would be sufficient.
      */
-    List<MetadataInterface> getAllMetadata();
+    List<LegacyMetadataHelper> getAllMetadata();
 
     /**
      * Returns all meta-data of a given type, including persons. Can be used to
@@ -223,7 +222,7 @@ public interface LegacyDocStructHelperInterface {
      *            meta-data type to look for
      * @return all meta-data of the given type
      */
-    List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType);
+    List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType);
 
     /**
      * Returns a list of all persons. If no {@code Person} objects are
@@ -347,7 +346,7 @@ public interface LegacyDocStructHelperInterface {
      * @param metaDatum
      *            meta-datum which should be removed
      */
-    void removeMetadata(MetadataInterface metaDatum);
+    void removeMetadata(LegacyMetadataHelper metaDatum);
 
     /**
      * Removes an outgoing reference. An outgoing reference is a reference to

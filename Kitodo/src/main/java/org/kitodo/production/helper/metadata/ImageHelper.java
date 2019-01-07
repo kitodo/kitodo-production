@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -55,8 +54,10 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
@@ -229,12 +230,12 @@ public class ImageHelper {
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
             for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
-                List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
+                List<? extends LegacyMetadataHelper> pageNoMetadata = page.getAllMetadataByType(mdt);
                 if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
                     break;
                 }
-                for (MetadataInterface pageNo : pageNoMetadata) {
+                for (LegacyMetadataHelper pageNo : pageNoMetadata) {
                     pageNo.setStringValue(String.valueOf(currentPhysicalOrder));
                 }
                 currentPhysicalOrder++;
@@ -489,7 +490,7 @@ public class ImageHelper {
         // problems with FilePath
         MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
-            MetadataInterface mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
+            LegacyMetadataHelper mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
             URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
                 process.getTitle(), process.getProcessBaseUri());
             String pathString = new File(pathURI).getPath();
@@ -526,10 +527,10 @@ public class ImageHelper {
      *            as String
      * @return Metadata object
      */
-    private MetadataInterface createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
+    private LegacyMetadataHelper createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
         MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
+        LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(determinePagination(currentPhysicalOrder, defaultPagination));
         return metadata;
     }
@@ -541,10 +542,10 @@ public class ImageHelper {
      *            as int
      * @return Metadata object
      */
-    private MetadataInterface createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
+    private LegacyMetadataHelper createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
         MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
+        LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(String.valueOf(currentPhysicalOrder));
         return metadata;
     }

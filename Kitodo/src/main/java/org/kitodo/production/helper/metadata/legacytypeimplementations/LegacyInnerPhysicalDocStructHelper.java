@@ -27,7 +27,6 @@ import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -92,7 +91,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException {
         if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER.equals(metadata.getMetadataType())) {
             mediaUnit.setOrder(Integer.parseInt(metadata.getValue()));
         } else if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL.equals(metadata.getMetadataType())) {
@@ -179,13 +178,13 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public List<MetadataInterface> getAllIdentifierMetadata() {
+    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataInterface> getAllMetadata() {
+    public List<LegacyMetadataHelper> getAllMetadata() {
         return Arrays.asList(
             new LegacyMetadataHelper(this, LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER,
                     Integer.toString(mediaUnit.getOrder())),
@@ -194,7 +193,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
         if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
             return Arrays.asList(new LegacyMetadataHelper(this, metadataType, Integer.toString(mediaUnit.getOrder())));
         } else if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL) {
@@ -333,7 +332,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public void removeMetadata(MetadataInterface metaDatum) {
+    public void removeMetadata(LegacyMetadataHelper metaDatum) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

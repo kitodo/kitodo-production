@@ -18,8 +18,8 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.DisplayType;
 
@@ -56,9 +56,9 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.SELECT);
         if (binding != null) {
-            List<MetadataInterface> elements = binding.getMetadataByType(metadataType.getName());
+            List<LegacyMetadataHelper> elements = binding.getMetadataByType(metadataType.getName());
             List<String> selected = new ArrayList<>(elements.size());
-            for (MetadataInterface m : elements) {
+            for (LegacyMetadataHelper m : elements) {
                 selected.add(m.getValue());
             }
             setSelectedItems(selected);
@@ -72,7 +72,7 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
      *            data to add
      */
     @Override
-    public void addContent(MetadataInterface data) {
+    public void addContent(LegacyMetadataHelper data) {
         String valueToSet = data.getValue();
         for (Item item : items) {
             if (valueToSet.equals(item.getValue())) {
@@ -116,8 +116,8 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
      * @see org.kitodo.production.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
-    public List<MetadataInterface> toMetadata() {
-        List<MetadataInterface> result = new ArrayList<>(items.size());
+    public List<LegacyMetadataHelper> toMetadata() {
+        List<LegacyMetadataHelper> result = new ArrayList<>(items.size());
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

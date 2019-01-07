@@ -24,10 +24,10 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
@@ -250,7 +250,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
             members.put(field.getName(), member);
         }
         if (!autoUpdate) {
-            for (MetadataInterface contentValue : data.getMetadataList()) {
+            for (LegacyMetadataHelper contentValue : data.getMetadataList()) {
                 members.get(contentValue.getMetadataType().getName()).addContent(contentValue);
             }
             for (PersonInterface contentValue : data.getPersonList()) {

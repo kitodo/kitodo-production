@@ -14,10 +14,10 @@ package org.kitodo.production.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
@@ -68,8 +68,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadata(Object firstObject, Object secondObject) {
-        MetadataInterface firstMetadata = (MetadataInterface) firstObject;
-        MetadataInterface secondMetadata = (MetadataInterface) secondObject;
+        LegacyMetadataHelper firstMetadata = (LegacyMetadataHelper) firstObject;
+        LegacyMetadataHelper secondMetadata = (LegacyMetadataHelper) secondObject;
 
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 

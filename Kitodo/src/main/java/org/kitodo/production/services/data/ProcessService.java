@@ -74,7 +74,6 @@ import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
@@ -118,6 +117,7 @@ import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -1894,7 +1894,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
         // trim all metadata values
         if (docStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : docStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setStringValue(md.getValue().trim());
                 }

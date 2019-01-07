@@ -65,7 +65,6 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -173,14 +172,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             // reading ats
             MetadataTypeInterface atsType = prefs.getMetadataTypeByName("TSL_ATS");
-            List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(atsType);
+            List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(atsType);
             if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                MetadataInterface atstsl = mdList.get(0);
+                LegacyMetadataHelper atstsl = mdList.get(0);
                 ats = atstsl.getValue();
             } else {
                 // generating ats
                 ats = createAtstsl(currentTitle, author);
-                MetadataInterface atstsl = new LegacyMetadataHelper(atsType);
+                LegacyMetadataHelper atstsl = new LegacyMetadataHelper(atsType);
                 atstsl.setStringValue(ats);
                 logicalDS.addMetadata(atstsl);
             }
@@ -202,7 +201,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (child != null) {
                 mdList = child.getAllMetadataByType(identifierType);
                 if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                    MetadataInterface identifier = mdList.get(0);
+                    LegacyMetadataHelper identifier = mdList.get(0);
                     workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
                 }
             }
@@ -214,7 +213,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             try {
                 // pathimagefiles
                 MetadataTypeInterface mdt = prefs.getMetadataTypeByName("pathimagefiles");
-                MetadataInterface newmd = new LegacyMetadataHelper(mdt);
+                LegacyMetadataHelper newmd = new LegacyMetadataHelper(mdt);
                 newmd.setStringValue("/images/");
                 digitalDocument.getPhysicalDocStruct().addMetadata(newmd);
 
@@ -227,12 +226,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                         volumes = Collections.emptyList();
                     }
                     for (String collection : this.currentCollectionList) {
-                        MetadataInterface mdCollection = new LegacyMetadataHelper(mdTypeCollection);
+                        LegacyMetadataHelper mdCollection = new LegacyMetadataHelper(mdTypeCollection);
                         mdCollection.setStringValue(collection);
                         topLogicalStruct.addMetadata(mdCollection);
                         for (LegacyDocStructHelperInterface volume : volumes) {
                             try {
-                                MetadataInterface mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
+                                LegacyMetadataHelper mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
                                 mdCollectionForVolume.setStringValue(collection);
                                 volume.addMetadata(mdCollectionForVolume);
                             } catch (MetadataTypeNotAllowedException e) {
@@ -256,17 +255,17 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     private void readCurrentTitle(LegacyDocStructHelperInterface logicalDS) {
         MetadataTypeInterface titleType = prefs.getMetadataTypeByName("TitleDocMain");
-        List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
+        List<? extends LegacyMetadataHelper> mdList = logicalDS.getAllMetadataByType(titleType);
         if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-            MetadataInterface title = mdList.get(0);
+            LegacyMetadataHelper title = mdList.get(0);
             currentTitle = title.getValue();
         }
     }
 
     private void readIdentifier(LegacyDocStructHelperInterface child, LegacyDocStructHelperInterface logicalDS) {
         MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-        List<? extends MetadataInterface> childMdList = null;
-        List<? extends MetadataInterface> mdList;
+        List<? extends LegacyMetadataHelper> childMdList = null;
+        List<? extends LegacyMetadataHelper> mdList;
         if (Objects.nonNull(child)) {
             childMdList = child.getAllMetadataByType(identifierType);
         }
@@ -276,7 +275,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             mdList = logicalDS.getAllMetadataByType(identifierType);
         }
         if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-            MetadataInterface identifier = mdList.get(0);
+            LegacyMetadataHelper identifier = mdList.get(0);
             currentIdentifier = identifier.getValue();
         } else {
             currentIdentifier = String.valueOf(System.currentTimeMillis());
@@ -297,15 +296,15 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         // reading volume number
         if (child != null) {
             MetadataTypeInterface mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
-            List<? extends MetadataInterface> mdList = child.getAllMetadataByType(mdt);
+            List<? extends LegacyMetadataHelper> mdList = child.getAllMetadataByType(mdt);
             if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                MetadataInterface md = mdList.get(0);
+                LegacyMetadataHelper md = mdList.get(0);
                 volumeNumber = md.getValue();
             } else {
                 mdt = prefs.getMetadataTypeByName("DateIssuedSort");
                 mdList = child.getAllMetadataByType(mdt);
                 if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                    MetadataInterface md = mdList.get(0);
+                    LegacyMetadataHelper md = mdList.get(0);
                     volumeNumber = md.getValue();
                 }
             }

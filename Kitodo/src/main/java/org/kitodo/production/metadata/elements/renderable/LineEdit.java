@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
 
 /**
  * Backing bean for a (multi-line) text input element to edit metadata
@@ -59,7 +59,7 @@ public class LineEdit extends RenderableMetadata
 
         super(metadataType, binding, container);
         if (binding != null) {
-            for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
+            for (LegacyMetadataHelper data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);
             }
         }
@@ -74,7 +74,7 @@ public class LineEdit extends RenderableMetadata
      *            data to add
      */
     @Override
-    public void addContent(MetadataInterface data) {
+    public void addContent(LegacyMetadataHelper data) {
         if (value == null) {
             value = new ArrayList<>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
         } else {
@@ -114,8 +114,8 @@ public class LineEdit extends RenderableMetadata
      * @see org.kitodo.production.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
-    public List<MetadataInterface> toMetadata() {
-        List<MetadataInterface> result = new ArrayList<>(1);
+    public List<LegacyMetadataHelper> toMetadata() {
+        List<LegacyMetadataHelper> result = new ArrayList<>(1);
         result.add(getMetadata(StringUtils.join(value, METADATA_LINE_SEPARATOR)));
         return result;
     }

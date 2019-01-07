@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -164,26 +163,26 @@ public class MetadataHelper {
                 Integer secondPage = 0;
                 final MetadataTypeInterface mdt = MetadataHelper.this.prefs
                         .getMetadataTypeByName("physPageNumber");
-                List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
+                List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final MetadataInterface page = listMetadata.get(0);
+                    final LegacyMetadataHelper page = listMetadata.get(0);
                     firstPage = Integer.parseInt(page.getValue());
                 }
                 listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final MetadataInterface page = listMetadata.get(0);
+                    final LegacyMetadataHelper page = listMetadata.get(0);
                     secondPage = Integer.parseInt(page.getValue());
                 }
                 return firstPage.compareTo(secondPage);
             });
 
             MetadataTypeInterface mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends MetadataInterface> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
+            List<? extends LegacyMetadataHelper> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                MetadataInterface meineSeite = listSeiten.get(0);
+                LegacyMetadataHelper meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
             mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
@@ -192,7 +191,7 @@ public class MetadataHelper {
                 listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                MetadataInterface meineSeite = listSeiten.get(0);
+                LegacyMetadataHelper meineSeite = listSeiten.get(0);
                 rueckgabe += ":" + meineSeite.getValue();
             }
         }
@@ -203,7 +202,7 @@ public class MetadataHelper {
      * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
      * DefaultDisplay-Metadaten ergänzen.
      */
-    public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
+    public List<? extends LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
         List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
@@ -216,7 +215,7 @@ public class MetadataHelper {
                         if (mdt.isPerson()) {
                             throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
-                            MetadataInterface md = new LegacyMetadataHelper(mdt);
+                            LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
@@ -238,7 +237,7 @@ public class MetadataHelper {
             }
             return person;
         } else {
-            List<MetadataInterface> metadata = inStruct.getAllMetadata();
+            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
             if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
                 metadata.sort(new MetadataComparator(inLanguage));
             }
@@ -248,14 +247,14 @@ public class MetadataHelper {
     }
 
     /** TODO: Replace it, after Maven is kicked :). */
-    private List<MetadataInterface> getAllVisibleMetadataHack(LegacyDocStructHelperInterface inStruct) {
+    private List<LegacyMetadataHelper> getAllVisibleMetadataHack(LegacyDocStructHelperInterface inStruct) {
 
         // Start with the list of all metadata.
-        List<MetadataInterface> result = new LinkedList<>();
+        List<LegacyMetadataHelper> result = new LinkedList<>();
 
         // Iterate over all metadata.
         if (inStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : inStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
                 // If the metadata has some value and it does not start with the
                 // HIDDEN_METADATA_CHAR, add it to the result list.
                 if (!md.getMetadataType().getName().startsWith("_")) {

@@ -17,10 +17,10 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.DisplayCase;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.Modes;
@@ -36,7 +36,7 @@ import org.kitodo.production.services.ServiceManager;
 
 public class MetadataImpl implements Metadata {
 
-    private MetadataInterface md;
+    private LegacyMetadataHelper md;
     private int identifier;
     private PrefsInterface myPrefs;
     private HashMap<String, DisplayCase> myValues = new HashMap<>();
@@ -46,7 +46,7 @@ public class MetadataImpl implements Metadata {
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetadataImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
+    public MetadataImpl(LegacyMetadataHelper m, int inID, PrefsInterface inPrefs, Process inProcess) {
         this.md = m;
         this.identifier = inID;
         this.myPrefs = inPrefs;
@@ -82,12 +82,12 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public MetadataInterface getMd() {
+    public LegacyMetadataHelper getMd() {
         return this.md;
     }
 
     @Override
-    public void setMd(MetadataInterface md) {
+    public void setMd(LegacyMetadataHelper md) {
         this.md = md;
     }
 

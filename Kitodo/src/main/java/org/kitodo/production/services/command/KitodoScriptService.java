@@ -27,7 +27,6 @@ import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -514,12 +513,12 @@ public class KitodoScriptService {
             try {
                 FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(process, "pathimagefiles");
-                List<? extends MetadataInterface> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
+                List<? extends LegacyMetadataHelper> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
-                for (MetadataInterface md : allImagePaths) {
+                for (LegacyMetadataHelper md : allImagePaths) {
                     rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                 }
-                MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
+                LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata.setStringValue("file:/" + fileService.getImagesDirectory(process)
                             + process.getTitle() + DIRECTORY_SUFFIX);

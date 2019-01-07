@@ -22,7 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -101,18 +100,18 @@ public class MetadataValidationService {
         }
 
         LegacyDocStructHelperInterface logical = dd.getLogicalDocStruct();
-        List<MetadataInterface> allIdentifierMetadata = logical.getAllIdentifierMetadata();
+        List<LegacyMetadataHelper> allIdentifierMetadata = logical.getAllIdentifierMetadata();
         if (Objects.nonNull(allIdentifierMetadata) && !allIdentifierMetadata.isEmpty()) {
-            MetadataInterface identifierTopStruct = allIdentifierMetadata.get(0);
+            LegacyMetadataHelper identifierTopStruct = allIdentifierMetadata.get(0);
 
             if (isMetadataValueReplaced(logical, identifierTopStruct, metadataLanguage)) {
                 result = false;
             }
 
             LegacyDocStructHelperInterface firstChild = logical.getAllChildren().get(0);
-            List<MetadataInterface> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
+            List<LegacyMetadataHelper> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
             if (Objects.nonNull(allChildIdentifierMetadata) && !allChildIdentifierMetadata.isEmpty()) {
-                MetadataInterface identifierFirstChild = allChildIdentifierMetadata.get(0);
+                LegacyMetadataHelper identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     Object[] parameter = new Object[] {identifierTopStruct.getMetadataType().getName(),
@@ -230,7 +229,7 @@ public class MetadataValidationService {
         return incorrect;
     }
 
-    private boolean isMetadataValueReplaced(LegacyDocStructHelperInterface docStruct, MetadataInterface metadata,
+    private boolean isMetadataValueReplaced(LegacyDocStructHelperInterface docStruct, LegacyMetadataHelper metadata,
             String metadataLanguage) {
 
         if (!metadata.getValue()
@@ -247,7 +246,7 @@ public class MetadataValidationService {
     private boolean isValidPathImageFiles(LegacyDocStructHelperInterface phys, PrefsInterface myPrefs) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
-            List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdt);
+            List<? extends LegacyMetadataHelper> allMetadata = phys.getAllMetadataByType(mdt);
             if (Objects.nonNull(allMetadata) && !allMetadata.isEmpty()) {
                 return true;
             } else {
@@ -295,7 +294,7 @@ public class MetadataValidationService {
         String physical = "";
         String logical = "";
 
-        for (MetadataInterface metadata : docStruct.getAllMetadata()) {
+        for (LegacyMetadataHelper metadata : docStruct.getAllMetadata()) {
             if (metadata.getMetadataType().getName().equals("logicalPageNumber")) {
                 logical = " (" + metadata.getValue() + ")";
             }
@@ -312,7 +311,7 @@ public class MetadataValidationService {
         List<MetadataTypeInterface> allMDTypes = dst.getAllMetadataTypes();
         for (MetadataTypeInterface mdt : allMDTypes) {
             String number = dst.getNumberOfMetadataType(mdt);
-            List<? extends MetadataInterface> ll = docStruct.getAllMetadataByType(mdt);
+            List<? extends LegacyMetadataHelper> ll = docStruct.getAllMetadataByType(mdt);
             int real = ll.size();
             // if (ll.size() > 0) {
 
@@ -448,10 +447,10 @@ public class MetadataValidationService {
          * ansonsten alle Daten zusammensammeln und in das neue Element
          * schreiben
          */
-        List<? extends MetadataInterface> createMetadata = docStruct.getAllMetadataByType(mdt);
+        List<? extends LegacyMetadataHelper> createMetadata = docStruct.getAllMetadataByType(mdt);
         if (createMetadata == null || createMetadata.isEmpty()) {
             try {
-                MetadataInterface createdElement = new LegacyMetadataHelper(mdt);
+                LegacyMetadataHelper createdElement = new LegacyMetadataHelper(mdt);
                 String value = "";
                 // go through all the metadata to append and append to the
                 // element
@@ -522,9 +521,9 @@ public class MetadataValidationService {
     private void checkStartsEndsWith(List<String> errorList, String propStartsWith, String propEndsWith,
             LegacyDocStructHelperInterface myStruct, MetadataTypeInterface mdt, String language) {
         // starts with or ends with
-        List<? extends MetadataInterface> allMetadataByType = myStruct.getAllMetadataByType(mdt);
+        List<? extends LegacyMetadataHelper> allMetadataByType = myStruct.getAllMetadataByType(mdt);
         if (Objects.nonNull(allMetadataByType)) {
-            for (MetadataInterface md : allMetadataByType) {
+            for (LegacyMetadataHelper md : allMetadataByType) {
                 /* prüfen, ob es mit korrekten Werten beginnt */
                 if (propStartsWith != null) {
                     boolean isOk = false;

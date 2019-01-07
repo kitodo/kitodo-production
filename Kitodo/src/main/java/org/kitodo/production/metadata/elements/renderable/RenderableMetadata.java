@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
@@ -203,8 +202,8 @@ public abstract class RenderableMetadata {
      *            value to set the metadata to
      * @return a metadata with the value
      */
-    protected MetadataInterface getMetadata(String value) {
-        MetadataInterface result;
+    protected LegacyMetadataHelper getMetadata(String value) {
+        LegacyMetadataHelper result;
         result = new LegacyMetadataHelper(metadataType);
         result.setStringValue(value);
         return result;
@@ -263,7 +262,7 @@ public abstract class RenderableMetadata {
      */
     protected void updateBinding() {
         if (binding != null) {
-            List<MetadataInterface> bound = binding.getMetadataList();
+            List<LegacyMetadataHelper> bound = binding.getMetadataList();
             bound.removeAll(binding.getMetadataByType(metadataType.getName()));
             bound.addAll(((RenderableGroupableMetadata) this).toMetadata());
         }

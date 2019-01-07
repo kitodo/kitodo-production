@@ -19,11 +19,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -129,10 +129,10 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      *
      * @param data
      *            data to add
-     * @see RenderableGroupableMetadata#addContent(MetadataInterface)
+     * @see RenderableGroupableMetadata#addContent(LegacyMetadataHelper)
      */
     @Override
-    public void addContent(MetadataInterface data) {
+    public void addContent(LegacyMetadataHelper data) {
         if (data instanceof PersonInterface) {
             PersonInterface personData = (PersonInterface) data;
             if (personData.getLastName() != null) {

@@ -18,8 +18,8 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.DisplayType;
 
@@ -58,7 +58,7 @@ public class DropDownList extends RenderableMetadata
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.SELECT1);
         if (binding != null) {
-            for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
+            for (LegacyMetadataHelper data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);
             }
         }
@@ -70,10 +70,10 @@ public class DropDownList extends RenderableMetadata
      *
      * @param data
      *            data to add
-     * @see org.kitodo.production.metadata.elements.renderable.RenderableGroupableMetadata#addContent(org.kitodo.api.ugh.MetadataInterface)
+     * @see org.kitodo.production.metadata.elements.renderable.RenderableGroupableMetadata#addContent(org.kitodo.api.ugh.LegacyMetadataHelper)
      */
     @Override
-    public void addContent(MetadataInterface data) {
+    public void addContent(LegacyMetadataHelper data) {
         setValue(data.getValue());
     }
 
@@ -142,8 +142,8 @@ public class DropDownList extends RenderableMetadata
      * @see org.kitodo.production.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
-    public List<MetadataInterface> toMetadata() {
-        List<MetadataInterface> result = new ArrayList<>(1);
+    public List<LegacyMetadataHelper> toMetadata() {
+        List<LegacyMetadataHelper> result = new ArrayList<>(1);
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

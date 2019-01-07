@@ -49,7 +49,6 @@ import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -508,7 +507,7 @@ public class ProzesskopieForm implements Serializable {
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     field.getMetadata());
-                MetadataInterface md = UghHelper.getMetadata(docStruct, mdt);
+                LegacyMetadataHelper md = UghHelper.getMetadata(docStruct, mdt);
                 if (md != null) {
                     field.setValue(md.getValue());
                     md.setStringValue(field.getValue().replace("&amp;", "&"));
@@ -799,7 +798,7 @@ public class ProzesskopieForm implements Serializable {
                 PrefsInterface prefs = ServiceManager.getRulesetService()
                         .getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
-                MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
+                LegacyMetadataHelper metadata = UghHelper.getMetadata(tempStruct, mdt);
                 if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
@@ -867,14 +866,14 @@ public class ProzesskopieForm implements Serializable {
         DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-            List<? extends MetadataInterface> allImagePaths = digitalDocument.getPhysicalDocStruct()
+            List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
             if (Objects.nonNull(allImagePaths)) {
-                for (MetadataInterface metadata : allImagePaths) {
+                for (LegacyMetadataHelper metadata : allImagePaths) {
                     digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
                 }
             }
-            MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
+            LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
             String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)
                     + this.prozessKopie.getTitle().trim() + "_" + DIRECTORY_SUFFIX;
             if (SystemUtils.IS_OS_WINDOWS) {
@@ -919,10 +918,10 @@ public class ProzesskopieForm implements Serializable {
     private void updateMetadata() throws PreferencesException {
         if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
             LegacyDocStructHelperInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
-            Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
+            Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
                 // save higher level metadata for lower enrichment
-                List<MetadataInterface> allMetadata = enricher.getAllMetadata();
+                List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
                 if (allMetadata == null) {
                     allMetadata = Collections.emptyList();
                 }
@@ -937,12 +936,12 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void iterateOverAllMetadata(Map<String, Map<String, MetadataInterface>> higherLevelMetadata,
-            List<MetadataInterface> allMetadata) {
-        for (MetadataInterface available : allMetadata) {
+    private void iterateOverAllMetadata(Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata,
+            List<LegacyMetadataHelper> allMetadata) {
+        for (LegacyMetadataHelper available : allMetadata) {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
-            Map<String, MetadataInterface> availableMetadata = higherLevelMetadata.containsKey(availableKey)
+            Map<String, LegacyMetadataHelper> availableMetadata = higherLevelMetadata.containsKey(availableKey)
                     ? higherLevelMetadata.get(availableKey)
                     : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
@@ -953,8 +952,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void iterateOverHigherLevelMetadata(LegacyDocStructHelperInterface enricher,
-            Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
-        for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
+            Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata) {
+        for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
             boolean addable = false;
             List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
@@ -970,13 +969,13 @@ public class ProzesskopieForm implements Serializable {
             if (!addable) {
                 continue;
             }
-            there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
+            there: for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue()
                     .entrySet()) {
-                List<MetadataInterface> amNotNull = enricher.getAllMetadata();
+                List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
                 }
-                for (MetadataInterface existentMetadata : amNotNull) {
+                for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
                             && existentMetadata.getValue().equals(higherElement.getKey())) {
                         continue there;
@@ -1007,7 +1006,7 @@ public class ProzesskopieForm implements Serializable {
     private void addCollections(LegacyDocStructHelperInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                MetadataInterface md = new LegacyMetadataHelper(UghHelper.getMetadataType(
+                LegacyMetadataHelper md = new LegacyMetadataHelper(UghHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setStringValue(s);
@@ -1026,8 +1025,8 @@ public class ProzesskopieForm implements Serializable {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
-            ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
-            for (MetadataInterface md : myCollections) {
+            ArrayList<LegacyMetadataHelper> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
+            for (LegacyMetadataHelper md : myCollections) {
                 colStruct.removeMetadata(md);
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
@@ -1181,7 +1180,7 @@ public class ProzesskopieForm implements Serializable {
     private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
 
         if (oldDocStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : oldDocStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {

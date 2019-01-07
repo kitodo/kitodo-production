@@ -23,7 +23,6 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -91,7 +90,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException {
         /*
          * Legacy code tries to add (empty) meta-data entries here. I guess this
          * is a bug.
@@ -176,18 +175,18 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public List<MetadataInterface> getAllIdentifierMetadata() {
+    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataInterface> getAllMetadata() {
+    public List<LegacyMetadataHelper> getAllMetadata() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
         return Collections.emptyList();
     }
 
@@ -308,7 +307,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void removeMetadata(MetadataInterface metaDatum) {
+    public void removeMetadata(LegacyMetadataHelper metaDatum) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

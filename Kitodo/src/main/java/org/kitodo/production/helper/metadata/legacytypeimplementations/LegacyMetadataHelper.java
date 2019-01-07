@@ -13,14 +13,13 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code
  * operational which is about to be removed. Do not use this class.
  */
-public class LegacyMetadataHelper implements MetadataInterface {
+public class LegacyMetadataHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
 
     /**
@@ -50,35 +49,29 @@ public class LegacyMetadataHelper implements MetadataInterface {
         this.value = "";
     }
 
-    @Override
     public LegacyInnerPhysicalDocStructHelper getDocStruct() {
         return legacyInnerPhysicalDocStructHelper;
     }
 
-    @Override
     public MetadataTypeInterface getMetadataType() {
         return type;
     }
 
-    @Override
     public String getValue() {
         return value;
     }
 
-    @Override
     public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
             this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }
     }
 
-    @Override
     public void setType(MetadataTypeInterface metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setStringValue(String value) {
         this.value = value;
     }

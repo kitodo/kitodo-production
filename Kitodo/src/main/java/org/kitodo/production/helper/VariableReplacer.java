@@ -25,7 +25,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
@@ -35,6 +34,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -345,7 +345,7 @@ public class VariableReplacer {
      * zurückgegeben.
      */
     private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, MetadataTypeInterface mdt) {
-        List<? extends MetadataInterface> mds = inDocstruct.getAllMetadataByType(mdt);
+        List<? extends LegacyMetadataHelper> mds = inDocstruct.getAllMetadataByType(mdt);
         if (!mds.isEmpty()) {
             return mds.get(0).getValue();
         } else {

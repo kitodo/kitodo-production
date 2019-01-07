@@ -41,7 +41,6 @@ import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -119,7 +118,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         Optional<MetadataViewInterface> optionalKeyView = divisionView
@@ -252,14 +251,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public List<MetadataInterface> getAllIdentifierMetadata() {
+    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataInterface> getAllMetadata() {
-        List<MetadataInterface> result = new LinkedList<>();
+    public List<LegacyMetadataHelper> getAllMetadata() {
+        List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
@@ -279,8 +278,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
-        List<MetadataInterface> result = new LinkedList<>();
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
+        List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
@@ -449,7 +448,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void removeMetadata(MetadataInterface metaDatum) {
+    public void removeMetadata(LegacyMetadataHelper metaDatum) {
         Iterator<MetadataAccessInterface> entries = structure.getMetadata().iterator();
         String metadataTypeName = metaDatum.getMetadataType().getName();
         while (entries.hasNext()) {

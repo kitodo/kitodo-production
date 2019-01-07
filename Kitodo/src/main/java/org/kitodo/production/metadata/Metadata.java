@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
 
 public interface Metadata {
 
@@ -54,15 +54,15 @@ public interface Metadata {
      * 
      * @return metadata
      */
-    MetadataInterface getMd();
+    LegacyMetadataHelper getMd();
 
     /**
      * Set metadata.
      * 
      * @param md
-     *            as MetadataInterface object
+     *            as LegacyMetadataHelper object
      */
-    void setMd(MetadataInterface md);
+    void setMd(LegacyMetadataHelper md);
 
     /**
      * New function for use of display configuration within xml files. This one gets

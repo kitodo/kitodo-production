@@ -29,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
@@ -51,6 +50,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -319,7 +319,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         for (MetadataTypeInterface metadataType : metadataTypeInterfaces) {
             if (metaDataTypeName.equals(metadataType.getName())) {
                 return Integer
-                        .parseInt(new HashSet<MetadataInterface>(structureTypeName.getAllMetadataByType(metadataType))
+                        .parseInt(new HashSet<LegacyMetadataHelper>(structureTypeName.getAllMetadataByType(metadataType))
                                 .iterator().next().getValue());
             }
         }
@@ -607,9 +607,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         }
 
         SIBLINGS: for (LegacyDocStructHelperInterface aforeborn : siblings) {
-            List<MetadataInterface> allMetadata = aforeborn.getAllMetadata();
+            List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
             if (allMetadata != null) {
-                for (MetadataInterface metadataElement : allMetadata) {
+                for (LegacyMetadataHelper metadataElement : allMetadata) {
                     if (metadataElement.getMetadataType().getName().equals(metadataType)) {
                         try {
                             if (Integer.parseInt(metadataElement.getValue()) < rank) {

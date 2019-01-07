@@ -13,7 +13,7 @@ package org.kitodo.production.metadata.elements.renderable;
 
 import java.util.List;
 
-import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
 
 /**
  * A RenderableGroupableMetadatum is a metadata which can—but doesn’t have to
@@ -37,7 +37,7 @@ interface RenderableGroupableMetadata {
      * @param data
      *            data to add
      */
-    void addContent(MetadataInterface data);
+    void addContent(LegacyMetadataHelper data);
 
     /**
      * Shall return the label for the metadatum in the language previously set.
@@ -68,5 +68,5 @@ interface RenderableGroupableMetadata {
      * 
      * @return the metadata elements contained in this bean
      */
-    List<? extends MetadataInterface> toMetadata();
+    List<? extends LegacyMetadataHelper> toMetadata();
 }
