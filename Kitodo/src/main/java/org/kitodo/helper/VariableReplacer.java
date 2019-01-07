@@ -104,7 +104,8 @@ public class VariableReplacer {
         try {
             // TIFF writer scripts will have a path without an end slash
             String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
-            String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process));
+            String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process.getId(),
+                this.process.getTitle(), this.process.getProcessBaseUri()));
             String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
             String origPath = replaceSlashAndSeparator(processService.getImagesOrigDirectory(false, this.process));
             String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process));
@@ -306,7 +307,7 @@ public class VariableReplacer {
     }
 
     private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
-                                                     String resultTop) {
+            String resultTop) {
         String result = "";
         switch (metadataLevel) {
             case FIRSTCHILD:

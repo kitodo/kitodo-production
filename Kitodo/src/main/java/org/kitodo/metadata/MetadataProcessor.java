@@ -199,12 +199,9 @@ public class MetadataProcessor {
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private int numberOfConvertedImages = 0;
     private int numberOfImagesToAdd = 0;
-    private List<String> metadataEditorComponents = Arrays.asList(
-            "structureTreeForm:structureWrapperPanel",
-            "structureTreeForm:paginationWrapperPanel",
-            "metadataWrapperPanel",
-            "commentWrapperPanel",
-            "galleryWrapperPanel");
+    private List<String> metadataEditorComponents = Arrays.asList("structureTreeForm:structureWrapperPanel",
+        "structureTreeForm:paginationWrapperPanel", "metadataWrapperPanel", "commentWrapperPanel",
+        "galleryWrapperPanel");
     private String referringView = "desktop";
 
     /**
@@ -378,8 +375,8 @@ public class MetadataProcessor {
             } else {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
-                    authority = ConfigCore
-                            .getParameter(ParameterCore.AUTHORITY_ID_FROM_URI.getName().replaceFirst("\\{0\\}", authorityURI), null);
+                    authority = ConfigCore.getParameter(
+                        ParameterCore.AUTHORITY_ID_FROM_URI.getName().replaceFirst("\\{0\\}", authorityURI), null);
                 }
             }
         }
@@ -423,7 +420,7 @@ public class MetadataProcessor {
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStructInterface myDocStruct,
-                                                          List<MetadataImpl> tempMetadataList) {
+            List<MetadataImpl> tempMetadataList) {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // determine all addable metadata types
@@ -769,8 +766,7 @@ public class MetadataProcessor {
         upperNode.setZblNummer(determineMetadata(inStrukturelement, "ZBLIdentifier"));
         upperNode.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
         upperNode.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
-        upperNode
-                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberFirst()));
+        upperNode.setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberFirst()));
         upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberLast()));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getDocStructType().getName().equals("PeriodicalIssue")) {
@@ -892,7 +888,6 @@ public class MetadataProcessor {
      * sets the specified pages.
      */
     public void addSingleNodeWithPages() {
-
         DocStructInterface docStruct = null;
         DocStructTypeInterface docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
 
@@ -1276,7 +1271,8 @@ public class MetadataProcessor {
         }
 
         if (!this.allTifFolders.contains(this.currentTifFolder)) {
-            this.currentTifFolder = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process);
+            this.currentTifFolder = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process.getId(),
+                this.process.getTitle(), this.process.getProcessBaseUri());
         }
     }
 
@@ -1360,13 +1356,14 @@ public class MetadataProcessor {
                 URI tifFile = this.currentTifFolder.resolve(this.image);
                 logger.trace("tiffconverterpfad: {}", tifFile);
                 if (!fileService.fileExist(tifFile)) {
-                    tifFile = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process)
-                            .resolve(this.image);
+                    tifFile = ServiceManager.getProcessService().getImagesTifDirectory(true, this.process.getId(),
+                        this.process.getTitle(), this.process.getProcessBaseUri()).resolve(this.image);
                     Helper.setErrorMessage("formularOrdner:TifFolders", "",
                         "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                 + ", using image from "
-                                + new File(ServiceManager.getProcessService().getImagesTifDirectory(true, this.process))
-                                        .getName());
+                                + new File(ServiceManager.getProcessService().getImagesTifDirectory(true,
+                                    this.process.getId(), this.process.getTitle(), this.process.getProcessBaseUri()))
+                                            .getName());
                 }
 
                 // Copy tif-file to temporary folder
@@ -1447,12 +1444,14 @@ public class MetadataProcessor {
         this.pagesStart = pagesStart;
     }
 
-    private SelectOne<Separator> paginationSeparators = new SelectOne<>(Separator
-            .factory(ConfigCore.getParameterOrDefaultValue(ParameterCore.PAGE_SEPARATORS)));
+    private SelectOne<Separator> paginationSeparators = new SelectOne<>(
+            Separator.factory(ConfigCore.getParameterOrDefaultValue(ParameterCore.PAGE_SEPARATORS)));
 
     /**
      * Set the first and the last page via AJAX request.
-     * @param docStruct the doc structure for which the pages are set
+     * 
+     * @param docStruct
+     *            the doc structure for which the pages are set
      */
     public void setFirstAndLastPageViaAjax(DocStructInterface docStruct) {
         boolean startPageOk = false;
@@ -1484,7 +1483,9 @@ public class MetadataProcessor {
 
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
-     * @param docStruct the doc structure for which the pages are set
+     * 
+     * @param docStruct
+     *            the doc structure for which the pages are set
      */
     public void setPageStartAndEnd(DocStructInterface docStruct) {
         int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
@@ -1835,11 +1836,10 @@ public class MetadataProcessor {
      *            The TreeDragDropEvent.
      */
     public void onNodeDragDrop(TreeDragDropEvent event) {
-
         int dropIndex = event.getDropIndex();
         if (event.getDropNode().getData().equals("root")) {
             Helper.setErrorMessage("Only one root element allowed");
-        } else  {
+        } else {
             DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
             DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
 
@@ -1853,7 +1853,6 @@ public class MetadataProcessor {
                 // parent
                 return;
             }
-
 
             if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getDocStructType())) {
                 this.docStruct = dragDocStruct;
@@ -2164,7 +2163,8 @@ public class MetadataProcessor {
     /**
      * Set showPagination.
      *
-     * @param showPagination as boolean
+     * @param showPagination
+     *            as boolean
      */
     public void setShowPagination(boolean showPagination) {
         this.showPagination = showPagination;
@@ -2206,7 +2206,8 @@ public class MetadataProcessor {
     /**
      * Sets numberOfImagesToAdd.
      *
-     * @param numberOfImagesToAdd The numberOfImagesToAdd.
+     * @param numberOfImagesToAdd
+     *            The numberOfImagesToAdd.
      */
     public void setNumberOfImagesToAdd(int numberOfImagesToAdd) {
         this.numberOfImagesToAdd = numberOfImagesToAdd;
@@ -2214,6 +2215,7 @@ public class MetadataProcessor {
 
     /**
      * Return index of currently selected page.
+     * 
      * @return current page index
      */
     public int getPageIndex() {
@@ -2257,7 +2259,7 @@ public class MetadataProcessor {
     }
 
     private String getLogicalPageNumberOfPaginatedImage(String paginationText) {
-        paginationText = paginationText.replace(" ","");
+        paginationText = paginationText.replace(" ", "");
         return paginationText.split(":")[1];
     }
 
@@ -2279,7 +2281,9 @@ public class MetadataProcessor {
                         continue;
                     }
 
-                    URI tiffURI = Paths.get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString()).toUri();
+                    URI tiffURI = Paths
+                            .get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString())
+                            .toUri();
 
                     BufferedImage inputImage = ImageIO.read(tiffURI.toURL());
 
@@ -2306,13 +2310,10 @@ public class MetadataProcessor {
         if (!thumbnailsExist()) {
             URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
             try (Stream<Path> imagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
-                Thumbnails.of((File[]) imagePaths
-                        .filter(path -> path.toFile().isFile())
-                        .filter(path -> path.toFile().canRead())
-                        .filter(path -> path.toString().endsWith(".png"))
-                        .map(Path::toFile).toArray(File[]::new))
-                        .size(60, 100)
-                        .outputFormat("png")
+                Thumbnails.of(
+                    (File[]) imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
+                            .filter(path -> path.toString().endsWith(".png")).map(Path::toFile).toArray(File[]::new))
+                        .size(60, 100).outputFormat("png")
                         .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
             } catch (IOException e) {
                 logger.error("ERROR: IOException thrown while creating thumbnails: " + e.getLocalizedMessage());
@@ -2343,22 +2344,23 @@ public class MetadataProcessor {
             try {
                 Files.createDirectories(directory);
             } catch (IOException e) {
-                logger.error("ERROR: IOException thrown while trying to create directory '" + directory + ": " + e.getLocalizedMessage());
+                logger.error("ERROR: IOException thrown while trying to create directory '" + directory + ": "
+                        + e.getLocalizedMessage());
             }
         }
     }
 
     /**
      * Return the path to the thumbnail for the page with the given path 'image'.
-     * @param image path to image file whose thumbnail is returned
+     * 
+     * @param image
+     *            path to image file whose thumbnail is returned
      * @return thumbnail for given image
      */
     public String getThumbnail(String image) {
         File imageFile = new File(image);
         String filename = imageFile.getName();
-        return image
-                .replace(FULLSIZE_FOLDER_NAME, THUMBNAIL_FOLDER_NAME)
-                .replace(filename, "thumbnail." + filename);
+        return image.replace(FULLSIZE_FOLDER_NAME, THUMBNAIL_FOLDER_NAME).replace(filename, "thumbnail." + filename);
     }
 
     private void resetTemporaryFolders() {
@@ -2366,19 +2368,15 @@ public class MetadataProcessor {
         try {
             FileUtils.deleteDirectory(new File(fullsizePath));
         } catch (IOException e) {
-            logger.error("ERROR: unable to delete directory '"
-                    + fullsizePath
-                    + "' containing fullsize PNG copies of TIFF images ("
-                    + "reason: " + e.getLocalizedMessage() + ")");
+            logger.error("ERROR: unable to delete directory '" + fullsizePath
+                    + "' containing fullsize PNG copies of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
         }
 
         try {
             FileUtils.deleteDirectory(new File(thumbnailPath));
         } catch (IOException e) {
-            logger.error("ERROR: unable to delete directory '"
-                    + thumbnailPath
-                    + "' containing PNG thumbnails of TIFF images ("
-                    + "reason: " + e.getLocalizedMessage() + ")");
+            logger.error("ERROR: unable to delete directory '" + thumbnailPath
+                    + "' containing PNG thumbnails of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
         }
     }
 
@@ -2387,13 +2385,14 @@ public class MetadataProcessor {
      */
     public void generatePNGs() {
         this.numberOfConvertedImages = 0;
-        //resetTemporaryFolders();
+        // resetTemporaryFolders();
         updateComponent(Collections.singletonList("convertTIFFDialog"));
         convertImages();
     }
 
     /**
      * Get number of TIFF images converted to PNG.
+     * 
      * @return number of converted TIFF images
      */
     public int getNumberOfConvertedImages() {
@@ -2402,6 +2401,7 @@ public class MetadataProcessor {
 
     /**
      * Get number of all images in current TIFF folder.
+     * 
      * @return number of images in current TIFF folder
      */
     public int getNumberOfImagesInCurrentTifFolder() {
@@ -2410,6 +2410,7 @@ public class MetadataProcessor {
 
     /**
      * Return all structure elements.
+     * 
      * @return list of all structure elements
      */
     public List<DocStructInterface> getAllStructureElements() {
@@ -2437,10 +2438,11 @@ public class MetadataProcessor {
 
     /**
      * Event listener for drag drop event.
-     * @param dragDropEvent the event that triggers this listener
+     * 
+     * @param dragDropEvent
+     *            the event that triggers this listener
      */
     public void onPageDrop(DragDropEvent dragDropEvent) {
-
         String dragId = dragDropEvent.getDragId();
         String dropId = dragDropEvent.getDropId();
 
@@ -2466,7 +2468,8 @@ public class MetadataProcessor {
             if (Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
                 for (ReferenceInterface reference : sourceDocStruct.getAllToReferences("logical_physical")) {
 
-                    if (FilenameUtils.getBaseName(pagePath).equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
+                    if (FilenameUtils.getBaseName(pagePath)
+                            .equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
                         // Remove page reference from source doc struct
                         sourceDocStruct.removeReferenceTo(reference.getTarget());
 
@@ -2484,10 +2487,13 @@ public class MetadataProcessor {
     }
 
     /**
-     * Retrieve and return list of all DocStructInferface instances
-     * referencing the given DocStructInterfaces 'docStruct'.
-     * @param docStruct the DocStructInterface for which the references are determined
-     * @return list of DocStructInterface instances referencing the given DocStructInterface docStruct
+     * Retrieve and return list of all DocStructInferface instances referencing the
+     * given DocStructInterfaces 'docStruct'.
+     * 
+     * @param docStruct
+     *            the DocStructInterface for which the references are determined
+     * @return list of DocStructInterface instances referencing the given
+     *         DocStructInterface docStruct
      */
     public List<DocStructInterface> getPageReferencesToDocStruct(DocStructInterface docStruct) {
         List<DocStructInterface> pageReferenceDocStructs = new LinkedList<>();
@@ -2501,9 +2507,13 @@ public class MetadataProcessor {
     }
 
     /**
-     * Retrieve and return list of file paths for pages assigned to given DocStructInterface 'docStruct'.
-     * @param docStruct DocStructInterfaces for which page file paths are returned.
-     * @return list of file paths of pages assigned to given DocStructInterface 'docStruct'.
+     * Retrieve and return list of file paths for pages assigned to given
+     * DocStructInterface 'docStruct'.
+     * 
+     * @param docStruct
+     *            DocStructInterfaces for which page file paths are returned.
+     * @return list of file paths of pages assigned to given DocStructInterface
+     *         'docStruct'.
      */
     @SuppressWarnings("unchecked")
     private List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
@@ -2517,7 +2527,8 @@ public class MetadataProcessor {
         if (!allImages.isEmpty()) {
             for (ReferenceInterface pageReferenceInterface : pageReferences) {
                 DocStructInterface docStructInterface = pageReferenceInterface.getTarget();
-                List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface.getAllMetadataByType(mdt);
+                List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface
+                        .getAllMetadataByType(mdt);
                 for (MetadataInterface metadataInterface : allMetadata) {
                     assignedPages.add(allImages.get(Integer.parseInt(metadataInterface.getValue()) - 1));
                 }
@@ -2529,9 +2540,14 @@ public class MetadataProcessor {
     }
 
     /**
-     * Retrieve file path to png image for given DocStructInterface 'pageDocStruct' representing a single scanned page image.
-     * @param pageDocStruct DocStructInterface for which the corresponding file path to the png copy is returned.
-     * @return file path to the png image of the given DocStructInterface 'pageDoctStruct'.
+     * Retrieve file path to png image for given DocStructInterface 'pageDocStruct'
+     * representing a single scanned page image.
+     * 
+     * @param pageDocStruct
+     *            DocStructInterface for which the corresponding file path to the
+     *            png copy is returned.
+     * @return file path to the png image of the given DocStructInterface
+     *         'pageDoctStruct'.
      */
     public String getPageImageFilePath(DocStructInterface pageDocStruct) {
         final String errorMessage = "IMAGE_PATH_NOT_FOUND";
@@ -2572,15 +2588,10 @@ public class MetadataProcessor {
         Path pngDir = Paths.get(fullsizePath);
         ensureDirectoryExists(pngDir);
         try (Stream<Path> streamPaths = Files.list(pngDir)) {
-            imagePaths = streamPaths
-                    .filter(path -> path.toFile().isFile())
-                    .filter(path -> path.toFile().canRead())
-                    .filter(path -> path.toString().endsWith(".png"))
-                    .sorted()
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/"
-                            + FULLSIZE_FOLDER_NAME + "/" + filename)
+            imagePaths = streamPaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
+                    .filter(path -> path.toString().endsWith(".png")).sorted().map(Path::getFileName)
+                    .map(Path::toString).map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName
+                            + "/" + FULLSIZE_FOLDER_NAME + "/" + filename)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -2598,8 +2609,11 @@ public class MetadataProcessor {
     }
 
     /**
-     * Retrieve and return physical page number of given DocStructInterface 'pageDocStruct'.
-     * @param pageDocStruct DocStructInterface whose physical page number is returned.
+     * Retrieve and return physical page number of given DocStructInterface
+     * 'pageDocStruct'.
+     * 
+     * @param pageDocStruct
+     *            DocStructInterface whose physical page number is returned.
      * @return physical page number of given DocStructInterface pageDocStruct
      */
     public int getPhysicalPageNumber(DocStructInterface pageDocStruct) {
@@ -2611,8 +2625,11 @@ public class MetadataProcessor {
     }
 
     /**
-     * Checks and returns whether access is granted to the image with the given filepath "imagePath".
-     * @param imagePath the filepath of the image for which access rights are checked
+     * Checks and returns whether access is granted to the image with the given
+     * filepath "imagePath".
+     * 
+     * @param imagePath
+     *            the filepath of the image for which access rights are checked
      * @return true if access is granted and false otherwise
      */
     public boolean isAccessGranted(String imagePath) {
@@ -2643,7 +2660,8 @@ public class MetadataProcessor {
             thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
                     + THUMBNAIL_FOLDER_NAME + File.separator;
         } else {
-            logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator + "' resulted in an empty array!");
+            logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator
+                    + "' resulted in an empty array!");
         }
     }
 
@@ -2710,16 +2728,15 @@ public class MetadataProcessor {
      * Add to wiki field.
      */
     public void addToWikiField() {
-
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            String comment =  ServiceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
+            String comment = ServiceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
             ServiceManager.getProcessService().addToWikiField(comment, this.process);
             this.addToWikiField = "";
             try {
                 ServiceManager.getProcessService().save(process);
                 refreshProcess(process);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new Object[]{Helper.getTranslation("wikiField")}, logger, e);
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
             }
         }
         setShowNewComment(false);
@@ -2773,8 +2790,7 @@ public class MetadataProcessor {
     public List<Task> getPreviousStepsForProblemReporting() {
         refreshProcess(this.process);
         return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
-                this.process.getId());
+            ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
@@ -2787,7 +2803,7 @@ public class MetadataProcessor {
      *
      */
     public void reportProblem() {
-        List<Task> taskList = new  ArrayList<>();
+        List<Task> taskList = new ArrayList<>();
         taskList.add(ServiceManager.getProcessService().getCurrentTask(this.process));
         BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
         batchStepHelper.setProblem(getProblem());
@@ -2819,8 +2835,8 @@ public class MetadataProcessor {
     /**
      * refresh the process in the session.
      *
-     * @param process Object
-     *            process to refresh
+     * @param process
+     *            Object process to refresh
      */
     public void refreshProcess(Process process) {
         try {

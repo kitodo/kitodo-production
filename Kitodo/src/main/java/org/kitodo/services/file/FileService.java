@@ -718,11 +718,15 @@ public class FileService {
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
-            ProcessSubType processSubType, String resourceName) throws DAOException {
+            ProcessSubType processSubType, String resourceName) {
 
         if (processDataDirectory == null) {
-            Process process = ServiceManager.getProcessService().getById(processId);
-            processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
+            try {
+                Process process = ServiceManager.getProcessService().getById(processId);
+                processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
+            } catch (DAOException e) {
+                processDataDirectory = URI.create(String.valueOf(processId));
+            }
         }
 
         if (resourceName == null) {
@@ -776,7 +780,7 @@ public class FileService {
      * @return unmapped URI
      */
     public List<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
-            URI processDataDirectory, ProcessSubType processSubType, String resourceName) throws DAOException {
+            URI processDataDirectory, ProcessSubType processSubType, String resourceName) {
         URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType,
             resourceName);
         return getSubUris(filter, processSubTypeURI);

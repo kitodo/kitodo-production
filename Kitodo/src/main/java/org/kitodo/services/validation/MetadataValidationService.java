@@ -192,8 +192,8 @@ public class MetadataValidationService {
 
         ImageHelper mih = new ImageHelper(prefs, dd);
         try {
-            if (!mih.checkIfImagesValid(process.getTitle(),
-                ServiceManager.getProcessService().getImagesTifDirectory(true, process))) {
+            if (!mih.checkIfImagesValid(process.getTitle(), ServiceManager.getProcessService()
+                    .getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri()))) {
                 result = false;
             }
         } catch (IOException | RuntimeException e) {
@@ -233,8 +233,9 @@ public class MetadataValidationService {
     private boolean isMetadataValueReplaced(DocStructInterface docStruct, MetadataInterface metadata,
             String metadataLanguage) {
 
-        if (!metadata.getValue().replaceAll(ConfigCore
-                .getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX), "").equals("")) {
+        if (!metadata.getValue()
+                .replaceAll(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX), "")
+                .equals("")) {
             Object[] parameters = new Object[] {metadata.getMetadataType().getNameByLanguage(metadataLanguage),
                                                 docStruct.getDocStructType().getNameByLanguage(metadataLanguage) };
             Helper.setErrorMessage("invalidIdentifierCharacter", parameters);

@@ -122,9 +122,8 @@ public class ExportPdf extends ExportMets {
             if (contentServerUrl == null || contentServerUrl.length() == 0) {
                 contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
             }
-            return new URL(
-                    contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
-                            + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + PDF_EXTENSION);
+            return new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
+                    + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + PDF_EXTENSION);
             // mets data does not exist or is invalid
         } else {
             if (contentServerUrl == null || contentServerUrl.length() == 0) {
@@ -149,7 +148,8 @@ public class ExportPdf extends ExportMets {
     private String prepareKitodoContentServerURL(Process process, String contentServerUrl) throws IOException {
         FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
         String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
-        URI imagesDir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
+        URI imagesDir = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
+            process.getTitle(), process.getProcessBaseUri());
         List<URI> meta = fileService.getSubUris(filter, imagesDir);
         int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                 + normalizedTitle.length() + PDF_EXTENSION.length();

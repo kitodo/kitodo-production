@@ -100,11 +100,10 @@ public class ImageHelper {
         }
 
         if (directory == null) {
-            checkIfImagesValid(process.getTitle(),
-                ServiceManager.getProcessService().getImagesTifDirectory(true, process));
+            checkIfImagesValid(process.getTitle(), ServiceManager.getProcessService().getImagesTifDirectory(true,
+                process.getId(), process.getTitle(), process.getProcessBaseUri()));
         } else {
-            checkIfImagesValid(process.getTitle(),
-                    directory);
+            checkIfImagesValid(process.getTitle(), directory);
             // fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
@@ -129,8 +128,8 @@ public class ImageHelper {
                 if (page.getImageName() != null) {
                     URI imageFile;
                     if (directory == null) {
-                        imageFile = ServiceManager.getProcessService().getImagesTifDirectory(true, process)
-                                .resolve(page.getImageName());
+                        imageFile = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
+                            process.getTitle(), process.getProcessBaseUri()).resolve(page.getImageName());
                     } else {
                         imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null)
                                 .resolve(page.getImageName());
@@ -275,7 +274,7 @@ public class ImageHelper {
                 logger.trace("close stream");
             } else {
                 String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
-                    + "&format=jpg";
+                        + "&format=jpg";
                 cs = cs.replace("\\", "/");
                 logger.trace("url: {}", cs);
                 URL csUrl = new URL(cs);
@@ -293,7 +292,7 @@ public class ImageHelper {
                 InputStream inStream = method.getResponseBodyAsStream();
                 logger.trace("inStream");
                 try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                     OutputStream fos = fileService.write(outFileName)) {
+                        OutputStream fos = fileService.write(outFileName)) {
                     logger.trace("BufferedInputStream");
                     logger.trace("FileOutputStream");
                     byte[] bytes = new byte[8192];
@@ -333,8 +332,7 @@ public class ImageHelper {
             }
 
             this.myLastImage = files.size();
-            if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX)
-                    .equals("\\d{8}")) {
+            if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX).equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;
                 int myDiff = 0;
@@ -425,7 +423,8 @@ public class ImageHelper {
     public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;
         try {
-            dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process);
+            dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(), process.getTitle(),
+                process.getProcessBaseUri());
         } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }
@@ -490,7 +489,8 @@ public class ImageHelper {
         MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
             MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
-            URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process);
+            URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
+                process.getTitle(), process.getProcessBaseUri());
             String pathString = new File(pathURI).getPath();
             mdForPath.setStringValue(pathString);
             physicalStructure.addMetadata(mdForPath);
@@ -572,10 +572,10 @@ public class ImageHelper {
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
         if (defaultPagination.equalsIgnoreCase(
-                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(0))) {
+            (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(0))) {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase(
-                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
+            (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
