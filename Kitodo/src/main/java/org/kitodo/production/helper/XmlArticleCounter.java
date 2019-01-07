@@ -53,16 +53,9 @@ public class XmlArticleCounter {
             return -1;
         }
 
-        // DocStruct rukursiv durchlaufen
-        try {
-            LegacyMetsModsDigitalDocumentHelper document = gdzfile.getDigitalDocument();
-            LegacyDocStructHelperInterface logicalTopstruct = document.getLogicalDocStruct();
-            result += getNumberOfUghElements(logicalTopstruct, inType);
-        } catch (PreferencesException e) {
-            Helper.setErrorMessage("[" + myProcess.getId() + "] "
-                    + Helper.getTranslation("cannotGetDigitalDocument") + ": ", logger, e);
-            result = 0;
-        }
+        LegacyMetsModsDigitalDocumentHelper document = gdzfile.getDigitalDocument();
+        LegacyDocStructHelperInterface logicalTopstruct = document.getLogicalDocStruct();
+        result += getNumberOfUghElements(logicalTopstruct, inType);
 
         // save the determined number in the process
         myProcess.setSortHelperArticles(result);

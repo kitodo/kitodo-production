@@ -1013,12 +1013,7 @@ public class MetadataProcessor {
      */
     public void retrieveAllImages() {
         LegacyMetsModsDigitalDocumentHelper document;
-        try {
-            document = this.gdzfile.getDigitalDocument();
-        } catch (PreferencesException e) {
-            Helper.setMessage("Can not get DigitalDocument: ", e.getMessage());
-            return;
-        }
+        document = this.gdzfile.getDigitalDocument();
 
         List<LegacyDocStructHelperInterface> meineListe = document.getPhysicalDocStruct().getAllChildren();
         if (meineListe == null) {
@@ -2176,7 +2171,7 @@ public class MetadataProcessor {
             this.digitalDocument = this.gdzfile.getDigitalDocument();
             this.digitalDocument.addAllContentFiles();
             readAllTifFolders();
-        } catch (IOException | PreferencesException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }

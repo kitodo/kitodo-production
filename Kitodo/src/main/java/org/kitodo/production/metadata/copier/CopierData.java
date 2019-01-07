@@ -11,10 +11,8 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.exceptions.MetadataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -110,11 +108,7 @@ public class CopierData {
      * @return the digital document
      */
     LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
-        try {
-            return fileformat.getDigitalDocument();
-        } catch (PreferencesException e) {
-            throw new MetadataException(e.getMessage(), e);
-        }
+        return fileformat.getDigitalDocument();
     }
 
     /**

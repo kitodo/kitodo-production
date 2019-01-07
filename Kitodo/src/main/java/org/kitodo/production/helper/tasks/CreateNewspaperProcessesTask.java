@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -295,11 +294,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         LegacyPrefsHelper ruleset = ServiceManager.getRulesetService()
                 .getPreferences(newProcess.getProzessKopie().getRuleset());
         LegacyMetsModsDigitalDocumentHelper document;
-        try {
-            document = newProcess.getFileformat().getDigitalDocument();
-        } catch (PreferencesException e) {
-            throw new ProcessCreationException(e.getMessage(), e);
-        }
+        document = newProcess.getFileformat().getDigitalDocument();
         LegacyDocStructHelperInterface newspaper = document.getLogicalDocStruct();
 
         // try to add the publication run

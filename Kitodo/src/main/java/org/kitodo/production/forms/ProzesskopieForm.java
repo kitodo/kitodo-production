@@ -608,8 +608,6 @@ public class ProzesskopieForm implements Serializable {
             removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct, this.prozessKopie);
-        } catch (PreferencesException e) {
-            Helper.setErrorMessage("Error on creating process", logger, e);
         } catch (RuntimeException e) {
             logger.debug("das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden", e);
         }
@@ -834,8 +832,6 @@ public class ProzesskopieForm implements Serializable {
                     : null;
             Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.",
                 logger, e);
-        } catch (UGHException catchAll) {
-            Helper.setErrorMessage(catchAll.getLocalizedMessage(), logger, catchAll);
         }
     }
 
@@ -1131,37 +1127,32 @@ public class ProzesskopieForm implements Serializable {
                 LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
                 createNewFileformat();
-                try {
-                    if (rdf.getDigitalDocument().getLogicalDocStruct()
-                            .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
-                        rdf = tmp;
-                    } else {
-                        LegacyDocStructHelperInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
-                        LegacyDocStructHelperInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
-                        // both have no children
-                        if (oldLogicalDocstruct.getAllChildren() == null
-                                && newLogicalDocstruct.getAllChildren() == null) {
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                        } else if (oldLogicalDocstruct.getAllChildren() != null
-                                && newLogicalDocstruct.getAllChildren() == null) {
-                            // old has a child, new has no child
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
-                        } else if (oldLogicalDocstruct.getAllChildren() == null
-                                && newLogicalDocstruct.getAllChildren() != null) {
-                            // new has a child, but old not
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            throw new UnsupportedOperationException("Dead code pending removal");
-                        } else if (oldLogicalDocstruct.getAllChildren() != null
-                                && newLogicalDocstruct.getAllChildren() != null) {
-                            // both have children
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
-                                newLogicalDocstruct.getAllChildren().get(0));
-                        }
+                if (rdf.getDigitalDocument().getLogicalDocStruct()
+                        .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
+                    rdf = tmp;
+                } else {
+                    LegacyDocStructHelperInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+                    LegacyDocStructHelperInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
+                    // both have no children
+                    if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() == null) {
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                    } else if (oldLogicalDocstruct.getAllChildren() != null
+                            && newLogicalDocstruct.getAllChildren() == null) {
+                        // old has a child, new has no child
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
+                    } else if (oldLogicalDocstruct.getAllChildren() == null
+                            && newLogicalDocstruct.getAllChildren() != null) {
+                        // new has a child, but old not
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        throw new UnsupportedOperationException("Dead code pending removal");
+                    } else if (oldLogicalDocstruct.getAllChildren() != null
+                            && newLogicalDocstruct.getAllChildren() != null) {
+                        // both have children
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
+                            newLogicalDocstruct.getAllChildren().get(0));
                     }
-                } catch (PreferencesException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 try {
                     fillFieldsFromMetadataFile();

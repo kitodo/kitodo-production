@@ -245,8 +245,6 @@ public class CopyProcess extends ProzesskopieForm {
             removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct, this.prozessKopie);
-        } catch (PreferencesException e) {
-            Helper.setErrorMessage("Fehler beim Anlegen des Vorgangs", logger, e);
         } catch (RuntimeException e) {
             /*
              * das Firstchild unterhalb des Topstructs konnte nicht ermittelt

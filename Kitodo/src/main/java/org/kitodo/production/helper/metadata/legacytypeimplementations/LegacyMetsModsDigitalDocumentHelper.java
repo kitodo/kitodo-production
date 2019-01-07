@@ -179,7 +179,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return message;
     }
 
-    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() throws PreferencesException {
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;
     }
 
