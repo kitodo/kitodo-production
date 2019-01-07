@@ -16,8 +16,8 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
 
 public class MetadataComparator implements Comparator<LegacyMetadataHelper> {
     private static final Logger logger = LogManager.getLogger(MetadataComparator.class);
@@ -38,8 +38,8 @@ public class MetadataComparator implements Comparator<LegacyMetadataHelper> {
         String firstName;
         String secondName;
         try {
-            MetadataTypeInterface firstMetadataType = firstMetadata.getMetadataType();
-            MetadataTypeInterface secondMetadataType = secondMetadata.getMetadataType();
+            LegacyMetadataTypeHelper firstMetadataType = firstMetadata.getMetadataType();
+            LegacyMetadataTypeHelper secondMetadataType = secondMetadata.getMetadataType();
             firstName = firstMetadataType.getNameByLanguage(this.language);
             secondName = secondMetadataType.getNameByLanguage(this.language);
         } catch (NullPointerException e) {

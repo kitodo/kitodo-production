@@ -24,11 +24,16 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.exceptions.MetadataException;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/elements/renderable/RenderableMetadataGroup.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.metadata.MetadataProcessor;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/elements/renderable/RenderableMetadataGroup.java
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata
@@ -174,7 +179,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    protected RenderableMetadataGroup(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    protected RenderableMetadataGroup(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
             RenderableMetadataGroup container, MetadataGroupTypeInterface type, String projectName)
             throws ConfigurationException {
 
@@ -238,9 +243,9 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             multi-select input
      */
     private void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
-        List<MetadataTypeInterface> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
+        List<LegacyMetadataTypeHelper> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
         members = new LinkedHashMap<>(hashCapacityFor(requiredFields));
-        for (MetadataTypeInterface field : requiredFields) {
+        for (LegacyMetadataTypeHelper field : requiredFields) {
             RenderableGroupableMetadata member;
             if (!(this instanceof PersonMetadataGroup)) {
                 member = RenderableMetadata.create(field, autoUpdate ? binding : null, this, projectName);
@@ -433,10 +438,10 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             misconfigured to show a multi-value input element
      */
     private void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
-        List<MetadataTypeInterface> requiredMetadataTypes = newGroupType.getMetadataTypeList();
+        List<LegacyMetadataTypeHelper> requiredMetadataTypes = newGroupType.getMetadataTypeList();
         Map<String, RenderableGroupableMetadata> newMembers = new LinkedHashMap<>(
                 hashCapacityFor(requiredMetadataTypes));
-        for (MetadataTypeInterface type : requiredMetadataTypes) {
+        for (LegacyMetadataTypeHelper type : requiredMetadataTypes) {
             RenderableGroupableMetadata member = members.get(type.getName());
             if (member == null) {
                 if (!(this instanceof PersonMetadataGroup)) {

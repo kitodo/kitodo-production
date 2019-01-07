@@ -18,9 +18,9 @@ import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.enums.DisplayType;
@@ -60,7 +60,7 @@ public abstract class RenderableMetadata {
     /**
      * Holds the metadata type represented by this input element.
      */
-    protected final MetadataTypeInterface metadataType;
+    protected final LegacyMetadataTypeHelper metadataType;
 
     /**
      * Holds the available labels for this input element.
@@ -104,7 +104,7 @@ public abstract class RenderableMetadata {
      * @param container
      *            group that the renderable metadata is in
      */
-    protected RenderableMetadata(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    protected RenderableMetadata(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
                                  RenderableMetadataGroup container) {
 
         this.metadataType = metadataType;
@@ -132,7 +132,7 @@ public abstract class RenderableMetadata {
      *             if a metadata field designed for a single value is
      *             misconfigured to show a multi-value input element
      */
-    public static RenderableGroupableMetadata create(MetadataTypeInterface metadataType,
+    public static RenderableGroupableMetadata create(LegacyMetadataTypeHelper metadataType,
                                                      MetadataGroupInterface binding, RenderableMetadataGroup container, String projectName)
             throws ConfigurationException {
 

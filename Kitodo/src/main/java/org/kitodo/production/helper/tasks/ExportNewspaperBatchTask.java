@@ -29,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -47,6 +46,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/tasks/ExportNewspaperBatchTask.java
 import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -54,6 +54,13 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
+import org.kitodo.services.ServiceManager;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/tasks/ExportNewspaperBatchTask.java
 
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
@@ -315,8 +322,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if the value cannot be parsed to int
      */
     private static int getMetadataIntValueByName(LegacyDocStructHelperInterface structureTypeName, String metaDataTypeName) {
-        List<MetadataTypeInterface> metadataTypeInterfaces = structureTypeName.getDocStructType().getAllMetadataTypes();
-        for (MetadataTypeInterface metadataType : metadataTypeInterfaces) {
+        List<LegacyMetadataTypeHelper> metadataTypeInterfaces = structureTypeName.getDocStructType().getAllMetadataTypes();
+        for (LegacyMetadataTypeHelper metadataType : metadataTypeInterfaces) {
             if (metaDataTypeName.equals(metadataType.getName())) {
                 return Integer
                         .parseInt(new HashSet<LegacyMetadataHelper>(structureTypeName.getAllMetadataByType(metadataType))

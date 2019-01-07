@@ -25,7 +25,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -34,10 +33,18 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/VariableReplacer.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.ProcessService;
+import org.kitodo.services.file.FileService;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/VariableReplacer.java
 
 public class VariableReplacer {
 
@@ -287,7 +294,7 @@ public class VariableReplacer {
             }
 
             /* MetadataType ermitteln und ggf. Fehler melden */
-            MetadataTypeInterface mdt;
+            LegacyMetadataTypeHelper mdt;
             try {
                 mdt = UghHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
@@ -344,7 +351,7 @@ public class VariableReplacer {
      * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
      * zurückgegeben.
      */
-    private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, MetadataTypeInterface mdt) {
+    private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, LegacyMetadataTypeHelper mdt) {
         List<? extends LegacyMetadataHelper> mds = inDocstruct.getAllMetadataByType(mdt);
         if (!mds.isEmpty()) {
             return mds.get(0).getValue();

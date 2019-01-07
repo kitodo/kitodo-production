@@ -57,7 +57,6 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -76,6 +75,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/MetadataProcessor.java
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
@@ -97,6 +97,22 @@ import org.kitodo.production.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.workflow.Problem;
+=======
+import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.helper.metadata.MetadataHelper;
+import org.kitodo.metadata.display.Modes;
+import org.kitodo.metadata.display.enums.BindState;
+import org.kitodo.metadata.display.helper.ConfigDisplayRules;
+import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
+import org.kitodo.metadata.elements.selectable.SelectOne;
+import org.kitodo.metadata.elements.selectable.Separator;
+import org.kitodo.metadata.pagination.Paginator;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
+import org.kitodo.workflow.Problem;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/MetadataProcessor.java
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -395,14 +411,14 @@ public class MetadataProcessor {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // determine all addable metadata types
-        List<MetadataTypeInterface> types = myDocStruct.getAddableMetadataTypes();
+        List<LegacyMetadataTypeHelper> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
             return selectItems;
         }
 
         // alle Metadatentypen, die keine Person sind, oder mit einem
         // Unterstrich anfangen rausnehmen
-        for (MetadataTypeInterface mdt : new ArrayList<>(types)) {
+        for (LegacyMetadataTypeHelper mdt : new ArrayList<>(types)) {
             if (mdt.isPerson()) {
                 types.remove(mdt);
             }
@@ -415,7 +431,7 @@ public class MetadataProcessor {
 
         int counter = types.size();
 
-        for (MetadataTypeInterface mdt : types) {
+        for (LegacyMetadataTypeHelper mdt : types) {
             selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
             LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
             MetadataImpl mdum = new MetadataImpl(md, counter, this.myPrefs, this.process);
@@ -598,13 +614,13 @@ public class MetadataProcessor {
                 }
             }
             if (!match) {
-                MetadataTypeInterface mdt = myPrefs.getMetadataTypeByName("_representative");
+                LegacyMetadataTypeHelper mdt = myPrefs.getMetadataTypeByName("_representative");
                 addMetadataToPhysicalDocStruct(mdt);
             }
         }
     }
 
-    private void addMetadataToPhysicalDocStruct(MetadataTypeInterface mdt) {
+    private void addMetadataToPhysicalDocStruct(LegacyMetadataTypeHelper mdt) {
         try {
             LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
             Integer value = Integer.valueOf(currentRepresentativePage);
@@ -1050,7 +1066,7 @@ public class MetadataProcessor {
         this.allPages = new String[zaehler];
         this.allPagesNew = new MetadataImpl[zaehler];
         zaehler = 0;
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         for (LegacyDocStructHelperInterface mySeitenDocStruct : meineListe) {
             List<? extends LegacyMetadataHelper> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
             for (LegacyMetadataHelper page : mySeitenDocStructMetadaten) {
@@ -1077,7 +1093,7 @@ public class MetadataProcessor {
                 Integer firstPage = 0;
                 int secondPage = 0;
 
-                MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+                LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
                 List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
                     LegacyMetadataHelper page = listMetadata.get(0);
@@ -1120,7 +1136,7 @@ public class MetadataProcessor {
      * alle Seiten des aktuellen Strukturelements ermitteln 2.
      */
     private void determineSecondPagesStructure(LegacyDocStructHelperInterface inStrukturelement, int inZaehler) {
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         List<? extends LegacyMetadataHelper> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
         if (listMetadaten == null || listMetadaten.isEmpty()) {
             return;
@@ -1136,7 +1152,7 @@ public class MetadataProcessor {
      * noch für Testzweck zum direkten öffnen der richtigen Startseite 3.
      */
     private int determineThirdPagesStructure(LegacyDocStructHelperInterface inStrukturelement) {
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         List<? extends LegacyMetadataHelper> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
         if (listMetadaten == null || listMetadaten.isEmpty()) {
             return 0;
@@ -1914,7 +1930,7 @@ public class MetadataProcessor {
 
         int currentPhysicalOrder = 1;
         if (allPages != null) {
-            MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+            LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
             for (LegacyDocStructHelperInterface page : allPages) {
                 List<? extends LegacyMetadataHelper> pageNoMetadata = page.getAllMetadataByType(mdt);
                 if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
@@ -2494,7 +2510,7 @@ public class MetadataProcessor {
         List<String> assignedPages = new LinkedList<>();
         List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
-        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
 
         List<String> allImages = getImages();
 
@@ -2525,7 +2541,7 @@ public class MetadataProcessor {
     public String getPageImageFilePath(LegacyDocStructHelperInterface pageDocStruct) {
         final String errorMessage = "IMAGE_PATH_NOT_FOUND";
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
-        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
         List<? extends LegacyMetadataHelper> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
 

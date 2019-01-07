@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -161,7 +160,7 @@ public class MetadataHelper {
             references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;
                 Integer secondPage = 0;
-                final MetadataTypeInterface mdt = MetadataHelper.this.prefs
+                final LegacyMetadataTypeHelper mdt = MetadataHelper.this.prefs
                         .getMetadataTypeByName("physPageNumber");
                 List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
@@ -176,7 +175,7 @@ public class MetadataHelper {
                 return firstPage.compareTo(secondPage);
             });
 
-            MetadataTypeInterface mdt = this.prefs.getMetadataTypeByName("physPageNumber");
+            LegacyMetadataTypeHelper mdt = this.prefs.getMetadataTypeByName("physPageNumber");
             List<? extends LegacyMetadataHelper> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
@@ -204,10 +203,10 @@ public class MetadataHelper {
      */
     public List<? extends LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
-        List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
+        List<LegacyMetadataTypeHelper> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
         if (displayMetadataTypes != null) {
-            for (MetadataTypeInterface mdt : displayMetadataTypes) {
+            for (LegacyMetadataTypeHelper mdt : displayMetadataTypes) {
                 // check, if mdt is already in the allMDs Metadata list, if not
                 // - add it
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
@@ -303,7 +302,7 @@ public class MetadataHelper {
      *            MetadataType object
      * @return localized Title of metadata type
      */
-    public String getMetadatatypeLanguage(MetadataTypeInterface inMdt) {
+    public String getMetadatatypeLanguage(LegacyMetadataTypeHelper inMdt) {
         String label = inMdt.getLanguage(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = inMdt.getName();
@@ -326,13 +325,13 @@ public class MetadataHelper {
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln
          */
-        List<MetadataTypeInterface> types = myDocStruct.getPossibleMetadataTypes();
+        List<LegacyMetadataTypeHelper> types = myDocStruct.getPossibleMetadataTypes();
         if (types == null) {
             types = new ArrayList<>();
         }
         if (inRoleName != null && inRoleName.length() > 0) {
             boolean addRole = true;
-            for (MetadataTypeInterface mdt : types) {
+            for (LegacyMetadataTypeHelper mdt : types) {
                 if (mdt.getName().equals(inRoleName)) {
                     addRole = false;
                 }
@@ -346,7 +345,7 @@ public class MetadataHelper {
          * alle Metadatentypen, die keine Person sind, oder mit einem
          * Unterstrich anfangen rausnehmen
          */
-        for (MetadataTypeInterface mdt : new ArrayList<>(types)) {
+        for (LegacyMetadataTypeHelper mdt : new ArrayList<>(types)) {
             if (!mdt.isPerson()) {
                 types.remove(mdt);
             }
@@ -356,7 +355,7 @@ public class MetadataHelper {
         c.setSortType(SortType.METADATA_TYPE);
         types.sort(c);
 
-        for (MetadataTypeInterface mdt : types) {
+        for (LegacyMetadataTypeHelper mdt : types) {
             myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));
         }
         return myList;

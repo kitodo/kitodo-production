@@ -16,21 +16,20 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Connects a legacy meta-data type to a key view. This is a soldering class to
  * keep legacy code operational which is about to be removed. Do not use this
  * class.
  */
-public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
+public class LegacyMetadataTypeHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataTypeHelper.class);
 
     /**
      * A representative for a special legacy meta-data type to read and write
      * the METS ORDER attribute.
      */
-    public static final MetadataTypeInterface SPECIAL_TYPE_ORDER = new MetadataTypeInterface() {
+    public static final LegacyMetadataTypeHelper SPECIAL_TYPE_ORDER = new LegacyMetadataTypeHelper() {
         @Override
         public Map<String, String> getAllLanguages() {
             //TODO remove
@@ -94,7 +93,7 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
      * A representative for a special legacy meta-data type to read and write
      * the METS ORDERLABEL attribute.
      */
-    public static final MetadataTypeInterface SPECIAL_TYPE_ORDERLABEL = new MetadataTypeInterface() {
+    public static final LegacyMetadataTypeHelper SPECIAL_TYPE_ORDERLABEL = new LegacyMetadataTypeHelper() {
         @Override
         public Map<String, String> getAllLanguages() {
             //TODO remove
@@ -159,62 +158,56 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
      */
     private MetadataViewInterface keyView;
 
+    private LegacyMetadataTypeHelper() {
+        this.keyView = null;
+    }
+
     public LegacyMetadataTypeHelper(MetadataViewInterface keyView) {
         this.keyView = keyView;
     }
 
-    @Override
     public Map<String, String> getAllLanguages() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public boolean isPerson() {
         return false;
     }
 
-    @Override
     public String getLanguage(String language) {
         return keyView.getLabel();
     }
 
-    @Override
     public String getName() {
         return keyView.getId();
     }
 
-    @Override
     public String getNum() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setAllLanguages(Map<String, String> labels) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setIdentifier(boolean identifier) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setPerson(boolean person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setName(String name) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setNum(String quantityRestriction) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

@@ -13,7 +13,7 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code
@@ -25,7 +25,7 @@ public class LegacyMetadataHelper {
     /**
      * The legacy type of the legacy metadata.
      */
-    private MetadataTypeInterface type;
+    private LegacyMetadataTypeHelper type;
 
     /**
      * The value of the legacy metadata.
@@ -38,13 +38,13 @@ public class LegacyMetadataHelper {
     private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
     LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
-            MetadataTypeInterface type, String value) {
+            LegacyMetadataTypeHelper type, String value) {
         this.type = type;
         this.value = value;
         this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
     }
 
-    public LegacyMetadataHelper(MetadataTypeInterface type) {
+    public LegacyMetadataHelper(LegacyMetadataTypeHelper type) {
         this.type = type;
         this.value = "";
     }
@@ -53,7 +53,7 @@ public class LegacyMetadataHelper {
         return legacyInnerPhysicalDocStructHelper;
     }
 
-    public MetadataTypeInterface getMetadataType() {
+    public LegacyMetadataTypeHelper getMetadataType() {
         return type;
     }
 
@@ -67,7 +67,7 @@ public class LegacyMetadataHelper {
         }
     }
 
-    public void setType(MetadataTypeInterface metadataType) {
+    public void setType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

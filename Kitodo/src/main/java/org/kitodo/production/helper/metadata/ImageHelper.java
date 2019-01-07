@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.RomanNumeralInterface;
@@ -227,7 +226,7 @@ public class ImageHelper {
             }
         }
         int currentPhysicalOrder = 1;
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
             for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
                 List<? extends LegacyMetadataHelper> pageNoMetadata = page.getAllMetadataByType(mdt);
@@ -488,7 +487,7 @@ public class ImageHelper {
         LegacyDocStructHelperInterface physicalStructure = this.mydocument.createDocStruct(dst);
 
         // problems with FilePath
-        MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+        LegacyMetadataTypeHelper metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
             LegacyMetadataHelper mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
             URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
@@ -529,7 +528,7 @@ public class ImageHelper {
      */
     private LegacyMetadataHelper createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
-        MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(determinePagination(currentPhysicalOrder, defaultPagination));
         return metadata;
@@ -544,7 +543,7 @@ public class ImageHelper {
      */
     private LegacyMetadataHelper createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
-        MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
         LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(String.valueOf(currentPhysicalOrder));
         return metadata;

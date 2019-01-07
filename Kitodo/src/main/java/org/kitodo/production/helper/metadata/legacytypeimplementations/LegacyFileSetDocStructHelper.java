@@ -23,7 +23,6 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -142,8 +141,12 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyFileSetDocStructHelper.java
     public List<MetadataTypeInterface> getAddableMetadataTypes() {
         //TODO remove
+=======
+    public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyFileSetDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -186,7 +189,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
     }
 
@@ -201,8 +204,12 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyFileSetDocStructHelper.java
     public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
         //TODO remove
+=======
+    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyFileSetDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -244,8 +251,12 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyFileSetDocStructHelper.java
     public List<MetadataTypeInterface> getDisplayMetadataTypes() {
         //TODO remove
+=======
+    public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyFileSetDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -267,8 +278,12 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyFileSetDocStructHelper.java
     public List<MetadataTypeInterface> getPossibleMetadataTypes() {
         //TODO remove
+=======
+    public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyFileSetDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

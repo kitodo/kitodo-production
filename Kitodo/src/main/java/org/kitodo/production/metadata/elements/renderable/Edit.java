@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
@@ -48,7 +48,7 @@ public class Edit extends RenderableMetadata
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public Edit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    public Edit(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
                 RenderableMetadataGroup container) {
 
         super(metadataType, binding, container);

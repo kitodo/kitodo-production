@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
@@ -175,7 +174,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all meta-data types that users can add to this instance
      */
-    List<MetadataTypeInterface> getAddableMetadataTypes();
+    List<LegacyMetadataTypeHelper> getAddableMetadataTypes();
 
     /**
      * Returns a list containing all children of this DocStruct. If this
@@ -222,7 +221,7 @@ public interface LegacyDocStructHelperInterface {
      *            meta-data type to look for
      * @return all meta-data of the given type
      */
-    List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType);
+    List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
 
     /**
      * Returns a list of all persons. If no {@code Person} objects are
@@ -291,7 +290,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all meta-data group types that shall always be displayed
      */
-    List<MetadataTypeInterface> getDisplayMetadataTypes();
+    List<LegacyMetadataTypeHelper> getDisplayMetadataTypes();
 
     /**
      * Returns the image name.
@@ -321,7 +320,7 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data types that can be added to this instance. A return
      *         type of {@code Collection<>} would be sufficient.
      */
-    List<MetadataTypeInterface> getPossibleMetadataTypes();
+    List<LegacyMetadataTypeHelper> getPossibleMetadataTypes();
 
     /**
      * Get the type of this DocStruct.

@@ -19,11 +19,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -79,7 +79,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      *             if one of the sub-fields was configured to display a
      *             multi-select metadata
      */
-    public PersonMetadataGroup(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    public PersonMetadataGroup(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
                                RenderableMetadataGroup container, String projectName) throws ConfigurationException {
 
         super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
@@ -101,7 +101,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      *            a metadata type which represents a person
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
-    private static MetadataGroupTypeInterface getGroupTypeFor(MetadataTypeInterface type) {
+    private static MetadataGroupTypeInterface getGroupTypeFor(LegacyMetadataTypeHelper type) {
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 

@@ -27,7 +27,6 @@ import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -147,8 +146,12 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyInnerPhysicalDocStructHelper.java
     public List<MetadataTypeInterface> getAddableMetadataTypes() {
         //TODO remove
+=======
+    public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyInnerPhysicalDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -193,7 +196,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
             return Arrays.asList(new LegacyMetadataHelper(this, metadataType, Integer.toString(mediaUnit.getOrder())));
         } else if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL) {
@@ -220,8 +223,12 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         return Collections.emptyList();
     }
 
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyInnerPhysicalDocStructHelper.java
     public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
         //TODO remove
+=======
+    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyInnerPhysicalDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -263,7 +270,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public List<MetadataTypeInterface> getDisplayMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         return Collections.emptyList();
     }
 
@@ -289,8 +296,12 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyInnerPhysicalDocStructHelper.java
     public List<MetadataTypeInterface> getPossibleMetadataTypes() {
         //TODO remove
+=======
+    public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyInnerPhysicalDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

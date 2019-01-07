@@ -41,7 +41,6 @@ import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -213,12 +212,12 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<MetadataTypeInterface> getAddableMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
             Collections.emptyList());
-        ArrayList<MetadataTypeInterface> result = new ArrayList<>(addableKeys.size());
+        ArrayList<LegacyMetadataTypeHelper> result = new ArrayList<>(addableKeys.size());
         for (MetadataViewInterface key : addableKeys) {
             result.add(new LegacyMetadataTypeHelper(key));
         }
@@ -278,7 +277,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
@@ -310,8 +309,12 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         return Collections.emptyList();
     }
 
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyLogicalDocStructHelper.java
     public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
         //TODO remove
+=======
+    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyLogicalDocStructHelper.java
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -369,8 +372,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<MetadataTypeInterface> getDisplayMetadataTypes() {
-        List<MetadataTypeInterface> result = new LinkedList<>();
+    public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
+        List<LegacyMetadataTypeHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
@@ -401,7 +404,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<MetadataTypeInterface> getPossibleMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
         /*
          * The method is a doublet (in the interface, as well as doubled code in
          * the legacy implementation)

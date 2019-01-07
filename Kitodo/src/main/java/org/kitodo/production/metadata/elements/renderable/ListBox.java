@@ -18,10 +18,17 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/elements/renderable/ListBox.java
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.DisplayType;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.enums.DisplayType;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/elements/renderable/ListBox.java
 
 /**
  * Backing bean for a select list style input element to edit a metadata with
@@ -50,7 +57,7 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
      * @param projectName
      *            project of the process owning this metadata
      */
-    public ListBox(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    public ListBox(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
                    RenderableMetadataGroup container, String projectName) {
 
         super(metadataType, binding, container);

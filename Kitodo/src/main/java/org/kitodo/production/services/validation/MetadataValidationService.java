@@ -22,7 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
@@ -39,12 +38,18 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/services/validation/MetadataValidationService.java
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
+=======
+import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/services/validation/MetadataValidationService.java
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetadataValidationService {
@@ -245,7 +250,7 @@ public class MetadataValidationService {
 
     private boolean isValidPathImageFiles(LegacyDocStructHelperInterface phys, PrefsInterface myPrefs) {
         try {
-            MetadataTypeInterface mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
+            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allMetadata = phys.getAllMetadataByType(mdt);
             if (Objects.nonNull(allMetadata) && !allMetadata.isEmpty()) {
                 return true;
@@ -308,8 +313,8 @@ public class MetadataValidationService {
 
     private List<String> checkMandatoryValues(LegacyDocStructHelperInterface docStruct, ArrayList<String> list, String language) {
         LegacyLogicalDocStructTypeHelper dst = docStruct.getDocStructType();
-        List<MetadataTypeInterface> allMDTypes = dst.getAllMetadataTypes();
-        for (MetadataTypeInterface mdt : allMDTypes) {
+        List<LegacyMetadataTypeHelper> allMDTypes = dst.getAllMetadataTypes();
+        for (LegacyMetadataTypeHelper mdt : allMDTypes) {
             String number = dst.getNumberOfMetadataType(mdt);
             List<? extends LegacyMetadataHelper> ll = docStruct.getAllMetadataByType(mdt);
             int real = ll.size();
@@ -369,7 +374,7 @@ public class MetadataValidationService {
             String propStartswith = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@startswith]");
             String propEndswith = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@endswith]");
             String propCreateElementFrom = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@createelementfrom]");
-            MetadataTypeInterface mdt = null;
+            LegacyMetadataTypeHelper mdt = null;
             try {
                 mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
             } catch (UghHelperException e) {
@@ -395,7 +400,7 @@ public class MetadataValidationService {
             if (mdt != null) {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
                 if (propCreateElementFrom != null) {
-                    List<MetadataTypeInterface> listOfFromMdts = prepareMetadataTypes(prefs, propCreateElementFrom);
+                    List<LegacyMetadataTypeHelper> listOfFromMdts = prepareMetadataTypes(prefs, propCreateElementFrom);
                     if (!listOfFromMdts.isEmpty()) {
                         checkCreateElementFrom(listOfFromMdts, docStruct, mdt, language);
                     }
@@ -407,13 +412,13 @@ public class MetadataValidationService {
         return errorList;
     }
 
-    private List<MetadataTypeInterface> prepareMetadataTypes(PrefsInterface prefs, String propCreateElementFrom) {
-        List<MetadataTypeInterface> metadataTypes = new ArrayList<>();
+    private List<LegacyMetadataTypeHelper> prepareMetadataTypes(PrefsInterface prefs, String propCreateElementFrom) {
+        List<LegacyMetadataTypeHelper> metadataTypes = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(propCreateElementFrom, "|");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             try {
-                MetadataTypeInterface emdete = UghHelper.getMetadataType(prefs, token);
+                LegacyMetadataTypeHelper emdete = UghHelper.getMetadataType(prefs, token);
                 metadataTypes.add(emdete);
             } catch (UghHelperException e) {
                 /*
@@ -440,8 +445,8 @@ public class MetadataValidationService {
      * erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
      * vorhanden.
      */
-    private void checkCreateElementFrom(List<MetadataTypeInterface> metadataTypes, LegacyDocStructHelperInterface docStruct,
-            MetadataTypeInterface mdt, String language) {
+    private void checkCreateElementFrom(List<LegacyMetadataTypeHelper> metadataTypes, LegacyDocStructHelperInterface docStruct,
+            LegacyMetadataTypeHelper mdt, String language) {
         /*
          * existiert das zu erzeugende Metadatum schon, dann überspringen,
          * ansonsten alle Daten zusammensammeln und in das neue Element
@@ -454,7 +459,7 @@ public class MetadataValidationService {
                 String value = "";
                 // go through all the metadata to append and append to the
                 // element
-                for (MetadataTypeInterface metadataType : metadataTypes) {
+                for (LegacyMetadataTypeHelper metadataType : metadataTypes) {
                     List<PersonInterface> fromElemente = docStruct.getAllPersons();
                     if (Objects.nonNull(fromElemente) && !fromElemente.isEmpty()) {
                         value = iterateOverPersons(fromElemente, docStruct, language, metadataType);
@@ -480,7 +485,7 @@ public class MetadataValidationService {
     }
 
     private String iterateOverPersons(List<PersonInterface> persons, LegacyDocStructHelperInterface docStruct, String language,
-            MetadataTypeInterface metadataType) {
+            LegacyMetadataTypeHelper metadataType) {
         StringBuilder value = new StringBuilder();
         for (PersonInterface p : persons) {
             if (p.getRole() == null) {
@@ -519,7 +524,7 @@ public class MetadataValidationService {
      *            as String
      */
     private void checkStartsEndsWith(List<String> errorList, String propStartsWith, String propEndsWith,
-            LegacyDocStructHelperInterface myStruct, MetadataTypeInterface mdt, String language) {
+            LegacyDocStructHelperInterface myStruct, LegacyMetadataTypeHelper mdt, String language) {
         // starts with or ends with
         List<? extends LegacyMetadataHelper> allMetadataByType = myStruct.getAllMetadataByType(mdt);
         if (Objects.nonNull(allMetadataByType)) {

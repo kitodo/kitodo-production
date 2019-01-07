@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Connects a legacy doc struct type from the logical map to a division view.
@@ -40,7 +39,7 @@ public class LegacyLogicalDocStructTypeHelper {
         return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
-    public List<MetadataTypeInterface> getAllMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -57,7 +56,7 @@ public class LegacyLogicalDocStructTypeHelper {
         return divisionView.getLabel();
     }
 
-    public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+    public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

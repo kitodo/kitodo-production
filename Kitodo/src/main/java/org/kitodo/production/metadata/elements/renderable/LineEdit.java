@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
 
 /**
  * Backing bean for a (multi-line) text input element to edit metadata
@@ -54,7 +54,7 @@ public class LineEdit extends RenderableMetadata
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public LineEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+    public LineEdit(LegacyMetadataTypeHelper metadataType, MetadataGroupInterface binding,
                     RenderableMetadataGroup container) {
 
         super(metadataType, binding, container);

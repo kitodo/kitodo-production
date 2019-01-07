@@ -17,15 +17,24 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/MetadataImpl.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.DisplayCase;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.services.ServiceManager;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.metadata.display.DisplayCase;
+import org.kitodo.metadata.display.Item;
+import org.kitodo.metadata.display.Modes;
+import org.kitodo.metadata.display.enums.BindState;
+import org.kitodo.services.ServiceManager;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/MetadataImpl.java
 
 /**
  * Metadata implementation.
@@ -67,7 +76,7 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public void setTyp(String inTyp) {
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(inTyp);
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName(inTyp);
         this.md.setType(mdt);
     }
 

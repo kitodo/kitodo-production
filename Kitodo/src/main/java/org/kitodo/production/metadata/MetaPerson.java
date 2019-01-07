@@ -15,13 +15,17 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/MetaPerson.java
 import org.kitodo.production.helper.metadata.MetadataHelper;
+=======
+import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.helper.metadata.MetadataHelper;
+>>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/MetaPerson.java
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -146,7 +150,7 @@ public class MetaPerson {
      */
     public void setRolle(String inRolle) {
         this.p.setRole(inRolle);
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
         this.p.setType(mdt);
     }
 
