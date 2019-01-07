@@ -45,7 +45,8 @@ import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class CopyProcess extends ProzesskopieForm {
@@ -77,9 +78,9 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
+        } catch (ReadException e) {
             logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
@@ -115,9 +116,9 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
+        } catch (ReadException e) {
             logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
@@ -143,7 +144,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getDocStructType().getName();
 
@@ -319,9 +320,9 @@ public class CopyProcess extends ProzesskopieForm {
 
         FileformatInterface ff;
         try {
-            ff = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             ff.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
+        } catch (ReadException e) {
             logger.error(e.getMessage(), e);
         }
     }

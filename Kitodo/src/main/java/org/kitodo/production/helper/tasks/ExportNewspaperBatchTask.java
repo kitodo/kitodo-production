@@ -51,7 +51,8 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
@@ -474,7 +475,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         PrefsInterface ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        MetsModsInterface result = UghImplementation.INSTANCE.createMetsMods(ruleSet);
+        MetsModsInterface result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
 

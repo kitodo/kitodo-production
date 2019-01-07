@@ -51,6 +51,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -517,7 +519,7 @@ public class FileService {
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
             case METS:
-                ff = UghImplementation.INSTANCE.createMetsMods(rulesetService.getPreferences(ruleset));
+                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) rulesetService.getPreferences(ruleset)).getRuleset());
                 break;
             case RDF:
                 ff = UghImplementation.INSTANCE.createRDFFile(rulesetService.getPreferences(ruleset));

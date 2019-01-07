@@ -119,6 +119,8 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
@@ -1239,7 +1241,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
                 break;
             case "mets":
-                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
+                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
                 break;
             case "xstream":
                 ff = UghImplementation.INSTANCE.createXStream(prefs);
@@ -1263,8 +1265,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         .createMetsModsImportExport(rulesetService.getPreferences(process.getRuleset()));
                 break;
             case "mets":
-                fileFormat = UghImplementation.INSTANCE
-                        .createMetsMods(rulesetService.getPreferences(process.getRuleset()));
+                fileFormat = new LegacyMetsModsDigitalDocumentHelper(
+                        ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
                 break;
             case "xstream":
                 fileFormat = UghImplementation.INSTANCE
