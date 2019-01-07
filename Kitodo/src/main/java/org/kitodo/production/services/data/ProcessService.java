@@ -1247,8 +1247,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 ff = UghImplementation.INSTANCE.createXStream(prefs);
                 break;
             default:
-                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
         }
         ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
 
@@ -1273,9 +1272,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         .createXStream(rulesetService.getPreferences(process.getRuleset()));
                 break;
             default:
-                fileFormat = UghImplementation.INSTANCE
-                        .createRDFFile(rulesetService.getPreferences(process.getRuleset()));
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
         }
         return fileFormat;
     }
@@ -1830,8 +1827,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     break;
                 case METS_AND_RDF:
                 default:
-                    newFile = UghImplementation.INSTANCE.createRDFFile(preferences);
-                    break;
+                    throw new UnsupportedOperationException("Dead code pending removal");
             }
             newFile.setDigitalDocument(gdzFile.getDigitalDocument());
             gdzFile = newFile;

@@ -46,7 +46,6 @@ import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.ExportDmsTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
@@ -284,13 +283,12 @@ public class ExportDms extends ExportMets {
                     break;
                 case METS_AND_RDF:
                 default:
-                    gdzfile = UghImplementation.INSTANCE.createRDFFile(this.myPrefs);
-                    break;
+                    throw new UnsupportedOperationException("Dead code pending removal");
             }
 
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
-        } catch (PreferencesException | RuntimeException e) {
+        } catch (RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);

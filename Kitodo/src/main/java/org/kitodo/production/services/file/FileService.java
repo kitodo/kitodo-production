@@ -522,8 +522,7 @@ public class FileService {
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) rulesetService.getPreferences(ruleset)).getRuleset());
                 break;
             case RDF:
-                ff = UghImplementation.INSTANCE.createRDFFile(rulesetService.getPreferences(ruleset));
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
             default:
                 ff = UghImplementation.INSTANCE.createXStream(rulesetService.getPreferences(ruleset));
                 break;
