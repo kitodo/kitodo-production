@@ -41,7 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
@@ -559,8 +558,8 @@ public class ImageHelper {
      *            URI to image
      * @return ContentFile object
      */
-    private ContentFileInterface createContentFile(URI image) {
-        ContentFileInterface contentFile = new LegacyContentFileHelper();
+    private LegacyContentFileHelper createContentFile(URI image) {
+        LegacyContentFileHelper contentFile = new LegacyContentFileHelper();
         contentFile.setLocation(image.getPath());
         return contentFile;
     }

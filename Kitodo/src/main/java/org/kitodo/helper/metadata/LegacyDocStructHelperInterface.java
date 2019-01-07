@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -97,7 +96,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      * @param contentFile
      *            content file to add
      */
-    void addContentFile(ContentFileInterface contentFile);
+    void addContentFile(LegacyContentFileHelper contentFile);
 
     /**
      * Adds a meta-data object to this instance. The method checks, if it is

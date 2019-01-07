@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
@@ -37,6 +36,7 @@ import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units
@@ -57,7 +57,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
     }
 
     @Override
-    public void addFile(ContentFileInterface contentFile) {
+    public void addFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -68,14 +68,12 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public Iterable<ContentFileInterface> getAllFiles() {
+    public Iterable<LegacyContentFileHelper> getAllFiles() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void removeFile(ContentFileInterface contentFile) {
+    public void removeFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -92,7 +90,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
     }
 
     @Override
-    public void addContentFile(ContentFileInterface contentFile) {
+    public void addContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -180,7 +178,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
     }
 
     @Override
-    public List<ContentFileInterface> getAllContentFiles() {
+    public List<LegacyContentFileHelper> getAllContentFiles() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -326,7 +324,7 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDoc
     }
 
     @Override
-    public void removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException {
+    public void removeContentFile(LegacyContentFileHelper contentFile) throws ContentFileNotLinkedException {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

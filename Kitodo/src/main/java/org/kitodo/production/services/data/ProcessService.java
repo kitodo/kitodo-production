@@ -72,7 +72,6 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
-import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
@@ -118,6 +117,7 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -2063,7 +2063,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        for (ContentFileInterface cf : dd.getFileSet().getAllFiles()) {
+        for (LegacyContentFileHelper cf : dd.getFileSet().getAllFiles()) {
             String location = cf.getLocation();
             // If the file's location string shoes no sign of any protocol,
             // use the file protocol.
