@@ -41,7 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
@@ -155,8 +154,8 @@ public class ImageHelper {
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
             for (LegacyDocStructHelperInterface pageToRemove : pageElementsWithoutImages) {
                 physicalStructure.removeChild(pageToRemove);
-                List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-                for (ReferenceInterface ref : refs) {
+                List<LegacyReferenceHelper> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
+                for (LegacyReferenceHelper ref : refs) {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
             }
@@ -193,8 +192,8 @@ public class ImageHelper {
                 } else {
                     // remove page
                     physicalStructure.removeChild(page);
-                    List<ReferenceInterface> refs = new ArrayList<>(page.getAllFromReferences());
-                    for (ReferenceInterface ref : refs) {
+                    List<LegacyReferenceHelper> refs = new ArrayList<>(page.getAllFromReferences());
+                    for (LegacyReferenceHelper ref : refs) {
                         ref.getSource().removeReferenceTo(page);
                     }
                 }

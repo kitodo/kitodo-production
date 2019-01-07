@@ -13,7 +13,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
@@ -21,7 +20,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
  * keep legacy code operational which is about to be removed. Do not use this
  * class.
  */
-public class LegacyReferenceHelper implements ReferenceInterface {
+public class LegacyReferenceHelper {
     private static final Logger logger = LogManager.getLogger(LegacyReferenceHelper.class);
 
     /**
@@ -34,18 +33,15 @@ public class LegacyReferenceHelper implements ReferenceInterface {
         this.target = target;
     }
 
-    @Override
     public LegacyDocStructHelperInterface getSource() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public LegacyDocStructHelperInterface getTarget() {
         return target;
     }
 
-    @Override
     public String getType() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

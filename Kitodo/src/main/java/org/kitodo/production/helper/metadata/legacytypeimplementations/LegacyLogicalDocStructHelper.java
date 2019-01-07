@@ -41,7 +41,6 @@ import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
@@ -156,7 +155,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public ReferenceInterface addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
+    public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         AreaXmlElementAccessInterface view = metsService.createAreaXmlElementAccess();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
         view.setFile(target.getMediaUnit());
@@ -243,7 +242,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public List<ReferenceInterface> getAllFromReferences() {
+    public List<LegacyReferenceHelper> getAllFromReferences() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -313,11 +312,11 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public List<ReferenceInterface> getAllReferences(String direction) {
+    public List<LegacyReferenceHelper> getAllReferences(String direction) {
         switch (direction) {
             case "to":
                 List<AreaXmlElementAccessInterface> views = structure.getAreas();
-                ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
+                ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
                 for (AreaXmlElementAccessInterface view : views) {
                     FileXmlElementAccessInterface mediaUnit = view.getFile();
                     allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
@@ -329,16 +328,16 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public Collection<ReferenceInterface> getAllToReferences() {
+    public Collection<LegacyReferenceHelper> getAllToReferences() {
         return getAllReferences("to");
     }
 
     @Override
-    public Collection<ReferenceInterface> getAllToReferences(String type) {
+    public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         switch (type) {
             case "logical_physical":
                 List<AreaXmlElementAccessInterface> views = structure.getAreas();
-                ArrayList<ReferenceInterface> allReferences = new ArrayList<>(views.size());
+                ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
                 for (AreaXmlElementAccessInterface view : views) {
                     FileXmlElementAccessInterface mediaUnit = view.getFile();
                     allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));

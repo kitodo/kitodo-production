@@ -57,7 +57,6 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -87,6 +86,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.helper.ConfigDisplayRules;
@@ -1011,10 +1011,10 @@ public class MetadataProcessor {
 
         if (log.getAllChildren() != null) {
             for (LegacyDocStructHelperInterface child : log.getAllChildren()) {
-                List<ReferenceInterface> childRefs = child.getAllReferences("to");
-                for (ReferenceInterface toAdd : childRefs) {
+                List<LegacyReferenceHelper> childRefs = child.getAllReferences("to");
+                for (LegacyReferenceHelper toAdd : childRefs) {
                     boolean match = false;
-                    for (ReferenceInterface ref : log.getAllReferences("to")) {
+                    for (LegacyReferenceHelper ref : log.getAllReferences("to")) {
                         if (ref.getTarget().equals(toAdd.getTarget())) {
                             match = true;
                             break;
@@ -1069,7 +1069,7 @@ public class MetadataProcessor {
         if (inStrukturelement == null) {
             return;
         }
-        List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
+        List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         int zaehler = 0;
         int imageNr = 0;
         if (references != null) {
@@ -1096,7 +1096,7 @@ public class MetadataProcessor {
             this.structurePageNew = new MetadataImpl[references.size()];
 
             /* alle Referenzen durchlaufen und deren Metadaten ermitteln */
-            for (ReferenceInterface ref : references) {
+            for (LegacyReferenceHelper ref : references) {
                 LegacyDocStructHelperInterface target = ref.getTarget();
                 determineSecondPagesStructure(target, zaehler);
                 if (imageNr == 0) {
@@ -1487,8 +1487,8 @@ public class MetadataProcessor {
         this.docStruct.getAllReferences("to").removeAll(this.docStruct.getAllReferences("to"));
         if (this.docStruct.getAllChildren() != null) {
             for (LegacyDocStructHelperInterface child : this.docStruct.getAllChildren()) {
-                List<ReferenceInterface> childRefs = child.getAllReferences("to");
-                for (ReferenceInterface toAdd : childRefs) {
+                List<LegacyReferenceHelper> childRefs = child.getAllReferences("to");
+                for (LegacyReferenceHelper toAdd : childRefs) {
                     boolean match = isFoundMatchForReference(toAdd);
                     if (!match) {
                         this.docStruct.getAllReferences("to").add(toAdd);
@@ -1501,8 +1501,8 @@ public class MetadataProcessor {
         return null;
     }
 
-    private boolean isFoundMatchForReference(ReferenceInterface toAdd) {
-        for (ReferenceInterface ref : this.docStruct.getAllReferences("to")) {
+    private boolean isFoundMatchForReference(LegacyReferenceHelper toAdd) {
+        for (LegacyReferenceHelper ref : this.docStruct.getAllReferences("to")) {
             if (ref.getTarget().equals(toAdd.getTarget())) {
                 return true;
             }
@@ -1533,7 +1533,7 @@ public class MetadataProcessor {
              * dann zuweisen
              */
             if (this.docStruct.getAllToReferences("logical_physical") != null) {
-                for (ReferenceInterface reference : this.docStruct.getAllToReferences("logical_physical")) {
+                for (LegacyReferenceHelper reference : this.docStruct.getAllToReferences("logical_physical")) {
                     if (reference.getTarget() == this.allPagesNew[currentId - 1].getMd().getDocStruct()) {
                         schonEnthalten = true;
                         break;
@@ -1945,8 +1945,8 @@ public class MetadataProcessor {
             removeImage(imageName);
             digitalDocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
             digitalDocument.getPhysicalDocStruct().removeChild(pageToRemove);
-            List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-            for (ReferenceInterface ref : refs) {
+            List<LegacyReferenceHelper> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
+            for (LegacyReferenceHelper ref : refs) {
                 ref.getSource().removeReferenceTo(pageToRemove);
             }
         }
@@ -2440,7 +2440,7 @@ public class MetadataProcessor {
             String pagePath = docStructPages.get(pageIndex);
 
             if (Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
-                for (ReferenceInterface reference : sourceDocStruct.getAllToReferences("logical_physical")) {
+                for (LegacyReferenceHelper reference : sourceDocStruct.getAllToReferences("logical_physical")) {
 
                     if (FilenameUtils.getBaseName(pagePath)
                             .equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
@@ -2471,9 +2471,9 @@ public class MetadataProcessor {
      */
     public List<LegacyDocStructHelperInterface> getPageReferencesToDocStruct(LegacyDocStructHelperInterface docStruct) {
         List<LegacyDocStructHelperInterface> pageReferenceDocStructs = new LinkedList<>();
-        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+        List<LegacyReferenceHelper> pageReferences = docStruct.getAllReferences("to");
 
-        for (ReferenceInterface pageReferenceInterface : pageReferences) {
+        for (LegacyReferenceHelper pageReferenceInterface : pageReferences) {
             pageReferenceDocStructs.add(pageReferenceInterface.getTarget());
         }
 
@@ -2492,14 +2492,14 @@ public class MetadataProcessor {
     @SuppressWarnings("unchecked")
     private List<String> getPagesAssignedToDocStruct(LegacyDocStructHelperInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
-        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+        List<LegacyReferenceHelper> pageReferences = docStruct.getAllReferences("to");
         LegacyPrefsHelper LegacyPrefsHelper = this.metaHelper.getPrefs();
         LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataTypeByName("physPageNumber");
 
         List<String> allImages = getImages();
 
         if (!allImages.isEmpty()) {
-            for (ReferenceInterface pageReferenceInterface : pageReferences) {
+            for (LegacyReferenceHelper pageReferenceInterface : pageReferences) {
                 LegacyDocStructHelperInterface LegacyDocStructHelperInterface = pageReferenceInterface.getTarget();
                 List<LegacyMetadataHelper> allMetadata = (List<LegacyMetadataHelper>) LegacyDocStructHelperInterface.getAllMetadataByType(mdt);
                 for (LegacyMetadataHelper LegacyMetadataHelper : allMetadata) {

@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
@@ -153,7 +152,7 @@ public class MetadataHelper {
         if (inStrukturelement == null) {
             return "";
         }
-        List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
+        List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
             references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;

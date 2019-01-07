@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
@@ -141,7 +140,7 @@ public interface LegacyDocStructHelperInterface {
      * @return a newly created References object containing information about
      *         linking both DocStructs. The return value is never used.
      */
-    ReferenceInterface addReferenceTo(LegacyDocStructHelperInterface docStruct, String type);
+    LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type);
 
     /**
      * This method cleans the meta-data and person list of instances which do
@@ -241,7 +240,7 @@ public interface LegacyDocStructHelperInterface {
      *            always "{@code to}".
      * @return incoming or outgoing {@code Reference}s
      */
-    List<ReferenceInterface> getAllReferences(String direction);
+    List<LegacyReferenceHelper> getAllReferences(String direction);
 
     /**
      * Returns all references that are directed from this instance to another.
@@ -249,7 +248,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all outgoing {@code Reference}s
      */
-    Collection<ReferenceInterface> getAllToReferences();
+    Collection<LegacyReferenceHelper> getAllToReferences();
 
     /**
      * Returns all references that are directed from this instance to another
@@ -262,7 +261,7 @@ public interface LegacyDocStructHelperInterface {
      *         type would be sufficient to be an Iterable, but there is a check
      *         for size()=0.
      */
-    Collection<ReferenceInterface> getAllToReferences(String type);
+    Collection<LegacyReferenceHelper> getAllToReferences(String type);
 
     /**
      * Retrieves the name of the anchor structure, if any, or null otherwise.
