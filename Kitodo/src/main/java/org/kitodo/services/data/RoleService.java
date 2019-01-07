@@ -20,8 +20,10 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -121,7 +123,7 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return convertJSONObjectsToDTOs(
-                    searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
+                searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
         }
         return new ArrayList<>();
     }
@@ -230,6 +232,33 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
                 ServiceManager.getUserService().saveToIndex(user, false);
             }
         }
+    }
+
+    /**
+     * Find all roles available to assign to the edited user. It will be displayed
+     * in the addRolesPopup.
+     *
+     * @param userId
+     *            id of user which is going to be edited
+     * @param clients
+     *            list of clients to which edited user is assigned
+     * @return list of all matching roles
+     */
+    public List<RoleDTO> findAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DataException {
+        return findAvailableForAssignToUser(userId, clients);
+    }
+
+    private List<RoleDTO> findAvailableForAssignToUser(Integer userId, List<Client> clients) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        if (Objects.nonNull(userId)) {
+            query.must(createSimpleQuery(RoleTypeField.USERS + ".id", userId, false));
+            //TODO: for new user this list is empty - only for edited condition to apply?
+            if (!clients.isEmpty()) {
+                query.must(createSetQueryForBeans(RoleTypeField.CLIENT_ID.getKey(), new ArrayList<>(clients), true));
+            }
+            return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
+        }
+        return findAll();
     }
 
     /**
@@ -365,7 +394,8 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
 
     // TODO: filtering functionality
     private QueryBuilder createQueryRolesForCurrentUser(Map filters) {
-        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), ServiceManager.getUserService().getSessionClientId(), true);
+        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), ServiceManager.getUserService().getSessionClientId(),
+            true);
     }
 
     /**

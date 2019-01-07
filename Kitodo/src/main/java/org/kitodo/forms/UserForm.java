@@ -372,9 +372,9 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Return list of projects.
+     * Return list of projects available for assignment to the user.
      *
-     * @return list of projects
+     * @return list of projects available for assignment to the user
      */
     public List<ProjectDTO> getProjects() {
         try {
@@ -387,13 +387,13 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Return list of roles.
+     * Return list of roles available for assignment to the user.
      *
-     * @return list of roles
+     * @return list of roles available for assignment to the user
      */
     public List<RoleDTO> getRoles() {
         try {
-            return ServiceManager.getRoleService().findAll();
+            return ServiceManager.getRoleService().findAllAvailableForAssignToUser(this.userObject.getId(), this.userObject.getClients());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);
