@@ -16,8 +16,9 @@ import static org.apache.http.HttpStatus.SC_OK;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -114,7 +115,7 @@ public class SRUImport implements ExternalDataImportInterface {
 
     @Override
     public Collection<Document> getMultipleEntriesById(Collection<String> ids, String catalogId) {
-        return null;
+        return Collections.emptyList();
     }
 
     private SearchResult performQuery(String queryURL) {
@@ -149,7 +150,7 @@ public class SRUImport implements ExternalDataImportInterface {
         List<BasicNameValuePair> nameValuePairList = searchFields.entrySet().stream()
                 .map(entry -> new BasicNameValuePair(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
-        return URLEncodedUtils.format(nameValuePairList, Charset.forName("UTF-8"));
+        return URLEncodedUtils.format(nameValuePairList, StandardCharsets.UTF_8);
     }
 
     private String createSearchFieldString(LinkedHashMap<String, String> searchFields) {
