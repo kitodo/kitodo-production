@@ -20,7 +20,6 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,8 +49,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
-import org.kitodo.dto.RoleDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.ExportXmlLog;
@@ -1434,36 +1431,6 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                 logger, e);
-        }
-    }
-
-    /**
-     * Return list of users.
-     *
-     * @return list of active user
-     */
-    public List<UserDTO> getActiveUsers() {
-        try {
-            return ServiceManager.getUserService().findAllActiveUsers();
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER.getTranslationPlural() }, logger,
-                e);
-            return new LinkedList<>();
-        }
-    }
-
-    /**
-     * Return list of roles.
-     *
-     * @return list of roles
-     */
-    public List<RoleDTO> getRoles() {
-        try {
-            return ServiceManager.getRoleService().findAll();
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() },
-                logger, e);
-            return new LinkedList<>();
         }
     }
 
