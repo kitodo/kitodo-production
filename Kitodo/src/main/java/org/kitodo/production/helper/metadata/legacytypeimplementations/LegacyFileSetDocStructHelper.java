@@ -44,7 +44,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
  * about to be removed. Do not use this class.
  */
 
-public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStructInterface {
+public class LegacyFileSetDocStructHelper implements FileSetInterface, LegacyDocStructHelperInterface {
     private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
     /**

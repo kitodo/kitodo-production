@@ -47,7 +47,7 @@ import org.kitodo.production.services.dataformat.MetsService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
+public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelperInterface {
     private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructHelper.class);
 
     private static final MetsService metsService = ServiceManager.getMetsService();
