@@ -61,7 +61,7 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.services.ServiceManager;
@@ -580,7 +580,7 @@ public class ImageHelper {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase(
             (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
-            RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
+            RomanNumeralInterface roman = new LegacyRomanNumeralHelper();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
