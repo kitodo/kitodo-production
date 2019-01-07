@@ -25,7 +25,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -142,7 +141,7 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
+    public boolean startExport(Process process, URI inZielVerzeichnis, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException, WriteException, PreferencesException, JAXBException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -274,7 +273,7 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private FileformatInterface readDocument(Process process, DigitalDocumentInterface newFile) {
+    private FileformatInterface readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
         FileformatInterface gdzfile;
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {

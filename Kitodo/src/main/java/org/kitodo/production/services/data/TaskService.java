@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -61,6 +60,7 @@ import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
@@ -565,7 +565,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             return false;
         }
         script = script.replace("{", "(").replace("}", ")");
-        DigitalDocumentInterface dd = null;
+        LegacyMetsModsDigitalDocumentHelper dd = null;
         Process po = task.getProcess();
 
         PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(po.getRuleset());

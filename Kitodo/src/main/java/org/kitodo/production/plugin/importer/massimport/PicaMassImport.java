@@ -63,7 +63,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -76,16 +75,10 @@ import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.helper.metadata.LegacyPrefsHelper;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -162,7 +155,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
             pica = addParentDataForVolume(pica);
             FileformatInterface fileformat = SRUHelper.parsePicaFormat(pica, prefs);
-            DigitalDocumentInterface digitalDocument = fileformat.getDigitalDocument();
+            LegacyMetsModsDigitalDocumentHelper digitalDocument = fileformat.getDigitalDocument();
             boolean multivolue = false;
             LegacyDocStructHelperInterface logicalDS = digitalDocument.getLogicalDocStruct();
             LegacyDocStructHelperInterface child = null;

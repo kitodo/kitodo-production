@@ -41,7 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.RomanNumeralInterface;
@@ -67,11 +66,11 @@ import org.kitodo.production.services.file.FileService;
 public class ImageHelper {
     private static final Logger logger = LogManager.getLogger(ImageHelper.class);
     private final PrefsInterface myPrefs;
-    private final DigitalDocumentInterface mydocument;
+    private final LegacyMetsModsDigitalDocumentHelper mydocument;
     private int myLastImage = 0;
     private static final FileService fileService = ServiceManager.getFileService();
 
-    public ImageHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public ImageHelper(PrefsInterface inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
         this.myPrefs = inPrefs;
         this.mydocument = inDocument;
     }

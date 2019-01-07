@@ -28,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -46,21 +45,14 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/tasks/ExportNewspaperBatchTask.java
 import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.helper.metadata.LegacyPrefsHelper;
-import org.kitodo.services.ServiceManager;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/tasks/ExportNewspaperBatchTask.java
 
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
@@ -282,7 +274,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws ReadException
      *             if one of the preconditions fails
      */
-    private int getYear(DigitalDocumentInterface act) throws ReadException {
+    private int getYear(LegacyMetsModsDigitalDocumentHelper act) throws ReadException {
         List<LegacyDocStructHelperInterface> children = act.getLogicalDocStruct().getAllChildren();
         if (children == null) {
             throw new ReadException(
@@ -374,7 +366,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *
      * @return a list with the dates of all issues in this process
      */
-    private static List<LocalDate> getIssueDates(DigitalDocumentInterface act) {
+    private static List<LocalDate> getIssueDates(LegacyMetsModsDigitalDocumentHelper act) {
         List<LocalDate> result = new LinkedList<>();
         LegacyDocStructHelperInterface logicalDocStruct = act.getLogicalDocStruct();
         for (LegacyDocStructHelperInterface annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
@@ -486,7 +478,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
 
-        DigitalDocumentInterface caudexDigitalis = result.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(
             caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator().next(),
             MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE);
@@ -519,7 +511,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocumentInterface act,
+    private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, LegacyMetsModsDigitalDocumentHelper act,
             PrefsInterface ruleSet) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         for (Map.Entry<Integer, String> year : years.entrySet()) {
@@ -563,7 +555,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type, String identifierField,
-            String identifier, String optionalField, DigitalDocumentInterface act, PrefsInterface ruleset)
+            String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleset)
             throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         try {
@@ -669,7 +661,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             (of this type) is already available
      */
     private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
-            String ownMetsPointerURL, DigitalDocumentInterface act, PrefsInterface ruleSet)
+            String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleSet)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         for (int i = 0; i < issues.size(); i++) {
             if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
@@ -700,7 +692,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private void insertIssueReference(DigitalDocumentInterface act, PrefsInterface ruleset, LocalDate date,
+    private void insertIssueReference(LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleset, LocalDate date,
             String metsPointerURL)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         LegacyDocStructHelperInterface year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,

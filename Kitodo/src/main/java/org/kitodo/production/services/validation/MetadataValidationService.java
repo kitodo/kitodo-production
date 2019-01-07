@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -38,18 +37,14 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/services/validation/MetadataValidationService.java
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
-=======
-import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/services/validation/MetadataValidationService.java
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetadataValidationService {
@@ -95,7 +90,7 @@ public class MetadataValidationService {
         this.process = process;
         boolean result = true;
 
-        DigitalDocumentInterface dd;
+        LegacyMetsModsDigitalDocumentHelper dd;
         try {
             dd = gdzfile.getDigitalDocument();
         } catch (PreferencesException | RuntimeException e) {

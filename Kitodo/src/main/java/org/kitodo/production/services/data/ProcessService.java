@@ -72,7 +72,6 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -1651,7 +1650,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    public DigitalDocumentInterface getDigitalDocument(Process process)
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process)
             throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
     }
@@ -2024,7 +2023,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * before creating mets file, change relative path to absolute -
          */
-        DigitalDocumentInterface dd = gdzfile.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper dd = gdzfile.getDigitalDocument();
         if (dd.getFileSet() == null) {
             Helper.setErrorMessage(process.getTitle() + ": digital document does not contain images; aborting");
             return false;

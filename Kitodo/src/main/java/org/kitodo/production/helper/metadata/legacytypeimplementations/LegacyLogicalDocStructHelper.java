@@ -38,7 +38,6 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -171,7 +170,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public LegacyDocStructHelperInterface createChild(String docStructType, DigitalDocumentInterface digitalDocument,
+    public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
             PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
         //TODO remove
@@ -309,12 +308,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         return Collections.emptyList();
     }
 
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/metadata/legacytypeimplementations/LegacyLogicalDocStructHelper.java
-    public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
-        //TODO remove
-=======
     public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/metadata/LegacyLogicalDocStructHelper.java
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

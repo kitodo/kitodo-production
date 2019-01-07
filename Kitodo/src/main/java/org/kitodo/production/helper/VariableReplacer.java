@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -33,18 +32,12 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/VariableReplacer.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.ProcessService;
-import org.kitodo.services.file.FileService;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/VariableReplacer.java
 
 public class VariableReplacer {
 
@@ -56,7 +49,7 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    private DigitalDocumentInterface dd;
+    private LegacyMetsModsDigitalDocumentHelper dd;
     private PrefsInterface prefs;
     // $(meta.abc)
     private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
@@ -85,7 +78,7 @@ public class VariableReplacer {
      * @param s
      *            Task object
      */
-    public VariableReplacer(DigitalDocumentInterface inDigitalDocument, PrefsInterface inPrefs, Process p, Task s) {
+    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, PrefsInterface inPrefs, Process p, Task s) {
         this.dd = inDigitalDocument;
         this.prefs = inPrefs;
         this.process = p;

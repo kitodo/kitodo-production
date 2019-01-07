@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -452,7 +452,7 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         Process process = processService.getById(1);
-        DigitalDocumentInterface digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
 
         String processTitle = process.getTitle();
         String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
@@ -528,7 +528,7 @@ public class ProcessServiceIT {
     public void shouldGetDigitalDocument() throws Exception {
         FileLoader.createMetadataFile();
 
-        DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(1));
+        LegacyMetsModsDigitalDocumentHelper actual = processService.getDigitalDocument(processService.getById(1));
         assertEquals("Metadata size in digital document is incorrect!", 1,
             actual.getLogicalDocStruct().getAllMetadata().size());
 

@@ -18,17 +18,10 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.MetadataGroupInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/elements/renderable/DropDownList.java
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.DisplayType;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.metadata.display.Item;
-import org.kitodo.metadata.display.enums.DisplayType;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/elements/renderable/DropDownList.java
 
 /**
  * Backing bean for a drop-down style select element to edit a single-select

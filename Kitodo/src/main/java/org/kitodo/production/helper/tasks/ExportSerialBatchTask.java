@@ -19,7 +19,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -35,6 +34,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -152,7 +152,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                         return;
                     }
                     process = processesIterator.next();
-                    DigitalDocumentInterface out = buildExportDocument(process, pointers);
+                    LegacyMetsModsDigitalDocumentHelper out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     exporter.setExportDmsTask(this);
@@ -202,10 +202,10 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private static DigitalDocumentInterface buildExportDocument(Process process, Iterable<String> allPointers)
+    private static LegacyMetsModsDigitalDocumentHelper buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
             TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-        DigitalDocumentInterface result = ServiceManager.getProcessService().readMetadataFile(process)
+        LegacyMetsModsDigitalDocumentHelper result = ServiceManager.getProcessService().readMetadataFile(process)
                 .getDigitalDocument();
         LegacyDocStructHelperInterface root = result.getLogicalDocStruct();
         String type = "Volume";

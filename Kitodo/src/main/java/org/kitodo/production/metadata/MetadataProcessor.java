@@ -53,7 +53,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
@@ -75,7 +74,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/MetadataProcessor.java
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
@@ -87,6 +85,8 @@ import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.helper.ConfigDisplayRules;
@@ -97,22 +97,6 @@ import org.kitodo.production.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.workflow.Problem;
-=======
-import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.helper.metadata.MetadataHelper;
-import org.kitodo.metadata.display.Modes;
-import org.kitodo.metadata.display.enums.BindState;
-import org.kitodo.metadata.display.helper.ConfigDisplayRules;
-import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
-import org.kitodo.metadata.elements.selectable.SelectOne;
-import org.kitodo.metadata.elements.selectable.Separator;
-import org.kitodo.metadata.pagination.Paginator;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
-import org.kitodo.workflow.Problem;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/MetadataProcessor.java
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -138,7 +122,7 @@ public class MetadataProcessor {
     private List<MetaPerson> metaPersonList = new LinkedList<>();
     private MetadataImpl currentMetadata;
     private MetaPerson curPerson;
-    private DigitalDocumentInterface digitalDocument;
+    private LegacyMetsModsDigitalDocumentHelper digitalDocument;
     private Process process;
     private PrefsInterface myPrefs;
     private String userId;
@@ -922,7 +906,7 @@ public class MetadataProcessor {
         }
     }
 
-    private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct, DigitalDocumentInterface digitalDocument,
+    private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct, LegacyMetsModsDigitalDocumentHelper digitalDocument,
             LegacyLogicalDocStructTypeHelper docStructType, PositionOfNewDocStrucElement positionOfNewDocStrucElement,
             int quantity, String metadataType, String value)
             throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
@@ -1049,7 +1033,7 @@ public class MetadataProcessor {
      * alle Seiten ermitteln.
      */
     public void retrieveAllImages() {
-        DigitalDocumentInterface document;
+        LegacyMetsModsDigitalDocumentHelper document;
         try {
             document = this.gdzfile.getDigitalDocument();
         } catch (PreferencesException e) {
@@ -1997,11 +1981,11 @@ public class MetadataProcessor {
         }
     }
 
-    public DigitalDocumentInterface getDigitalDocument() {
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return digitalDocument;
     }
 
-    public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
+    public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper digitalDocument) {
         this.digitalDocument = digitalDocument;
     }
 

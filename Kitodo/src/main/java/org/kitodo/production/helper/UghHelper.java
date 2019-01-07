@@ -20,14 +20,9 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/UghHelper.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.services.ServiceManager;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.services.ServiceManager;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/UghHelper.java
 
 public class UghHelper {
     private static final Logger logger = LogManager.getLogger(UghHelper.class);

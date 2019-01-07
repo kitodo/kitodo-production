@@ -47,7 +47,6 @@ import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -74,7 +73,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/forms/ProzesskopieForm.java
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
@@ -83,21 +81,13 @@ import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
-=======
-import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.helper.metadata.LegacyPrefsHelper;
-import org.kitodo.metadata.copier.CopierData;
-import org.kitodo.metadata.copier.DataCopier;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/forms/ProzesskopieForm.java
 import org.kitodo.production.thread.TaskScriptThread;
 import org.omnifaces.util.Ajax;
 import org.primefaces.context.RequestContext;
@@ -528,7 +518,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private LegacyDocStructHelperInterface getDocStruct(AdditionalField field) throws PreferencesException {
-        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = this.rdf.getDigitalDocument();
         LegacyDocStructHelperInterface docStruct = digitalDocument.getLogicalDocStruct();
         if (field.getDocstruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
@@ -872,7 +862,7 @@ public class ProzesskopieForm implements Serializable {
      * Insert image path and delete any existing ones first.
      */
     private void insertImagePath() throws IOException, PreferencesException, WriteException {
-        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = this.rdf.getDigitalDocument();
         try {
             LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()

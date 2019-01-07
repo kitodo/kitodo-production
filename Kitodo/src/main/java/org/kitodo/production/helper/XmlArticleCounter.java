@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -25,6 +24,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class XmlArticleCounter {
@@ -56,7 +56,7 @@ public class XmlArticleCounter {
 
         // DocStruct rukursiv durchlaufen
         try {
-            DigitalDocumentInterface document = gdzfile.getDigitalDocument();
+            LegacyMetsModsDigitalDocumentHelper document = gdzfile.getDigitalDocument();
             LegacyDocStructHelperInterface logicalTopstruct = document.getLogicalDocStruct();
             result += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e) {

@@ -14,19 +14,11 @@ package org.kitodo.production.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/helper/HelperComparator.java
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.services.ServiceManager;
-=======
-import org.kitodo.enums.SortType;
-import org.kitodo.helper.metadata.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.services.ServiceManager;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/helper/HelperComparator.java
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 

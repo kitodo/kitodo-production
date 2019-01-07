@@ -20,12 +20,8 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/MetaPerson.java
 import org.kitodo.production.helper.metadata.MetadataHelper;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.helper.metadata.MetadataHelper;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/MetaPerson.java
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen

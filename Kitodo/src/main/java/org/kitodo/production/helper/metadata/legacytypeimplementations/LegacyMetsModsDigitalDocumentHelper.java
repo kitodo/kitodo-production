@@ -27,7 +27,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -48,7 +47,7 @@ import org.kitodo.production.services.file.FileService;
  * Do not use this class.
  */
 public class LegacyMetsModsDigitalDocumentHelper
-        implements DigitalDocumentInterface, MetsModsInterface, MetsModsImportExportInterface {
+        implements MetsModsInterface, MetsModsImportExportInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
 
     private static final MetsService metsService = ServiceManager.getMetsService();
@@ -119,7 +118,6 @@ public class LegacyMetsModsDigitalDocumentHelper
         this.workpiece = workpiece;
     }
 
-    @Override
     public void addAllContentFiles() {
         /*
          * In the legacy implementation, this method must be called to fully
@@ -129,7 +127,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
             return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
@@ -160,22 +157,18 @@ public class LegacyMetsModsDigitalDocumentHelper
         return message;
     }
 
-    @Override
-    public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() throws PreferencesException {
         return this;
     }
 
-    @Override
     public LegacyFileSetDocStructHelper getFileSet() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
-    @Override
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
         return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
-    @Override
     public LegacyDocStructHelperInterface getPhysicalDocStruct() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
@@ -189,7 +182,6 @@ public class LegacyMetsModsDigitalDocumentHelper
         return workpiece;
     }
 
-    @Override
     public void overrideContentFiles(List<String> images) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -213,19 +205,15 @@ public class LegacyMetsModsDigitalDocumentHelper
         }
     }
 
-    @Override
-    public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        LegacyMetsModsDigitalDocumentHelper metsKitodoDocument = (LegacyMetsModsDigitalDocumentHelper) digitalDocument;
+    public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper metsKitodoDocument) {
         this.workpiece = metsKitodoDocument.workpiece;
     }
 
-    @Override
     public void setLogicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setPhysicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

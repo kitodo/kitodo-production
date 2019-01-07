@@ -26,14 +26,9 @@ import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.exceptions.MetadataException;
-<<<<<<< HEAD:Kitodo/src/main/java/org/kitodo/production/metadata/elements/renderable/RenderableMetadataGroup.java
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
-=======
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
-import org.kitodo.metadata.MetadataProcessor;
->>>>>>> Remove references to MetadataTypeInterface [not compilable]:Kitodo/src/main/java/org/kitodo/metadata/elements/renderable/RenderableMetadataGroup.java
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata
