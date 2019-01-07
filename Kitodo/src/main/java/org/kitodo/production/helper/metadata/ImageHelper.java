@@ -43,7 +43,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -171,7 +170,7 @@ public class ImageHelper {
                     // image name
                     dsPage.addContentFile(createContentFile(newImage));
 
-                } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
+                } catch (MetadataTypeNotAllowedException e) {
                     logger.error(e.getMessage(), e);
                 }
             }
@@ -206,7 +205,7 @@ public class ImageHelper {
 
                         // image name
                         dsPage.addContentFile(createContentFile(newImage));
-                    } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
+                    } catch (MetadataTypeNotAllowedException e) {
                         logger.error(e.getMessage(), e);
                     }
                 }
@@ -483,7 +482,7 @@ public class ImageHelper {
             String pathString = new File(pathURI).getPath();
             mdForPath.setStringValue(pathString);
             physicalStructure.addMetadata(mdForPath);
-        } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+        } catch (DocStructHasNoTypeException e) {
             logger.error(e.getMessage(), e);
         }
 

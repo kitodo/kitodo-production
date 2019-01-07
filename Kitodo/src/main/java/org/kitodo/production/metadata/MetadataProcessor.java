@@ -259,15 +259,10 @@ public class MetadataProcessor {
      */
     public void copy() {
         LegacyMetadataHelper md;
-        try {
-            md = new LegacyMetadataHelper(this.currentMetadata.getMd().getMetadataType());
+        md = new LegacyMetadataHelper(this.currentMetadata.getMd().getMetadataType());
 
-            md.setStringValue(this.currentMetadata.getMd().getValue());
-            this.docStruct.addMetadata(md);
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage(e.getMessage());
-            logger.error("Error at Metadata copy (MetadataTypeNotAllowedException): " + e.getMessage());
-        }
+        md.setStringValue(this.currentMetadata.getMd().getValue());
+        this.docStruct.addMetadata(md);
         saveMetadataAsBean(this.docStruct);
     }
 
@@ -284,25 +279,17 @@ public class MetadataProcessor {
      * Save.
      */
     public void save() {
-        try {
-            LegacyMetadataHelper md = new LegacyMetadataHelper(this.myPrefs.getMetadataTypeByName(this.tempTyp));
-            md.setStringValue(this.selectedMetadata.getValue());
+        LegacyMetadataHelper md = new LegacyMetadataHelper(this.myPrefs.getMetadataTypeByName(this.tempTyp));
+        md.setStringValue(this.selectedMetadata.getValue());
 
-            this.docStruct.addMetadata(md);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error("Error while adding metadata (MetadataTypeNotAllowedException): " + e.getMessage());
-        }
+        this.docStruct.addMetadata(md);
 
         // if TitleDocMain, then create equal sort titles with the same content
         if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
-            try {
-                LegacyMetadataHelper secondMetadata = new LegacyMetadataHelper(
-                        this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
-                secondMetadata.setStringValue(this.selectedMetadata.getValue());
-                this.docStruct.addMetadata(secondMetadata);
-            } catch (MetadataTypeNotAllowedException e) {
-                logger.error("Error while adding title (MetadataTypeNotAllowedException): " + e.getMessage());
-            }
+            LegacyMetadataHelper secondMetadata = new LegacyMetadataHelper(
+                    this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
+            secondMetadata.setStringValue(this.selectedMetadata.getValue());
+            this.docStruct.addMetadata(secondMetadata);
         }
 
         Modes.setBindState(BindState.EDIT);
@@ -603,14 +590,10 @@ public class MetadataProcessor {
     }
 
     private void addMetadataToPhysicalDocStruct(LegacyMetadataTypeHelper mdt) {
-        try {
-            LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
-            Integer value = Integer.valueOf(currentRepresentativePage);
-            md.setStringValue(String.valueOf(value + 1));
-            this.digitalDocument.getPhysicalDocStruct().addMetadata(md);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage(), e);
-        }
+        LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
+        Integer value = Integer.valueOf(currentRepresentativePage);
+        md.setStringValue(String.valueOf(value + 1));
+        this.digitalDocument.getPhysicalDocStruct().addMetadata(md);
     }
 
     private boolean storeMetadata() {

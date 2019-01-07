@@ -49,10 +49,8 @@ import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
@@ -881,8 +879,6 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
         } catch (UghHelperException e) {
             Helper.setErrorMessage("UghHelperException", logger, e);
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
         }
     }
 
@@ -973,11 +969,7 @@ public class ProzesskopieForm implements Serializable {
                         continue there;
                     }
                 }
-                try {
-                    enricher.addMetadata(higherElement.getValue());
-                } catch (UGHException e) {
-                    Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") }, logger, e);
-                }
+                enricher.addMetadata(higherElement.getValue());
             }
         }
     }
@@ -1004,7 +996,7 @@ public class ProzesskopieForm implements Serializable {
                 md.setStringValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
-            } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+            } catch (UghHelperException | DocStructHasNoTypeException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
@@ -1169,7 +1161,7 @@ public class ProzesskopieForm implements Serializable {
             for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
-                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                } catch (DocStructHasNoTypeException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }

@@ -16,9 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
@@ -63,11 +61,8 @@ public interface LegacyDocStructHelperInterface {
      *
      * @param child
      *            DocStruct to be added
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
-    void addChild(LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(LegacyDocStructHelperInterface child);
 
     /**
      * Adds a DocStruct object as a child to this instance. The new child will
@@ -83,11 +78,8 @@ public interface LegacyDocStructHelperInterface {
      *            index at which the child is to be inserted
      * @param child
      *            DocStruct to be added
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
-    void addChild(Integer index, LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(Integer index, LegacyDocStructHelperInterface child);
 
     /**
      * Adds a new reference to a content file, and adds the content file to the
@@ -121,12 +113,8 @@ public interface LegacyDocStructHelperInterface {
      *             if this instance does not allow the meta-data type to be
      *             added, or if the maximum allowed number of meta-data of this
      *             type has already been added
-     * @throws DocStructHasNoTypeException
-     *             if no {@code DocStructType} is set on this instance. In this
-     *             case, the meta-data element cannot be added because we cannot
-     *             check whether the the meta-data type is allowed or not.
      */
-    void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException;
+    void addMetadata(LegacyMetadataHelper metadata);
 
     /**
      * Adds an outgoing reference to another {@code DocStruct} instance.

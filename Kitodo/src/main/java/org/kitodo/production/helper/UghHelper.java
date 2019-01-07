@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
@@ -78,15 +77,10 @@ public class UghHelper {
         if (inStruct != null && inMetadataType != null) {
             List<? extends LegacyMetadataHelper> all = inStruct.getAllMetadataByType(inMetadataType);
             if (all.isEmpty()) {
-                try {
-                    LegacyMetadataHelper md = new LegacyMetadataHelper(inMetadataType);
-                    md.setDocStruct(inStruct);
-                    inStruct.addMetadata(md);
-                    return md;
-                } catch (MetadataTypeNotAllowedException e) {
-                    logger.debug(e.getMessage());
-                    return null;
-                }
+                LegacyMetadataHelper md = new LegacyMetadataHelper(inMetadataType);
+                md.setDocStruct(inStruct);
+                inStruct.addMetadata(md);
+                return md;
             } else {
                 return all.get(0);
             }

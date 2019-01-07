@@ -27,10 +27,6 @@ import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -70,13 +66,13 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public void addChild(LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(LegacyDocStructHelperInterface child) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void addChild(Integer index, LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -87,7 +83,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     @Override
-    public void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) {
         if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER.equals(metadata.getMetadataType())) {
             mediaUnit.setOrder(Integer.parseInt(metadata.getValue()));
         } else if (LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL.equals(metadata.getMetadataType())) {
@@ -97,18 +93,17 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         }
     }
 
-    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value)
-            throws MetadataTypeNotAllowedException {
+    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException {
+    public void addMetadataGroup(MetadataGroupInterface metadataGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException {
+    public void addPerson(PersonInterface person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -125,7 +120,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     }
 
     public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            LegacyPrefsHelper prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
+            LegacyPrefsHelper prefs) {
 
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -322,7 +317,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void removeContentFile(LegacyContentFileHelper contentFile) throws ContentFileNotLinkedException {
+    public void removeContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

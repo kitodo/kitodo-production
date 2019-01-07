@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.enums.SortType;
@@ -220,7 +219,7 @@ public class MetadataHelper {
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
-                    } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                    } catch (DocStructHasNoTypeException e) {
                         logger.error(e.getMessage(), e);
                     }
                 }

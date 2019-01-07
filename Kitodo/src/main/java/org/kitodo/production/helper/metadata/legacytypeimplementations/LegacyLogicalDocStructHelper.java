@@ -41,10 +41,6 @@ import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -94,14 +90,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void addChild(LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
         structure.getChildren().add(legacyLogicalDocStructHelperChild.structure);
     }
 
     @Override
-    public void addChild(Integer index, LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
         structure.getChildren().add(index, legacyLogicalDocStructHelperChild.structure);
@@ -114,7 +110,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
-    public void addMetadata(LegacyMetadataHelper metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
         Optional<MetadataViewInterface> optionalKeyView = divisionView
@@ -138,18 +134,17 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
-    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value)
-            throws MetadataTypeNotAllowedException {
+    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException {
+    public void addMetadataGroup(MetadataGroupInterface metadataGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException {
+    public void addPerson(PersonInterface person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -169,7 +164,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            LegacyPrefsHelper prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
+            LegacyPrefsHelper prefs) {
 
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -437,7 +432,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         structure.getChildren().remove(legacyLogicalDocStructHelperChild.structure);
     }
 
-    public void removeContentFile(LegacyContentFileHelper contentFile) throws ContentFileNotLinkedException {
+    public void removeContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

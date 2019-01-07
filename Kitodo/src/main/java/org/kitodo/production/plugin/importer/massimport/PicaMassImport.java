@@ -63,7 +63,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -204,44 +203,34 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             workpieceProperties.add(prepareProperty("ATS", ats));
             workpieceProperties.add(prepareProperty("Identifier", currentIdentifier));
 
-            try {
-                // pathimagefiles
-                LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("pathimagefiles");
-                LegacyMetadataHelper newmd = new LegacyMetadataHelper(mdt);
-                newmd.setStringValue("/images/");
-                digitalDocument.getPhysicalDocStruct().addMetadata(newmd);
+            // pathimagefiles
+            LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("pathimagefiles");
+            LegacyMetadataHelper newmd = new LegacyMetadataHelper(mdt);
+            newmd.setStringValue("/images/");
+            digitalDocument.getPhysicalDocStruct().addMetadata(newmd);
 
-                // collections
-                if (this.currentCollectionList != null) {
-                    LegacyMetadataTypeHelper mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
-                    LegacyDocStructHelperInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
-                    List<LegacyDocStructHelperInterface> volumes = topLogicalStruct.getAllChildren();
-                    if (volumes == null) {
-                        volumes = Collections.emptyList();
-                    }
-                    for (String collection : this.currentCollectionList) {
-                        LegacyMetadataHelper mdCollection = new LegacyMetadataHelper(mdTypeCollection);
-                        mdCollection.setStringValue(collection);
-                        topLogicalStruct.addMetadata(mdCollection);
-                        for (LegacyDocStructHelperInterface volume : volumes) {
-                            try {
-                                LegacyMetadataHelper mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
-                                mdCollectionForVolume.setStringValue(collection);
-                                volume.addMetadata(mdCollectionForVolume);
-                            } catch (MetadataTypeNotAllowedException e) {
-                                logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-                            }
-                        }
+            // collections
+            if (this.currentCollectionList != null) {
+                LegacyMetadataTypeHelper mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
+                LegacyDocStructHelperInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
+                List<LegacyDocStructHelperInterface> volumes = topLogicalStruct.getAllChildren();
+                if (volumes == null) {
+                    volumes = Collections.emptyList();
+                }
+                for (String collection : this.currentCollectionList) {
+                    LegacyMetadataHelper mdCollection = new LegacyMetadataHelper(mdTypeCollection);
+                    mdCollection.setStringValue(collection);
+                    topLogicalStruct.addMetadata(mdCollection);
+                    for (LegacyDocStructHelperInterface volume : volumes) {
+                        LegacyMetadataHelper mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
+                        mdCollectionForVolume.setStringValue(collection);
+                        volume.addMetadata(mdCollectionForVolume);
                     }
                 }
-
-            } catch (MetadataTypeNotAllowedException e) {
-                logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             }
 
             return fileformat;
-        } catch (PreferencesException | ReadException | IOException | JDOMException | ParserConfigurationException
-                | MetadataTypeNotAllowedException e) {
+        } catch (PreferencesException | ReadException | IOException | JDOMException | ParserConfigurationException e) {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }

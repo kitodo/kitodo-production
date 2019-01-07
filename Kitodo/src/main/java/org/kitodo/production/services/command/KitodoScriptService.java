@@ -529,7 +529,7 @@ public class KitodoScriptService {
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
-            } catch (UghHelperException | MetadataTypeNotAllowedException | PreferencesException | IOException
+            } catch (UghHelperException | PreferencesException | IOException
                     | ReadException | WriteException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
             }
