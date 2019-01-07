@@ -629,16 +629,16 @@ public class ProcessForm extends TemplateBaseForm {
 
     private void download(WebDav webDav, ProcessDTO processDTO) {
         try {
-            Process process = ServiceManager.getProcessService().convertDtoToBean(processDTO);
+            Process processForDownload = ServiceManager.getProcessService().getById(processDTO.getId());
             if (!ServiceManager.getProcessService().isImageFolderInUse(processDTO)) {
-                webDav.downloadToHome(process, false);
+                webDav.downloadToHome(processForDownload, false);
             } else {
                 Helper.setMessage(
                     Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     ServiceManager.getUserService()
-                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(process)));
-                webDav.downloadToHome(process, true);
+                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
+                webDav.downloadToHome(processForDownload, true);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
