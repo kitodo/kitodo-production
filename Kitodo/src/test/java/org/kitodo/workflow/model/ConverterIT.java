@@ -105,7 +105,7 @@ public class ConverterIT {
 
         Template template = new Template();
         exception.expect(WorkflowException.class);
-        exception.expectMessage("No roles assigned to the workflow task with title: 'Task1'.");
+        exception.expectMessage("No roles assigned to the workflow task with name 'Task1'.");
         converter.convertWorkflowToTemplate(template);
     }
 

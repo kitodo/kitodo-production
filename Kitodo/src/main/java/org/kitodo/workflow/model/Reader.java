@@ -14,6 +14,7 @@ package org.kitodo.workflow.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.beans.Diagram;
 import org.kitodo.workflow.model.beans.TaskInfo;
@@ -170,7 +172,7 @@ public class Reader {
             } else if (nextNodes.count() > 1) {
                 addConditionalTasksBranch(nextNodes.list(), ordering);
             } else {
-                throw new WorkflowException("Exclusive gateway is not followed by any tasks!");
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionExclusiveGateway"));
             }
         } else if (node instanceof ParallelGateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
@@ -179,7 +181,7 @@ public class Reader {
             } else if (nextNodes.count() > 1) {
                 addParallelTasksBranch(nextNodes.list(), ordering, workflowCondition);
             } else {
-                throw new WorkflowException("Parallel gateway is not followed by any tasks!");
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGateway"));
             }
         }
     }
@@ -193,9 +195,8 @@ public class Reader {
     private void addConditionalTasksBranch(List<FlowNode> nextNodes, int ordering) throws WorkflowException {
         for (FlowNode node : nextNodes) {
             if (isBranchInvalid(node)) {
-                throw new WorkflowException(
-                        "Task in conditional branch can not have second task. Please remove task after task with name '"
-                                + node.getName() + "'.");
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionConditionalBranch",
+                    Collections.singletonList(node.getName())));
             }
 
             ConditionExpression conditionExpression = node.getIncoming().iterator().next().getConditionExpression();
@@ -221,9 +222,8 @@ public class Reader {
             throws WorkflowException {
         for (FlowNode node : nodes) {
             if (isBranchInvalid(node)) {
-                throw new WorkflowException(
-                        "Task in parallel branch can not have second task. Please remove task after task with name '"
-                                + node.getName() + "'.");
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelBranch",
+                    Collections.singletonList(node.getName())));
             }
 
             iterateOverNodes(node, ordering, workflowCondition);
@@ -268,8 +268,8 @@ public class Reader {
         } else if (nextNodesSize == 0) {
             tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
         } else {
-            throw new WorkflowException("Task with title '" + node.getName()
-                    + "' has more than one following tasks without any gateway in between!");
+            throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingGateway",
+                Collections.singletonList(node.getName())));
         }
     }
 
