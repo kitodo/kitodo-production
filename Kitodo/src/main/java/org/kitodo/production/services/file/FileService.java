@@ -53,7 +53,6 @@ import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
@@ -521,11 +520,8 @@ public class FileService {
             case METS:
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) rulesetService.getPreferences(ruleset)).getRuleset());
                 break;
-            case RDF:
-                throw new UnsupportedOperationException("Dead code pending removal");
             default:
-                ff = UghImplementation.INSTANCE.createXStream(rulesetService.getPreferences(ruleset));
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
         }
         // createBackupFile();
         URI metadataFileUri = getMetadataFilePath(process);

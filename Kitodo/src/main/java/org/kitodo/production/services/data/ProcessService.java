@@ -1242,9 +1242,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             case "mets":
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
                 break;
-            case "xstream":
-                ff = UghImplementation.INSTANCE.createXStream(prefs);
-                break;
             default:
                 throw new UnsupportedOperationException("Dead code pending removal");
         }
@@ -1265,10 +1262,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             case "mets":
                 fileFormat = new LegacyMetsModsDigitalDocumentHelper(
                         ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
-                break;
-            case "xstream":
-                fileFormat = UghImplementation.INSTANCE
-                        .createXStream(rulesetService.getPreferences(process.getRuleset()));
                 break;
             default:
                 throw new UnsupportedOperationException("Dead code pending removal");
