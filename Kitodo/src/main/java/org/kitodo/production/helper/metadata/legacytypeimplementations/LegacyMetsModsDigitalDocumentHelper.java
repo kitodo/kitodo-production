@@ -27,7 +27,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -45,8 +44,33 @@ import org.kitodo.production.services.file.FileService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyMetsModsDigitalDocumentHelper implements MetsModsImportExportInterface {
+public class LegacyMetsModsDigitalDocumentHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
+
+    /**
+     * For each meta data element of this type that is associated with a
+     * DocStruct element of the logical structure tree of a digital document, a
+     * METS pointer element will be created during export.
+     */
+    public static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
+
+    /**
+     * If there is a meta data element of this type associated with a DocStruct
+     * element of the logical structure tree of a digital document, a LABEL
+     * attribute will be attached to the logical div element during export which
+     * will have assigned the value assigned to the last meta data element of
+     * this type associated with the DocStruct element.
+     */
+    public static final String CREATE_LABEL_ATTRIBUTE_TYPE = "TitleDocMain";
+
+    /**
+     * If there is a meta data element of this type associated with a DocStruct
+     * element of the logical structure tree of a digital document, an
+     * ORDERLABEL attribute will be attached to the logical div element during
+     * export which will have assigned the value assigned to the last meta data
+     * element of this type associated with the DocStruct element.
+     */
+    public static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
 
     private static final MetsService metsService = ServiceManager.getMetsService();
     private static final FileService fileService = ServiceManager.getFileService();

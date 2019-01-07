@@ -19,7 +19,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -219,7 +218,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
                 root.createChild(type, result, ruleset)
-                        .addMetadata(MetsModsImportExportInterface.CREATE_MPTR_ELEMENT_TYPE, pointer);
+                        .addMetadata(LegacyMetsModsDigitalDocumentHelper.CREATE_MPTR_ELEMENT_TYPE, pointer);
             }
         }
         return result;

@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -312,7 +311,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         // create the year level
         LegacyDocStructHelperInterface year = createFirstChild(newspaper, document, ruleset);
         String theYear = Integer.toString(issues.get(0).getDate().getYear());
-        addMetadatum(year, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+        addMetadatum(year, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
         // create the month level
         Map<Integer, LegacyDocStructHelperInterface> months = new HashMap<>();
@@ -322,10 +321,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             Integer monthNo = date.getMonthOfYear();
             if (!months.containsKey(monthNo)) {
                 LegacyDocStructHelperInterface newMonth = createFirstChild(year, document, ruleset);
-                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                addMetadatum(newMonth, LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     monthNo.toString(), true);
                 addMetadatum(newMonth, year.getDocStructType().getName(), theYear, false);
-                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(),
+                addMetadatum(newMonth, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(),
                     false);
                 months.put(monthNo, newMonth);
             }
@@ -334,12 +333,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             // create the day level
             if (!days.containsKey(date)) {
                 LegacyDocStructHelperInterface newDay = createFirstChild(month, document, ruleset);
-                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                addMetadatum(newDay, LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     Integer.toString(date.getDayOfMonth()), true);
                 addMetadatum(newDay, year.getDocStructType().getName(), theYear, false);
                 addMetadatum(newDay, month.getDocStructType().getName(), Integer.toString(date.getMonthOfYear()),
                     false);
-                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE,
+                addMetadatum(newDay, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE,
                     Integer.toString(date.getDayOfMonth()), false);
                 days.put(date, newDay);
             }
@@ -354,7 +353,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             addMetadatum(issue, year.getDocStructType().getName(), theYear, false);
             addMetadatum(issue, month.getDocStructType().getName(), Integer.toString(date.getMonthOfYear()), false);
             addMetadatum(issue, day.getDocStructType().getName(), Integer.toString(date.getDayOfMonth()), false);
-            addMetadatum(issue, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
+            addMetadatum(issue, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
         }
     }
 

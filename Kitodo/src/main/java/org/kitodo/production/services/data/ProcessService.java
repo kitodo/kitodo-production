@@ -73,7 +73,6 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -2016,7 +2015,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        MetsModsImportExportInterface mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
+        LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
