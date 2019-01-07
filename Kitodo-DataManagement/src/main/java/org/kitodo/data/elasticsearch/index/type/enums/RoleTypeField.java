@@ -15,7 +15,6 @@ public enum RoleTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    AUTHORITIES("authorities"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
     USERS("users");

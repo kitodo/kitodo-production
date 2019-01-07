@@ -29,7 +29,6 @@ import javax.json.JsonValue;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
@@ -39,7 +38,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
-import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
@@ -86,7 +84,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         JsonArrayBuilder result = Json.createArrayBuilder();
         for (F property : objects) {
             JsonObjectBuilder jsonObject = Json.createObjectBuilder();
-            jsonObject.add(AuthorityTypeField.ID.getKey(), property.getId());
+            jsonObject.add(BatchTypeField.ID.getKey(), property.getId());
             if (addAdditionalProperties) {
                 getAdditionalProperties(jsonObject, property);
             }
@@ -134,9 +132,6 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             jsonObject.add(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
         } else if (property instanceof Filter) {
             jsonObject.add(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
-        } else if (property instanceof Authority) {
-            jsonObject.add(AuthorityTypeField.TITLE.getKey(),
-                    preventNull(((Authority) property).getTitle()));
         }
     }
 

@@ -31,12 +31,10 @@ import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RoleType;
-import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.RoleDTO;
 import org.kitodo.dto.UserDTO;
@@ -166,30 +164,8 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      */
     @Override
     protected void manageDependenciesForIndex(Role role) throws CustomResponseException, IOException {
-        manageAuthorizationsDependenciesForIndex(role);
         manageTasksDependenciesForIndex(role);
         manageUsersDependenciesForIndex(role);
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove role from list of
-     * roles and re-save authorization, if false only re-save authorization
-     * object.
-     *
-     * @param role
-     *            object
-     */
-    private void manageAuthorizationsDependenciesForIndex(Role role) throws CustomResponseException, IOException {
-        if (role.getIndexAction() == IndexAction.DELETE) {
-            for (Authority authority : role.getAuthorities()) {
-                authority.getRoles().remove(role);
-                ServiceManager.getAuthorityService().saveToIndex(authority, false);
-            }
-        } else {
-            for (Authority authority : role.getAuthorities()) {
-                ServiceManager.getAuthorityService().saveToIndex(authority, false);
-            }
-        }
     }
 
     /**
@@ -243,18 +219,6 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     }
 
     /**
-     * Find roles with authorization title.
-     *
-     * @param authorizationTitle
-     *            of the searched role
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
-        QueryBuilder query = createSimpleQuery(RoleTypeField.AUTHORITIES + ".title", authorizationTitle, true);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find roles by id of user.
      *
      * @param id
@@ -285,11 +249,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         JsonObject roleJsonObject = jsonObject.getJsonObject("_source");
         roleDTO.setTitle(RoleTypeField.TITLE.getStringValue(roleJsonObject));
         roleDTO.setUsersSize(RoleTypeField.USERS.getSizeOfProperty(roleJsonObject));
-        roleDTO.setAuthorizationsSize(RoleTypeField.AUTHORITIES.getSizeOfProperty(roleJsonObject));
         if (!related) {
             convertRelatedJSONObjects(roleJsonObject, roleDTO);
         } else {
-            addBasicAuthorizationsRelation(roleDTO, roleJsonObject);
             addBasicUsersRelation(roleDTO, roleJsonObject);
         }
 
@@ -304,25 +266,6 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
     private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO roleDTO) throws DataException {
         roleDTO.setUsers(
             convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(), ServiceManager.getUserService()));
-    }
-
-    private void addBasicAuthorizationsRelation(RoleDTO roleDTO, JsonObject jsonObject) {
-        if (roleDTO.getAuthorizationsSize() > 0) {
-            List<AuthorityDTO> authorizations = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(AuthorityTypeField.TITLE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                RoleTypeField.AUTHORITIES.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                AuthorityDTO authorization = new AuthorityDTO();
-                authorization.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    authorization.setTitle(relatedProperty.getValues().get(0));
-                }
-                authorizations.add(authorization);
-            }
-            roleDTO.setAuthorities(authorizations);
-        }
     }
 
     private void addBasicUsersRelation(RoleDTO roleDTO, JsonObject jsonObject) {

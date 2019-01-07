@@ -252,7 +252,7 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertAuthorities() throws DataException {
+    private static void insertAuthorities() throws DAOException {
         List<Authority> authorities = new ArrayList<>();
 
         // Client
@@ -367,7 +367,7 @@ public class MockDatabase {
         authorities.add(new Authority("addTask" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
-            ServiceManager.getAuthorityService().save(authority);
+            ServiceManager.getAuthorityService().saveToDatabase(authority);
         }
     }
 

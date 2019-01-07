@@ -129,8 +129,6 @@ public class DesktopForm extends BaseForm {
                     return ServiceManager.getProjectService().count();
                 case RULESET:
                     return ServiceManager.getRulesetService().count();
-                case AUTHORITY:
-                    return ServiceManager.getAuthorityService().count();
                 case PROPERTY:
                     return ServiceManager.getPropertyService().count();
                 case TEMPLATE:

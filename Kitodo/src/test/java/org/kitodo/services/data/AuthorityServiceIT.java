@@ -11,7 +11,6 @@
 
 package org.kitodo.services.data;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class AuthorityServiceIT {
@@ -49,42 +47,9 @@ public class AuthorityServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllAuthorities() {
-        await().untilAsserted(() -> assertEquals("Authorizations were not counted correctly!",
-            Long.valueOf(EXPECTED_AUTHORITIES_COUNT), authorityService.count()));
-    }
-
-    @Test
     public void shouldCountAllDatabaseRowsForAuthorities() throws Exception {
         Long amount = authorityService.countDatabaseRows();
         assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
-    }
-
-    @Test
-    public void shouldFindAllAuthorities() {
-        await().untilAsserted(() -> assertEquals("Not all authorizations were found in database!",
-            EXPECTED_AUTHORITIES_COUNT, authorityService.findAll().size()));
-    }
-
-    @Test
-    public void shouldFindById() {
-        String expected = "viewClient_globalAssignable";
-        await().untilAsserted(
-            () -> assertEquals("Authority was not found in index!", expected, authorityService.findById(2).getTitle()));
-    }
-
-    @Test
-    public void shouldFindByTitle() {
-        int expected = 1;
-        await().untilAsserted(() -> assertEquals("Authority was not found in index!", expected,
-            authorityService.findByTitle("viewAllRoles_globalAssignable", true).size()));
-    }
-
-    @Test
-    public void shouldNotFindByTitle() {
-        int expected = 0;
-        await().untilAsserted(() -> assertEquals("Authority was found in index!", expected,
-            authorityService.findByTitle("none", true).size()));
     }
 
     @Test
@@ -107,11 +72,11 @@ public class AuthorityServiceIT {
     }
 
     @Test
-    public void shouldNotSaveAlreadyExistingAuthorities() throws DataException {
+    public void shouldNotSaveAlreadyExistingAuthorities() throws Exception {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("viewAllClients_globalAssignable");
-        exception.expect(DataException.class);
-        authorityService.save(adminAuthority);
+        exception.expect(DAOException.class);
+        authorityService.saveToDatabase(adminAuthority);
     }
 
     @Test

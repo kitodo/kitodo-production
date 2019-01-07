@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class AuthorityDaoIT {
 
@@ -53,11 +52,9 @@ public class AuthorityDaoIT {
     private List<Authority> getAuthorities() {
         Authority firstAuthority = new Authority();
         firstAuthority.setTitle("first_authority");
-        firstAuthority.setIndexAction(IndexAction.DONE);
 
         Authority secondAuthority = new Authority();
         secondAuthority.setTitle("second_authority");
-        secondAuthority.setIndexAction(IndexAction.INDEX);
 
         Authority thirdAuthority = new Authority();
         thirdAuthority.setTitle("third_authority");

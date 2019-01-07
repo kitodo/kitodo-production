@@ -29,7 +29,6 @@ public class RoleType extends BaseType<Role> {
     JsonObject getJsonObject(Role role) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(RoleTypeField.TITLE.getKey(), preventNull(role.getTitle()));
-        jsonObjectBuilder.add(RoleTypeField.AUTHORITIES.getKey(), addObjectRelation(role.getAuthorities(), true));
         jsonObjectBuilder.add(RoleTypeField.USERS.getKey(), addObjectRelation(role.getUsers(), true));
         if (Objects.nonNull(role.getClient())) {
             jsonObjectBuilder.add(RoleTypeField.CLIENT_ID.getKey(), role.getClient().getId());

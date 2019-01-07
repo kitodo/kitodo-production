@@ -580,9 +580,6 @@ public class IndexingForm {
     private SearchService getService(ObjectType objectType) {
         if (!searchServices.containsKey(objectType) || searchServices.get(objectType) == null) {
             switch (objectType) {
-                case AUTHORITY:
-                    searchServices.put(objectType, ServiceManager.getAuthorityService());
-                    break;
                 case BATCH:
                     searchServices.put(objectType, ServiceManager.getBatchService());
                     break;

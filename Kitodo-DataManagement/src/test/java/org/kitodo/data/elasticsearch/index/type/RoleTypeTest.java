@@ -29,7 +29,6 @@ import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
@@ -113,27 +112,6 @@ public class RoleTypeTest {
         assertEquals("Key client.name doesn't match to given value!", "Client",
                 RoleTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
-        assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
-
-        JsonObject authority = authorities.getJsonObject(0);
-        assertEquals("Key authorities.id doesn't match to given value!", 1,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "admin",
-            AuthorityTypeField.TITLE.getStringValue(authority));
-
-        authority = authorities.getJsonObject(1);
-        assertEquals("Key authorities.id doesn't match to given value!", 2,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "manager",
-            AuthorityTypeField.TITLE.getStringValue(authority));
-
-        authority = authorities.getJsonObject(2);
-        assertEquals("Key authorities.id doesn't match to given value!", 3,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "user",
-            AuthorityTypeField.TITLE.getStringValue(authority));
-
         JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
@@ -172,27 +150,6 @@ public class RoleTypeTest {
 
         JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
-
-        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
-        assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
-
-        JsonObject authority = authorities.getJsonObject(0);
-        assertEquals("Key authorities.id doesn't match to given value!", 1,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "admin",
-            AuthorityTypeField.TITLE.getStringValue(authority));
-
-        authority = authorities.getJsonObject(1);
-        assertEquals("Key authorities.id doesn't match to given value!", 2,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "manager",
-            AuthorityTypeField.TITLE.getStringValue(authority));
-
-        authority = authorities.getJsonObject(2);
-        assertEquals("Key authorities.id doesn't match to given value!", 3,
-            AuthorityTypeField.ID.getIntValue(authority));
-        assertEquals("Key authorities.title doesn't match to given value!", "user",
-            AuthorityTypeField.TITLE.getStringValue(authority));
     }
 
     @Test
@@ -203,11 +160,7 @@ public class RoleTypeTest {
         HttpEntity document = roleType.createDocument(role);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
-
-        JsonArray authorities = RoleTypeField.AUTHORITIES.getJsonArray(actual);
-        JsonObject authority = authorities.getJsonObject(0);
-        assertEquals("Amount of keys in authorities is incorrect!", 2, authority.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 4, actual.keySet().size());
 
         JsonArray users = RoleTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);
