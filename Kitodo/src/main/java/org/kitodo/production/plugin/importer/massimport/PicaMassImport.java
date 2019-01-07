@@ -64,7 +64,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -436,7 +435,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (ff != null) {
                 r.setId(this.currentIdentifier);
                 try {
-                    MetsModsInterface mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) this.prefs).getRuleset());
+                    LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) this.prefs).getRuleset());
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
                     logger.debug("Writing '{}' into given folder...", fileName);

@@ -29,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -250,7 +249,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 return;
             }
             process = processesIterator.next();
-            MetsModsInterface extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
+            LegacyMetsModsDigitalDocumentHelper extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
             new ExportDms(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES)).startExport(process,
@@ -469,12 +468,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private MetsModsInterface buildExportableMetsMods(Process process, HashMap<Integer, String> years,
+    private LegacyMetsModsDigitalDocumentHelper buildExportableMetsMods(Process process, HashMap<Integer, String> years,
             ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, IOException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         PrefsInterface ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        MetsModsInterface result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
+        LegacyMetsModsDigitalDocumentHelper result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
 

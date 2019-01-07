@@ -28,7 +28,6 @@ import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -46,8 +45,7 @@ import org.kitodo.production.services.file.FileService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyMetsModsDigitalDocumentHelper
-        implements MetsModsInterface, MetsModsImportExportInterface {
+public class LegacyMetsModsDigitalDocumentHelper implements MetsModsImportExportInterface {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
 
     private static final MetsService metsService = ServiceManager.getMetsService();
@@ -187,7 +185,6 @@ public class LegacyMetsModsDigitalDocumentHelper
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void read(String path) throws ReadException {
         URI uri = new File(path).toURI();
 
@@ -219,7 +216,6 @@ public class LegacyMetsModsDigitalDocumentHelper
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void write(String filename) throws PreferencesException, WriteException {
         URI uri = new File(filename).toURI();
 
@@ -270,7 +266,6 @@ public class LegacyMetsModsDigitalDocumentHelper
         return exception;
     }
 
-    @Override
     public void setContentIDs(String contentIDs) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -278,7 +273,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setDigiprovPresentation(String digiprovPresentation) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -286,7 +280,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -294,7 +287,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setDigiprovReference(String digiprovReference) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -302,7 +294,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -310,7 +301,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setMptrAnchorUrl(String mptrAnchorUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -318,7 +308,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setMptrUrl(String mptrUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -326,7 +315,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setPurlUrl(String purlUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -334,7 +322,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setRightsOwner(String rightsOwner) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -342,7 +329,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setRightsOwnerContact(String rightsOwnerContact) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -350,7 +336,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setRightsOwnerLogo(String rightsOwnerLogo) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -358,7 +343,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -366,7 +350,6 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
     public void setWriteLocal(boolean writeLocalFileGroup) {
         /*
          * This is already done by the schema service. There is nothing to do
