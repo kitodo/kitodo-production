@@ -532,25 +532,24 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFilterForCorrectionSolutionMessages() throws Exception {
-        ProcessDTO process = processService.findById(1);
-        List<PropertyDTO> properties = processService.filterForCorrectionSolutionMessages(process.getProperties());
-
-        Integer expected = 2;
-        Integer actual = properties.get(0).getId();
-        assertEquals("Process property id is not equal to given process property id!", expected, actual);
-
-        expected = 3;
-        actual = properties.get(1).getId();
-        assertEquals("Process property id is not equal to given process property id!", expected, actual);
-    }
-
-    @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws Exception {
         ProcessDTO process = processService.findById(1);
-        Integer expected = 2;
-        Integer actual = processService.getSortedCorrectionSolutionMessages(process).size();
-        assertEquals("Size of sorted correction messages is not equal to given size!", expected, actual);
+        List<PropertyDTO> properties = processService.getSortedCorrectionSolutionMessages(process);
+
+        int actual = properties.size();
+        assertEquals("Size of sorted correction messages is not equal to given size!", 2, actual);
+
+        actual = properties.get(0).getId();
+        assertEquals("Process property id is not equal to given process property id!", 2, actual);
+
+        actual = properties.get(1).getId();
+        assertEquals("Process property id is not equal to given process property id!", 3, actual);
+
+        process = processService.findById(3);
+        properties = processService.getSortedCorrectionSolutionMessages(process);
+
+        actual = properties.size();
+        assertEquals("Size of sorted correction messages is not equal to given size!", 0, actual);
     }
 
     @Test
