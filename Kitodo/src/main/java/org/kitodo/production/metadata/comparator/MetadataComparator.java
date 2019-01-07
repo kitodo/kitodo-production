@@ -16,8 +16,8 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
-import org.kitodo.helper.metadata.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 
 public class MetadataComparator implements Comparator<LegacyMetadataHelper> {
     private static final Logger logger = LogManager.getLogger(MetadataComparator.class);
@@ -40,8 +40,8 @@ public class MetadataComparator implements Comparator<LegacyMetadataHelper> {
         try {
             LegacyMetadataTypeHelper firstMetadataType = firstMetadata.getMetadataType();
             LegacyMetadataTypeHelper secondMetadataType = secondMetadata.getMetadataType();
-            firstName = firstMetadataType.getNameByLanguage(this.language);
-            secondName = secondMetadataType.getNameByLanguage(this.language);
+            firstName = firstMetadataType.getLanguage(this.language);
+            secondName = secondMetadataType.getLanguage(this.language);
         } catch (NullPointerException e) {
             logger.debug("Language {} for metadata {} or {} is missing in ruleset", this.language,
                     firstMetadata.getMetadataType(), secondMetadata.getMetadataType());

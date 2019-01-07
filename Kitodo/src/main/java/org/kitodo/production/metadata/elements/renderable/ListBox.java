@@ -56,12 +56,7 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.SELECT);
         if (binding != null) {
-            List<LegacyMetadataHelper> elements = binding.getMetadataByType(metadataType.getName());
-            List<String> selected = new ArrayList<>(elements.size());
-            for (LegacyMetadataHelper m : elements) {
-                selected.add(m.getValue());
-            }
-            setSelectedItems(selected);
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
     }
 

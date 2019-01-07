@@ -59,9 +59,7 @@ public class LineEdit extends RenderableMetadata
 
         super(metadataType, binding, container);
         if (binding != null) {
-            for (LegacyMetadataHelper data : binding.getMetadataByType(metadataType.getName())) {
-                addContent(data);
-            }
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
     }
 

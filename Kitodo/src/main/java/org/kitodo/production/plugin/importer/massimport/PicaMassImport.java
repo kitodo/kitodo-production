@@ -63,7 +63,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -280,12 +279,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     private void readAuthor(LegacyDocStructHelperInterface logicalDS) {
         LegacyMetadataTypeHelper authorType = prefs.getMetadataTypeByName("Author");
-        List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
-        if (Objects.nonNull(personList) && !personList.isEmpty()) {
-            PersonInterface authorMetadata = personList.get(0);
-            author = authorMetadata.getDisplayName();
-
-        }
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private void readVolumeNumber(LegacyDocStructHelperInterface child) {

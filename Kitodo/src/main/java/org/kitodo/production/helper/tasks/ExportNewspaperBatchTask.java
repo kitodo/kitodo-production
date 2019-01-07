@@ -516,7 +516,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 LegacyDocStructHelperInterface child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
                     LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, year.getKey().toString(),
                     LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
-                child.addMetadata(LegacyMetsModsDigitalDocumentHelper.CREATE_MPTR_ELEMENT_TYPE, year.getValue());
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         }
     }
@@ -556,27 +556,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         try {
-            return parent.getChild(type, identifierField, identifier);
+            throw new UnsupportedOperationException("Dead code pending removal");
         } catch (NoSuchElementException nose) {
             LegacyDocStructHelperInterface child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
-            child.addMetadata(identifierField, identifier);
-            try {
-                child.addMetadata(optionalField, identifier);
-            } catch (MetadataTypeNotAllowedException e) {
-                logger.info("Exception: {}",
-                    e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
-            }
-
-            Integer rank = null;
-            try {
-                rank = Integer.valueOf(identifier);
-            } catch (NumberFormatException e) {
-                logger.warn("Cannot place {} \"{}\" correctly because its sorting criterion is not numeric.", type,
-                    identifier);
-            }
-            parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
-
-            return child;
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
     }
 
@@ -701,8 +684,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         LegacyDocStructHelperInterface day = getOrCreateChild(month, dayLevelName,
             LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
             LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-        LegacyDocStructHelperInterface issue = day.createChild(issueLevelName, act, ruleset);
-        issue.addMetadata(LegacyMetsModsDigitalDocumentHelper.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**

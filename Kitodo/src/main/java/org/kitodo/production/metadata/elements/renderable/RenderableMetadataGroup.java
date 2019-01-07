@@ -15,18 +15,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.faces.model.SelectItem;
+import javax.naming.ConfigurationException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.exceptions.MetadataException;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 
@@ -238,25 +235,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             multi-select input
      */
     private void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
-        List<LegacyMetadataTypeHelper> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
-        members = new LinkedHashMap<>(hashCapacityFor(requiredFields));
-        for (LegacyMetadataTypeHelper field : requiredFields) {
-            RenderableGroupableMetadata member;
-            if (!(this instanceof PersonMetadataGroup)) {
-                member = RenderableMetadata.create(field, autoUpdate ? binding : null, this, projectName);
-            } else {
-                member = new Edit(field, autoUpdate ? binding : null, this);
-            }
-            members.put(field.getName(), member);
-        }
-        if (!autoUpdate) {
-            for (LegacyMetadataHelper contentValue : data.getMetadataList()) {
-                members.get(contentValue.getMetadataType().getName()).addContent(contentValue);
-            }
-            for (PersonInterface contentValue : data.getPersonList()) {
-                members.get(contentValue.getMetadataType().getName()).addContent(contentValue);
-            }
-        }
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -433,21 +412,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      *             misconfigured to show a multi-value input element
      */
     private void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
-        List<LegacyMetadataTypeHelper> requiredMetadataTypes = newGroupType.getMetadataTypeList();
-        Map<String, RenderableGroupableMetadata> newMembers = new LinkedHashMap<>(
-                hashCapacityFor(requiredMetadataTypes));
-        for (LegacyMetadataTypeHelper type : requiredMetadataTypes) {
-            RenderableGroupableMetadata member = members.get(type.getName());
-            if (member == null) {
-                if (!(this instanceof PersonMetadataGroup)) {
-                    member = RenderableMetadata.create(type, binding, this, projectName);
-                } else {
-                    member = new Edit(type, binding, this);
-                }
-            }
-            newMembers.put(type.getName(), member);
-        }
-        members = newMembers;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private static int hashCapacityFor(Collection<?> collection) {

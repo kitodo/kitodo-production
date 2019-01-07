@@ -147,7 +147,7 @@ public class MetaPerson {
     public void setRolle(String inRolle) {
         this.p.setRole(inRolle);
         LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
-        this.p.setType(mdt);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     public List<SelectItem> getAddableRollen() {

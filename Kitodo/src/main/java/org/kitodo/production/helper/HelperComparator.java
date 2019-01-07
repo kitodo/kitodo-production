@@ -73,15 +73,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
-        String firstName = firstMetadata.getMetadataType().getNameByLanguage(language);
-        String secondName = secondMetadata.getMetadataType().getNameByLanguage(language);
-        if (firstName == null) {
-            firstName = firstMetadata.getMetadataType().getName();
-        }
-        if (secondName == null) {
-            secondName = secondMetadata.getMetadataType().getName();
-        }
-        return firstName.compareToIgnoreCase(secondName);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private int compareDocStructTypes(Object firstObject, Object secondObject) {

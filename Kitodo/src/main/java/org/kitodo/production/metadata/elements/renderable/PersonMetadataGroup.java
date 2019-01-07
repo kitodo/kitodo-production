@@ -87,7 +87,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
         getField(Field.NORMDATA_RECORD).setValue(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""));
         if (binding != null) {
             for (PersonInterface person : binding.getPersonByType(metadataType.getName())) {
-                addContent(person);
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         }
     }
@@ -202,7 +202,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      * @see RenderableGroupableMetadata#toMetadata()
      */
     @Override
-    public List<PersonInterface> toMetadata() {
+    public List<? extends LegacyMetadataHelper> toMetadata() {
         PersonInterface person;
         throw new UnsupportedOperationException("Dead code pending removal");
     }

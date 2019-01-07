@@ -22,10 +22,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -254,8 +251,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         String firstAddable = null;
         try {
             firstAddable = docStruct.getDocStructType().getAllAllowedDocStructTypes().get(0);
-            return docStruct.createChild(firstAddable, document, ruleset);
-        } catch (TypeNotAllowedAsChildException | TypeNotAllowedForParentException | RuntimeException e) {
+            throw new UnsupportedOperationException("Dead code pending removal");
+        } catch (RuntimeException e) {
             StringBuilder message = new StringBuilder();
             message.append("Could not add child ");
             if (firstAddable != null) {
@@ -372,8 +369,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      */
     private void addMetadatum(LegacyDocStructHelperInterface level, String key, String value, boolean fail) {
         try {
-            level.addMetadata(key, value);
-        } catch (MetadataTypeNotAllowedException | RuntimeException e) {
+            throw new UnsupportedOperationException("Dead code pending removal");
+        } catch (RuntimeException e) {
             if (fail) {
                 throw new ProcessCreationException("Could not create metadatum " + key + " in "
                         + (level.getDocStructType() != null ? "DocStrctType " + level.getDocStructType().getName()

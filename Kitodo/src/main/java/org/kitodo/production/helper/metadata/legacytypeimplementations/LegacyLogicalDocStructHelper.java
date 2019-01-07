@@ -427,8 +427,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        return divisionView.getAllowedSubstructuralElements().containsKey(type.getName());
     }
 
     @Override

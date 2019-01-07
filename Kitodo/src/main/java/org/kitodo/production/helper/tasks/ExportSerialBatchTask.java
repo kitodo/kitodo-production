@@ -217,8 +217,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
-                root.createChild(type, result, ruleset)
-                        .addMetadata(LegacyMetsModsDigitalDocumentHelper.CREATE_MPTR_ELEMENT_TYPE, pointer);
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         }
         return result;

@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.helper.metadata.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 
 public interface Metadata {
 

@@ -825,8 +825,7 @@ public class ProzesskopieForm implements Serializable {
                 LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
                 while (docStructType.getAnchorClass() != null) {
-                    populizer = populizer.createChild(docStructType.getAllAllowedDocStructTypes().get(0),
-                        rdf.getDigitalDocument(), ruleset);
+                    throw new UnsupportedOperationException("Dead code pending removal");
                 }
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -1152,8 +1151,7 @@ public class ProzesskopieForm implements Serializable {
                                 && newLogicalDocstruct.getAllChildren() != null) {
                             // new has a child, but old not
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.copy(true, false),
-                                newLogicalDocstruct.getAllChildren().get(0));
+                            throw new UnsupportedOperationException("Dead code pending removal");
                         } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() != null) {
                             // both have children
@@ -1188,8 +1186,8 @@ public class ProzesskopieForm implements Serializable {
         if (oldDocStruct.getAllPersons() != null) {
             for (PersonInterface p : oldDocStruct.getAllPersons()) {
                 try {
-                    newDocStruct.addPerson(p);
-                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    throw new UnsupportedOperationException("Dead code pending removal");
+                } catch (DocStructHasNoTypeException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }

@@ -20,9 +20,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
-import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
@@ -170,18 +167,7 @@ public class MetadataPathSelector extends MetadataSelector {
         LegacyDocStructHelperInterface subnode = getSubnode(logicalNode);
         if (subnode == null && !ANY_METADATA_TYPE_SYMBOL.equals(docStructType)) {
             try {
-                subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
-            } catch (TypeNotAllowedAsChildException e) {
-                // copy rules aren’t related to the rule set but depend on it,
-                // so copy rules that don’t work with the current rule set are
-                // ignored
-                String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";
-                logger.debug("Cannot create structural element {} as child of {} because it isn’t allowed by the rule set.",
-                    docStructType, nodeName);
-                return;
-            } catch (TypeNotAllowedForParentException e) {
-                // see https://github.com/kitodo/kitodo-ugh/issues/2
-                throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
+                throw new UnsupportedOperationException("Dead code pending removal");
             } catch (RuntimeException e) {
                 // copy rule failed, skip it
                 String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";

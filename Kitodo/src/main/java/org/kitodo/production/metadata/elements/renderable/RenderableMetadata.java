@@ -262,9 +262,7 @@ public abstract class RenderableMetadata {
      */
     protected void updateBinding() {
         if (binding != null) {
-            List<LegacyMetadataHelper> bound = binding.getMetadataList();
-            bound.removeAll(binding.getMetadataByType(metadataType.getName()));
-            bound.addAll(((RenderableGroupableMetadata) this).toMetadata());
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
     }
 

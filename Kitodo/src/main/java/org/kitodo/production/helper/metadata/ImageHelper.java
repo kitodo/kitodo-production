@@ -41,7 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
@@ -136,12 +135,7 @@ public class ImageHelper {
                     if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
                     } else {
-                        try {
-                            page.removeContentFile(page.getAllContentFiles().get(0));
-                            pageElementsWithoutImages.add(page);
-                        } catch (ContentFileNotLinkedException e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                        throw new UnsupportedOperationException("Dead code pending removal");
                     }
                 } else {
                     pageElementsWithoutImages.add(page);
@@ -157,10 +151,7 @@ public class ImageHelper {
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
             for (LegacyDocStructHelperInterface pageToRemove : pageElementsWithoutImages) {
                 physicalStructure.removeChild(pageToRemove);
-                List<LegacyReferenceHelper> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-                for (LegacyReferenceHelper ref : refs) {
-                    ref.getSource().removeReferenceTo(pageToRemove);
-                }
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         } else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
             // case 2: no page docs but images (some images are added)
@@ -195,10 +186,7 @@ public class ImageHelper {
                 } else {
                     // remove page
                     physicalStructure.removeChild(page);
-                    List<LegacyReferenceHelper> refs = new ArrayList<>(page.getAllFromReferences());
-                    for (LegacyReferenceHelper ref : refs) {
-                        ref.getSource().removeReferenceTo(page);
-                    }
+                    throw new UnsupportedOperationException("Dead code pending removal");
                 }
             }
             if (!imagesWithoutPageElements.isEmpty()) {

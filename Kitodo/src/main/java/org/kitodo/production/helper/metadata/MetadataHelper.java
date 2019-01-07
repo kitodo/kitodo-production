@@ -27,14 +27,19 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.metadata.comparator.MetadataComparator;
 import org.kitodo.production.services.ServiceManager;
 
@@ -227,11 +232,7 @@ public class MetadataHelper {
          * sortieren
          */
         if (inIsPerson) {
-            List<PersonInterface> person = inStruct.getAllPersons();
-            if (person != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                person.sort(new MetadataComparator(inLanguage));
-            }
-            return person;
+            throw new UnsupportedOperationException("Dead code pending removal");
         } else {
             List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
             if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {

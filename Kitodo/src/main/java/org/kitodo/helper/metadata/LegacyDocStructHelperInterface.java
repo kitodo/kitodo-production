@@ -19,6 +19,11 @@ import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 
 /**
  * One node of a tree depicting the structure of the document.
@@ -327,6 +332,17 @@ public interface LegacyDocStructHelperInterface {
      * @return the type of this DocStruct
      */
     LegacyLogicalDocStructTypeHelper getDocStructType();
+
+    /**
+     * Returns whether a {@code DocStruct} of the given {@code DocStructType} is
+     * allowed to be added to this instance.
+     *
+     * @param type
+     *            the {@code DocStructType} in question
+     * @return true, if {@code DocStruct} of this type can be added; otherwise
+     *         false
+     */
+    boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type);
 
     /**
      * Removes a child from this instance.

@@ -367,8 +367,7 @@ public class MetadataProcessor {
      *
      */
     public void deletePerson() {
-        this.docStruct.removePerson(this.curPerson.getP());
-        saveMetadataAsBean(this.docStruct);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -650,17 +649,6 @@ public class MetadataProcessor {
             }
         }
 
-        /*
-         * alle Personen und die DefaultDisplay-Werte ermitteln
-         */
-        tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
-            ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), true, this.process);
-        if (tempMetadata != null) {
-            for (LegacyMetadataHelper metadata : tempMetadata) {
-                lsPers.add(new MetaPerson((PersonInterface) metadata, 0, this.myPrefs, inStrukturelement));
-            }
-        }
-
         this.myMetadaten = lsMeta;
         this.metaPersonList = lsPers;
 
@@ -894,15 +882,7 @@ public class MetadataProcessor {
     private void addNewDocStructToExistingDocStruct(LegacyDocStructHelperInterface existingDocStruct,
             LegacyDocStructHelperInterface newDocStruct, int index) throws TypeNotAllowedAsChildException {
 
-        if (existingDocStruct.isDocStructTypeAllowedAsChild(newDocStruct.getDocStructType())) {
-            if (existingDocStruct.getAllChildren().size() < index) {
-                index--;
-            }
-            existingDocStruct.addChild(index, newDocStruct);
-        } else {
-            throw new TypeNotAllowedAsChildException(newDocStruct.getDocStructType() + " ot allowed as child of "
-                    + existingDocStruct.getDocStructType());
-        }
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct, LegacyMetsModsDigitalDocumentHelper digitalDocument,
@@ -916,7 +896,7 @@ public class MetadataProcessor {
 
             LegacyDocStructHelperInterface createdElement = digitalDocument.createDocStruct(docStructType);
             if (docStructType != null && value != null && metadataType != null) {
-                createdElement.addMetadata(metadataType, value);
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
             createdElements.add(createdElement);
         }
@@ -1942,12 +1922,7 @@ public class MetadataProcessor {
             LegacyDocStructHelperInterface pageToRemove = allPages.get(pageIndex);
             String imageName = pageToRemove.getImageName();
             removeImage(imageName);
-            digitalDocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
-            digitalDocument.getPhysicalDocStruct().removeChild(pageToRemove);
-            List<LegacyReferenceHelper> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-            for (LegacyReferenceHelper ref : refs) {
-                ref.getSource().removeReferenceTo(pageToRemove);
-            }
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
     }
 
@@ -2009,11 +1984,7 @@ public class MetadataProcessor {
      * @return whether the type is available to add
      */
     public boolean canCreate(MetadataGroupTypeInterface type) {
-        List<MetadataGroupTypeInterface> addableTypes = docStruct.getAddableMetadataGroupTypes();
-        if (addableTypes == null) {
-            addableTypes = Collections.emptyList();
-        }
-        return addableTypes.contains(type);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -2023,7 +1994,7 @@ public class MetadataProcessor {
      *            metadata group to delete.
      */
     public void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
-        docStruct.removeMetadataGroup(metadataGroup);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
