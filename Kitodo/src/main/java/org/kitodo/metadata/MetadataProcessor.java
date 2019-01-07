@@ -606,7 +606,7 @@ public class MetadataProcessor {
         this.process.setSortHelperMetadata(counter.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
             this.process.setSortHelperImages(fileService
-                    .getNumberOfFiles(ServiceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
+                    .getNumberOfFiles(ServiceManager.getProcessService().getImagesOriginDirectory(true, this.process)));
             ServiceManager.getProcessService().save(this.process);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);

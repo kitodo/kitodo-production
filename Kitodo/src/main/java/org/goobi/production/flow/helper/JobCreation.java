@@ -176,7 +176,7 @@ public class JobCreation {
                 for (URI uri : imageDir) {
                     URI image = fileService.createResource(imagesFolder, uri.toString());
                     URI dest = fileService.createResource(
-                        ServiceManager.getProcessService().getImagesOrigDirectory(false, p),
+                        ServiceManager.getProcessService().getImagesOriginDirectory(false, p),
                         fileService.getFileName(image));
                     fileService.moveFile(image, dest);
                 }
