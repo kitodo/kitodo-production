@@ -27,9 +27,7 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.exceptions.MetadataException;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
@@ -418,25 +416,7 @@ public class RenderableMetadataGroup extends RenderableMetadata {
      */
     public MetadataGroupInterface toMetadataGroup() {
         MetadataGroupInterface result;
-        try {
-            result = UghImplementation.INSTANCE.createMetadataGroup(type);
-        } catch (MetadataTypeNotAllowedException e) {
-            throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation.");
-        }
-        result.getMetadataList().clear();
-        result.getPersonList().clear();
-
-        for (RenderableGroupableMetadata member : members.values()) {
-            for (MetadataInterface element : member.toMetadata()) {
-                if (member instanceof PersonMetadataGroup) {
-                    result.addPerson(((PersonInterface) element));
-                } else {
-                    result.addMetadata(element);
-                }
-            }
-
-        }
-        return result;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
