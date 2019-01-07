@@ -16,7 +16,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,12 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MdSec;
 
 public class WorkpieceIT {
+
+    private static final File OUT_FILE = new File("src/test/resources/out.xml");
+
+    public static void clean() throws Exception {
+        Files.deleteIfExists(OUT_FILE.toPath());
+    }
 
     /**
      * Tests loading a workpiece from a METS file.
@@ -187,11 +195,15 @@ public class WorkpieceIT {
         workpiece.getMetsHdr().add(note);
 
         // write file
-        workpiece.save(new FileOutputStream(new File("src/test/resources/out.xml")));
+        try (FileOutputStream out = new FileOutputStream(OUT_FILE)) {
+            workpiece.save(out);
+        }
 
         // read the file and see if everything is in it
         Workpiece reread = new Workpiece();
-        reread.read(new FileInputStream(new File("src/test/resources/out.xml")));
+        try (InputStream inputStream = new FileInputStream(OUT_FILE)) {
+            reread.read(inputStream);
+        }
 
         assertEquals(1, reread.getMetsHdr().size());
         assertEquals(4, reread.getFileGrp().size());
@@ -202,5 +214,7 @@ public class WorkpieceIT {
         assertEquals(4, structureRoot.getAreas().size());
         assertEquals(3, structureRoot.getChildren().size());
         assertEquals(1, structureRoot.getMetadata().size());
+
+        clean();
     }
 }
