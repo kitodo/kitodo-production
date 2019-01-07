@@ -22,7 +22,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class UghHelper {
@@ -80,7 +80,7 @@ public class UghHelper {
             List<? extends MetadataInterface> all = inStruct.getAllMetadataByType(inMetadataType);
             if (all.isEmpty()) {
                 try {
-                    MetadataInterface md = UghImplementation.INSTANCE.createMetadata(inMetadataType);
+                    MetadataInterface md = new LegacyMetadataHelper(inMetadataType);
                     md.setDocStruct(inStruct);
                     inStruct.addMetadata(md);
                     return md;

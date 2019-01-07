@@ -41,6 +41,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.comparator.MetadataComparator;
 import org.kitodo.production.services.ServiceManager;
@@ -220,7 +221,7 @@ public class MetadataHelper {
                             p.setRole(mdt.getName());
                             inStruct.addPerson(p);
                         } else {
-                            MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
+                            MetadataInterface md = new LegacyMetadataHelper(mdt);
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }

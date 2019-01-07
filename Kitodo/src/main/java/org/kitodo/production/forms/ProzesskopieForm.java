@@ -83,9 +83,9 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.WikiFieldHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
@@ -874,7 +874,7 @@ public class ProzesskopieForm implements Serializable {
                     digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
                 }
             }
-            MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
+            MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
             String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)
                     + this.prozessKopie.getTitle().trim() + "_" + DIRECTORY_SUFFIX;
             if (SystemUtils.IS_OS_WINDOWS) {
@@ -1007,7 +1007,7 @@ public class ProzesskopieForm implements Serializable {
     private void addCollections(DocStructInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                MetadataInterface md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
+                MetadataInterface md = new LegacyMetadataHelper(UghHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setStringValue(s);

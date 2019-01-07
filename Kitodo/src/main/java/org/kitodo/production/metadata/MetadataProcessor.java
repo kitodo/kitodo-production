@@ -87,6 +87,7 @@ import org.kitodo.production.helper.XmlArticleCounter.CountType;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
@@ -262,7 +263,7 @@ public class MetadataProcessor {
     public void copy() {
         MetadataInterface md;
         try {
-            md = UghImplementation.INSTANCE.createMetadata(this.currentMetadata.getMd().getMetadataType());
+            md = new LegacyMetadataHelper(this.currentMetadata.getMd().getMetadataType());
 
             md.setStringValue(this.currentMetadata.getMd().getValue());
             this.docStruct.addMetadata(md);
@@ -300,8 +301,7 @@ public class MetadataProcessor {
      */
     public void save() {
         try {
-            MetadataInterface md = UghImplementation.INSTANCE
-                    .createMetadata(this.myPrefs.getMetadataTypeByName(this.tempTyp));
+            MetadataInterface md = new LegacyMetadataHelper(this.myPrefs.getMetadataTypeByName(this.tempTyp));
             md.setStringValue(this.selectedMetadata.getValue());
 
             this.docStruct.addMetadata(md);
@@ -312,8 +312,8 @@ public class MetadataProcessor {
         // if TitleDocMain, then create equal sort titles with the same content
         if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
             try {
-                MetadataInterface secondMetadata = UghImplementation.INSTANCE
-                        .createMetadata(this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
+                MetadataInterface secondMetadata = new LegacyMetadataHelper(
+                        this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
                 secondMetadata.setStringValue(this.selectedMetadata.getValue());
                 this.docStruct.addMetadata(secondMetadata);
             } catch (MetadataTypeNotAllowedException e) {
@@ -446,16 +446,11 @@ public class MetadataProcessor {
 
         for (MetadataTypeInterface mdt : types) {
             selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
-            try {
-                MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
-                MetadataImpl mdum = new MetadataImpl(md, counter, this.myPrefs, this.process);
-                counter++;
-                if (tempMetadataList != null) {
-                    tempMetadataList.add(mdum);
-                }
-
-            } catch (MetadataTypeNotAllowedException e) {
-                logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
+            MetadataInterface md = new LegacyMetadataHelper(mdt);
+            MetadataImpl mdum = new MetadataImpl(md, counter, this.myPrefs, this.process);
+            counter++;
+            if (tempMetadataList != null) {
+                tempMetadataList.add(mdum);
             }
         }
         return selectItems;
@@ -640,7 +635,7 @@ public class MetadataProcessor {
 
     private void addMetadataToPhysicalDocStruct(MetadataTypeInterface mdt) {
         try {
-            MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
+            MetadataInterface md = new LegacyMetadataHelper(mdt);
             Integer value = Integer.valueOf(currentRepresentativePage);
             md.setStringValue(String.valueOf(value + 1));
             this.digitalDocument.getPhysicalDocStruct().addMetadata(md);

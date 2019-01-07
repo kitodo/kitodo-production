@@ -59,6 +59,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
@@ -490,7 +492,7 @@ public class ImageHelper {
         // problems with FilePath
         MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
-            MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
+            MetadataInterface mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
             URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
                 process.getTitle(), process.getProcessBaseUri());
             String pathString = new File(pathURI).getPath();
@@ -530,7 +532,7 @@ public class ImageHelper {
     private MetadataInterface createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
         MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-        MetadataInterface metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
+        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(determinePagination(currentPhysicalOrder, defaultPagination));
         return metadata;
     }
@@ -545,7 +547,7 @@ public class ImageHelper {
     private MetadataInterface createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
         MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        MetadataInterface metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
+        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(String.valueOf(currentPhysicalOrder));
         return metadata;
     }

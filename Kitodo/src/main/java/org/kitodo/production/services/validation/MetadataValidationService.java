@@ -44,7 +44,7 @@ import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -451,7 +451,7 @@ public class MetadataValidationService {
         List<? extends MetadataInterface> createMetadata = docStruct.getAllMetadataByType(mdt);
         if (createMetadata == null || createMetadata.isEmpty()) {
             try {
-                MetadataInterface createdElement = UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface createdElement = new LegacyMetadataHelper(mdt);
                 String value = "";
                 // go through all the metadata to append and append to the
                 // element
