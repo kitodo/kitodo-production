@@ -48,7 +48,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -77,6 +76,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
@@ -499,7 +499,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void proceedField(AdditionalField field) throws PreferencesException {
-        DocStructInterface docStruct = getDocStruct(field);
+        LegacyDocStructHelperInterface docStruct = getDocStruct(field);
         try {
             if (field.getMetadata().equals(LIST_OF_CREATORS)) {
                 field.setValue(getAuthors(docStruct.getAllPersons()));
@@ -519,9 +519,9 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private DocStructInterface getDocStruct(AdditionalField field) throws PreferencesException {
+    private LegacyDocStructHelperInterface getDocStruct(AdditionalField field) throws PreferencesException {
         DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
-        DocStructInterface docStruct = digitalDocument.getLogicalDocStruct();
+        LegacyDocStructHelperInterface docStruct = digitalDocument.getLogicalDocStruct();
         if (field.getDocstruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
         }
@@ -608,7 +608,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private void removeCollectionsForChildren() {
         try {
-            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+            LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct, this.prozessKopie);
@@ -770,8 +770,8 @@ public class ProzesskopieForm implements Serializable {
 
     private void processAdditionalField(AdditionalField field) throws PreferencesException {
         // which DocStruct
-        DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-        DocStructInterface tempChild = null;
+        LegacyDocStructHelperInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        LegacyDocStructHelperInterface tempChild = null;
         String fieldDocStruct = field.getDocstruct();
         if (fieldDocStruct.equals(FIRST_CHILD)) {
             try {
@@ -822,7 +822,7 @@ public class ProzesskopieForm implements Serializable {
      * insert logical doc structures until you reach it.
      */
     private void insertLogicalDocStruct() {
-        DocStructInterface populizer = null;
+        LegacyDocStructHelperInterface populizer = null;
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
@@ -845,7 +845,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void insertCollections() throws PreferencesException {
-        DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
         if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
                 && !colStruct.getAllChildren().isEmpty()) {
             try {
@@ -918,7 +918,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private void updateMetadata() throws PreferencesException {
         if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
-            DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
+            LegacyDocStructHelperInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
                 // save higher level metadata for lower enrichment
@@ -929,7 +929,7 @@ public class ProzesskopieForm implements Serializable {
                 iterateOverAllMetadata(higherLevelMetadata, allMetadata);
 
                 // enrich children with inherited metadata
-                for (DocStructInterface nextChild : enricher.getAllChildren()) {
+                for (LegacyDocStructHelperInterface nextChild : enricher.getAllChildren()) {
                     enricher = nextChild;
                     iterateOverHigherLevelMetadata(enricher, higherLevelMetadata);
                 }
@@ -952,7 +952,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void iterateOverHigherLevelMetadata(DocStructInterface enricher,
+    private void iterateOverHigherLevelMetadata(LegacyDocStructHelperInterface enricher,
             Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
         for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
@@ -1004,7 +1004,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void addCollections(DocStructInterface colStruct) {
+    private void addCollections(LegacyDocStructHelperInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
                 MetadataInterface md = new LegacyMetadataHelper(UghHelper.getMetadataType(
@@ -1022,7 +1022,7 @@ public class ProzesskopieForm implements Serializable {
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
-    protected void removeCollections(DocStructInterface colStruct, Process process) {
+    protected void removeCollections(LegacyDocStructHelperInterface colStruct, Process process) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
@@ -1141,8 +1141,8 @@ public class ProzesskopieForm implements Serializable {
                             .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
                         rdf = tmp;
                     } else {
-                        DocStructInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
-                        DocStructInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
+                        LegacyDocStructHelperInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+                        LegacyDocStructHelperInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
                         // both have no children
                         if (oldLogicalDocstruct.getAllChildren() == null
                                 && newLogicalDocstruct.getAllChildren() == null) {
@@ -1178,7 +1178,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void copyMetadata(DocStructInterface oldDocStruct, DocStructInterface newDocStruct) {
+    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
 
         if (oldDocStruct.getAllMetadata() != null) {
             for (MetadataInterface md : oldDocStruct.getAllMetadata()) {

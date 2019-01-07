@@ -25,7 +25,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -35,6 +34,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -280,8 +280,8 @@ public class VariableReplacer {
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
         if (this.dd != null) {
             /* TopStruct und FirstChild ermitteln */
-            DocStructInterface topstruct = this.dd.getLogicalDocStruct();
-            DocStructInterface firstchildstruct = null;
+            LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
+            LegacyDocStructHelperInterface firstchildstruct = null;
             if (Objects.nonNull(topstruct.getAllChildren()) && !topstruct.getAllChildren().isEmpty()) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
@@ -344,7 +344,7 @@ public class VariableReplacer {
      * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
      * zurückgegeben.
      */
-    private String getMetadataValue(DocStructInterface inDocstruct, MetadataTypeInterface mdt) {
+    private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, MetadataTypeInterface mdt) {
         List<? extends MetadataInterface> mds = inDocstruct.getAllMetadataByType(mdt);
         if (!mds.isEmpty()) {
             return mds.get(0).getValue();

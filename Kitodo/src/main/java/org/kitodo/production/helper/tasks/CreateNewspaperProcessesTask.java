@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -35,6 +34,7 @@ import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.bibliography.course.Course;
@@ -249,7 +249,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            rule set the document is based on
      * @return the created child
      */
-    private DocStructInterface createFirstChild(DocStructInterface docStruct, DigitalDocumentInterface document,
+    private LegacyDocStructHelperInterface createFirstChild(LegacyDocStructHelperInterface docStruct, DigitalDocumentInterface document,
             PrefsInterface ruleset) {
 
         String firstAddable = null;
@@ -304,24 +304,24 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (PreferencesException e) {
             throw new ProcessCreationException(e.getMessage(), e);
         }
-        DocStructInterface newspaper = document.getLogicalDocStruct();
+        LegacyDocStructHelperInterface newspaper = document.getLogicalDocStruct();
 
         // try to add the publication run
         addMetadatum(newspaper, "PublicationRun", publicationRun, false);
 
         // create the year level
-        DocStructInterface year = createFirstChild(newspaper, document, ruleset);
+        LegacyDocStructHelperInterface year = createFirstChild(newspaper, document, ruleset);
         String theYear = Integer.toString(issues.get(0).getDate().getYear());
         addMetadatum(year, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
         // create the month level
-        Map<Integer, DocStructInterface> months = new HashMap<>();
-        Map<LocalDate, DocStructInterface> days = new HashMap<>(488);
+        Map<Integer, LegacyDocStructHelperInterface> months = new HashMap<>();
+        Map<LocalDate, LegacyDocStructHelperInterface> days = new HashMap<>(488);
         for (IndividualIssue individualIssue : issues) {
             LocalDate date = individualIssue.getDate();
             Integer monthNo = date.getMonthOfYear();
             if (!months.containsKey(monthNo)) {
-                DocStructInterface newMonth = createFirstChild(year, document, ruleset);
+                LegacyDocStructHelperInterface newMonth = createFirstChild(year, document, ruleset);
                 addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     monthNo.toString(), true);
                 addMetadatum(newMonth, year.getDocStructType().getName(), theYear, false);
@@ -329,11 +329,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     false);
                 months.put(monthNo, newMonth);
             }
-            DocStructInterface month = months.get(monthNo);
+            LegacyDocStructHelperInterface month = months.get(monthNo);
 
             // create the day level
             if (!days.containsKey(date)) {
-                DocStructInterface newDay = createFirstChild(month, document, ruleset);
+                LegacyDocStructHelperInterface newDay = createFirstChild(month, document, ruleset);
                 addMetadatum(newDay, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     Integer.toString(date.getDayOfMonth()), true);
                 addMetadatum(newDay, year.getDocStructType().getName(), theYear, false);
@@ -343,10 +343,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     Integer.toString(date.getDayOfMonth()), false);
                 days.put(date, newDay);
             }
-            DocStructInterface day = days.get(date);
+            LegacyDocStructHelperInterface day = days.get(date);
 
             // create the issue
-            DocStructInterface issue = createFirstChild(day, document, ruleset);
+            LegacyDocStructHelperInterface issue = createFirstChild(day, document, ruleset);
             String heading = individualIssue.getHeading();
             if ((heading != null) && (heading.trim().length() > 0)) {
                 addMetadatum(issue, issue.getDocStructType().getName(), heading, true);
@@ -371,7 +371,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      * @param fail
      *            if true, throws an error on fail, otherwise returns silently
      */
-    private void addMetadatum(DocStructInterface level, String key, String value, boolean fail) {
+    private void addMetadatum(LegacyDocStructHelperInterface level, String key, String value, boolean fail) {
         try {
             level.addMetadata(key, value);
         } catch (MetadataTypeNotAllowedException | RuntimeException e) {

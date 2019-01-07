@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -51,7 +50,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
  * a {@code DocStructType} element. Depending on the type of structure entities
  * certain meta-data and children a permitted or forbidden.
  */
-public interface LegacyDocStructHelperInterface extends DocStructInterface {
+public interface LegacyDocStructHelperInterface {
 
     /**
      * Adds another {@code DocStruct} as a child to this instance. The new child
@@ -67,7 +66,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException;
 
     /**
      * Adds a DocStruct object as a child to this instance. The new child will
@@ -87,7 +86,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    void addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(Integer index, LegacyDocStructHelperInterface child) throws TypeNotAllowedAsChildException;
 
     /**
      * Adds a new reference to a content file, and adds the content file to the
@@ -145,7 +144,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      * @return a newly created References object containing information about
      *         linking both DocStructs. The return value is never used.
      */
-    ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type);
+    ReferenceInterface addReferenceTo(LegacyDocStructHelperInterface docStruct, String type);
 
     /**
      * This method cleans the meta-data and person list of instances which do
@@ -186,7 +185,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      *
      * @return all children of this DocStruct
      */
-    List<DocStructInterface> getAllChildren();
+    List<LegacyDocStructHelperInterface> getAllChildren();
 
     /**
      * Returns all children of this instance which are of a given type and have
@@ -203,7 +202,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      *            name of the meta-data type
      * @return all children of the given type and with the given meta-data
      */
-    List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType);
+    List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType);
 
     /**
      * Returns all meta-data from this instance. If no {@code Metadata} is
@@ -309,7 +308,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      *
      * @return the parent, if any
      */
-    DocStructInterface getParent();
+    LegacyDocStructHelperInterface getParent();
 
     /**
      * Returns all meta-data types that can be added to this instance. Includes
@@ -339,7 +338,7 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      * @param docStruct
      *            to be removed
      */
-    void removeChild(DocStructInterface docStruct);
+    void removeChild(LegacyDocStructHelperInterface docStruct);
 
     /**
      * Removes a meta-datum from this instance. If (according to configuration)
@@ -359,5 +358,5 @@ public interface LegacyDocStructHelperInterface extends DocStructInterface {
      * @param target
      *            {@code DocStruct}
      */
-    void removeReferenceTo(DocStructInterface target);
+    void removeReferenceTo(LegacyDocStructHelperInterface target);
 }

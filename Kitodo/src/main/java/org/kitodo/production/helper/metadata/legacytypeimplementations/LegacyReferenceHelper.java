@@ -13,8 +13,8 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Connects a legacy reference to a media unit. This is a soldering class to
@@ -35,13 +35,13 @@ public class LegacyReferenceHelper implements ReferenceInterface {
     }
 
     @Override
-    public DocStructInterface getSource() {
+    public LegacyDocStructHelperInterface getSource() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public DocStructInterface getTarget() {
+    public LegacyDocStructHelperInterface getTarget() {
         return target;
     }
 

@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
@@ -25,6 +24,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.services.ServiceManager;
 
 public class XmlArticleCounter {
@@ -57,7 +57,7 @@ public class XmlArticleCounter {
         // DocStruct rukursiv durchlaufen
         try {
             DigitalDocumentInterface document = gdzfile.getDigitalDocument();
-            DocStructInterface logicalTopstruct = document.getLogicalDocStruct();
+            LegacyDocStructHelperInterface logicalTopstruct = document.getLogicalDocStruct();
             result += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e) {
             Helper.setErrorMessage("[" + myProcess.getId() + "] "
@@ -84,7 +84,7 @@ public class XmlArticleCounter {
      * @param inType
      *            CountType object
      */
-    public int getNumberOfUghElements(DocStructInterface inStruct, CountType inType) {
+    public int getNumberOfUghElements(LegacyDocStructHelperInterface inStruct, CountType inType) {
         int result = 0;
         if (inStruct != null) {
             /*
@@ -100,7 +100,7 @@ public class XmlArticleCounter {
 
             // call children recursive
             if (inStruct.getAllChildren() != null) {
-                for (DocStructInterface struct : inStruct.getAllChildren()) {
+                for (LegacyDocStructHelperInterface struct : inStruct.getAllChildren()) {
                     result += getNumberOfUghElements(struct, inType);
                 }
             }
@@ -108,7 +108,7 @@ public class XmlArticleCounter {
         return result;
     }
 
-    private int countNonEmptyPersons(DocStructInterface inStruct) {
+    private int countNonEmptyPersons(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
         List<PersonInterface> persons = inStruct.getAllPersons();
         if (persons != null) {
@@ -122,7 +122,7 @@ public class XmlArticleCounter {
         return result;
     }
 
-    private int countNonEmptyMetadata(DocStructInterface inStruct) {
+    private int countNonEmptyMetadata(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
         List<MetadataInterface> allMetadata = inStruct.getAllMetadata();
         if (allMetadata != null) {

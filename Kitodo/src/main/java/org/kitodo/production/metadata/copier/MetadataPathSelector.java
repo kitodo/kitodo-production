@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
@@ -139,11 +139,11 @@ public class MetadataPathSelector extends MetadataSelector {
      * @param value
      *            value to write if no metadata is available at the path’s end
      * @see org.kitodo.production.metadata.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
-     *      DocStructInterface, String)
+     *      LegacyDocStructHelperInterface, String)
      */
     @Override
-    protected void createIfPathExistsOnly(CopierData data, DocStructInterface logicalNode, String value) {
-        DocStructInterface subnode = getSubnode(logicalNode);
+    protected void createIfPathExistsOnly(CopierData data, LegacyDocStructHelperInterface logicalNode, String value) {
+        LegacyDocStructHelperInterface subnode = getSubnode(logicalNode);
         if (subnode == null) {
             return;
         }
@@ -163,11 +163,11 @@ public class MetadataPathSelector extends MetadataSelector {
      * @param value
      *            value to write
      * @see org.kitodo.production.metadata.copier.MetadataSelector#createOrOverwrite(CopierData,
-     *      DocStructInterface, String)
+     *      LegacyDocStructHelperInterface, String)
      */
     @Override
-    protected void createOrOverwrite(CopierData data, DocStructInterface logicalNode, String value) {
-        DocStructInterface subnode = getSubnode(logicalNode);
+    protected void createOrOverwrite(CopierData data, LegacyDocStructHelperInterface logicalNode, String value) {
+        LegacyDocStructHelperInterface subnode = getSubnode(logicalNode);
         if (subnode == null && !ANY_METADATA_TYPE_SYMBOL.equals(docStructType)) {
             try {
                 subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
@@ -203,18 +203,18 @@ public class MetadataPathSelector extends MetadataSelector {
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findAll(org.kitodo.api.ugh.DocStructInterface)
+     * @see org.kitodo.production.metadata.copier.MetadataSelector#findAll(org.kitodo.api.ugh.LegacyDocStructHelperInterface)
      */
     @Override
-    protected Iterable<MetadataSelector> findAll(DocStructInterface logicalNode) {
+    protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
         LinkedList<MetadataSelector> result = new LinkedList<>();
-        List<DocStructInterface> children = logicalNode.getAllChildren();
+        List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildren();
         if (children == null) {
             children = Collections.emptyList();
         }
         int lastChild = children.size() - 1;
         int count = 0;
-        for (DocStructInterface child : children) {
+        for (LegacyDocStructHelperInterface child : children) {
             if (typeCheck(child) && indexCheck(count, lastChild)) {
                 for (MetadataSelector cms : selector.findAll(child)) {
                     result.add(new MetadataPathSelector(ANY_METADATA_TYPE_SYMBOL, count, cms));
@@ -226,16 +226,16 @@ public class MetadataPathSelector extends MetadataSelector {
     }
 
     /**
-     * Returns the value of the metadata named by the path used to construct
-     * the metadata selector, or null if either the path or the metadata at the
-     * end of the path aren’t available. This works recursively, by calling
-     * itself on the subnode, if found, or returning null otherwise.
+     * Returns the value of the metadata named by the path used to construct the
+     * metadata selector, or null if either the path or the metadata at the end
+     * of the path aren’t available. This works recursively, by calling itself
+     * on the subnode, if found, or returning null otherwise.
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.DocStructInterface)
+     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.LegacyDocStructHelperInterface)
      */
     @Override
-    protected String findIn(DocStructInterface supernode) {
-        DocStructInterface subnode = getSubnode(supernode);
+    protected String findIn(LegacyDocStructHelperInterface supernode) {
+        LegacyDocStructHelperInterface subnode = getSubnode(supernode);
         if (subnode == null) {
             return null;
         } else {
@@ -302,8 +302,8 @@ public class MetadataPathSelector extends MetadataSelector {
      *             if there is more than one element matching but no index was
      *             given to chose among them
      */
-    private DocStructInterface getSubnode(DocStructInterface logicalNode) {
-        List<DocStructInterface> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
+    private LegacyDocStructHelperInterface getSubnode(LegacyDocStructHelperInterface logicalNode) {
+        List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
             ANY_METADATA_TYPE_SYMBOL);
         if (children == null) {
             children = Collections.emptyList();
@@ -419,7 +419,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            child whose type shall be checked
      * @return whether the child type is to be matched
      */
-    private boolean typeCheck(DocStructInterface child) {
+    private boolean typeCheck(LegacyDocStructHelperInterface child) {
         return ANY_METADATA_TYPE_SYMBOL.equals(docStructType) || docStructType.equals(child.getDocStructType().getName());
     }
 }

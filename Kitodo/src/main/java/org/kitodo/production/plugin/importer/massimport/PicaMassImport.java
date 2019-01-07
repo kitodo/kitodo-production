@@ -64,7 +64,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -78,6 +77,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -159,8 +159,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             FileformatInterface fileformat = SRUHelper.parsePicaFormat(pica, prefs);
             DigitalDocumentInterface digitalDocument = fileformat.getDigitalDocument();
             boolean multivolue = false;
-            DocStructInterface logicalDS = digitalDocument.getLogicalDocStruct();
-            DocStructInterface child = null;
+            LegacyDocStructHelperInterface logicalDS = digitalDocument.getLogicalDocStruct();
+            LegacyDocStructHelperInterface child = null;
             if (logicalDS.getDocStructType().getAnchorClass() != null) {
                 child = logicalDS.getAllChildren().get(0);
                 multivolue = true;
@@ -221,8 +221,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 // collections
                 if (this.currentCollectionList != null) {
                     MetadataTypeInterface mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
-                    DocStructInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
-                    List<DocStructInterface> volumes = topLogicalStruct.getAllChildren();
+                    LegacyDocStructHelperInterface topLogicalStruct = digitalDocument.getLogicalDocStruct();
+                    List<LegacyDocStructHelperInterface> volumes = topLogicalStruct.getAllChildren();
                     if (volumes == null) {
                         volumes = Collections.emptyList();
                     }
@@ -230,7 +230,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                         MetadataInterface mdCollection = new LegacyMetadataHelper(mdTypeCollection);
                         mdCollection.setStringValue(collection);
                         topLogicalStruct.addMetadata(mdCollection);
-                        for (DocStructInterface volume : volumes) {
+                        for (LegacyDocStructHelperInterface volume : volumes) {
                             try {
                                 MetadataInterface mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
                                 mdCollectionForVolume.setStringValue(collection);
@@ -254,7 +254,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
     }
 
-    private void readCurrentTitle(DocStructInterface logicalDS) {
+    private void readCurrentTitle(LegacyDocStructHelperInterface logicalDS) {
         MetadataTypeInterface titleType = prefs.getMetadataTypeByName("TitleDocMain");
         List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
         if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
@@ -263,7 +263,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
     }
 
-    private void readIdentifier(DocStructInterface child, DocStructInterface logicalDS) {
+    private void readIdentifier(LegacyDocStructHelperInterface child, LegacyDocStructHelperInterface logicalDS) {
         MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
         List<? extends MetadataInterface> childMdList = null;
         List<? extends MetadataInterface> mdList;
@@ -283,7 +283,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
     }
 
-    private void readAuthor(DocStructInterface logicalDS) {
+    private void readAuthor(LegacyDocStructHelperInterface logicalDS) {
         MetadataTypeInterface authorType = prefs.getMetadataTypeByName("Author");
         List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
         if (Objects.nonNull(personList) && !personList.isEmpty()) {
@@ -293,7 +293,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
     }
 
-    private void readVolumeNumber(DocStructInterface child) {
+    private void readVolumeNumber(LegacyDocStructHelperInterface child) {
         // reading volume number
         if (child != null) {
             MetadataTypeInterface mdt = prefs.getMetadataTypeByName("CurrentNoSorting");

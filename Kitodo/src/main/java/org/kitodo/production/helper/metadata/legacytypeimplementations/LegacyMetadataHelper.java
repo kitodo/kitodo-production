@@ -13,7 +13,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
@@ -67,7 +66,7 @@ public class LegacyMetadataHelper implements MetadataInterface {
     }
 
     @Override
-    public void setDocStruct(DocStructInterface docStruct) {
+    public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
             this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }

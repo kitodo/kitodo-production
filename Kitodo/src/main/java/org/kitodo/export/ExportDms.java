@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -38,6 +37,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -428,7 +428,7 @@ public class ExportDms extends ExportMets {
      * Run through all metadata and children of given docstruct to trim the strings
      * calls itself recursively.
      */
-    private void trimAllMetadata(DocStructInterface inStruct) {
+    private void trimAllMetadata(LegacyDocStructHelperInterface inStruct) {
         // trim all metadata values
         if (inStruct.getAllMetadata() != null) {
             for (MetadataInterface md : inStruct.getAllMetadata()) {
@@ -440,7 +440,7 @@ public class ExportDms extends ExportMets {
 
         // run through all children of docstruct
         if (inStruct.getAllChildren() != null) {
-            for (DocStructInterface child : inStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }

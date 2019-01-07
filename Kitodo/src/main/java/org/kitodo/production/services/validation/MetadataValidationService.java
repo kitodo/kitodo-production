@@ -21,7 +21,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -41,6 +40,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
@@ -50,7 +50,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetadataValidationService {
 
-    private List<DocStructInterface> docStructsOhneSeiten;
+    private List<LegacyDocStructHelperInterface> docStructsOhneSeiten;
     private Process process;
     private boolean autoSave = false;
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
@@ -100,7 +100,7 @@ public class MetadataValidationService {
             return false;
         }
 
-        DocStructInterface logical = dd.getLogicalDocStruct();
+        LegacyDocStructHelperInterface logical = dd.getLogicalDocStruct();
         List<MetadataInterface> allIdentifierMetadata = logical.getAllIdentifierMetadata();
         if (Objects.nonNull(allIdentifierMetadata) && !allIdentifierMetadata.isEmpty()) {
             MetadataInterface identifierTopStruct = allIdentifierMetadata.get(0);
@@ -109,7 +109,7 @@ public class MetadataValidationService {
                 result = false;
             }
 
-            DocStructInterface firstChild = logical.getAllChildren().get(0);
+            LegacyDocStructHelperInterface firstChild = logical.getAllChildren().get(0);
             List<MetadataInterface> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
             if (Objects.nonNull(allChildIdentifierMetadata) && !allChildIdentifierMetadata.isEmpty()) {
                 MetadataInterface identifierFirstChild = allChildIdentifierMetadata.get(0);
@@ -140,7 +140,7 @@ public class MetadataValidationService {
         /*
          * auf Docstructs ohne Seiten prüfen
          */
-        DocStructInterface logicalTop = dd.getLogicalDocStruct();
+        LegacyDocStructHelperInterface logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<>();
         if (logicalTop == null) {
             Helper.setErrorMessage(process.getTitle(), "metadataPaginationError");
@@ -150,7 +150,7 @@ public class MetadataValidationService {
         }
 
         if (!this.docStructsOhneSeiten.isEmpty()) {
-            for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
+            for (LegacyDocStructHelperInterface docStructWithoutPages : this.docStructsOhneSeiten) {
                 Helper.setErrorMessage(process.getTitle(), Helper.getTranslation("metadataPaginationStructure")
                         + docStructWithoutPages.getDocStructType().getNameByLanguage(metadataLanguage));
             }
@@ -230,7 +230,7 @@ public class MetadataValidationService {
         return incorrect;
     }
 
-    private boolean isMetadataValueReplaced(DocStructInterface docStruct, MetadataInterface metadata,
+    private boolean isMetadataValueReplaced(LegacyDocStructHelperInterface docStruct, MetadataInterface metadata,
             String metadataLanguage) {
 
         if (!metadata.getValue()
@@ -244,7 +244,7 @@ public class MetadataValidationService {
         return false;
     }
 
-    private boolean isValidPathImageFiles(DocStructInterface phys, PrefsInterface myPrefs) {
+    private boolean isValidPathImageFiles(LegacyDocStructHelperInterface phys, PrefsInterface myPrefs) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
             List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdt);
@@ -261,13 +261,13 @@ public class MetadataValidationService {
         }
     }
 
-    private void checkDocStructsOhneSeiten(DocStructInterface docStruct) {
+    private void checkDocStructsOhneSeiten(LegacyDocStructHelperInterface docStruct) {
         if (docStruct.getAllToReferences().isEmpty() && docStruct.getDocStructType().getAnchorClass() == null) {
             this.docStructsOhneSeiten.add(docStruct);
         }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
         if (docStruct.getAllChildren() != null) {
-            for (DocStructInterface child : docStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
                 checkDocStructsOhneSeiten(child);
             }
         }
@@ -275,14 +275,14 @@ public class MetadataValidationService {
 
     private List<String> checkSeitenOhneDocstructs(FileformatInterface inRdf) throws PreferencesException {
         List<String> result = new ArrayList<>();
-        DocStructInterface boundBook = inRdf.getDigitalDocument().getPhysicalDocStruct();
+        LegacyDocStructHelperInterface boundBook = inRdf.getDigitalDocument().getPhysicalDocStruct();
         // if boundBook is null
         if (boundBook == null || boundBook.getAllChildren() == null) {
             return result;
         }
 
         /* alle Seiten durchlaufen und prüfen ob References existieren */
-        for (DocStructInterface docStruct : boundBook.getAllChildren()) {
+        for (LegacyDocStructHelperInterface docStruct : boundBook.getAllChildren()) {
             List<ReferenceInterface> refs = docStruct.getAllFromReferences();
             if (refs.isEmpty()) {
                 result.add(collectLogicalAndPhysicalStructure(docStruct));
@@ -291,7 +291,7 @@ public class MetadataValidationService {
         return result;
     }
 
-    private String collectLogicalAndPhysicalStructure(DocStructInterface docStruct) {
+    private String collectLogicalAndPhysicalStructure(LegacyDocStructHelperInterface docStruct) {
         String physical = "";
         String logical = "";
 
@@ -307,7 +307,7 @@ public class MetadataValidationService {
         return physical + logical;
     }
 
-    private List<String> checkMandatoryValues(DocStructInterface docStruct, ArrayList<String> list, String language) {
+    private List<String> checkMandatoryValues(LegacyDocStructHelperInterface docStruct, ArrayList<String> list, String language) {
         DocStructTypeInterface dst = docStruct.getDocStructType();
         List<MetadataTypeInterface> allMDTypes = dst.getAllMetadataTypes();
         for (MetadataTypeInterface mdt : allMDTypes) {
@@ -341,7 +341,7 @@ public class MetadataValidationService {
         // }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
         if (docStruct.getAllChildren() != null) {
-            for (DocStructInterface child : docStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
                 checkMandatoryValues(child, list, language);
             }
         }
@@ -352,7 +352,7 @@ public class MetadataValidationService {
      * individuelle konfigurierbare projektspezifische Validierung der
      * Metadaten.
      */
-    private List<String> checkConfiguredValidationValues(DocStructInterface docStruct, ArrayList<String> errorList,
+    private List<String> checkConfiguredValidationValues(LegacyDocStructHelperInterface docStruct, ArrayList<String> errorList,
             PrefsInterface prefs, String language) {
         // open configuration and read the validation details
         ConfigProject cp;
@@ -441,7 +441,7 @@ public class MetadataValidationService {
      * erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
      * vorhanden.
      */
-    private void checkCreateElementFrom(List<MetadataTypeInterface> metadataTypes, DocStructInterface docStruct,
+    private void checkCreateElementFrom(List<MetadataTypeInterface> metadataTypes, LegacyDocStructHelperInterface docStruct,
             MetadataTypeInterface mdt, String language) {
         /*
          * existiert das zu erzeugende Metadatum schon, dann überspringen,
@@ -472,15 +472,15 @@ public class MetadataValidationService {
         }
 
         // go through all children
-        List<DocStructInterface> children = docStruct.getAllChildren();
+        List<LegacyDocStructHelperInterface> children = docStruct.getAllChildren();
         if (Objects.nonNull(children)) {
-            for (DocStructInterface child : children) {
+            for (LegacyDocStructHelperInterface child : children) {
                 checkCreateElementFrom(metadataTypes, child, mdt, language);
             }
         }
     }
 
-    private String iterateOverPersons(List<PersonInterface> persons, DocStructInterface docStruct, String language,
+    private String iterateOverPersons(List<PersonInterface> persons, LegacyDocStructHelperInterface docStruct, String language,
             MetadataTypeInterface metadataType) {
         StringBuilder value = new StringBuilder();
         for (PersonInterface p : persons) {
@@ -520,7 +520,7 @@ public class MetadataValidationService {
      *            as String
      */
     private void checkStartsEndsWith(List<String> errorList, String propStartsWith, String propEndsWith,
-            DocStructInterface myStruct, MetadataTypeInterface mdt, String language) {
+            LegacyDocStructHelperInterface myStruct, MetadataTypeInterface mdt, String language) {
         // starts with or ends with
         List<? extends MetadataInterface> allMetadataByType = myStruct.getAllMetadataByType(mdt);
         if (Objects.nonNull(allMetadataByType)) {

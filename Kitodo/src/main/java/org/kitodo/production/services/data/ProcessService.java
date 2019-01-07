@@ -73,7 +73,6 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
@@ -106,6 +105,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -1891,7 +1891,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param docStruct
      *            metadata to be trimmed
      */
-    private void trimAllMetadata(DocStructInterface docStruct) {
+    private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
         // trim all metadata values
         if (docStruct.getAllMetadata() != null) {
             for (MetadataInterface md : docStruct.getAllMetadata()) {
@@ -1903,7 +1903,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // run through all children of docStruct
         if (docStruct.getAllChildren() != null) {
-            for (DocStructInterface child : docStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }
@@ -2034,7 +2034,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * get the topstruct element of the digital document depending on anchor
          * property
          */
-        DocStructInterface topElement = dd.getLogicalDocStruct();
+        LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
             if (topElement.getAllChildren() == null || topElement.getAllChildren().isEmpty()) {
                 throw new PreferencesException(process.getTitle()
@@ -2054,7 +2054,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
-                for (DocStructInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
+                for (LegacyDocStructHelperInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {

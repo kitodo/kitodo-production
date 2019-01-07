@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -40,6 +39,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
@@ -166,7 +166,7 @@ public class CopyProcess extends ProzesskopieForm {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
 
-                    DocStructInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+                    LegacyDocStructHelperInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
                             myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
@@ -243,7 +243,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
-            DocStructInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            LegacyDocStructHelperInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct, this.prozessKopie);

@@ -20,7 +20,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -34,6 +33,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -207,7 +207,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
         DigitalDocumentInterface result = ServiceManager.getProcessService().readMetadataFile(process)
                 .getDigitalDocument();
-        DocStructInterface root = result.getLogicalDocStruct();
+        LegacyDocStructHelperInterface root = result.getLogicalDocStruct();
         String type = "Volume";
         try {
             type = root.getAllChildren().get(0).getDocStructType().getName();

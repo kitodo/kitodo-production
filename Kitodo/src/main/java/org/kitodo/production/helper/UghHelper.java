@@ -15,13 +15,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -75,7 +75,7 @@ public class UghHelper {
      *            MetadataType object
      * @return Metadata
      */
-    public static MetadataInterface getMetadata(DocStructInterface inStruct, MetadataTypeInterface inMetadataType) {
+    public static MetadataInterface getMetadata(LegacyDocStructHelperInterface inStruct, MetadataTypeInterface inMetadataType) {
         if (inStruct != null && inMetadataType != null) {
             List<? extends MetadataInterface> all = inStruct.getAllMetadataByType(inMetadataType);
             if (all.isEmpty()) {

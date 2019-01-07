@@ -28,7 +28,6 @@ import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileSetInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
@@ -37,6 +36,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
@@ -132,7 +132,7 @@ public class LegacyMetsModsDigitalDocumentHelper
     }
 
     @Override
-    public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
+    public LegacyDocStructHelperInterface createDocStruct(DocStructTypeInterface docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
             return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
         } else {
@@ -173,12 +173,12 @@ public class LegacyMetsModsDigitalDocumentHelper
     }
 
     @Override
-    public DocStructInterface getLogicalDocStruct() {
+    public LegacyDocStructHelperInterface getLogicalDocStruct() {
         return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
     @Override
-    public DocStructInterface getPhysicalDocStruct() {
+    public LegacyDocStructHelperInterface getPhysicalDocStruct() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
@@ -222,13 +222,13 @@ public class LegacyMetsModsDigitalDocumentHelper
     }
 
     @Override
-    public void setLogicalDocStruct(DocStructInterface docStruct) {
+    public void setLogicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void setPhysicalDocStruct(DocStructInterface docStruct) {
+    public void setPhysicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

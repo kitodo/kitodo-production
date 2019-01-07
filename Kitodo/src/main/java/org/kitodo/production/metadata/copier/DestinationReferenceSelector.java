@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * A DestinationReferenceSelector provides methods to retrieve document
@@ -69,7 +69,7 @@ public class DestinationReferenceSelector extends DataSelector {
      */
     @Override
     public String findIn(CopierData data) {
-        DocStructInterface currentLevel = data.getLogicalDocStruct();
+        LegacyDocStructHelperInterface currentLevel = data.getLogicalDocStruct();
         MetadataSelector destination = data.getDestination();
         for (int descend = index; descend > 0; descend--) {
             if (!(destination instanceof MetadataPathSelector)) {

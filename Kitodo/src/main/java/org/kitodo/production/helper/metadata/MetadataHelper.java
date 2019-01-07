@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -78,7 +77,7 @@ public class MetadataHelper {
     /**
      * die MetadatenTypen zurückgeben.
      */
-    public SelectItem[] getAddableDocStructTypen(DocStructInterface inStruct, boolean checkTypesFromParent) {
+    public SelectItem[] getAddableDocStructTypen(LegacyDocStructHelperInterface inStruct, boolean checkTypesFromParent) {
         /*
          * zuerst mal die addierbaren Metadatentypen ermitteln
          */
@@ -140,10 +139,10 @@ public class MetadataHelper {
      * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv
      * aufrufen.
      */
-    public void deleteAllUnusedElements(DocStructInterface inStruct) {
+    public void deleteAllUnusedElements(LegacyDocStructHelperInterface inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
         if (Objects.nonNull(inStruct.getAllChildren())) {
-            for (DocStructInterface child : inStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
                 deleteAllUnusedElements(child);
             }
         }
@@ -153,7 +152,7 @@ public class MetadataHelper {
      * die erste Imagenummer zurückgeben.
      */
     // FIXME: alphanumerisch
-    public String getImageNumber(DocStructInterface inStrukturelement, int inPageNumber) {
+    public String getImageNumber(LegacyDocStructHelperInterface inStrukturelement, int inPageNumber) {
         String rueckgabe = "";
 
         if (inStrukturelement == null) {
@@ -205,7 +204,7 @@ public class MetadataHelper {
      * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
      * DefaultDisplay-Metadaten ergänzen.
      */
-    public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(DocStructInterface inStruct,
+    public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
         List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
@@ -250,7 +249,7 @@ public class MetadataHelper {
     }
 
     /** TODO: Replace it, after Maven is kicked :). */
-    private List<MetadataInterface> getAllVisibleMetadataHack(DocStructInterface inStruct) {
+    private List<MetadataInterface> getAllVisibleMetadataHack(LegacyDocStructHelperInterface inStruct) {
 
         // Start with the list of all metadata.
         List<MetadataInterface> result = new LinkedList<>();
@@ -324,7 +323,7 @@ public class MetadataHelper {
      *            der aktuellen Person, damit diese ggf. in die Liste mit
      *            übernommen wird
      */
-    public List<SelectItem> getAddablePersonRoles(DocStructInterface myDocStruct, String inRoleName) {
+    public List<SelectItem> getAddablePersonRoles(LegacyDocStructHelperInterface myDocStruct, String inRoleName) {
         ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln

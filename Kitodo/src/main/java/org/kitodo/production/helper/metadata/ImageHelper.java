@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -86,9 +85,9 @@ public class ImageHelper {
      * delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, URI directory) throws IOException {
-        DocStructInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
-        DocStructInterface logicalStructure = this.mydocument.getLogicalDocStruct();
-        List<DocStructInterface> allChildren = logicalStructure.getAllChildren();
+        LegacyDocStructHelperInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
+        LegacyDocStructHelperInterface logicalStructure = this.mydocument.getLogicalDocStruct();
+        List<LegacyDocStructHelperInterface> allChildren = logicalStructure.getAllChildren();
         while (logicalStructure.getDocStructType().getAnchorClass() != null && Objects.nonNull(allChildren)
                 && !allChildren.isEmpty()) {
             logicalStructure = allChildren.get(0);
@@ -110,7 +109,7 @@ public class ImageHelper {
 
         // retrieve existing pages/images
         DocStructTypeInterface newPage = this.myPrefs.getDocStrctTypeByName("page");
-        List<DocStructInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
+        List<LegacyDocStructHelperInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
             oldPages = new ArrayList<>();
         }
@@ -121,11 +120,11 @@ public class ImageHelper {
         }
 
         String defaultPagination = ConfigCore.getParameterOrDefaultValue(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION);
-        Map<String, DocStructInterface> assignedImages = new HashMap<>();
-        List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
+        Map<String, LegacyDocStructHelperInterface> assignedImages = new HashMap<>();
+        List<LegacyDocStructHelperInterface> pageElementsWithoutImages = new ArrayList<>();
 
         if (physicalStructure.getAllChildren() != null && !physicalStructure.getAllChildren().isEmpty()) {
-            for (DocStructInterface page : physicalStructure.getAllChildren()) {
+            for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildren()) {
                 if (page.getImageName() != null) {
                     URI imageFile;
                     if (directory == null) {
@@ -157,7 +156,7 @@ public class ImageHelper {
 
         // case 1: existing pages but no images (some images are removed)
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
-            for (DocStructInterface pageToRemove : pageElementsWithoutImages) {
+            for (LegacyDocStructHelperInterface pageToRemove : pageElementsWithoutImages) {
                 physicalStructure.removeChild(pageToRemove);
                 List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
                 for (ReferenceInterface ref : refs) {
@@ -168,7 +167,7 @@ public class ImageHelper {
             // case 2: no page docs but images (some images are added)
             int currentPhysicalOrder = assignedImages.size();
             for (URI newImage : imagesWithoutPageElements) {
-                DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
+                LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
                 try {
                     // physical page no
                     physicalStructure.addChild(dsPage);
@@ -188,7 +187,7 @@ public class ImageHelper {
             }
         } else {
             // case 3: empty page docs and unassinged images
-            for (DocStructInterface page : pageElementsWithoutImages) {
+            for (LegacyDocStructHelperInterface page : pageElementsWithoutImages) {
                 if (!imagesWithoutPageElements.isEmpty()) {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
@@ -207,7 +206,7 @@ public class ImageHelper {
                 // create new page elements
                 int currentPhysicalOrder = physicalStructure.getAllChildren().size();
                 for (URI newImage : imagesWithoutPageElements) {
-                    DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
+                    LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
                     try {
                         // physical page no
                         physicalStructure.addChild(dsPage);
@@ -230,7 +229,7 @@ public class ImageHelper {
         int currentPhysicalOrder = 1;
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-            for (DocStructInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
+            for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
                 List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
                 if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
@@ -403,11 +402,11 @@ public class ImageHelper {
      *            DocStruct object
      * @return list of Strings
      */
-    public List<URI> getImageFiles(DocStructInterface physical) {
+    public List<URI> getImageFiles(LegacyDocStructHelperInterface physical) {
         List<URI> orderedFileList = new ArrayList<>();
-        List<DocStructInterface> pages = physical.getAllChildren();
+        List<LegacyDocStructHelperInterface> pages = physical.getAllChildren();
         if (pages != null) {
-            for (DocStructInterface page : pages) {
+            for (LegacyDocStructHelperInterface page : pages) {
                 URI filename = URI.create(page.getImageName());
                 orderedFileList.add(filename);
             }
@@ -467,9 +466,9 @@ public class ImageHelper {
 
     private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
         List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<LegacyDocStructHelperInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
         if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
+            for (LegacyDocStructHelperInterface page : pagesList) {
                 String fileName = page.getImageName();
                 String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
                 for (URI currentImage : dataList) {
@@ -484,9 +483,9 @@ public class ImageHelper {
         return orderedFileNameList;
     }
 
-    private DocStructInterface createPhysicalStructure(Process process) throws IOException {
+    private LegacyDocStructHelperInterface createPhysicalStructure(Process process) throws IOException {
         DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
-        DocStructInterface physicalStructure = this.mydocument.createDocStruct(dst);
+        LegacyDocStructHelperInterface physicalStructure = this.mydocument.createDocStruct(dst);
 
         // problems with FilePath
         MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
@@ -504,7 +503,7 @@ public class ImageHelper {
         return physicalStructure;
     }
 
-    private List<URI> getImagesWithoutPageElements(Process process, Map<String, DocStructInterface> assignedImages) {
+    private List<URI> getImagesWithoutPageElements(Process process, Map<String, LegacyDocStructHelperInterface> assignedImages) {
         List<URI> imagesWithoutPageElements = new ArrayList<>();
         try {
             List<URI> imageNamesInMediaFolder = getDataFiles(process);
