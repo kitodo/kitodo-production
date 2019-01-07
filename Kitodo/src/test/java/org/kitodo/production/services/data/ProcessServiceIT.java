@@ -35,7 +35,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.helper.metadata.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -478,7 +478,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         Process process = processService.getById(1);
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(
             new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));

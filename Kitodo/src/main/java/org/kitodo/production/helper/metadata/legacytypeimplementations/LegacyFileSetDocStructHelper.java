@@ -23,7 +23,6 @@ import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
@@ -122,7 +121,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
+            LegacyPrefsHelper prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

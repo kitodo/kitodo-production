@@ -25,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
@@ -194,7 +194,7 @@ public class RulesetServiceIT {
 
     public void shouldGetPreferences() throws Exception {
         Ruleset ruleset = rulesetService.getById(1);
-        PrefsInterface prefs = rulesetService.getPreferences(ruleset);
+        LegacyPrefsHelper prefs = rulesetService.getPreferences(ruleset);
 
         assertEquals("Seite", prefs.getDocStrctTypeByName("page").getNameByLanguage("de"));
     }

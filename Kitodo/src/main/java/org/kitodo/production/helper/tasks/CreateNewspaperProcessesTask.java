@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
@@ -36,6 +35,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.CourseToGerman;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -249,7 +249,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      * @return the created child
      */
     private LegacyDocStructHelperInterface createFirstChild(LegacyDocStructHelperInterface docStruct, LegacyMetsModsDigitalDocumentHelper document,
-            PrefsInterface ruleset) {
+            LegacyPrefsHelper ruleset) {
 
         String firstAddable = null;
         try {
@@ -295,7 +295,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             String publicationRun) {
 
         // initialise
-        PrefsInterface ruleset = ServiceManager.getRulesetService()
+        LegacyPrefsHelper ruleset = ServiceManager.getRulesetService()
                 .getPreferences(newProcess.getProzessKopie().getRuleset());
         LegacyMetsModsDigitalDocumentHelper document;
         try {

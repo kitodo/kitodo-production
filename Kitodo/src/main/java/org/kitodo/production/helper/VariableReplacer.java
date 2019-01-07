@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -35,6 +34,7 @@ import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -50,7 +50,7 @@ public class VariableReplacer {
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
     private LegacyMetsModsDigitalDocumentHelper dd;
-    private PrefsInterface prefs;
+    private LegacyPrefsHelper prefs;
     // $(meta.abc)
     private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
 
@@ -78,7 +78,7 @@ public class VariableReplacer {
      * @param s
      *            Task object
      */
-    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, PrefsInterface inPrefs, Process p, Task s) {
+    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, LegacyPrefsHelper inPrefs, Process p, Task s) {
         this.dd = inDigitalDocument;
         this.prefs = inPrefs;
         this.process = p;

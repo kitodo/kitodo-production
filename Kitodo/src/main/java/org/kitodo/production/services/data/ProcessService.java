@@ -73,7 +73,6 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -1228,7 +1227,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            The Preferences
      * @return The fileFormat.
      */
-    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
+    public FileformatInterface readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
             throws IOException, PreferencesException, ReadException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
         FileformatInterface ff;
@@ -1722,7 +1721,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException, JAXBException {
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = getNormalizedTitle(process.getTitle());
 
         // read document
@@ -1800,7 +1799,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private FileformatInterface readDocument(PrefsInterface preferences, Process process)
+    private FileformatInterface readDocument(LegacyPrefsHelper preferences, Process process)
             throws IOException, PreferencesException {
         FileformatInterface gdzFile;
         FileformatInterface newFile;
@@ -2014,7 +2013,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);

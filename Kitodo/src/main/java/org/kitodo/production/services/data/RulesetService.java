@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -209,8 +208,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            object
      * @return preferences
      */
-    public PrefsInterface getPreferences(Ruleset ruleset) {
-        PrefsInterface myPreferences = new LegacyPrefsHelper();
+    public LegacyPrefsHelper getPreferences(Ruleset ruleset) {
+        LegacyPrefsHelper myPreferences = new LegacyPrefsHelper();
         try {
             myPreferences.loadPrefs(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + ruleset.getFile());
         } catch (PreferencesException e) {

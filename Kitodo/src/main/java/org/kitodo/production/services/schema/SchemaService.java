@@ -21,7 +21,6 @@ import org.kitodo.api.dataformat.mets.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
@@ -55,7 +54,7 @@ public class SchemaService {
      *            object
      */
     public <T extends ExportMets> void tempConvert(MetsXmlElementAccessInterface workpiece, T exportMets,
-            PrefsInterface prefs, Process process) {
+            LegacyPrefsHelper prefs, Process process) {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen

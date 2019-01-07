@@ -22,7 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -44,6 +43,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLog
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -63,7 +63,7 @@ public class MetadataValidationService {
      * @return boolean
      */
     public boolean validate(Process process) {
-        PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         FileformatInterface gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
@@ -85,7 +85,7 @@ public class MetadataValidationService {
      *            object
      * @return boolean
      */
-    public boolean validate(FileformatInterface gdzfile, PrefsInterface prefs, Process process) {
+    public boolean validate(FileformatInterface gdzfile, LegacyPrefsHelper prefs, Process process) {
         String metadataLanguage = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         this.process = process;
         boolean result = true;
@@ -243,7 +243,7 @@ public class MetadataValidationService {
         return false;
     }
 
-    private boolean isValidPathImageFiles(LegacyDocStructHelperInterface phys, PrefsInterface myPrefs) {
+    private boolean isValidPathImageFiles(LegacyDocStructHelperInterface phys, LegacyPrefsHelper myPrefs) {
         try {
             LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allMetadata = phys.getAllMetadataByType(mdt);
@@ -352,7 +352,7 @@ public class MetadataValidationService {
      * Metadaten.
      */
     private List<String> checkConfiguredValidationValues(LegacyDocStructHelperInterface docStruct, ArrayList<String> errorList,
-            PrefsInterface prefs, String language) {
+            LegacyPrefsHelper prefs, String language) {
         // open configuration and read the validation details
         ConfigProject cp;
         try {
@@ -407,7 +407,7 @@ public class MetadataValidationService {
         return errorList;
     }
 
-    private List<LegacyMetadataTypeHelper> prepareMetadataTypes(PrefsInterface prefs, String propCreateElementFrom) {
+    private List<LegacyMetadataTypeHelper> prepareMetadataTypes(LegacyPrefsHelper prefs, String propCreateElementFrom) {
         List<LegacyMetadataTypeHelper> metadataTypes = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(propCreateElementFrom, "|");
         while (tokenizer.hasMoreTokens()) {

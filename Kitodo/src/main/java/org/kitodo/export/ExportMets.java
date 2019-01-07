@@ -27,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -37,12 +36,13 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
 public class ExportMets {
     private final FileService fileService = ServiceManager.getFileService();
-    protected PrefsInterface myPrefs;
+    protected LegacyPrefsHelper myPrefs;
 
     private static final Logger logger = LogManager.getLogger(ExportMets.class);
 

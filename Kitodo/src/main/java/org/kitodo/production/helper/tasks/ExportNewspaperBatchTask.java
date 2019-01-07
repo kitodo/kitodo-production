@@ -28,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -471,7 +470,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, IOException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
-        PrefsInterface ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
@@ -510,7 +509,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, LegacyMetsModsDigitalDocumentHelper act,
-            PrefsInterface ruleSet) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+            LegacyPrefsHelper ruleSet) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         for (Map.Entry<Integer, String> year : years.entrySet()) {
             if (year.getKey() != ownYear) {
@@ -553,7 +552,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type, String identifierField,
-            String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleset)
+            String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleset)
             throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         try {
@@ -659,7 +658,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             (of this type) is already available
      */
     private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
-            String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleSet)
+            String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleSet)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         for (int i = 0; i < issues.size(); i++) {
             if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
@@ -690,7 +689,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private void insertIssueReference(LegacyMetsModsDigitalDocumentHelper act, PrefsInterface ruleset, LocalDate date,
+    private void insertIssueReference(LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleset, LocalDate date,
             String metsPointerURL)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         LegacyDocStructHelperInterface year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,

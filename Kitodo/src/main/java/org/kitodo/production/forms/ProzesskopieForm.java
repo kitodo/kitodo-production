@@ -49,7 +49,6 @@ import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -794,7 +793,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             // except for the authors, take all additional into the metadata
             if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-                PrefsInterface prefs = ServiceManager.getRulesetService()
+                LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
                         .getPreferences(this.prozessKopie.getRuleset());
                 LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 LegacyMetadataHelper metadata = UghHelper.getMetadata(tempStruct, mdt);
@@ -824,7 +823,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                PrefsInterface ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
+                LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
                 while (docStructType.getAnchorClass() != null) {
                     populizer = populizer.createChild(docStructType.getAllAllowedDocStructTypes().get(0),

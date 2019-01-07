@@ -26,7 +26,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
@@ -38,7 +37,7 @@ import org.kitodo.production.services.dataeditor.RulesetManagementService;
  * Connects a legacy prefs to a ruleset. This is a soldering class to keep
  * legacy code operational which is about to be removed. Do not use this class.
  */
-public class LegacyPrefsHelper implements PrefsInterface {
+public class LegacyPrefsHelper {
     private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
 
     private static final RulesetManagementService rulesetManagementService = ServiceManager
@@ -49,13 +48,11 @@ public class LegacyPrefsHelper implements PrefsInterface {
      */
     private RulesetManagementInterface ruleset;
 
-    @Override
     public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
@@ -72,7 +69,6 @@ public class LegacyPrefsHelper implements PrefsInterface {
         }
     }
 
-    @Override
     public LegacyMetadataTypeHelper getMetadataTypeByName(String identifier) {
         switch (identifier) {
             case "logicalPageNumber":
@@ -117,7 +113,6 @@ public class LegacyPrefsHelper implements PrefsInterface {
         return ruleset;
     }
 
-    @Override
     public void loadPrefs(String fileName) throws PreferencesException {
         File rulesetFile = new File(fileName);
         RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();

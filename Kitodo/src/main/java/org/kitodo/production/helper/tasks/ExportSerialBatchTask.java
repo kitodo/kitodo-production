@@ -19,7 +19,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -34,6 +33,7 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -214,7 +214,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             logger.error(e.getMessage(), e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-        PrefsInterface ruleset = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
                 root.createChild(type, result, ruleset)

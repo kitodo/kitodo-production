@@ -57,7 +57,6 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -87,6 +86,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLog
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.display.Modes;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.helper.ConfigDisplayRules;
@@ -124,7 +124,7 @@ public class MetadataProcessor {
     private MetaPerson curPerson;
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
     private Process process;
-    private PrefsInterface myPrefs;
+    private LegacyPrefsHelper myPrefs;
     private String userId;
     private String tempTyp;
     private String tempPersonRecord;
@@ -2493,8 +2493,8 @@ public class MetadataProcessor {
     private List<String> getPagesAssignedToDocStruct(LegacyDocStructHelperInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
         List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
-        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
-        LegacyMetadataTypeHelper mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        LegacyPrefsHelper LegacyPrefsHelper = this.metaHelper.getPrefs();
+        LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataTypeByName("physPageNumber");
 
         List<String> allImages = getImages();
 
@@ -2524,8 +2524,8 @@ public class MetadataProcessor {
      */
     public String getPageImageFilePath(LegacyDocStructHelperInterface pageDocStruct) {
         final String errorMessage = "IMAGE_PATH_NOT_FOUND";
-        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
-        LegacyMetadataTypeHelper mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        LegacyPrefsHelper LegacyPrefsHelper = this.metaHelper.getPrefs();
+        LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
         List<? extends LegacyMetadataHelper> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
 

@@ -15,13 +15,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class UghHelper {
@@ -44,7 +44,7 @@ public class UghHelper {
      * @return MetadataType
      */
     public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) throws UghHelperException {
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return getMetadataType(myPrefs, inName);
     }
 
@@ -57,7 +57,7 @@ public class UghHelper {
      *            String
      * @return MetadataType
      */
-    public static LegacyMetadataTypeHelper getMetadataType(PrefsInterface inPrefs, String inName) throws UghHelperException {
+    public static LegacyMetadataTypeHelper getMetadataType(LegacyPrefsHelper inPrefs, String inName) throws UghHelperException {
         LegacyMetadataTypeHelper mdt = inPrefs.getMetadataTypeByName(inName);
         if (mdt == null) {
             throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);

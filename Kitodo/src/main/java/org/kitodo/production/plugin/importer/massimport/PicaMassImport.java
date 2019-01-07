@@ -65,7 +65,6 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -91,7 +90,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private String data = "";
     private String importFolder = "";
     private File importFile;
-    private PrefsInterface prefs;
+    private LegacyPrefsHelper prefs;
     private String currentIdentifier;
     private List<String> currentCollectionList;
     private String opacCatalogue;
@@ -128,7 +127,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     @Override
-    public void setPrefs(PrefsInterface prefs) {
+    public void setPrefs(LegacyPrefsHelper prefs) {
         this.prefs = prefs;
     }
 

@@ -19,9 +19,9 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library
@@ -164,7 +164,7 @@ public class CataloguePlugin extends UnspecificPlugin {
         find = getDeclaredMethod("find", new Class[] {String.class, long.class }, Object.class);
         getHit = getDeclaredMethod("getHit", new Class[] {Object.class, long.class, long.class }, Map.class);
         getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] {Object.class, long.class }, long.class);
-        setPreferences = getDeclaredMethod("setPreferences", PrefsInterface.class, Void.TYPE);
+        setPreferences = getDeclaredMethod("setPreferences", LegacyPrefsHelper.class, Void.TYPE);
         supportsCatalogue = getDeclaredMethod("supportsCatalogue", String.class, boolean.class);
         useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
     }
@@ -202,7 +202,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *            Prefs object
      * @return UGH preferences
      */
-    public static FileformatInterface getFirstHit(String catalogue, String query, PrefsInterface preferences) {
+    public static FileformatInterface getFirstHit(String catalogue, String query, LegacyPrefsHelper preferences) {
         try {
             CataloguePlugin plugin = PluginLoader.getCataloguePluginForCatalogue(catalogue);
             if (Objects.nonNull(plugin)) {
@@ -296,7 +296,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *            UGH preferences
      * @see org.kitodo.production.services.data.RulesetService#getPreferences(org.kitodo.data.database.beans.Ruleset)
      */
-    public void setPreferences(PrefsInterface preferences) {
+    public void setPreferences(LegacyPrefsHelper preferences) {
         invokeQuietly(plugin, setPreferences, preferences, null);
     }
 

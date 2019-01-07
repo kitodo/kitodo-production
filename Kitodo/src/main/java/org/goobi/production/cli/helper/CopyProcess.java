@@ -25,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -76,7 +75,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
@@ -114,7 +113,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
@@ -142,7 +141,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
@@ -316,7 +315,7 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void createNewFileformat() {
 
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
         FileformatInterface ff;
         try {

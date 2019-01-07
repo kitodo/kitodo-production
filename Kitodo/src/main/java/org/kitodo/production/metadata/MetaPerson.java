@@ -16,12 +16,12 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -33,14 +33,14 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 public class MetaPerson {
     private PersonInterface p;
     private int identifier;
-    private final PrefsInterface myPrefs;
+    private final LegacyPrefsHelper myPrefs;
     private final LegacyDocStructHelperInterface myDocStruct;
     private final MetadataHelper mdh;
 
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetaPerson(PersonInterface p, int inID, PrefsInterface inPrefs, LegacyDocStructHelperInterface inStruct) {
+    public MetaPerson(PersonInterface p, int inID, LegacyPrefsHelper inPrefs, LegacyDocStructHelperInterface inStruct) {
         this.myPrefs = inPrefs;
         this.p = p;
         this.identifier = inID;

@@ -20,12 +20,12 @@ import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.exceptions.ImportPluginException;
+import org.kitodo.helper.metadata.LegacyPrefsHelper;
 
 public interface IImportPlugin extends IPlugin {
 
-    void setPrefs(PrefsInterface prefs);
+    void setPrefs(LegacyPrefsHelper prefs);
 
     void setData(Record r);
 

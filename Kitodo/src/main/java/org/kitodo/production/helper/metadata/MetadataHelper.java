@@ -28,7 +28,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
@@ -44,10 +43,10 @@ public class MetadataHelper {
     private static final Logger logger = LogManager.getLogger(MetadataHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
-    private PrefsInterface prefs;
+    private LegacyPrefsHelper prefs;
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
 
-    public MetadataHelper(PrefsInterface inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
+    public MetadataHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
         this.prefs = inPrefs;
         this.digitalDocument = inDocument;
     }
@@ -360,7 +359,7 @@ public class MetadataHelper {
         return myList;
     }
 
-    public PrefsInterface getPrefs() {
+    public LegacyPrefsHelper getPrefs() {
         return this.prefs;
     }
 }
