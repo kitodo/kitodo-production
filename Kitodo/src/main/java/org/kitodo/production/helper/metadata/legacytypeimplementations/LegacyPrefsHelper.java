@@ -47,6 +47,7 @@ public class LegacyPrefsHelper {
      */
     private RulesetManagementInterface ruleset;
 
+    @Deprecated
     public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -60,6 +61,7 @@ public class LegacyPrefsHelper {
      *            identifier (internal name) of the {@code DocStructType}
      * @return the {@code DocStructType}, otherwise {@code null}.
      */
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
@@ -83,6 +85,7 @@ public class LegacyPrefsHelper {
      *            parameter
      * @return MetadataType object with this name
      */
+    @Deprecated
     public LegacyMetadataTypeHelper getMetadataTypeByName(String identifier) {
         switch (identifier) {
             case "logicalPageNumber":
@@ -123,6 +126,7 @@ public class LegacyPrefsHelper {
      * 
      * @return the ruleset
      */
+    @Deprecated
     public RulesetManagementInterface getRuleset() {
         return ruleset;
     }
@@ -135,6 +139,7 @@ public class LegacyPrefsHelper {
      * @throws PreferencesException
      *             if the preferences file has none, or the wrong root tag
      */
+    @Deprecated
     public void loadPrefs(String fileName) throws IOException {
         File rulesetFile = new File(fileName);
         RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();

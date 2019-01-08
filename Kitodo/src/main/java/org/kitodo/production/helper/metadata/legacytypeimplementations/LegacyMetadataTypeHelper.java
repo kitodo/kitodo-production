@@ -29,60 +29,71 @@ public class LegacyMetadataTypeHelper {
      * A representative for a special legacy meta-data type to read and write
      * the METS ORDER attribute.
      */
+    @Deprecated
     public static final LegacyMetadataTypeHelper SPECIAL_TYPE_ORDER = new LegacyMetadataTypeHelper() {
         @Override
+        @Deprecated
         public Map<String, String> getAllLanguages() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public boolean isPerson() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public String getLanguage(String language) {
             return "de".equals(language) ? "physische Seitenzahl (Imagenummer)" : "physical page number";
         }
 
         @Override
+        @Deprecated
         public String getName() {
             return "physPageNumber";
         }
 
         @Override
+        @Deprecated
         public String getNum() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setAllLanguages(Map<String, String> labels) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setIdentifier(boolean identifier) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setPerson(boolean person) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setName(String name) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setNum(String quantityRestriction) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -93,60 +104,71 @@ public class LegacyMetadataTypeHelper {
      * A representative for a special legacy meta-data type to read and write
      * the METS ORDERLABEL attribute.
      */
+    @Deprecated
     public static final LegacyMetadataTypeHelper SPECIAL_TYPE_ORDERLABEL = new LegacyMetadataTypeHelper() {
         @Override
+        @Deprecated
         public Map<String, String> getAllLanguages() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public boolean isPerson() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public String getLanguage(String language) {
             return "de".equals(language) ? "logische Seitenzahl (gedruckte Zeitenzahl)" : "logical page number";
         }
 
         @Override
+        @Deprecated
         public String getName() {
             return "logicalPageNumber";
         }
 
         @Override
+        @Deprecated
         public String getNum() {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setAllLanguages(Map<String, String> labels) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setIdentifier(boolean identifier) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setPerson(boolean person) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setName(String name) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
+        @Deprecated
         public void setNum(String quantityRestriction) {
             //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -162,52 +184,63 @@ public class LegacyMetadataTypeHelper {
         this.keyView = null;
     }
 
+    @Deprecated
     public LegacyMetadataTypeHelper(MetadataViewInterface keyView) {
         this.keyView = keyView;
     }
 
+    @Deprecated
     public Map<String, String> getAllLanguages() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public boolean isPerson() {
         return false;
     }
 
+    @Deprecated
     public String getLanguage(String language) {
         return keyView.getLabel();
     }
 
+    @Deprecated
     public String getName() {
         return keyView.getId();
     }
 
+    @Deprecated
     public String getNum() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setAllLanguages(Map<String, String> labels) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setIdentifier(boolean identifier) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setPerson(boolean person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setName(String name) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setNum(String quantityRestriction) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

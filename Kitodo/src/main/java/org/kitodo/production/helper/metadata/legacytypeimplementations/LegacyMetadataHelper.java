@@ -51,27 +51,33 @@ public class LegacyMetadataHelper {
         this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
     }
 
+    @Deprecated
     public LegacyMetadataHelper(LegacyMetadataTypeHelper type) {
         this.type = type;
         this.value = "";
     }
 
+    @Deprecated
     public MetadataXmlElementAccessInterface getBinding() {
         return binding;
     }
 
+    @Deprecated
     public LegacyInnerPhysicalDocStructHelper getDocStruct() {
         return legacyInnerPhysicalDocStructHelper;
     }
 
+    @Deprecated
     public Domain getDomain() {
         return domain;
     }
 
+    @Deprecated
     public LegacyMetadataTypeHelper getMetadataType() {
         return type;
     }
 
+    @Deprecated
     public String getValue() {
         return value;
     }
@@ -111,17 +117,20 @@ public class LegacyMetadataHelper {
      * @param docStruct
      *            document structure entity to which this object belongs
      */
+    @Deprecated
     public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
             this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }
     }
 
+    @Deprecated
     public void setType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setStringValue(String value) {
         this.value = value;
         if (bindingSaveInterface != null) {
