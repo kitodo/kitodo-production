@@ -14,6 +14,8 @@ package org.kitodo.data.elasticsearch;
 import java.io.IOException;
 import java.util.Collections;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
@@ -95,7 +97,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return information about the server
      */
     public String getServerInformation() throws IOException {
-        Response response = restClient.performRequest("GET", "/", Collections.singletonMap("pretty", "true"));
+        Response response = restClient.performRequest(HttpMethod.GET, "/", Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -105,7 +107,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return mapping
      */
     public String getMapping() throws IOException {
-        Response response = restClient.performRequest("GET", "/" + index + "/_mapping",
+        Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/_mapping",
             Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
@@ -130,7 +132,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.emptyMap(), entity);
+        Response indexResponse = restClient.performRequest(HttpMethod.PUT, "/" + index, Collections.emptyMap(), entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -141,7 +143,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return false if doesn't exists, true if exists
      */
     public boolean indexExists() throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("GET", "/" + index, Collections.emptyMap());
+        Response indexResponse = restClient.performRequest(HttpMethod.GET, "/" + index, Collections.emptyMap());
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -150,7 +152,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * Delete the whole index. Used for cleaning after tests!
      */
     public void deleteIndex() throws IOException {
-        restClient.performRequest("DELETE", "/" + index);
+        restClient.performRequest(HttpMethod.DELETE, "/" + index);
     }
 
     /**

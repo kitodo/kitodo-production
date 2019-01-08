@@ -11,11 +11,11 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseIndexedBean;
@@ -28,7 +28,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
  */
 public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
 
-    private HTTPMethods method;
+    private String method;
     private static final String INCORRECT_HTTP = "Incorrect HTTP method!";
 
     /**
@@ -52,7 +52,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
     }
 
     /**
-     * Perform request depending on given parameters of HTTPMethods.
+     * Perform request depending on given parameters of HTTP Method.
      *
      * @param baseIndexedBean
      *            bean object which will be added or deleted from index
@@ -67,10 +67,10 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
             throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
-        if (method == HTTPMethods.PUT) {
+        if (method.equals(HttpMethod.PUT)) {
             HttpEntity document = baseType.createDocument(baseIndexedBean);
             restClient.addDocument(document, baseIndexedBean.getId(), forceRefresh);
-        } else if (method == HTTPMethods.DELETE) {
+        } else if (method.equals(HttpMethod.DELETE)) {
             restClient.deleteDocument(baseIndexedBean.getId(), forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
@@ -91,7 +91,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
             throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
-        if (method == HTTPMethods.DELETE) {
+        if (method.equals(HttpMethod.DELETE)) {
             restClient.deleteDocument(beanId, forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
@@ -111,7 +111,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
             throws InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
-        if (method == HTTPMethods.PUT) {
+        if (method.equals(HttpMethod.PUT)) {
             Map<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
             restClient.addType(documents);
         } else {
@@ -131,7 +131,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *
      * @return method for request
      */
-    public HTTPMethods getMethod() {
+    public String getMethod() {
         return method;
     }
 
@@ -142,7 +142,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            Determines if we want to add (update) or delete document - true
      *            add, false delete
      */
-    public void setMethod(HTTPMethods method) {
+    public void setMethod(String method) {
         this.method = method;
     }
 }

@@ -17,8 +17,6 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +29,7 @@ import java.util.Set;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.ws.rs.HttpMethod;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -246,7 +245,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     @SuppressWarnings("unchecked")
     public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
+        indexer.setMethod(HttpMethod.PUT);
         if (Objects.nonNull(baseIndexedBean)) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
@@ -261,7 +260,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex(List<T> baseIndexedBeans)
             throws CustomResponseException, DAOException, InterruptedException {
-        indexer.setMethod(HTTPMethods.PUT);
+        indexer.setMethod(HttpMethod.PUT);
         indexer.performMultipleRequests(baseIndexedBeans, type);
         for (T baseIndexedBean : baseIndexedBeans) {
             updateIndexFlag(baseIndexedBean);
@@ -279,7 +278,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     @SuppressWarnings("unchecked")
     public void removeFromIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.setMethod(HttpMethod.DELETE);
         if (baseIndexedBean != null) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
@@ -295,7 +294,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            object is right after that available for display
      */
     public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.setMethod(HttpMethod.DELETE);
         indexer.performSingleRequest(id, forceRefresh);
     }
 
