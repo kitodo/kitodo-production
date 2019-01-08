@@ -72,7 +72,6 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
-import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -2088,11 +2087,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 URI folderUri = new File(folder.getRelativePath()).toURI();
                 if (fileService.fileExist(folderUri)
                         && !ServiceManager.getFileService().getSubUris(folderUri).isEmpty()) {
-                    mm.getDigitalDocument().getFileSet()
-                            .addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
+                    throw new UnsupportedOperationException("Dead code pending removal");
                 }
             } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
-                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         }
 
@@ -2152,11 +2150,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
-            throws JAXBException {
-
-        throw new UnsupportedOperationException("Dead code pending removal");
-    }
 
     /**
      * Set showClosedProcesses.
