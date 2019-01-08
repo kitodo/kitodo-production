@@ -77,9 +77,14 @@
                                     value="#{MetadataProcessor.getPageReferencesToDocStruct(structureElement)}"
                                     binding="#{structuredThumbnail}">
                             <ui:param name="filePath" value="#{MetadataProcessor.getPageImageFilePath(page)}"/>
-                            <p:panel id="structuredPagePanel" header="#{msgs.image} #{MetadataProcessor.getPhysicalPageNumber(page)} , #{msgs.page} #{MetadataProcessor.getLogicalPageNumber(page)}" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
+                            <p:panel id="structuredPagePanel" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
                                 <p:commandLink update="structureTreeForm, imagePreviewForm">
-                                    <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                    <div class="thumbnail-container">
+                                        <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                        <div class="thumbnail-overlay">
+                                            #{msgs.image} #{MetadataProcessor.getPhysicalPageNumber(page)}, #{msgs.page} #{MetadataProcessor.getLogicalPageNumber(page)}
+                                        </div>
+                                    </div>
                                     <f:setPropertyActionListener value="#{filePath}" target="#{MetadataProcessor.currentImage}"/>
                                     <f:setPropertyActionListener value="#{page}" target="#{MetadataProcessor.myStrukturelement}"/>
                                 </p:commandLink>
@@ -129,7 +134,7 @@
                     <ui:fragment rendered="#{MetadataProcessor.isAccessGranted(MetadataProcessor.currentImage)}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
                         <h:outputScript name="js/ol_custom.js"/>
-                        <div id="map" class="map" style="width: calc(100% - 100px); height: 100%; display: inline-block; float: left"/>
+                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left"/>
                     </ui:fragment>
                 </div>
             </ui:fragment>

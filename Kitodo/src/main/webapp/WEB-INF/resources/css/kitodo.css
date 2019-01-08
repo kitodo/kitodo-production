@@ -1070,7 +1070,7 @@ Metadata Editor
 #metadataPanel,
 #commentPanel,
 #galleryPanel {
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
 #galleryPanel {
@@ -1129,11 +1129,7 @@ Column content
 }
 
 .structureElementDataList {
-    min-height: 75px;
-    border: 1px solid black;
-    border-radius: 10px;
     padding: 5px;
-    margin-bottom: 15px;
 }
 
 #metadata input {
@@ -1168,6 +1164,10 @@ Column content
     right: auto !important;
 }
 
+#map div.ol-control button {
+    background-color: var(--primary);
+}
+
 .thumbnailWrapper {
     margin-left: 5px;
 }
@@ -1175,6 +1175,11 @@ Column content
 #galleryWrapperPanel,
 #galleryWrapperPanel_content {
     height: 100%;
+}
+
+#thumbnailStripe {
+    height: 100%;
+    border-left: 1px solid var(--primary);
 }
 
 #thumbnailStripe > div {
@@ -1188,11 +1193,63 @@ Column content
 .thumbnail {
     height: 60px;
     border: 1px solid black;
-    margin: 3px;
 }
 
 .thumbnail.active {
-    border: 2px solid red;
+    border: 2px solid var(--callto);
+}
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+    margin: 3px;
+}
+
+.thumbnail-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .2s ease;
+    background-color: var(--secondary);
+    color: white;
+    font-size: smaller;
+    text-align: center;
+}
+
+.thumbnail-container:hover .thumbnail-overlay {
+    opacity: .7;
+}
+
+#imagePreviewForm {
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(var(--carbonblue), var(--dark));
+}
+
+#imagePreviewForm\:structuredPages .ui-panel .ui-panel-content {
+    padding: 0;
+}
+
+#imagePreviewForm div.ui-panel.ui-corner-all,
+#imagePreviewForm .ui-widget-content {
+    background: transparent;
+}
+
+#imagePreviewForm\:structuredPages div.ui-panel-titlebar {
+    display: none;
+}
+
+#imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
+    display: block;
+    background-color: var(--dark);
+    color: white;
+    padding: 5px;
+    border-top: 3px solid var(--primary);
 }
 
 #imagePreviewForm\:structuredPages ul {
@@ -1205,6 +1262,12 @@ Column content
 
 #imagePreviewForm\:structuredPages ul li span.ui-panel-title {
     margin: 0;
+}
+
+#imagePreviewForm\:structuredPagesField {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 0;
 }
 
 /*----------------------------------------------------------------------
