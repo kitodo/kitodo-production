@@ -14,27 +14,19 @@ package org.kitodo.production.services.data;
 import java.util.List;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.ClientType;
-import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 
-public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
+public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
 
     private static ClientService instance = null;
 
     /**
-     * Return singleton variable of type AuthorityService.
+     * Return singleton variable of type ClientService.
      *
-     * @return unique instance of AuthorityService
+     * @return unique instance of ClientService
      */
     public static ClientService getInstance() {
         if (Objects.equals(instance, null)) {
@@ -48,11 +40,10 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     /**
-     * Constructor with Searcher and Indexer assigning.
+     * Constructor.
      */
     private ClientService() {
-        super(new ClientDAO(), new ClientType(), new Indexer<>(Client.class), new Searcher(Client.class));
-        this.indexer = new Indexer<>(Client.class);
+        super(new ClientDAO());
     }
 
     @Override
@@ -61,56 +52,8 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Client WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-
-    @Override
-    public List<Client> getAllNotIndexed() {
-        return getByQuery("FROM Client WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
     public List<Client> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ClientDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject clientJSONObject = jsonObject.getJsonObject("_source");
-        clientDTO.setName(ClientTypeField.NAME.getStringValue(clientJSONObject));
-        return clientDTO;
-    }
-
-    /**
-     * Get all clients from index and covert results to format accepted by frontend.
-     * Right now there is no usage which demands all relations.
-     *
-     * @return list of ClientDTO objects
-     */
-    @Override
-    public List<ClientDTO> findAll() throws DataException {
-        return findAll(true);
-    }
-
-    /**
-     * Get all clients from index and covert results to format accepted by frontend.
-     * Right now there is no usage which demands all relations.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return list of ClientDTO objects
-     */
-    @Override
-    public List<ClientDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return findAll(sort, offset, size, true);
     }
 
     /**

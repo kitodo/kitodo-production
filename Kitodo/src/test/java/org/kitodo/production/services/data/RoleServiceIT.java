@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -56,21 +55,9 @@ public class RoleServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllRoles() {
-        await().untilAsserted(
-            () -> assertEquals("Roles were not counted correctly!", Long.valueOf(EXPECTED_ROLES_COUNT), roleService.count()));
-    }
-
-    @Test
     public void shouldCountAllDatabaseRowsForRoles() throws Exception {
         Long amount = roleService.countDatabaseRows();
         assertEquals("Roles were not counted correctly!", Long.valueOf(EXPECTED_ROLES_COUNT), amount);
-    }
-
-    @Test
-    public void shouldFindAllRoles() {
-        await().untilAsserted(
-            () -> assertEquals("Not all user's roles were found in database!", EXPECTED_ROLES_COUNT, roleService.findAll().size()));
     }
 
     @Test
@@ -97,25 +84,24 @@ public class RoleServiceIT {
     public void shouldRemoveRole() throws Exception {
         Role role = new Role();
         role.setTitle("To Remove");
-        roleService.save(role);
-        Role foundRole = roleService.convertJSONObjectToBean(roleService.findByTitle("To Remove", true).get(0));
+        roleService.saveToDatabase(role);
+        Role foundRole = roleService.getByQuery("FROM Role WHERE title = 'To Remove'").get(0);
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundRole.getTitle());
 
-        roleService.remove(foundRole);
+        roleService.removeFromDatabase(foundRole);
         exception.expect(DAOException.class);
         exception.expectMessage("");
         roleService.getById(foundRole.getId());
 
         role = new Role();
         role.setTitle("To remove");
-        roleService.save(role);
-        foundRole = roleService.convertJSONObjectToBean(roleService.findByTitle("To remove", true).get(0));
+        roleService.saveToDatabase(role);
+        foundRole = roleService.getByQuery("FROM Role WHERE title = 'To remove'").get(0);
         assertEquals("Additional user group was not inserted in database!", "To remove", foundRole.getTitle());
 
-        roleService.remove(foundRole.getId());
+        roleService.removeFromDatabase(foundRole.getId());
         exception.expect(DAOException.class);
         exception.expectMessage("");
-        roleService.convertJSONObjectToBean(roleService.findByTitle("To remove", true).get(0));
     }
 
     @Test
@@ -145,64 +131,6 @@ public class RoleServiceIT {
     }
 
     @Test
-    public void shouldFindById() {
-        String expected = "Admin";
-        await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", expected, roleService.findById(1).getTitle()));
-
-        Integer expectedInt = 2;
-        await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", expectedInt, roleService.findById(1).getUsersSize()));
-    }
-
-    @Test
-    public void shouldFindByTitle() {
-        await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", 1, roleService.findByTitle("Admin", true).size()));
-    }
-
-    @Test
-    public void shouldNotFindByTitle() {
-        await().untilAsserted(
-            () -> assertEquals("Role was found in index!", 0, roleService.findByTitle("none", true).size()));
-    }
-
-    @Test
-    public void shouldFindManyByUserId() {
-        await().untilAsserted(
-                () -> assertEquals("Role was not found in index!", 2, roleService.findByUserId(1).size()));
-    }
-
-    @Test
-    public void shouldFindOneByUserId() {
-        await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserId(3).size()));
-    }
-
-    @Test
-    public void shouldNotFindByUserId() {
-        await().untilAsserted(() -> assertEquals("Roles were found in index!", 0, roleService.findByUserId(5).size()));
-    }
-
-    @Test
-    public void shouldFindManyByUserLogin() {
-        await().untilAsserted(
-                () -> assertEquals("Role was not found in index!", 2, roleService.findByUserLogin("kowal").size()));
-    }
-
-    @Test
-    public void shouldFindOneByUserLogin() {
-        await().untilAsserted(
-            () -> assertEquals("Role was not found in index!", 1, roleService.findByUserLogin("dora").size()));
-    }
-
-    @Test
-    public void shouldNotFindByUserLogin() {
-        await().untilAsserted(
-            () -> assertEquals("Roles were found in index!", 0, roleService.findByUserLogin("user").size()));
-    }
-
-    @Test
     public void shouldGetAuthorizationsAsString() throws Exception {
         Role role = roleService.getById(1);
         int actual = roleService.getAuthorizationsAsString(role).size();
@@ -219,11 +147,11 @@ public class RoleServiceIT {
     }
 
     @Test
-    public void shouldNotSaveRoleWithAlreadyExistingTitle() throws DataException {
+    public void shouldNotSaveRoleWithAlreadyExistingTitle() throws Exception {
         Role role = new Role();
         role.setTitle("Admin");
         exception.expect(DataException.class);
-        roleService.save(role);
+        roleService.saveToDatabase(role);
     }
 
     @Test
@@ -238,7 +166,7 @@ public class RoleServiceIT {
         authorities.add(authority);
 
         role.setAuthorities(authorities);
-        roleService.save(role);
+        roleService.saveToDatabase(role);
 
         role = roleService.getById(1);
 

@@ -22,8 +22,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
@@ -72,12 +70,6 @@ public class UserServiceIT {
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
-
-    @Test
-    public void shouldCountAllUsers() {
-        await().untilAsserted(
-            () -> assertEquals("Users were not counted correctly!", Long.valueOf(6), userService.count()));
-    }
 
     @Test
     public void shouldCountUsersAccordingToQuery() {
@@ -134,21 +126,21 @@ public class UserServiceIT {
     public void shouldRemoveUser() throws Exception {
         User user = new User();
         user.setLogin("Remove");
-        userService.save(user);
-        User foundUser = userService.convertJSONObjectToBean(userService.findByLogin("Remove"));
+        userService.saveToDatabase(user);
+        User foundUser = userService.getByQuery("FROM User WHERE login = 'Remove' ORDER BY id DESC").get(0);
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
-        userService.remove(foundUser);
+        userService.removeFromDatabase(foundUser);
         foundUser = userService.getById(foundUser.getId());
         assertNull("Additional user was not removed from database!", foundUser.getLogin());
 
         user = new User();
         user.setLogin("remove");
-        userService.save(user);
-        foundUser = userService.convertJSONObjectToBean(userService.findByLogin("remove"));
+        userService.saveToDatabase(user);
+        foundUser = userService.getByQuery("FROM User WHERE login = 'remove' ORDER BY id DESC").get(0);
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
-        userService.remove(foundUser.getId());
+        userService.removeFromDatabase(foundUser.getId());
         foundUser = userService.getById(foundUser.getId());
         assertNull("Additional user was not removed from database!", foundUser.getLogin());
     }
@@ -181,142 +173,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindById() {
-        String expected = "kowal";
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", expected, userService.findById(1).getLogin()));
-    }
-
-    @Test
-    public void shouldFindByName() {
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 1, userService.findByName("Jan").size()));
-    }
-
-    @Test
-    public void shouldNotFindByName() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByName("Jannik").size()));
-    }
-
-    @Test
-    public void shouldFindBySurname() {
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 1, userService.findBySurname("Kowalski").size()));
-    }
-
-    @Test
-    public void shouldNotFindBySurname() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findBySurname("Müller").size()));
-    }
-
-    @Test
-    public void shouldFindByFullName() {
-        await().untilAsserted(() -> assertEquals("User was not found in index!", 1,
-            userService.findByFullName("Jan", "Kowalski").size()));
-    }
-
-    @Test
-    public void shouldNotFindByFullName() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByFullName("Jannik", "Müller").size()));
-    }
-
-    @Test
-    public void shouldFindByLogin() {
-        Integer expected = 1;
-        await().untilAsserted(() -> assertEquals("User was not found in index!", expected,
-            userService.getIdFromJSONObject(userService.findByLogin("kowal"))));
-    }
-
-    @Test
-    public void shouldNotFindByLogin() {
-        Integer expected = 0;
-        await().untilAsserted(() -> assertEquals("User was found in index!", expected,
-            userService.getIdFromJSONObject(userService.findByLogin("random"))));
-    }
-
-    @Test
-    public void shouldFindByLdapLogin() {
-        Integer expected = 1;
-        await().untilAsserted(() -> assertEquals("User was not found in index!", expected,
-            userService.getIdFromJSONObject(userService.findByLdapLogin("kowalLDP"))));
-    }
-
-    @Test
-    public void shouldNotFindByLdapLogin() {
-        Integer expected = 0;
-        await().untilAsserted(() -> assertEquals("User was found in index!", expected,
-            userService.getIdFromJSONObject(userService.findByLdapLogin("random"))));
-    }
-
-    @Test
-    public void shouldFindManyByLocation() {
-        await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 4, userService.findByLocation("Dresden").size()));
-    }
-
-    @Test
-    public void shouldFindOneByLocation() {
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 1, userService.findByLocation("Leipzig").size()));
-    }
-
-    @Test
-    public void shouldNotFindByLocation() {
-        await().untilAsserted(
-            () -> assertEquals("Users were found in index!", 0, userService.findByLocation("Wroclaw").size()));
-    }
-
-    @Test
-    public void shouldFindByActive() throws Exception {
-        List<JsonObject> users = userService.findByActive(true);
-        boolean result = users.size() == 2 || users.size() == 3 || users.size() == 4 || users.size() == 5;
-        assertTrue("Users were not found in index!", result);
-
-        users = userService.findByActive(false);
-        result = users.size() == 1 || users.size() == 2 || users.size() == 3 || users.size() == 4;
-        assertTrue("Users were found in index!", result);
-    }
-
-    @Test
-    public void shouldFindByRoleId() {
-        await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 2, userService.findByRoleId(1).size()));
-    }
-
-    @Test
-    public void shouldNotFindByRoleId() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 1, userService.findByRoleId(3).size()));
-    }
-
-    @Test
-    public void shouldFindByRoleTitle() {
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 2, userService.findByRoleTitle("Admin").size()));
-    }
-
-    @Test
-    public void shouldNotFindByRoleTitle() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByRoleTitle("None").size()));
-    }
-
-    @Test
-    public void shouldFindByFilter() {
-        await().untilAsserted(
-            () -> assertEquals("User was not found in index!", 1, userService.findByFilter("\"id:1\"").size()));
-    }
-
-    @Test
-    public void shouldNotFindByFilter() {
-        await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByFilter("\"id:5\"").size()));
-    }
-
-    @Test
     public void shouldGetTableSize() throws Exception {
         User user = userService.getById(1);
         int actual = user.getTableSize();
@@ -325,52 +181,6 @@ public class UserServiceIT {
         user = userService.getById(2);
         actual = user.getTableSize();
         assertEquals("Table size is incorrect!", 10, actual);
-    }
-
-    @Test
-    public void shouldGetRolesSize() {
-        await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1).getRolesSize()));
-
-        await().untilAsserted(
-            () -> assertEquals("User groups' size is incorrect!", 2, userService.findById(1, true).getRolesSize()));
-
-        await().untilAsserted(() -> assertEquals("User group's title is incorrect!", "Admin",
-            userService.findById(1, true).getRoles().get(0).getTitle()));
-    }
-
-    @Test
-    public void shouldGetProcessingTasksSize() {
-        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 3,
-            userService.findById(1).getProcessingTasks().size()));
-    }
-
-    @Test
-    public void shouldFindClientSize() {
-        await().untilAsserted(
-            () -> assertEquals("Projects' size is incorrect!", 1, userService.findById(1).getClientsSize()));
-    }
-
-    @Test
-    public void shouldGetProjectsSize() {
-        await().untilAsserted(
-            () -> assertEquals("Projects' size is incorrect!", 2, userService.findById(1).getProjectsSize()));
-
-        await().untilAsserted(
-            () -> assertEquals("Projects' size is incorrect!", 2, userService.findById(2).getProjectsSize()));
-
-        await().untilAsserted(
-            () -> assertEquals("Projects' size is incorrect!", 2, userService.findById(2, true).getProjectsSize()));
-
-        await().untilAsserted(() -> assertEquals("Project's title is incorrect!", "First project",
-            userService.findById(2, true).getProjects().get(0).getTitle()));
-    }
-
-    @Test
-    public void shouldGetFiltersSize() {
-        Integer expected = 2;
-        await().untilAsserted(
-            () -> assertEquals("Properties' size is incorrect!", expected, userService.findById(1).getFiltersSize()));
     }
 
     @Test
@@ -427,11 +237,11 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldNotSaveUserWithSameLogin() throws DataException {
+    public void shouldNotSaveUserWithSameLogin() throws Exception {
         User newUser = new User();
         newUser.setLogin("kowal");
         exception.expect(DataException.class);
-        userService.save(newUser);
+        userService.saveToDatabase(newUser);
     }
 
     @Test

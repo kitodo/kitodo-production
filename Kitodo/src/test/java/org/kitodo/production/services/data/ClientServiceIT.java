@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -49,18 +48,5 @@ public class ClientServiceIT {
     public void shouldGetAllClients() throws Exception {
         List<Client> clients = clientService.getAll();
         assertEquals("Clients were not found database!", 4, clients.size());
-    }
-
-    @Test
-    public void shouldFindAllClients() {
-        await().untilAsserted(
-            () -> assertEquals("Not all clients were found in database!", 4, clientService.findAll().size()));
-    }
-
-    @Test
-    public void shouldFindById() {
-        String expected = "Second client";
-        await().untilAsserted(
-            () -> assertEquals("User group was not found in index!", expected, clientService.findById(2).getName()));
     }
 }

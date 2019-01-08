@@ -117,7 +117,6 @@ public class User extends BaseBean {
      *            The user.
      */
     public User(User user) {
-
         this.setId(user.getId());
         this.setLanguage(user.getLanguage());
         this.active = user.active;

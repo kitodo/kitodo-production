@@ -200,7 +200,7 @@ public class ProjectForm extends BaseForm {
                 }
 
                 return projectListPath;
-            } catch (DataException e) {
+            } catch (DAOException | DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -208,13 +208,13 @@ public class ProjectForm extends BaseForm {
         }
     }
 
-    private void addFirstUserToNewProject() throws DataException {
+    private void addFirstUserToNewProject() throws DAOException, DataException {
         if (this.project.getUsers().isEmpty()) {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
             ServiceManager.getProjectService().save(this.project);
-            ServiceManager.getUserService().save(user);
+            ServiceManager.getUserService().saveToDatabase(user);
         }
     }
 
