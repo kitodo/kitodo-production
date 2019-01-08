@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -75,7 +77,7 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public void addDocument(HttpEntity entity, Integer id, boolean forceRefresh)
             throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("PUT",
+        Response indexResponse = restClient.performRequest(HttpMethod.PUT,
             "/" + this.getIndex() + "/" + this.getType() + "/" + id, getParameters(forceRefresh), entity);
         processStatusCode(indexResponse.getStatusLine());
     }
@@ -92,7 +94,7 @@ public class IndexRestClient extends KitodoRestClient {
         final ArrayList<String> output = new ArrayList<>();
 
         for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
-            restClient.performRequestAsync("PUT", "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
+            restClient.performRequestAsync(HttpMethod.PUT, "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
                 Collections.emptyMap(), entry.getValue(), new ResponseListener() {
                     @Override
                     public void onSuccess(Response response) {
@@ -122,7 +124,7 @@ public class IndexRestClient extends KitodoRestClient {
      */
     void deleteDocument(Integer id, boolean forceRefresh) throws IOException, CustomResponseException {
         try {
-            restClient.performRequest("DELETE", "/" + this.getIndex() + "/" + this.getType() + "/" + id,
+            restClient.performRequest(HttpMethod.DELETE, "/" + this.getIndex() + "/" + this.getType() + "/" + id,
                 getParameters(forceRefresh));
         } catch (ResponseException e) {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
@@ -146,7 +148,7 @@ public class IndexRestClient extends KitodoRestClient {
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("PUT",
+        Response indexResponse = restClient.performRequest(HttpMethod.PUT,
             "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types", Collections.emptyMap(), entity);
         processStatusCode(indexResponse.getStatusLine());
     }

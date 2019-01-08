@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -68,7 +70,7 @@ public class SearchRestClient extends KitodoRestClient {
     String countDocuments(String query) throws DataException {
         String wrappedQuery = "{\n \"query\": " + query + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        return performRequest(entity, "GET", "_count");
+        return performRequest(entity, HttpMethod.GET, "_count");
     }
 
     /**
@@ -84,7 +86,7 @@ public class SearchRestClient extends KitodoRestClient {
     String aggregateDocuments(String query, String aggregation) throws DataException {
         String wrappedQuery = "{\n \"query\": " + query + "\n,\n \"aggs\": " + aggregation + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        return performRequest(entity, "POST", "_search?size=0");
+        return performRequest(entity, HttpMethod.POST, "_search?size=0");
     }
 
     /**
@@ -97,7 +99,7 @@ public class SearchRestClient extends KitodoRestClient {
     String getDocument(Integer id) throws DataException {
         String output = "";
         try {
-            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
+            Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/" + type + "/" + id.toString(),
                     getParameter());
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
@@ -144,7 +146,7 @@ public class SearchRestClient extends KitodoRestClient {
 
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
-            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search?",
+            Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/" + type + "/_search?",
                     parameters, entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
