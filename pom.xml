@@ -118,7 +118,6 @@
     </repositories>
 
     <modules>
-        <module>OpacPica-Plugin</module>
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
         <module>Kitodo-SRU-Import</module>
