@@ -154,8 +154,8 @@ public class LdapUser implements DirContext {
 
             MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-            String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + digestBase64);
+            String encodedDigest = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + encodedDigest);
         }
     }
 

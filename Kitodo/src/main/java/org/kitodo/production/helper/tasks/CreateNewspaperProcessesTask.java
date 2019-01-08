@@ -244,8 +244,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            rule set the document is based on
      * @return the created child
      */
-    private LegacyDocStructHelperInterface createFirstChild(LegacyDocStructHelperInterface docStruct, LegacyMetsModsDigitalDocumentHelper document,
-            LegacyPrefsHelper ruleset) {
+    private LegacyDocStructHelperInterface createFirstChild(LegacyDocStructHelperInterface docStruct,
+            LegacyMetsModsDigitalDocumentHelper document, LegacyPrefsHelper ruleset) {
 
         String firstAddable = null;
         try {

@@ -495,8 +495,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @return the first child matching the given conditions, if any, or a newly
      *         created child with these properties otherwise
      */
-    private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type, String identifierField,
-            String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act,
+    private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type,
+            String identifierField, String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act,
             LegacyPrefsHelper ruleset) {
 
         try {

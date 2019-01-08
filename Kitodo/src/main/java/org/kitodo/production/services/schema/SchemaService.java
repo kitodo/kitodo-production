@@ -40,6 +40,7 @@ public class SchemaService {
 
     private static final MetsService METS_SERVICE = ServiceManager.getMetsService();
     private static final UseXmlAttributeAccessInterface LOCAL = new LegacyInnerPhysicalDocStructHelper().local;
+
     /**
      * Temporal method for separate file conversion from ExportMets class
      * (method writeMetsFile).

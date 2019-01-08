@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.kitodo.production.enums.ReportLevel;
 
@@ -80,8 +79,7 @@ public class WebServiceResult {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
 
                 DateTime now = new DateTime();
-                DateTimeFormatter iso8601formatter = ISODateTimeFormat.dateTime();
-                report.setString("timestamp", iso8601formatter.print(now));
+                report.setString("timestamp", ISODateTimeFormat.dateTime().print(now));
                 report.setString("queue", queueName);
                 report.setString("id", id);
                 report.setString("level", level.toLowerCase());

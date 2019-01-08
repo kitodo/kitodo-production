@@ -65,6 +65,12 @@ public class LegacyMetadataHelper {
         return value;
     }
 
+    /**
+     * Sets the document structure entity to which this object belongs to.
+     *
+     * @param docStruct
+     *            document structure entity to which this object belongs
+     */
     @Deprecated
     public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {

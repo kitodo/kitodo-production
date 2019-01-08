@@ -143,6 +143,11 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = workpiece;
     }
 
+    /**
+     * Add all content files to the digital document according to the
+     * pathimagefiles meta-data. The pages in the physical DocStruct must
+     * already exist!
+     */
     @Deprecated
     public void addAllContentFiles() {
         /*
@@ -153,6 +158,14 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Creates a document structure with the given document structure type for
+     * the Digital Document.
+     *
+     * @param docStructType
+     *            document structure type for the new document structure
+     * @return the new document structure
+     */
     @Deprecated
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
@@ -220,6 +233,14 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Reads a file and creates a digital document instance.
+     *
+     * @param path
+     *            full path to file which should be read
+     * @throws IOException
+     *             may be thrown if reading fails
+     */
     @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
@@ -253,6 +274,15 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Writes the content of the DigitalDocument instance to a file. The file
+     * format must already have a DigitalDocument instance.
+     *
+     * @param filename
+     *            full path to the file
+     * @throws IOException
+     *             may be thrown if writing fails
+     */
     @Deprecated
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
@@ -302,6 +332,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return exception;
     }
 
+    /**
+     * Sets the content IDs of the METS/MODS import export.
+     *
+     * @param contentIDs
+     *            the content IDs to set
+     */
     @Deprecated
     public void setContentIDs(String contentIDs) {
         /*
@@ -310,6 +346,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience presentation of the METS/MODS import export.
+     *
+     * @param digiprovPresentation
+     *            the digital provenience presentation to set
+     */
     @Deprecated
     public void setDigiprovPresentation(String digiprovPresentation) {
         /*
@@ -318,6 +360,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience presentation anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovPresentationAnchor
+     *            the digital provenience presentation anchor to set
+     */
     @Deprecated
     public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
         /*
@@ -326,6 +375,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience reference of the METS/MODS import export.
+     *
+     * @param digiprovReference
+     *            the digital provenience reference to set
+     */
     @Deprecated
     public void setDigiprovReference(String digiprovReference) {
         /*
@@ -334,6 +389,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience reference anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovReferenceAnchor
+     *            the digital provenience reference anchor to set
+     */
     @Deprecated
     public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
         /*
@@ -342,6 +404,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the mets:mptr anchor URL of the METS/MODS import export.
+     *
+     * @param mptrAnchorUrl
+     *            the mets:mptr anchor URL to set
+     */
     @Deprecated
     public void setMptrAnchorUrl(String mptrAnchorUrl) {
         /*
@@ -350,6 +418,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Adds a mets:mptr URL to the METS/MODS import export.
+     *
+     * @param mptrUrl
+     *            the mets:mptr URL to set
+     */
     @Deprecated
     public void setMptrUrl(String mptrUrl) {
         /*
@@ -358,6 +432,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the purl URL of the METS/MODS import export.
+     *
+     * @param purlUrl
+     *            the purl URL to set
+     */
     @Deprecated
     public void setPurlUrl(String purlUrl) {
         /*
@@ -366,6 +446,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner of the METS/MODS import export.
+     *
+     * @param rightsOwner
+     *            the rights owner to set
+     */
     @Deprecated
     public void setRightsOwner(String rightsOwner) {
         /*
@@ -374,6 +460,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner contact of the METS/MODS import export.
+     *
+     * @param rightsOwnerContact
+     *            the rights owner contact to set
+     */
     @Deprecated
     public void setRightsOwnerContact(String rightsOwnerContact) {
         /*
@@ -382,6 +474,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner logo of the METS/MODS import export.
+     *
+     * @param rightsOwnerLogo
+     *            the rights owner logo to set
+     */
     @Deprecated
     public void setRightsOwnerLogo(String rightsOwnerLogo) {
         /*
@@ -390,6 +488,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner site URL of the METS/MODS import export.
+     *
+     * @param rightsOwnerSiteURL
+     *            the rights owner site URL to set
+     */
     @Deprecated
     public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
         /*
@@ -398,6 +502,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets whether the METS/MODS import export shall write a local file group.
+     *
+     * @param writeLocalFileGroup
+     *            whether the METS/MODS import export shall write a local file
+     *            group
+     */
     @Deprecated
     public void setWriteLocal(boolean writeLocalFileGroup) {
         /*
