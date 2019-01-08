@@ -128,9 +128,6 @@ public class LanguageForm implements Serializable {
     public List<Map<String, Object>> getSupportedLocales() {
         List<Map<String, Object>> result = new ArrayList<>();
         Locale currentDisplayLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        // It seems we have an old Faces API, Faces 2.1’s getSupportedLocales()
-        // returns Iterator<Locale>
-        // TODO: Update JSF API
         Iterator<Locale> localesIterator = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
         while (localesIterator.hasNext()) {
             Locale supportedLocale = localesIterator.next();
