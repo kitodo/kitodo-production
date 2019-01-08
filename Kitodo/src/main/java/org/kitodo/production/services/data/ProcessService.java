@@ -1788,7 +1788,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        // download images
         try {
             if (exportWithImages) {
                 downloadImages(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
@@ -1796,7 +1795,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             } else if (exportFullText) {
                 downloadFullText(process, userHome, atsPpnBand);
             }
-
             directoryDownload(process, targetDirectory);
         } catch (RuntimeException e) {
             Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
@@ -1958,45 +1956,30 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
-        // download sources
-        URI sources = fileService.getSourceDirectory(process);
-        if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
+        URI source = fileService.getSourceDirectory(process);
+        if (fileService.fileExist(source) && !fileService.getSubUris(source).isEmpty()) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            List<URI> files = fileService.getSubUris(sources);
-            for (URI file : files) {
-                if (fileService.isFile(file)) {
-                    URI targetDirectory = destination
-                            .resolve(File.separator + fileService.getFileNameWithExtension(file));
-                    fileService.copyFile(file, targetDirectory);
-                }
-            }
+            copyProcessFiles(source, destination, null);
         }
     }
 
     private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
-            List<URI> folder = fileService.getSubUris(ocr);
-            for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()
-                        && fileService.getFileName(dir).contains("_")) {
-                    String suffix = fileService.getFileNameWithExtension(dir)
-                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf('_'));
+            List<URI> directories = fileService.getSubUris(ocr);
+            for (URI directory : directories) {
+                if (fileService.isDirectory(directory) && !fileService.getSubUris(directory).isEmpty()
+                        && fileService.getFileName(directory).contains("_")) {
+                    String suffix = fileService.getFileNameWithExtension(directory)
+                            .substring(fileService.getFileNameWithExtension(directory).lastIndexOf('_'));
                     URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    List<URI> files = fileService.getSubUris(dir);
-                    for (URI file : files) {
-                        if (fileService.isFile(file)) {
-                            URI target = destination
-                                    .resolve(File.separator + fileService.getFileNameWithExtension(file));
-                            fileService.copyFile(file, target);
-                        }
-                    }
+                    copyProcessFiles(directory, destination, null);
                 }
             }
         }
@@ -2011,49 +1994,45 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            save file
      * @param atsPpnBand
      *            String
-     * @param ordnerEndung
+     * @param directorySuffix
      *            String
      */
-    public void downloadImages(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
+    public void downloadImages(Process process, URI userHome, String atsPpnBand, final String directorySuffix)
             throws IOException {
-
         Project project = process.getProject();
-        /*
-         * den Ausgangspfad ermitteln
-         */
-        URI tifOrdner = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
 
-        /*
-         * jetzt die Ausgangsordner in die Zielordner kopieren
-         */
-        if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
-            URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
+        // determine the output path
+        URI tifDirectory = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
 
-            /* bei Agora-Import einfach den Ordner anlegen */
+        // copy the source folder to the destination folder
+        if (fileService.fileExist(tifDirectory) && !fileService.getSubUris(tifDirectory).isEmpty()) {
+            URI destination = userHome.resolve(File.separator + atsPpnBand + directorySuffix);
+
+            // with Agora import simply create the folder
             if (project.isUseDmsImport()) {
-                if (!fileService.fileExist(zielTif)) {
-                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
+                if (!fileService.fileExist(destination)) {
+                    fileService.createDirectory(userHome, atsPpnBand + directorySuffix);
                 }
             } else {
-                /*
-                 * wenn kein Agora-Import, dann den Ordner mit
-                 * Benutzerberechtigung neu anlegen
-                 */
+                // if no Agora import, then create again the folder with user authorization
                 User user = ServiceManager.getUserService().getAuthenticatedUser();
                 try {
-                    fileService.createDirectoryForUser(zielTif, user.getLogin());
+                    fileService.createDirectoryForUser(destination, user.getLogin());
                 } catch (RuntimeException e) {
                     Helper.setErrorMessage(ERROR_EXPORT, "could not create destination directory", logger, e);
                 }
             }
+            copyProcessFiles(tifDirectory, destination, ImageHelper.dataFilter);
+        }
+    }
 
-            // jetzt den eigentlichen Kopiervorgang
-            List<URI> dateien = fileService.getSubUris(ImageHelper.dataFilter, tifOrdner);
-            for (URI file : dateien) {
-                if (fileService.isFile(file)) {
-                    URI target = zielTif.resolve(File.separator + fileService.getFileNameWithExtension(file));
-                    fileService.copyFile(file, target);
-                }
+    private void copyProcessFiles(URI source, URI destination, FilenameFilter filter) throws IOException {
+        List<URI> files = fileService.getSubUris(filter, source);
+
+        for (URI file : files) {
+            if (fileService.isFile(file)) {
+                URI target = destination.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                fileService.copyFile(file, target);
             }
         }
     }
