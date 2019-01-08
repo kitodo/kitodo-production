@@ -25,9 +25,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -117,8 +114,7 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException
-                | JAXBException e) {
+        } catch (IOException | RuntimeException | JAXBException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
@@ -141,7 +137,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     public boolean startExport(Process process, URI inZielVerzeichnis, LegacyMetsModsDigitalDocumentHelper newFile)
-            throws IOException, WriteException, PreferencesException, JAXBException {
+            throws IOException, JAXBException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
@@ -318,7 +314,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
-            throws IOException, PreferencesException, WriteException, JAXBException {
+            throws IOException, JAXBException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
         if (exportDmsTask != null) {
@@ -391,7 +387,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
-            throws IOException, PreferencesException, WriteException, JAXBException {
+            throws IOException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
             writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);

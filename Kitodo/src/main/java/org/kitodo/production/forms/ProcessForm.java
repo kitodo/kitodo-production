@@ -32,10 +32,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -467,8 +463,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
-                | PreferencesException | IOException | RuntimeException | JAXBException e) {
+        } catch (ExportFileException | IOException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -489,8 +484,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
-                | ExportFileException | RuntimeException | JAXBException e) {
+        } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                 new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
@@ -529,8 +523,7 @@ public class ProcessForm extends TemplateBaseForm {
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
-            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | IOException | ExportFileException | RuntimeException | JAXBException e) {
+            } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
             }

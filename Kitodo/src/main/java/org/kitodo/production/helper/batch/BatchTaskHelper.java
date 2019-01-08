@@ -21,10 +21,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -380,8 +376,7 @@ public class BatchTaskHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | IOException | ExportFileException | RuntimeException | JAXBException e) {
+            } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
             }

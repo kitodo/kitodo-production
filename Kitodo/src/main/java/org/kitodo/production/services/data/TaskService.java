@@ -31,9 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
@@ -574,7 +571,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             dd = ServiceManager.getProcessService()
                     .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(po), prefs)
                     .getDigitalDocument();
-        } catch (PreferencesException | ReadException | IOException e2) {
+        } catch (IOException e2) {
             logger.error(e2);
         }
         VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
@@ -694,7 +691,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             } else {
                 abortTask(task);
             }
-        } catch (PreferencesException | WriteException | IOException | JAXBException e) {
+        } catch (IOException | JAXBException e) {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }

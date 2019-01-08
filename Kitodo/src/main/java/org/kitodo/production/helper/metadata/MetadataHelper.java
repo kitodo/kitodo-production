@@ -27,7 +27,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.enums.SortType;
@@ -211,16 +210,12 @@ public class MetadataHelper {
                 // check, if mdt is already in the allMDs Metadata list, if not
                 // - add it
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
-                    try {
-                        if (mdt.isPerson()) {
-                            throw new UnsupportedOperationException("Dead code pending removal");
-                        } else {
-                            LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
-                            inStruct.addMetadata(md); // add this new metadata
-                            // element
-                        }
-                    } catch (DocStructHasNoTypeException e) {
-                        logger.error(e.getMessage(), e);
+                    if (mdt.isPerson()) {
+                        throw new UnsupportedOperationException("Dead code pending removal");
+                    } else {
+                        LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
+                        inStruct.addMetadata(md); // add this new metadata
+                        // element
                     }
                 }
             }
