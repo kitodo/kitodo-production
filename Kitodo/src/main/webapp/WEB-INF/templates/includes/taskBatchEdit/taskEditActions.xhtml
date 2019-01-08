@@ -17,7 +17,6 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
 >
     <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
 
@@ -32,17 +31,17 @@
                     <td class="eingabeBoxen_row2">
                         <h:panelGrid columns="1">
 
-                            <t:dataList var="script" value="#{CurrentTaskForm.batchHelper.script}"
+                            <p:dataList var="script" value="#{CurrentTaskForm.batchHelper.script}"
                                         layout="unorderedList">
                                 <h:commandLink id="action3" action="#{CurrentTaskForm.batchHelper.executeScript}"
                                                title="#{script}">
-                                    <t:updateActionListener property="#{CurrentTaskForm.batchHelper.script}"
+                                    <f:setPropertyActionListener target="#{CurrentTaskForm.batchHelper.script}"
                                                             value="#{script}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute action"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.scriptExecute}: #{script}"/>
                                 </h:commandLink>
-                            </t:dataList>
+                            </p:dataList>
 
                             <h:outputText rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
                                           value="#{msgs.timeoutWarningDMS}"/>
