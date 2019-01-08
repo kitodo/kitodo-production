@@ -47,11 +47,13 @@ public class LegacyPrefsHelper {
      */
     private RulesetManagementInterface ruleset;
 
+    @Deprecated
     public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
@@ -68,6 +70,7 @@ public class LegacyPrefsHelper {
         }
     }
 
+    @Deprecated
     public LegacyMetadataTypeHelper getMetadataTypeByName(String identifier) {
         switch (identifier) {
             case "logicalPageNumber":
@@ -108,10 +111,12 @@ public class LegacyPrefsHelper {
      * 
      * @return the ruleset
      */
+    @Deprecated
     public RulesetManagementInterface getRuleset() {
         return ruleset;
     }
 
+    @Deprecated
     public void loadPrefs(String fileName) throws IOException {
         File rulesetFile = new File(fileName);
         RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();

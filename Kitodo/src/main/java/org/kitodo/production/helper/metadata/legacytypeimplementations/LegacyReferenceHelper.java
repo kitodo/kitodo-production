@@ -29,19 +29,23 @@ public class LegacyReferenceHelper {
      */
     private LegacyInnerPhysicalDocStructHelper target;
 
+    @Deprecated
     public LegacyReferenceHelper(LegacyInnerPhysicalDocStructHelper target) {
         this.target = target;
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getSource() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getTarget() {
         return target;
     }
 
+    @Deprecated
     public String getType() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

@@ -44,34 +44,41 @@ public class LegacyMetadataHelper {
         this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
     }
 
+    @Deprecated
     public LegacyMetadataHelper(LegacyMetadataTypeHelper type) {
         this.type = type;
         this.value = "";
     }
 
+    @Deprecated
     public LegacyInnerPhysicalDocStructHelper getDocStruct() {
         return legacyInnerPhysicalDocStructHelper;
     }
 
+    @Deprecated
     public LegacyMetadataTypeHelper getMetadataType() {
         return type;
     }
 
+    @Deprecated
     public String getValue() {
         return value;
     }
 
+    @Deprecated
     public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
             this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }
     }
 
+    @Deprecated
     public void setType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setStringValue(String value) {
         this.value = value;
     }

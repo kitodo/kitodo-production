@@ -55,6 +55,7 @@ public interface LegacyDocStructHelperInterface {
      * @param child
      *            DocStruct to be added
      */
+    @Deprecated
     void addChild(LegacyDocStructHelperInterface child);
 
     /**
@@ -69,6 +70,7 @@ public interface LegacyDocStructHelperInterface {
      * @param child
      *            DocStruct to be added
      */
+    @Deprecated
     void addChild(Integer index, LegacyDocStructHelperInterface child);
 
     /**
@@ -78,6 +80,7 @@ public interface LegacyDocStructHelperInterface {
      * @param contentFile
      *            content file to add
      */
+    @Deprecated
     void addContentFile(LegacyContentFileHelper contentFile);
 
     /**
@@ -100,6 +103,7 @@ public interface LegacyDocStructHelperInterface {
      * @param metadata
      *            meta-data object to add
      */
+    @Deprecated
     void addMetadata(LegacyMetadataHelper metadata);
 
     /**
@@ -119,6 +123,7 @@ public interface LegacyDocStructHelperInterface {
      * @return a newly created References object containing information about
      *         linking both DocStructs. The return value is never used.
      */
+    @Deprecated
     LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type);
 
     /**
@@ -137,6 +142,7 @@ public interface LegacyDocStructHelperInterface {
      * identifier, nor an institution.</li>
      * </ul>
      */
+    @Deprecated
     void deleteUnusedPersonsAndMetadata();
 
     /**
@@ -152,6 +158,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all meta-data types that users can add to this instance
      */
+    @Deprecated
     List<LegacyMetadataTypeHelper> getAddableMetadataTypes();
 
     /**
@@ -160,6 +167,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all children of this DocStruct
      */
+    @Deprecated
     List<LegacyDocStructHelperInterface> getAllChildren();
 
     /**
@@ -177,6 +185,7 @@ public interface LegacyDocStructHelperInterface {
      *            name of the meta-data type
      * @return all children of the given type and with the given meta-data
      */
+    @Deprecated
     List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType);
 
     /**
@@ -186,6 +195,7 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data from this instance. A return type
      *         {@code Collection<>} would be sufficient.
      */
+    @Deprecated
     List<LegacyMetadataHelper> getAllMetadata();
 
     /**
@@ -199,6 +209,7 @@ public interface LegacyDocStructHelperInterface {
      *            meta-data type to look for
      * @return all meta-data of the given type
      */
+    @Deprecated
     List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
 
     /**
@@ -209,6 +220,7 @@ public interface LegacyDocStructHelperInterface {
      *            always "{@code to}".
      * @return incoming or outgoing {@code Reference}s
      */
+    @Deprecated
     List<LegacyReferenceHelper> getAllReferences(String direction);
 
     /**
@@ -217,6 +229,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all outgoing {@code Reference}s
      */
+    @Deprecated
     Collection<LegacyReferenceHelper> getAllToReferences();
 
     /**
@@ -230,6 +243,7 @@ public interface LegacyDocStructHelperInterface {
      *         type would be sufficient to be an Iterable, but there is a check
      *         for size()=0.
      */
+    @Deprecated
     Collection<LegacyReferenceHelper> getAllToReferences(String type);
 
     /**
@@ -242,6 +256,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return String, which is null, if it cannot be used as an anchor
      */
+    @Deprecated
     default String getAnchorClass() {
         return null;
     }
@@ -258,6 +273,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return all meta-data group types that shall always be displayed
      */
+    @Deprecated
     List<LegacyMetadataTypeHelper> getDisplayMetadataTypes();
 
     /**
@@ -265,6 +281,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return the image name
      */
+    @Deprecated
     String getImageName();
 
     /**
@@ -273,6 +290,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return the parent, if any
      */
+    @Deprecated
     LegacyDocStructHelperInterface getParent();
 
     /**
@@ -288,6 +306,7 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data types that can be added to this instance. A return
      *         type of {@code Collection<>} would be sufficient.
      */
+    @Deprecated
     List<LegacyMetadataTypeHelper> getPossibleMetadataTypes();
 
     /**
@@ -295,6 +314,7 @@ public interface LegacyDocStructHelperInterface {
      *
      * @return the type of this DocStruct
      */
+    @Deprecated
     LegacyLogicalDocStructTypeHelper getDocStructType();
 
     /**
@@ -314,6 +334,7 @@ public interface LegacyDocStructHelperInterface {
      * @param docStruct
      *            to be removed
      */
+    @Deprecated
     void removeChild(LegacyDocStructHelperInterface docStruct);
 
     /**
@@ -324,6 +345,7 @@ public interface LegacyDocStructHelperInterface {
      * @param metaDatum
      *            meta-datum which should be removed
      */
+    @Deprecated
     void removeMetadata(LegacyMetadataHelper metaDatum);
 
     /**
@@ -334,5 +356,6 @@ public interface LegacyDocStructHelperInterface {
      * @param target
      *            {@code DocStruct}
      */
+    @Deprecated
     void removeReferenceTo(LegacyDocStructHelperInterface target);
 }

@@ -49,6 +49,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * DocStruct element of the logical structure tree of a digital document, a
      * METS pointer element will be created during export.
      */
+    @Deprecated
     public static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
 
     /**
@@ -58,6 +59,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * will have assigned the value assigned to the last meta data element of
      * this type associated with the DocStruct element.
      */
+    @Deprecated
     public static final String CREATE_LABEL_ATTRIBUTE_TYPE = "TitleDocMain";
 
     /**
@@ -67,6 +69,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * export which will have assigned the value assigned to the last meta data
      * element of this type associated with the DocStruct element.
      */
+    @Deprecated
     public static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
 
     private static final MetsService metsService = ServiceManager.getMetsService();
@@ -92,6 +95,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     /**
      * Creates a new legacy METS MODS digital document helper.
      */
+    @Deprecated
     public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
         this.workpiece = metsService.createMetsXmlElementAccess();
@@ -117,6 +121,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * @param ruleset
      *            ruleset to set
      */
+    @Deprecated
     public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset) {
         this();
         this.ruleset = ruleset;
@@ -130,6 +135,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * @param workpiece
      *            workpiece to set
      */
+    @Deprecated
     public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset,
             MetsXmlElementAccessInterface workpiece) {
 
@@ -137,6 +143,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = workpiece;
     }
 
+    @Deprecated
     public void addAllContentFiles() {
         /*
          * In the legacy implementation, this method must be called to fully
@@ -146,6 +153,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
             return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
@@ -176,18 +184,22 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return message;
     }
 
+    @Deprecated
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;
     }
 
+    @Deprecated
     public LegacyFileSetDocStructHelper getFileSet() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
         return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getPhysicalDocStruct() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
@@ -197,15 +209,18 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * 
      * @return the workpiece
      */
+    @Deprecated
     public MetsXmlElementAccessInterface getWorkpiece() {
         return workpiece;
     }
 
+    @Deprecated
     public void overrideContentFiles(List<String> images) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
 
@@ -221,20 +236,24 @@ public class LegacyMetsModsDigitalDocumentHelper {
         }
     }
 
+    @Deprecated
     public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper metsKitodoDocument) {
         this.workpiece = metsKitodoDocument.workpiece;
     }
 
+    @Deprecated
     public void setLogicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setPhysicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
 
@@ -283,6 +302,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return exception;
     }
 
+    @Deprecated
     public void setContentIDs(String contentIDs) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -290,6 +310,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setDigiprovPresentation(String digiprovPresentation) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -297,6 +318,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -304,6 +326,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setDigiprovReference(String digiprovReference) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -311,6 +334,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -318,6 +342,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setMptrAnchorUrl(String mptrAnchorUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -325,6 +350,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setMptrUrl(String mptrUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -332,6 +358,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setPurlUrl(String purlUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -339,6 +366,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setRightsOwner(String rightsOwner) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -346,6 +374,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setRightsOwnerContact(String rightsOwnerContact) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -353,6 +382,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setRightsOwnerLogo(String rightsOwnerLogo) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -360,6 +390,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -367,6 +398,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    @Deprecated
     public void setWriteLocal(boolean writeLocalFileGroup) {
         /*
          * This is already done by the schema service. There is nothing to do

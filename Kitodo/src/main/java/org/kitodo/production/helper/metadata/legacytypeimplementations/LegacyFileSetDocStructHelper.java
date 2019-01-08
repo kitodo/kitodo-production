@@ -36,43 +36,51 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
      */
     private List<FileXmlElementAccessInterface> mediaUnits;
 
+    @Deprecated
     public LegacyFileSetDocStructHelper(List<FileXmlElementAccessInterface> mediaUnits) {
         this.mediaUnits = mediaUnits;
     }
 
+    @Deprecated
     public void addFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public Iterable<LegacyContentFileHelper> getAllFiles() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void removeFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void addChild(LegacyDocStructHelperInterface child) {
         mediaUnits.add(((LegacyInnerPhysicalDocStructHelper) child).getMediaUnit());
     }
 
     @Override
+    @Deprecated
     public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void addContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
         /*
          * Legacy code tries to add (empty) meta-data entries here. I guess this
@@ -80,23 +88,28 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
          */
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
         // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface copy(boolean copyMetaData, Boolean recursive) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
+    @Deprecated
+    public LegacyDocStructHelperInterface createChild(String docStructType,
+            LegacyMetsModsDigitalDocumentHelper digitalDocument,
             LegacyPrefsHelper prefs) {
 
         //TODO remove
@@ -104,18 +117,21 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void deleteUnusedPersonsAndMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
         List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
@@ -125,6 +141,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
         List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
@@ -133,32 +150,38 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         return result;
     }
 
+    @Deprecated
     public List<LegacyContentFileHelper> getAllContentFiles() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public List<LegacyReferenceHelper> getAllFromReferences() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         return Collections.emptyList();
     }
 
     @Override
+    @Deprecated
     public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
     }
 
     @Override
+    @Deprecated
     public List<LegacyReferenceHelper> getAllReferences(String direction) {
         /*
          * Although the method is called because the same loop is used for
@@ -168,63 +191,74 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public Collection<LegacyReferenceHelper> getAllToReferences() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public Object getAllVisibleMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public String getAnchorClass() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getChild(String type, String identifierField, String identifier) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public String getImageName() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public LegacyDocStructHelperInterface getParent() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getDocStructType() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -236,6 +270,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
         logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
@@ -243,38 +278,48 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         return getDocStructType();
     }
 
+    @Override
+    @Deprecated
     public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
         // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Override
+    @Deprecated
+    // TODO remove
     public void removeChild(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void removeContentFile(LegacyContentFileHelper contentFile) {
         // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void removeReferenceTo(LegacyDocStructHelperInterface target) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setImageName(String imageName) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

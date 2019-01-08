@@ -1755,11 +1755,7 @@ public class MetadataProcessor {
                 this.docStruct = dragDocStruct;
                 this.docStruct.getParent().removeChild(dragDocStruct);
 
-                try {
-                    addNewDocStructToExistingDocStruct(dropDocStruct, dragDocStruct, dropIndex);
-                } catch (TypeNotAllowedAsChildException e) {
-                    Helper.setErrorMessage(e.getMessage(), logger, e);
-                }
+                addNewDocStructToExistingDocStruct(dropDocStruct, dragDocStruct, dropIndex);
             } else {
                 Helper.setErrorMessage(
                     dragDocStruct.getDocStructType() + " not allowed as child of " + dropDocStruct.getDocStructType());
