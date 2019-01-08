@@ -39,8 +39,6 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -504,13 +502,8 @@ public class FileService {
      *            the process
      * @throws IOException
      *             if error occurs
-     * @throws PreferencesException
-     *             if error occurs
-     * @throws WriteException
-     *             if error occurs
      */
-    public void writeMetadataFile(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process)
-            throws IOException, PreferencesException, WriteException {
+    public void writeMetadataFile(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) throws IOException {
         RulesetService rulesetService = ServiceManager.getRulesetService();
         LegacyMetsModsDigitalDocumentHelper ff;
 

@@ -19,12 +19,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -162,9 +156,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     setProgress(100 * stepcounter / maxsize);
                 }
             }
-        } catch (PreferencesException | ReadException | IOException | MetadataTypeNotAllowedException
-                | TypeNotAllowedForParentException | TypeNotAllowedAsChildException | WriteException | RuntimeException
-                | JAXBException e) {
+        } catch (IOException | RuntimeException | JAXBException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
@@ -183,27 +175,12 @@ public class ExportSerialBatchTask extends EmptyTask {
      * @param allPointers
      *            all the METS pointers from all volumes
      * @return an enriched DigitalDocument
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set used
-     * @throws ReadException
-     *             if the meta data file cannot be read
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws TypeNotAllowedForParentException
-     *             is thrown, if this DocStruct is not allowed for a parent
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
     private static LegacyMetsModsDigitalDocumentHelper buildExportDocument(Process process, Iterable<String> allPointers)
-            throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
-            TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+            throws IOException {
         LegacyMetsModsDigitalDocumentHelper result = ServiceManager.getProcessService().readMetadataFile(process)
                 .getDigitalDocument();
         LegacyDocStructHelperInterface root = result.getLogicalDocStruct();

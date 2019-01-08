@@ -26,10 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
@@ -51,8 +47,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException, JAXBException {
+    public boolean startExport(Process process) throws IOException, ExportFileException, JAXBException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
@@ -66,8 +61,7 @@ public class ExportMets {
      * @param userHome
      *            String
      */
-    public boolean startExport(Process process, URI userHome) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException, JAXBException {
+    public boolean startExport(Process process, URI userHome) throws IOException, ExportFileException, JAXBException {
 
         /*
          * Read Document

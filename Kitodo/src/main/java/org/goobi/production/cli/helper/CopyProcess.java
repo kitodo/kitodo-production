@@ -24,9 +24,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -235,7 +232,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         try {
             this.myRdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
-        } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
 
@@ -276,9 +273,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io)
-            throws ReadException, IOException, PreferencesException, WriteException {
-
+    public Process createProcess(ImportObject io) throws IOException {
         addProperties(io);
         updateTasks(this.prozessKopie);
 

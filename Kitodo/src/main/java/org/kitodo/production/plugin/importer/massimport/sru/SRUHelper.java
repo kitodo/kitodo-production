@@ -33,8 +33,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
@@ -159,9 +157,7 @@ public class SRUHelper {
      *            Prefs
      * @return Fileformat
      */
-    public static LegacyMetsModsDigitalDocumentHelper parsePicaFormat(Node pica, LegacyPrefsHelper prefs)
-            throws ReadException, PreferencesException {
-
+    public static LegacyMetsModsDigitalDocumentHelper parsePicaFormat(Node pica, LegacyPrefsHelper prefs) {
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 }

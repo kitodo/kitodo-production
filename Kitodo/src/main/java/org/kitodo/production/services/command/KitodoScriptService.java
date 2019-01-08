@@ -26,11 +26,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
@@ -169,7 +164,7 @@ public class KitodoScriptService {
                 rdf.getDigitalDocument().addAllContentFiles();
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
-            } catch (PreferencesException | IOException | ReadException | WriteException | RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
             }
         }
@@ -529,8 +524,7 @@ public class KitodoScriptService {
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
-            } catch (UghHelperException | PreferencesException | IOException
-                    | ReadException | WriteException | RuntimeException e) {
+            } catch (UghHelperException | IOException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
             }
         }
@@ -546,9 +540,7 @@ public class KitodoScriptService {
                     dms.setExportFullText(exportFulltext);
                 }
                 dms.startExport(process);
-            } catch (DocStructHasNoTypeException | PreferencesException | WriteException
-                    | MetadataTypeNotAllowedException | ReadException | IOException | ExportFileException
-                    | JAXBException e) {
+            } catch (IOException | ExportFileException | JAXBException e) {
                 logger.error(e.getMessage(), e);
             }
         }

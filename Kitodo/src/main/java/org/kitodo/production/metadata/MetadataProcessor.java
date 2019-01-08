@@ -53,13 +53,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
-import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.UGHException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -321,7 +314,7 @@ public class MetadataProcessor {
                 boundary = valueURI.lastIndexOf('/');
             }
             if (boundary == -1) {
-                throw new IncompletePersonObjectException("uriMalformed");
+                throw new IllegalArgumentException("uriMalformed");
             } else {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
@@ -456,9 +449,7 @@ public class MetadataProcessor {
         this.treeNodeStruct = null;
         try {
             readXmlStart();
-        } catch (ReadException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
-        } catch (PreferencesException | IOException e) {
+        } catch (IOException e) {
             Helper.setErrorMessage("error while loading metadata" + e.getMessage(), logger, e);
         }
 
@@ -469,7 +460,7 @@ public class MetadataProcessor {
     /**
      * Read metadata.
      */
-    public void readXmlStart() throws ReadException, IOException, PreferencesException {
+    public void readXmlStart() throws IOException {
         currentRepresentativePage = "";
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(this.process.getRuleset());
         // TODO: Make file pattern configurable
@@ -498,7 +489,7 @@ public class MetadataProcessor {
 
         // this exception needs some serious feedback because data is corrupted
         if (this.logicalTopstruct == null) {
-            throw new ReadException(Helper.getTranslation("metadataError"));
+            throw new IOException(Helper.getTranslation("metadataError"));
         }
 
         retrieveAllImages();
@@ -593,7 +584,7 @@ public class MetadataProcessor {
         boolean result = true;
         try {
             fileService.writeMetadataFile(this.gdzfile, this.process);
-        } catch (PreferencesException | WriteException | IOException | RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("metadata") }, logger, e);
             result = false;
         }
@@ -817,14 +808,8 @@ public class MetadataProcessor {
     public void addSingleNodeWithPages() {
         LegacyDocStructHelperInterface docStruct = null;
         LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-
-        try {
-            docStruct = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
-                1, null, null);
-
-        } catch (UGHException e) {
-            logger.error(e.getMessage());
-        }
+        docStruct = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement, 1,
+            null, null);
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
 
@@ -841,28 +826,22 @@ public class MetadataProcessor {
      * sets specified metadata.
      */
     public void addSeveralNodesWithMetadata() {
-        LegacyDocStructHelperInterface ds;
-
         LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-        try {
-            ds = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
-                this.metadataElementsToAdd, this.addMetaDataType, this.addMetaDataValue);
-        } catch (UGHException e) {
-            logger.error(e.getMessage());
-        }
+        addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
+            this.metadataElementsToAdd, this.addMetaDataType, this.addMetaDataValue);
         readMetadataAsFirstTree();
     }
 
     private void addNewDocStructToExistingDocStruct(LegacyDocStructHelperInterface existingDocStruct,
-            LegacyDocStructHelperInterface newDocStruct, int index) throws TypeNotAllowedAsChildException {
+            LegacyDocStructHelperInterface newDocStruct, int index) {
 
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
-    private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct, LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            LegacyLogicalDocStructTypeHelper docStructType, PositionOfNewDocStrucElement positionOfNewDocStrucElement,
-            int quantity, String metadataType, String value)
-            throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+    private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct,
+            LegacyMetsModsDigitalDocumentHelper digitalDocument, LegacyLogicalDocStructTypeHelper docStructType,
+            PositionOfNewDocStrucElement positionOfNewDocStrucElement, int quantity, String metadataType,
+            String value) {
 
         ArrayList<LegacyDocStructHelperInterface> createdElements = new ArrayList<>(quantity);
 

@@ -63,8 +63,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
@@ -230,7 +228,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             return fileformat;
-        } catch (PreferencesException | ReadException | IOException | JDOMException | ParserConfigurationException e) {
+        } catch (IOException | JDOMException | ParserConfigurationException e) {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }

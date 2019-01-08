@@ -14,8 +14,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import java.util.Collection;
 import java.util.List;
 
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-
 /**
  * One node of a tree depicting the structure of the document.
  *
@@ -46,11 +44,7 @@ public interface LegacyDocStructHelperInterface {
 
     /**
      * Adds another {@code DocStruct} as a child to this instance. The new child
-     * will automatically become the last child in the list. When adding a
-     * {@code DocStruct}, configuration is checked, whether a {@code DocStruct}
-     * of this type can be added. If not, a
-     * {@code TypeNotAllowedAsChildException} is thrown. The parent of this
-     * child (this instance) is set automatically.
+     * will automatically become the last child in the list.
      *
      * @param child
      *            DocStruct to be added
@@ -62,10 +56,7 @@ public interface LegacyDocStructHelperInterface {
      * become the element at the specified position in the child list while the
      * element currently at that position (if any) and any subsequent elements
      * are shifted to the right (so that one gets added to their indices), or
-     * the last child in the list if index is null. When adding a DocStruct,
-     * configuration is checked, whether a DocStruct of this type can be added.
-     * If not, a TypeNotAllowedAsChildException is thrown. The parent of this
-     * child (this instance) is set automatically.
+     * the last child in the list if index is null.
      *
      * @param index
      *            index at which the child is to be inserted
@@ -102,10 +93,6 @@ public interface LegacyDocStructHelperInterface {
      *
      * @param metadata
      *            meta-data object to add
-     * @throws MetadataTypeNotAllowedException
-     *             if this instance does not allow the meta-data type to be
-     *             added, or if the maximum allowed number of meta-data of this
-     *             type has already been added
      */
     void addMetadata(LegacyMetadataHelper metadata);
 
