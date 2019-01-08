@@ -208,6 +208,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return searcher.findDocuments(getQueryForUserId(id, true).toString());
     }
 
+    private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
+        return createSimpleQuery(ProjectTypeField.USERS.getKey() + ".id", id, contains);
+    }
+
     /**
      * Find projects by login of user.
      *
@@ -221,10 +225,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     private QueryBuilder getQueryForUserLogin(String login, boolean contains) {
         return createSimpleQuery(ProjectTypeField.USERS + ".login", login, contains);
-    }
-
-    private QueryBuilder getQueryForUserId(int id, boolean contains) {
-        return createSimpleQuery(ProjectTypeField.USERS + ".id", id, contains);
     }
 
     /**

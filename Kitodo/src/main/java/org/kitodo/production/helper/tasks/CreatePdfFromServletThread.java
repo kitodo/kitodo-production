@@ -92,7 +92,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             // define path for mets and pdfs
             new File("");
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
-            URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
+            final URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore
                     .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();

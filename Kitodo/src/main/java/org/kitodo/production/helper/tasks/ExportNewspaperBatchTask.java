@@ -551,9 +551,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type, String identifierField,
-            String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleset)
-            throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+    private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type,
+            String identifierField, String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act,
+            LegacyPrefsHelper ruleset) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         try {
             throw new UnsupportedOperationException("Dead code pending removal");

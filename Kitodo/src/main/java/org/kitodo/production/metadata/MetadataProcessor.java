@@ -2440,17 +2440,18 @@ public class MetadataProcessor {
     private List<String> getPagesAssignedToDocStruct(LegacyDocStructHelperInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
         List<LegacyReferenceHelper> pageReferences = docStruct.getAllReferences("to");
-        LegacyPrefsHelper LegacyPrefsHelper = this.metaHelper.getPrefs();
-        LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataTypeByName("physPageNumber");
+        LegacyPrefsHelper legacyPrefsHelper = this.metaHelper.getPrefs();
+        LegacyMetadataTypeHelper mdt = legacyPrefsHelper.getMetadataTypeByName("physPageNumber");
 
         List<String> allImages = getImages();
 
         if (!allImages.isEmpty()) {
             for (LegacyReferenceHelper pageReferenceInterface : pageReferences) {
-                LegacyDocStructHelperInterface LegacyDocStructHelperInterface = pageReferenceInterface.getTarget();
-                List<LegacyMetadataHelper> allMetadata = (List<LegacyMetadataHelper>) LegacyDocStructHelperInterface.getAllMetadataByType(mdt);
-                for (LegacyMetadataHelper LegacyMetadataHelper : allMetadata) {
-                    assignedPages.add(allImages.get(Integer.parseInt(LegacyMetadataHelper.getValue()) - 1));
+                LegacyDocStructHelperInterface legacyDocStructHelperInterface = pageReferenceInterface.getTarget();
+                List<LegacyMetadataHelper> allMetadata = (List<LegacyMetadataHelper>) legacyDocStructHelperInterface
+                        .getAllMetadataByType(mdt);
+                for (LegacyMetadataHelper legacyMetadataHelper : allMetadata) {
+                    assignedPages.add(allImages.get(Integer.parseInt(legacyMetadataHelper.getValue()) - 1));
                 }
             }
         } else {

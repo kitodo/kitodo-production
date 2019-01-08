@@ -512,7 +512,8 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        tifHeaderImageDescriptionBuilder.append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        tifHeaderImageDescriptionBuilder
+                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }

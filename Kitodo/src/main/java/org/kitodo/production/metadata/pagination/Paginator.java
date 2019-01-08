@@ -210,6 +210,8 @@ public class Paginator {
             case ARABIC:
                 sequence = new IntegerSequence(start, end, increment);
                 break;
+            default:
+                throw new IllegalStateException("complete switch");
         }
         return sequence;
     }

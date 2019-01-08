@@ -137,6 +137,11 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = workpiece;
     }
 
+    /**
+     * Add all content files to the digital document according to the
+     * pathimagefiles meta-data. The pages in the physical DocStruct must
+     * already exist!
+     */
     public void addAllContentFiles() {
         /*
          * In the legacy implementation, this method must be called to fully
@@ -146,6 +151,14 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Creates a document structure with the given document structure type for
+     * the Digital Document.
+     *
+     * @param docStructType
+     *            document structure type for the new document structure
+     * @return the new document structure
+     */
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
             return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
@@ -206,6 +219,14 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Reads a file and creates a digital document instance.
+     *
+     * @param path
+     *            full path to file which should be read
+     * @throws IOException
+     *             may be thrown if reading fails
+     */
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
 
@@ -235,6 +256,15 @@ public class LegacyMetsModsDigitalDocumentHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Writes the content of the DigitalDocument instance to a file. The file
+     * format must already have a DigitalDocument instance.
+     *
+     * @param filename
+     *            full path to the file
+     * @throws IOException
+     *             may be thrown if writing fails
+     */
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
 
@@ -283,6 +313,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
         return exception;
     }
 
+    /**
+     * Sets the content IDs of the METS/MODS import export.
+     *
+     * @param contentIDs
+     *            the content IDs to set
+     */
     public void setContentIDs(String contentIDs) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -290,6 +326,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience presentation of the METS/MODS import export.
+     *
+     * @param digiprovPresentation
+     *            the digital provenience presentation to set
+     */
     public void setDigiprovPresentation(String digiprovPresentation) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -297,6 +339,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience presentation anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovPresentationAnchor
+     *            the digital provenience presentation anchor to set
+     */
     public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -304,6 +353,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience reference of the METS/MODS import export.
+     *
+     * @param digiprovReference
+     *            the digital provenience reference to set
+     */
     public void setDigiprovReference(String digiprovReference) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -311,6 +366,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the digital provenience reference anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovReferenceAnchor
+     *            the digital provenience reference anchor to set
+     */
     public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -318,6 +380,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the mets:mptr anchor URL of the METS/MODS import export.
+     *
+     * @param mptrAnchorUrl
+     *            the mets:mptr anchor URL to set
+     */
     public void setMptrAnchorUrl(String mptrAnchorUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -325,6 +393,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Adds a mets:mptr URL to the METS/MODS import export.
+     *
+     * @param mptrUrl
+     *            the mets:mptr URL to set
+     */
     public void setMptrUrl(String mptrUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -332,6 +406,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the purl URL of the METS/MODS import export.
+     *
+     * @param purlUrl
+     *            the purl URL to set
+     */
     public void setPurlUrl(String purlUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -339,6 +419,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner of the METS/MODS import export.
+     *
+     * @param rightsOwner
+     *            the rights owner to set
+     */
     public void setRightsOwner(String rightsOwner) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -346,6 +432,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner contact of the METS/MODS import export.
+     *
+     * @param rightsOwnerContact
+     *            the rights owner contact to set
+     */
     public void setRightsOwnerContact(String rightsOwnerContact) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -353,6 +445,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner logo of the METS/MODS import export.
+     *
+     * @param rightsOwnerLogo
+     *            the rights owner logo to set
+     */
     public void setRightsOwnerLogo(String rightsOwnerLogo) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -360,6 +458,12 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets the rights owner site URL of the METS/MODS import export.
+     *
+     * @param rightsOwnerSiteURL
+     *            the rights owner site URL to set
+     */
     public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -367,6 +471,13 @@ public class LegacyMetsModsDigitalDocumentHelper {
          */
     }
 
+    /**
+     * Sets whether the METS/MODS import export shall write a local file group.
+     *
+     * @param writeLocalFileGroup
+     *            whether the METS/MODS import export shall write a local file
+     *            group
+     */
     public void setWriteLocal(boolean writeLocalFileGroup) {
         /*
          * This is already done by the schema service. There is nothing to do

@@ -137,15 +137,15 @@ public class SearchResultGeneration {
                         + " / " + p.getSortHelperStatus().substring(6);
             }
             row.createCell(6).setCellValue(sortHelperStatus);
-            HSSFCell cell7 = row.createCell(7);
-            cell7.setCellValue("");
-            HSSFCell cell8 = row.createCell(8);
-            cell8.setCellValue("");
+            HSSFCell cellSeven = row.createCell(7);
+            cellSeven.setCellValue("");
+            HSSFCell cellEight = row.createCell(8);
+            cellEight.setCellValue("");
             for (Property property : p.getProperties()) {
                 if (property.getTitle().equals("AltRefNo")) {
-                    cell7.setCellValue(property.getValue());
+                    cellSeven.setCellValue(property.getValue());
                 } else if (property.getTitle().equals("b-number")) {
-                    cell8.setCellValue(property.getValue());
+                    cellEight.setCellValue(property.getValue());
                 }
             }
             rowCounter++;
