@@ -29,6 +29,7 @@ import javax.json.JsonValue;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
@@ -80,7 +81,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            object
      * @return JSONArray
      */
-    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
+    <F extends BaseBean> JsonArray addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
         JsonArrayBuilder result = Json.createArrayBuilder();
         for (F property : objects) {
             JsonObjectBuilder jsonObject = Json.createObjectBuilder();
@@ -100,11 +101,11 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            list
      * @return JSONArray
      */
-    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects) {
+    <F extends BaseBean> JsonArray addObjectRelation(List<F> objects) {
         return addObjectRelation(objects, false);
     }
 
-    private void getAdditionalProperties(JsonObjectBuilder jsonObject, BaseIndexedBean property) {
+    private void getAdditionalProperties(JsonObjectBuilder jsonObject, BaseBean property) {
         if (property instanceof Batch) {
             Batch batch = (Batch) property;
             jsonObject.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));

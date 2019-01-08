@@ -29,7 +29,7 @@ import org.kitodo.data.database.persistence.RoleDAO;
 
 @Entity
 @Table(name = "role")
-public class Role extends BaseIndexedBean implements Comparable<Role> {
+public class Role extends BaseBean implements Comparable<Role> {
     private static final long serialVersionUID = -5924845694417474352L;
 
     @Column(name = "title", nullable = false, unique = true)

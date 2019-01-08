@@ -30,7 +30,7 @@ import org.kitodo.data.database.persistence.UserDAO;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseIndexedBean {
+public class User extends BaseBean {
     private static final long serialVersionUID = -7482853955996650586L;
 
     @Column(name = "name")
@@ -119,7 +119,6 @@ public class User extends BaseIndexedBean {
     public User(User user) {
 
         this.setId(user.getId());
-        this.setIndexAction(user.getIndexAction());
         this.setLanguage(user.getLanguage());
         this.active = user.active;
         this.configProductionDateShow = user.configProductionDateShow;

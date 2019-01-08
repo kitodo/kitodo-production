@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "client")
-public class Client extends BaseIndexedBean {
+public class Client extends BaseBean {
 
     private static final long serialVersionUID = -5538496170333987498L;
 

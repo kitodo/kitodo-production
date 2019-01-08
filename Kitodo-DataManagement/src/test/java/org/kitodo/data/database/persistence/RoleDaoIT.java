@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class RoleDaoIT {
 
@@ -53,11 +52,9 @@ public class RoleDaoIT {
     private List<Role> getRoles() {
         Role firstRole = new Role();
         firstRole.setTitle("first_role");
-        firstRole.setIndexAction(IndexAction.DONE);
 
         Role secondRole = new Role();
         secondRole.setTitle("second_role");
-        secondRole.setIndexAction(IndexAction.INDEX);
 
         Role thirdRole = new Role();
         thirdRole.setTitle("third_role");
