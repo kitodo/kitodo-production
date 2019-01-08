@@ -25,8 +25,8 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.file.FileService;
 
 public class BaseTestSelenium {
 

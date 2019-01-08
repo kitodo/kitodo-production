@@ -21,8 +21,8 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.enums.ReportLevel;
-import org.kitodo.helper.Helper;
+import org.kitodo.production.enums.ReportLevel;
+import org.kitodo.production.helper.Helper;
 
 /**
  * The class ActiveMQProcessor offers general services, such as making the

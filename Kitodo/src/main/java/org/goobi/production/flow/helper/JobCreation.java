@@ -32,10 +32,10 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.helper.Helper;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.thread.TaskScriptThread;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.file.FileService;
 
 public class JobCreation {
     private static final Logger logger = LogManager.getLogger(JobCreation.class);

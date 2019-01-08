@@ -77,13 +77,13 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.enums.ObjectType;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.exceptions.WorkflowException;
-import org.kitodo.helper.BeanHelper;
-import org.kitodo.helper.Helper;
-import org.kitodo.security.password.SecurityPasswordEncoder;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.workflow.model.Converter;
+import org.kitodo.production.helper.BeanHelper;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.security.password.SecurityPasswordEncoder;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.workflow.model.Converter;
 
 /**
  * Insert data to test database.

@@ -15,10 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.helper.Helper;
-import org.kitodo.helper.tasks.EmptyTask;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.TaskService;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.tasks.EmptyTask;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.TaskService;
 
 public class TaskScriptThread extends EmptyTask {
 
@@ -79,7 +79,7 @@ public class TaskScriptThread extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see org.kitodo.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.production.helper.tasks.EmptyTask#replace()
      */
     @Override
     public TaskScriptThread replace() {
@@ -89,7 +89,7 @@ public class TaskScriptThread extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {

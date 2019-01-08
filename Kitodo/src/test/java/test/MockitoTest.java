@@ -22,9 +22,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kitodo.converter.ProcessConverter;
+import org.kitodo.production.converter.ProcessConverter;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.data.ProcessService;
+import org.kitodo.production.services.data.ProcessService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 

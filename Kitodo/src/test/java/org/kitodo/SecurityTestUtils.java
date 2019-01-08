@@ -13,8 +13,8 @@ package org.kitodo;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.security.SecurityUserDetails;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.security.SecurityUserDetails;
+import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

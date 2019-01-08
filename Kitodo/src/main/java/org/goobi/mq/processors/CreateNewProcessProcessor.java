@@ -31,10 +31,10 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessCreationException;
-import org.kitodo.forms.ProzesskopieForm;
-import org.kitodo.helper.AdditionalField;
-import org.kitodo.helper.Helper;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.forms.ProzesskopieForm;
+import org.kitodo.production.helper.AdditionalField;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to

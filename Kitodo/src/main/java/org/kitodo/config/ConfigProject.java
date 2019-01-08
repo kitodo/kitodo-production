@@ -31,7 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.helper.AdditionalField;
+import org.kitodo.production.helper.AdditionalField;
 
 public class ConfigProject {
 

@@ -22,8 +22,8 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.forms.CurrentTaskForm;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.production.forms.CurrentTaskForm;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * This is a web service interface to close steps. You have to provide the step

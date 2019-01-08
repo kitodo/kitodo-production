@@ -13,9 +13,9 @@ package org.kitodo.production.thread;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.helper.Helper;
-import org.kitodo.helper.tasks.EmptyTask;
-import org.kitodo.services.image.ImageGenerator;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.tasks.EmptyTask;
+import org.kitodo.production.services.image.ImageGenerator;
 
 /**
  * Performs creating images in the task manager, when the operator clicks on a
@@ -55,7 +55,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.production.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -67,7 +67,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
      * start the export on the ExportDms. This task instance is passed in
      * addition so that the ExportDms can update the task’s state.
      *
-     * @see org.kitodo.helper.tasks.EmptyTask#run()
+     * @see org.kitodo.production.helper.tasks.EmptyTask#run()
      */
     @Override
     public void run() {
@@ -86,7 +86,7 @@ public class TaskImageGeneratorThread extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see org.kitodo.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.production.helper.tasks.EmptyTask#replace()
      */
     @Override
     public TaskImageGeneratorThread replace() {
