@@ -20,10 +20,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.VirtualFileGroupInterface;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units
@@ -44,11 +40,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     public void addFile(LegacyContentFileHelper contentFile) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void addVirtualFileGroup(VirtualFileGroupInterface virtualFileGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -93,16 +84,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addMetadataGroup(MetadataGroupInterface metadataGroup) {
-        // TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void addPerson(PersonInterface person) {
-        // TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         //TODO remove
@@ -123,11 +104,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     public void deleteUnusedPersonsAndMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public List<MetadataGroupTypeInterface> getAddableMetadataGroupTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -179,22 +155,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
-    }
-
-    public List<MetadataGroupInterface> getAllMetadataGroups() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public List<PersonInterface> getAllPersons() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -299,16 +259,6 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void removeMetadataGroup(MetadataGroupInterface metadataGroup) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void removePerson(PersonInterface person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

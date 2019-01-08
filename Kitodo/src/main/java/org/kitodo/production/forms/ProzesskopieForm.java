@@ -47,7 +47,6 @@ import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -496,7 +495,7 @@ public class ProzesskopieForm implements Serializable {
         LegacyDocStructHelperInterface docStruct = getDocStruct(field);
         try {
             if (field.getMetadata().equals(LIST_OF_CREATORS)) {
-                field.setValue(getAuthors(docStruct.getAllPersons()));
+                throw new UnsupportedOperationException("Dead code pending removal");
             } else {
                 // evaluate the content in normal fields
                 LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
@@ -525,32 +524,7 @@ public class ProzesskopieForm implements Serializable {
         return docStruct;
     }
 
-    /**
-     * Get together authors' names.
-     *
-     * @param persons
-     *            list of persons
-     * @return authors' names as String
-     */
-    protected String getAuthors(List<PersonInterface> persons) {
-        StringBuilder authors = new StringBuilder();
 
-        if (persons != null) {
-            for (PersonInterface p : persons) {
-                authors.append(p.getLastName());
-                if (StringUtils.isNotBlank(p.getFirstName())) {
-                    authors.append(", ");
-                    authors.append(p.getFirstName());
-                }
-                authors.append("; ");
-            }
-            if (authors.toString().endsWith("; ")) {
-                authors.setLength(authors.length() - 2);
-            }
-        }
-
-        return authors.toString();
-    }
 
     /**
      * Auswahl des Prozesses auswerten.
@@ -1161,15 +1135,6 @@ public class ProzesskopieForm implements Serializable {
             for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
-                } catch (DocStructHasNoTypeException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                }
-            }
-        }
-        if (oldDocStruct.getAllPersons() != null) {
-            for (PersonInterface p : oldDocStruct.getAllPersons()) {
-                try {
-                    throw new UnsupportedOperationException("Dead code pending removal");
                 } catch (DocStructHasNoTypeException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }

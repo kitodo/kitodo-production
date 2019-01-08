@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
@@ -86,7 +85,6 @@ public class XmlArticleCounter {
             if (inType == CountType.DOCSTRUCT) {
                 result++;
             } else {
-                result += countNonEmptyPersons(inStruct);
                 result += countNonEmptyMetadata(inStruct);
             }
 
@@ -94,20 +92,6 @@ public class XmlArticleCounter {
             if (inStruct.getAllChildren() != null) {
                 for (LegacyDocStructHelperInterface struct : inStruct.getAllChildren()) {
                     result += getNumberOfUghElements(struct, inType);
-                }
-            }
-        }
-        return result;
-    }
-
-    private int countNonEmptyPersons(LegacyDocStructHelperInterface inStruct) {
-        int result = 0;
-        List<PersonInterface> persons = inStruct.getAllPersons();
-        if (persons != null) {
-            for (PersonInterface person : persons) {
-                String lastName = person.getLastName();
-                if (lastName != null && lastName.trim().length() > 0) {
-                    result++;
                 }
             }
         }
