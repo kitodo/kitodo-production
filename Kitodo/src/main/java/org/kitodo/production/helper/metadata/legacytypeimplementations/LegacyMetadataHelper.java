@@ -75,6 +75,7 @@ public class LegacyMetadataHelper implements MetadataInterface {
 
     @Override
     public void setType(MetadataTypeInterface metadataType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

@@ -36,6 +36,7 @@ public class LegacyReferenceHelper implements ReferenceInterface {
 
     @Override
     public DocStructInterface getSource() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -46,6 +47,7 @@ public class LegacyReferenceHelper implements ReferenceInterface {
 
     @Override
     public String getType() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

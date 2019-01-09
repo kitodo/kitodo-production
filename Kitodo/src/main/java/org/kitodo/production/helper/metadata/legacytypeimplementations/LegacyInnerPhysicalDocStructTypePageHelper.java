@@ -36,16 +36,19 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
 
     @Override
     public List<String> getAllAllowedDocStructTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataTypeInterface> getAllMetadataTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public String getAnchorClass() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -66,6 +69,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
 
     @Override
     public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

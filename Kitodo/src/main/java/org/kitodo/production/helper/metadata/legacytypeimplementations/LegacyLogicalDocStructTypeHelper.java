@@ -44,6 +44,7 @@ public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface 
 
     @Override
     public List<MetadataTypeInterface> getAllMetadataTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -64,6 +65,7 @@ public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface 
 
     @Override
     public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

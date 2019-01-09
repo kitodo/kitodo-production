@@ -78,11 +78,13 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -104,26 +106,31 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public DocStructInterface addMetadata(String metadataType, String value) throws MetadataTypeNotAllowedException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -131,21 +138,25 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
     public DocStructInterface createChild(String docStructType, DigitalDocumentInterface digitalDocument,
             PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void deleteUnusedPersonsAndMetadata() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataGroupTypeInterface> getAddableMetadataGroupTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataTypeInterface> getAddableMetadataTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -160,21 +171,25 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<ContentFileInterface> getAllContentFiles() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<ReferenceInterface> getAllFromReferences() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataInterface> getAllIdentifierMetadata() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -196,12 +211,14 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
                     ? Arrays.asList(new LegacyMetadataHelper(this, metadataType, mediaUnit.getOrderlabel()))
                     : Collections.emptyList();
         } else {
+            // TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
     }
 
     @Override
     public List<MetadataGroupInterface> getAllMetadataGroups() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -216,6 +233,7 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -230,26 +248,31 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public Collection<ReferenceInterface> getAllToReferences() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public Collection<ReferenceInterface> getAllToReferences(String type) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public Object getAllVisibleMetadata() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public String getAnchorClass() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public DocStructInterface getChild(String type, String identifierField, String identifier) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -270,16 +293,19 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public DocStructInterface getNextChild(DocStructInterface predecessor) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public DocStructInterface getParent() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public List<MetadataTypeInterface> getPossibleMetadataTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -306,47 +332,56 @@ public class LegacyInnerPhysicalDocStructHelper implements DocStructInterface {
 
     @Override
     public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeChild(DocStructInterface docStruct) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeMetadata(MetadataInterface metaDatum) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeMetadataGroup(MetadataGroupInterface metadataGroup) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removePerson(PersonInterface person) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void removeReferenceTo(DocStructInterface target) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
 
     }
 
     @Override
     public void setImageName(String imageName) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setType(DocStructTypeInterface docStructType) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

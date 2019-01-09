@@ -33,11 +33,13 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
     public static final MetadataTypeInterface SPECIAL_TYPE_ORDER = new MetadataTypeInterface() {
         @Override
         public Map<String, String> getAllLanguages() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public boolean isPerson() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
@@ -53,31 +55,37 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
         @Override
         public String getNum() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setAllLanguages(Map<String, String> labels) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setIdentifier(boolean identifier) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setPerson(boolean person) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setName(String name) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setNum(String quantityRestriction) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
     };
@@ -89,11 +97,13 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
     public static final MetadataTypeInterface SPECIAL_TYPE_ORDERLABEL = new MetadataTypeInterface() {
         @Override
         public Map<String, String> getAllLanguages() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public boolean isPerson() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
@@ -109,31 +119,37 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
         @Override
         public String getNum() {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setAllLanguages(Map<String, String> labels) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setIdentifier(boolean identifier) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setPerson(boolean person) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setName(String name) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
 
         @Override
         public void setNum(String quantityRestriction) {
+            //TODO remove
             throw andLog(new UnsupportedOperationException("Not yet implemented"));
         }
     };
@@ -149,6 +165,7 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
     @Override
     public Map<String, String> getAllLanguages() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -169,31 +186,37 @@ public class LegacyMetadataTypeHelper implements MetadataTypeInterface {
 
     @Override
     public String getNum() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setAllLanguages(Map<String, String> labels) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setIdentifier(boolean identifier) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setPerson(boolean person) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setName(String name) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setNum(String quantityRestriction) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

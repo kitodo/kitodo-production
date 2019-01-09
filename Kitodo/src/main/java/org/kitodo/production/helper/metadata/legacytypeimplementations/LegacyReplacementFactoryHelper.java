@@ -46,6 +46,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public DigitalDocumentInterface createDigitalDocument() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -59,16 +60,19 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
             throws MetadataTypeNotAllowedException {
 
         UnsupportedOperationException e = new UnsupportedOperationException("MetadataGroupInterface is not supported");
+        //TODO remove
         throw andLog(new UnsupportedOperationException("MetadataGroupInterface is not supported"));
     }
 
     @Override
     public MetadataGroupTypeInterface createMetadataGroupType() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Metadata group type is not supported"));
     }
 
     @Override
     public MetadataTypeInterface createMetadataType() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -79,16 +83,19 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefs) throws PreferencesException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("METS/MODS import/export is not supported"));
     }
 
     @Override
     public PersonInterface createPerson(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Person is not supported"));
     }
 
     @Override
     public PicaPlusInterface createPicaPlus(PrefsInterface prefs) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("PICA+ is not supported"));
     }
 
@@ -99,6 +106,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public FileformatInterface createRDFFile(PrefsInterface prefs) throws PreferencesException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("RDF file is not supported"));
     }
 
@@ -109,11 +117,13 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public VirtualFileGroupInterface createVirtualFileGroup() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Virtual file group is not supported"));
     }
 
     @Override
     public FileformatInterface createXStream(PrefsInterface prefs) throws PreferencesException {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("XStream is not supported"));
     }
 

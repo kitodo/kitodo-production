@@ -52,6 +52,7 @@ public class LegacyPrefsHelper implements PrefsInterface {
 
     @Override
     public List<DocStructTypeInterface> getAllDocStructTypes() {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 

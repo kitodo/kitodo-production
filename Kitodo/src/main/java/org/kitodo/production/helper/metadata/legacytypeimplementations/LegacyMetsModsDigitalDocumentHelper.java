@@ -181,6 +181,7 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
 
     @Override
     public void overrideContentFiles(List<String> images) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -210,11 +211,13 @@ public class LegacyMetsModsDigitalDocumentHelper implements DigitalDocumentInter
 
     @Override
     public void setLogicalDocStruct(DocStructInterface docStruct) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
     public void setPhysicalDocStruct(DocStructInterface docStruct) {
+        //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
