@@ -52,6 +52,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.RelatedProperty;
+import org.primefaces.model.SortOrder;
 
 /**
  * Class for implementing methods used by all service classes which search in
@@ -203,22 +204,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     public List<S> findAll(String sort, Integer offset, Integer size, boolean related) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), related);
-    }
-
-    /**
-     * This function can be overriden to implement specific filters e.g. in
-     * ProcessService. Since there are no general filters at the moment this
-     * function just returns null, but a query for general filters can be
-     * implemented here in the future.
-     *
-     * @param filters
-     *            Map of parameters used for filtering
-     * @return null
-     * @throws DataException
-     *             that can be caused by ElasticSearch
-     */
-    public String createCountQuery(Map filters) throws DataException {
-        return null;
     }
 
     /**
@@ -576,7 +561,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            so, objects related to it are not included in conversion)
      * @return list of DTO object
      */
-    public List<S> convertJSONObjectsToDTOs(List<JsonObject> jsonObjects, boolean related) throws DataException {
+    protected List<S> convertJSONObjectsToDTOs(List<JsonObject> jsonObjects, boolean related) throws DataException {
         List<S> results = new ArrayList<>();
 
         for (JsonObject jsonObject : jsonObjects) {
@@ -586,27 +571,14 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return results;
     }
 
-    /**
-     * Convert JSONObject object to bean object.
-     *
-     * @param jsonObject
-     *            result from ElasticSearch
-     * @return bean object
-     */
-    public T convertJSONObjectToBean(JsonObject jsonObject) throws DAOException {
-        Integer id = getIdFromJSONObject(jsonObject);
-        if (id == 0) {
-            // TODO: maybe here could be used some instancing of generic
-            // class...
-            return null;
+    protected String getSort(String sortField, SortOrder sortOrder) {
+        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+            return "{\"" + sortField + "\":\"asc\" }";
+        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+            return  "{\"" + sortField + "\":\"desc\" }";
         } else {
-            return getById(id);
+            return "";
         }
-    }
-
-    protected <O extends BaseDTO> List<O> convertListIdToDTO(List<Integer> listId, SearchService<?, O, ?> service)
-            throws DataException {
-        return service.findByQuery(createSetQueryForIds(listId), true);
     }
 
     /**

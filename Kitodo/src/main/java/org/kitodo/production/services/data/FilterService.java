@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -52,6 +53,7 @@ import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
+import org.primefaces.model.SortOrder;
 
 /**
  * Service for Filter bean.
@@ -102,6 +104,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     @Override
     public List<Filter> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Filter> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 
     /**

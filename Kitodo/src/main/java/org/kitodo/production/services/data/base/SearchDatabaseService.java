@@ -12,10 +12,13 @@
 package org.kitodo.production.services.data.base;
 
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
+import org.kitodo.data.exceptions.DataException;
+import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
 
@@ -37,6 +40,19 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return list of all objects for selected client from database
      */
     public abstract List<T> getAllForSelectedClient();
+
+    /**
+     *
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     *
+     * @return
+     */
+    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DAOException, DataException;
 
     /**
      * Method saves object to database.
@@ -84,6 +100,24 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      */
     public Long countDatabaseRows(String query) throws DAOException {
         return dao.count(query);
+    }
+
+    /**
+     * This function can be overriden to implement specific filters e.g. in
+     * ProcessService. Since there are no general filters at the moment this
+     * function just returns null, but a query for general filters can be
+     * implemented here in the future.
+     *
+     * @param filters
+     *            Map of parameters used for filtering
+     * @return null
+     * @throws DAOException
+     *             that can be caused by Hibernate
+     * @throws DataException
+     *             that can be caused by ElasticSearch
+     */
+    public String createCountQuery(Map filters) throws DAOException, DataException {
+        return null;
     }
 
     /**

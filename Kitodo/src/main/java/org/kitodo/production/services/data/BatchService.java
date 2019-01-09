@@ -12,7 +12,9 @@
 package org.kitodo.production.services.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -35,6 +37,7 @@ import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
@@ -101,6 +104,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     @Override
     public List<Batch> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 
     /**

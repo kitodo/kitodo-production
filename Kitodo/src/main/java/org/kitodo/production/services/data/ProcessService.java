@@ -176,9 +176,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+    public List<ProcessDTO> loadData(int first, int pageSize, String sortField, org.primefaces.model.SortOrder sortOrder, Map filters)
+            throws DataException {
         return convertJSONObjectsToDTOs(
-            searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
+            searcher.findDocuments(createUserProcessesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
 
     }
 

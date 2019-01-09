@@ -18,26 +18,27 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigMain;
+import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
     private static final long serialVersionUID = 8782111495680176505L;
-    private SearchService searchService;
+    private SearchDatabaseService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
-    private List entities = new ArrayList();
+    private transient List entities = new ArrayList();
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -48,13 +49,13 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *            the searchService which is used to retrieve data from the data
      *            source
      */
-    public LazyDTOModel(SearchService searchService) {
+    public LazyDTOModel(SearchDatabaseService searchService) {
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         this.searchService = searchService;
 
         try {
-            this.setRowCount(toIntExact(searchService.count()));
-        } catch (DataException e) {
+            this.setRowCount(toIntExact(searchService.countDatabaseRows()));
+        } catch (DAOException e) {
             logger.error(e.getMessage());
             this.setRowCount(0);
         }
@@ -63,8 +64,8 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     @Override
     public Object getRowData(String rowKey) {
         try {
-            return searchService.findById(Integer.parseInt(rowKey));
-        } catch (DataException e) {
+            return searchService.getById(Integer.parseInt(rowKey));
+        } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;
         }
@@ -72,8 +73,14 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     @Override
     public Object getRowKey(Object inObject) {
-        BaseDTO dto = (BaseDTO) inObject;
-        return dto.getId();
+        if (inObject instanceof BaseDTO) {
+            BaseDTO dto = (BaseDTO) inObject;
+            return dto.getId();
+        } else if (inObject instanceof BaseBean) {
+            BaseBean bean = (BaseBean) inObject;
+            return bean.getId();
+        }
+        return 0;
     }
 
     @Override
@@ -81,19 +88,13 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (indexRunning()) {
             try {
-                setRowCount(toIntExact(searchService.count(searchService.createCountQuery(filters))));
+                setRowCount(toIntExact(searchService.countDatabaseRows(searchService.createCountQuery(filters))));
 
-                if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-                    entities = searchService.findAll("{\"" + sortField + "\":\"asc\" }", first, pageSize, filters);
-                } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-                    entities = searchService.findAll("{\"" + sortField + "\":\"desc\" }", first, pageSize, filters);
-                } else {
-                    entities = searchService.findAll(null, first, pageSize, filters);
-                }
+                entities = searchService.loadData(first, pageSize, sortField, sortOrder, filters);
                 logger.info(entities.size() + " entities loaded!");
                 return entities;
-            } catch (DataException e) {
-                logger.error(e.getMessage());
+            } catch (DAOException | DataException e) {
+                logger.error(e.getMessage(), e);
                 return new LinkedList();
             }
         } else {

@@ -41,6 +41,7 @@ import org.kitodo.production.dto.RulesetDTO;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
@@ -86,8 +87,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public List<RulesetDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getRulesetsForCurrentUserQuery(), sort, offset, size),
+    public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getRulesetsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 

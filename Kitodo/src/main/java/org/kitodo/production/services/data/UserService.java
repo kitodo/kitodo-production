@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +49,7 @@ import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -207,9 +209,33 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+        }
+
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0";
+        }
+        return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+    }
+
+    @Override
     public List<User> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
+        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return getAll(findAllDocuments(sortByLogin(), offset, size), false);
+        }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return getAllForSelectedClient(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
+                    sortByLogin(), offset, size), false);
+        }
+        return new ArrayList<>();
     }
 
     /**

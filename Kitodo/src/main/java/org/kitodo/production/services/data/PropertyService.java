@@ -12,7 +12,9 @@
 package org.kitodo.production.services.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -34,6 +36,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
@@ -99,6 +102,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     @Override
     public List<Property> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Property> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 
     /**

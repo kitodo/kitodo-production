@@ -11,13 +11,16 @@
 
 package org.kitodo.production.services.data;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 
 public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
 
@@ -54,6 +57,11 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     @Override
     public List<Client> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Client> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 
     /**

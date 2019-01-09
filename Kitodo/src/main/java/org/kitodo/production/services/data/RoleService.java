@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Authority;
@@ -22,6 +23,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 
 public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
 
@@ -56,9 +58,31 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
+    public String createCountQuery(Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return "SELECT COUNT(*) FROM Role";
+        }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
+            return createQueryRolesForCurrentUser(filters).toString();
+        }
+        return "SELECT COUNT(*) FROM Role";
+    }
+
+    @Override
     public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
+    public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return getAll(sort, offset, size, false);
+        }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
+            return getAllForSelectedClient(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
+        }
+        return new ArrayList<>();
     }
 
     /**
