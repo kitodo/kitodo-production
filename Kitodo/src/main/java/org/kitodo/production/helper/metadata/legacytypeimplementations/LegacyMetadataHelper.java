@@ -9,62 +9,78 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper.metadata;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
- * Connects a legacy doc struct type from the logical map to a division view.
- * This is a soldering class to keep legacy code operational which is about to
- * be removed. Do not use this class.
+ * Represents a legacy metadata. This is a soldering class to keep legacy code
+ * operational which is about to be removed. Do not use this class.
  */
-public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface {
-    private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructTypeHelper.class);
+public class LegacyMetadataHelper implements MetadataInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
 
     /**
-     * The division view accessed via this soldering class.
+     * The legacy type of the legacy metadata.
      */
-    private StructuralElementViewInterface divisionView;
+    private MetadataTypeInterface type;
 
-    public LegacyLogicalDocStructTypeHelper(StructuralElementViewInterface divisionView) {
-        this.divisionView = divisionView;
+    /**
+     * The value of the legacy metadata.
+     */
+    private String value;
+
+    /**
+     * The legacy doc struct of the legacy metadata.
+     */
+    private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
+
+    LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
+            MetadataTypeInterface type, String value) {
+        this.type = type;
+        this.value = value;
+        this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
+    }
+
+    public LegacyMetadataHelper(MetadataTypeInterface type) {
+        this.type = type;
+        this.value = "";
     }
 
     @Override
-    public List<String> getAllAllowedDocStructTypes() {
-        return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
+    public LegacyInnerPhysicalDocStructHelper getDocStruct() {
+        return legacyInnerPhysicalDocStructHelper;
     }
 
     @Override
-    public List<MetadataTypeInterface> getAllMetadataTypes() {
+    public MetadataTypeInterface getMetadataType() {
+        return type;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public void setDocStruct(DocStructInterface docStruct) {
+        if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
+            this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
+        }
+    }
+
+    @Override
+    public void setType(MetadataTypeInterface metadataType) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public String getAnchorClass() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return divisionView.getId();
-    }
-
-    @Override
-    public String getNameByLanguage(String language) {
-        return divisionView.getLabel();
-    }
-
-    @Override
-    public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    public void setStringValue(String value) {
+        this.value = value;
     }
 
     /**

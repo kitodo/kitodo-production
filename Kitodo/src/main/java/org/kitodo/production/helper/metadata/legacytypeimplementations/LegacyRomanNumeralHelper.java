@@ -9,9 +9,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper.metadata;
+package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
+import org.kitodo.production.helper.metadata.RomanNumeral;
 
 /**
  * Connects the legacy Roman numeral to a Roman numeral implementation. This is

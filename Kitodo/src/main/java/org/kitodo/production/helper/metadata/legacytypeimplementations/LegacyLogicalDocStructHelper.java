@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper.metadata;
+package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

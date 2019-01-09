@@ -9,34 +9,37 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper.metadata;
+package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
- * Represents the only existing legacy doc struct type from the physical map
- * named “page”. This is a soldering class to keep legacy code operational which
- * is about to be removed. Do not use this class.
+ * Connects a legacy doc struct type from the logical map to a division view.
+ * This is a soldering class to keep legacy code operational which is about to
+ * be removed. Do not use this class.
  */
-public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructTypeInterface {
-    private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructTypePageHelper.class);
+public class LegacyLogicalDocStructTypeHelper implements DocStructTypeInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructTypeHelper.class);
 
     /**
-     * The sole doc struct type instance “page”.
+     * The division view accessed via this soldering class.
      */
-    public static final DocStructTypeInterface INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
+    private StructuralElementViewInterface divisionView;
 
-    private LegacyInnerPhysicalDocStructTypePageHelper() {
+    public LegacyLogicalDocStructTypeHelper(StructuralElementViewInterface divisionView) {
+        this.divisionView = divisionView;
     }
 
     @Override
     public List<String> getAllAllowedDocStructTypes() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
     @Override
@@ -46,22 +49,17 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
 
     @Override
     public String getAnchorClass() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+        return null;
     }
 
     @Override
     public String getName() {
-        return "page";
+        return divisionView.getId();
     }
 
     @Override
     public String getNameByLanguage(String language) {
-        switch (language) {
-            case "de":
-                return "Seite";
-            default:
-                return "Page";
-        }
+        return divisionView.getLabel();
     }
 
     @Override
