@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
+package org.kitodo.production.helper.metadata;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
 

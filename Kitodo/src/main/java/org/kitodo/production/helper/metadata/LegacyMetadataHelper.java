@@ -9,64 +9,78 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
-
-import java.util.List;
+package org.kitodo.production.helper.metadata;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
- * Represents the only existing legacy doc struct type from the physical map
- * named “page”. This is a soldering class to keep legacy code operational which
- * is about to be removed. Do not use this class.
+ * Represents a legacy metadata. This is a soldering class to keep legacy code
+ * operational which is about to be removed. Do not use this class.
  */
-public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructTypeInterface {
-    private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructTypePageHelper.class);
+public class LegacyMetadataHelper implements MetadataInterface {
+    private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
 
     /**
-     * The sole doc struct type instance “page”.
+     * The legacy type of the legacy metadata.
      */
-    public static final DocStructTypeInterface INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
+    private MetadataTypeInterface type;
 
-    private LegacyInnerPhysicalDocStructTypePageHelper() {
+    /**
+     * The value of the legacy metadata.
+     */
+    private String value;
+
+    /**
+     * The legacy doc struct of the legacy metadata.
+     */
+    private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
+
+    LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
+            MetadataTypeInterface type, String value) {
+        this.type = type;
+        this.value = value;
+        this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
+    }
+
+    public LegacyMetadataHelper(MetadataTypeInterface type) {
+        this.type = type;
+        this.value = "";
     }
 
     @Override
-    public List<String> getAllAllowedDocStructTypes() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    public LegacyInnerPhysicalDocStructHelper getDocStruct() {
+        return legacyInnerPhysicalDocStructHelper;
     }
 
     @Override
-    public List<MetadataTypeInterface> getAllMetadataTypes() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    public MetadataTypeInterface getMetadataType() {
+        return type;
     }
 
     @Override
-    public String getAnchorClass() {
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    public String getValue() {
+        return value;
     }
 
     @Override
-    public String getName() {
-        return "page";
-    }
-
-    @Override
-    public String getNameByLanguage(String language) {
-        switch (language) {
-            case "de":
-                return "Seite";
-            default:
-                return "Page";
+    public void setDocStruct(DocStructInterface docStruct) {
+        if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
+            this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }
     }
 
     @Override
-    public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+    public void setType(MetadataTypeInterface metadataType) {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    @Override
+    public void setStringValue(String value) {
+        this.value = value;
     }
 
     /**

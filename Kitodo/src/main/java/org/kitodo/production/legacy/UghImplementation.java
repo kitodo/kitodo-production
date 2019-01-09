@@ -12,7 +12,7 @@
 package org.kitodo.production.legacy;
 
 import org.kitodo.api.ugh.FactoryInterface;
-import org.kitodo.helper.metadata.LegacyReplacementFactoryHelper;
+import org.kitodo.production.helper.metadata.LegacyReplacementFactoryHelper;
 
 public class UghImplementation {
     public static final FactoryInterface INSTANCE = new LegacyReplacementFactoryHelper();

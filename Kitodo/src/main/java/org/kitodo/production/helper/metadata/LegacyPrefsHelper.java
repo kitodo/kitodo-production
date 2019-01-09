@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
+package org.kitodo.production.helper.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +30,10 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.helper.Helper;
-import org.kitodo.metadata.MetadataProcessor;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.dataeditor.RulesetManagementService;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.metadata.MetadataProcessor;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.RulesetManagementService;
 
 /**
  * Connects a legacy prefs to a ruleset. This is a soldering class to keep

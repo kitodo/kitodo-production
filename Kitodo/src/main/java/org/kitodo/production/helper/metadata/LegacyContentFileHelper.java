@@ -9,14 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
+package org.kitodo.production.helper.metadata;
 
 import java.io.File;
 
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.api.ugh.ContentFileInterface;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.dataformat.MetsService;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataformat.MetsService;
 
 /**
  * Connects a legacy content file to a media file. This is a soldering class to

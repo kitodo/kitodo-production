@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
+package org.kitodo.production.helper.metadata;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -53,8 +53,8 @@ import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.dataformat.MetsService;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataformat.MetsService;
 
 /**
  * Connects a legacy doc struct from the logical map to a structure. This is a
