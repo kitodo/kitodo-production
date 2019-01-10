@@ -24,7 +24,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.User;
@@ -79,7 +80,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     /**
      * The workpiece accessed via this soldering class.
      */
-    private MetsXmlElementAccessInterface workpiece;
+    private Workpiece workpiece = new Workpiece();
 
     /**
      * The current ruleset.
@@ -97,7 +98,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
-        this.workpiece = metsService.createMetsXmlElementAccess();
+        this.workpiece = new Workpiece();
 
         try {
             User user = new MetadataProcessor().getCurrentUser();
@@ -135,9 +136,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      *            workpiece to set
      */
     @Deprecated
-    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset,
-            MetsXmlElementAccessInterface workpiece) {
-
+    public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset, Workpiece workpiece) {
         this(ruleset);
         this.workpiece = workpiece;
     }
@@ -168,7 +167,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
-            return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
+            return new LegacyLogicalDocStructHelper(new Structure(), null, ruleset, priorityList);
         } else {
             return new LegacyInnerPhysicalDocStructHelper();
         }
@@ -203,17 +202,17 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyFileSetDocStructHelper getFileSet() {
-        return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
+        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnits());
     }
 
     @Deprecated
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
-        return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
+        return new LegacyLogicalDocStructHelper(workpiece.getStructure(), null, ruleset, priorityList);
     }
 
     @Deprecated
     public LegacyDocStructHelperInterface getPhysicalDocStruct() {
-        return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
+        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnits());
     }
 
     /**
@@ -221,8 +220,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * 
      * @return the workpiece
      */
-    @Deprecated
-    public MetsXmlElementAccessInterface getWorkpiece() {
+    public Workpiece getWorkpiece() {
         return workpiece;
     }
 
@@ -248,7 +246,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
             if (lockResult.isSuccessful()) {
                 try (InputStream in = fileService.read(uri, lockResult)) {
                     logger.info("Reading {}", uri.toString());
-                    workpiece.read(in);
+                    workpiece = ServiceManager.getMetsService().load(in);
                 }
             } else {
                 throw new IOException(createLockErrorMessage(uri, lockResult));
@@ -290,7 +288,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
             if (lockResult.isSuccessful()) {
                 try (OutputStream out = fileService.write(uri, lockResult)) {
                     logger.info("Saving {}", uri.toString());
-                    workpiece.save(out);
+                    ServiceManager.getMetsService().save(workpiece, out);
                 }
             } else {
                 throw new IOException(createLockErrorMessage(uri, lockResult));

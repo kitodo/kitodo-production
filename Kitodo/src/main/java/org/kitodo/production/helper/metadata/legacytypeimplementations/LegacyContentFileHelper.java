@@ -12,8 +12,8 @@
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.io.File;
+import java.net.URI;
 
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
@@ -29,25 +29,23 @@ public class LegacyContentFileHelper {
     /**
      * The media file accessed via this soldering class.
      */
-    private FLocatXmlElementAccessInterface mediaFile;
+    private URI mediaFile;
 
     @Deprecated
     public LegacyContentFileHelper() {
-        mediaFile = metsService.createFLocatXmlElementAccess();
     }
 
     @Deprecated
     public String getLocation() {
-        return mediaFile.getUri().toString();
+        return String.valueOf(mediaFile);
     }
 
     @Deprecated
     public void setLocation(String fileName) {
-        mediaFile.setUri(new File(fileName).toURI());
+        mediaFile = new File(fileName).toURI();
     }
 
-    @Deprecated
-    public FLocatXmlElementAccessInterface getMediaFile() {
+    public URI getMediaFile() {
         return mediaFile;
     }
 }

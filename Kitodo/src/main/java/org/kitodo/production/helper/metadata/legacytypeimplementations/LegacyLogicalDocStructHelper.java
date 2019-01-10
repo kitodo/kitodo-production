@@ -28,16 +28,16 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
@@ -54,7 +54,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     /**
      * The media file accessed via this soldering class.
      */
-    private DivXmlElementAccessInterface structure;
+    private Structure structure;
 
     /**
      * The current ruleset.
@@ -76,7 +76,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
      */
     private LegacyLogicalDocStructHelper parent;
 
-    LegacyLogicalDocStructHelper(DivXmlElementAccessInterface structure, LegacyLogicalDocStructHelper parent,
+    LegacyLogicalDocStructHelper(Structure structure, LegacyLogicalDocStructHelper parent,
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) {
         this.structure = structure;
         this.ruleset = ruleset;
@@ -111,15 +111,15 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
-        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         Optional<MetadataViewInterface> optionalKeyView = divisionView
                 .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
                 .filter(keyView -> keyView.getId().equals(metadata.getMetadataType().getName())).findFirst();
         Optional<Domain> optionalDomain = optionalKeyView.isPresent() ? optionalKeyView.get().getDomain()
                 : Optional.empty();
         if (!optionalDomain.isPresent() || !optionalDomain.get().equals(Domain.METS_DIV)) {
-            MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadataXmlElementAccess();
+            MetadataEntry metadataEntry = new MetadataEntry();
             metadata.setBinding(this, metadataEntry, optionalDomain.orElse(Domain.DESCRIPTION));
             metadata.saveToBinding();
             structure.getMetadata().add(metadataEntry);
@@ -139,7 +139,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
         } else if (metadata.getBinding() != null) {
-            metadata.getBinding().setType(metadata.getMetadataType().getName());
+            metadata.getBinding().setKey(metadata.getMetadataType().getName());
             metadata.getBinding().setDomain(domainToMdSec(metadata.getDomain()));
             metadata.getBinding().setValue(metadata.getValue());
         }
@@ -154,10 +154,10 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
-        AreaXmlElementAccessInterface view = metsService.createAreaXmlElementAccess();
+        View view = new View();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
-        view.setFile(target.getMediaUnit());
-        structure.getAreas().add(view);
+        view.setMediaUnit(target.getMediaUnit());
+        structure.getViews().add(view);
         return new LegacyReferenceHelper(target);
     }
 
@@ -179,11 +179,11 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void deleteUnusedPersonsAndMetadata() {
-        Iterator<MetadataAccessInterface> metadataAccessInterfaceIterator = structure.getMetadata().iterator();
-        while (metadataAccessInterfaceIterator.hasNext()) {
-            MetadataAccessInterface metadataAccessInterface = metadataAccessInterfaceIterator.next();
-            if (((MetadataXmlElementAccessInterface) metadataAccessInterface).getValue().isEmpty()) {
-                metadataAccessInterfaceIterator.remove();
+        Iterator<Metadata> metadataIterator = structure.getMetadata().iterator();
+        while (metadataIterator.hasNext()) {
+            Metadata metadata = metadataIterator.next();
+            if (((MetadataEntry) metadata).getValue().isEmpty()) {
+                metadataIterator.remove();
             }
         }
     }
@@ -208,8 +208,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
-        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
             Collections.emptyList());
         ArrayList<LegacyMetadataTypeHelper> result = new ArrayList<>(addableKeys.size());
@@ -223,7 +223,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
         List<LegacyDocStructHelperInterface> wrappedChildren = new ArrayList<>();
-        for (DivXmlElementAccessInterface child : structure.getChildren()) {
+        for (Structure child : structure.getChildren()) {
             wrappedChildren.add(new LegacyLogicalDocStructHelper(child, this, ruleset, priorityList));
         }
         return wrappedChildren;
@@ -259,17 +259,17 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> result = new LinkedList<>();
-        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+        for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
             if (entryView.getMetadata().isPresent()) {
                 MetadataViewInterface key = entryView.getMetadata().get();
-                for (MetadataAccessInterface value : entryView.getValues()) {
-                    if (value instanceof MetadataXmlElementAccessInterface) {
+                for (Metadata value : entryView.getValues()) {
+                    if (value instanceof MetadataEntry) {
                         result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
-                                ((MetadataXmlElementAccessInterface) value).getValue()));
+                                ((MetadataEntry) value).getValue()));
                     }
                 }
             }
@@ -281,18 +281,18 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
-        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+        for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
             if (entryView.getMetadata().isPresent()) {
                 MetadataViewInterface key = entryView.getMetadata().get();
                 if (key.getId().equals(metadataType.getName())) {
-                    for (MetadataAccessInterface value : entryView.getValues()) {
-                        if (value instanceof MetadataXmlElementAccessInterface) {
+                    for (Metadata value : entryView.getValues()) {
+                        if (value instanceof MetadataEntry) {
                             result.add(new LegacyMetadataHelper(null, new LegacyMetadataTypeHelper(key),
-                                    ((MetadataXmlElementAccessInterface) value).getValue()));
+                                    ((MetadataEntry) value).getValue()));
                         }
                     }
                 }
@@ -306,10 +306,10 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public List<LegacyReferenceHelper> getAllReferences(String direction) {
         switch (direction) {
             case "to":
-                List<AreaXmlElementAccessInterface> views = structure.getAreas();
+                Collection<View> views = structure.getViews();
                 ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
-                for (AreaXmlElementAccessInterface view : views) {
-                    FileXmlElementAccessInterface mediaUnit = view.getFile();
+                for (View view : views) {
+                    MediaUnit mediaUnit = view.getMediaUnit();
                     allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
                 }
                 return allReferences;
@@ -329,10 +329,10 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         switch (type) {
             case "logical_physical":
-                List<AreaXmlElementAccessInterface> views = structure.getAreas();
+                Collection<View> views = structure.getViews();
                 ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
-                for (AreaXmlElementAccessInterface view : views) {
-                    FileXmlElementAccessInterface mediaUnit = view.getFile();
+                for (View view : views) {
+                    MediaUnit mediaUnit = view.getMediaUnit();
                     allReferences.add(new LegacyReferenceHelper(new LegacyInnerPhysicalDocStructHelper(mediaUnit)));
                 }
                 return allReferences;
@@ -364,11 +364,11 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         List<LegacyMetadataTypeHelper> result = new LinkedList<>();
-        Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> entryViews = divisionView
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> entryView : entryViews) {
+        for (MetadataViewWithValuesInterface<Metadata> entryView : entryViews) {
             if (entryView.getMetadata().isPresent()) {
                 MetadataViewInterface key = entryView.getMetadata().get();
                 result.add(new LegacyMetadataTypeHelper(key));
@@ -476,12 +476,12 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
-        Iterator<MetadataAccessInterface> entries = structure.getMetadata().iterator();
+        Iterator<Metadata> entries = structure.getMetadata().iterator();
         String metadataTypeName = metaDatum.getMetadataType().getName();
         while (entries.hasNext()) {
-            MetadataAccessInterface entry = entries.next();
-            if (entry.getType().equals(metadataTypeName)
-                    && ((MetadataXmlElementAccessInterface) entry).getValue().equals(metaDatum.getValue())) {
+            Metadata entry = entries.next();
+            if (entry.getKey().equals(metadataTypeName)
+                    && ((MetadataEntry) entry).getValue().equals(metaDatum.getValue())) {
                 entries.remove();
                 break;
             }
@@ -491,13 +491,12 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void removeReferenceTo(LegacyDocStructHelperInterface target) {
-        FileXmlElementAccessInterface mediaUnit = ((LegacyInnerPhysicalDocStructHelper) target).getMediaUnit();
-        Iterator<AreaXmlElementAccessInterface> areaXmlElementAccessInterfaceIterator = structure.getAreas().iterator();
-        while (areaXmlElementAccessInterfaceIterator.hasNext()) {
-            FileXmlElementAccessInterface fileXmlElementAccessInterface = areaXmlElementAccessInterfaceIterator.next()
-                    .getFile();
-            if (fileXmlElementAccessInterface.equals(mediaUnit)) {
-                areaXmlElementAccessInterfaceIterator.remove();
+        MediaUnit mediaUnit = ((LegacyInnerPhysicalDocStructHelper) target).getMediaUnit();
+        Iterator<View> viewIterator = structure.getViews().iterator();
+        while (viewIterator.hasNext()) {
+            MediaUnit containedMediaUnit = viewIterator.next().getMediaUnit();
+            if (containedMediaUnit.equals(mediaUnit)) {
+                viewIterator.remove();
             }
         }
     }
