@@ -55,10 +55,16 @@ public class TaskTypeTest {
 
         User firstUser = new User();
         firstUser.setId(1);
+        firstUser.setLogin("testOne");
+        firstUser.setName("Test");
+        firstUser.setSurname("One");
         users.add(firstUser);
 
         User secondUser = new User();
         secondUser.setId(2);
+        secondUser.setLogin("testTwo");
+        secondUser.setName("Test");
+        secondUser.setSurname("Two");
         users.add(secondUser);
 
         Role firstRole = new Role();
@@ -130,7 +136,13 @@ public class TaskTypeTest {
         assertEquals("Key processingStatus doesn't match to given value!", 3,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 1,
-            TaskTypeField.PROCESSING_USER.getIntValue(actual));
+            TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "testOne",
+                TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "Test",
+                TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "One",
+                TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual));
         assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01 00:00:00",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
         assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17 00:00:00",
@@ -180,7 +192,13 @@ public class TaskTypeTest {
         assertEquals("Key processingStatus doesn't match to given value!", 2,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 2,
-            TaskTypeField.PROCESSING_USER.getIntValue(actual));
+                TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "testTwo",
+                TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "Test",
+                TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual));
+        assertEquals("Key processingBegin doesn't match to given value!", "Two",
+                TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual));
         assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10 00:00:00",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
         assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
@@ -230,7 +248,7 @@ public class TaskTypeTest {
         assertEquals("Key processingStatus doesn't match to given value!", 1,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 0,
-            TaskTypeField.PROCESSING_USER.getIntValue(actual));
+                TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
         assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL,
             actual.get(TaskTypeField.PROCESSING_BEGIN.getKey()));
         assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
@@ -265,7 +283,7 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 20, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
 
         JsonArray roles = TaskTypeField.ROLES.getJsonArray(actual);
         JsonObject role = roles.getJsonObject(0);

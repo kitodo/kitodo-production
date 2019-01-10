@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
@@ -30,9 +31,7 @@ public class TaskType extends BaseType<Task> {
         int editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
         int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
         int processId = task.getProcess() != null ? task.getProcess().getId() : 0;
-        String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
         int templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
-        String templateTitle = task.getTemplate() != null ? task.getTemplate().getTitle() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
@@ -49,11 +48,29 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_READ.getKey(), task.isTypeImagesRead());
         jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_WRITE.getKey(), task.isTypeImagesWrite());
         jsonObjectBuilder.add(TaskTypeField.BATCH_STEP.getKey(), task.isBatchStep());
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER.getKey(), processingUser);
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser);
+        if (processingUser > 0) {
+            User user = task.getProcessingUser();
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_LOGIN.getKey(), user.getLogin());
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_NAME.getKey(), user.getName());
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), user.getSurname());
+        } else {
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_LOGIN.getKey(),"");
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_NAME.getKey(), "");
+            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), "");
+        }
         jsonObjectBuilder.add(TaskTypeField.PROCESS_ID.getKey(), processId);
-        jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), processTitle);
+        if (processId > 0) {
+            jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), task.getProcess().getTitle());
+        } else {
+            jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), "");
+        }
         jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
-        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), templateTitle);
+        if (templateId > 0) {
+            jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), task.getTemplate().getTitle());
+        } else {
+            jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), "");
+        }
         jsonObjectBuilder.add(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObjectBuilder.build();
     }

@@ -57,6 +57,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -128,10 +129,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (onlyOwnTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
-            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
             for (Role role : user.getRoles()) {
                 subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
@@ -178,9 +179,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
+    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
         BoolQueryBuilder query = createUserTaskQuery();
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
     }
 
     /**
@@ -296,7 +299,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -315,7 +318,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Integer priority, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         return searcher.findDocuments(query.toString(), sort);
     }
@@ -335,7 +338,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
     }
@@ -357,7 +360,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
@@ -401,6 +404,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(ServiceManager.getProcessService()
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
+        }
+
+        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(taskJSONObject);
+        if (processingUser > 0) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(processingUser);
+            userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(taskJSONObject));
+            userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(taskJSONObject));
+            userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(taskJSONObject));
+            userDTO.setFullName(ServiceManager.getUserService().getFullName(userDTO));
+            taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;
     }

@@ -455,7 +455,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));
         } else if (onlyUserAssignedTask) {
             taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));
-            taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
         } else {
             BoolQueryBuilder processingStatus = new BoolQueryBuilder();
             processingStatus.should(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));

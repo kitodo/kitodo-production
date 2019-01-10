@@ -94,7 +94,8 @@ public class RoleDAO extends BaseDAO<Role> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("userId", userId);
         parameters.put("clientIds", clientIds);
-        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientIds JOIN r.user AS u WHERE u.id != :userId GROUP BY r.id",
+        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientIds JOIN r.user AS u "
+                        + "WHERE u.id != :userId GROUP BY r.id",
                 parameters);
     }
 }
