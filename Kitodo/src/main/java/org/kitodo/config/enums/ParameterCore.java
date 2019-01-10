@@ -200,6 +200,12 @@ public enum ParameterCore implements ParameterInterface {
      */
     XSLT_FILENAME_METADATA_TRANSFORMATION(new Parameter<UndefinedParameter>("xsltFilenameMetadataTransformation")),
 
+    /**
+     * Filename of the XSLT file for transforming metadata files to export format which need to
+     * be in the xslt folder above.
+     */
+    XSLT_FILENAME_METADATA_EXPORT_TRANSFORMATION(new Parameter<UndefinedParameter>("xsltFilenameMetadataExportTransformation")),
+
     /*
      * Images
      */
