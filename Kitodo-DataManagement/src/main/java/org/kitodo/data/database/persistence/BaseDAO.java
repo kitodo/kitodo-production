@@ -462,11 +462,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     private void addParameters(Query query, Map<String, Object> parameters) {
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-            if (parameter.getValue() instanceof List) {
-                query.setParameterList(parameter.getKey(), (List) parameter.getValue());
-            } else {
-                query.setParameter(parameter.getKey(), parameter.getValue());
+        if (Objects.nonNull(parameters)) {
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                if (parameter.getValue() instanceof List) {
+                    query.setParameterList(parameter.getKey(), (List) parameter.getValue());
+                } else {
+                    query.setParameter(parameter.getKey(), parameter.getValue());
+                }
             }
         }
     }

@@ -107,9 +107,10 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(
-                searcher.findDocuments(createUserTemplatesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
+    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserTemplatesQuery(filters).toString(),
+            getSort(sortField, sortOrder), first, pageSize), false);
 
     }
 

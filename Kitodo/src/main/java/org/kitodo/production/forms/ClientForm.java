@@ -54,7 +54,7 @@ public class ClientForm extends BaseForm {
         try {
             ServiceManager.getClientService().saveToDatabase(this.client);
             return clientListPath;
-        } catch (DAOException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }

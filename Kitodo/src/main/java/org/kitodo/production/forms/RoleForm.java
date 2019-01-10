@@ -81,7 +81,7 @@ public class RoleForm extends BaseForm {
         try {
             ServiceManager.getRoleService().saveToDatabase(this.role);
             return roleListPath;
-        } catch (DAOException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }

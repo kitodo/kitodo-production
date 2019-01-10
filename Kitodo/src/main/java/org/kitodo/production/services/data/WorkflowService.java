@@ -76,8 +76,10 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getWorkflowsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getWorkflowsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 

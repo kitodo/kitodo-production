@@ -79,11 +79,13 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
     @SuppressWarnings("unchecked")
     public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return dao.getByQuery("FROM Role", filters, first, pageSize);
+            return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), filters, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return new ArrayList<>();
-            //return dao.getByQuery(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size));
+            return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
+                            + getSort(sortField, sortOrder),
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                pageSize);
         }
         return new ArrayList<>();
     }
@@ -99,7 +101,10 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
      * @return list of all matching roles
      */
     public List<Role> getAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DAOException {
-        return dao.getAllAvailableForAssignToUser(userId, clients);
+        if (Objects.nonNull(userId)) {
+            return dao.getAllAvailableForAssignToUser(userId, clients);
+        }
+        return getAll();
     }
 
     /**

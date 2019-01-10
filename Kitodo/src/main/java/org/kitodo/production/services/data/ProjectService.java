@@ -79,8 +79,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
         manageProcessesDependenciesForIndex(project);
     }
 
@@ -129,8 +128,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public List<ProjectDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getProjectsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+    public List<ProjectDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getProjectsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 
@@ -277,10 +278,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        // TODO: not clear if project lists will need it
-        projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-                ServiceManager.getTemplateService()));
+            ServiceManager.getTemplateService()));
     }
 
     /**

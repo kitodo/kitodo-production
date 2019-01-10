@@ -87,8 +87,10 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getRulesetsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+    public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getRulesetsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 
@@ -220,7 +222,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     private String getRulesetsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-                ServiceManager.getUserService().getSessionClientId(), true));
+            ServiceManager.getUserService().getSessionClientId(), true));
         return query.toString();
     }
 }

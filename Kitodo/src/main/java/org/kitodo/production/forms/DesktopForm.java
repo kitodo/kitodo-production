@@ -114,8 +114,14 @@ public class DesktopForm extends BaseForm {
                     return 0L;
                 case TASK:
                     return ServiceManager.getTaskService().count();
+                case AUTHORITY:
+                    return ServiceManager.getAuthorityService().countDatabaseRows();
                 case USER:
                     return ServiceManager.getUserService().countDatabaseRows();
+                case LDAP_GROUP:
+                    return ServiceManager.getLdapGroupService().countDatabaseRows();
+                case LDAP_SERVER:
+                    return ServiceManager.getAuthorityService().countDatabaseRows();
                 case BATCH:
                     return ServiceManager.getBatchService().count();
                 case CLIENT:

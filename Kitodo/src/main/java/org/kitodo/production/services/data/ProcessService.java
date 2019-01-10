@@ -200,10 +200,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public List<ProcessDTO> loadData(int first, int pageSize, String sortField, org.primefaces.model.SortOrder sortOrder, Map filters)
-            throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(createUserProcessesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
+    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
+            org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserProcessesQuery(filters).toString(),
+            getSort(sortField, sortOrder), first, pageSize), false);
 
     }
 
@@ -1546,7 +1546,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.debug("exception: " + e);
         }
         try {
-            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(), process.getProcessBaseUri());
+            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(),
+                process.getProcessBaseUri());
             String folderName = fileService.getFileName(folder);
             folderName = folderName.substring(0, folderName.lastIndexOf('_'));
             folderName = folderName + "_" + methodName;
@@ -1701,7 +1702,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         List<String> translationList = Arrays.asList("Correction required", "Correction performed",
-                "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
+            "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         // filtering for correction and solution messages
         for (PropertyDTO property : lpe) {

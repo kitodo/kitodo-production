@@ -66,7 +66,7 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     @Override
     @SuppressWarnings("unchecked")
     public List<Client> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        return dao.getByQuery("FROM Client WHERE", filters, first, pageSize);
+        return dao.getByQuery("FROM Client" + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
     /**

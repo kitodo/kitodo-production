@@ -33,7 +33,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -114,7 +113,7 @@ public class UserForm extends BaseForm {
         }
 
         try {
-            if (userService.getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
+            if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
                 if (Objects.nonNull(this.passwordToEncrypt)) {
                     this.userObject.setPassword(passwordEncoder.encrypt(this.passwordToEncrypt));
                 }
@@ -129,7 +128,7 @@ public class UserForm extends BaseForm {
                 Helper.setErrorMessage("loginInUse");
                 return this.stayOnCurrentPage;
             }
-        } catch (DAOException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -141,13 +140,6 @@ public class UserForm extends BaseForm {
 
     private boolean isMissingClient() {
         return this.userObject.getClients().isEmpty();
-    }
-
-    private String getUserId() {
-        if (this.userObject.getId() != null) {
-            return this.userObject.getId().toString();
-        }
-        return null;
     }
 
     /**

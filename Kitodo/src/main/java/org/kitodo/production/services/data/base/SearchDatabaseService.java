@@ -13,6 +13,7 @@ package org.kitodo.production.services.data.base;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -179,5 +180,15 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      */
     public void refresh(T baseBean) {
         this.dao.refresh(baseBean);
+    }
+
+    protected String getSort(String sortField, SortOrder sortOrder) {
+        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+            return " ORDER BY " + sortField + " ASC";
+        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+            return  " ORDER BY " + sortField + " DESC";
+        } else {
+            return "";
+        }
     }
 }

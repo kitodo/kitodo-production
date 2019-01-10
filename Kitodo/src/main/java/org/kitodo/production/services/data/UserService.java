@@ -96,7 +96,8 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         }
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return countDatabaseRows("SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0");
+            return countDatabaseRows(
+                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0");
         }
         return 0L;
     }
@@ -104,8 +105,8 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     @Override
     public List<User> getAllForSelectedClient() {
         return dao.getByQuery(
-                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -124,13 +125,14 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     @SuppressWarnings("unchecked")
     public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0", filters, first, pageSize);
+            return dao.getByQuery("FROM User WHERE deleted = 0"  + getSort(sortField, sortOrder), filters, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return dao.getByQuery(
-                    "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-                    Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
-                    pageSize);
+                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
+                        + getSort(sortField, sortOrder),
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                pageSize);
         }
         return new ArrayList<>();
     }
@@ -252,7 +254,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      * @return amount of users with exactly the same login like given but different
      *         id
      */
-    public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DAOException {
+    public Long getAmountOfUsersWithExactlyTheSameLogin(Integer id, String login) throws DAOException {
         return dao.countUsersWithExactlyTheSameLogin(id, login);
     }
 

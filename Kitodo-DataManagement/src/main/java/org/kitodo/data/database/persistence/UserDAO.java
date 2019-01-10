@@ -97,7 +97,7 @@ public class UserDAO extends BaseDAO<User> {
      *            of user
      * @return list of users
      */
-    public Long countUsersWithExactlyTheSameLogin(String id, String login) throws DAOException {
+    public Long countUsersWithExactlyTheSameLogin(Integer id, String login) throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("id", id);
         parameters.put("login", login);

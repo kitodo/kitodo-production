@@ -84,7 +84,7 @@ public class RoleDAO extends BaseDAO<Role> {
      *            list of clients to which edited user is assigned
      * @return list of all matching roles
      */
-    public List<Role> getAllAvailableForAssignToUser(int userId, List<Client> clients) throws DAOException {
+    public List<Role> getAllAvailableForAssignToUser(int userId, List<Client> clients) {
         List<Integer> clientIds = new ArrayList<>();
 
         for (Client client : clients) {
