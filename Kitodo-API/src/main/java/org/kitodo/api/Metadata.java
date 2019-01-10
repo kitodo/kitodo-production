@@ -13,13 +13,27 @@ package org.kitodo.api;
 
 import org.kitodo.api.dataformat.mets.MdSec;
 
-public class Metadata {
+/**
+ * Abstract superclass for meta-data entries and groups.
+ *
+ * <p>
+ * Meta-data is stored in Production as a collection of key-value pairs. This
+ * super interface grants access to the key while providing access to the value
+ * through two different sub-interfaces, the use of which depends on the nature
+ * of the meta-data, as the value must be accessed in different ways
+ * accordingly.
+ */
+public abstract class Metadata {
     /**
      * In which conceptual area in the METS file this meta-data entry is stored.
      */
     private MdSec domain;
 
-    // The key of the metadata.
+    /**
+     * The key of the meta-data. The key is used to describe the meta-data, i.e.
+     * whether the value of the entry is about the title, the author or a
+     * summary of an intellectual work.
+     */
     private String key;
 
     /**
@@ -34,9 +48,13 @@ public class Metadata {
     }
 
     /**
-     * Get the key o the metadata.
+     * Returns the key of the meta-data entry. The key is used to describe the
+     * meta-data entry, i.e. whether the value of the entry is about the title,
+     * the author or a summary of an intellectual work. Even though the key is
+     * stored as simple text, it is worth using a controlled vocabulary here. In
+     * Production, this controlled vocabulary is provided by the ruleset.
      *
-     * @return The key of the metadata.
+     * @return the key of the meta-data entry
      */
     public String getKey() {
         return key;
@@ -57,9 +75,14 @@ public class Metadata {
     }
 
     /**
-     *Set the key of the metadata.
+     * Sets the key of the meta-data entry. The key is used to describe the
+     * meta-data entry, i.e. whether the value of the entry is about the title,
+     * the author or a summary of an intellectual work. Even if the type is
+     * stored as simple text, it is worth using a controlled vocabulary here. In
+     * Production, this controlled vocabulary is provided by the ruleset.
      *
-     * @param key The key value of the metadata.
+     * @param key
+     *            the key of the meta-data entry
      */
     public void setKey(String key) {
         this.key = key;

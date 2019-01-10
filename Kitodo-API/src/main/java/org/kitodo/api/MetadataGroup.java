@@ -14,25 +14,32 @@ package org.kitodo.api;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A group of meta-data entries. A group of meta-data entries is like a table
+ * with different meta-data entries, which can be groups again. This allows any
+ * nesting depths to be achieved.
+ */
 public class MetadataGroup extends Metadata {
-
-    // The value of the metadata is a list of metadata objects.
+    /**
+     * The meta-data in this group. The value of the meta-data is a list of
+     * meta-data objects.
+     */
     private List<Metadata> group = new ArrayList<>();
 
     /**
-     * Get the grouped metadata.
-     *
-     * @return The grouped metadata.
+     * Returns the group of this meta-data group.
+     * 
+     * @return the group
      */
     public List<Metadata> getGroup() {
         return group;
     }
 
     /**
-     * Set the grouped metadata.
+     * Returns the group of this meta-data group.
      *
      * @param group
-     *            the grouped metadata.
+     *            group to set
      */
     public void setGroup(List<Metadata> group) {
         this.group = group;

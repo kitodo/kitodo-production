@@ -11,25 +11,31 @@
 
 package org.kitodo.api;
 
+/**
+ * A meta-data entry. A meta-data entry consists of a key and a value. The key
+ * is stored in the superclass {@link Metadata}. There is also the domain, that
+ * is an indication in which container the meta-data entry is stored.
+ */
 public class MetadataEntry extends Metadata {
-
-    // The value of the metadata.
+    /**
+     * The value of the meta-data entry.
+     */
     private String value;
 
     /**
-     * Get the value of the metadataentry.
-     *
-     * @return The value of the metadata.
+     * Returns the value of the meta-data entry.
+     * 
+     * @return the value
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * Set the value of the metadataentry.
-     *
+     * Sets the value of the meta-data entry.
+     * 
      * @param value
-     *            The value of the metadata.
+     *            value to set
      */
     public void setValue(String value) {
         this.value = value;
