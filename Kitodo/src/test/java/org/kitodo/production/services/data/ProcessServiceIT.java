@@ -228,12 +228,12 @@ public class ProcessServiceIT {
     public void shouldGetBlockedUser() throws Exception {
         UserService userService = ServiceManager.getUserService();
 
-        ProcessDTO process = processService.findById(1);
+        Process process = processService.getById(1);
         boolean condition = processService.getBlockedUser(process) == null;
         assertTrue("Process has blocked user but it shouldn't!", condition);
 
-        process = processService.findById(2);
-        condition = processService.getBlockedUser(process) == userService.findById(3);
+        process = processService.getById(2);
+        condition = processService.getBlockedUser(process) == userService.getById(3);
         assertTrue("Blocked user doesn't match to given user!", condition);
     }
 

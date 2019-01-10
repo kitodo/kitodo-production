@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
@@ -63,7 +64,7 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
             return "SELECT COUNT(*) FROM Role";
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return createQueryRolesForCurrentUser(filters).toString();
+            return "SELECT COUNT(*) FROM Role";
         }
         return "SELECT COUNT(*) FROM Role";
     }
@@ -75,14 +76,30 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return getAll(sort, offset, size, false);
+            return dao.getByQuery("FROM Role", filters, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return getAllForSelectedClient(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
+            return new ArrayList<>();
+            //return dao.getByQuery(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size));
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Get all roles available to assign to the edited user. It will be displayed
+     * in the addRolesPopup.
+     *
+     * @param userId
+     *            id of user which is going to be edited
+     * @param clients
+     *            list of clients to which edited user is assigned
+     * @return list of all matching roles
+     */
+    public List<Role> getAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DAOException {
+        return dao.getAllAvailableForAssignToUser(userId, clients);
     }
 
     /**
@@ -91,6 +108,7 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
      * @param role
      *            object
      */
+    @Override
     public void refresh(Role role) {
         dao.refresh(role);
     }

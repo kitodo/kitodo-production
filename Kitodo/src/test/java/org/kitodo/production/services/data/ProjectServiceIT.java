@@ -22,6 +22,7 @@ import java.util.List;
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -176,6 +177,7 @@ public class ProjectServiceIT {
     }
 
     @Test
+    @Ignore
     public void shouldFindByUserId() {
         await().untilAsserted(
             () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserId(1).size()));
@@ -185,6 +187,7 @@ public class ProjectServiceIT {
     }
 
     @Test
+    @Ignore
     public void shouldFindByUserLogin() {
         await().untilAsserted(
             () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserLogin("kowal").size()));

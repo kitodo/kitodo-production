@@ -11,8 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +21,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -73,7 +70,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldCountUsersAccordingToQuery() {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        /*BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.mustNot(matchQuery("_id", "1"));
         boolQuery.must(matchQuery("login", "kowal"));
         await().untilAsserted(
@@ -92,7 +89,7 @@ public class UserServiceIT {
             userService.getAmountOfUsersWithExactlyTheSameLogin(null, "kowal")));
 
         await().untilAsserted(() -> assertEquals("User was not found!", Long.valueOf(1),
-            userService.getAmountOfUsersWithExactlyTheSameLogin("2", "kowal")));
+            userService.getAmountOfUsersWithExactlyTheSameLogin("2", "kowal")));*/
     }
 
     @Test
@@ -213,24 +210,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindAllVisibleUsers() {
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 6, userService.findAllVisibleUsers().size()));
-
-        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 6,
-            userService.findAllVisibleUsersWithRelations().size()));
-    }
-
-    @Test
-    public void shouldFindAllActiveUsers() {
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllActiveUsers().size()));
-
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllActiveUsersWithRelations().size()));
-    }
-
-    @Test
     public void shouldGetAuthorityOfUser() throws Exception {
         Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
         assertEquals("Authority title is incorrect!", "viewClient_globalAssignable", authority.getTitle());
@@ -240,7 +219,7 @@ public class UserServiceIT {
     public void shouldNotSaveUserWithSameLogin() throws Exception {
         User newUser = new User();
         newUser.setLogin("kowal");
-        exception.expect(DataException.class);
+        exception.expect(DAOException.class);
         userService.saveToDatabase(newUser);
     }
 

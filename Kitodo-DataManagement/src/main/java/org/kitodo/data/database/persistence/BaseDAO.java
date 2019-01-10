@@ -149,19 +149,37 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            as String
      * @param parameters
      *            for query
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int first, int max) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query q = session.createQuery(query);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            addParameters(q, parameters);
+            return (List<T>) q.list();
+        }
+    }
+
+    /**
+     * Retrieves BaseBean objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
      * @return list of beans objects
      */
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
         try (Session session = HibernateUtil.getSession()) {
             Query q = session.createQuery(query);
-            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-                if (parameter.getValue() instanceof List) {
-                    q.setParameterList(parameter.getKey(), (List) parameter.getValue());
-                } else {
-                    q.setParameter(parameter.getKey(), parameter.getValue());
-                }
-            }
+            addParameters(q, parameters);
             return (List<T>) q.list();
         }
     }
@@ -181,6 +199,23 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 result = new ArrayList<>();
             }
             return result;
+        }
+    }
+
+    /**
+     * Count all rows in database.
+     *
+     * @param query
+     *            for counting objects
+     * @return amount of rows in database according to given query
+     */
+    public Long count(String query, Map<String, Object> parameters) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
+            Query q = session.createQuery(query);
+            addParameters(q, parameters);
+            return (Long) q.uniqueResult();
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -423,6 +458,16 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     void updateObject(T object) {
         try (Session session = HibernateUtil.getSession()) {
             session.update(object);
+        }
+    }
+
+    private void addParameters(Query query, Map<String, Object> parameters) {
+        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            if (parameter.getValue() instanceof List) {
+                query.setParameterList(parameter.getKey(), (List) parameter.getValue());
+            } else {
+                query.setParameter(parameter.getKey(), parameter.getValue());
+            }
         }
     }
 }

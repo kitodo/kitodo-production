@@ -11,10 +11,12 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -70,5 +72,29 @@ public class RoleDAO extends BaseDAO<Role> {
         parameters.put("clientId", clientId);
         return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientId GROUP BY r.id",
             parameters);
+    }
+
+    /**
+     * Get all roles available to assign to the edited user. It will be displayed
+     * in the addRolesPopup.
+     *
+     * @param userId
+     *            id of user which is going to be edited
+     * @param clients
+     *            list of clients to which edited user is assigned
+     * @return list of all matching roles
+     */
+    public List<Role> getAllAvailableForAssignToUser(int userId, List<Client> clients) throws DAOException {
+        List<Integer> clientIds = new ArrayList<>();
+
+        for (Client client : clients) {
+            clientIds.add(client.getId());
+        }
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userId", userId);
+        parameters.put("clientIds", clientIds);
+        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientIds JOIN r.user AS u WHERE u.id != :userId GROUP BY r.id",
+                parameters);
     }
 }

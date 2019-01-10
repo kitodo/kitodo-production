@@ -21,6 +21,7 @@ import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -114,11 +115,11 @@ public class DesktopForm extends BaseForm {
                 case TASK:
                     return ServiceManager.getTaskService().count();
                 case USER:
-                    return ServiceManager.getUserService().count();
+                    return ServiceManager.getUserService().countDatabaseRows();
                 case BATCH:
                     return ServiceManager.getBatchService().count();
                 case CLIENT:
-                    return ServiceManager.getClientService().count();
+                    return ServiceManager.getClientService().countDatabaseRows();
                 case DOCKET:
                     return ServiceManager.getDocketService().count();
                 case FILTER:
@@ -134,14 +135,14 @@ public class DesktopForm extends BaseForm {
                 case TEMPLATE:
                     return ServiceManager.getTemplateService().count();
                 case ROLE:
-                    return ServiceManager.getRoleService().count();
+                    return ServiceManager.getRoleService().countDatabaseRows();
                 case WORKFLOW:
                     return ServiceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }
 
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | DataException | JsonException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;

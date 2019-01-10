@@ -561,9 +561,6 @@ public class IndexingForm {
                 case BATCH:
                     searchServices.put(objectType, ServiceManager.getBatchService());
                     break;
-                case CLIENT:
-                    searchServices.put(objectType, ServiceManager.getClientService());
-                    break;
                 case DOCKET:
                     searchServices.put(objectType, ServiceManager.getDocketService());
                     break;
@@ -584,12 +581,6 @@ public class IndexingForm {
                     break;
                 case TEMPLATE:
                     searchServices.put(objectType, ServiceManager.getTemplateService());
-                    break;
-                case USER:
-                    searchServices.put(objectType, ServiceManager.getUserService());
-                    break;
-                case ROLE:
-                    searchServices.put(objectType, ServiceManager.getRoleService());
                     break;
                 case WORKFLOW:
                     searchServices.put(objectType, ServiceManager.getWorkflowService());

@@ -43,7 +43,7 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List clients = clientService.findAll();
+        List clients = clientService.getAll();
         ClientDTO firstClient = (ClientDTO) clients.get(0);
         ClientDTO lazyClient = (ClientDTO) lazyDTOModel.getRowData(String.valueOf(firstClient.getId()));
         Assert.assertEquals(firstClient.getName(), lazyClient.getName());

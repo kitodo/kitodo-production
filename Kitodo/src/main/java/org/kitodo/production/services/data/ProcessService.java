@@ -709,7 +709,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
-        processDTO.setBlockedUser(getBlockedUser(processDTO));
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
@@ -764,24 +763,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return result;
         }
         return batches;
-    }
-
-    /**
-     * Get blocked user for ProcessDTO.
-     *
-     * @return blocked metadata (user)
-     */
-    UserDTO getBlockedUser(ProcessDTO process) {
-        UserDTO result = null;
-        if (MetadataLock.isLocked(process.getId())) {
-            String userID = this.msp.getLockUser(process.getId());
-            try {
-                result = ServiceManager.getUserService().findById(Integer.valueOf(userID));
-            } catch (DataException | RuntimeException e) {
-                Helper.setErrorMessage("userNotFound", logger, e);
-            }
-        }
-        return result;
     }
 
     /**

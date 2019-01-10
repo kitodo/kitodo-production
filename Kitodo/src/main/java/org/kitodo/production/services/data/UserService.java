@@ -222,20 +222,38 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     @Override
     public List<User> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+        return dao.getByQuery(
+            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return getAll(findAllDocuments(sortByLogin(), offset, size), false);
+            return dao.getByQuery("FROM User WHERE deleted = 0", filters, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return getAllForSelectedClient(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
-                    sortByLogin(), offset, size), false);
+            return dao.getByQuery(
+                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                pageSize);
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Get amount of users with exactly the same login like given but different id.
+     *
+     * @param id
+     *            of user
+     * @param login
+     *            of user
+     * @return amount of users with exactly the same login like given but different
+     *         id
+     */
+    public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DAOException {
+        return dao.countUsersWithExactlyTheSameLogin(id, login);
     }
 
     /**

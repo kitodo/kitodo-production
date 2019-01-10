@@ -21,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -53,9 +52,9 @@ public class ClientForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getClientService().save(this.client);
+            ServiceManager.getClientService().saveToDatabase(this.client);
             return clientListPath;
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -125,8 +124,8 @@ public class ClientForm extends BaseForm {
      */
     public void delete() {
         try {
-            ServiceManager.getClientService().remove(this.client);
-        } catch (DataException e) {
+            ServiceManager.getClientService().removeFromDatabase(this.client);
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }
     }

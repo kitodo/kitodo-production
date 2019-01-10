@@ -150,7 +150,7 @@ public class RoleServiceIT {
     public void shouldNotSaveRoleWithAlreadyExistingTitle() throws Exception {
         Role role = new Role();
         role.setTitle("Admin");
-        exception.expect(DataException.class);
+        exception.expect(DAOException.class);
         roleService.saveToDatabase(role);
     }
 

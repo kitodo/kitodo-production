@@ -39,6 +39,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -653,9 +654,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return createSetQuery(key, valuesIds, contains);
     }
 
-    protected QueryBuilder createSetQueryForBeans(String key, List<BaseIndexedBean> values, boolean contains) {
+    protected QueryBuilder createSetQueryForBeans(String key, List<? extends BaseBean> values, boolean contains) {
         Set<Integer> valuesIds = new HashSet<>();
-        for (BaseIndexedBean value : values) {
+        for (BaseBean value : values) {
             valuesIds.add(value.getId());
         }
 
