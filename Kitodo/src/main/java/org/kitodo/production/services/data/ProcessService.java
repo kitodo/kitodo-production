@@ -185,8 +185,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserProcessesQuery(filters).toString());
     }
 
     @Override
@@ -205,11 +205,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return convertJSONObjectsToDTOs(
             searcher.findDocuments(createUserProcessesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
 
-    }
-
-    @Override
-    public String createCountQuery(Map filters) throws DataException {
-        return createUserProcessesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {

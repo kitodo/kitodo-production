@@ -113,13 +113,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
-        return getProjectsForCurrentUserQuery();
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(getProjectsForCurrentUserQuery());
     }
 
     @Override

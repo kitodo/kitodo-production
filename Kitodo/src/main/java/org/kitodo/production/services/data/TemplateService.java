@@ -92,8 +92,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserTemplatesQuery(filters).toString());
     }
 
     @Override
@@ -111,11 +111,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return convertJSONObjectsToDTOs(
                 searcher.findDocuments(createUserTemplatesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
 
-    }
-
-    @Override
-    public String createCountQuery(Map filters) throws DataException {
-        return createUserTemplatesQuery(filters).toString();
     }
 
     /**

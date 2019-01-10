@@ -48,7 +48,6 @@ import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.dto.FilterDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
@@ -97,8 +96,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments();
     }
 
     @Override

@@ -90,20 +90,15 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     }
 
     @Override
-    public Long countResults(String query) throws DAOException {
-        return countDatabaseRows();
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
+    public Long countResults(Map filters) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+            return countDatabaseRows();
         }
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0";
+            return countDatabaseRows("SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0");
         }
-        return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+        return 0L;
     }
 
     @Override

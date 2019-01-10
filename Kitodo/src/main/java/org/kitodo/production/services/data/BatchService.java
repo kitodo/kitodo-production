@@ -97,8 +97,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments();
     }
 
     @Override

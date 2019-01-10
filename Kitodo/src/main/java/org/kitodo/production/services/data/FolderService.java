@@ -36,7 +36,7 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
-    public Long countResults(String query) throws DAOException {
+    public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
     }
 

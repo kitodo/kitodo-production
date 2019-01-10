@@ -11,7 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,7 +54,7 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     @Override
-    public Long countResults(String query) throws DAOException {
+    public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
     }
 
@@ -65,8 +64,9 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Client> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        return new ArrayList<>();
+        return dao.getByQuery("FROM Client WHERE", filters, first, pageSize);
     }
 
     /**

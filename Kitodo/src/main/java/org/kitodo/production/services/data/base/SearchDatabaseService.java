@@ -102,25 +102,18 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.count(query);
     }
 
-    public abstract Long countResults(String query) throws DAOException, DataException;
-
     /**
-     * This function can be overriden to implement specific filters e.g. in
-     * ProcessService. Since there are no general filters at the moment this
-     * function just returns null, but a query for general filters can be
-     * implemented here in the future.
+     * This function is used for count amount of results for frontend lists.
      *
      * @param filters
      *            Map of parameters used for filtering
-     * @return null
+     * @return amount of results
      * @throws DAOException
      *             that can be caused by Hibernate
      * @throws DataException
      *             that can be caused by ElasticSearch
      */
-    public String createCountQuery(Map filters) throws DAOException, DataException {
-        return null;
-    }
+    public abstract Long countResults(Map filters) throws DAOException, DataException;
 
     /**
      * Method necessary for get from database object by id. It is used in removeById

@@ -59,19 +59,14 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
-    public Long countResults(String query) throws DAOException {
-        return countDatabaseRows();
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
+    public Long countResults(Map filters) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return "SELECT COUNT(*) FROM Role";
+            return countDatabaseRows();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return "SELECT COUNT(*) FROM Role";
+            return countDatabaseRows();
         }
-        return "SELECT COUNT(*) FROM Role";
+        return 0L;
     }
 
     @Override

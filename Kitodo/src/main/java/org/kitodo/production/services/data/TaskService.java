@@ -163,8 +163,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public Long countResults(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserTaskQuery().toString());
     }
 
     @Override
@@ -181,12 +181,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
         BoolQueryBuilder query = createUserTaskQuery();
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
-    }
-
-    @Override
-    public String createCountQuery(Map filters) throws DataException {
-        BoolQueryBuilder query = createUserTaskQuery();
-        return query.toString();
     }
 
     /**

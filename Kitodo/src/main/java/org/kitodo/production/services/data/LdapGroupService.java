@@ -33,7 +33,7 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     }
 
     @Override
-    public Long countResults(String query) throws DAOException {
+    public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
     }
 

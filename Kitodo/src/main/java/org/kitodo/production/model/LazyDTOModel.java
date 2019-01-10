@@ -88,7 +88,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (indexRunning()) {
             try {
-                setRowCount(toIntExact(searchService.countResults(searchService.createCountQuery(filters))));
+                setRowCount(toIntExact(searchService.countResults(filters)));
 
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filters);
                 logger.info(entities.size() + " entities loaded!");
