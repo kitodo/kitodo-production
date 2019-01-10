@@ -82,6 +82,11 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public String createCountQuery(Map filters) {
         return getRulesetsForCurrentUserQuery();
     }

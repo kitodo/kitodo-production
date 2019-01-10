@@ -97,6 +97,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public List<Batch> getAllNotIndexed() {
         return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }

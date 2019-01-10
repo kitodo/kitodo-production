@@ -97,6 +97,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public List<Filter> getAllNotIndexed() {
         return getByQuery("FROM Filter WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }

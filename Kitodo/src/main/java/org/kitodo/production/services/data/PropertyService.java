@@ -95,6 +95,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public List<Property> getAllNotIndexed() {
         return getByQuery("FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }

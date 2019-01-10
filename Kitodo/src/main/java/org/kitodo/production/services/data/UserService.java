@@ -85,6 +85,35 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     }
 
     @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0");
+    }
+
+    @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+        }
+
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0";
+        }
+        return "SELECT COUNT(*) FROM User WHERE deleted = 0";
+    }
+
+    @Override
+    public List<User> getAllForSelectedClient() {
+        return dao.getByQuery(
+                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) {
         User user;
         try {
@@ -94,6 +123,21 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
             throw new UsernameNotFoundException(e.getMessage(), e);
         }
         return new SecurityUserDetails(user);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return dao.getByQuery("FROM User WHERE deleted = 0", filters, first, pageSize);
+        }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return dao.getByQuery(
+                    "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+                    Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                    pageSize);
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -201,45 +245,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     public List<User> getByQuery(String query, String namedParameter, String parameter) throws DAOException {
         return dao.search(query, namedParameter, parameter);
-    }
-
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0");
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return "SELECT COUNT(*) FROM User WHERE deleted = 0";
-        }
-
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0";
-        }
-        return "SELECT COUNT(*) FROM User WHERE deleted = 0";
-    }
-
-    @Override
-    public List<User> getAllForSelectedClient() {
-        return dao.getByQuery(
-            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0", filters, first, pageSize);
-        }
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return dao.getByQuery(
-                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
-                pageSize);
-        }
-        return new ArrayList<>();
     }
 
     /**

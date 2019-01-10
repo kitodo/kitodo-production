@@ -102,6 +102,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<LdapServer> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }

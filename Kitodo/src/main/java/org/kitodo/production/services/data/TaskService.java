@@ -153,6 +153,31 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
+    public List<Task> getAllNotIndexed() {
+        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Task> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
         BoolQueryBuilder query = createUserTaskQuery();
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
@@ -239,26 +264,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
         return findDistinctValues(null, "title.keyword", true);
-    }
-
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Task> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
     }
 
     /**

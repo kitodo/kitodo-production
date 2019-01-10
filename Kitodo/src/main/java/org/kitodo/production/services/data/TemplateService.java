@@ -92,6 +92,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public List<Template> getAllNotIndexed() {
         return getByQuery("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
@@ -99,6 +104,18 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     @Override
     public List<Template> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(
+                searcher.findDocuments(createUserTemplatesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
+
+    }
+
+    @Override
+    public String createCountQuery(Map filters) throws DataException {
+        return createUserTemplatesQuery(filters).toString();
     }
 
     /**
@@ -195,18 +212,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         List<Integer> newList = new ArrayList<>(firstList);
         newList.removeAll(secondList);
         return newList;
-    }
-
-    @Override
-    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(createUserTemplatesQuery(filters).toString(), getSort(sortField, sortOrder), first, pageSize), false);
-
-    }
-
-    @Override
-    public String createCountQuery(Map filters) throws DataException {
-        return createUserTemplatesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {

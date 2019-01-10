@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -53,6 +54,7 @@ import org.omnifaces.util.Ajax;
 public class IndexingForm {
 
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private static List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
 
     private static final String MAPPING_STARTED_MESSAGE = "mapping_started";
     private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
@@ -116,7 +118,7 @@ public class IndexingForm {
      * Standard constructor.
      */
     IndexingForm() {
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             searchServices.put(objectType, getService(objectType));
             indexWorkers.put(objectType, new IndexWorker(searchServices.get(objectType)));
             objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
@@ -125,13 +127,13 @@ public class IndexingForm {
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
 
         Map<ObjectType, Integer> result = new EnumMap<>(ObjectType.class);
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             result.put(objectType, getNumberOfDatabaseObjects(objectType));
         }
         countDatabaseObjects = Collections.unmodifiableMap(result);
 
         if (indexExists()) {
-            for (ObjectType objectType : ObjectType.values()) {
+            for (ObjectType objectType : objectTypes) {
                 indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
             }
         }
@@ -162,7 +164,7 @@ public class IndexingForm {
      */
     public long getTotalCount() {
         int totalCount = 0;
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             totalCount += countDatabaseObjects.get(objectType);
         }
         return totalCount;
@@ -193,7 +195,7 @@ public class IndexingForm {
      */
     public int getAllIndexed() {
         int allIndexed = 0;
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             allIndexed += getNumberOfIndexedObjects(objectType);
         }
         return allIndexed;
@@ -406,7 +408,7 @@ public class IndexingForm {
     }
 
     private void resetGlobalProgress() {
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             indexedObjects.put(objectType, 0);
         }
     }
@@ -522,7 +524,7 @@ public class IndexingForm {
      * @return static variable for global indexing state
      */
     public IndexingStates getAllObjectsIndexingState() {
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.INDEXING_FAILED)) {
                 return IndexingStates.INDEXING_FAILED;
             }
@@ -539,7 +541,7 @@ public class IndexingForm {
      * @return array of object type values
      */
     public ObjectType[] getObjectTypes() {
-        return ObjectType.values();
+        return objectTypes.toArray(new ObjectType[0]);
     }
 
     /**
@@ -547,9 +549,10 @@ public class IndexingForm {
      *
      * @return JSONArray containing objects type constants.
      */
+    @SuppressWarnings("unused")
     public JsonArray getObjectTypesAsJson() {
         JsonArrayBuilder objectsTypesJson = Json.createArrayBuilder();
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             objectsTypesJson.add(objectType.toString());
         }
         return objectsTypesJson.build();
@@ -608,7 +611,7 @@ public class IndexingForm {
      * Update the view.
      */
     public void updateView() {
-        for (ObjectType objectType : ObjectType.values()) {
+        for (ObjectType objectType : objectTypes) {
             updateCount(objectType);
         }
         Ajax.update("@all");
@@ -652,7 +655,7 @@ public class IndexingForm {
             resetGlobalProgress();
             indexingAll = true;
 
-            for (ObjectType objectType : ObjectType.values()) {
+            for (ObjectType objectType : objectTypes) {
                 startIndexing(objectType);
             }
 

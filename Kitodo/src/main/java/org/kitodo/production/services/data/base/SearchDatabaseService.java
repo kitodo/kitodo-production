@@ -102,6 +102,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.count(query);
     }
 
+    public abstract Long countResults(String query) throws DAOException, DataException;
+
     /**
      * This function can be overriden to implement specific filters e.g. in
      * ProcessService. Since there are no general filters at the moment this

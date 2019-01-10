@@ -87,6 +87,11 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
     }
 
     @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<Authority> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }

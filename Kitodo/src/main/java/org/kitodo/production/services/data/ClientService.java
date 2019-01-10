@@ -55,6 +55,11 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<Client> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
@@ -70,6 +75,7 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
      * @param client
      *            object
      */
+    @Override
     public void refresh(Client client) {
         dao.refresh(client);
     }

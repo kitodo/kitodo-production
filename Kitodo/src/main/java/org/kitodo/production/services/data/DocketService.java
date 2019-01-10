@@ -73,6 +73,11 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public String createCountQuery(Map filters) {
         return getDocketsForCurrentUserQuery();
     }

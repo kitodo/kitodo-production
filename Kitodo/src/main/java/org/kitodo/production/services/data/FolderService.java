@@ -36,6 +36,11 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<Folder> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }

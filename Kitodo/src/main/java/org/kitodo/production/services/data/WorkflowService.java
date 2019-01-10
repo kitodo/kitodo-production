@@ -71,6 +71,11 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
     public String createCountQuery(Map filters) {
         return getWorkflowsForCurrentUserQuery();
     }

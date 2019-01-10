@@ -113,7 +113,6 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -173,6 +172,31 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
         return instance;
+    }
+
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process");
+    }
+
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public Long countResults(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    @Override
+    public List<Process> getAllNotIndexed() {
+        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Process> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -409,26 +433,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
-    }
-
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Process> getAllNotIndexed() {
-        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Process> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
     }
 
     @Override

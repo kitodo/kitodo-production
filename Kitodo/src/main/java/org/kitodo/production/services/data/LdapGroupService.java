@@ -33,6 +33,11 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     }
 
     @Override
+    public Long countResults(String query) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<LdapGroup> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
     }
