@@ -473,7 +473,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // only processes which are not templates and are part of assigned
         // projects
         try {
-
             List<ProcessDTO> processDTOS = ServiceManager.getProcessService()
                     .findByProjectIds(projectIds, true);
             taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true));

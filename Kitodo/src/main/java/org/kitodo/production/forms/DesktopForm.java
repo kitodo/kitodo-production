@@ -26,12 +26,13 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortOrder;
 
 @Named("DesktopForm")
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
-    private static final String SORT_TITLE_ASC = "{\"title\":\"asc\" }";
+    private static final String SORT_TITLE = "title";
 
     /**
      * Default constructor.
@@ -57,7 +58,7 @@ public class DesktopForm extends BaseForm {
     public List getTasks() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList()) {
-                return ServiceManager.getTaskService().findAll(SORT_TITLE_ASC, 0, 10, new HashMap());
+                return ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap());
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
@@ -74,7 +75,7 @@ public class DesktopForm extends BaseForm {
     public List getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList()) {
-                return ServiceManager.getProcessService().findAll(SORT_TITLE_ASC, 0, 10, null);
+                return ServiceManager.getProcessService().loadData(0, 10,SORT_TITLE, SortOrder.ASCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
@@ -91,7 +92,7 @@ public class DesktopForm extends BaseForm {
     public List getProjects() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()) {
-                return ServiceManager.getProjectService().findAll(SORT_TITLE_ASC, 0, 10, null);
+                return ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
@@ -118,10 +119,12 @@ public class DesktopForm extends BaseForm {
                     return ServiceManager.getAuthorityService().countDatabaseRows();
                 case USER:
                     return ServiceManager.getUserService().countDatabaseRows();
+                case FOLDER:
+                    return ServiceManager.getFolderService().countDatabaseRows();
                 case LDAP_GROUP:
                     return ServiceManager.getLdapGroupService().countDatabaseRows();
                 case LDAP_SERVER:
-                    return ServiceManager.getAuthorityService().countDatabaseRows();
+                    return ServiceManager.getLdapServerService().countDatabaseRows();
                 case BATCH:
                     return ServiceManager.getBatchService().count();
                 case CLIENT:

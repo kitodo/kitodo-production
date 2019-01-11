@@ -147,7 +147,7 @@ public class MockDatabase {
         Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
     }
 
-    public static void insertProcessesFull() throws DAOException, DataException {
+    public static void insertProcessesFull() throws Exception {
         insertRolesFull();
         insertDockets();
         insertRulesets();
@@ -165,7 +165,7 @@ public class MockDatabase {
         insertRemovableObjects();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException, WorkflowException {
+    public static void insertProcessesForWorkflowFull() throws Exception {
         insertRolesFull();
         insertDockets();
         insertRulesets();
@@ -190,7 +190,7 @@ public class MockDatabase {
         insertUsers();
     }
 
-    public static void insertForAuthenticationTesting() throws DAOException, DataException {
+    public static void insertForAuthenticationTesting() throws Exception {
         insertAuthorities();
         insertLdapGroups();
         insertClients();
@@ -630,7 +630,7 @@ public class MockDatabase {
         ServiceManager.getClientService().saveToDatabase(thirdClient);
     }
 
-    private static void insertProjects() throws DAOException, DataException {
+    private static void insertProjects() throws Exception {
         User firstUser = ServiceManager.getUserService().getById(1);
         User secondUser = ServiceManager.getUserService().getById(2);
 
@@ -670,6 +670,7 @@ public class MockDatabase {
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
         ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -780,7 +781,7 @@ public class MockDatabase {
         ServiceManager.getRulesetService().save(thirdRuleset);
     }
 
-    private static void insertTasks() throws DAOException, DataException {
+    private static void insertTasks() throws Exception {
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Role role = ServiceManager.getRoleService().getById(1);
 
@@ -838,6 +839,7 @@ public class MockDatabase {
         role.getTasks().add(eleventhTask);
         ServiceManager.getTaskService().save(eleventhTask);
         firstUser.getProcessingTasks().add(eleventhTask);
+        ServiceManager.getTaskService().saveToIndex(eleventhTask, true);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -853,6 +855,7 @@ public class MockDatabase {
         ServiceManager.getTaskService().save(twelfthTask);
         firstUser.getProcessingTasks().add(twelfthTask);
         ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getTaskService().saveToIndex(twelfthTask, true);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");

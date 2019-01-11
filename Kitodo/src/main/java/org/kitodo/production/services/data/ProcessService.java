@@ -243,7 +243,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (!this.showInactiveProjects) {
             query.must(getQueryProjectActive(true));
         }
-
         return query;
     }
 
