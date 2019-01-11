@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -66,36 +67,9 @@ public class IndexingForm {
 
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
-    public LocalDateTime getIndexingStartedTime() {
-        return indexingStartedTime;
-    }
+    private final Map<ObjectType, Integer> countDatabaseObjects;
 
     private int pause = 1000;
-
-    class IndexAllThread extends Thread {
-
-        @Override
-        public void run() {
-            resetGlobalProgress();
-            indexingAll = true;
-
-            for (ObjectType objectType : ObjectType.values()) {
-                startIndexing(objectType);
-            }
-
-            try {
-                sleep(pause);
-            } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
-            }
-
-            currentIndexState = ObjectType.NONE;
-            indexingAll = false;
-
-            pollingChannel.send(INDEXING_FINISHED_MESSAGE);
-        }
-    }
 
     @Inject
     @Push(channel = POLLING_CHANNEL_NAME)
@@ -150,11 +124,35 @@ public class IndexingForm {
 
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
 
+        Map<ObjectType, Integer> result = new EnumMap<>(ObjectType.class);
+        for (ObjectType objectType : ObjectType.values()) {
+            result.put(objectType, getNumberOfDatabaseObjects(objectType));
+        }
+        countDatabaseObjects = Collections.unmodifiableMap(result);
+
         if (indexExists()) {
             for (ObjectType objectType : ObjectType.values()) {
-                indexedObjects.put(objectType, getNumberOfIndexedObjects(objectType));
+                indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
             }
         }
+    }
+
+    /**
+     * Get time when indexing has started.
+     * 
+     * @return time when indexing has started as LocalDateTime
+     */
+    public LocalDateTime getIndexingStartedTime() {
+        return indexingStartedTime;
+    }
+
+    /**
+     * Get count of database objects.
+     *
+     * @return value of countDatabaseObjects
+     */
+    public Map<ObjectType, Integer> getCountDatabaseObjects() {
+        return countDatabaseObjects;
     }
 
     /**
@@ -165,29 +163,9 @@ public class IndexingForm {
     public long getTotalCount() {
         int totalCount = 0;
         for (ObjectType objectType : ObjectType.values()) {
-            totalCount += getNumberOfDatabaseObjects(objectType);
+            totalCount += countDatabaseObjects.get(objectType);
         }
         return totalCount;
-    }
-
-    /**
-     * Return the number of objects in the database for the given ObjectType.
-     *
-     * @param objectType
-     *            name of ObjectType for which the number of database objects is
-     *            returned
-     * @return number of database objects
-     */
-    public int getNumberOfDatabaseObjects(ObjectType objectType) {
-        try {
-            SearchService searchService = searchServices.get(objectType);
-            if (searchService != null) {
-                return toIntExact(searchService.countDatabaseRows());
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return 0;
     }
 
     /**
@@ -228,7 +206,7 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void startIndexing(ObjectType type) {
-        if (getNumberOfDatabaseObjects(type) > 0) {
+        if (countDatabaseObjects.get(type) > 0) {
             IndexWorker worker = indexWorkers.get(type);
             runIndexing(worker, type);
         }
@@ -241,7 +219,7 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void startIndexingRemaining(ObjectType type) {
-        if (getNumberOfDatabaseObjects(type) > 0) {
+        if (countDatabaseObjects.get(type) > 0) {
             IndexWorker worker = indexWorkers.get(type);
             worker.setIndexAllObjects(false);
             runIndexing(worker, type);
@@ -410,7 +388,7 @@ public class IndexingForm {
      * @return the progress of the current indexing process in percent
      */
     public int getProgress(ObjectType currentType) {
-        long numberOfObjects = getNumberOfDatabaseObjects(currentType);
+        long numberOfObjects = countDatabaseObjects.get(currentType);
         long nrOfIndexedObjects = getNumberOfIndexedObjects(currentType);
         int progress = numberOfObjects > 0 ? (int) ((nrOfIndexedObjects / (float) numberOfObjects) * 100) : 0;
         if (Objects.equals(currentIndexState, currentType) && (numberOfObjects == 0 || progress == 100)) {
@@ -653,6 +631,51 @@ public class IndexingForm {
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
+        }
+    }
+
+    /**
+     * Return the number of objects in the database for the given ObjectType.
+     *
+     * @param objectType
+     *            name of ObjectType for which the number of database objects is
+     *            returned
+     * @return number of database objects
+     */
+    private int getNumberOfDatabaseObjects(ObjectType objectType) {
+        try {
+            SearchService searchService = searchServices.get(objectType);
+            if (searchService != null) {
+                return toIntExact(searchService.countDatabaseRows());
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return 0;
+    }
+
+    class IndexAllThread extends Thread {
+
+        @Override
+        public void run() {
+            resetGlobalProgress();
+            indexingAll = true;
+
+            for (ObjectType objectType : ObjectType.values()) {
+                startIndexing(objectType);
+            }
+
+            try {
+                sleep(pause);
+            } catch (InterruptedException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                Thread.currentThread().interrupt();
+            }
+
+            currentIndexState = ObjectType.NONE;
+            indexingAll = false;
+
+            pollingChannel.send(INDEXING_FINISHED_MESSAGE);
         }
     }
 }
