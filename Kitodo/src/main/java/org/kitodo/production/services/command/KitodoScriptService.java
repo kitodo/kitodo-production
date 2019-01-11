@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,12 +31,8 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.UghHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -504,31 +499,13 @@ public class KitodoScriptService {
      *            list of Process objects
      */
     public void updateImagePath(List<Process> processes) {
-        for (Process process : processes) {
-            try {
-                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
-                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(process, "pathimagefiles");
-                List<? extends LegacyMetadataHelper> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
-                        .getAllMetadataByType(mdt);
-                for (LegacyMetadataHelper md : allImagePaths) {
-                    rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
-                }
-                LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    newMetadata.setStringValue("file:/" + fileService.getImagesDirectory(process)
-                            + process.getTitle() + DIRECTORY_SUFFIX);
-                } else {
-                    newMetadata.setStringValue("file://" + fileService.getImagesDirectory(process)
-                            + process.getTitle() + DIRECTORY_SUFFIX);
-                }
-                rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
-                fileService.writeMetadataFile(rdf, process);
-                Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
-            } catch (UghHelperException | IOException | RuntimeException e) {
-                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
-            }
-        }
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateImagePath finished");
+        // TODO remove
+        /*
+         * In the new internal METS format, the path to the image directory is
+         * no longer saved. All image URIs are relative to the process directory
+         * and thus relative to the directory where the METS file resides.
+         * Therefore, there is nothing left to do here.
+         */
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
