@@ -88,20 +88,6 @@
         <!--<param-value>none</param-value>-->
     <!--</context-param>-->
 
-    <!-- Extensions Filter -->
-    <filter>
-        <filter-name>extensionsFilter</filter-name>
-        <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
-        <init-param>
-            <param-name>uploadMaxFileSize</param-name>
-            <param-value>100m</param-value>
-        </init-param>
-        <init-param>
-            <param-name>uploadThresholdSize</param-name>
-            <param-value>100k</param-value>
-        </init-param>
-    </filter>
-
     <context-param>
         <param-name>org.richfaces.SKIN</param-name>
         <param-value>blueSky</param-value>
@@ -115,15 +101,6 @@
             <param-value>/WEB-INF/reverse-proxy.xml</param-value>
         </init-param>
     </filter>
-
-    <filter-mapping>
-        <filter-name>extensionsFilter</filter-name>
-        <url-pattern>*.jsf</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>extensionsFilter</filter-name>
-        <url-pattern>/faces/*</url-pattern>
-    </filter-mapping>
 
     <filter-mapping>
         <filter-name>Proxy</filter-name>

@@ -30,7 +30,6 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
@@ -45,6 +44,7 @@ import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.primefaces.model.UploadedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -1330,7 +1330,7 @@ public class CalendarForm implements Serializable {
                 Helper.setMessage(UPLOAD_ERROR, "calendar.upload.isEmpty");
                 return;
             }
-            Document xml = XMLUtils.load(uploadedFile.getInputStream());
+            Document xml = XMLUtils.load(uploadedFile.getInputstream());
             course = new Course(xml);
             blockShowing = course.get(0);
             Helper.removeManagedBean("GranularityForm");

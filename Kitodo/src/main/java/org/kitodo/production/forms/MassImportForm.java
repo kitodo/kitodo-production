@@ -30,7 +30,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
@@ -58,6 +57,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.UploadedFile;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -243,7 +243,7 @@ public class MassImportForm extends BaseForm {
             return;
         }
 
-        String basename = this.uploadedFile.getName();
+        String basename = this.uploadedFile.getFileName();
         if (basename.startsWith(".")) {
             basename = basename.substring(1);
         }
@@ -256,7 +256,7 @@ public class MassImportForm extends BaseForm {
         URI temporalFile = ServiceManager.getFileService().createResource(
             FilenameUtils.concat(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_TEMP), basename));
 
-        ServiceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
+        ServiceManager.getFileService().copyFile(URI.create(this.uploadedFile.getFileName()), temporalFile);
     }
 
     public UploadedFile getUploadedFile() {
