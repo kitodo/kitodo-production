@@ -25,7 +25,7 @@
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexing(objectType)}"
                                  styleClass="indexing-button"
-                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
+                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.countDatabaseObjects[objectType] lt 1)}"/>
             </td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
@@ -34,7 +34,7 @@
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexingRemaining(objectType)}"
                                  styleClass="indexing-button"
-                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
+                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.countDatabaseObjects[objectType] lt 1)}"/>
             </td>
             <td>
                 <p:progressBar widgetVar="#{objectType}Progress"
@@ -46,7 +46,7 @@
                 </p:progressBar>
             </td>
             <td style="text-align: right;">
-                <h:outputText value="#{indexingForm.getNumberOfIndexedObjects(objectType)} / #{indexingForm.getNumberOfDatabaseObjects(objectType)}"/>
+                <h:outputText value="#{indexingForm.getNumberOfIndexedObjects(objectType)} / #{indexingForm.countDatabaseObjects[objectType]}"/>
             </td>
             <td>
                 <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingStartedState}"/>
