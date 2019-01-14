@@ -189,9 +189,12 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Deprecated
     public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
-            return Arrays.asList(new LegacyMetadataHelper(this, metadataType, Integer.toString(mediaUnit.getOrder())));
+            return Objects.nonNull(mediaUnit)
+                    ? Arrays.asList(
+                        new LegacyMetadataHelper(this, metadataType, Integer.toString(mediaUnit.getOrder())))
+                    : Collections.emptyList();
         } else if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL) {
-            return Objects.nonNull(mediaUnit.getOrderlabel())
+            return Objects.nonNull(mediaUnit) && Objects.nonNull(mediaUnit.getOrderlabel())
                     ? Arrays.asList(new LegacyMetadataHelper(this, metadataType, mediaUnit.getOrderlabel()))
                     : Collections.emptyList();
         } else {
