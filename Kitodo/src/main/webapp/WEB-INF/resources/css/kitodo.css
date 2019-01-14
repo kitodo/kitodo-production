@@ -1152,6 +1152,10 @@ Column content
     background: #f3f3f3;
 }
 
+#imagePreviewForm\:imageControlPanel button {
+    margin-right: 0;
+}
+
 .rotate-right {
     top: 65px !important;
     left: .5em;
