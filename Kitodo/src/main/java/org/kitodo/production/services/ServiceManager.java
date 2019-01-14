@@ -583,7 +583,7 @@ public class ServiceManager {
      *
      * @return RulesetService object
      */
-    public RulesetManagementService getRulesetManagementService() {
+    public static RulesetManagementService getRulesetManagementService() {
         initializeRulesetManagementService();
         return rulesetManagementService;
     }

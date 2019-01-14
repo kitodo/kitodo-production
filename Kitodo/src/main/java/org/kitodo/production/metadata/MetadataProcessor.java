@@ -1792,12 +1792,16 @@ public class MetadataProcessor {
         }
 
         if (children != null) {
-            visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
+            Optional<TreeNode> optionalPrimeFacesTreeNode = convertDocstructToPrimeFacesTreeNode(children, visibleRoot);
+            if (optionalPrimeFacesTreeNode.isPresent()) {
+                visibleRoot.getChildren().add(optionalPrimeFacesTreeNode.get());
+            }
         }
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertDocstructToPrimeFacesTreeNode(List<DocStructInterface> elements, TreeNode parentTreeNode) {
+    private Optional<TreeNode> convertDocstructToPrimeFacesTreeNode(List<DocStructInterface> elements,
+            TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
         for (DocStructInterface element : elements) {
@@ -1817,7 +1821,7 @@ public class MetadataProcessor {
                 convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
-        return treeNode;
+        return Optional.ofNullable(treeNode);
     }
 
     private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
@@ -2285,8 +2289,10 @@ public class MetadataProcessor {
                             .get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString())
                             .toUri();
 
+                    logger.info("Reading {}…", tiffURI);
                     BufferedImage inputImage = ImageIO.read(tiffURI.toURL());
 
+                    logger.info("Writing {}…", targetPath);
                     ImageIO.write(inputImage, "png", new File(targetPath));
                     numberOfConvertedImages++;
                     // FIXME: this call to the update function does not work!
@@ -2310,11 +2316,13 @@ public class MetadataProcessor {
         if (!thumbnailsExist()) {
             URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
             try (Stream<Path> imagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
+                logger.info("Creating thumbnails from {} to {}", fullsizePath, thumbnailPath);
                 Thumbnails.of(
                     (File[]) imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
                             .filter(path -> path.toString().endsWith(".png")).map(Path::toFile).toArray(File[]::new))
                         .size(60, 100).outputFormat("png")
                         .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
+                logger.info("Thumbnails completed in {}", thumbnailPath);
             } catch (IOException e) {
                 logger.error("ERROR: IOException thrown while creating thumbnails: " + e.getLocalizedMessage());
             } catch (IllegalArgumentException e) {

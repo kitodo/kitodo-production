@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -127,28 +129,40 @@ public class Workpiece implements MetsXmlElementAccessInterface {
      *            METS XML structure to read
      */
     private Workpiece(Mets mets) {
-        createdate = mets.getMetsHdr().getCREATEDATE().toGregorianCalendar();
-        for (Agent agent : mets.getMetsHdr().getAgent()) {
-            editHistory.add(new ProcessingNote(agent));
-        }
-        MetsDocumentID metsDocumentID = mets.getMetsHdr().getMetsDocumentID();
-        if (Objects.nonNull(metsDocumentID)) {
-            id = metsDocumentID.getID();
+        MetsHdr metsHdr = mets.getMetsHdr();
+        if (metsHdr != null) {
+            XMLGregorianCalendar createDate = metsHdr.getCREATEDATE();
+            if (createDate != null) {
+                createdate = createDate.toGregorianCalendar();
+            }
+            for (Agent agent : metsHdr.getAgent()) {
+                editHistory.add(new ProcessingNote(agent));
+            }
+            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
+            if (Objects.nonNull(metsDocumentID)) {
+                id = metsDocumentID.getID();
+            }
         }
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> mediaVariants = fileSec != null ? fileSec.getFileGrp().parallelStream()
                 .map(MediaVariant::new).collect(Collectors.toMap(MediaVariant::getUse, Function.identity()))
                 : new HashMap<>();
-        List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
-        Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
-        for (DivType div : physicalDivs) {
-            MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
-            mediaUnits.add(mediaUnit);
-            divIDsToMediaUnits.put(div.getID(), mediaUnit);
+        Optional<StructMapType> optionalPhysical = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
+        Map<String, Set<MediaUnit>> mediaUnitsMap;
+        if (!optionalPhysical.isPresent()) {
+            mediaUnitsMap = Collections.emptyMap();
+        } else {
+            List<DivType> physicalDivs = optionalPhysical.get().getDiv().getDiv();
+            Map<String, MediaUnit> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
+            for (DivType div : physicalDivs) {
+                MediaUnit mediaUnit = new MediaUnit(div, mets, mediaVariants);
+                mediaUnits.add(mediaUnit);
+                divIDsToMediaUnits.put(div.getID(), mediaUnit);
+            }
+            mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
+                    .filter(SmLink.class::isInstance).map(SmLink.class::cast).collect(
+                        new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         }
-        Map<String, Set<MediaUnit>> mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
-                .filter(SmLink.class::isInstance).map(SmLink.class::cast)
-                .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
         structure = getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new Structure(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
                 .iterator().next();
@@ -304,14 +318,16 @@ public class Workpiece implements MetsXmlElementAccessInterface {
     }
 
     /**
-     * Creates the header of the METS file. The header area stores the
-     * timestamp, the ID and the processing notes.
+     * Creates the header of the METS file. The header area stores the time
+     * stamp, the ID and the processing notes.
      * 
      * @return the header of the METS file
      */
     private MetsHdr generateMetsHdr() {
         MetsHdr metsHdr = new MetsHdr();
-        metsHdr.setCREATEDATE(convertDate(createdate));
+        if (createdate != null) {
+            metsHdr.setCREATEDATE(convertDate(createdate));
+        }
         metsHdr.setLASTMODDATE(convertDate(new GregorianCalendar()));
         if (this.id != null) {
             MetsDocumentID id = new MetsDocumentID();
