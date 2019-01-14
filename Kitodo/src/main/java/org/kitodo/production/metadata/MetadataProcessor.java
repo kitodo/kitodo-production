@@ -1772,11 +1772,12 @@ public class MetadataProcessor {
     }
 
     public List<?> getMetaPersonList() {
-        throw new UnsupportedOperationException("Dead code pending removal");
+        // Dead code pending removal. TODO remove
+        return Collections.emptyList();
     }
 
     public void setMetaPersonList(List<?> metaPersonList) {
-        throw new UnsupportedOperationException("Dead code pending removal");
+        // Dead code pending removal. TODO remove
     }
 
     public MetadataImpl getCurrentMetadata() {
@@ -1788,11 +1789,12 @@ public class MetadataProcessor {
     }
 
     public Void getCurPerson() {
-        throw new UnsupportedOperationException("Dead code pending removal");
+        // Dead code pending removal. TODO remove
+        return null;
     }
 
     public void setCurPerson(Object curPerson) {
-        throw new UnsupportedOperationException("Dead code pending removal");
+        // Dead code pending removal. TODO remove
     }
 
     public URI getCurrentTifFolder() {
