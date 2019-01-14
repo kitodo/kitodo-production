@@ -15,6 +15,7 @@
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
 
@@ -35,11 +36,12 @@
             <div id="metadataEditorWrapper">
 
                 <!-- First Column -->
-                <div class="collapsibleWrapper" id="firstColumnWrapper" data-min-width="200">
+                <h:panelGroup class="collapsibleWrapper" id="firstColumnWrapper" a:data-min-width="200">
                     <button type="button"
                             onclick="toggleFirstColumn()"
                             class="columnExpandButton">
-                        <i class="fa fa-angle-double-left fa-lg"/>
+                        <i class="fa fa-expand fa-lg"/>
+                        <i class="fa fa-compress fa-lg"/>
                     </button>
                     <div class="columnHeadingWrapper">
                         <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
@@ -56,24 +58,25 @@
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogAddDocStrucType.xhtml"/>
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogEditPages.xhtml"/>
                     </p:panel>
-                </div>
+                </h:panelGroup>
 
                 <!-- Element for resizing first and second column -->
-                <div class="resizer" id="firstResizer"></div>
+                <h:panelGroup class="resizer" id="firstResizer"/>
 
                 <!-- Second Column -->
-                <div class="collapsibleWrapper" id="secondColumnWrapper" data-min-width="200">
+                <h:panelGroup class="collapsibleWrapper" id="secondColumnWrapper" a:data-min-width="200">
                     <button type="button"
                             onclick="toggleSecondColumn()"
                             class="columnExpandButton">
-                        <i class="fa fa-angle-double-left fa-lg"/>
+                        <i class="fa fa-expand fa-lg"/>
+                        <i class="fa fa-compress fa-lg"/>
                     </button>
 
                     <div class="columnHeadingWrapper">
-                        <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
                         <button id="firstSectionToggler" onclick="toggleFirstSection()">
-                            <i class="fa fa-chevron-down fa-lg"/>
+                            <i class="fa fa-chevron-circle-up fa-lg"/>
                         </button>
+                        <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
                     </div>
                     <p:panel id="secondColumnPanel">
                         <div id="metadataPanel" data-min-height="100">
@@ -84,26 +87,27 @@
                         <div id="verticalResizer"></div>
 
                         <div class="columnHeadingWrapper">
-                            <h:outputText value="#{msgs.comments}"/>
                             <button id="secondSectionToggler" onclick="toggleSecondSection()">
-                                <i class="fa fa-chevron-down fa-lg"/>
+                                <i class="fa fa-chevron-circle-up fa-lg"/>
                             </button>
+                            <h:outputText value="#{msgs.comments}"/>
                         </div>
                         <div id="commentPanel" data-min-height="100">
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/comment.xhtml" />
                         </div>
                     </p:panel>
-                </div>
+                </h:panelGroup>
 
                 <!-- Element for resizing second and third column -->
-                <div class="resizer" id="secondResizer"></div>
+                <h:panelGroup class="resizer" id="secondResizer"/>
 
                 <!-- Third Column -->
-                <div class="collapsibleWrapper" id="thirdColumnWrapper" data-min-width="400">
+                <h:panelGroup class="collapsibleWrapper" id="thirdColumnWrapper" a:data-min-width="400">
                     <button type="button"
                             onclick="toggleThirdColumn()"
                             class="columnExpandButton">
-                        <i class="fa fa-angle-double-left fa-lg"/>
+                        <i class="fa fa-expand fa-lg"/>
+                        <i class="fa fa-compress fa-lg"/>
                     </button>
 
                     <div class="columnHeadingWrapper">
@@ -122,7 +126,7 @@
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
                         </div>
                     </p:panel>
-                </div>
+                </h:panelGroup>
             </div>
         </p:panel>
 

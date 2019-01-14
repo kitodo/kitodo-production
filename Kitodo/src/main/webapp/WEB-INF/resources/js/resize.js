@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-var SEPARATOR_WIDTH = 14.5;
+var SEPARATOR_WIDTH = 3;
 var COLLAPSED_COL_WIDTH = 42;
 var HEADING_HEIGHT = 40;
 var SEPARATOR_HEIGHT = 5;

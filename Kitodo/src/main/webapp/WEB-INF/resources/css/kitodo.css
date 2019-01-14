@@ -961,6 +961,7 @@ Metadata Editor
     margin-right: 16px;
     width: calc(100% - 32px);
     white-space: nowrap;
+    border-top: solid 3px grey;
 }
 
 .collapsibleWrapper {
@@ -969,41 +970,60 @@ Metadata Editor
     box-sizing: border-box;
     vertical-align: top;
     position: relative;
-    padding: 10px 0 0 0;
     background: #d8d8d8;
     overflow: visible !important;
     white-space: initial;
 }
 
-.collapsibleWrapper > button {
+.collapsibleWrapper > .columnExpandButton {
+    background: transparent;
+    border: none;
+    color: grey;
+    height: 36px;
     position: absolute;
-    top: -10px;
-    left: 8px;
-    background: #0071bc;
-    color: #fff;
-    border: solid 1px #fff;
+    right: 16px;
 }
 
-.collapsibleWrapper > button:disabled {
-    background: #d8d8d8;
+.collapsibleWrapper.collapsed > .columnExpandButton {
+    right: 0;
+    top: 0;
+    width: 42px;
 }
 
-.collapsibleWrapper.collapsed .columnExpandButton {
-    transform: scaleX(-1);
+.collapsibleWrapper .columnExpandButton .fa-expand {
+    display: none;
+}
+
+.collapsibleWrapper .columnExpandButton .fa-compress {
+    display: inline-block;
+}
+
+.collapsibleWrapper.collapsed .columnExpandButton .fa-expand {
+    display: inline-block;
+}
+
+.collapsibleWrapper.collapsed .columnExpandButton .fa-compress {
+    display: none;
 }
 
 .collapsibleWrapper .columnHeadingWrapper {
-    height: 40px;
-    line-height: 40px;
-    padding: 0 8px;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px;
     font-weight: bold;
 }
 
 .collapsibleWrapper .columnHeadingWrapper button {
-    float: right;
     background: none;
     border: none;
-    height: 40px;
+    height: 36px;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: var(--primary);
+}
+
+.collapsibleWrapper .columnHeadingWrapper button:disabled {
+    color: var(--disabled-dark);
 }
 
 .collapsibleWrapper.collapsed .columnHeadingWrapper button {
@@ -1017,7 +1037,7 @@ Metadata Editor
 .collapsibleWrapper.collapsed .columnHeading {
     position: absolute;
     transform: rotate(90deg);
-    top: -10px;
+    top: 16px;
     left: 0px;
     width: 200px;
     height: 42px;
@@ -1045,8 +1065,33 @@ Metadata Editor
 #metadataEditorWrapper .resizer {
     display: inline-block;
     height: 100%;
-    width: 5px;
+    width: 3px;
+    border: solid grey;
+    border-width: 0 1px;
+    box-sizing: border-box;
     cursor: ew-resize;
+    position: relative;
+}
+
+#metadataEditorWrapper .resizer::before {
+    content: '\f0d9';
+    color: grey;
+    font-family: FontAwesome;
+    font-size: 22px;
+    position: absolute;
+    right: 3px;
+    top: 8px;
+}
+
+#metadataEditorWrapper .resizer::after {
+    content: '\f0da';
+    color: grey;
+    font-family: FontAwesome;
+    font-size: 22px;
+    position: absolute;
+    left: 3px;
+    top: 8px;
+    z-index: 1;
 }
 
 #metadataEditorWrapper .resizer.disabled {
