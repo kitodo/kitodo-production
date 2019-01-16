@@ -22,6 +22,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -87,6 +88,7 @@ public class ExportMetsIT {
         }
     }
 
+    @Test
     public void exportMetsTest() throws Exception {
         if (SystemUtils.IS_OS_WINDOWS) {
             // This is a workaround for the problem that the startExport method
@@ -101,7 +103,6 @@ public class ExportMetsIT {
         exportMets.startExport(process, exportUri);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
-
         Assert.assertTrue("Export of metadata was wrong",
             strings.get(1).contains("<mods:publisher>Test Publisher</mods:publisher>"));
         Assert.assertTrue("Export of person was wrong", strings.get(1).contains("<mods:title>Test Title</mods:title>"));
