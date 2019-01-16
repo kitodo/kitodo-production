@@ -291,8 +291,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 try {
                     idLabels.put(year,
                             getMetadataValueByName(children.get(0), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE));
+                    logger.debug("Found LABEL for year " + year + " with value \"" + idLabels.get(year)
+                            + "\" in issue: " + act.getLogicalDocStruct());
                 } catch (NoSuchElementException e) {
-                    // no year label
+                    logger.debug("No LABEL for year " + year + " in issue: " + act.getLogicalDocStruct().toString());
                 }
                 return year;
             } catch (NoSuchElementException nose) {
@@ -685,6 +687,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             DocStruct child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
             child.addMetadata(identifierField, identifier);
             if (idLabels.containsKey(identifier)) {
+                logger.debug("Setting LABEL \"" + idLabels.get(identifier) + "\" for year " + identifier
+                        + " on reference \"" + child + "\" to be added to issue: " + parent);
                 child.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, idLabels.get(identifier));
             } else if (optionalField != null) {
                 try {
