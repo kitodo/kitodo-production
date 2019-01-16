@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:ns2="http://www.w3.org/1999/xlink" xmlns:ns3="http://meta.kitodo.org/v1/">
+    <dmdSec ID="1">
+        <mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
+            <xmlData>
+                <ns3:kitodo>
+                    <ns3:metadata name="singleDigCollection">test collection</ns3:metadata>
+                    <ns3:metadata name="PublicationYearSorting">1111</ns3:metadata>
+                    <ns3:metadata name="PlaceOfPublication">Hamburg</ns3:metadata>
+                    <ns3:metadata name="SizeSourcePrint">VI, 134 S.</ns3:metadata>
+                    <ns3:metadata name="TitleDocMain">test title</ns3:metadata>
+                    <ns3:metadata name="TitleDocMainShort">test title short</ns3:metadata>
+                    <ns3:metadata name="CatalogIDDigital">644901748</ns3:metadata>
+                    <ns3:metadata name="shelfmarksource">Online Ressource</ns3:metadata>
+                    <ns3:metadata name="DocLanguage">ger</ns3:metadata>
+                    <ns3:metadata name="TSL_ATS">ThomPhar</ns3:metadata>
+                    <ns3:metadata name="PublisherName">Publisher test name</ns3:metadata>
+                </ns3:kitodo>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>
+    <structMap TYPE="LOGICAL">
+        <div DMDID="1" TYPE="Monograph"/>
+    </structMap>
+    <structMap TYPE="PHYSICAL">
+        <div/>
+    </structMap>
+    <structLink/>
+</mets>

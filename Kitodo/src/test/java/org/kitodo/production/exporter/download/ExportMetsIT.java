@@ -59,8 +59,7 @@ public class ExportMetsIT {
         exportUri = ConfigCore.getUriParameter(ParameterCore.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
-        fileService.copyFileToDirectory(URI.create("metadata/testmetaOldFormat.xml"), URI.create(metadataDirectory));
-        fileService.renameFile(URI.create(metadataDirectory + "/testmetaOldFormat.xml"), "meta.xml");
+        fileService.copyFileToDirectory(URI.create("metadata/testmetaNewFormat.xml"), URI.create(metadataDirectory + "/meta.xml"));
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         FileLoader.createConfigProjectsFile();
 
@@ -103,11 +102,12 @@ public class ExportMetsIT {
         exportMets.startExport(process, exportUri);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
                 + "/" + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
-        Assert.assertTrue("Export of metadata was wrong",
-            strings.get(1).contains("<mods:publisher>Test Publisher</mods:publisher>"));
-        Assert.assertTrue("Export of person was wrong", strings.get(1).contains("<mods:title>Test Title</mods:title>"));
-        Assert.assertTrue("Export of metadata group was wrong",
-            strings.get(1).contains("<mods:namePart type=\"given\">FirstTestName</mods:namePart>"));
+        Assert.assertTrue("Export of metadata 'singleDigCollection' was wrong",
+            strings.toString().contains("<ns3:metadata name=\"singleDigCollection\">test collection</ns3:metadata>"));
+        Assert.assertTrue("Export of metadata 'TitleDocMain' was wrong",
+            strings.toString().contains("<ns3:metadata name=\"TitleDocMain\">test title</ns3:metadata>"));
+        Assert.assertTrue("Export of metadata 'PublisherName' was wrong",
+            strings.toString().contains("<ns3:metadata name=\"PublisherName\">Publisher test name</ns3:metadata>"));
 
     }
 }
