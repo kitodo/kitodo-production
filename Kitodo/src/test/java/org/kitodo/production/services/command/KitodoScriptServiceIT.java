@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper;
+package org.kitodo.production.services.command;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
-public class KitodoScriptIT {
+public class KitodoScriptServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -43,7 +43,7 @@ public class KitodoScriptIT {
 
     @Test
     public void shouldExecuteAddRoleScript() throws Exception {
-        KitodoScript kitodoScript = new KitodoScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         Task task = ServiceManager.getTaskService().getById(8);
         int amountOfRoles = task.getRoles().size();
@@ -62,7 +62,7 @@ public class KitodoScriptIT {
         MockDatabase.cleanDatabase();
         MockDatabase.insertProcessesFull();
 
-        KitodoScript kitodoScript = new KitodoScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setStepStatus \"steptitle:Progress\" status:3";
         List<Process> processes = new ArrayList<>();
@@ -75,7 +75,7 @@ public class KitodoScriptIT {
 
     @Test
     public void shouldExecuteAddShellScriptToTaskScript() throws Exception {
-        KitodoScript kitodoScript = new KitodoScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:addShellScriptToStep \"steptitle:Progress\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
@@ -89,7 +89,7 @@ public class KitodoScriptIT {
 
     @Test
     public void shouldExecuteSetPropertyTaskScript() throws Exception {
-        KitodoScript kitodoScript = new KitodoScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
@@ -102,7 +102,7 @@ public class KitodoScriptIT {
 
     @Test
     public void shouldNotExecuteSetPropertyTaskScript() throws Exception {
-        KitodoScript kitodoScript = new KitodoScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
