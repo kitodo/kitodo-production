@@ -17,6 +17,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
@@ -45,9 +46,9 @@ import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
-public class GoobiScript {
-    private HashMap<String, String> parameters;
-    private static final Logger logger = LogManager.getLogger(GoobiScript.class);
+public class KitodoScript {
+    private Map<String, String> parameters;
+    private static final Logger logger = LogManager.getLogger(KitodoScript.class);
     private final FileService fileService = ServiceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
