@@ -48,6 +48,12 @@ public class Workpiece {
     private Structure structure = new Structure();
 
     /**
+     * The list of parent linked structures. The list is to be read from top to
+     * bottom, i.e. the element 0 of the list is the topmost structure.
+     */
+    private List<LinkedStructure> uplinks = new ArrayList<>();
+
+    /**
      * Returns the creation date of the workpiece.
      * 
      * @return the creation date
@@ -141,6 +147,15 @@ public class Workpiece {
      */
     public void setStructure(Structure structure) {
         this.structure = structure;
+    }
+
+    /**
+     * Returns the list of parent linked structures.
+     * 
+     * @return the list of parent linked structures
+     */
+    public List<LinkedStructure> getUplinks() {
+        return uplinks;
     }
 
     @Override
