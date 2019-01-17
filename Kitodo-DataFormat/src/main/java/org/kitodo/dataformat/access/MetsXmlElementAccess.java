@@ -97,7 +97,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         this.workpiece = workpiece;
     }
 
-    private static final Workpiece toWorkpiece(Mets mets,
+    static final Workpiece toWorkpiece(Mets mets,
             Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
         Workpiece workpiece = new Workpiece();
         MetsHdr metsHdr = mets.getMetsHdr();
@@ -140,7 +140,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             }
         }
         workpiece.setStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap,
+                        getInputStreamFunction))
+                .collect(Collectors.toList())
                 .iterator().next());
         return workpiece;
     }
@@ -200,7 +202,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            If invoked, the calling function is responsible of closing the
      *            stream.
      */
-    private static Mets readMets(InputStream in) throws IOException {
+    static Mets readMets(InputStream in) throws IOException {
         try {
             JAXBContext jc = JAXBContext.newInstance(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();

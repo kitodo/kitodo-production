@@ -11,6 +11,8 @@
 
 package org.kitodo.dataformat.access;
 
+import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -95,8 +97,14 @@ public class DivXmlElementAccess extends Structure {
      * @param mediaUnitsMap
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
+     * @param getInputStreamFunction
+     *            A reference to a function
+     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
+     *            If invoked, the calling function is responsible of closing the
+     *            stream.
      */
-    DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap,
+            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
@@ -108,7 +116,7 @@ public class DivXmlElementAccess extends Structure {
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap));
+            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getInputStreamFunction));
         }
         super.setType(div.getTYPE());
         Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
