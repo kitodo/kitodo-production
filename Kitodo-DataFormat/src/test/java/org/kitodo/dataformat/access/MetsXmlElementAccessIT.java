@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -51,7 +52,7 @@ public class MetsXmlElementAccessIT {
     @Test
     public void testRead() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta.xml")));
+                .read(new FileInputStream(new File("src/test/resources/meta.xml")), null);
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getMediaUnits().size());
@@ -218,7 +219,10 @@ public class MetsXmlElementAccessIT {
         }
 
         // read the file and see if everything is in it
-        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
+        Workpiece reread;
+        try (InputStream inputStream = new FileInputStream(OUT_FILE)) {
+            reread = new MetsXmlElementAccess().read(inputStream, null);
+        }
 
         assertEquals(1, reread.getEditHistory().size());
         List<MediaUnit> mediaUnits = reread.getMediaUnits();

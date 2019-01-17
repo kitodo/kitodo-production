@@ -14,6 +14,7 @@ package org.kitodo.dataformat.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -181,9 +183,15 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * 
      * @param in
      *            InputStream to read from
+     * @param getInputStreamFunction
+     *            A reference to a function
+     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
+     *            If invoked, the calling function is responsible of closing the
+     *            stream.
      */
     @Override
-    public Workpiece read(InputStream in) throws IOException {
+    public Workpiece read(InputStream in, Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction)
+            throws IOException {
         try {
             JAXBContext jc = JAXBContext.newInstance(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -195,6 +203,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             } else {
                 throw new IOException(e.getMessage(), e);
             }
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
         }
     }
 

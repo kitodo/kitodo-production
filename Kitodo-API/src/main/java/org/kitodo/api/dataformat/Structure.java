@@ -151,21 +151,12 @@ public class Structure implements ExistingOrLinkedStructure {
         this.orderlabel = orderlabel;
     }
 
-    /**
-     * Returns the type of this structure.
-     * 
-     * @return the type
-     */
+    @Override
     public String getType() {
         return type;
     }
 
-    /**
-     * Sets the type of this structure.
-     * 
-     * @param type
-     *            type to set
-     */
+    @Override
     public void setType(String type) {
         this.type = type;
     }

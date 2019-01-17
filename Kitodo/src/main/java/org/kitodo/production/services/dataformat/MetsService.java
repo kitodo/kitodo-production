@@ -14,8 +14,11 @@ package org.kitodo.production.services.dataformat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Objects;
+import java.util.function.Function;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -46,8 +49,9 @@ public class MetsService {
                 MetsXmlElementAccessInterface.class).loadModule();
     }
 
-    public Workpiece load(InputStream in) throws IOException {
-        return metsXmlElementAccess.read(in);
+    public Workpiece load(InputStream in, Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction)
+            throws IOException {
+        return metsXmlElementAccess.read(in, getInputStreamFunction);
     }
 
     public void save(Workpiece workpiece, OutputStream out) throws IOException {
