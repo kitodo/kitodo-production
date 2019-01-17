@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.exporter.dms;
+package org.kitodo.export;
 
 import java.io.BufferedReader;
 import java.io.File;

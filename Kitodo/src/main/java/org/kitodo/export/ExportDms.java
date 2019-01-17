@@ -9,18 +9,20 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.exporter.dms;
+package org.kitodo.export;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -36,7 +38,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.production.exporter.download.ExportMets;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
@@ -171,7 +172,7 @@ public class ExportDms extends ExportMets {
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
             // TODO: I have got here value usr/local/kitodo/hotfolder
-            zielVerzeichnis = URI.create(process.getProject().getDmsImportImagesPath());
+            zielVerzeichnis = new File(process.getProject().getDmsImportImagesPath()).toURI();
             userHome = zielVerzeichnis;
 
             // if necessary, create process folder
@@ -219,18 +220,23 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
-        String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
-        if (Objects.nonNull(rules)) {
-            try {
-                new DataCopier(rules).process(new CopierData(gdzfile, process));
-            } catch (ConfigurationException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                } else {
-                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+        try {
+            String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
+            if (Objects.nonNull(rules)) {
+                try {
+                    new DataCopier(rules).process(new CopierData(gdzfile, process));
+                } catch (ConfigurationException e) {
+                    if (exportDmsTask != null) {
+                        exportDmsTask.setException(e);
+                    } else {
+                        Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+                    }
+                    return false;
                 }
-                return false;
             }
+        } catch (NoSuchElementException e) {
+            logger.catching(Level.TRACE, e);
+            // no configuration simply means here is nothing to do
         }
         return true;
     }
@@ -322,8 +328,7 @@ public class ExportDms extends ExportMets {
         }
         if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS) {
             // if METS, then write by writeMetsFile...
-            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile,
-                false);
+            writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
         } else {
             // ...if not, just write a fileformat
             gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
@@ -332,7 +337,7 @@ public class ExportDms extends ExportMets {
         // if necessary, METS and RDF should be written in the export
         if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS_AND_RDF) {
             writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".mets.xml"),
-                gdzfile, false);
+                gdzfile);
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
@@ -391,8 +396,7 @@ public class ExportDms extends ExportMets {
             throws IOException, PreferencesException, WriteException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile,
-                false);
+            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);
         } else {
             gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
         }
@@ -468,7 +472,7 @@ public class ExportDms extends ExportMets {
     private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
-            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            URI destination = userHome.resolve(atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
@@ -503,7 +507,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setWorkDetail(fileService.getFileName(file));
                 }
-                URI target = destination.resolve(File.separator + fileService.getFileName(file));
+                URI target = destination.resolve(fileService.getFileName(file));
                 fileService.copyFile(file, target);
             }
         }

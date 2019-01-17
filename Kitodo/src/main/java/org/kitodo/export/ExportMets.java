@@ -9,8 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.exporter.download;
+package org.kitodo.export;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
@@ -18,20 +21,18 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
-import org.kitodo.production.exporter.dms.ExportDmsCorrectRusdml;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -76,18 +77,11 @@ public class ExportMets {
             return false;
         }
 
-        // only for the metadata of the RUSDML project
-        ConfigProject cp = new ConfigProject(process.getProject().getTitle());
-        if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-            ExportDmsCorrectRusdml exportCorrect = new ExportDmsCorrectRusdml(process, this.myPrefs, gdzfile);
-            atsPpnBand = exportCorrect.correctionStart();
-        }
-
         prepareUserDirectory(userHome);
 
         String targetFileName = atsPpnBand + "_mets.xml";
         URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
-        return writeMetsFile(process, metaFile, gdzfile, false);
+        return writeMetsFile(process, metaFile, gdzfile);
     }
 
     /**
@@ -115,22 +109,27 @@ public class ExportMets {
      *            the meta file which should be written
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
-     * @param writeLocalFilegroup
-     *            true or false
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, JAXBException {
+    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile)
+            throws IOException {
 
-        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
-        mm.setWriteLocal(writeLocalFilegroup);
-        mm = ServiceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
-        if (mm != null) {
-            mm.write(metaFile.getRawPath());
-            Helper.setMessage(process.getTitle() + ": ", "exportFinished");
-            return true;
+        MetsXmlElementAccessInterface workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();
+        ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
+        /*
+         * We write to the user’s home directory or to the hotfolder here, not
+         * to a content repository, therefore no use of file service.
+         */
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
+            /*
+             * TODO: Add XSLT processing here. E.g., save() the workpiece to a
+             * ByteArrayOutputStream and pass its content to the XSLT processor,
+             * then write the result of the XSLT processor to the file.
+             */
+            workpiece.save(out);
         }
-        Helper.setErrorMessage(process.getTitle() + ": was not finished!");
-        return false;
+
+        Helper.setMessage(process.getTitle() + ": ", "exportFinished");
+        return true;
     }
 }

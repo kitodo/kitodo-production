@@ -32,7 +32,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.exporter.download.TiffHeader;
+import org.kitodo.export.TiffHeader;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.file.FileService;

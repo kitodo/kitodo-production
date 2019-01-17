@@ -83,8 +83,7 @@ public class LegacyReplacementFactoryHelper implements FactoryInterface {
 
     @Override
     public MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefs) throws PreferencesException {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("METS/MODS import/export is not supported"));
+        return new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
     }
 
     @Override
