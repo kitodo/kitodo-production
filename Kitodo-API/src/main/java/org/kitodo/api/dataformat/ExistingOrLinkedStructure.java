@@ -11,12 +11,14 @@
 
 package org.kitodo.api.dataformat;
 
+import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
+
 /**
  * A common interface for {@code Structure}s and {@code LinkedStructure}s.
  * 
  * @see Structure
  */
-interface ExistingOrLinkedStructure {
+interface ExistingOrLinkedStructure extends DivXmlElementAccessInterface {
     /**
      * Returns the label of this structure.
      * 
