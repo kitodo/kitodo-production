@@ -17,7 +17,8 @@ import java.net.URI;
 /**
  * A link to a structure in a different {@code Workpiece}.
  */
-class LinkedStructure implements ExistingOrLinkedStructure {
+public class LinkedStructure implements ExistingOrLinkedStructure {
+
     /**
      * The label of the linked structure. The label is saved in the linked file.
      */
