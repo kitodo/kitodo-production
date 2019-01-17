@@ -15,10 +15,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -183,8 +186,8 @@ public class LegacyMetsModsDigitalDocumentHelper {
      *            Lock result that did not work
      * @return The error message for the exception.
      */
-    private String createLockErrorMessage(URI uri, LockResult lockResult) {
-        Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
+    private String createLockErrorMessage(URI uri, Map<URI, Collection<String>> conflicts) {
+        Collection<String> conflictingUsers = conflicts.get(uri);
         StringBuilder buffer = new StringBuilder();
         buffer.append("Cannot lock ");
         buffer.append(uri);
@@ -246,11 +249,28 @@ public class LegacyMetsModsDigitalDocumentHelper {
             if (lockResult.isSuccessful()) {
                 try (InputStream in = fileService.read(uri, lockResult)) {
                     logger.info("Reading {}", uri.toString());
-                    workpiece = ServiceManager.getMetsService().load(in);
+                    workpiece = ServiceManager.getMetsService().load(in,
+                        args -> getInputStream(args.getLeft(), lockResult, args.getRight()));
                 }
             } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult.getConflicts()));
             }
+        }
+    }
+
+    private InputStream getInputStream(URI uri, LockResult lockResult, boolean couldHaveToBeWrittenInTheFuture) {
+        try {
+            Map<URI, LockingMode> requests = new HashMap<>(2);
+            requests.put(uri,
+                couldHaveToBeWrittenInTheFuture ? LockingMode.UPGRADEABLE_READ : LockingMode.IMMUTABLE_READ);
+            Map<URI, Collection<String>> conflicts = lockResult.tryLock(requests);
+            if (conflicts.isEmpty()) {
+                return fileService.read(uri, lockResult);
+            } else {
+                throw new IOException(createLockErrorMessage(uri, conflicts));
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -291,7 +311,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
                     ServiceManager.getMetsService().save(workpiece, out);
                 }
             } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult.getConflicts()));
             }
         }
     }

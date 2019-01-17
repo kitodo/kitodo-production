@@ -13,12 +13,6 @@ package org.kitodo.api.dataformat;
 
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 
 /**
  * A link to a structure in a different {@code Workpiece}.
@@ -110,33 +104,8 @@ class LinkedStructure implements ExistingOrLinkedStructure {
     }
 
     @Override
-    public List<AreaXmlElementAccessInterface> getAreas() {
-        throw new UnsupportedOperationException("areas is not supported by linked structure");
-    }
-
-    @Override
-    public List<DivXmlElementAccessInterface> getChildren() {
-        throw new UnsupportedOperationException("children is not supported by linked structure");
-    }
-
-    @Override
-    public Collection<MetadataAccessInterface> getMetadata() {
-        throw new UnsupportedOperationException("metadata is not supported by linked structure");
-    }
-
-    @Override
-    public String getOrderlabel() {
-        throw new UnsupportedOperationException("orderlabel is not supported by linked structure");
-    }
-
-    @Override
     public String getType() {
         return type;
-    }
-
-    @Override
-    public void setOrderlabel(String orderlabel) {
-        throw new UnsupportedOperationException("orderlabel is not supported by linked structure");
     }
 
     @Override
