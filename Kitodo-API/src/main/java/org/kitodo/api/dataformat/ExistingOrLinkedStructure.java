@@ -18,10 +18,25 @@ package org.kitodo.api.dataformat;
  */
 interface ExistingOrLinkedStructure {
     /**
+     * Returns the label of this structure.
+     * 
+     * @return the label
+     */
+    String getLabel();
+
+    /**
      * Returns whether this structure is a link to a structure in another
      * workpiece.
      * 
      * @return whether this structure is a link
      */
     boolean isLinked();
+
+    /**
+     * Sets the label of this structure.
+     * 
+     * @param label
+     *            label to set
+     */
+    void setLabel(String label);
 }
