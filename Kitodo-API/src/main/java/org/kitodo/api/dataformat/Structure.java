@@ -23,7 +23,7 @@ import org.kitodo.api.Metadata;
  * structure can be subdivided into arbitrary finely granular
  * {@link #substructures}. It can be described by {@link #metadata}.
  */
-public class Structure {
+public class Structure implements ExistingOrLinkedStructure {
     /**
      * The label for this structure. The label is displayed in the graphical
      * representation of the structure tree for this level.
@@ -116,6 +116,11 @@ public class Structure {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public boolean isLinked() {
+        return false;
     }
 
     /**
