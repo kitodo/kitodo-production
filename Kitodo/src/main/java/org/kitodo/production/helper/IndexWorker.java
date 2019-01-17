@@ -11,22 +11,21 @@
 
 package org.kitodo.production.helper;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchService;
 
 public class IndexWorker implements Runnable {
 
     private int indexedObjects = 0;
+    private int startIndexing;
+    private int indexLimit = 5000;
     private boolean indexAllObjects = true;
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(IndexWorker.class);
@@ -40,6 +39,19 @@ public class IndexWorker implements Runnable {
      */
     public IndexWorker(SearchService searchService) {
         this.searchService = searchService;
+        this.startIndexing = 0;
+    }
+
+    /**
+     * Constructor initializing an IndexWorker object with the given SearchService
+     * and list of objects that will be indexed.
+     *
+     * @param searchService
+     *            SearchService instance used for indexing
+     */
+    public IndexWorker(SearchService searchService, int startIndexing) {
+        this.searchService = searchService;
+        this.startIndexing = startIndexing;
     }
 
     @Override
@@ -48,12 +60,8 @@ public class IndexWorker implements Runnable {
         this.indexedObjects = 0;
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         try {
-            int amountToIndex;
-            if (indexAllObjects) {
-                amountToIndex = searchService.countDatabaseRows().intValue();
-            } else {
-                amountToIndex = searchService.countNotIndexedDatabaseRows().intValue();
-            }
+            int amountToIndex = getAmountToIndex();
+
             if (amountToIndex < batchSize) {
                 if (indexAllObjects) {
                     indexObjects(searchService.getAll());
@@ -61,33 +69,49 @@ public class IndexWorker implements Runnable {
                     indexObjects(searchService.getAllNotIndexed());
                 }
             } else {
+                if (amountToIndex > this.indexLimit) {
+                    amountToIndex = this.indexLimit;
+                }
                 while (this.indexedObjects < amountToIndex) {
                     indexChunks(batchSize);
                 }
             }
-        } catch (CustomResponseException | DAOException | DataException | IOException e) {
-            logger.error(e.getMessage());
+        } catch (CustomResponseException | DAOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException, IOException {
-        List<Object> objectsToIndex;
+    private int getAmountToIndex() throws DAOException {
         if (indexAllObjects) {
-            objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
+            return searchService.countDatabaseRows().intValue() - this.startIndexing;
         } else {
-            objectsToIndex = searchService.getAllNotIndexed(this.indexedObjects, batchSize);
+            return searchService.countNotIndexedDatabaseRows().intValue() - this.startIndexing;
         }
-        indexObjects(objectsToIndex);
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex)
-            throws CustomResponseException, DAOException, DataException, IOException {
-        for (Object object : objectsToIndex) {
-            this.searchService.saveToIndexAndUpdateIndexFlag((BaseIndexedBean) object, false);
-            this.indexedObjects++;
+    private void indexChunks(int batchSize) throws CustomResponseException, DAOException {
+        List<Object> objectsToIndex;
+        while (this.indexedObjects < this.indexLimit) {
+            int offset = this.indexedObjects + this.startIndexing;
+
+            if (indexAllObjects) {
+                objectsToIndex = searchService.getAll(offset, batchSize);
+            } else {
+                objectsToIndex = searchService.getAllNotIndexed(offset, batchSize);
+            }
+            if (objectsToIndex.isEmpty()) {
+                break;
+            }
+
+            indexObjects(objectsToIndex);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException {
+        this.searchService.addAllObjectsToIndex(objectsToIndex);
+        this.indexedObjects = this.indexedObjects + objectsToIndex.size();
     }
 
     /**
@@ -97,7 +121,7 @@ public class IndexWorker implements Runnable {
      * @return int the number of objects indexed during the current indexing run
      */
     public int getIndexedObjects() {
-        return indexedObjects;
+        return indexedObjects + startIndexing;
     }
 
     /**

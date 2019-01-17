@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -70,7 +71,7 @@ public class IndexingForm {
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
     private final Map<ObjectType, Integer> countDatabaseObjects;
-
+    private int indexLimit = 20000;
     private int pause = 1000;
 
     @Inject
@@ -108,7 +109,9 @@ public class IndexingForm {
 
     private Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
 
-    private Map<ObjectType, IndexWorker> indexWorkers = new EnumMap<>(ObjectType.class);
+    private Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
+
+    private IndexWorker currentIndexWorker;
 
     private LocalDateTime indexingStartedTime = null;
 
@@ -120,11 +123,12 @@ public class IndexingForm {
     IndexingForm() {
         for (ObjectType objectType : objectTypes) {
             searchServices.put(objectType, getService(objectType));
-            indexWorkers.put(objectType, new IndexWorker(searchServices.get(objectType)));
             objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
         }
 
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+
+        prepareIndexWorker();
 
         Map<ObjectType, Integer> result = new EnumMap<>(ObjectType.class);
         for (ObjectType objectType : objectTypes) {
@@ -180,7 +184,16 @@ public class IndexingForm {
      */
     public int getNumberOfIndexedObjects(ObjectType objectType) {
         if (currentIndexState == objectType) {
-            indexedObjects.put(objectType, indexWorkers.get(objectType).getIndexedObjects());
+            List<IndexWorker> indexWorkerList = indexWorkers.get(objectType);
+            if (indexWorkerList.size() > 1) {
+                if (indexWorkerList.contains(currentIndexWorker)) {
+                    indexedObjects.put(objectType, currentIndexWorker.getIndexedObjects());
+                } else {
+                    indexedObjects.put(objectType, indexWorkers.get(objectType).get(0).getIndexedObjects());
+                }
+            } else {
+                indexedObjects.put(objectType, indexWorkers.get(objectType).get(0).getIndexedObjects());
+            }
         } else if (!indexedObjects.containsKey(objectType)) {
             updateCount(objectType);
         }
@@ -209,8 +222,11 @@ public class IndexingForm {
      */
     public void startIndexing(ObjectType type) {
         if (countDatabaseObjects.get(type) > 0) {
-            IndexWorker worker = indexWorkers.get(type);
-            runIndexing(worker, type);
+            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
+            for (IndexWorker worker : indexWorkerList) {
+                currentIndexWorker = worker;
+                runIndexing(currentIndexWorker, type);
+            }
         }
     }
 
@@ -222,9 +238,12 @@ public class IndexingForm {
      */
     public void startIndexingRemaining(ObjectType type) {
         if (countDatabaseObjects.get(type) > 0) {
-            IndexWorker worker = indexWorkers.get(type);
-            worker.setIndexAllObjects(false);
-            runIndexing(worker, type);
+            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
+            for (IndexWorker worker : indexWorkerList) {
+                worker.setIndexAllObjects(false);
+                currentIndexWorker = worker;
+                runIndexing(currentIndexWorker, type);
+            }
         }
     }
 
@@ -233,11 +252,13 @@ public class IndexingForm {
         int attempts = 0;
         while (attempts < 10) {
             try {
-                if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                    indexingStartedTime = LocalDateTime.now();
-                    currentIndexState = type;
-                    objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
-                    pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
+                if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
+                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
+                        indexingStartedTime = LocalDateTime.now();
+                        currentIndexState = type;
+                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
+                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
+                    }
                     indexerThread = new Thread(worker);
                     indexerThread.setDaemon(true);
                     indexerThread.start();
@@ -268,8 +289,11 @@ public class IndexingForm {
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexingRemaining() {
-        for (Map.Entry<ObjectType, IndexWorker> workerEntry : indexWorkers.entrySet()) {
-            workerEntry.getValue().setIndexAllObjects(false);
+        for (Map.Entry<ObjectType, List<IndexWorker>> workerEntry : indexWorkers.entrySet()) {
+            List<IndexWorker> indexWorkerList = workerEntry.getValue();
+            for (IndexWorker worker : indexWorkerList) {
+                worker.setIndexAllObjects(false);
+            }
         }
         startAllIndexing();
     }
@@ -625,6 +649,26 @@ public class IndexingForm {
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
+        }
+    }
+
+    private void prepareIndexWorker() {
+        for (ObjectType objectType : ObjectType.values()) {
+            List<IndexWorker> indexWorkerList = new ArrayList<>();
+
+            int databaseObjectsSize = getNumberOfDatabaseObjects(objectType);
+            if (databaseObjectsSize > indexLimit) {
+                int start = 0;
+
+                while (start < databaseObjectsSize) {
+                    indexWorkerList.add(new IndexWorker(searchServices.get(objectType), start));
+                    start += indexLimit;
+                }
+            } else {
+                indexWorkerList.add(new IndexWorker(searchServices.get(objectType)));
+            }
+
+            indexWorkers.put(objectType, indexWorkerList);
         }
     }
 

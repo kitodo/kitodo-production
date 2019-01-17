@@ -53,7 +53,6 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.RelatedProperty;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -987,7 +986,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     private void updateIndexFlag(T baseIndexedBean) throws DAOException {
         if (Objects.nonNull(baseIndexedBean)) {
             baseIndexedBean.setIndexAction(IndexAction.DONE);
-            saveToDatabase(baseIndexedBean);
+            dao.saveWithoutGet(baseIndexedBean);
         }
     }
 }
