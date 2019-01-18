@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <div LABEL="Top METS file" TYPE="top">
+      <div ORDER="1">
+        <mptr xlink:href="between.xml"/>
+      </div>
+    </div>
+  </structMap>
+</mets>

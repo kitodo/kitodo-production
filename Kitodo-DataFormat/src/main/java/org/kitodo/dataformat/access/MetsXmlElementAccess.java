@@ -40,6 +40,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
+import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -128,8 +129,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
             readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, mediaUnit, divIDsToMediaUnits);
         }
-        if (mets.getStructLink() == null) {
-            mets.setStructLink(new StructLink());
+        StructLink structLink = mets.getStructLink();
+        if (structLink == null) {
+            structLink = new StructLink();
         }
         Map<String, Set<FileXmlElementAccess>> mediaUnitsMap = new HashMap<>();
         for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
@@ -139,11 +141,15 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        workpiece.setStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap,
-                        getInputStreamFunction))
-                .collect(Collectors.toList())
-                .iterator().next());
+        /*
+         * If the topmost <mets:div> contains a <mets:mptr>, then it is a holder
+         * <div> for that <mptr> and must be skipped.
+         */
+        workpiece.setStructure(
+            (Structure) getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
+                .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
+                    .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, getInputStreamFunction))
+                .collect(Collectors.toList()).iterator().next());
         return workpiece;
     }
 

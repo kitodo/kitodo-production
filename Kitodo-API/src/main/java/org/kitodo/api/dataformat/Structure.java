@@ -48,7 +48,7 @@ public class Structure implements ExistingOrLinkedStructure {
      * order of the substructures described by the order of the {@code <div>}
      * elements in the {@code <structMap TYPE="LOGICAL">} in the METS file.
      */
-    private List<Structure> substructures = new LinkedList<>();
+    private List<ExistingOrLinkedStructure> substructures = new LinkedList<>();
 
     /**
      * The type of structure, for example, book, chapter, page. Although the
@@ -95,7 +95,7 @@ public class Structure implements ExistingOrLinkedStructure {
      * 
      * @return the substructures
      */
-    public List<Structure> getChildren() {
+    public List<ExistingOrLinkedStructure> getChildren() {
         return substructures;
     }
 

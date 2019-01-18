@@ -15,9 +15,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -25,12 +28,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -41,6 +48,18 @@ import org.kitodo.api.dataformat.Workpiece;
 public class MetsXmlElementAccessIT {
 
     private static final File OUT_FILE = new File("src/test/resources/out.xml");
+
+    public static final Function<Pair<URI, Boolean>, InputStream> GET_INPUT_STREAM_FUNCTION = args -> {
+        URI uri = args.getLeft();
+        @SuppressWarnings("unused")
+        boolean couldHaveToBeWrittenInTheFuture = args.getRight();
+
+        try {
+            return new FileInputStream(new File("src/test/resources/" + uri.getPath()));
+        } catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
+        }
+    };
 
     public static void clean() throws Exception {
         Files.deleteIfExists(OUT_FILE.toPath());
@@ -242,5 +261,32 @@ public class MetsXmlElementAccessIT {
         assertEquals(1, structureRoot.getMetadata().size());
 
         clean();
+    }
+
+    @Test
+    public void testReadingHierarchy() throws Exception {
+        Workpiece workpiece = new MetsXmlElementAccess()
+                .read(new FileInputStream(new File("src/test/resources/between.xml")), GET_INPUT_STREAM_FUNCTION);
+
+        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
+        assertEquals(LinkedStructure.class, downlink.getClass());
+        assertEquals("Leaf METS file", downlink.getLabel());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
+        assertEquals("leaf", downlink.getType());
+        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSubordinateFileHasNoBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/subordinate-no-backreference_between.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSubordinateFileHasWrongBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/subordinate-wrong-backreference_between.xml")),
+            GET_INPUT_STREAM_FUNCTION);
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <div>
+      <mptr xlink:href="top.xml"/>
+      <div LABEL="Between the METS files" TYPE="between">
+        <div ORDER="1">
+          <mptr xlink:href="leaf.xml"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>
