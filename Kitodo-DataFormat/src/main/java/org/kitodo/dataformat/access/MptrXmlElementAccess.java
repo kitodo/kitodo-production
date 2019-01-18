@@ -68,6 +68,20 @@ public class MptrXmlElementAccess {
         } catch (URISyntaxException e) {
             throw new DataBindingException(e.getMessage(), e);
         }
+        // =======
+        // LinkedStructure(DivType div, Mets parent, Function<Pair<URI,
+        // Boolean>, InputStream> getInputStreamFunction) {
+        // this.order = div.getORDER();
+        // this.uri =
+        // Workpiece.hrefToUri(div.getMptr().stream().findFirst().get().getHref());
+        // Mets child = Workpiece.readMets(getInputStreamFunction, uri, true);
+        // ensureParenthood(parent, child, getInputStreamFunction);
+        // Structure linked = new Workpiece(child,
+        // getInputStreamFunction).getStructMap();
+        // this.label = linked.getLabel();
+        // this.type = linked.getType();
+        // >>>>>>> Add reading of parent
+        // references:Kitodo-DataFormat/src/main/java/org/kitodo/dataformat/access/LinkedStructure.java
     }
 
     /**
@@ -85,15 +99,13 @@ public class MptrXmlElementAccess {
      *            METS data of the process linked as child
      * @throws IOException
      *             if file system I/O fails
-     * @throws URISyntaxException
-     *             if an URI found in a METS file is syntactically wrong
      * @throws IllegalStateException
      *             if the child does not have a link to the parent, or the
      *             parent link of the child returns METS data different from the
      *             parent’s METS
      */
     private void ensureParenthood(Mets current, Mets child,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) throws IOException, URISyntaxException {
+            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) throws IOException {
 
         Optional<String> optionalParentLink = child.getStructMap().parallelStream()
                 .filter(structMap -> "LOGICAL".equals(structMap.getTYPE())).map(structMap -> structMap.getDiv())
@@ -111,12 +123,12 @@ public class MptrXmlElementAccess {
         }
 
         Mets linked;
-        try (InputStream in = getInputStreamFunction.apply(Pair.of(new URI(optionalParentLink.get()), false))) {
+        try (InputStream in = getInputStreamFunction
+                .apply(Pair.of(MetsXmlElementAccess.hrefToUri(optionalParentLink.get()), false))) {
             linked = MetsXmlElementAccess.readMets(in);
         }
         if (!Objects.deepEquals(linked, current)) {
             throw new IllegalStateException("METS file linked as child points to different parent METS");
         }
     }
-
 }
