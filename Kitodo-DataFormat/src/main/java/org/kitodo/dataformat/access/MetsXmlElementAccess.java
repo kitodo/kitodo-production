@@ -193,16 +193,23 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                     .reduce(Boolean::logicalOr).get();
             return found ? new LinkedList<>() : null;
         } else {
-            Optional<LinkedList<LinkedStructure>> optionalResult = div.getDiv().stream()
-                    .map(child -> findMyself(child, current, parentUri, getInputStreamFunction))
-                    .filter(Objects::nonNull).reduce(CHILD_REFERENCED_ONCE);
+            Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
+                LinkedList<LinkedStructure> m = findMyself(child, current, parentUri, getInputStreamFunction);
+                return m != null ? Pair.of(child, m) : null;
+            }).filter(Objects::nonNull).reduce((one, another) -> {
+                if (one.getRight().equals(another.getRight())) {
+                    return one;
+                }
+                throw new IllegalStateException("Child is referenced from parent multiple times");
+            });
             if (optionalResult.isPresent()) {
+                Pair<DivType, LinkedList<LinkedStructure>> found = optionalResult.get();
                 LinkedStructure linkedStructure = new LinkedStructure();
                 linkedStructure.setLabel(div.getLABEL());
                 linkedStructure.setType(div.getTYPE());
-                linkedStructure.setOrder(div.getORDER());
+                linkedStructure.setOrder(found.getLeft().getORDER());
                 linkedStructure.setUri(parentUri);
-                LinkedList<LinkedStructure> result = optionalResult.get();
+                LinkedList<LinkedStructure> result = found.getRight();
                 result.addFirst(linkedStructure);
                 return result;
             }
@@ -296,7 +303,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                             .map(structMap -> structMap.getDiv())
                             .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
                             .map(div -> findMyself(div, current, parentUri, getInputStreamFunction))
-                            .filter(Objects::nonNull).reduce(CHILD_REFERENCED_ONCE)
+                            .filter(Objects::nonNull).reduce((one, another) -> {
+                                if (one.equals(another)) {
+                                    return one;
+                                }
+                                throw new IllegalStateException("Child is referenced from parent multiple times");
+                            })
                             .orElseThrow(() -> new IllegalStateException("Child not referenced from parent"));
                     found.addAll(0, readUplinks(parent, getInputStreamFunction));
                     return found;

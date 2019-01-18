@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <div LABEL="Top METS file" TYPE="top">
+      <div LABEL="This branch?" TYPE="between">
+        <div ORDER="10">
+          <mptr xlink:href="superordinate-ambiguous-backreference_leaf.xml"/>
+        </div>
+      </div>
+      <div LABEL="Or this one?" TYPE="between">
+        <div ORDER="10">
+          <mptr xlink:href="superordinate-ambiguous-backreference_leaf.xml"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>
