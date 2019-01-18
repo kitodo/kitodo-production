@@ -35,6 +35,7 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
@@ -116,7 +117,11 @@ public class DivXmlElementAccess extends Structure {
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getInputStreamFunction));
+            if (child.getMptr().isEmpty()) {
+                super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getInputStreamFunction));
+            } else {
+                super.getChildren().add(new MptrXmlElementAccess(child, mets, getInputStreamFunction).linkedStructure);
+            }
         }
         super.setType(div.getTYPE());
         Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
@@ -226,8 +231,8 @@ public class DivXmlElementAccess extends Structure {
             mets.getAmdSec().add(admSec);
         }
 
-        for (Structure substructure : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(substructure).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (ExistingOrLinkedStructure substructure : super.getChildren()) {
+            div.getDiv().add(new DivXmlElementAccess((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }

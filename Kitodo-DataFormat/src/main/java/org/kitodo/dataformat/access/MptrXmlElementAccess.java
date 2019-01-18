@@ -114,7 +114,7 @@ public class MptrXmlElementAccess {
         try (InputStream in = getInputStreamFunction.apply(Pair.of(new URI(optionalParentLink.get()), false))) {
             linked = MetsXmlElementAccess.readMets(in);
         }
-        if (linked.equals(current)) {
+        if (!Objects.deepEquals(linked, current)) {
             throw new IllegalStateException("METS file linked as child points to different parent METS");
         }
     }

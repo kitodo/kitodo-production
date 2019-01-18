@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <!-- no wrapping <div> with <mptr href="between.xml"/> here -->
+    <div LABEL="Leaf METS file" TYPE="leaf"/>
+  </structMap>
+</mets>

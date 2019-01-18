@@ -16,7 +16,7 @@ package org.kitodo.api.dataformat;
  * 
  * @see Structure
  */
-interface ExistingOrLinkedStructure {
+public interface ExistingOrLinkedStructure {
     /**
      * Returns the label of this structure.
      * 
