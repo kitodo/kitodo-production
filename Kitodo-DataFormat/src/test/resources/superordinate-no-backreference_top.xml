@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <div LABEL="Top METS file" TYPE="top">
+      <div LABEL="My branch" TYPE="between">
+        <div ORDER="10">
+          <mptr xlink:href="leaf.xml"/><!-- Wrong link: would have to be superordinate-no-backreference_leaf.xml -->
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>

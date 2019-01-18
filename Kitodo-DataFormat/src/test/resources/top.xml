@@ -2,8 +2,20 @@
 <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
   <structMap TYPE="LOGICAL">
     <div LABEL="Top METS file" TYPE="top">
-      <div ORDER="1">
-        <mptr xlink:href="between.xml"/>
+      <div LABEL="Other branch" TYPE="one">
+        <div ORDER="1">
+          <mptr xlink:href="other.xml"/>
+        </div>
+      </div>
+      <div LABEL="My branch" TYPE="two">
+        <div ORDER="10">
+          <mptr xlink:href="between.xml"/>
+        </div>
+      </div>
+      <div LABEL="Another branch" TYPE="three">
+        <div ORDER="100">
+          <mptr xlink:href="another.xml"/>
+        </div>
       </div>
     </div>
   </structMap>

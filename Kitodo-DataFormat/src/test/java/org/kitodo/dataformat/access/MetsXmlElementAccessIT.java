@@ -111,6 +111,126 @@ public class MetsXmlElementAccessIT {
     }
 
     @Test
+    public void testReadingHierarchyOfTop() throws Exception {
+        Workpiece workpiece = new MetsXmlElementAccess()
+                .read(new FileInputStream(new File("src/test/resources/top.xml")), GET_INPUT_STREAM_FUNCTION);
+
+        List<ExistingOrLinkedStructure> topStructMapChildren = workpiece.getStructure().getChildren();
+        ExistingOrLinkedStructure firstBranch = topStructMapChildren.get(0);
+        assertEquals("Other branch", firstBranch.getLabel());
+        assertEquals("one", firstBranch.getType());
+        ExistingOrLinkedStructure firstDownlink = ((Structure) firstBranch).getChildren().get(0);
+        assertEquals(LinkedStructure.class, firstDownlink.getClass());
+        assertEquals("Other METS file", firstDownlink.getLabel());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) firstDownlink).getOrder());
+        assertEquals("leaf", firstDownlink.getType());
+        assertEquals("other.xml", ((LinkedStructure) firstDownlink).getUri().getPath());
+
+        ExistingOrLinkedStructure secondBranch = topStructMapChildren.get(1);
+        assertEquals("My branch", secondBranch.getLabel());
+        assertEquals("two", secondBranch.getType());
+        ExistingOrLinkedStructure secondDownlink = ((Structure) secondBranch).getChildren().get(0);
+        assertEquals(LinkedStructure.class, secondDownlink.getClass());
+        assertEquals("Between the METS files", secondDownlink.getLabel());
+        assertEquals(BigInteger.valueOf(10), ((LinkedStructure) secondDownlink).getOrder());
+        assertEquals("between", secondDownlink.getType());
+        assertEquals("between.xml", ((LinkedStructure) secondDownlink).getUri().getPath());
+
+        ExistingOrLinkedStructure thirdBranch = topStructMapChildren.get(2);
+        assertEquals("Another branch", thirdBranch.getLabel());
+        assertEquals("three", thirdBranch.getType());
+        ExistingOrLinkedStructure thirdDownlink = ((Structure) thirdBranch).getChildren().get(0);
+        assertEquals(LinkedStructure.class, thirdDownlink.getClass());
+        assertEquals("Anther METS file", thirdDownlink.getLabel());
+        assertEquals(BigInteger.valueOf(100), ((LinkedStructure) thirdDownlink).getOrder());
+        assertEquals("leaf", thirdDownlink.getType());
+        assertEquals("another.xml", ((LinkedStructure) thirdDownlink).getUri().getPath());
+    }
+
+    @Test
+    public void testReadingHierarchyOfBetween() throws Exception {
+        Workpiece workpiece = new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/between.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+
+        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
+        assertEquals(LinkedStructure.class, downlink.getClass());
+        assertEquals("Leaf METS file", downlink.getLabel());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
+        assertEquals("leaf", downlink.getType());
+        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
+
+        List<LinkedStructure> uplinks = workpiece.getUplinks();
+        assertEquals(2, uplinks.size());
+        LinkedStructure top = uplinks.get(0);
+        assertEquals("Top METS file", top.getLabel());
+        assertEquals(null, top.getOrder());
+        assertEquals("top", top.getType());
+        assertEquals("top.xml", top.getUri().getPath());
+
+        LinkedStructure second = uplinks.get(1);
+        assertEquals("My branch", second.getLabel());
+        assertEquals(BigInteger.valueOf(10), second.getOrder());
+        assertEquals("two", second.getType());
+        assertEquals("top.xml", second.getUri().getPath());
+    }
+
+    @Test
+    public void testReadingHierarchyOfLeaf() throws Exception {
+        Workpiece workpiece = new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/leaf.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+
+        List<LinkedStructure> leafUplinks = workpiece.getUplinks();
+        assertEquals(3, leafUplinks.size());
+        LinkedStructure top = leafUplinks.get(0);
+        assertEquals("Top METS file", top.getLabel());
+        assertEquals(null, top.getOrder());
+        assertEquals("top", top.getType());
+        assertEquals("top.xml", top.getUri().getPath());
+
+        LinkedStructure second = leafUplinks.get(1);
+        assertEquals("My branch", second.getLabel());
+        assertEquals(BigInteger.valueOf(10), second.getOrder());
+        assertEquals("two", second.getType());
+        assertEquals("top.xml", second.getUri().getPath());
+
+        LinkedStructure third = leafUplinks.get(2);
+        assertEquals("Between the METS files", third.getLabel());
+        assertEquals(BigInteger.valueOf(1), third.getOrder());
+        assertEquals("between", third.getType());
+        assertEquals("between.xml", third.getUri().getPath());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSubordinateFileHasNoBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/subordinate-no-backreference_between.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSubordinateFileHasWrongBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/subordinate-wrong-backreference_between.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSuperordinateFileHasNoBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/superordinate-no-backreference_leaf.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadingHierarchyFailsIfSuperordinateFileHasAmbiguousBackreference() throws Exception {
+        new MetsXmlElementAccess().read(
+            new FileInputStream(new File("src/test/resources/superordinate-ambiguous-backreference_leaf.xml")),
+            GET_INPUT_STREAM_FUNCTION);
+    }
+
+    @Test
     public void testSave() throws Exception {
         Workpiece workpiece = new Workpiece();
         workpiece.setId("1");
@@ -261,32 +381,5 @@ public class MetsXmlElementAccessIT {
         assertEquals(1, structureRoot.getMetadata().size());
 
         clean();
-    }
-
-    @Test
-    public void testReadingHierarchy() throws Exception {
-        Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/between.xml")), GET_INPUT_STREAM_FUNCTION);
-
-        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
-        assertEquals(LinkedStructure.class, downlink.getClass());
-        assertEquals("Leaf METS file", downlink.getLabel());
-        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
-        assertEquals("leaf", downlink.getType());
-        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testReadingHierarchyFailsIfSubordinateFileHasNoBackreference() throws Exception {
-        new MetsXmlElementAccess().read(
-            new FileInputStream(new File("src/test/resources/subordinate-no-backreference_between.xml")),
-            GET_INPUT_STREAM_FUNCTION);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testReadingHierarchyFailsIfSubordinateFileHasWrongBackreference() throws Exception {
-        new MetsXmlElementAccess().read(
-            new FileInputStream(new File("src/test/resources/subordinate-wrong-backreference_between.xml")),
-            GET_INPUT_STREAM_FUNCTION);
     }
 }

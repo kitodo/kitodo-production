@@ -150,9 +150,9 @@ public class Workpiece {
     }
 
     /**
-     * Returns the list of parent linked structures.
+     * Returns the uplinks of this workpiece
      * 
-     * @return the list of parent linked structures
+     * @return the uplinks
      */
     public List<LinkedStructure> getUplinks() {
         return uplinks;

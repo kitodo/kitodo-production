@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <structMap TYPE="LOGICAL">
+    <div>
+      <mptr xlink:href="superordinate-no-backreference_top.xml"/>
+      <div LABEL="Leaf METS file" TYPE="leaf"/>
+    </div>
+  </structMap>
+</mets>

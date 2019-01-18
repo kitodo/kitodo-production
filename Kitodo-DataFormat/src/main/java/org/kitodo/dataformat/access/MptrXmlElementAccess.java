@@ -68,20 +68,6 @@ public class MptrXmlElementAccess {
         } catch (URISyntaxException e) {
             throw new DataBindingException(e.getMessage(), e);
         }
-        // =======
-        // LinkedStructure(DivType div, Mets parent, Function<Pair<URI,
-        // Boolean>, InputStream> getInputStreamFunction) {
-        // this.order = div.getORDER();
-        // this.uri =
-        // Workpiece.hrefToUri(div.getMptr().stream().findFirst().get().getHref());
-        // Mets child = Workpiece.readMets(getInputStreamFunction, uri, true);
-        // ensureParenthood(parent, child, getInputStreamFunction);
-        // Structure linked = new Workpiece(child,
-        // getInputStreamFunction).getStructMap();
-        // this.label = linked.getLabel();
-        // this.type = linked.getType();
-        // >>>>>>> Add reading of parent
-        // references:Kitodo-DataFormat/src/main/java/org/kitodo/dataformat/access/LinkedStructure.java
     }
 
     /**
