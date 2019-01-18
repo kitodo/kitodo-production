@@ -13,8 +13,6 @@ jdk:
   - oraclejdk8
   - openjdk8
 
-sudo: required
-
 addons:
   chrome: stable
   apt:
