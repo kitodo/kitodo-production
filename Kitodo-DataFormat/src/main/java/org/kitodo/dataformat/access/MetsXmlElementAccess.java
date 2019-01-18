@@ -14,16 +14,21 @@ package org.kitodo.dataformat.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,13 +42,14 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.DivType.Mptr;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
@@ -81,6 +87,17 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
 public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
+    /**
+     * There must not be multiple references to the child, or they must be
+     * identical.
+     */
+    private static final BinaryOperator<LinkedList<LinkedStructure>> CHILD_REFERENCED_ONCE = (one, another) -> {
+        if (one.equals(another)) {
+            return one;
+        }
+        throw new IllegalStateException("Child is referenced from parent multiple times");
+    };
+
     /**
      * The data object of this mets XML element access.
      */
@@ -146,10 +163,11 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
          * <div> for that <mptr> and must be skipped.
          */
         workpiece.setStructure(
-            (Structure) getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
+            getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
                 .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
                     .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, getInputStreamFunction))
                 .collect(Collectors.toList()).iterator().next());
+        workpiece.getUplinks().addAll(readUplinks(mets, getInputStreamFunction));
         return workpiece;
     }
 
@@ -166,6 +184,32 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
     }
 
+    private static final LinkedList<LinkedStructure> findMyself(DivType div, Mets current, URI parentUri,
+            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+
+        if (!div.getMptr().isEmpty()) {
+            boolean found = div.getMptr().stream().map(Mptr::getHref)
+                    .map(href -> Objects.deepEquals(readMets(getInputStreamFunction, hrefToUri(href), false), current))
+                    .reduce(Boolean::logicalOr).get();
+            return found ? new LinkedList<>() : null;
+        } else {
+            Optional<LinkedList<LinkedStructure>> optionalResult = div.getDiv().stream()
+                    .map(child -> findMyself(child, current, parentUri, getInputStreamFunction))
+                    .filter(Objects::nonNull).reduce(CHILD_REFERENCED_ONCE);
+            if (optionalResult.isPresent()) {
+                LinkedStructure linkedStructure = new LinkedStructure();
+                linkedStructure.setLabel(div.getLABEL());
+                linkedStructure.setType(div.getTYPE());
+                linkedStructure.setOrder(div.getORDER());
+                linkedStructure.setUri(parentUri);
+                LinkedList<LinkedStructure> result = optionalResult.get();
+                result.addFirst(linkedStructure);
+                return result;
+            }
+        }
+        return null;
+    }
+
     /**
      * The method helps to read {@code <structMap>}s from METS.
      *
@@ -177,6 +221,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private static final Stream<StructMapType> getStructMapsStreamByType(Mets mets, String type) {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
+    }
+
+    static final URI hrefToUri(String href) {
+        try {
+            return new URI(href);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -220,6 +272,39 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 throw new IOException(e.getMessage(), e);
             }
         }
+    }
+
+    static final Mets readMets(Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction, URI uri,
+            boolean couldHaveToBeWrittenInTheFuture) {
+        try (InputStream in = getInputStreamFunction.apply(Pair.of(uri, couldHaveToBeWrittenInTheFuture))) {
+            return readMets(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static final List<LinkedStructure> readUplinks(Mets current,
+            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+
+        Optional<List<LinkedStructure>> result = getStructMapsStreamByType(current, "LOGICAL")
+                .map(structMap -> structMap.getDiv()).filter(div -> !div.getMptr().isEmpty())
+                .flatMap(div -> div.getMptr().parallelStream()).map(mptr -> mptr.getHref()).map(href -> {
+                    URI parentUri = hrefToUri(href);
+                    Mets parent = readMets(getInputStreamFunction, parentUri, false);
+
+                    LinkedList<LinkedStructure> found = getStructMapsStreamByType(parent, "LOGICAL")
+                            .map(structMap -> structMap.getDiv())
+                            .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
+                            .map(div -> findMyself(div, current, parentUri, getInputStreamFunction))
+                            .filter(Objects::nonNull).reduce(CHILD_REFERENCED_ONCE)
+                            .orElseThrow(() -> new IllegalStateException("Child not referenced from parent"));
+                    found.addAll(0, readUplinks(parent, getInputStreamFunction));
+                    return found;
+                }).reduce((one, another) -> {
+                    one.addAll(another);
+                    return one;
+                }).map(linkedList -> (List<LinkedStructure>) linkedList);
+        return result.orElse(Collections.emptyList());
     }
 
     /**
