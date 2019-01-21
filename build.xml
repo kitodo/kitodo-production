@@ -34,7 +34,7 @@
 
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="kitodo-production"/>
-    <property name="build.dist.version" value="2.1.0" />
+    <property name="build.dist.version" value="2.2.0" />
     <property name="build.dist.vendor" value="kitodo.org"/>
     <property name="build.dist.url" value="https://github.com/kitodo/kitodo-production"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
