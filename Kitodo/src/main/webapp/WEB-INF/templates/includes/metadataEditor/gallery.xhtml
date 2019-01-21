@@ -78,7 +78,7 @@
                                     binding="#{structuredThumbnail}">
                             <ui:param name="filePath" value="#{MetadataProcessor.getPageImageFilePath(page)}"/>
                             <p:panel id="structuredPagePanel" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
-                                <p:commandLink update="structureTreeForm, imagePreviewForm">
+                                <p:commandLink update="structureTreeForm, @(.structureElementDataList)">
                                     <div class="thumbnail-container">
                                         <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
                                         <div class="thumbnail-overlay">
