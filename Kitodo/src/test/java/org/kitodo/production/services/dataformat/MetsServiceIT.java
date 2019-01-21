@@ -12,15 +12,22 @@
 package org.kitodo.production.services.dataformat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
 
@@ -70,5 +77,39 @@ public class MetsServiceIT {
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
             workpiece.getMediaUnits().stream().map(MediaUnit::getOrderlabel).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testReadingHierarchy() throws Exception {
+        Workpiece workpiece = MetsService.getInstance()
+                .load(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/between.xml")), args -> {
+            try {
+                return new FileInputStream(
+                        new File("../Kitodo-DataFormat/src/test/resources/" + args.getLeft().getPath()));
+            } catch (FileNotFoundException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+
+        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
+        assertTrue(downlink.isLinked());
+        assertEquals("Leaf METS file", downlink.getLabel());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
+        assertEquals("leaf", downlink.getType());
+        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
+
+        List<LinkedStructure> uplinks = workpiece.getUplinks();
+        assertEquals(2, uplinks.size());
+        LinkedStructure top = uplinks.get(0);
+        assertEquals("Top METS file", top.getLabel());
+        assertEquals(null, top.getOrder());
+        assertEquals("top", top.getType());
+        assertEquals("top.xml", top.getUri().getPath());
+
+        LinkedStructure second = uplinks.get(1);
+        assertEquals("My branch", second.getLabel());
+        assertEquals(BigInteger.valueOf(10), second.getOrder());
+        assertEquals("two", second.getType());
+        assertEquals("top.xml", second.getUri().getPath());
     }
 }
