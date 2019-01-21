@@ -24,7 +24,7 @@
 
     <!-- Default build properties (applied if not overridden by build.properties file) -->
     <property name="build.dist.name" value="kitodo-production" />
-    <property name="build.dist.version" value="2.1.0" />
+    <property name="build.dist.version" value="2.2.0" />
     <property name="build.dir" value="./build" />
     <property name="build.dist.dir" value="${basedir}/dist" />
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war" />
