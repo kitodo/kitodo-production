@@ -184,6 +184,24 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
     }
 
+    /**
+     * Locates the pointer to the current METS document within the parent
+     * documents and return a list of hierarchy levels to that pointer within
+     * the parent METS documents.
+     * 
+     * @param div
+     *            substructure of the structure tree of the immediately superior
+     *            METS document to be examined (to be called recursively)
+     * @param current
+     *            content of the current METS file to be found
+     * @param parentUri
+     *            URI of the parent METS document to be returned within the link
+     * @param getInputStreamFunction
+     *            a function
+     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
+     *            to open found URIs and compare their content
+     * @return a list of the parent structures of the document
+     */
     private static final LinkedList<LinkedStructure> findMyself(DivType div, Mets current, URI parentUri,
             Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
 
@@ -194,8 +212,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             return found ? new LinkedList<>() : null;
         } else {
             Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
-                LinkedList<LinkedStructure> m = findMyself(child, current, parentUri, getInputStreamFunction);
-                return m != null ? Pair.of(child, m) : null;
+                LinkedList<LinkedStructure> links = findMyself(child, current, parentUri, getInputStreamFunction);
+                return links != null ? Pair.of(child, links) : null;
             }).filter(Objects::nonNull).reduce((one, another) -> {
                 if (one.getRight().equals(another.getRight())) {
                     return one;
@@ -261,11 +279,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *
      * @param in
      *            InputStream to read from
-     * @param getInputStreamFunction
-     *            A reference to a function
-     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
-     *            If invoked, the calling function is responsible of closing the
-     *            stream.
+     * @return the parsed METS file
+     * @throws IOException
+     *             if the reading fails
      */
     static Mets readMets(InputStream in) throws IOException {
         try {
@@ -281,8 +297,30 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
     }
 
+    /**
+     * Use the {@code getInputStreamFunction} function to read in a METS file.
+     * 
+     * @param getInputStreamFunction
+     *            a function
+     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
+     *            to open found URIs and compare their content
+     * @param uri
+     *            URI to read
+     * @param couldHaveToBeWrittenInTheFuture
+     *            Whether the file may still need to be written in the future.
+     *            That would be the case, if it is a subordinate METS file and
+     *            the link to this is to be removed. This is never the case for
+     *            higher-level METS files. Depending on this, the
+     *            {@code getInputStreamFunction} function must request the lock
+     *            so that a later change may still be possible, but no documents
+     *            are unnecessarily locked for other users.
+     * @return the parsed METS document
+     * @throws UncheckedIOException
+     *             if the reading fails (to be used in lambda expressions)
+     */
     static final Mets readMets(Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction, URI uri,
             boolean couldHaveToBeWrittenInTheFuture) {
+
         try (InputStream in = getInputStreamFunction.apply(Pair.of(uri, couldHaveToBeWrittenInTheFuture))) {
             return readMets(in);
         } catch (IOException e) {
@@ -290,6 +328,18 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
     }
 
+    /**
+     * Reads the superordinate structures of this workpiece from a METS
+     * document.
+     * 
+     * @param current
+     *            content of the current METS file
+     * @param getInputStreamFunction
+     *            a function
+     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
+     *            to open found URIs and compare their content
+     * @return a list of the parent structures of the document
+     */
     private static final List<LinkedStructure> readUplinks(Mets current,
             Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
 
