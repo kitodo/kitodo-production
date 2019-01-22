@@ -420,7 +420,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
             } else {
-                throw new IOException(e.getMessage(), e);
+                throw new IOException(
+                        e.getMessage() == null && e.getCause() != null ? e.getCause().getMessage() : e.getMessage(),
+                        e.getCause() != null ? e.getCause() : e);
             }
         }
     }

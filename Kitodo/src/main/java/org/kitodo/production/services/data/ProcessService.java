@@ -1274,7 +1274,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         try {
             ff.read(ServiceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (IOException e) {
-            if (e.getMessage().startsWith("Parse error at line -1")) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setErrorMessage("metadataCorrupt", logger, e);
             } else {
                 throw e;
