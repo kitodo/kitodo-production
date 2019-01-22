@@ -439,7 +439,19 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
+        DivType structureRoot = new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets);
+        List<LinkedStructure> uplinks = workpiece.getUplinks();
+        if (uplinks.isEmpty()) {
+            logical.setDiv(structureRoot);
+        } else {
+            DivType uplinkHolder = new DivType();
+            Mptr uplink = new Mptr();
+            uplink.setHref(uplinks.get(uplinks.size() - 1).getUri().getPath());
+            uplinkHolder.getMptr().add(uplink);
+            uplinkHolder.getDiv().add(structureRoot);
+            logical.setDiv(uplinkHolder);
+        }
+
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));
