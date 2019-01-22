@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -266,16 +267,28 @@ public class LegacyMetsModsDigitalDocumentHelper {
     }
 
     private InputStreamProviderInterface getInputStreamProvider(LockResult lockResult) {
-        InputStreamProviderInterface inputStreamProvider = (uri, mayWrite) -> {
+        InputStreamProviderInterface inputStreamProvider = (uri, couldHaveToBeWrittenInTheFuture) -> {
             try {
+                if (uri.getScheme() == null) {
+                    String path = uri.getPath();
+                    if (!path.startsWith("../")) {
+                        throw new IllegalArgumentException("Relative URI must start with \"../\", but was: " + path);
+                    }
+                    URI metadataFileUri = new URI(path.substring(3));
+                    uri = fileService.getFile(metadataFileUri).toURI();
+                }
+
                 Map<URI, LockingMode> requests = new HashMap<>(2);
-                requests.put(uri, mayWrite ? LockingMode.UPGRADEABLE_READ : LockingMode.IMMUTABLE_READ);
+                requests.put(uri,
+                    couldHaveToBeWrittenInTheFuture ? LockingMode.UPGRADEABLE_READ : LockingMode.IMMUTABLE_READ);
                 Map<URI, Collection<String>> conflicts = lockResult.tryLock(requests);
                 if (conflicts.isEmpty()) {
                     return fileService.read(uri, lockResult);
                 } else {
                     throw new IOException(createLockErrorMessage(uri, conflicts));
                 }
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException(e.getMessage(), e);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
