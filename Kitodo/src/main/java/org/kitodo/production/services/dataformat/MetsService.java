@@ -47,9 +47,9 @@ public class MetsService {
                 MetsXmlElementAccessInterface.class).loadModule();
     }
 
-    public Workpiece load(InputStream in, InputStreamProviderInterface inputStreamProvider)
+    public Workpiece load(InputStream input, InputStreamProviderInterface inputStreamProvider)
             throws IOException {
-        return metsXmlElementAccess.read(in, inputStreamProvider);
+        return metsXmlElementAccess.read(input, inputStreamProvider);
     }
 
     public void save(Workpiece workpiece, OutputStream out) throws IOException {

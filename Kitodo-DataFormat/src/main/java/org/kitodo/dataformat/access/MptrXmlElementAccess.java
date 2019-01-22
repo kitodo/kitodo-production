@@ -55,8 +55,8 @@ public class MptrXmlElementAccess {
             URI uri = new URI(href);
             linkedStructure.setUri(uri);
             Mets child;
-            try (InputStream in = inputStreamProvider.getInputStream(uri, true)) {
-                child = MetsXmlElementAccess.readMets(in);
+            try (InputStream input = inputStreamProvider.getInputStream(uri, true)) {
+                child = MetsXmlElementAccess.readMets(input);
             }
             ensureParenthood(parent, child, inputStreamProvider);
             Structure linked = MetsXmlElementAccess.toWorkpiece(child, inputStreamProvider).getStructure();
@@ -115,9 +115,9 @@ public class MptrXmlElementAccess {
         }
 
         Mets linked;
-        try (InputStream in = inputStreamProvider
+        try (InputStream input = inputStreamProvider
                 .getInputStream(MetsXmlElementAccess.hrefToUri(parentLink), false)) {
-            linked = MetsXmlElementAccess.readMets(in);
+            linked = MetsXmlElementAccess.readMets(input);
         }
         if (!Objects.deepEquals(linked, current)) {
             throw new IllegalStateException("METS file linked as child points to different parent METS");

@@ -1675,12 +1675,12 @@ public class MetadataProcessor {
     }
 
     /**
-     * Gets logicalTopstruct of digital document as full expanded TreeNode
-     * structure.
+     * Returns the logical structure of the workpiece as fully expanded tree
+     * node structure.
      *
-     * @return The TreeNote.
+     * @return the document structure tree
      */
-    public TreeNode getTreeNodes() {
+    private TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
         Structure structure = this.gdzfile.getWorkpiece().getStructure();
         List<ExistingOrLinkedStructure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
@@ -2092,6 +2092,17 @@ public class MetadataProcessor {
      */
     public void setSelectedMetadataType(String selectedMetadataType) {
         this.selectedMetadataType = selectedMetadataType;
+    }
+
+    /**
+     * Returns whether a structure is a link.
+     *
+     * @param structure
+     *            the structure object
+     * @return whether a link
+     */
+    public boolean isLink(Structure structure) {
+        return structure.isLinked();
     }
 
     /**

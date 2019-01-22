@@ -286,32 +286,32 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Reads METS from an InputStream. JAXB is used to parse the XML.
      *
-     * @param in
+     * @param input
      *            InputStream to read from
      * @param inputStreamProvider
      *            a function that opens an input stream
      */
     @Override
-    public Workpiece read(InputStream in, InputStreamProviderInterface inputStreamProvider)
+    public Workpiece read(InputStream input, InputStreamProviderInterface inputStreamProvider)
             throws IOException {
 
-        return toWorkpiece(readMets(in), inputStreamProvider);
+        return toWorkpiece(readMets(input), inputStreamProvider);
     }
 
     /**
      * Reads METS from an InputStream. JAXB is used to parse the XML.
      *
-     * @param in
+     * @param input
      *            InputStream to read from
      * @return the parsed METS file
      * @throws IOException
      *             if the reading fails
      */
-    public static Mets readMets(InputStream in) throws IOException {
+    public static Mets readMets(InputStream input) throws IOException {
         try {
             JAXBContext jc = JAXBContext.newInstance(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
-            return (Mets) unmarshaller.unmarshal(in);
+            return (Mets) unmarshaller.unmarshal(input);
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -345,8 +345,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     public static final Mets readMets(InputStreamProviderInterface inputStreamProvider, URI uri,
             boolean couldHaveToBeWrittenInTheFuture) {
 
-        try (InputStream in = inputStreamProvider.getInputStream(uri, couldHaveToBeWrittenInTheFuture)) {
-            return readMets(in);
+        try (InputStream input = inputStreamProvider.getInputStream(uri, couldHaveToBeWrittenInTheFuture)) {
+            return readMets(input);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -422,7 +422,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             } else {
                 throw new IOException(
                         e.getMessage() == null && e.getCause() != null ? e.getCause().getMessage() : e.getMessage(),
-                        e.getCause() != null ? e.getCause() : e);
+                        Objects.isNull(e.getCause()) ? e : e.getCause());
             }
         }
     }

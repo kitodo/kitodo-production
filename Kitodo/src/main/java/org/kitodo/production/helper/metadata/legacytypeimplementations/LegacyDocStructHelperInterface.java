@@ -368,6 +368,16 @@ public interface LegacyDocStructHelperInterface {
     }
 
     /**
+     * Returns whether this lecacy doc struct helper is a link to another METS
+     * file.
+     * 
+     * @return whether this is a link
+     */
+    default boolean isLink() {
+        return false;
+    }
+
+    /**
      * Removes a child from this instance.
      *
      * @param docStruct
