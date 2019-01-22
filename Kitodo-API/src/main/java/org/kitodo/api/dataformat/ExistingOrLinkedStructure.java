@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.dataformat;
+package org.kitodo.dataformat.access;
 
 /**
  * A common interface for {@code Structure}s and {@code LinkedStructure}s.

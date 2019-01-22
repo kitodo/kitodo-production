@@ -70,6 +70,17 @@ public class MptrXmlElementAccess {
     }
 
     /**
+     * Creates a new {@code <mets:mptr>} XML element accessor for a given linked
+     * structure.
+     *
+     * @param linkedStructure
+     *            data object to work on
+     */
+    MptrXmlElementAccess(LinkedStructure linkedStructure) {
+        this.linkedStructure = linkedStructure;
+    }
+
+    /**
      * Checks if the child METS file is a child of this METS file. If the child
      * being found for some reason is not actually the child of this process,
      * editing can corrupt the other process that was erroneously assumed as a
@@ -126,10 +137,19 @@ public class MptrXmlElementAccess {
 
     /**
      * Returns the linked structure of this {@code <mptr>} XML element access.
-     * 
+     *
      * @return the linked structure
      */
     public LinkedStructure getLinkedStructure() {
         return linkedStructure;
+    }
+
+    public DivType toDiv() {
+        DivType div = new DivType();
+        div.setORDER(linkedStructure.getOrder());
+        Mptr mptr = new Mptr();
+        mptr.setHref(linkedStructure.getUri().getPath());
+        div.getMptr().add(mptr);
+        return div;
     }
 }

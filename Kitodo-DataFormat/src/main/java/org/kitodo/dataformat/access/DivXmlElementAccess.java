@@ -34,6 +34,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
@@ -205,7 +206,7 @@ public class DivXmlElementAccess extends Structure {
      *            the METS structure in which the meta-data is added
      * @return a METS {@code <div>} element
      */
-    DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+    public DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
         div.setLABEL(super.getLabel());
@@ -229,7 +230,12 @@ public class DivXmlElementAccess extends Structure {
         }
 
         for (ExistingOrLinkedStructure substructure : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
+            if (substructure instanceof Structure) {
+                div.getDiv()
+                        .add(new DivXmlElementAccess((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
+            } else {
+                div.getDiv().add(new MptrXmlElementAccess((LinkedStructure) substructure).toDiv());
+            }
         }
         return div;
     }
