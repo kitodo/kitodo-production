@@ -42,11 +42,11 @@
         </p:row>
         <p:row>
             <p:outputLabel for="active" value="#{msgs.active}"/>
-            <p:selectBooleanCheckbox id="active" styleClass="input workflow-editor-checkbox"
+            <p:selectBooleanCheckbox id="active" styleClass="switch input workflow-editor-checkbox"
                                      value="#{WorkflowForm.workflow.active}"
                                      onchange="toggleSave()"/>
             <p:outputLabel for="ready" value="#{msgs.ready}"/>
-            <p:selectBooleanCheckbox id="ready" styleClass="input workflow-editor-checkbox"
+            <p:selectBooleanCheckbox id="ready" styleClass="switch input workflow-editor-checkbox"
                                      value="#{WorkflowForm.workflow.ready}"
                                      onchange="toggleSave()"/>
         </p:row>

@@ -68,7 +68,7 @@
 
             <div>
                 <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
-                <p:selectBooleanCheckbox id="showInList" styleClass="input"
+                <p:selectBooleanCheckbox id="showInList" styleClass="switch input"
                                          value="#{TemplateForm.template.inChoiceListShown}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
@@ -76,7 +76,7 @@
 
             <div>
                 <p:outputLabel for="active" value="#{msgs.active}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="input" value="#{TemplateForm.template.active}">
+                <p:selectBooleanCheckbox id="active" styleClass="switch input" value="#{TemplateForm.template.active}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>

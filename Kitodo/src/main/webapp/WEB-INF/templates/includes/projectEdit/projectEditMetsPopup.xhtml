@@ -45,7 +45,7 @@
                     <p:row>
                         <p:column colspan="2">
                             <p:outputLabel for="createFolder" value="#{msgs['editFolderDialog.createFolder']}"/>
-                            <p:selectBooleanCheckbox id="createFolder" class="input"
+                            <p:selectBooleanCheckbox id="createFolder" styleClass="switch input"
                                                      value="#{ProjectForm.myFolder.createFolder}">
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>
@@ -120,7 +120,7 @@
                     <p:row>
                         <p:column>
                             <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}"/>
-                            <p:selectBooleanCheckbox id="copyFolder" class="input"
+                            <p:selectBooleanCheckbox id="copyFolder" styleClass="switch input"
                                                      value="#{ProjectForm.myFolder.copyFolder}">
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectBooleanCheckbox>

@@ -66,7 +66,7 @@
             </div>
             <div>
                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-                <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjectForm.project.active}">
+                <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
@@ -74,7 +74,7 @@
             <ui:fragment rendered="#{ProjectForm.copyTemplates}">
                 <div>
                     <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
-                    <p:selectBooleanCheckbox id="copyTemplates" class="input" value="#{ProjectForm.copyTemplates}">
+                    <p:selectBooleanCheckbox id="copyTemplates" styleClass="switch input" value="#{ProjectForm.copyTemplates}">
                         <p:ajax event="change" oncomplete="toggleSave()" />
                     </p:selectBooleanCheckbox>
                 </div>
