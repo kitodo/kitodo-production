@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -57,6 +58,7 @@ import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
@@ -65,6 +67,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
@@ -128,6 +131,7 @@ public class MetadataValidationService implements MetadataValidationInterface {
     private final ProcessService processService = ServiceManager.getProcessService();
     private final RulesetManagementService rulesetManagementService = ServiceManager.getRulesetManagementService();
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
+    private final UserService userService = ServiceManager.getUserService();
 
     /**
      * Validate.
@@ -221,7 +225,7 @@ public class MetadataValidationService implements MetadataValidationInterface {
         for (DivXmlElementAccessInterface structure : treeStream(workpiece.getStructMap(),
             DivXmlElementAccessInterface::getChildren).collect(Collectors.toList())) {
             StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(), null,
-                null);
+                getMetadataLanguage());
             results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
                 structure.getMetadata().parallelStream()
                         .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType)),
@@ -473,6 +477,18 @@ public class MetadataValidationService implements MetadataValidationInterface {
         String message = buffer.toString();
         logger.info(message);
         return message;
+    }
+
+    /**
+     * Returns the meta-data language for a user.
+     * 
+     * @return the meta-data language
+     */
+    private List<LanguageRange> getMetadataLanguage() {
+        User user = userService.getAuthenticatedUser();
+        String metadataLanguage = user != null ? user.getMetadataLanguage()
+                : Helper.getRequestParameter("Accept-Language");
+        return LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
     }
 
     /**
