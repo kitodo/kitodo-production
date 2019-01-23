@@ -91,17 +91,17 @@ public class MetadataValidationService implements MetadataValidationInterface {
     /**
      * Message key if no media is assigned.
      */
-    private static final String MESSAGE_MEDIA_MISSING = "metadataPaginationError";
+    private static final String MESSAGE_MEDIA_MISSING = "metadataMediaError";
 
     /**
      * Message key if media is present but not assigned to a structure.
      */
-    private static final String MESSAGE_MEDIA_UNASSIGNED = "metadataPaginationPages";
+    private static final String MESSAGE_MEDIA_UNASSIGNED = "metadataMediaUnassigned";
 
     /**
      * Message key if a structure has no media assigned.
      */
-    private static final String MESSAGE_STRUCTURE_WITHOUT_MEDIA = "metadataPaginationStructure";
+    private static final String MESSAGE_STRUCTURE_WITHOUT_MEDIA = "metadataStructureWithoutMedia";
 
     /**
      * Message key if the input is invalid.
@@ -256,8 +256,7 @@ public class MetadataValidationService implements MetadataValidationInterface {
         } else {
             if (!Pattern.matches(ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_IDENTIFIER_REGEX),
                 workpieceId)) {
-                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID,
-                    Arrays.asList(workpieceId, workpiece.toString())));
+                messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Arrays.asList(workpieceId)));
                 error = true;
             }
             List<ProcessDTO> processDTOs = processService.findAll().parallelStream()
@@ -361,19 +360,16 @@ public class MetadataValidationService implements MetadataValidationInterface {
             int count = metadataViewWithValues.getValue().size();
 
             if (count == 0 && (min == 1 && max == 1)) {
-                messages.add(Helper.getTranslation(MESSAGE_VALUE_MISSING) + ' ' + location + metadataView.getLabel());
+                messages.add(
+                    Helper.getTranslation(MESSAGE_VALUE_MISSING, Arrays.asList(location + metadataView.getLabel())));
                 warning = true;
             } else if (count < min) {
-                /*
-                 * Double quotes for single chars in string building prevent
-                 * their addition with the ints.
-                 */
-                messages.add(Helper.getTranslation(MESSAGE_VALUE_TOO_RARE) + ' ' + location + metadataView.getLabel()
-                        + " (" + count + "/" + min + ")");
+                messages.add(Helper.getTranslation(MESSAGE_VALUE_TOO_RARE,
+                    Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
                 warning = true;
             } else if (count > max) {
-                messages.add(Helper.getTranslation(MESSAGE_VALUE_TOO_OFTEN) + ' ' + location + metadataView.getLabel()
-                        + " (" + count + "/" + max + ")");
+                messages.add(Helper.getTranslation(MESSAGE_VALUE_TOO_OFTEN,
+                    Arrays.asList(location + metadataView.getLabel(), Integer.toString(count), Integer.toString(min))));
                 warning = true;
             }
 
@@ -431,8 +427,8 @@ public class MetadataValidationService implements MetadataValidationInterface {
                         && metadataView instanceof SimpleMetadataViewInterface) {
                     String value = ((MetadataXmlElementAccessInterface) metadata).getValue();
                     if (!((SimpleMetadataViewInterface) metadataView).isValid(value)) {
-                        result.add(Helper.getTranslation(MESSAGE_VALUE_INVALID) + ' ' + location
-                                + metadataView.getLabel() + " \"" + value + '"');
+                        result.add(Helper.getTranslation(MESSAGE_VALUE_INVALID,
+                            Arrays.asList(value, location + metadataView.getLabel())));
                         error = true;
                     }
                 } else if (metadata instanceof MetadataGroupXmlElementAccessInterface
