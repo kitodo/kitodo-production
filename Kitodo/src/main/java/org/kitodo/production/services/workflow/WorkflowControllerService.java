@@ -215,7 +215,6 @@ public class WorkflowControllerService {
             // metadata validation
             if (task.isTypeMetadata()
                     && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
-                ServiceManager.getMetadataValidationService().setAutoSave(true);
                 if (!ServiceManager.getMetadataValidationService().validate(task.getProcess())) {
                     return;
                 }

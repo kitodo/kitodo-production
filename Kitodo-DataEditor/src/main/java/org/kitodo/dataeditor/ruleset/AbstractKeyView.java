@@ -32,6 +32,11 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
     protected final U universal;
 
     /**
+     * The universal rule.
+     */
+    protected UniversalRule universalRule;
+
+    /**
      * The wish list of the user regarding the human languages best understood
      * by it.
      *
@@ -49,8 +54,9 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
      * @param priorityList
      *            wish language of the user
      */
-    protected AbstractKeyView(U universal, List<LanguageRange> priorityList) {
+    protected AbstractKeyView(U universal, UniversalRule universalRule, List<LanguageRange> priorityList) {
         this.universal = universal;
+        this.universalRule = universalRule;
         this.priorityList = priorityList;
     }
 
@@ -72,6 +78,26 @@ abstract class AbstractKeyView<U extends Labeled> implements MetadataViewInterfa
     @Override
     public String getLabel() {
         return universal.getLabel(priorityList);
+    }
+
+    /**
+     * Returns the maximum number of occurrences for this type of meta-data.
+     * 
+     * @return the maximum number
+     */
+    @Override
+    public int getMaxOccurs() {
+        return universalRule.getMaxOccurs();
+    }
+
+    /**
+     * Returns the minimum number of occurrences for this type of meta-data.
+     * 
+     * @return the minimum number
+     */
+    @Override
+    public int getMinOccurs() {
+        return universalRule.getMinOccurs();
     }
 
     /**

@@ -21,7 +21,7 @@ public class ValidationResult {
     /** A list of result messages. */
     private Collection<String> resultMessages;
 
-    ValidationResult(State state, Collection<String> resultMessages) {
+    public ValidationResult(State state, Collection<String> resultMessages) {
         this.state = state;
         this.resultMessages = resultMessages;
     }

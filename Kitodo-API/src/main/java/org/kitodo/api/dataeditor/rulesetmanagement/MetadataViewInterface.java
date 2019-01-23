@@ -43,6 +43,20 @@ public interface MetadataViewInterface {
     String getLabel();
 
     /**
+     * Returns the maximum number of occurrences for this type of meta-data.
+     * 
+     * @return the maximum number
+     */
+    int getMaxOccurs();
+
+    /**
+     * Returns the minimum number of occurrences for this type of meta-data.
+     * 
+     * @return the minimum number
+     */
+    int getMinOccurs();
+
+    /**
      * Returns whether the key is a complex key. A complex key consists of
      * subfields, which in turn can be complex, while a simple key only takes a
      * single value. This can also be determined by type checking, but if it's

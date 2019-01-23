@@ -70,8 +70,7 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
     KeyView(UniversalKey universalKey, UniversalRule universalRule, Settings settings,
             List<LanguageRange> priorityList) {
 
-        super(universalKey, priorityList);
-        this.universalRule = universalRule;
+        super(universalKey, universalRule, priorityList);
         this.settings = settings;
     }
 
