@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ugh;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+
 /**
  * A meta-data object represents a single meta-data entry. Each meta-data entry
  * has at least a value and a type. The type of the a meta-data element is
@@ -23,6 +26,13 @@ package org.kitodo.api.ugh;
  */
 public interface MetadataInterface {
     /**
+     * Returns the binding of the meta-data.
+     * 
+     * @return the binding
+     */
+    MetadataXmlElementAccessInterface getBinding();
+
+    /**
      * Returns the document structure instance, to which this meta-data object
      * belongs. This is extremely helpful, if only the meta-data instance is
      * stored in a list; the reference to the associated document structure
@@ -31,6 +41,13 @@ public interface MetadataInterface {
      * @return the document structure instance
      */
     DocStructInterface getDocStruct();
+
+    /**
+     * Returns the domain of the meta-data. There are six different ones.
+     * 
+     * @return the domain
+     */
+    Domain getDomain();
 
     /**
      * Returns the type of the meta-data instance. The MetadataType object which
