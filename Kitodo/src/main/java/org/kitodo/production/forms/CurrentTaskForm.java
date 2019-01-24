@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -110,6 +113,19 @@ public class CurrentTaskForm extends BaseForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+    }
+
+    @PostConstruct
+    public void init() {
+        columns = new ArrayList<>();
+        SelectItemGroup taskColumns = new SelectItemGroup(Helper.getTranslation("task"));
+        taskColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("taskTitle", Helper.getTranslation("title")),
+            new SelectItem("taskProcess", Helper.getTranslation("process")),
+            new SelectItem("taskProject", Helper.getTranslation("project")),
+            new SelectItem("taskState", Helper.getTranslation("status"))
+        });
+        columns.add(taskColumns);
     }
 
     /**

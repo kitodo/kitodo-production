@@ -25,8 +25,11 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -53,6 +56,51 @@ public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
+
+    @PostConstruct
+    public void init() {
+
+        columns = new ArrayList<>();
+
+        SelectItemGroup projectColumns = new SelectItemGroup(Helper.getTranslation("project"));
+        projectColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("projectTitle", Helper.getTranslation("title")),
+            new SelectItem("projectMetsRightsOwner", Helper.getTranslation("metsRightsOwner")),
+            new SelectItem("projectActive", Helper.getTranslation("active"))
+        });
+        columns.add(projectColumns);
+
+        SelectItemGroup templateColumns = new SelectItemGroup(Helper.getTranslation("template"));
+        templateColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("templateTitle", Helper.getTranslation("title")),
+            new SelectItem("templateRuleset", Helper.getTranslation("ruleset"))
+        });
+        columns.add(templateColumns);
+
+        SelectItemGroup workflowColumns = new SelectItemGroup(Helper.getTranslation("workflow"));
+        workflowColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("workflowTitle", Helper.getTranslation("title")),
+            new SelectItem("workflowFilename", Helper.getTranslation("filename")),
+            new SelectItem("workflowActive", Helper.getTranslation("active")),
+            new SelectItem("workflowReady", Helper.getTranslation("ready"))
+        });
+        columns.add(workflowColumns);
+
+        SelectItemGroup docketColumns = new SelectItemGroup(Helper.getTranslation("docket"));
+        docketColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("docketTitle", Helper.getTranslation("title")),
+            new SelectItem("docketFilename", Helper.getTranslation("filename"))
+        });
+        columns.add(docketColumns);
+
+        SelectItemGroup rulesetColumns = new SelectItemGroup(Helper.getTranslation("ruleset"));
+        rulesetColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("rulesetTitle", Helper.getTranslation("title")),
+            new SelectItem("rulesetFilename", Helper.getTranslation("filename")),
+            new SelectItem("rulesetSorting", Helper.getTranslation("sorting"))
+        });
+        columns.add(rulesetColumns);
+    }
 
     /**
      * The folder currently under edit in the pop-up dialog.

@@ -15,40 +15,52 @@
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/filter.js" target="body" />
-            <h3>#{msgs.processes}</h3>
-            <!-- filters -->
-            <p:button id="search" value="#{msgs.extendedSearch}"
-                      icon="fa fa-search" iconPos="right"
-                      outcome="searchProcess"/>
-            <h:form id="filterMenu">
-                <div class="ui-inputgroup">
-                    <p:inputText forceId="true" id="filterfield" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
-                    <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="plain"/>
-                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
-                    <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
-                        <ul>
+        <h3>#{msgs.processes}</h3>
+
+        <!-- filters -->
+        <p:button id="search" value="#{msgs.extendedSearch}"
+                  icon="fa fa-search" iconPos="right"
+                  outcome="searchProcess"/>
+        <h:form id="filterMenu">
+            <div class="ui-inputgroup">
+                <p:inputText forceId="true" id="filterfield" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
+                <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="plain"/>
+                <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
+                <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
+                    <ul>
+                        <li>
+                            <p:commandButton id="addFilter"
+                                             action="#{ProcessForm.addFilterToUser}"
+                                             icon="fa fa-floppy-o fa-lg"
+                                             value="#{msgs.addFilter}" update="@form"/>
+                        </li>
+                        <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
                             <li>
-                                <p:commandButton id="addFilter"
-                                                 action="#{ProcessForm.addFilterToUser}"
-                                                 icon="fa fa-floppy-o fa-lg"
-                                                 value="#{msgs.addFilter}" update="@form"/>
+                                <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
+                                <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
+                                    <i class="fa fa-trash-o fa-lg"/>
+                                </p:commandLink>
                             </li>
-                            <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
-                                <li>
-                                    <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
-                                    <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
-                                        <i class="fa fa-trash-o fa-lg"/>
-                                    </p:commandLink>
-                                </li>
-                            </ui:repeat>
-                        </ul>
-                    </p:overlayPanel>
-                </div>
-            </h:form>
+                        </ui:repeat>
+                    </ul>
+                </p:overlayPanel>
+            </div>
+        </h:form>
+        <h:form id="processesForm">
+            <p:selectCheckboxMenu styleClass="configure-columns-button"
+                                  label=""
+                                  title="#{msgs.configureColumns}"
+                                  style="float: right; margin-right: 0;"
+                                  value="#{ProcessForm.selectedColumns}">
+                <f:selectItems value="#{ProcessForm.columns}" />
+                <p:ajax update="processesTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
     </ui:define>
 
     <ui:define name="pageTabView">

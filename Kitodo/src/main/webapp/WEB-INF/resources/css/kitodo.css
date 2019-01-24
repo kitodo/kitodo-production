@@ -915,6 +915,20 @@ main i.fa {
     width: 100%;
 }
 
+.configure-columns-button {
+    display: inline-block !important;
+    margin-right: 16px;
+}
+
+.configure-columns-button .ui-selectcheckboxmenu-label::after {
+    font-family: 'FontAwesome';
+    content: '\f0db';
+}
+
+.configure-columns-button .ui-selectcheckboxmenu-trigger {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/

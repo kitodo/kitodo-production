@@ -15,6 +15,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="taskTable" var="item" value="#{CurrentTaskForm.lazyDTOModel}" lazy="true" paginator="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
@@ -27,11 +28,13 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.task}">
+        <p:column headerText="#{msgs.task}"
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskTitle')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.process}">
+        <p:column headerText="#{msgs.process}"
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskProcess')}">
             <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                 <i class="fa fa-pencil-square-o fa-lg"/>
@@ -40,11 +43,13 @@
             <h:outputText value=" #{item.process.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.project}">
+        <p:column headerText="#{msgs.project}"
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskProject')}">
             <h:outputText value="#{item.process.project.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.status}">
+        <p:column headerText="#{msgs.status}"
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskState')}">
             <h:panelGroup class="task-status"
                           title="#{item.processingStatusTitle}"
                           style="margin-right:10px; background-color:

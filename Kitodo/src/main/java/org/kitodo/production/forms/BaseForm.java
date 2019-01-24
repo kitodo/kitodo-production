@@ -15,6 +15,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.faces.model.SelectItem;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
@@ -45,6 +47,9 @@ public class BaseForm implements Serializable {
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
     protected static final String DEFAULT_LINK = "desktop";
+
+    protected List<SelectItem> columns;
+    protected String[] selectedColumns;
 
     /**
      * Getter: return lazyDTOModel.
@@ -179,5 +184,37 @@ public class BaseForm implements Serializable {
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;
+    }
+
+    /**
+     * Get list of configurable columns.
+     * @return list of configurable columns
+     */
+    public List<SelectItem> getColumns() {
+        return columns;
+    }
+
+    /**
+     * Set list of configurable columns.
+     * @param columns list of columns
+     */
+    public void setColumns(List<SelectItem> columns) {
+        this.columns = columns;
+    }
+
+    /**
+     * Get array of selected column names.
+     * @return array of selected column names
+     */
+    public String[] getSelectedColumns() {
+        return selectedColumns;
+    }
+
+    /**
+     * Set array of selected column names.
+     * @param columns array of column names
+     */
+    public void setSelectedColumns(String[] columns) {
+        this.selectedColumns = columns;
     }
 }

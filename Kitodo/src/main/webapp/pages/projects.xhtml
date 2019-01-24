@@ -14,13 +14,20 @@
 <ui:composition
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui"
->
+        xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
                 rendered="#{SecurityAccessController.hasAnyAuthorityForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button"
+                                  label=""
+                                  title="#{msgs.configureColumns}"
+                                  value="#{ProjectForm.selectedColumns}">
+                <f:selectItems value="#{ProjectForm.columns}" />
+                <p:ajax update="projectsTabView"/>
+            </p:selectCheckboxMenu>
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
@@ -44,7 +51,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
+        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView" widgetVar="projectsTabView">
             <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">

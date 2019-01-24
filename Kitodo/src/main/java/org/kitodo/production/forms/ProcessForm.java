@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -114,6 +116,24 @@ public class ProcessForm extends TemplateBaseForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+    }
+
+    @PostConstruct
+    public void init() {
+
+        columns = new ArrayList<>();
+
+        SelectItemGroup processColumns = new SelectItemGroup(Helper.getTranslation("process"));
+        processColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("processTitle", Helper.getTranslation("title")),
+            new SelectItem("processState", Helper.getTranslation("status")),
+            new SelectItem("processProject", Helper.getTranslation("project"))
+            //TODO: add selectItems for configured process properties! (signature, job ID etc.)
+        });
+        columns.add(processColumns);
+
+        // TODO: do something with "batches" tab!
+
     }
 
     /**
