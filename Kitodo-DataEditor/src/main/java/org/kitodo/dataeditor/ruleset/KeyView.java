@@ -32,11 +32,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
  */
 class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetadataViewInterface {
     /**
-     * The universal rule for this key.
-     */
-    private UniversalRule universalRule;
-
-    /**
      * The schema in which the part of the date relevant to this division is
      * stored. Apart from the dates built into Java and interpreted by the
      * runtime, there is still the special string “{@code yyyy/yyyy}”, which
