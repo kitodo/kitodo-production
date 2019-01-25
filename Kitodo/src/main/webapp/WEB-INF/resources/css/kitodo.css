@@ -1118,6 +1118,10 @@ Metadata Editor
     overflow: hidden;
 }
 
+#metadataPanel {
+    overflow-y: scroll;
+}
+
 #galleryPanel {
     height: 100%;
 }
