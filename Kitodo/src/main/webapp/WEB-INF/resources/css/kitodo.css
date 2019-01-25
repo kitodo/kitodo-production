@@ -1201,6 +1201,51 @@ Column content
     margin-right: 0;
 }
 
+#map .ol-overlaycontainer-stopevent {
+    left: 16px;
+    position: absolute;
+    top: 16px;
+}
+
+#map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control {
+    background: transparent;
+    left: 0;
+    padding: 0;
+    top: 0;
+}
+
+#map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control > button {
+    border-radius: 3px;
+    height: 36px;
+    margin: 0 0 16px 0;
+    width: 36px;
+}
+
+#map .ol-unselectable.ol-control > button:hover {
+    cursor: pointer;
+}
+
+#map .ol-control {
+    background: transparent;
+    padding: 0;
+    position: static;
+}
+
+#map .ol-control:hover {
+    background: transparent;
+}
+
+#map .ol-control button {
+    border-radius: 3px;
+    height: 36px;
+    margin: 0 0 16px 0;
+    width: 36px;
+}
+
+#map .ol-rotate.ol-hidden, #map .ol-attribution {
+    display: none;
+}
+
 .rotate-right {
     top: 65px !important;
     left: .5em;
@@ -1227,16 +1272,43 @@ Column content
 }
 
 #thumbnailStripe {
+    display: inline-block;
+    float: right;
     height: 100%;
     border-left: 1px solid var(--primary);
+    overflow: hidden;
+    width: 100px;
 }
 
-#thumbnailStripe > div {
+#thumbnailStripeScrollableContent {
+    box-sizing: content-box;
+    height: calc(100% - 136px);
+    overflow-y: scroll;
+    padding-right: 50px;
+    width: 100%;
+}
+
+#thumbnailWrapper {
+    width: 100px;
+    text-align: center;
+    overflow: visible;
+}
+
+#thumbnailWrapper > div {
     text-align: center;
 }
 
-#thumbnailStripe a {
+#thumbnailStripeScrollableContent a {
     display: inline-block;
+}
+
+#imagePreviewForm\:scroll-up, #imagePreviewForm\:scroll-down {
+    display: block;
+    margin: 16px auto;
+}
+
+#imagePreviewForm\:scroll-up *, #imagePreviewForm\:scroll-down * {
+    pointer-events: none;
 }
 
 .thumbnail {
@@ -1251,7 +1323,6 @@ Column content
 .thumbnail-container {
     position: relative;
     display: inline-block;
-    margin: 3px;
 }
 
 .thumbnail-overlay {
@@ -1289,10 +1360,6 @@ Column content
     background: transparent;
 }
 
-#imagePreviewForm\:structuredPages div.ui-panel-titlebar {
-    display: none;
-}
-
 #imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
     display: block;
     background-color: var(--dark);
@@ -1309,14 +1376,14 @@ Column content
     display: inline-block;
 }
 
-#imagePreviewForm\:structuredPages ul li span.ui-panel-title {
-    margin: 0;
-}
-
 #imagePreviewForm\:structuredPagesField {
     height: 100%;
     overflow-y: scroll;
     padding: 0;
+}
+
+#imagePreviewForm\:structuredPages .ui-widget-content {
+    color: var(--default-bright);
 }
 
 /*----------------------------------------------------------------------

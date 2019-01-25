@@ -27,6 +27,7 @@
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
+                                     oncomplete="destruct()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -35,6 +36,7 @@
                     <p:commandButton id="gridViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
+                                     oncomplete="destruct()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'grid' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="grid" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -43,6 +45,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
+                                     oncomplete="initialize()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -78,7 +81,7 @@
                                     binding="#{structuredThumbnail}">
                             <ui:param name="filePath" value="#{MetadataProcessor.getPageImageFilePath(page)}"/>
                             <p:panel id="structuredPagePanel" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
-                                <p:commandLink update="structureTreeForm, @(.structureElementDataList)">
+                                <p:commandLink update="structureTreeForm, imagePreviewForm">
                                     <div class="thumbnail-container">
                                         <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
                                         <div class="thumbnail-overlay">
@@ -118,18 +121,24 @@
             <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'preview' and MetadataProcessor.imageListExistent}">
                 <!-- OpenLayers Kitodo custom controls -->
                 <div id="olWrapper" style="overflow-x: auto; height: 100%">
-                    <div id="thumbnailStripe" style="width: 100px; display: inline-block; float: right">
-                        <ui:repeat value="#{MetadataProcessor.images}" var="image">
-                            <div>
-                                <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{MetadataProcessor.isAccessGranted(image)}">
-                                    <!-- outputText is needed to remove whitespace produced by correct code indent -->
-                                    <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
-                                    <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
-                                </p:commandLink>
+                    <div id="thumbnailStripe">
+                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
+                        <div id="thumbnailStripeScrollableContent">
+                            <div id="thumbnailWrapper">
+                                <ui:repeat value="#{MetadataProcessor.images}" var="image">
+                                    <div>
+                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{MetadataProcessor.isAccessGranted(image)}">
+                                            <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                                            <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
+                                            <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
+                                        </p:commandLink>
+                                    </div>
+                                    <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
+                                    <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
+                                </ui:repeat>
                             </div>
-                            <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
-                            <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
-                        </ui:repeat>
+                        </div>
+                        <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
                     <ui:fragment rendered="#{MetadataProcessor.isAccessGranted(MetadataProcessor.currentImage)}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>

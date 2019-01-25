@@ -113,9 +113,9 @@ function initializeMap(imageDimensions) {
                 collapsible: false
             }
         }).extend([
-            new kitodo.RotateLeftControl()
-        ]).extend([
             new kitodo.RotateRightControl()
+        ]).extend([
+            new kitodo.RotateLeftControl()
         ]),
         layers: [
             new ol.layer.Image({
