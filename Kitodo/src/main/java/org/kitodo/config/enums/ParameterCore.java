@@ -628,6 +628,11 @@ public enum ParameterCore implements ParameterInterface {
      */
     OCR_URL(new Parameter<UndefinedParameter>("ocrUrl")),
 
+    /**
+     * Process properties to display in process list.
+     */
+    PROCESS_PROPERTIES(new Parameter<>("processProperties")),
+
     /*
      * ActiveMQ web services
      */

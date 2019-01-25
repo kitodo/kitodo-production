@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.Helper;
@@ -94,6 +96,9 @@ public class ProcessForm extends TemplateBaseForm {
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
 
+    private static String[] processPropertyNames =
+            ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(",");
+
     /**
      * Constructor.
      */
@@ -118,22 +123,44 @@ public class ProcessForm extends TemplateBaseForm {
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     }
 
+    /**
+     * Initialize SelectItems used for configuring displayed columns in process list.
+     */
     @PostConstruct
     public void init() {
 
         columns = new ArrayList<>();
 
+        SelectItem[] processColumnItems = new SelectItem[3 + processPropertyNames.length];
+        processColumnItems[0] = new SelectItem("processTitle", Helper.getTranslation("title"));
+        processColumnItems[1] = new SelectItem("processState", Helper.getTranslation("status"));
+        processColumnItems[2] = new SelectItem("processProject", Helper.getTranslation("project"));
+
+        // Read process properties to display from configuration
+        for (String propertyName : processPropertyNames) {
+            processColumnItems[3 + Arrays.asList(processPropertyNames).indexOf(propertyName)]
+                            = new SelectItem(propertyName, propertyName);
+        }
+
         SelectItemGroup processColumns = new SelectItemGroup(Helper.getTranslation("process"));
-        processColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("processTitle", Helper.getTranslation("title")),
-            new SelectItem("processState", Helper.getTranslation("status")),
-            new SelectItem("processProject", Helper.getTranslation("project"))
-            //TODO: add selectItems for configured process properties! (signature, job ID etc.)
-        });
+        processColumns.setSelectItems(processColumnItems);
         columns.add(processColumns);
+    }
 
-        // TODO: do something with "batches" tab!
-
+    /**
+     * Retrieve and return process property value of property with given name 'propertyName' from given ProcessDTO
+     * 'process'.
+     * @param process the ProcessDTO object from which the property value is retrieved
+     * @param propertyName name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName', empty String otherwise
+     */
+    public static String getPropertyValue(ProcessDTO process, String propertyName) {
+        for (PropertyDTO property : process.getProperties()) {
+            if (property.getTitle().equals(propertyName)) {
+                return property.getValue();
+            }
+        }
+        return "";
     }
 
     /**
@@ -1321,5 +1348,13 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String getProcessEditReferer() {
         return this.processEditReferer;
+    }
+
+    /**
+     * Get list of names for process properties that should be displayed as columns in the process list.
+     * @return list of process property names
+     */
+    public static String[] getProcessPropertyNames() {
+        return processPropertyNames;
     }
 }
