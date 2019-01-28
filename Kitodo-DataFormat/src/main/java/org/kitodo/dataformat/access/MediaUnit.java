@@ -35,6 +35,14 @@ public class MediaUnit implements FileXmlElementAccessInterface {
     private Map<MediaVariant, MediaFile> mediaFiles = new HashMap<>();
 
     /**
+     * Some magic numbers that are used in the METS XML file representation of
+     * this structure to describe relations between XML elements. They need to
+     * be stored because some scatty third-party scripts rely on them not being
+     * changed anymore once assigned.
+     */
+    private final String metsReferrerId;
+
+    /**
      * Sequence number of the media unit. The playback order of the media units
      * when referenced from a structure is determined by this attribute (not by
      * the order of the references).
@@ -54,6 +62,7 @@ public class MediaUnit implements FileXmlElementAccessInterface {
      * with the service loader to get a new instance of media unit.
      */
     public MediaUnit() {
+        metsReferrerId = UUID.randomUUID().toString();
     }
 
     /**
@@ -77,7 +86,8 @@ public class MediaUnit implements FileXmlElementAccessInterface {
                             .orElseThrow(() -> new IllegalArgumentException(
                                     "Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>"))
                             .getUSE()),
-                    file -> new MediaFile(file.getFLocat().get(0))));
+                    file -> new MediaFile(file)));
+        metsReferrerId = div.getID();
         order = div.getORDER().intValue();
         orderlabel = div.getORDERLABEL();
     }
@@ -190,9 +200,8 @@ public class MediaUnit implements FileXmlElementAccessInterface {
             Map<MediaUnit, String> mediaUnitIDs) {
 
         DivType div = new DivType();
-        String divId = UUID.randomUUID().toString();
-        div.setID(divId);
-        mediaUnitIDs.put(this, divId);
+        div.setID(metsReferrerId);
+        mediaUnitIDs.put(this, metsReferrerId);
         div.setORDER(BigInteger.valueOf(order));
         div.setORDERLABEL(orderlabel);
         for (Entry<MediaVariant, MediaFile> use : mediaFiles.entrySet()) {
