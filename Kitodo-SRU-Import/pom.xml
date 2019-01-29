@@ -15,7 +15,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.0.0-beta.1-SNAPSHOT</version>
+        <version>3.0.0-beta.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
-            <version>3.0.0-beta.1-SNAPSHOT</version>
+            <version>3.0.0-beta.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
