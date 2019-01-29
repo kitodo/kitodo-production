@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kitodo</groupId>
     <artifactId>kitodo-production</artifactId>
-    <version>3.0.0-beta.1-SNAPSHOT</version>
+    <version>3.0.0-beta.2</version>
     <packaging>pom</packaging>
 
     <organization>

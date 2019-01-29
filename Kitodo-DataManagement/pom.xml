@@ -16,11 +16,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kitodo-data-management</artifactId>
-    <version>3.0.0-beta.1-SNAPSHOT</version>
+    <version>3.0.0-beta.2</version>
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.0.0-beta.1-SNAPSHOT</version>
+        <version>3.0.0-beta.2</version>
     </parent>
     <organization>
         <name>kitodo.org</name>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
-            <version>3.0.0-beta.1-SNAPSHOT</version>
+            <version>3.0.0-beta.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
