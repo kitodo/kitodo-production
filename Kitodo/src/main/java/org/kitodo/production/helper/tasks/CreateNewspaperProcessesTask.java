@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.production.exceptions.ProcessCreationException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.bibliography.course.Course;

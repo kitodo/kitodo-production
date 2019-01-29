@@ -21,8 +21,8 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.joda.time.Duration;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 
 /**

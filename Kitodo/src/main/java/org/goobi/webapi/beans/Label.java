@@ -18,7 +18,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * The Label class provides serialization for Map &lt;String,String&gt; objects

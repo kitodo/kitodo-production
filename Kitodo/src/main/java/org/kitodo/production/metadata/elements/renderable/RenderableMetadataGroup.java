@@ -28,7 +28,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.exceptions.MetadataException;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataProcessor;
 

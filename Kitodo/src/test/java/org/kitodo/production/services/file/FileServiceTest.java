@@ -26,11 +26,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.ExecutionPermission;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 
 public class FileServiceTest {
 

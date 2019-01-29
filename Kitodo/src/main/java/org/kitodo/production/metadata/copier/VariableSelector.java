@@ -13,7 +13,7 @@ package org.kitodo.production.metadata.copier;
 
 import java.lang.reflect.Field;
 
-import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.exceptions.MetadataException;
 
 /**
  * A VariableSelector provides methods to retrieve variables used in Goobi.

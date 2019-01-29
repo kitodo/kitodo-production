@@ -30,11 +30,11 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.xml.fileformats.FileFormat;
-import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.xml.fileformats.FileFormat;
+import org.kitodo.production.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.services.ServiceManager;

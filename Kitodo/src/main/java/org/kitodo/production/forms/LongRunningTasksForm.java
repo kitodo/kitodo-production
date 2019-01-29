@@ -13,8 +13,8 @@ package org.kitodo.production.forms;
 
 import java.util.List;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 import org.kitodo.production.helper.tasks.TaskManager;

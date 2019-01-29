@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
-import org.kitodo.ExecutionPermission;
+import org.kitodo.production.ExecutionPermission;
 
 public class WebDriverProvider {
 

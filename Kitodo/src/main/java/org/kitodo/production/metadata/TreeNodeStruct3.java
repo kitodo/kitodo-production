@@ -14,8 +14,8 @@ package org.kitodo.production.metadata;
 import java.util.ArrayList;
 
 import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {

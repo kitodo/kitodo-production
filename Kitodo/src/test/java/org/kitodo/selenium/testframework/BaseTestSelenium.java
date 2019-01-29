@@ -19,12 +19,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.ExecutionPermission;
-import org.kitodo.FileLoader;
-import org.kitodo.MockDatabase;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
+import org.kitodo.production.ExecutionPermission;
+import org.kitodo.production.FileLoader;
+import org.kitodo.production.MockDatabase;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 

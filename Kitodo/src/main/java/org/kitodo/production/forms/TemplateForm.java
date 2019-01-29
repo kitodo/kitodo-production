@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.exceptions.WorkflowException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;

@@ -11,7 +11,7 @@
 
 package org.kitodo.demo;
 
-import org.kitodo.MockDatabase;
+import org.kitodo.production.MockDatabase;
 
 public class KitodoEnvironmentBuilder {
 

@@ -27,7 +27,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.PasswordConfig;
+import org.kitodo.production.config.PasswordConfig;
 import org.kitodo.production.helper.Helper;
 import org.passay.CharacterRule;
 import org.passay.DictionaryRule;

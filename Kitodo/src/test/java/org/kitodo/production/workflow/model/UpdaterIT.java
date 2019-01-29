@@ -14,8 +14,8 @@ package org.kitodo.production.workflow.model;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 public class UpdaterIT {

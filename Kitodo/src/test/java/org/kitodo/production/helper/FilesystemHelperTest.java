@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.production.config.ConfigCore;
 import org.kitodo.production.services.file.FileService;
 
 public class FilesystemHelperTest {

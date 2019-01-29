@@ -21,8 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 
 /**

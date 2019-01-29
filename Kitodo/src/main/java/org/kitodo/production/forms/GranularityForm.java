@@ -24,8 +24,8 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.helper.FacesUtils;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;

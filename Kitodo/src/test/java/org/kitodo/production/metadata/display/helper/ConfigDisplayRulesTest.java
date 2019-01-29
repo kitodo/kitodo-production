@@ -18,7 +18,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.FileLoader;
+import org.kitodo.production.FileLoader;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.DisplayType;
 

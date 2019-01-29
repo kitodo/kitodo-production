@@ -25,7 +25,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.kitodo.config.ConfigCore;
+import org.kitodo.production.config.ConfigCore;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LegalTexts;
 

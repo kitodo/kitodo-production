@@ -21,10 +21,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 public class GoobiScriptIT {

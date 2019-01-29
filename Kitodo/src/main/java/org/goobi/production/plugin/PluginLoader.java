@@ -32,8 +32,8 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
 /**

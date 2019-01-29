@@ -16,8 +16,8 @@ import java.net.URI;
 import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class DataEditorService {

@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
-import org.kitodo.config.ConfigCore;
+import org.kitodo.production.config.ConfigCore;
 import org.omnifaces.cdi.Eager;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;

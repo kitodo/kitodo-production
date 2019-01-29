@@ -8,10 +8,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.MockDatabase;
+import org.kitodo.production.exceptions.WorkflowException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

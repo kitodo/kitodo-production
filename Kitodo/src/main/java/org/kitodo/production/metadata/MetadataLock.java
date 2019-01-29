@@ -14,8 +14,8 @@ package org.kitodo.production.metadata;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 
 /**
  * Bean für die Sperrung der Metadaten.

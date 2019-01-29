@@ -12,10 +12,10 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.config.KitodoConfig;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.openqa.selenium.WebElement;

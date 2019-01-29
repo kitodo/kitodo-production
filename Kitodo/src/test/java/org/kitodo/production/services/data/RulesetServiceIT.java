@@ -24,11 +24,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.MockDatabase;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 /**

@@ -16,9 +16,9 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
-import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.production.MockDatabase;
+import org.kitodo.production.SecurityTestUtils;
 import org.kitodo.production.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;

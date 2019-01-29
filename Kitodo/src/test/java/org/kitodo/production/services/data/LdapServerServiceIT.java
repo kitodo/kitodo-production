@@ -17,8 +17,8 @@ import static org.junit.Assert.assertFalse;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 public class LdapServerServiceIT {

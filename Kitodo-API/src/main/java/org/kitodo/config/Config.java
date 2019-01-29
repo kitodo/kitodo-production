@@ -33,7 +33,7 @@ public abstract class Config {
      *            file with configuration
      * @return the configuration
      */
-    static PropertiesConfiguration getConfig(String configFile) {
+    protected static PropertiesConfiguration getConfig(String configFile) {
         if (Objects.isNull(config)) {
             synchronized (Config.class) {
                 PropertiesConfiguration initialized = config;
@@ -68,7 +68,8 @@ public abstract class Config {
      * @param usedValue
      *            default value being used
      */
-    static <T> void logConversionException(String configFile, String key, Class<T> failedClass, ConversionException occurred,
+    protected static <T> void logConversionException(String configFile, String key, Class<T> failedClass,
+            ConversionException occurred,
                                                    T usedValue) {
         logger.catching(Level.DEBUG, occurred);
         final String message = "Configuration found in {} for key {} is defined as \"{}\", but "

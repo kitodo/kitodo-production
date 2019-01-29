@@ -21,8 +21,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.services.ServiceManager;
 
 public class ClientServiceIT {

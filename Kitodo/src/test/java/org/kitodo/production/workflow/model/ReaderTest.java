@@ -22,8 +22,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.FileLoader;
-import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.FileLoader;
+import org.kitodo.production.exceptions.WorkflowException;
 import org.kitodo.production.workflow.model.beans.Diagram;
 import org.kitodo.production.workflow.model.beans.TaskInfo;
 

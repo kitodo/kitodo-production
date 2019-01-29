@@ -14,11 +14,11 @@ package org.kitodo.production.helper.tasks;
 import java.net.URI;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.export.ExportDms;
+import org.kitodo.production.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 
 /**
- * The class ExportDmsTask accepts an {@link org.kitodo.export.ExportDms} for a
+ * The class ExportDmsTask accepts an {@link org.kitodo.production.export.ExportDms} for a
  * process and provides the ability to run the export in the background this
  * way. This is especially valuable if the export has a big load of images to
  * copy.

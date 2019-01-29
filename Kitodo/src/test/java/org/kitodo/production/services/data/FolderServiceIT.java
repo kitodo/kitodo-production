@@ -19,8 +19,8 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.production.MockDatabase;
 
 /**
  * Tests for TaskService class.

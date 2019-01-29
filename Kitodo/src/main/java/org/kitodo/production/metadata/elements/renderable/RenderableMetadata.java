@@ -21,7 +21,7 @@ import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.BindState;

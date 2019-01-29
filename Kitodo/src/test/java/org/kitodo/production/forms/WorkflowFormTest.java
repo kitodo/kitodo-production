@@ -21,9 +21,9 @@ import java.net.URI;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.FileLoader;
-import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.production.FileLoader;
+import org.kitodo.production.config.ConfigCore;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 

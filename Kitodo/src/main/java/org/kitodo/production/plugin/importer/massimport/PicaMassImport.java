@@ -77,7 +77,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.exceptions.ImportPluginException;
+import org.kitodo.production.exceptions.ImportPluginException;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;

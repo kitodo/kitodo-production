@@ -23,8 +23,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.production.config.ConfigCore;
 
 /**
  * Test class for class 'XMLEditorTest'.

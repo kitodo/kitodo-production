@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.production.config.ConfigCore;
 
 public class UghUtils {
     private static final Logger logger = LogManager.getLogger(UghUtils.class);

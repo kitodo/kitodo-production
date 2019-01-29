@@ -14,9 +14,9 @@ package org.kitodo.production.metadata.comparator;
 import java.net.URI;
 import java.util.Comparator;
 
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.NotImplementedException;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 

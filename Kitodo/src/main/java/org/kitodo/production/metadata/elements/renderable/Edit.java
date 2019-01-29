@@ -18,9 +18,9 @@ import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.production.config.ConfigCore;
+import org.kitodo.production.config.enums.ParameterCore;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.production.metadata.MetadataProcessor;
 
 /**

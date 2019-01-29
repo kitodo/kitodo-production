@@ -16,7 +16,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.kitodo.FileLoader;
+import org.kitodo.production.FileLoader;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 

@@ -17,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.production.MockDatabase;
 
 /**
  * Tests for LdapGroupService class.

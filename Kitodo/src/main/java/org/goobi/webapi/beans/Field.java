@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
-import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.production.config.ConfigProject;
 
 @XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })
 public class Field {

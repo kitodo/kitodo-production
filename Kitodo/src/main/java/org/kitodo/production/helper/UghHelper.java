@@ -21,7 +21,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.production.exceptions.UghHelperException;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 

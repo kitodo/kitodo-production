@@ -25,8 +25,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.production.ExecutionPermission;
 
 public class CommandServiceTest {
     private static String scriptExtension;

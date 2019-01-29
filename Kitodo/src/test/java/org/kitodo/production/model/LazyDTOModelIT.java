@@ -17,7 +17,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.MockDatabase;
+import org.kitodo.production.MockDatabase;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
