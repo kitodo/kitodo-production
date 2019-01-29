@@ -12,12 +12,16 @@
 package org.kitodo.export;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,13 +124,17 @@ public class ExportMets {
          * We write to the user’s home directory or to the hotfolder here, not
          * to a content repository, therefore no use of file service.
          */
-        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
-            /*
-             * TODO: Add XSLT processing here. E.g., save() the workpiece to a
-             * ByteArrayOutputStream and pass its content to the XSLT processor,
-             * then write the result of the XSLT processor to the file.
-             */
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             workpiece.save(out);
+            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray())) {
+                StreamSource source = new StreamSource(byteArrayInputStream);
+                try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
+                    URI xslFile = XsltHelper.getXsltFileFromConfig(process);
+                    bufferedOutputStream.write(XsltHelper.transformXmlByXslt(source, xslFile).toByteArray());
+                } catch (TransformerException e) {
+                    logger.error("Writing Mets file failed!", e);
+                }
+            }
         }
 
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
