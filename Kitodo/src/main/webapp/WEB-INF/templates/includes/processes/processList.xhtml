@@ -44,7 +44,6 @@
             <p:columns value="#{ProcessForm.getProcessPropertyNames()}"
                        var="propertyName"
                        headerText="#{propertyName}"
-                       sortBy="#{ProcessForm.getPropertyValue(process, propertyName)}"
                        rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), propertyName)}">
                 <h:outputText value="#{ProcessForm.getPropertyValue(process, propertyName)}"/>
             </p:columns>
@@ -209,4 +208,5 @@
             <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
         </p:commandLink>
     </h:form>
+    <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
 </ui:composition>

@@ -19,6 +19,7 @@
     --callto-dark: #258725;
     --disabled-light: #d8d8d8;
     --disabled-dark: #999999;
+    --lightgray: #f3f3f3;
     --alert: #f94a15;
     --error-border: #b94a48;
     --error-background: #f2dede;
@@ -381,10 +382,12 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background: var(--primary);
 }
 
+.ui-selectcheckboxmenu-header {
+    display: none;
+}
+
 .switch.ui-chkbox .ui-chkbox-box,
-.switch.ui-chkbox .ui-chkbox-box.ui-state-hover,
-.ui-selection-column .ui-chkbox .ui-chkbox-box,
-.ui-selection-column .ui-chkbox .ui-chkbox-box.ui-state-hover {
+.switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
     width: 40px;
     height: 40px;
     border-radius: 3px;
@@ -392,23 +395,26 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     cursor: pointer;
 }
 
-.switch.ui-chkbox .ui-chkbox-icon,
-.ui-selection-column .ui-chkbox .ui-chkbox-icon {
+.ui-chkbox-icon {
+    border: 1px solid var(--primary);
+    border-radius: 3px;
+    background-color: white !important;
+}
+
+.switch.ui-chkbox .ui-chkbox-icon {
     width: 80%;
     height: 40%;
     position: relative;
     left: 10%;
     top: 30%;
-    background: var(--default-bright);
-    background-image: none;
+    background: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-.switch.ui-chkbox .ui-chkbox-icon:after,
-.ui-selection-column .ui-chkbox .ui-chkbox-icon:after {
+.switch.ui-chkbox .ui-chkbox-icon:after {
   position: relative;
   display: block;
   content: "";
@@ -423,16 +429,19 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 }
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active,
-.switch .ui-chkbox-box.ui-state-active.ui-state-hover,
-.ui-selection-column .ui-chkbox .ui-chkbox-box.ui-state-active,
-.ui-selection-column .ui-chkbox-box.ui-state-active.ui-state-hover {
+.switch .ui-chkbox-box.ui-state-active.ui-state-hover {
     background: #00C62F;
 }
 
-.switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after,
-.ui-selection-column .ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
+.switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
   left: calc(50% + 2px);
   background: #00C62F;
+}
+
+.ui-selectcheckboxmenu-panel,
+.ui-selectcheckboxmenu-items-wrapper,
+.ui-selectcheckboxmenu-items {
+    background-color: var(--lightgray);
 }
 
 .ui-datatable thead th,
@@ -460,7 +469,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 }
 
 #metadata .ui-datatable-odd {
-    background: #f3f3f3;
+    background: var(--lightgray);
 }
 
 #imagePreviewForm\:imageControlPanel {
