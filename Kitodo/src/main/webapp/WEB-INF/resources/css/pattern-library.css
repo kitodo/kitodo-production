@@ -445,6 +445,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background-color: var(--lightgray);
 }
 
+.ui-tree {
+    width: 100%;
+}
+
 .ui-datatable thead th,
 .ui-datatable tbody td,
 .ui-datatable tfoot td,
