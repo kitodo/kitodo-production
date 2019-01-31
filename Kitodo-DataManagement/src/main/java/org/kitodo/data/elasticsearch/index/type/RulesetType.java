@@ -11,11 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
@@ -26,18 +24,18 @@ import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 public class RulesetType extends BaseType<Ruleset> {
 
     @Override
-    JsonObject getJsonObject(Ruleset ruleset) {
-        Integer clientId = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getId() : 0;
+    Map<String, Object> getJsonObject(Ruleset ruleset) {
+        int clientId = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getId() : 0;
         String clientName = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getName() : "";
 
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(RulesetTypeField.TITLE.getKey(), preventNull(ruleset.getTitle()));
-        jsonObjectBuilder.add(RulesetTypeField.FILE.getKey(), preventNull(ruleset.getFile()));
-        jsonObjectBuilder.add(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
-        jsonObjectBuilder.add(RulesetTypeField.FILE_CONTENT.getKey(), "");
-        jsonObjectBuilder.add(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
-        jsonObjectBuilder.add(RulesetTypeField.CLIENT_ID.getKey(), clientId);
-        jsonObjectBuilder.add(RulesetTypeField.CLIENT_NAME.getKey(), clientName);
-        return jsonObjectBuilder.build();
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(RulesetTypeField.TITLE.getKey(), preventNull(ruleset.getTitle()));
+        jsonObject.put(RulesetTypeField.FILE.getKey(), preventNull(ruleset.getFile()));
+        jsonObject.put(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
+        jsonObject.put(RulesetTypeField.FILE_CONTENT.getKey(), "");
+        jsonObject.put(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
+        jsonObject.put(RulesetTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObject.put(RulesetTypeField.CLIENT_NAME.getKey(), clientName);
+        return jsonObject;
     }
 }

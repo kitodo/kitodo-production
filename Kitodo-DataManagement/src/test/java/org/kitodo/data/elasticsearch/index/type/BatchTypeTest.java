@@ -13,17 +13,10 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -76,22 +69,20 @@ public class BatchTypeTest {
         BatchType batchType = new BatchType();
 
         Batch batch = prepareData().get(0);
-        HttpEntity document = batchType.createDocument(batch);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = batchType.createDocument(batch);
 
         assertEquals("Key title doesn't match to given value!", "Batch1", BatchTypeField.TITLE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "LOGISTIC", BatchTypeField.TYPE.getStringValue(actual));
 
-        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
 
-        JsonObject process = processes.getJsonObject(0);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Key processes.id doesn't match to given value!", 1, ProcessTypeField.ID.getIntValue(process));
         assertEquals("Key processes.title doesn't match to given value!", "First",
             ProcessTypeField.TITLE.getStringValue(process));
 
-        process = processes.getJsonObject(1);
+        process = processes.get(1);
         assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
         assertEquals("Key processes.title doesn't match to given value!", "Second",
             ProcessTypeField.TITLE.getStringValue(process));
@@ -102,14 +93,12 @@ public class BatchTypeTest {
         BatchType batchType = new BatchType();
 
         Batch batch = prepareData().get(1);
-        HttpEntity document = batchType.createDocument(batch);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = batchType.createDocument(batch);
 
         assertEquals("Key title doesn't match to given value!", "Batch2", BatchTypeField.TITLE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "", BatchTypeField.TYPE.getStringValue(actual));
 
-        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
     }
 
@@ -118,13 +107,12 @@ public class BatchTypeTest {
         BatchType batchType = new BatchType();
 
         Batch batch = prepareData().get(0);
-        HttpEntity document = batchType.createDocument(batch);
+        Map<String, Object> actual = batchType.createDocument(batch);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
 
-        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
-        JsonObject process = processes.getJsonObject(0);
+        List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
     }
 
@@ -133,7 +121,7 @@ public class BatchTypeTest {
         BatchType batchType = new BatchType();
 
         List<Batch> batches = prepareData();
-        Map<Integer, HttpEntity> documents = batchType.createDocuments(batches);
+        Map<Integer, Map<String, Object>> documents = batchType.createDocuments(batches);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }

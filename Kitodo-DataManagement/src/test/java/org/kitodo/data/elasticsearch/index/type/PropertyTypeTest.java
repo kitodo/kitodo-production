@@ -13,7 +13,6 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,12 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -78,9 +71,7 @@ public class PropertyTypeTest {
         PropertyType propertyType = new PropertyType();
 
         Property property = prepareData().get(0);
-        HttpEntity document = propertyType.createDocument(property);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = propertyType.createDocument(property);
 
         assertEquals("Key title doesn't match to given value!", "Property1",
             PropertyTypeField.TITLE.getStringValue(actual));
@@ -91,19 +82,19 @@ public class PropertyTypeTest {
         assertEquals("Key creationDate doesn't match to given value!", formatDate(property.getCreationDate()),
             PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
-        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
 
-        JsonObject process = processes.getJsonObject(0);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
 
-        process = processes.getJsonObject(1);
+        process = processes.get(1);
         assertEquals("Key processes.id doesn't match to given value!", 3, ProcessTypeField.ID.getIntValue(process));
 
-        JsonArray workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
+        List<Map<String, Object>> workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
     }
 
@@ -112,9 +103,7 @@ public class PropertyTypeTest {
         PropertyType propertyType = new PropertyType();
 
         Property property = prepareData().get(1);
-        HttpEntity document = propertyType.createDocument(property);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = propertyType.createDocument(property);
 
         assertEquals("Key title doesn't match to given value!", "Property2",
             PropertyTypeField.TITLE.getStringValue(actual));
@@ -125,16 +114,16 @@ public class PropertyTypeTest {
         assertEquals("Key creationDate doesn't match to given value!", formatDate(property.getCreationDate()),
             PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
-        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
+        List<Map<String, Object>> workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
-        JsonObject template = templates.getJsonObject(0);
+        Map<String, Object> template = templates.get(0);
         assertEquals("Key templates.id doesn't match to given value!", 1,
             PropertyTypeField.ID.getIntValue(template));
     }
@@ -144,13 +133,12 @@ public class PropertyTypeTest {
         PropertyType propertyType = new PropertyType();
 
         Property property = prepareData().get(0);
-        HttpEntity document = propertyType.createDocument(property);
+        Map<String, Object> actual = propertyType.createDocument(property);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
 
-        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
-        JsonObject process = processes.getJsonObject(0);
+        List<Map<String, Object>> processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Amount of keys in processes is incorrect!", 1, process.keySet().size());
     }
 
@@ -159,7 +147,7 @@ public class PropertyTypeTest {
         PropertyType propertyType = new PropertyType();
 
         List<Property> properties = prepareData();
-        Map<Integer, HttpEntity> documents = propertyType.createDocuments(properties);
+        Map<Integer, Map<String, Object>> documents = propertyType.createDocuments(properties);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 

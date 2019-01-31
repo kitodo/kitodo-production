@@ -17,11 +17,11 @@ import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 
-import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of Elastic Search Indexer for index package.
@@ -64,11 +64,11 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      */
     @SuppressWarnings("unchecked")
     public void performSingleRequest(T baseIndexedBean, S baseType, boolean forceRefresh)
-            throws IOException, CustomResponseException {
+            throws CustomResponseException, DataException, IOException {
         IndexRestClient restClient = initiateRestClient();
 
         if (method.equals(HttpMethod.PUT)) {
-            HttpEntity document = baseType.createDocument(baseIndexedBean);
+            Map<String, Object> document = baseType.createDocument(baseIndexedBean);
             restClient.addDocument(document, baseIndexedBean.getId(), forceRefresh);
         } else if (method.equals(HttpMethod.DELETE)) {
             restClient.deleteDocument(baseIndexedBean.getId(), forceRefresh);
@@ -87,8 +87,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    public void performSingleRequest(Integer beanId, boolean forceRefresh)
-            throws IOException, CustomResponseException {
+    public void performSingleRequest(Integer beanId, boolean forceRefresh) throws CustomResponseException, DataException {
         IndexRestClient restClient = initiateRestClient();
 
         if (method.equals(HttpMethod.DELETE)) {
@@ -107,13 +106,16 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            type on which will be called method createDocument()
      */
     @SuppressWarnings("unchecked")
-    public void performMultipleRequests(List<T> baseIndexedBeans, S baseType)
-            throws InterruptedException, CustomResponseException {
+    public void performMultipleRequests(List<T> baseIndexedBeans, S baseType, boolean async) throws CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
         if (method.equals(HttpMethod.PUT)) {
-            Map<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
-            restClient.addType(documents);
+            Map<Integer, Map<String, Object>> documents = baseType.createDocuments(baseIndexedBeans);
+            if (async) {
+                restClient.addTypeAsync(documents);
+            } else {
+                restClient.addTypeSync(documents);
+            }
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }

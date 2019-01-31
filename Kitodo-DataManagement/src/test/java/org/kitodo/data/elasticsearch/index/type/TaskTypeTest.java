@@ -15,18 +15,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
@@ -125,9 +117,7 @@ public class TaskTypeTest {
         TaskType taskType = new TaskType();
 
         Task task = prepareData().get(0);
-        HttpEntity document = taskType.createDocument(task);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = taskType.createDocument(task);
 
         assertEquals("Key title doesn't match to given value!", "Testing", TaskTypeField.TITLE.getStringValue(actual));
         assertEquals("Key ordering doesn't match to given value!", 1, TaskTypeField.ORDERING.getIntValue(actual));
@@ -165,13 +155,13 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "First",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray roles = TaskTypeField.ROLES.getJsonArray(actual);
+        List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
         assertEquals("Size roles doesn't match to given value!", 2, roles.size());
 
-        JsonObject role = roles.getJsonObject(0);
+        Map<String, Object> role = roles.get(0);
         assertEquals("Key roles.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(role));
 
-        role = roles.getJsonObject(1);
+        role = roles.get(1);
         assertEquals("Key roles.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(role));
     }
 
@@ -180,9 +170,7 @@ public class TaskTypeTest {
         TaskType taskType = new TaskType();
 
         Task task = prepareData().get(1);
-        HttpEntity document = taskType.createDocument(task);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = taskType.createDocument(task);
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             TaskTypeField.TITLE.getStringValue(actual));
@@ -201,7 +189,7 @@ public class TaskTypeTest {
                 TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual));
         assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10 00:00:00",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
-        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
+        assertEquals("Key processingEnd doesn't match to given value!", "",
             actual.get(TaskTypeField.PROCESSING_END.getKey()));
         assertEquals("Key processingTime doesn't match to given value!", "2017-02-17 00:00:00",
             TaskTypeField.PROCESSING_TIME.getStringValue(actual));
@@ -221,13 +209,13 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray roles = TaskTypeField.ROLES.getJsonArray(actual);
+        List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
         assertEquals("Size roles doesn't match to given value!", 2, roles.size());
 
-        JsonObject role = roles.getJsonObject(0);
+        Map<String, Object>role = roles.get(0);
         assertEquals("Key roles.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(role));
 
-        role = roles.getJsonObject(1);
+        role = roles.get(1);
         assertEquals("Key roles.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(role));
     }
 
@@ -236,9 +224,7 @@ public class TaskTypeTest {
         TaskType taskType = new TaskType();
 
         Task task = prepareData().get(2);
-        HttpEntity document = taskType.createDocument(task);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = taskType.createDocument(task);
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             TaskTypeField.TITLE.getStringValue(actual));
@@ -249,11 +235,11 @@ public class TaskTypeTest {
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 0,
                 TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL,
+        assertEquals("Key processingBegin doesn't match to given value!", "",
             actual.get(TaskTypeField.PROCESSING_BEGIN.getKey()));
-        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
+        assertEquals("Key processingEnd doesn't match to given value!", "",
             actual.get(TaskTypeField.PROCESSING_END.getKey()));
-        assertEquals("Key processingTime doesn't match to given value!", JsonValue.NULL,
+        assertEquals("Key processingTime doesn't match to given value!", "",
             actual.get(TaskTypeField.PROCESSING_TIME.getKey()));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
@@ -271,7 +257,7 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray roles = TaskTypeField.ROLES.getJsonArray(actual);
+        List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
         assertEquals("Size roles doesn't match to given value!", 0, roles.size());
     }
 
@@ -280,13 +266,12 @@ public class TaskTypeTest {
         TaskType taskType = new TaskType();
 
         Task task = prepareData().get(0);
-        HttpEntity document = taskType.createDocument(task);
+        Map<String, Object> actual = taskType.createDocument(task);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
 
-        JsonArray roles = TaskTypeField.ROLES.getJsonArray(actual);
-        JsonObject role = roles.getJsonObject(0);
+        List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
+        Map<String, Object> role = roles.get(0);
         assertEquals("Amount of keys in roles is incorrect!", 1, role.keySet().size());
     }
 
@@ -295,7 +280,7 @@ public class TaskTypeTest {
         TaskType taskType = new TaskType();
 
         List<Task> tasks = prepareData();
-        Map<Integer, HttpEntity> documents = taskType.createDocuments(tasks);
+        Map<Integer, Map<String, Object>> documents = taskType.createDocuments(tasks);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }

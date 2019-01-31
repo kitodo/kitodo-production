@@ -11,10 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.json.JsonArray;
-import javax.json.JsonObject;
 
 import org.kitodo.data.exceptions.DataException;
 
@@ -36,9 +35,9 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return boolean value for given json
      */
-    default boolean getBooleanValue(JsonObject jsonObject) throws DataException {
+    default boolean getBooleanValue(Map<String, Object> jsonObject) throws DataException {
         try {
-            return jsonObject.getBoolean(this.toString());
+            return (Boolean) jsonObject.get(this.toString());
         } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve boolean value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
@@ -52,9 +51,9 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return int value for given json
      */
-    default int getIntValue(JsonObject jsonObject) throws DataException {
+    default int getIntValue(Map<String, Object> jsonObject) throws DataException {
         try {
-            return jsonObject.getInt(this.toString());
+            return (Integer) jsonObject.get(this.toString());
         } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve int value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
@@ -68,9 +67,9 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return String value for given json
      */
-    default String getStringValue(JsonObject jsonObject) throws DataException {
+    default String getStringValue(Map<String, Object> jsonObject) throws DataException {
         try {
-            return jsonObject.getString(this.toString());
+            return (String) jsonObject.get(this.toString());
         } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve String value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
@@ -84,9 +83,9 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return json array for given json
      */
-    default JsonArray getJsonArray(JsonObject jsonObject) throws DataException {
+    default List<Map<String, Object>> getJsonArray(Map<String, Object> jsonObject) throws DataException {
         try {
-            return jsonObject.getJsonArray(this.toString());
+            return (List<Map<String, Object>>) jsonObject.get(this.toString());
         } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve JsonArray value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
@@ -100,10 +99,10 @@ interface TypeInterface {
      *            JSONObject
      * @return size of array with related objects
      */
-    default int getSizeOfProperty(JsonObject object) throws DataException {
+    default int getSizeOfProperty(Map<String, Object> object) throws DataException {
         if (Objects.nonNull(object)) {
             try {
-                return object.getJsonArray(this.toString()).size();
+                return ((List) object.get(this.toString())).size();
             } catch (ClassCastException | NullPointerException e) {
                 throw new DataException("Not possible to retrieve size of array for key " + this.toString()
                         + ". Exception: " + e.getMessage());

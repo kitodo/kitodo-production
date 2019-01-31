@@ -15,16 +15,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
@@ -58,9 +52,7 @@ public class RulesetTypeTest {
         RulesetType rulesetType = new RulesetType();
         Ruleset ruleset = prepareData().get(0);
 
-        HttpEntity document = rulesetType.createDocument(ruleset);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = rulesetType.createDocument(ruleset);
 
         assertEquals("Key title doesn't match to given value!", "SLUBDD",
             RulesetTypeField.TITLE.getStringValue(actual));
@@ -78,9 +70,8 @@ public class RulesetTypeTest {
         RulesetType rulesetType = new RulesetType();
         Ruleset ruleset = prepareData().get(0);
 
-        HttpEntity document = rulesetType.createDocument(ruleset);
+        Map<String, Object> actual = rulesetType.createDocument(ruleset);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
     }
 
@@ -89,7 +80,7 @@ public class RulesetTypeTest {
         RulesetType rulesetType = new RulesetType();
 
         List<Ruleset> rulesets = prepareData();
-        Map<Integer, HttpEntity> documents = rulesetType.createDocuments(rulesets);
+        Map<Integer, Map<String, Object>> documents = rulesetType.createDocuments(rulesets);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

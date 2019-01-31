@@ -14,19 +14,12 @@ package org.kitodo.data.elasticsearch.index.type;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
@@ -183,9 +176,7 @@ public class ProjectTypeTest {
         ProjectType processType = new ProjectType();
 
         Project project = prepareData().get(0);
-        HttpEntity document = processType.createDocument(project);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(project);
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             ProjectTypeField.TITLE.getStringValue(actual));
@@ -209,26 +200,26 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
-        JsonObject process = processes.getJsonObject(0);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
         assertEquals("Key processes.title doesn't match to given value!", "Second",
             ProcessTypeField.TITLE.getStringValue(process));
 
-        JsonArray templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
-        JsonObject template = templates.getJsonObject(0);
+        Map<String, Object> template = templates.get(0);
         assertEquals("Key templates.id doesn't match to given value!", 1, TemplateTypeField.ID.getIntValue(template));
         assertEquals("Key templates.title doesn't match to given value!", "First",
             TemplateTypeField.TITLE.getStringValue(template));
 
-        JsonArray folders = ProjectTypeField.FOLDER.getJsonArray(actual);
+        List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
         assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
-        JsonObject folder = folders.getJsonObject(0);
+        Map<String, Object> folder = folders.get(0);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
@@ -239,7 +230,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(1);
+        folder = folders.get(1);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
@@ -250,7 +241,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(2);
+        folder = folders.get(2);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
@@ -261,7 +252,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(3);
+        folder = folders.get(3);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
@@ -272,7 +263,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(4);
+        folder = folders.get(4);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
@@ -283,10 +274,10 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
+        List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
-        JsonObject user = users.getJsonObject(0);
+        Map<String, Object> user = users.get(0);
         assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
         assertEquals("Key users.name doesn't match to given value!", "Tic", UserTypeField.NAME.getStringValue(user));
         assertEquals("Key users.surname doesn't match to given value!", "Tac",
@@ -294,7 +285,7 @@ public class ProjectTypeTest {
         assertEquals("Key users.login doesn't match to given value!", "first",
             UserTypeField.LOGIN.getStringValue(user));
 
-        user = users.getJsonObject(1);
+        user = users.get(1);
         assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
         assertEquals("Key users.name doesn't match to given value!", "Ted", UserTypeField.NAME.getStringValue(user));
         assertEquals("Key users.surname doesn't match to given value!", "Barney",
@@ -308,9 +299,7 @@ public class ProjectTypeTest {
         ProjectType processType = new ProjectType();
 
         Project project = prepareData().get(1);
-        HttpEntity document = processType.createDocument(project);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(project);
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             ProjectTypeField.TITLE.getStringValue(actual));
@@ -334,26 +323,26 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
-        JsonObject process = processes.getJsonObject(0);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
         assertEquals("Key processes.title doesn't match to given value!", "Second",
             ProcessTypeField.TITLE.getStringValue(process));
 
-        JsonArray templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
-        JsonObject template = templates.getJsonObject(0);
+        Map<String, Object> template = templates.get(0);
         assertEquals("Key templates.id doesn't match to given value!", 1, TemplateTypeField.ID.getIntValue(template));
         assertEquals("Key templates.title doesn't match to given value!", "First",
             TemplateTypeField.TITLE.getStringValue(template));
 
-        JsonArray folders = ProjectTypeField.FOLDER.getJsonArray(actual);
+        List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
         assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
-        JsonObject folder = folders.getJsonObject(0);
+        Map<String, Object> folder = folders.get(0);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
@@ -364,7 +353,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(1);
+        folder = folders.get(1);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
@@ -375,7 +364,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(2);
+        folder = folders.get(2);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
@@ -386,7 +375,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(3);
+        folder = folders.get(3);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
@@ -397,7 +386,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        folder = folders.getJsonObject(4);
+        folder = folders.get(4);
         assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
             ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
@@ -408,10 +397,10 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
+        List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
-        JsonObject user = users.getJsonObject(0);
+        Map<String, Object> user = users.get(0);
         assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
         assertEquals("Key users.name doesn't match to given value!", "Tic", UserTypeField.NAME.getStringValue(user));
         assertEquals("Key users.surname doesn't match to given value!", "Tac",
@@ -419,7 +408,7 @@ public class ProjectTypeTest {
         assertEquals("Key users.login doesn't match to given value!", "first",
             UserTypeField.LOGIN.getStringValue(user));
 
-        user = users.getJsonObject(1);
+        user = users.get(1);
         assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
         assertEquals("Key users.name doesn't match to given value!", "Ted", UserTypeField.NAME.getStringValue(user));
         assertEquals("Key users.surname doesn't match to given value!", "Barney",
@@ -434,9 +423,7 @@ public class ProjectTypeTest {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Project project = prepareData().get(2);
-        HttpEntity document = processType.createDocument(project);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(project);
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             ProjectTypeField.TITLE.getStringValue(actual));
@@ -460,13 +447,13 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
+        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray folder = ProjectTypeField.FOLDER.getJsonArray(actual);
+        List<Map<String, Object>> folder = ProjectTypeField.FOLDER.getJsonArray(actual);
         assertEquals("Size projectFileGroups doesn't match to given value!", 0, folder.size());
 
-        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
+        List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
     }
 
@@ -475,25 +462,24 @@ public class ProjectTypeTest {
         ProjectType processType = new ProjectType();
 
         Project project = prepareData().get(0);
-        HttpEntity document = processType.createDocument(project);
+        Map<String, Object> actual = processType.createDocument(project);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
 
-        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
-        JsonObject process = processes.getJsonObject(0);
+        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
+        Map<String, Object> process = processes.get(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
 
-        JsonArray templates = actual.getJsonArray("templates");
-        JsonObject template = templates.getJsonObject(0);
+        List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
+        Map<String, Object> template = templates.get(0);
         assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
-        JsonArray folders = ProjectTypeField.FOLDER.getJsonArray(actual);
-        JsonObject folder = folders.getJsonObject(0);
+        List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
+        Map<String, Object> folder = folders.get(0);
         assertEquals("Amount of keys in folders is incorrect!", 4, folder.keySet().size());
 
-        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
-        JsonObject user = users.getJsonObject(0);
+        List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
+        Map<String, Object> user = users.get(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }
 
@@ -502,7 +488,7 @@ public class ProjectTypeTest {
         ProjectType processType = new ProjectType();
 
         List<Project> processes = prepareData();
-        Map<Integer, HttpEntity> documents = processType.createDocuments(processes);
+        Map<Integer, Map<String, Object>> documents = processType.createDocuments(processes);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }

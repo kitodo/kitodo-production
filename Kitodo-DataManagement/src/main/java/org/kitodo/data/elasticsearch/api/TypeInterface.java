@@ -14,8 +14,6 @@ package org.kitodo.data.elasticsearch.api;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
-
 /**
  * Interface for serving types which are added to the index.
  *
@@ -26,7 +24,7 @@ import org.apache.http.HttpEntity;
  */
 public interface TypeInterface<T> {
 
-    HttpEntity createDocument(T baseIndexedBean);
+    Map<String, Object> createDocument(T baseIndexedBean);
 
-    Map<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans);
+    Map<Integer, Map<String, Object>> createDocuments(List<T> baseIndexedBeans);
 }

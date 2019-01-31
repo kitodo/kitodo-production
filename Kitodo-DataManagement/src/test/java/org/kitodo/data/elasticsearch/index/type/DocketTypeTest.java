@@ -14,16 +14,10 @@ package org.kitodo.data.elasticsearch.index.type;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
@@ -57,9 +51,7 @@ public class DocketTypeTest {
         DocketType docketType = new DocketType();
         Docket docket = prepareData().get(0);
 
-        HttpEntity document = docketType.createDocument(docket);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = docketType.createDocument(docket);
 
         assertEquals("Key title doesn't match to given value!", "default",
             DocketTypeField.TITLE.getStringValue(actual));
@@ -73,9 +65,8 @@ public class DocketTypeTest {
         DocketType docketType = new DocketType();
         Docket docket = prepareData().get(0);
 
-        HttpEntity document = docketType.createDocument(docket);
+        Map<String, Object> actual = docketType.createDocument(docket);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
     }
 
@@ -84,7 +75,7 @@ public class DocketTypeTest {
         DocketType docketType = new DocketType();
 
         List<Docket> dockets = prepareData();
-        Map<Integer, HttpEntity> documents = docketType.createDocuments(dockets);
+        Map<Integer, Map<String, Object>> documents = docketType.createDocuments(dockets);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

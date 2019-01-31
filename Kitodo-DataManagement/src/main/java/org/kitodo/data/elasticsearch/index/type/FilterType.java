@@ -11,9 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
@@ -24,12 +23,12 @@ import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 public class FilterType extends BaseType<Filter> {
 
     @Override
-    JsonObject getJsonObject(Filter filter) {
-        Integer user = filter.getUser() != null ? filter.getUser().getId() : 0;
+    Map<String, Object> getJsonObject(Filter filter) {
+        int user = filter.getUser() != null ? filter.getUser().getId() : 0;
 
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(FilterTypeField.VALUE.getKey(), preventNull(filter.getValue()));
-        jsonObjectBuilder.add(FilterTypeField.USER.getKey(), user);
-        return jsonObjectBuilder.build();
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(FilterTypeField.VALUE.getKey(), preventNull(filter.getValue()));
+        jsonObject.put(FilterTypeField.USER.getKey(), user);
+        return jsonObject;
     }
 }

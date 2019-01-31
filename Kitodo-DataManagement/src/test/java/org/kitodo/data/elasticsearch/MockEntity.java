@@ -12,14 +12,12 @@
 package org.kitodo.data.elasticsearch;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.elasticsearch.common.io.FileSystemUtils;
@@ -81,24 +79,44 @@ public class MockEntity {
         Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
     }
 
-    public static HashMap<Integer, HttpEntity> createEntities() {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
+    public static HashMap<Integer, Map<String, Object>> createEntities() {
+        HashMap<Integer, Map<String, Object>> documents = new HashMap<>();
 
-        String jsonString = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"amount\":2,\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
-        HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(1, entity);
+        Map<String, Object> firstBatchMap = new HashMap<>();
+        firstBatchMap.put("title", "Batch1");
+        firstBatchMap.put("type", "LOGISTIC");
+        firstBatchMap.put("amount", 2);
+        Map<String, Object> firstBatchProcesses = new HashMap<>();
+        firstBatchProcesses.put("id", Arrays.asList(1, 2));
+        firstBatchMap.put("processes", firstBatchProcesses);
+        documents.put(1, firstBatchMap);
 
-        jsonString = "{\"title\":\"Sort\",\"type\":\"null\",\"amount\":4,\"processes\":[]}";
-        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(2, entity);
+        Map<String, Object> secondBatchMap = new HashMap<>();
+        secondBatchMap.put("title", "Sort");
+        secondBatchMap.put("type", "");
+        secondBatchMap.put("amount", 4);
+        Map<String, Object> secondBatchMapProcesses = new HashMap<>();
+        secondBatchMapProcesses.put("id", Collections.emptyList());
+        secondBatchMap.put("processes", secondBatchMapProcesses);
+        documents.put(2, secondBatchMap);
 
-        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"amount\":0,\"processes\":[]}";
-        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(3, entity);
+        Map<String, Object> thirdBatchMap = new HashMap<>();
+        thirdBatchMap.put("title", "Batch2");
+        thirdBatchMap.put("type", "");
+        thirdBatchMap.put("amount", 0);
+        Map<String, Object> thirdBatchMapProcesses = new HashMap<>();
+        thirdBatchMapProcesses.put("id", Collections.emptyList());
+        thirdBatchMap.put("processes", thirdBatchMapProcesses);
+        documents.put(3, thirdBatchMap);
 
-        jsonString = "{\"title\":\"Order\",\"type\":\"null\",\"amount\":2,\"processes\":[]}";
-        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(4, entity);
+        Map<String, Object> fourthBatchMap = new HashMap<>();
+        fourthBatchMap.put("title", "Order");
+        fourthBatchMap.put("type", "");
+        fourthBatchMap.put("amount", 2);
+        Map<String, Object> fourthBatchMapProcesses = new HashMap<>();
+        fourthBatchMapProcesses.put("id", Collections.emptyList());
+        fourthBatchMap.put("processes", fourthBatchMapProcesses);
+        documents.put(4, fourthBatchMap);
 
         return documents;
     }
