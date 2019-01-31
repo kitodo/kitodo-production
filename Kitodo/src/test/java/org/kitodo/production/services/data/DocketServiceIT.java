@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -62,7 +63,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldCountAllDocketsAccordingToQuery() {
-        String query = matchQuery("title", "default").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("title", "default").operator(Operator.AND);
         await().untilAsserted(
             () -> assertEquals("Dockets were not counted correctly!", Long.valueOf(1), docketService.count(query)));
     }
@@ -109,7 +110,7 @@ public class DocketServiceIT {
     public void shouldFindByFile() {
         String expected = "docket.xsl";
         await().untilAsserted(() -> assertEquals("Docket was not found in index!", expected,
-            docketService.findByFile("docket.xsl").getJsonObject("_source").getString(DocketTypeField.FILE.getKey())));
+            docketService.findByFile("docket.xsl").get(DocketTypeField.FILE.getKey())));
     }
 
     @Test

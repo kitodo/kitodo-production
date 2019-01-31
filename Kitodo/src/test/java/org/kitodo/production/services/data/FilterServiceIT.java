@@ -61,7 +61,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldCountAllFiltersAccordingToQuery() {
-        String query = matchQuery("value", "\"id:1\"").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("value", "\"id:1\"").operator(Operator.AND);
         await().untilAsserted(
             () -> assertEquals("Filters were not counted correctly!", Long.valueOf(1), filterService.count(query)));
     }

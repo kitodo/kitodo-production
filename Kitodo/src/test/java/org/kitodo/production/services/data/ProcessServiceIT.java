@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -82,7 +83,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountProcessesAccordingToQuery() {
-        String query = matchQuery("title", "First Process").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("title", "First Process").operator(Operator.AND);
         await().untilAsserted(() -> assertEquals("Process was not found!", processService.count(query),
             processService.findNumberOfProcessesWithTitle("First Process")));
     }

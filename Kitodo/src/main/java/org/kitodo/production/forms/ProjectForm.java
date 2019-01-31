@@ -65,7 +65,7 @@ public class ProjectForm extends BaseForm {
     private Folder myFolder;
     private Project baseProject;
 
-    // lists accepting the preliminary actions of adding and delting folders
+    // lists accepting the preliminary actions of adding and deleting folders
     // it needs the execution of commit folders to make these changes
     // permanent
     private List<Integer> newFolders = new ArrayList<>();

@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -79,7 +75,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project)
+            throws CustomResponseException, DataException, IOException {
         manageProcessesDependenciesForIndex(project);
     }
 
@@ -89,7 +86,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @param project
      *            object
      */
-    private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+    private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, DataException, IOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (Process process : project.getProcesses()) {
                 ServiceManager.getProcessService().removeFromIndex(process, false);
@@ -113,7 +110,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(getProjectsForCurrentUserQuery());
+        return countDocuments(getProjectsForCurrentUserQuery());
     }
 
     @Override
@@ -130,8 +127,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @Override
     public List<ProjectDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(getProjectsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+        return findByQuery(getProjectsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
     }
 
@@ -153,23 +149,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(userId, false));
         query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
-    }
-
-    /**
-     * Find active or inactive projects.
-     *
-     * @param active
-     *            if true - find active projects, if false - find not active
-     *            projects
-     * @param related
-     *            if true - found project is related to some other DTO object, if
-     *            false - not and it collects all related objects
-     * @return list of ProjectDTO objects
-     */
-    List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProjectTypeField.ACTIVE.getKey(), active, true);
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
+        return findByQuery(query, true);
     }
 
     /**
@@ -179,9 +159,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return search result
      */
-    JsonObject findByProcessId(Integer id) throws DataException {
+    Map<String, Object> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
-        return searcher.findDocument(query.toString());
+        return findDocument(query);
     }
 
     /**
@@ -191,10 +171,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return list of JSON objects with projects for specific process title
      */
-    List<JsonObject> findByProcessTitle(String title) throws DataException {
-        List<JsonObject> processes = ServiceManager.getProcessService().findByTitle(title, true);
-
-        return searcher.findDocuments(createSetQuery(ProjectTypeField.PROCESSES + ".id", processes, true).toString());
+    List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
+        List<Map<String, Object>> processes = ServiceManager.getProcessService().findByTitle(title, true);
+        return findDocuments(createSetQuery(ProjectTypeField.PROCESSES + ".id", processes, true));
     }
 
     /**
@@ -204,8 +183,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of user
      * @return list of JSON objects
      */
-    List<JsonObject> findByUserId(Integer id) throws DataException {
-        return searcher.findDocuments(getQueryForUserId(id, true).toString());
+    List<Map<String, Object>> findByUserId(Integer id) throws DataException {
+        return findDocuments(getQueryForUserId(id, true));
     }
 
     /**
@@ -215,8 +194,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of user
      * @return list of search result with projects for specific user login
      */
-    List<JsonObject> findByUserLogin(String login) throws DataException {
-        return searcher.findDocuments(getQueryForUserLogin(login, true).toString());
+    List<Map<String, Object>> findByUserLogin(String login) throws DataException {
+        return findDocuments(getQueryForUserLogin(login, true));
     }
 
     private QueryBuilder getQueryForUserLogin(String login, boolean contains) {
@@ -237,47 +216,46 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public ProjectDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public ProjectDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(getIdFromJSONObject(jsonObject));
-
-        JsonObject projectJSONObject = jsonObject.getJsonObject("_source");
-        projectDTO.setTitle(ProjectTypeField.TITLE.getStringValue(projectJSONObject));
-        projectDTO.setStartDate(ProjectTypeField.START_DATE.getStringValue(projectJSONObject));
-        projectDTO.setEndDate(ProjectTypeField.END_DATE.getStringValue(projectJSONObject));
-        projectDTO.setFileFormatDmsExport(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(projectJSONObject));
-        projectDTO.setFileFormatInternal(ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(projectJSONObject));
-        projectDTO.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(projectJSONObject));
-        projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(projectJSONObject));
-        projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(projectJSONObject));
-        projectDTO.setActive(ProjectTypeField.ACTIVE.getBooleanValue(projectJSONObject));
+        projectDTO.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
+        projectDTO.setStartDate(ProjectTypeField.START_DATE.getStringValue(jsonObject));
+        projectDTO.setEndDate(ProjectTypeField.END_DATE.getStringValue(jsonObject));
+        projectDTO.setFileFormatDmsExport(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(jsonObject));
+        projectDTO.setFileFormatInternal(ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(jsonObject));
+        projectDTO.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
+        projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
+        projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
+        projectDTO.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(projectJSONObject));
-        clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(projectJSONObject));
+        clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
+        clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
         projectDTO.setClient(clientDTO);
         if (!related) {
-            convertRelatedJSONObjects(projectJSONObject, projectDTO);
+            convertRelatedJSONObjects(jsonObject, projectDTO);
         } else {
-            projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
+            projectDTO.setTemplates(getTemplatesForProjectDTO(jsonObject));
         }
         return projectDTO;
     }
 
-    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) throws DataException {
+    private List<TemplateDTO> getTemplatesForProjectDTO(Map<String, Object> jsonObject) throws DataException {
         List<TemplateDTO> templateDTOS = new ArrayList<>();
-        JsonArray jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
+        List<Map<String, Object>> jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
 
-        for (JsonValue singleObject : jsonArray) {
-            JsonObject templateJson = singleObject.asJsonObject();
+        for (Map<String, Object> singleObject : jsonArray) {
             TemplateDTO templateDTO = new TemplateDTO();
-            templateDTO.setId(TemplateTypeField.ID.getIntValue(templateJson));
-            templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJson));
+            templateDTO.setId(TemplateTypeField.ID.getIntValue(singleObject));
+            templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
             templateDTOS.add(templateDTO);
         }
         return templateDTOS;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectDTO projectDTO) throws DataException {
+        // TODO: not clear if project lists will need it
+        projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
             ServiceManager.getTemplateService()));
     }
@@ -362,13 +340,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return duplicatedProject;
     }
 
-    private String getProjectsForCurrentUserQuery() {
+    private QueryBuilder getProjectsForCurrentUserQuery() {
         int currentUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForUserId(currentUserId, true));
         query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return query.toString();
+        return query;
     }
 }

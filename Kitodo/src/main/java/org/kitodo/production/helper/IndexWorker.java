@@ -21,6 +21,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchService;
 
 public class IndexWorker implements Runnable {
@@ -64,13 +65,13 @@ public class IndexWorker implements Runnable {
                     indexChunks(batchSize);
                 }
             }
-        } catch (CustomResponseException | DAOException | IOException e) {
+        } catch (CustomResponseException | DAOException | DataException | IOException e) {
             logger.error(e.getMessage());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, IOException {
+    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException, IOException {
         List<Object> objectsToIndex;
         if (indexAllObjects) {
             objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
@@ -81,7 +82,8 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
+    private void indexObjects(List<Object> objectsToIndex)
+            throws CustomResponseException, DAOException, DataException, IOException {
         for (Object object : objectsToIndex) {
             this.searchService.saveToIndexAndUpdateIndexFlag((BaseIndexedBean) object, false);
             this.indexedObjects++;

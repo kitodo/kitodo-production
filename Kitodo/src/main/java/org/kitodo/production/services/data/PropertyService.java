@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -72,7 +69,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Property property) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Property property) throws CustomResponseException, DataException, IOException {
         for (Process process : property.getProcesses()) {
             ServiceManager.getProcessService().saveToIndex(process, false);
         }
@@ -142,7 +139,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     private List<String> findDistinctTitles(String type) throws DataException {
-        return findDistinctValues(getQueryForType(type).toString(), "title.keyword", true);
+        return findDistinctValues(getQueryForType(type), "title.keyword", true);
     }
 
     private QueryBuilder getQueryForType(String type) {
@@ -160,13 +157,13 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<JsonObject> findByTitle(String title, String type, boolean contains) throws DataException {
+    public List<Map<String,Object>> findByTitle(String title, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
         if (type != null) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -180,13 +177,13 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    List<JsonObject> findByValue(String value, String type, boolean contains) throws DataException {
+    List<Map<String,Object>> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.VALUE.getKey(), value, contains, Operator.AND));
         if (type != null) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -203,7 +200,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            true or false
      * @return list of JSON objects with batches of exact type
      */
-    List<JsonObject> findByTitleAndValue(String title, String value, String type, boolean contains)
+    List<Map<String, Object>> findByTitleAndValue(String title, String value, String type, boolean contains)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
@@ -211,18 +208,16 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         if (type != null) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     @Override
-    public PropertyDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public PropertyDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         PropertyDTO propertyDTO = new PropertyDTO();
         propertyDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject propertyJSONObject = jsonObject.getJsonObject("_source");
-        propertyDTO.setTitle(PropertyTypeField.TITLE.getStringValue(propertyJSONObject));
-        propertyDTO.setValue(PropertyTypeField.VALUE.getStringValue(propertyJSONObject));
-        JsonValue creationDate = propertyJSONObject.get(PropertyTypeField.CREATION_DATE.getKey());
-        propertyDTO.setCreationDate(creationDate != JsonValue.NULL ? creationDate.toString() : null);
+        propertyDTO.setTitle(PropertyTypeField.TITLE.getStringValue(jsonObject));
+        propertyDTO.setValue(PropertyTypeField.VALUE.getStringValue(jsonObject));
+        propertyDTO.setCreationDate(PropertyTypeField.CREATION_DATE.getStringValue(jsonObject));
         return propertyDTO;
     }
 

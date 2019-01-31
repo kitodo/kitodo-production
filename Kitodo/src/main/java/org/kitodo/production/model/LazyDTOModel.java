@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 public class LazyDTOModel extends LazyDataModel<Object> {
 
     private static final long serialVersionUID = 8782111495680176505L;
-    private SearchDatabaseService searchService;
+    private transient SearchDatabaseService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
     private transient List entities = new ArrayList();
@@ -89,7 +89,6 @@ public class LazyDTOModel extends LazyDataModel<Object> {
         if (indexRunning()) {
             try {
                 setRowCount(toIntExact(searchService.countResults(filters)));
-
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filters);
                 logger.info(entities.size() + " entities loaded!");
                 return entities;

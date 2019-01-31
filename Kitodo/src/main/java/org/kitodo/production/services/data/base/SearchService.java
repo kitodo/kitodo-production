@@ -26,19 +26,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.ws.rs.HttpMethod;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -96,7 +97,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            true or false
      * @return DTO object
      */
-    public abstract S convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException;
+    public abstract S convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException;
 
     /**
      * Count all not indexed rows in database. Not indexed means that row has index
@@ -156,7 +157,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            possible sort query according to which results will be sorted
      * @return list of all objects from ES
      */
-    public List<S> findAll(String sort) throws DataException {
+    public List<S> findAll(SortBuilder sort) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
     }
 
@@ -171,7 +172,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return list of all objects from ES
      */
-    public List<S> findAll(String sort, Integer offset, Integer size) throws DataException {
+    public List<S> findAll(SortBuilder sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
@@ -186,7 +187,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return list of all objects from ES
      */
-    public List<S> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+    public List<S> findAll(SortBuilder sort, Integer offset, Integer size, Map filters) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
@@ -203,7 +204,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            true or false
      * @return list of all objects from ES
      */
-    public List<S> findAll(String sort, Integer offset, Integer size, boolean related) throws DataException {
+    public List<S> findAll(SortBuilder sort, Integer offset, Integer size, boolean related) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), related);
     }
 
@@ -215,7 +216,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            object
      */
     public void saveToIndexAndUpdateIndexFlag(T baseIndexedBean, boolean forceRefresh)
-            throws CustomResponseException, DAOException, IOException {
+            throws CustomResponseException, DataException, DAOException, IOException {
         saveToIndex(baseIndexedBean, forceRefresh);
         updateIndexFlag(baseIndexedBean);
     }
@@ -230,7 +231,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            object is right after that available for display
      */
     @SuppressWarnings("unchecked")
-    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
+    public void saveToIndex(T baseIndexedBean, boolean forceRefresh)
+            throws CustomResponseException, DataException, IOException {
+
         indexer.setMethod(HttpMethod.PUT);
         if (Objects.nonNull(baseIndexedBean)) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
@@ -244,10 +247,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            List of BaseIndexedBean objects
      */
     @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex(List<T> baseIndexedBeans)
-            throws CustomResponseException, DAOException, InterruptedException {
+    public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException {
         indexer.setMethod(HttpMethod.PUT);
-        indexer.performMultipleRequests(baseIndexedBeans, type);
+        indexer.performMultipleRequests(baseIndexedBeans, type, true);
         for (T baseIndexedBean : baseIndexedBeans) {
             updateIndexFlag(baseIndexedBean);
         }
@@ -263,7 +265,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            object is right after that available for display
      */
     @SuppressWarnings("unchecked")
-    public void removeFromIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
+    public void removeFromIndex(T baseIndexedBean, boolean forceRefresh)
+            throws CustomResponseException, DataException, IOException {
         indexer.setMethod(HttpMethod.DELETE);
         if (baseIndexedBean != null) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
@@ -279,7 +282,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, IOException {
+    public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
         indexer.setMethod(HttpMethod.DELETE);
         indexer.performSingleRequest(id, forceRefresh);
     }
@@ -409,7 +412,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return amount of all objects
      */
     public Long count() throws DataException {
-        return searcher.countDocuments();
+        try {
+            return searcher.countDocuments();
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -419,8 +426,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            for index search
      * @return amount of objects according to given query or 0 if query is null
      */
-    public Long count(String query) throws DataException {
-        return searcher.countDocuments(query);
+    public Long count(QueryBuilder query) throws DataException {
+        try {
+            return searcher.countDocuments(query);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -428,9 +439,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @return list of all documents
      */
-    public List<JsonObject> findAllDocuments() throws DataException {
+    public List<Map<String, Object>> findAllDocuments() throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
-        return searcher.findDocuments(queryBuilder.toString());
+        try {
+            return searcher.findDocuments(queryBuilder);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -440,9 +455,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            possible sort query according to which results will be sorted
      * @return sorted list of all documents
      */
-    public List<JsonObject> findAllDocuments(String sort) throws DataException {
+    public List<Map<String, Object>> findAllDocuments(SortBuilder sort) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
-        return searcher.findDocuments(queryBuilder.toString(), sort);
+        try {
+            return searcher.findDocuments(queryBuilder, sort);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -454,9 +473,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return sorted list of all documents
      */
-    public List<JsonObject> findAllDocuments(Integer offset, Integer size) throws DataException {
+    public List<Map<String, Object>> findAllDocuments(Integer offset, Integer size) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
-        return searcher.findDocuments(queryBuilder.toString(), offset, size);
+        try {
+            return searcher.findDocuments(queryBuilder, offset, size);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -470,9 +493,14 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return sorted list of all documents
      */
-    public List<JsonObject> findAllDocuments(String sort, Integer offset, Integer size) throws DataException {
+    public List<Map<String, Object>> findAllDocuments(SortBuilder sort, Integer offset, Integer size)
+            throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
-        return searcher.findDocuments(queryBuilder.toString(), sort, offset, size);
+        try {
+            return searcher.findDocuments(queryBuilder, sort, offset, size);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -497,7 +525,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return related DTO object
      */
     public S findById(Integer id, boolean related) throws DataException {
-        return convertJSONObjectToDTO(searcher.findDocument(id), related);
+        try {
+            return convertJSONObjectToDTO(searcher.findDocument(id), related);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -511,7 +543,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return list of found DTO objects
      */
     public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
+        try {
+            return convertJSONObjectsToDTOs(searcher.findDocuments(query), related);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -526,8 +562,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            so, objects related to it are not included in conversion)
      * @return list of found DTO objects
      */
-    public List<S> findByQuery(QueryBuilder query, String sort, boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort), related);
+    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, boolean related) throws DataException {
+        try {
+            return convertJSONObjectsToDTOs(searcher.findDocuments(query, sort), related);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -547,9 +587,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            so, objects related to it are not included in conversion)
      * @return list of found DTO objects
      */
-    public List<S> findByQuery(QueryBuilder query, String sort, Integer offset, Integer size, boolean related)
+    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, Integer offset, Integer size, boolean related)
             throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), related);
+        try {
+            return convertJSONObjectsToDTOs(searcher.findDocuments(query, sort, offset, size), related);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -562,24 +606,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            so, objects related to it are not included in conversion)
      * @return list of DTO object
      */
-    protected List<S> convertJSONObjectsToDTOs(List<JsonObject> jsonObjects, boolean related) throws DataException {
+    protected List<S> convertJSONObjectsToDTOs(List<Map<String, Object>> jsonObjects, boolean related)
+            throws DataException {
         List<S> results = new ArrayList<>();
 
-        for (JsonObject jsonObject : jsonObjects) {
+        for (Map<String, Object> jsonObject : jsonObjects) {
             results.add(convertJSONObjectToDTO(jsonObject, related));
         }
 
         return results;
-    }
-
-    protected String getSort(String sortField, SortOrder sortOrder) {
-        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-            return "{\"" + sortField + "\":\"asc\" }";
-        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-            return  "{\"" + sortField + "\":\"desc\" }";
-        } else {
-            return "";
-        }
     }
 
     /**
@@ -591,7 +626,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            name of related property
      * @return bean object
      */
-    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JsonObject jsonObject, String key,
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(Map<String, Object> jsonObject, String key,
             SearchService<?, O, ?> service) throws DataException {
         List<Integer> ids = getRelatedPropertyForDTO(jsonObject, key);
         if (ids.isEmpty()) {
@@ -611,14 +646,22 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            returned form ElasticSearch
      * @return id as Integer
      */
-    public Integer getIdFromJSONObject(JsonObject jsonObject) {
-        if (jsonObject.containsKey("_id")) {
-            String id = jsonObject.getString("_id");
+    public Integer getIdFromJSONObject(Map<String, Object> jsonObject) {
+        if (jsonObject.containsKey("id")) {
+            String id = (String) jsonObject.get("id");
             if (Objects.nonNull(id)) {
                 return Integer.valueOf(id);
             }
         }
         return 0;
+    }
+
+    protected Long countDocuments(QueryBuilder query) throws DataException {
+        try {
+            return searcher.countDocuments(query);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -645,9 +688,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         }
     }
 
-    protected QueryBuilder createSetQuery(String key, List<JsonObject> values, boolean contains) {
+    protected QueryBuilder createSetQuery(String key, List<Map<String, Object>> values, boolean contains) {
         Set<Integer> valuesIds = new HashSet<>();
-        for (JsonObject value : values) {
+        for (Map<String, Object> value : values) {
             valuesIds.add(getIdFromJSONObject(value));
         }
 
@@ -838,16 +881,24 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return queryStringQuery(key + ": *" + value + "*");
     }
 
-    protected Long findCountAggregation(String query, String field) throws DataException {
-        JsonObject jsonObject = searcher.aggregateDocuments(query, createCountAggregation(field));
-        JsonObject count = jsonObject.getJsonObject(field);
-        return count.getJsonNumber("value").longValue();
+    protected Long findCountAggregation(QueryBuilder query, String field) throws DataException {
+        try {
+            Aggregations jsonObject = searcher.aggregateDocuments(query, AggregationBuilders.count(field).field(field));
+            JsonObject count = jsonObject.get(field);
+            return count.getJsonNumber("value").longValue();
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
-    protected Double findSumAggregation(String query, String field) throws DataException {
-        JsonObject jsonObject = searcher.aggregateDocuments(query, createSumAggregation(field));
-        JsonObject sum = jsonObject.getJsonObject(field);
-        return sum.getJsonNumber("value").doubleValue();
+    protected Double findSumAggregation(QueryBuilder query, String field) throws DataException {
+        try {
+            Aggregations jsonObject = searcher.aggregateDocuments(query, AggregationBuilders.count(field).field(field));
+            JsonObject sum = jsonObject.get(field);
+            return sum.getJsonNumber("value").doubleValue();
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -861,33 +912,45 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            asc true or false
      * @return sorted list of distinct values
      */
-    protected List<String> findDistinctValues(String query, String field, boolean sort) throws DataException {
+    protected List<String> findDistinctValues(QueryBuilder query, String field, boolean sort) throws DataException {
         List<String> distinctValues = new ArrayList<>();
-        JsonObject jsonObject = searcher.aggregateDocuments(query, createTermAggregation(field, sort));
-        JsonObject aggregations = (JsonObject) jsonObject.get(field);
-        JsonArray buckets = aggregations.getJsonArray("buckets");
-        for (Object bucket : buckets) {
-            JsonObject document = (JsonObject) bucket;
-            distinctValues.add(document.getString("key"));
+        try {
+            Aggregations jsonObject = searcher.aggregateDocuments(query,
+                AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
+            ParsedStringTerms stringTerms = jsonObject.get(field);
+            List<? extends Terms.Bucket> buckets = stringTerms.getBuckets();
+            for (Terms.Bucket bucket : buckets) {
+                distinctValues.add(bucket.getKeyAsString());
+            }
+            return distinctValues;
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
         }
-        return distinctValues;
     }
 
-    private String createAvgAggregation(String field) {
-        return XContentHelper.toString(AggregationBuilders.avg(field).field(field));
+    protected Map<String, Object> findDocument(QueryBuilder query) throws DataException {
+        try {
+            return searcher.findDocument(query);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
-    private String createCountAggregation(String field) {
-        return XContentHelper.toString(AggregationBuilders.count(field).field(field));
+    protected List<Map<String, Object>> findDocuments(QueryBuilder query) throws DataException {
+        return findDocuments(query, null);
     }
 
-    private String createSumAggregation(String field) {
-        return XContentHelper.toString(AggregationBuilders.sum(field).field(field));
+    protected List<Map<String, Object>> findDocuments(QueryBuilder query, SortBuilder sortBuilder) throws DataException {
+        return findDocuments(query, sortBuilder, null, null);
     }
 
-    private String createTermAggregation(String field, boolean sort) {
-        return XContentHelper
-                .toString(AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
+    protected List<Map<String, Object>> findDocuments(QueryBuilder query, SortBuilder sortBuilder, Integer offset, Integer size)
+            throws DataException {
+        try {
+            return searcher.findDocuments(query, sortBuilder, offset, size);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -897,12 +960,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            JSONObject
      * @return display properties as list of Integers
      */
-    private List<Integer> getRelatedPropertyForDTO(JsonObject object, String key) {
+    private List<Integer> getRelatedPropertyForDTO(Map<String, Object> object, String key) {
         if (object != null) {
-            JsonArray jsonArray = object.getJsonArray(key);
+            List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
             List<Integer> ids = new ArrayList<>();
-            for (JsonValue singleObject : jsonArray) {
-                ids.add(singleObject.asJsonObject().getInt("id"));
+            for (Map<String, Object> singleObject : jsonArray) {
+                ids.add((Integer) singleObject.get("id"));
             }
             return ids;
         }
@@ -920,17 +983,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            to access specified values in objects of JSONArray
      * @return display properties as list of Integers
      */
-    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(JsonObject object, String key, List<String> subKeys) {
+    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(Map<String, Object> object, String key,
+            List<String> subKeys) {
         if (object != null) {
-            JsonArray jsonArray = (JsonArray) object.get(key);
+            List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
             List<RelatedProperty> relatedProperties = new ArrayList<>();
-            for (Object singleObject : jsonArray) {
-                JsonObject jsonObject = (JsonObject) singleObject;
+            for (Map<String, Object> singleObject : jsonArray) {
                 RelatedProperty relatedProperty = new RelatedProperty();
-                relatedProperty.setId(jsonObject.getInt("id"));
-                ArrayList<String> values = new ArrayList<>();
+                relatedProperty.setId((Integer) singleObject.get("id"));
+                List<String> values = new ArrayList<>();
                 for (String subKey : subKeys) {
-                    values.add(jsonObject.getString(subKey));
+                    values.add((String) singleObject.get(subKey));
                 }
                 relatedProperty.setValues(values);
                 relatedProperties.add(relatedProperty);
@@ -938,6 +1001,16 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             return relatedProperties;
         }
         return new ArrayList<>();
+    }
+
+    protected SortBuilder getSortBuilder(String sortField, SortOrder sortOrder) {
+        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.ASC);
+        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.DESC);
+        } else {
+            return null;
+        }
     }
 
     /**

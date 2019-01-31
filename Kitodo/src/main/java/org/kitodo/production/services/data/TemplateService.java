@@ -24,8 +24,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.json.JsonObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -93,7 +91,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(createUserTemplatesQuery(filters).toString());
+        return countDocuments(createUserTemplatesQuery(filters));
     }
 
     @Override
@@ -109,8 +107,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     @Override
     public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserTemplatesQuery(filters).toString(),
-            getSort(sortField, sortOrder), first, pageSize), false);
+        return findByQuery(createUserTemplatesQuery(filters),
+            getSortBuilder(sortField, sortOrder), first, pageSize, false);
 
     }
 
@@ -133,7 +131,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      * @param template
      *            object
      */
-    private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, IOException {
+    private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, DataException, IOException {
         for (Project project : template.getProjects()) {
             if (template.getIndexAction().equals(IndexAction.DELETE)) {
                 project.getTemplates().remove(template);
@@ -179,8 +177,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             ServiceManager.getTaskService().saveToIndex(task, false);
         }
 
-        List<JsonObject> searchResults = ServiceManager.getTaskService().findByProcessId(template.getId());
-        for (JsonObject object : searchResults) {
+        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByProcessId(template.getId());
+        for (Map<String, Object> object : searchResults) {
             index.add(getIdFromJSONObject(object));
         }
 
@@ -261,7 +259,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
         query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
+        return findByQuery(query, true);
     }
 
     /**
@@ -290,33 +288,32 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
-    public TemplateDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public TemplateDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         TemplateDTO templateDTO = new TemplateDTO();
         templateDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject templateJSONObject = jsonObject.getJsonObject("_source");
-        templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJSONObject));
-        templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(templateJSONObject));
-        templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
+        templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
+        templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
+        templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
         templateDTO.setDocket(
-            ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));
+            ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));
         templateDTO.setRuleset(
-            ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(templateJSONObject)));
+            ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(jsonObject)));
         WorkflowDTO workflowDTO = new WorkflowDTO();
-        workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
-        workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
+        workflowDTO.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
+        workflowDTO.setFileName(TemplateTypeField.WORKFLOW_FILE_NAME.getStringValue(jsonObject));
         templateDTO.setWorkflow(workflowDTO);
-        templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
+        templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
         templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
-            convertRelatedJSONObjects(templateJSONObject, templateDTO);
+            convertRelatedJSONObjects(jsonObject, templateDTO);
         }
 
         return templateDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateDTO templateDTO) throws DataException {
         templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
             ServiceManager.getProjectService()));
     }
@@ -328,9 +325,9 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            id of docket for search
      * @return list of JSON objects with templates for specific docket id
      */
-    public List<JsonObject> findByDocket(int docketId) throws DataException {
+    public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
         QueryBuilder query = createSimpleQuery(TemplateTypeField.DOCKET.getKey(), docketId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -340,9 +337,9 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            id of ruleset for search
      * @return list of JSON objects with templates for specific ruleset id
      */
-    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+    public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(TemplateTypeField.RULESET.getKey(), rulesetId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -63,7 +64,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldCountAllRulesetsAccordingToQuery() {
-        String query = matchQuery("title", "SLUBDD").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("title", "SLUBDD").operator(Operator.AND);
         await().untilAsserted(
             () -> assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), rulesetService.count(query)));
     }
@@ -110,7 +111,7 @@ public class RulesetServiceIT {
     public void shouldFindByFile() {
         String expected = "ruleset_test.xml";
         await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", expected, rulesetService
-                .findByFile("ruleset_test.xml").getJsonObject("_source").getString(RulesetTypeField.FILE.getKey())));
+                .findByFile("ruleset_test.xml").get(RulesetTypeField.FILE.getKey())));
     }
 
     @Test

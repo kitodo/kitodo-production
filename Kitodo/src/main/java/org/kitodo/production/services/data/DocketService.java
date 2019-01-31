@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -74,14 +72,13 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(getDocketsForCurrentUserQuery());
+        return countDocuments(getDocketsForCurrentUserQuery());
     }
 
     @Override
     public List<DocketDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(getDocketsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+        return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
     }
 
@@ -97,16 +94,15 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
-    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public DocketDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         DocketDTO docketDTO = new DocketDTO();
         docketDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
-        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
-        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
+        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
+        docketDTO.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
 
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(docketJSONObject));
-        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(docketJSONObject));
+        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
+        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
         docketDTO.setClientDTO(clientDTO);
         return docketDTO;
@@ -130,9 +126,9 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      *            of the searched docket
      * @return search result
      */
-    JsonObject findByFile(String file) throws DataException {
+    Map<String, Object> findByFile(String file) throws DataException {
         QueryBuilder query = createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND);
-        return searcher.findDocument(query.toString());
+        return findDocument(query);
     }
 
     /**
@@ -142,9 +138,9 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      *            of the searched dockets
      * @return search result
      */
-    List<JsonObject> findByClientId(Integer clientId) throws DataException {
+    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
         QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -156,11 +152,11 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      *            of the searched docket
      * @return search result
      */
-    JsonObject findByTitleAndFile(String title, String file) throws DataException {
+    Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.must(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return searcher.findDocument(query.toString());
+        return findDocument(query);
     }
 
     /**
@@ -172,17 +168,17 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      *            of the searched docket
      * @return search result
      */
-    List<JsonObject> findByTitleOrFile(String title, String file) throws DataException {
+    List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.should(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
-    private String getDocketsForCurrentUserQuery() {
+    private QueryBuilder getDocketsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-            ServiceManager.getUserService().getSessionClientId(), true));
-        return query.toString();
+                ServiceManager.getUserService().getSessionClientId(), true));
+        return query;
     }
 }

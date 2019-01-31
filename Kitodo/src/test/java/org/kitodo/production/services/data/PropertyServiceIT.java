@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -59,7 +60,7 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldCountAllPropertiesAccordingToQuery() {
-        String query = matchQuery("type", "process").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("type", "process").operator(Operator.AND);
         await().untilAsserted(() -> assertEquals("Properties were not counted correctly!", Long.valueOf(4),
             propertyService.count(query)));
     }
