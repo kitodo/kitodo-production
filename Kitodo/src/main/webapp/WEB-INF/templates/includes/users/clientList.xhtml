@@ -13,6 +13,7 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
     xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="clientsTable"
@@ -22,7 +23,8 @@
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.client}">
+        <p:column headerText="#{msgs.client}"
+                  rendered="#{fn:contains(fn:join(ClientForm.selectedColumns, '-'), 'client.client')}">
             <h:outputText value="#{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">

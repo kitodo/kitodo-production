@@ -29,12 +29,12 @@
         </p:column>
 
         <p:column headerText="#{msgs.task}"
-                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskTitle')}">
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'task.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.process}"
-                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskProcess')}">
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'task.process')}">
             <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                 <i class="fa fa-pencil-square-o fa-lg"/>
@@ -44,12 +44,12 @@
         </p:column>
 
         <p:column headerText="#{msgs.project}"
-                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskProject')}">
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'task.project')}">
             <h:outputText value="#{item.process.project.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.status}"
-                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'taskState')}">
+                  rendered="#{fn:contains(fn:join(CurrentTaskForm.selectedColumns, '-'), 'task.state')}">
             <h:panelGroup class="task-status"
                           title="#{item.processingStatusTitle}"
                           style="margin-right:10px; background-color:

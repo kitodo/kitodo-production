@@ -28,19 +28,19 @@
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'rulesetTitle')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
                   sortBy="#{item.file.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'rulesetFilename')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.filename')}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 
         <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial"
                   sortBy="#{item.orderMetadataByRuleset}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'rulesetSorting')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.sorting')}">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
             </ui:fragment>

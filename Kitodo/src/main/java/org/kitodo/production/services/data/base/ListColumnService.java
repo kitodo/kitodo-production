@@ -14,9 +14,15 @@ package org.kitodo.production.services.data.base;
 import java.util.List;
 import java.util.Objects;
 
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
+
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.ServiceManager;
 
 public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
 
@@ -53,5 +59,28 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM ListColumn");
+    }
+
+    /**
+     * Retrieve the list of list columns for the current client and list with the name 'listTitle' from the database,
+     * convert it into a SelectItemGroup and return the created SelectedItemGroup.
+     *
+     * @param listTitle the title of the list for which list columns are returned
+     * @return
+     *          a SelectItemGroup containing information about the listColumns for the list with name 'listTitle'
+     */
+    public SelectItemGroup getListColumnsForListAsSeletItemGroup(String listTitle) {
+        Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        List<ListColumn> clientColumns = client.getListColumns();
+
+        SelectItemGroup itemGroup = new SelectItemGroup(Helper.getTranslation(listTitle));
+
+        itemGroup.setSelectItems(clientColumns.stream()
+                .filter(listColumn -> listColumn.getTitle().startsWith(listTitle + "."))
+                .map(listColumn -> new SelectItem(listColumn.getTitle(),
+                        Helper.getTranslation(listColumn.getTitle().replace(listTitle + ".", ""))))
+                .toArray(SelectItem[]::new));
+
+        return itemGroup;
     }
 }

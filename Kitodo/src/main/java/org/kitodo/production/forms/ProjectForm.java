@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -37,9 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -64,50 +60,12 @@ public class ProjectForm extends BaseForm {
      */
     @PostConstruct
     public void init() {
-
-        Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        List<ListColumn> clientColumns = client.getListColumns();
-
         columns = new ArrayList<>();
-
-        SelectItemGroup projectColumns = new SelectItemGroup(Helper.getTranslation("project"));
-        projectColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("projectTitle", Helper.getTranslation("title")),
-            new SelectItem("projectMetsRightsOwner", Helper.getTranslation("metsRightsOwner")),
-            new SelectItem("projectActive", Helper.getTranslation("active"))
-        });
-        columns.add(projectColumns);
-
-        SelectItemGroup templateColumns = new SelectItemGroup(Helper.getTranslation("template"));
-        templateColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("templateTitle", Helper.getTranslation("title")),
-            new SelectItem("templateRuleset", Helper.getTranslation("ruleset"))
-        });
-        columns.add(templateColumns);
-
-        SelectItemGroup workflowColumns = new SelectItemGroup(Helper.getTranslation("workflow"));
-        workflowColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("workflowTitle", Helper.getTranslation("title")),
-            new SelectItem("workflowFilename", Helper.getTranslation("filename")),
-            new SelectItem("workflowActive", Helper.getTranslation("active")),
-            new SelectItem("workflowReady", Helper.getTranslation("ready"))
-        });
-        columns.add(workflowColumns);
-
-        SelectItemGroup docketColumns = new SelectItemGroup(Helper.getTranslation("docket"));
-        docketColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("docketTitle", Helper.getTranslation("title")),
-            new SelectItem("docketFilename", Helper.getTranslation("filename"))
-        });
-        columns.add(docketColumns);
-
-        SelectItemGroup rulesetColumns = new SelectItemGroup(Helper.getTranslation("ruleset"));
-        rulesetColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("rulesetTitle", Helper.getTranslation("title")),
-            new SelectItem("rulesetFilename", Helper.getTranslation("filename")),
-            new SelectItem("rulesetSorting", Helper.getTranslation("sorting"))
-        });
-        columns.add(rulesetColumns);
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("project"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("template"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("workflow"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("docket"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("ruleset"));
     }
 
     /**

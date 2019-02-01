@@ -20,54 +20,55 @@ CREATE TABLE listColumn (
 ) DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 2. Add standard columns
---- projects page
----- project columns
+-- projects page
+-- project columns
+--
 INSERT INTO listColumn (title) VALUES ('project.title');
-INSERT INTO listColumn (title) VALUES ('project.mets_rights_owner');
+INSERT INTO listColumn (title) VALUES ('project.metsRightsOwner');
 INSERT INTO listColumn (title) VALUES ('project.active');
----- template columns
+-- template columns
 INSERT INTO listColumn (title) VALUES ('template.title');
-INSERT INTO listColumn (title) VALUES ('template.active');
----- workflow columns
+INSERT INTO listColumn (title) VALUES ('template.ruleset');
+-- workflow columns
 INSERT INTO listColumn (title) VALUES ('workflow.title');
 INSERT INTO listColumn (title) VALUES ('workflow.filename');
 INSERT INTO listColumn (title) VALUES ('workflow.active');
 INSERT INTO listColumn (title) VALUES ('workflow.ready');
----- docket columns
+-- docket columns
 INSERT INTO listColumn (title) VALUES ('docket.title');
 INSERT INTO listColumn (title) VALUES ('docket.filename');
----- ruleset columns
+-- ruleset columns
 INSERT INTO listColumn (title) VALUES ('ruleset.title');
 INSERT INTO listColumn (title) VALUES ('ruleset.filename');
 INSERT INTO listColumn (title) VALUES ('ruleset.sorting');
 
---- tasks page
----- task columns
+-- tasks page
+-- task columns
 INSERT INTO listColumn (title) VALUES ('task.title');
 INSERT INTO listColumn (title) VALUES ('task.process');
 INSERT INTO listColumn (title) VALUES ('task.project');
-INSERT INTO listColumn (title) VALUES ('task.status');
+INSERT INTO listColumn (title) VALUES ('task.state');
 
---- processes pages
----- process columns
+-- processes pages
+-- process columns
 INSERT INTO listColumn (title) VALUES ('process.title');
-INSERT INTO listColumn (title) VALUES ('process.status');
+INSERT INTO listColumn (title) VALUES ('process.state');
 INSERT INTO listColumn (title) VALUES ('process.project');
 
---- user page
----- user columns
+-- user page
+-- user columns
 INSERT INTO listColumn (title) VALUES ('user.username');
 INSERT INTO listColumn (title) VALUES ('user.location');
 INSERT INTO listColumn (title) VALUES ('user.roles');
 INSERT INTO listColumn (title) VALUES ('user.clients');
 INSERT INTO listColumn (title) VALUES ('user.projects');
 INSERT INTO listColumn (title) VALUES ('user.active');
----- role columns
+-- role columns
 INSERT INTO listColumn (title) VALUES ('role.role');
 INSERT INTO listColumn (title) VALUES ('role.client');
----- client columns
+-- client columns
 INSERT INTO listColumn (title) VALUES ('client.client');
----- ldap columns
+-- ldap columns
 INSERT INTO listColumn (title) VALUES ('ldapgroup.ldapgroup');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.home_directory');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.gidNumber');
@@ -84,5 +85,5 @@ CREATE TABLE client_x_listColumn (
 );
 
 -- 4. Add standard mappings
-INSERT IGNORE INTO client_x_listColumn (client_id, column_id)
-  VALUES ((SELECT id FROM client), (SELECT id FROM listColumn));
+INSERT INTO client_x_listColumn (client_id, column_id)
+  SELECT client.id, listColumn.id FROM client CROSS JOIN listColumn;

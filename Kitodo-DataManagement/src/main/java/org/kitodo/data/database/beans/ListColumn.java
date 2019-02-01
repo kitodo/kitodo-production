@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "listColumn")
-public class ListColumn extends BaseIndexedBean {
+public class ListColumn extends BaseBean {
 
     @Column(name = "title")
     private String title;

@@ -28,25 +28,25 @@
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflowTitle')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.filename}"
                   sortBy="#{item.fileName.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflowFilename')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.filename')}">
             <h:outputText value="#{item.fileName}"/>
         </p:column>
 
         <p:column headerText="#{msgs.active}"
                   sortBy="#{item.active}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflowActive')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.active')}">
             <h:outputText value="#{item.active}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ready}"
                   sortBy="#{item.ready}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflowReady')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.ready')}">
             <h:outputText value="#{item.ready}"/>
         </p:column>
 

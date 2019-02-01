@@ -36,12 +36,12 @@
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'templateTitle')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'template.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'templateRuleset')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'template.ruleset')}">
             <h:outputText value="#{item.ruleset.title}"/>
         </p:column>
 

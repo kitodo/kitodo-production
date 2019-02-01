@@ -15,6 +15,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="usersTable"
@@ -24,31 +25,38 @@
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.username}">
+        <p:column headerText="#{msgs.username}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.username')}">
             <h:outputText value="#{item.surname}, #{item.name}"/>
         </p:column>
-        <p:column headerText="#{msgs.location}">
+        <p:column headerText="#{msgs.location}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.location')}">
             <h:outputText value="#{item.location}"/>
         </p:column>
-        <p:column headerText="#{msgs.roles}">
+        <p:column headerText="#{msgs.roles}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.roles')}">
             <ui:repeat var="role" value="#{item.roles}" varStatus="status">
                 <h:outputText value="#{role.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
-        <p:column headerText="#{msgs.clients}">
+        <p:column headerText="#{msgs.clients}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.clients')}">
             <ui:repeat var="client" value="#{item.clients}" varStatus="status">
                 <h:outputText value="#{client.name}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
-        <p:column headerText="#{msgs.projects}">
+        <p:column headerText="#{msgs.projects}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.projects')}">
             <ui:repeat var="project" value="#{item.projects}" varStatus="status">
                 <h:outputText value="#{project.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
-        <p:column headerText="#{msgs.active}" styleClass="checkboxColumn">
+        <p:column headerText="#{msgs.active}"
+                  rendered="#{fn:contains(fn:join(UserForm.selectedColumns, '-'), 'user.active')}"
+                  styleClass="checkboxColumn">
             <h:outputText>
                 <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>

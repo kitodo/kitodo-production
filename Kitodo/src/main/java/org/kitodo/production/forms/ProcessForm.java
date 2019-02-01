@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -131,20 +132,23 @@ public class ProcessForm extends TemplateBaseForm {
 
         columns = new ArrayList<>();
 
-        SelectItem[] processColumnItems = new SelectItem[3 + processPropertyNames.length];
-        processColumnItems[0] = new SelectItem("processTitle", Helper.getTranslation("title"));
-        processColumnItems[1] = new SelectItem("processState", Helper.getTranslation("status"));
-        processColumnItems[2] = new SelectItem("processProject", Helper.getTranslation("project"));
+        SelectItemGroup processColumGroup =
+                ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("process");
 
         // Read process properties to display from configuration
+        SelectItem[] processPropertyColumnItems = new SelectItem[processPropertyNames.length];
         for (String propertyName : processPropertyNames) {
-            processColumnItems[3 + Arrays.asList(processPropertyNames).indexOf(propertyName)]
+            processPropertyColumnItems[Arrays.asList(processPropertyNames).indexOf(propertyName)]
                             = new SelectItem(propertyName, propertyName);
         }
 
+        SelectItem[] allColumns = Stream.concat(
+                        Stream.of(processColumGroup.getSelectItems()),
+                        Stream.of(processPropertyColumnItems)).toArray(SelectItem[]::new);
         SelectItemGroup processColumns = new SelectItemGroup(Helper.getTranslation("process"));
-        processColumns.setSelectItems(processColumnItems);
+        processColumns.setSelectItems(allColumns);
         columns.add(processColumns);
+
     }
 
     /**

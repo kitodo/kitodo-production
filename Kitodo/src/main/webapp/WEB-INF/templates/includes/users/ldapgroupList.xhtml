@@ -15,18 +15,22 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
     xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item" id="ldapGroupsTable" value="#{LdapGroupForm.ldapGroups}" lazy="true" paginator="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.ldapGroup}">
+        <p:column headerText="#{msgs.ldapGroup}"
+                  rendered="#{fn:contains(fn:join(LdapGroupForm.selectedColumns, '-'), 'ldapgroup.ldapgroup')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.homeDirectory}">
+        <p:column headerText="#{msgs.homeDirectory}"
+                  rendered="#{fn:contains(fn:join(LdapGroupForm.selectedColumns, '-'), 'ldapgroup.home_directory')}">
             <h:outputText value="#{item.homeDirectory}"/>
         </p:column>
-        <p:column headerText="gidNumber">
+        <p:column headerText="gidNumber"
+                  rendered="#{fn:contains(fn:join(LdapGroupForm.selectedColumns, '-'), 'ldapgroup.gidNumber')}">
             <h:outputText value="#{item.gidNumber}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">

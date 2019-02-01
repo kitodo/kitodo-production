@@ -115,17 +115,13 @@ public class CurrentTaskForm extends BaseForm {
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     }
 
+    /**
+     * Initialize the list of displayed list columns.
+     */
     @PostConstruct
     public void init() {
         columns = new ArrayList<>();
-        SelectItemGroup taskColumns = new SelectItemGroup(Helper.getTranslation("task"));
-        taskColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("taskTitle", Helper.getTranslation("title")),
-            new SelectItem("taskProcess", Helper.getTranslation("process")),
-            new SelectItem("taskProject", Helper.getTranslation("project")),
-            new SelectItem("taskState", Helper.getTranslation("status"))
-        });
-        columns.add(taskColumns);
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("task"));
     }
 
     /**

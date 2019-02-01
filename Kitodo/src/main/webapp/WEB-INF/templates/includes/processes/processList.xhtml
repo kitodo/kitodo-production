@@ -27,17 +27,17 @@
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
                       filterBy="#{process.title}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'processTitle')}">
+                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.title')}">
                 <h:outputText value="#{process.title}"/>
             </p:column>
             <p:column id="progressColumn"
                       styleClass="progressColumn"
                       headerText="#{msgs.status}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'processState')}">
+                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
             <p:column headerText="#{msgs.project}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'processProject')}">
+                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.project')}">
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->

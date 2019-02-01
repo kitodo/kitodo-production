@@ -83,42 +83,16 @@ public class UserForm extends BaseForm {
         this.loginForm = loginForm;
     }
 
+    /**
+     * Initialize the list of displayed list columns.
+     */
     @PostConstruct
     public void init() {
-
         columns = new ArrayList<>();
-
-        SelectItemGroup userColumns = new SelectItemGroup(Helper.getTranslation("user"));
-        userColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("userName", Helper.getTranslation("username")),
-            new SelectItem("userLocation", Helper.getTranslation("location")),
-            new SelectItem("userRoles", Helper.getTranslation("roles")),
-            new SelectItem("userClients", Helper.getTranslation("clients")),
-            new SelectItem("userProjects", Helper.getTranslation("projects")),
-            new SelectItem("userActive", Helper.getTranslation("active"))
-        });
-        columns.add(userColumns);
-
-        SelectItemGroup roleColumns = new SelectItemGroup(Helper.getTranslation("role"));
-        userColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("roleRole", Helper.getTranslation("role")),
-            new SelectItem("roleClient", Helper.getTranslation("client"))
-        });
-        columns.add(roleColumns);
-
-        SelectItemGroup clientColumns = new SelectItemGroup(Helper.getTranslation("client"));
-        userColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("clientTitle", Helper.getTranslation("title")),
-        });
-        columns.add(clientColumns);
-
-        SelectItemGroup ldapgroupColumns = new SelectItemGroup(Helper.getTranslation("ldapGroup"));
-        userColumns.setSelectItems(new SelectItem[] {
-            new SelectItem("ldapgroupName", Helper.getTranslation("name")),
-            new SelectItem("ldapgroupHomeFolder", Helper.getTranslation("homefolder")),
-            new SelectItem("ldapgroupHomeGidNumber", Helper.getTranslation("gidnumber"))
-        });
-        columns.add(ldapgroupColumns);
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("user"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("role"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("client"));
+        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("ldapgroup"));
     }
 
 

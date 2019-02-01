@@ -27,12 +27,12 @@
                  paginatorPosition="bottom">
 
         <p:column headerText="#{msgs.title}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docketTitle')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docket.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docketFilename')}">
+                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docket.filename')}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 

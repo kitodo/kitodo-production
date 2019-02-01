@@ -33,15 +33,15 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.title}" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'projectTitle')}">
+        <p:column headerText="#{msgs.title}" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'project.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.metsRightsOwner}" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'projectMetsRightsOwner')}">
+        <p:column headerText="#{msgs.metsRightsOwner}" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'project.metsRightsOwner')}">
             <h:outputText value="#{item.metsRightsOwner}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.active}" styleClass="checkboxColumn" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'projectActive')}">
+        <p:column headerText="#{msgs.active}" styleClass="checkboxColumn" rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'project.active')}">
             <h:outputText>
                 <ui:fragment rendered="#{item.isActive()}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
