@@ -135,7 +135,8 @@
                 },
                 "endDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "fileFormatDmsExport": {
                     "type": "text",
@@ -244,7 +245,8 @@
                 },
                 "startDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "title": {
                     "type": "text",
@@ -326,7 +328,8 @@
                 },
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "docket": {
                     "type": "long"
@@ -468,7 +471,8 @@
             "properties": {
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "docket": {
                     "type": "long"
@@ -635,15 +639,18 @@
                 },
                 "processingTime": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "processingBegin": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "processingEnd": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "processingUser": {
                     "properties": {
@@ -722,7 +729,8 @@
             "properties": {
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss"
+                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "ignore_malformed": true
                 },
                 "processes": {
                     "properties": {
