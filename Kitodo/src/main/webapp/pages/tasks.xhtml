@@ -24,6 +24,7 @@
                                   label=""
                                   title="#{msgs.configureColumns}"
                                   style="float: right; margin-right: 0;"
+                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
                                   value="#{CurrentTaskForm.selectedColumns}">
                 <f:selectItems value="#{CurrentTaskForm.columns}" />
                 <p:ajax update="tasksTabView"/>

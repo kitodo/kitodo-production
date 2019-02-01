@@ -24,6 +24,7 @@
             <p:selectCheckboxMenu styleClass="configure-columns-button"
                                   label=""
                                   title="#{msgs.configureColumns}"
+                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
                                   value="#{ProjectForm.selectedColumns}">
                 <f:selectItems value="#{ProjectForm.columns}" />
                 <p:ajax update="projectsTabView"/>

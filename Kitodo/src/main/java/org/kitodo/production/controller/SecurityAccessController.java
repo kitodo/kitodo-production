@@ -640,4 +640,14 @@ public class SecurityAccessController {
     public boolean hasAuthorityGlobalToAddOrEditRole() {
         return securityAccessService.hasAuthorityGlobalToAddOrEditRole();
     }
+
+    /**
+     * Checks if current user has authority to configure displayed columns
+     * in list views.
+     *
+     * @return true if current user has authority to configure columns
+     */
+    public boolean hasAuthorityToConfigureColumns() {
+        return securityAccessService.hasAuthorityToConfigureColumns();
+    }
 }

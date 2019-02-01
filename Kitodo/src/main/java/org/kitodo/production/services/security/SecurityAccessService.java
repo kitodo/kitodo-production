@@ -719,4 +719,13 @@ public class SecurityAccessService {
     public boolean hasAuthorityGlobalToViewUserList() {
         return hasAuthorityGlobal("viewAllUsers");
     }
+
+    /** Check if current usr has authority to configure list views. It returns true if
+     * the user has "configureColumns" authority globally or for a client.
+     *
+     * @return true if user has authority 'configureColumns' globally or for a client
+     */
+    public boolean hasAuthorityToConfigureColumns() {
+        return hasAuthorityGlobalOrForClient("configureColumns");
+    }
 }
