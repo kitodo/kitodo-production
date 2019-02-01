@@ -20,45 +20,45 @@
             <bpmn2:outgoing>SequenceFlow_14kxxow</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_16aqqn5" sourceRef="Task1" targetRef="Task2"/>
-        <bpmn2:exclusiveGateway id="ExclusiveGateway_in">
+        <bpmn2:parallelGateway id="ParallelGateway2_in">
             <bpmn2:incoming>SequenceFlow_14kxxow</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0z1l896</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_0rcoqsk</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_0n2rxt4</bpmn2:outgoing>
-        </bpmn2:exclusiveGateway>
-        <bpmn2:sequenceFlow id="SequenceFlow_14kxxow" sourceRef="Task2" targetRef="ExclusiveGateway_in"/>
+        </bpmn2:parallelGateway>
+        <bpmn2:sequenceFlow id="SequenceFlow_14kxxow" sourceRef="Task2" targetRef="ParallelGateway2_in"/>
         <bpmn2:task id="Task3" name="Task3">
             <bpmn2:incoming>SequenceFlow_0z1l896</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_006rbcv</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0z1l896" name="type=1" sourceRef="ExclusiveGateway_in"
+        <bpmn2:sequenceFlow id="SequenceFlow_0z1l896" name="type=1" sourceRef="ParallelGateway2_in"
                             targetRef="Task3"/>
         <bpmn2:task id="Task5" name="Task5">
             <bpmn2:incoming>SequenceFlow_0rcoqsk</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1slhoqp</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0rcoqsk" name="type=2" sourceRef="ExclusiveGateway_in"
+        <bpmn2:sequenceFlow id="SequenceFlow_0rcoqsk" name="type=2" sourceRef="ParallelGateway2_in"
                             targetRef="Task5"/>
         <bpmn2:task id="Task6" name="Task6">
             <bpmn2:incoming>SequenceFlow_0n2rxt4</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1gxu15q</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0n2rxt4" name="type=3" sourceRef="ExclusiveGateway_in"
+        <bpmn2:sequenceFlow id="SequenceFlow_0n2rxt4" name="type=3" sourceRef="ParallelGateway2_in"
                             targetRef="Task6"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_006rbcv" sourceRef="Task3" targetRef="ExclusiveGateway_out"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_1gxu15q" sourceRef="Task6" targetRef="ExclusiveGateway_out"/>
-        <bpmn2:exclusiveGateway id="ExclusiveGateway_out">
+        <bpmn2:sequenceFlow id="SequenceFlow_006rbcv" sourceRef="Task3" targetRef="ParallelGateway2_out"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_1gxu15q" sourceRef="Task6" targetRef="ParallelGateway2_out"/>
+        <bpmn2:parallelGateway id="ParallelGateway2_out">
             <bpmn2:incoming>SequenceFlow_1slhoqp</bpmn2:incoming>
             <bpmn2:incoming>SequenceFlow_006rbcv</bpmn2:incoming>
             <bpmn2:incoming>SequenceFlow_1gxu15q</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0e4mel5</bpmn2:outgoing>
-        </bpmn2:exclusiveGateway>
-        <bpmn2:sequenceFlow id="SequenceFlow_1slhoqp" sourceRef="Task5" targetRef="ExclusiveGateway_out"/>
+        </bpmn2:parallelGateway>
+        <bpmn2:sequenceFlow id="SequenceFlow_1slhoqp" sourceRef="Task5" targetRef="ParallelGateway2_out"/>
         <bpmn2:task id="Task7" name="Task7">
             <bpmn2:incoming>SequenceFlow_0e4mel5</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1fztu3j</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0e4mel5" sourceRef="ExclusiveGateway_out" targetRef="Task7"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_0e4mel5" sourceRef="ParallelGateway2_out" targetRef="Task7"/>
         <bpmn2:task id="Task8" name="Task8">
             <bpmn2:incoming>SequenceFlow_1fztu3j</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_18hy4na</bpmn2:outgoing>
@@ -138,7 +138,7 @@
                     <dc:Bounds x="623" y="237" width="0" height="12"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNShape id="ExclusiveGateway_in_di" bpmnElement="ExclusiveGateway_in"
+            <bpmndi:BPMNShape id="ParallelGateway2_in_di" bpmnElement="ParallelGateway2_in"
                               isMarkerVisible="true">
                 <dc:Bounds x="798" y="233" width="50" height="50"/>
                 <bpmndi:BPMNLabel>
@@ -200,7 +200,7 @@
                     <dc:Bounds x="1001" y="366" width="90" height="12"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNShape id="ExclusiveGateway_out_di" bpmnElement="ExclusiveGateway_out"
+            <bpmndi:BPMNShape id="ParallelGateway2_out_di" bpmnElement="ParallelGateway2_out"
                               isMarkerVisible="true">
                 <dc:Bounds x="1069" y="233" width="50" height="50"/>
                 <bpmndi:BPMNLabel>

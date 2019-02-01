@@ -23,9 +23,7 @@ import java.util.Objects;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.Query;
-import org.camunda.bpm.model.bpmn.instance.ConditionExpression;
 import org.camunda.bpm.model.bpmn.instance.EndEvent;
-import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
 import org.camunda.bpm.model.bpmn.instance.ParallelGateway;
 import org.camunda.bpm.model.bpmn.instance.Process;
@@ -165,15 +163,6 @@ public class Reader {
     private void iterateOverNodes(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
         if (node instanceof Task) {
             addTask(node, ordering, workflowCondition);
-        } else if (node instanceof ExclusiveGateway) {
-            Query<FlowNode> nextNodes = node.getSucceedingNodes();
-            if (nextNodes.count() == 1) {
-                iterateOverNodes(nextNodes.singleResult(), ordering);
-            } else if (nextNodes.count() > 1) {
-                addConditionalTasksBranch(nextNodes.list(), ordering);
-            } else {
-                throw new WorkflowException(Helper.getTranslation("workflowExceptionExclusiveGateway"));
-            }
         } else if (node instanceof ParallelGateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
             if (nextNodes.count() == 1) {
@@ -183,29 +172,6 @@ public class Reader {
             } else {
                 throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGateway"));
             }
-        }
-    }
-
-    /**
-     * Add all tasks in exact branch - following given exclusive gateway.
-     *
-     * @param nextNodes
-     *            nodes of exclusive gateway
-     */
-    private void addConditionalTasksBranch(List<FlowNode> nextNodes, int ordering) throws WorkflowException {
-        for (FlowNode node : nextNodes) {
-            if (isBranchInvalid(node)) {
-                throw new WorkflowException(Helper.getTranslation("workflowExceptionConditionalBranch",
-                    Collections.singletonList(node.getName())));
-            }
-
-            ConditionExpression conditionExpression = node.getIncoming().iterator().next().getConditionExpression();
-            String workflowCondition = "default";
-            if (Objects.nonNull(conditionExpression)) {
-                workflowCondition = conditionExpression.getTextContent();
-            }
-
-            iterateOverNodes(node, ordering, workflowCondition);
         }
     }
 

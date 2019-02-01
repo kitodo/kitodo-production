@@ -307,7 +307,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0wgtpei" style="display: block;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0wgtpei" style="display: block;"
            transform="translate(798 233)">
             <g class="djs-visual">
                 <polygon points="25,0 50,25 25,50 0,25"
@@ -321,7 +321,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0wgtpei_label" style="display: none;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0wgtpei_label" style="display: none;"
            transform="translate(813 252)">
             <g class="djs-visual">
                 <text class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px;">
@@ -454,7 +454,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_1r6tp93" style="display: block;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_1r6tp93" style="display: block;"
            transform="translate(1069 233)">
             <g class="djs-visual">
                 <polygon points="25,0 50,25 25,50 0,25"
@@ -507,7 +507,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_1r6tp93_label" style="display: none;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_1r6tp93_label" style="display: none;"
            transform="translate(1049 211)">
             <g class="djs-visual">
                 <text class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px;">
@@ -576,7 +576,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0bfnkde" style="display: block;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0bfnkde" style="display: block;"
            transform="translate(1491 233)">
             <g class="djs-visual">
                 <polygon points="25,0 50,25 25,50 0,25"
@@ -603,7 +603,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0bfnkde_label" style="display: none;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0bfnkde_label" style="display: none;"
            transform="translate(1471 211)">
             <g class="djs-visual">
                 <text class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px;">
@@ -753,7 +753,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0h0y791" style="display: block;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0h0y791" style="display: block;"
            transform="translate(1870 233)">
             <g class="djs-visual">
                 <polygon points="25,0 50,25 25,50 0,25"
@@ -806,7 +806,7 @@
         </g>
     </g>
     <g class="djs-group">
-        <g class="djs-element djs-shape" data-element-id="ExclusiveGateway_0h0y791_label" style="display: none;"
+        <g class="djs-element djs-shape" data-element-id="ParallelGateway_0h0y791_label" style="display: none;"
            transform="translate(1850 211)">
             <g class="djs-visual">
                 <text class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px;">
