@@ -33,10 +33,10 @@
                     <h:outputLabel value="#{msgs.position}:"
                                    for="docStructPositionSelection"/>
                     <p:selectOneMenu id="docStructPositionSelection"
-                                     value="#{MetadataProcessor.positionOfNewDocStrucElement}"
+                                     value="#{DataEditorForm.selectedNewLogicalPosition}"
                                      style="width: 180px;">
                         <!--TODO check addable types-->
-                        <f:selectItems value="#{MetadataProcessor.positionsOfNewDocStrucElement}"
+                        <f:selectItems value="#{DataEditorForm.getNewElementPositionList}"
                                        var="positionSelection"
                                        itemValue="#{positionSelection}"
                                        itemLabel="#{positionSelection.label}"/>
@@ -46,10 +46,10 @@
                     <h:outputLabel value="#{msgs.typ}:"
                                    for="docStructAddTypeSelection"/>
                     <p:selectOneMenu id="docStructAddTypeSelection"
-                                     value="#{MetadataProcessor.selectedStructureType}"
+                                     value="#{DataEditorForm.selectedNewLogicalType}"
                                      style="width: 180px;">
                         <!--TODO check addable types-->
-                        <f:selectItems value="#{MetadataProcessor.allowedStructureTypes}"/>
+                        <f:selectItems value="#{DataEditorForm.newLogicalTypeList}"/>
                         <p:ajax update="selectAddableMetadataTypes"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
@@ -60,7 +60,7 @@
                     <h:outputText value="#{msgs.defaults}:"/>
 
                     <h:panelGroup>
-                        <p:selectOneRadio layout="grid" columns="1" value="#{MetadataProcessor.addServeralStructuralElementsMode}">
+                        <p:selectOneRadio layout="grid" columns="1" value="#{DataEditorForm.addMultipleLogicalElements}">
                             <f:selectItem itemLabel="#{msgs.pageAllocation}" itemValue="#{false}" />
                             <f:selectItem itemLabel="#{msgs.metadata}" itemValue="#{true}" />
                             <p:ajax event="click" update="AddDocStrucTypeSpecs" />
@@ -69,23 +69,29 @@
                 </h:panelGrid>
 
                 <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
-                    <h:panelGroup rendered="#{!MetadataProcessor.addServeralStructuralElementsMode}">
+                    <h:panelGroup rendered="#{!DataEditorForm.addMultipleLogicalElements}">
                         <p:panelGrid columns="2">
                             <p:row>
                                 <h:outputText value="#{msgs.firstPage}:"/>
-                                <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{MetadataProcessor.pagesStart}"
-                                                 filter="true" filterMatchMode="startsWith">
-                                    <f:selectItem itemLabel="#{msgs.firstPage}" itemValue="" />
-                                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                <p:selectOneMenu id="selectFirstPageOnAddNode"
+                                                 value="#{DataEditorForm.selectedFirstPage}"
+                                                 filter="true"
+                                                 filterMatchMode="startsWith">
+                                    <f:selectItem itemLabel="#{msgs.firstPage}"
+                                                  itemValue="" />
+                                    <f:selectItems value="#{DataEditorForm.allPages}"/>
                                 </p:selectOneMenu>
                             </p:row>
 
                             <p:row>
                                 <h:outputText value="#{msgs.lastPage}:"/>
-                                <p:selectOneMenu id="selectLastPageOnAddNode" value="#{MetadataProcessor.pagesEnd}"
-                                                 filter="true" filterMatchMode="startsWith">
-                                    <f:selectItem itemLabel="#{msgs.lastPage}" itemValue="" />
-                                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                <p:selectOneMenu id="selectLastPageOnAddNode"
+                                                 value="#{DataEditorForm.selectedLastPage}"
+                                                 filter="true"
+                                                 filterMatchMode="startsWith">
+                                    <f:selectItem itemLabel="#{msgs.lastPage}"
+                                                  itemValue="" />
+                                    <f:selectItems value="#{DataEditorForm.allPages}"/>
                                 </p:selectOneMenu>
                             </p:row>
                         </p:panelGrid>
@@ -93,7 +99,7 @@
                         <h:panelGroup layout="block">
                             <p:commandButton id="addSingleDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
-                                             action="#{MetadataProcessor.addSingleNodeWithPages()}"
+                                             action="#{DataEditorForm.addLogicalNode}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
@@ -107,23 +113,23 @@
                         </h:panelGroup>
                     </h:panelGroup>
 
-                    <h:panelGroup rendered="#{MetadataProcessor.addServeralStructuralElementsMode}">
+                    <h:panelGroup rendered="#{DataEditorForm.addMultipleLogicalElements}">
                         <h:panelGrid columns="2">
                             <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
-                            <p:spinner value="#{MetadataProcessor.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
+                            <p:spinner value="#{DataEditorForm.numberOfLogicalElements}" id="elementsToAddSpinner" size="5" min="1"/>
 
                             <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
-                            <p:selectOneMenu id="selectAddableMetadataTypes" value="#{MetadataProcessor.addMetaDataType}" style="width: 180px;">
-                                <f:selectItems value="#{MetadataProcessor.addableMetadataTypesFromTempType}" />
+                            <p:selectOneMenu id="selectAddableMetadataTypes" value="#{DataEditorForm.selectedMetadataType}" style="width: 180px;">
+                                <f:selectItems value="#{DataEditorForm.newLogicalMetadataList}" />
                             </p:selectOneMenu>
 
                             <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
-                            <h:inputTextarea id="inputMetaDataValue" value="#{MetadataProcessor.addMetaDataValue}"/>
+                            <h:inputTextarea id="inputMetaDataValue" value="#{DataEditorForm.metadataValue}"/>
                         </h:panelGrid>
                         <h:panelGroup layout="block">
                             <p:commandButton id="addMultiDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
-                                             action="#{MetadataProcessor.addSeveralNodesWithMetadata}"
+                                             action="#{DataEditorForm.addMultipleLogicalNodes}"
                                              update="structureTreeForm"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"

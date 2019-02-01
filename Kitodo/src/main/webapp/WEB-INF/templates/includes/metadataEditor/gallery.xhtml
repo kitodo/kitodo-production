@@ -19,17 +19,17 @@
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
 
         <h:form id="imagePreviewForm" style="height: 100%">
-            <span id="imageData" data-image="#{request.contextPath}#{MetadataProcessor.currentImage}"/>
+            <span id="imageData" data-image="#{request.contextPath}#{DataEditorForm.selectedImage}"/>
             <p:panelGrid id="imageControlPanel" columns="3"
-                         rendered="#{MetadataProcessor.imageListExistent}"
+                         rendered="#{DataEditorForm.imageListExistent}"
                          style="right: 47px; top: 0; position: absolute;">
                 <p:column>
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
                                      oncomplete="destruct()"
-                                     styleClass="#{MetadataProcessor.viewMode eq 'list' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="list" target="#{MetadataProcessor.viewMode}"/>
+                                     styleClass="#{DataEditorForm.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryViewMode}"/>
                     </p:commandButton>
                 </p:column>
                 <p:column>
@@ -37,8 +37,8 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
                                      oncomplete="destruct()"
-                                     styleClass="#{MetadataProcessor.viewMode eq 'grid' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="grid" target="#{MetadataProcessor.viewMode}"/>
+                                     styleClass="#{DataEditorForm.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryViewMode}"/>
                     </p:commandButton>
                 </p:column>
                 <p:column>
@@ -46,18 +46,18 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
                                      oncomplete="initialize()"
-                                     styleClass="#{MetadataProcessor.viewMode eq 'preview' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="preview" target="#{MetadataProcessor.viewMode}"/>
+                                     styleClass="#{DataEditorForm.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryViewMode}"/>
                     </p:commandButton>
                 </p:column>
             </p:panelGrid>
 
-            <p:panel rendered="#{not MetadataProcessor.imageListExistent}">
+            <p:panel rendered="#{not DataEditorForm.imageListExistent}">
                 <p:outputLabel for="tifFolders" id="tifFoldersLabel" value="#{msgs.currentFolder}"/>
-                <p:selectOneMenu id="tifFolders" value="#{MetadataProcessor.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
+                <p:selectOneMenu id="tifFolders" value="#{DataEditorForm.selectedTifDirectory}" converter="#{URIConverter}" style="margin: 0 5px">
                     <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
-                    <f:selectItems value="#{MetadataProcessor.allTifFolders}"/>
-                    <f:ajax listener="#{MetadataProcessor.updateImagesFolder()}"/>
+                    <f:selectItems value="#{DataEditorForm.tifDirectoryList}"/>
+                    <f:ajax listener="#{DataEditorForm.updateImageDirectory()}"/>
                 </p:selectOneMenu>
                 <p:commandButton id="readImagesButton"
                                  value="#{msgs.generatePNGs}"
@@ -66,69 +66,69 @@
             </p:panel>
 
             <!-- Pages in structured view -->
-            <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'list' and MetadataProcessor.imageListExistent}">
+            <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'list' and DataEditorForm.imageListExistent}">
                 <p:fieldset id="structuredPagesField">
                     <p:dataList id="structuredPages"
                                 var="structureElement"
-                                value="#{MetadataProcessor.allStructureElements}"
+                                value="#{DataEditorForm.logicalElementList}"
                                 type="definition"
                                 binding="#{currentElement}">
                         <h:outputText value="#{structureElement.getDocStructType().getNameByLanguage(LanguageForm.locale)}" style="font-weight: bold;"/>
                         <p:dataList styleClass="structureElementDataList"
                                     id="structureElementDataList"
                                     var="page"
-                                    value="#{MetadataProcessor.getPageReferencesToDocStruct(structureElement)}"
+                                    value="#{DataEditorForm.getLogicalElementPageList(structureElement)}"
                                     binding="#{structuredThumbnail}">
-                            <ui:param name="filePath" value="#{MetadataProcessor.getPageImageFilePath(page)}"/>
-                            <p:panel id="structuredPagePanel" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
+                            <ui:param name="filePath" value="#{DataEditorForm.getPageImageFilePath(page)}"/>
+                            <p:panel id="structuredPagePanel" rendered="#{DataEditorForm.getImageAccessible(filePath)}">
                                 <p:commandLink update="structureTreeForm, imagePreviewForm">
                                     <div class="thumbnail-container">
-                                        <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                        <img src="#{request.contextPath}#{DataEditorForm.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
                                         <div class="thumbnail-overlay">
-                                            #{msgs.image} #{MetadataProcessor.getPhysicalPageNumber(page)}, #{msgs.page} #{MetadataProcessor.getLogicalPageNumber(page)}
+                                            #{msgs.image} #{DataEditorForm.getPhysicalPageNumber(page)}, #{msgs.page} #{DataEditorForm.getLogicalPageNumber(page)}
                                         </div>
                                     </div>
-                                    <f:setPropertyActionListener value="#{filePath}" target="#{MetadataProcessor.currentImage}"/>
-                                    <f:setPropertyActionListener value="#{page}" target="#{MetadataProcessor.myStrukturelement}"/>
+                                    <f:setPropertyActionListener value="#{filePath}" target="#{DataEditorForm.selectedImage}"/>
+                                    <f:setPropertyActionListener value="#{page}" target="#{DataEditorForm.selectedLogicalTreeNode}"/>
                                 </p:commandLink>
                             </p:panel>
                             <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
                                          revert="true" stack=".ui-panel"/>
                         </p:dataList>
                         <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
-                            <p:ajax listener="#{MetadataProcessor.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
+                            <p:ajax listener="#{DataEditorForm.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
                         </p:droppable>
                     </p:dataList>
                 </p:fieldset>
             </ui:fragment>
 
             <!-- Pages in UNstructured view -->
-            <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'grid' and MetadataProcessor.imageListExistent}">
+            <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'grid' and DataEditorForm.imageListExistent}">
                 <div class="thumbnailWrapper">
-                    <ui:repeat value="#{MetadataProcessor.images}" var="image">
-                        <p:commandLink update="imagePreviewForm" rendered="#{MetadataProcessor.isAccessGranted(image)}">
+                    <ui:repeat value="#{DataEditorForm.imageList}" var="image">
+                        <p:commandLink update="imagePreviewForm" rendered="#{DataEditorForm.getImageAccessible(image)}">
                             <!-- outputText is needed to remove whitespace produced by correct code indent -->
-                            <h:outputText><img class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
-                            <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
+                            <h:outputText><img class="thumbnail #{DataEditorForm.selectedImage eq image ? 'active' : ''}" src="#{request.contextPath}#{DataEditorForm.getThumbnail(image)}"/></h:outputText>
+                            <f:setPropertyActionListener value="#{image}" target="#{DataEditorForm.selectedImage}"/>
                         </p:commandLink>
                     </ui:repeat>
                 </div>
             </ui:fragment>
 
             <!-- View current page with OpenLayers -->
-            <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'preview' and MetadataProcessor.imageListExistent}">
+            <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'preview' and DataEditorForm.imageListExistent}">
                 <!-- OpenLayers Kitodo custom controls -->
                 <div id="olWrapper" style="overflow-x: auto; height: 100%">
                     <div id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
                             <div id="thumbnailWrapper">
-                                <ui:repeat value="#{MetadataProcessor.images}" var="image">
+                                <ui:repeat value="#{DataEditorForm.imageList}" var="image">
                                     <div>
-                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" oncomplete="checkScrollPosition()" rendered="#{MetadataProcessor.isAccessGranted(image)}">
+                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" oncomplete="checkScrollPosition()" rendered="#{DataEditorForm.getImageAccessible(image)}">
                                             <!-- outputText is needed to remove whitespace produced by correct code indent -->
-                                            <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
-                                            <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
+                                            <h:outputText><img style="display: inline;" class="thumbnail #{DataEditorForm.selectedImage eq image ? 'active' : ''}" src="#{request.contextPath}#{DataEditorForm.getThumbnail(image)}"/></h:outputText>
+                                            <f:setPropertyActionListener value="#{image}" target="#{DataEditorForm.selectedImage}"/>
                                         </p:commandLink>
                                     </div>
                                 </ui:repeat>
@@ -136,7 +136,7 @@
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
-                    <ui:fragment rendered="#{MetadataProcessor.isAccessGranted(MetadataProcessor.currentImage)}">
+                    <ui:fragment rendered="#{DataEditorForm.getImageAccessible(DataEditorForm.selectedImage)}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
                         <h:outputScript name="js/ol_custom.js"/>
                         <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left"/>

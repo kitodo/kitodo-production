@@ -21,8 +21,8 @@
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
     <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
-            <h:panelGroup rendered="#{!empty MetadataProcessor.metaPersonList}">
-                <p:dataTable id="personTable" value="#{MetadataProcessor.metaPersonList}" var="person"
+            <h:panelGroup rendered="#{!empty DataEditorForm.metaPersonList}">
+                <p:dataTable id="personTable" value="#{DataEditorForm.metaPersonList}" var="person"
                              style="margin-bottom:30px;">
                     <f:facet name="header">
                         #{msgs.persons}
@@ -75,8 +75,8 @@
                                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                          disabled="#{readOnly}"
                                          title="#{msgs.personsDataDelete}"
-                                         action="#{MetadataProcessor.deletePerson}">
-                            <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
+                                         action="#{DataEditorForm.deletePerson}">
+                            <f:setPropertyActionListener value="#{person}" target="#{DataEditorForm.selectedPerson}"/>
                         </p:commandButton>
                         <p:commandButton update="metadata:personTable"
                                          id="copyPersonBtn"
@@ -85,8 +85,8 @@
                                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                          disabled="#{readOnly}"
                                          title="#{msgs.personsDataCopy}"
-                                         action="#{MetadataProcessor.copyPerson}">
-                            <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
+                                         action="#{DataEditorForm.copyPerson}">
+                            <f:setPropertyActionListener value="#{person}" target="#{DataEditorForm.selectedPerson}"/>
                         </p:commandButton>
                     </p:column>
 
@@ -94,7 +94,7 @@
                 <p:commandButton icon="fa fa-plus" value="#{msgs.neuePersonAnlegen}"
                                  update="dialogAddPersonForm:selectTempPersonRoll, dialogAddPersonForm:addPersonRecord"
                                  title="#{msgs.docstructTypeAendern}"
-                                 action="#{MetadataProcessor.addPerson}"
+                                 action="#{DataEditorForm.newPerson}"
                                  style="margin-bottom: 40px;"
                                  styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                  disabled="#{readOnly}"
@@ -104,11 +104,12 @@
 
             <p:dataTable id="metadataTable"
                          styleClass="no-header"
-                         value="#{MetadataProcessor.selectedTreeNode.data.metadata}"
+                         rendered="#{!empty DataEditorForm.selectedLogicalTreeNodeMetadataList}"
+                         value="#{DataEditorForm.selectedLogicalTreeNodeMetadataList}"
                          var="item">
 
                 <p:column style="width: 100%;">
-                    <p:outputLabel value="#{MetadataProcessor.getMetadataTranslation(item.key)}"/>
+                    <p:outputLabel value="#{DataEditorForm.getMetadataTranslation(item.key)}"/>
                     <p:inputTextarea value="#{item.value}"
                                      rows="2"
                                      disabled="#{readOnly}"
@@ -126,8 +127,8 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{MetadataProcessor.delete}">
-                        <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
+                                     action="#{DataEditorForm.deleteMetadata}">
+                        <f:setPropertyActionListener value="#{item}" target="#{DataEditorForm.selectedMetadata}"/>
                     </p:commandButton>
                     <p:commandButton update="metadata:metadataTable"
                                      id="copyMetadata"
@@ -139,8 +140,8 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{MetadataProcessor.copy}">
-                        <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
+                                     action="#{DataEditorForm.copyMetadata}">
+                        <f:setPropertyActionListener value="#{item}" target="#{DataEditorForm.selectedMetadata}"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
@@ -148,16 +149,10 @@
             <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
                 <p:row>
                     <p:commandButton id="addMetadataButton"
-                                     icon="fa fa-plus"
-                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     disabled="#{readOnly or MetadataProcessor.selectedTreeNode eq null}"
-                                     style="vertical-align: top; margin-left: 10px;"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
-                                     onclick="PF('addMetadataDialog').show();">
-                    </p:commandButton>
+                                     onclick="PF('addMetadataDialog').show();"/>
                 </p:row>
             </p:panelGrid>
         </h:form>
-
     </p:panel>
 </ui:composition>

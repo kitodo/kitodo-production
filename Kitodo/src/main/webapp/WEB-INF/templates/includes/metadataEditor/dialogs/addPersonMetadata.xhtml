@@ -29,29 +29,29 @@
             <p:panelGrid columns="2" styleClass="ui-noborder">
 
                 <p:outputLabel value="#{msgs.role}:"/>
-                <p:selectOneMenu value="#{MetadataProcessor.tempPersonRolle}" style="width: 350px;"
+                <p:selectOneMenu value="#{DataEditorForm.newPersonRole}" style="width: 350px;"
                                  id="selectTempPersonRoll">
-                    <f:selectItems value="#{MetadataProcessor.addableRollen}"/>
+                    <f:selectItems value="#{DataEditorForm.addableRoles}"/>
                 </p:selectOneMenu>
 
                 <p:outputLabel value="#{msgs.normDataRecord}:"/>
-                <p:inputText value="#{MetadataProcessor.tempPersonRecord}"
+                <p:inputText value="#{DataEditorForm.newPersonRecord}"
                              style="width: 350px;"
                              id="addPersonRecord"/>
 
                 <p:outputLabel value="#{msgs.firstName}:"/>
-                <p:inputText value="#{MetadataProcessor.tempPersonVorname}"
+                <p:inputText value="#{DataEditorForm.newPersonFirstName}"
                              style="width: 350px;"
                              id="addPersonFirstname"/>
 
                 <p:outputLabel value="#{msgs.surname}:"/>
-                <p:inputText value="#{MetadataProcessor.tempPersonNachname}"
+                <p:inputText value="#{DataEditorForm.newPersonLastName}"
                              style="width: 350px;"
                              id="addPersonLastname"/>
             </p:panelGrid>
 
             <p:commandButton value="#{msgs.apply}"
-                             action="#{MetadataProcessor.savePerson}"
+                             action="#{DataEditorForm.savePerson}"
                              update="metadata"
                              oncomplete="PF('dialogAddPerson').hide();">
             </p:commandButton>

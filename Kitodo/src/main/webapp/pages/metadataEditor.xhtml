@@ -130,11 +130,11 @@
 
                         <div class="columnHeadingWrapper">
                             <h:panelGroup id="galleryHeadingWrapper">
-                                <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'list' or MetadataProcessor.viewMode eq 'grid'}">
+                                <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'list' or DataEditorForm.galleryViewMode eq 'grid'}">
                                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
                                 </ui:fragment>
-                                <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'preview'}">
-                                    <h:outputText styleClass="columnHeading" value="#{msgs.page} #{MetadataProcessor.pageIndex}"/>
+                                <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'preview'}">
+                                    <h:outputText styleClass="columnHeading" value="#{msgs.page} #DataEditorForm.pageIndex}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
@@ -153,8 +153,6 @@
     </ui:define>
 
     <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/generatePNGs.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/generatePNGsProgress.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/addDocStrucType.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/addMetadata.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/addPersonMetadata.xhtml"/>
@@ -166,7 +164,7 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.processes}" url="processes.jsf"/>
-        <p:menuitem value="#{msgs.metadataEdit} (#{MetadataProcessor.process.title})"/>
+        <p:menuitem value="#{msgs.metadataEdit} (#{DataEditorForm.process.title})"/>
     </ui:define>
 
 </ui:composition>
