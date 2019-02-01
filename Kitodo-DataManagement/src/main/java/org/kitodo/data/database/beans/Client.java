@@ -11,11 +11,20 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.kitodo.data.database.persistence.ClientDAO;
 
 @Entity
 @Table(name = "client")
@@ -25,6 +34,13 @@ public class Client extends BaseBean {
 
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "client_x_listColumn", joinColumns = {@JoinColumn(name = "client_id",
+            foreignKey = @ForeignKey(name = "FK_client_id"))},
+            inverseJoinColumns = {@JoinColumn(name = "column_id",
+                    foreignKey = @ForeignKey(name = "FK_column_id"))})
+    private List<ListColumn> listColumns;
 
     /**
      * Gets name.
@@ -62,5 +78,27 @@ public class Client extends BaseBean {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
+    }
+
+    /**
+     * Get listColumns.
+     * @return
+     *          ListColumns
+     */
+    public List<ListColumn> getListColumns() {
+        initialize(new ClientDAO(), this.listColumns);
+        if (Objects.isNull(this.listColumns)) {
+            this.listColumns = new ArrayList<>();
+        }
+        return this.listColumns;
+    }
+
+    /**
+     * Set listColumns.
+     * @param columns
+     *          ListColumns
+     */
+    public void setListColumns(List<ListColumn> columns) {
+        this.listColumns = columns;
     }
 }

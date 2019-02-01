@@ -15,7 +15,7 @@
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
@@ -42,6 +42,17 @@
                             rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
+        </h:form>
+        <h:form id="configureColumnsForm">
+            <p:selectCheckboxMenu styleClass="configure-columns-button"
+                                  label=""
+                                  title="#{msgs.configureColumns}"
+                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
+                                  value="#{UserForm.selectedColumns}">
+                <f:selectItems value="#{UserForm.selectedColumns}"/>
+                <p:ajax update="usersTabView"/>
+            </p:selectCheckboxMenu>
+
         </h:form>
     </ui:define>
 

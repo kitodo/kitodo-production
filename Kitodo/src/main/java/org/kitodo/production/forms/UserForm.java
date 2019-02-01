@@ -14,11 +14,15 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NameAlreadyBoundException;
@@ -78,6 +82,45 @@ public class UserForm extends BaseForm {
         super.setLazyDTOModel(new LazyDTOModel(userService));
         this.loginForm = loginForm;
     }
+
+    @PostConstruct
+    public void init() {
+
+        columns = new ArrayList<>();
+
+        SelectItemGroup userColumns = new SelectItemGroup(Helper.getTranslation("user"));
+        userColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("userName", Helper.getTranslation("username")),
+            new SelectItem("userLocation", Helper.getTranslation("location")),
+            new SelectItem("userRoles", Helper.getTranslation("roles")),
+            new SelectItem("userClients", Helper.getTranslation("clients")),
+            new SelectItem("userProjects", Helper.getTranslation("projects")),
+            new SelectItem("userActive", Helper.getTranslation("active"))
+        });
+        columns.add(userColumns);
+
+        SelectItemGroup roleColumns = new SelectItemGroup(Helper.getTranslation("role"));
+        userColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("roleRole", Helper.getTranslation("role")),
+            new SelectItem("roleClient", Helper.getTranslation("client"))
+        });
+        columns.add(roleColumns);
+
+        SelectItemGroup clientColumns = new SelectItemGroup(Helper.getTranslation("client"));
+        userColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("clientTitle", Helper.getTranslation("title")),
+        });
+        columns.add(clientColumns);
+
+        SelectItemGroup ldapgroupColumns = new SelectItemGroup(Helper.getTranslation("ldapGroup"));
+        userColumns.setSelectItems(new SelectItem[] {
+            new SelectItem("ldapgroupName", Helper.getTranslation("name")),
+            new SelectItem("ldapgroupHomeFolder", Helper.getTranslation("homefolder")),
+            new SelectItem("ldapgroupHomeGidNumber", Helper.getTranslation("gidnumber"))
+        });
+        columns.add(ldapgroupColumns);
+    }
+
 
     /**
      * New user.

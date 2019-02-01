@@ -37,7 +37,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -57,8 +59,14 @@ public class ProjectForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
 
+    /**
+     * Initialize the list of displayed list columns.
+     */
     @PostConstruct
     public void init() {
+
+        Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        List<ListColumn> clientColumns = client.getListColumns();
 
         columns = new ArrayList<>();
 

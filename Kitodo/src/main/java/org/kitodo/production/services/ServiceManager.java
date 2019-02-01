@@ -33,6 +33,7 @@ import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.data.WorkflowConditionService;
 import org.kitodo.production.services.data.WorkflowService;
+import org.kitodo.production.services.data.base.ListColumnService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -80,6 +81,7 @@ public class ServiceManager {
     private static RulesetManagementService rulesetManagementService;
     private static SessionService sessionService;
     private static WorkflowControllerService workflowControllerService;
+    private static ListColumnService listColumnService;
 
     /**
      * Private constructor.
@@ -276,6 +278,12 @@ public class ServiceManager {
     private static void initializeWorkflowControllerService() {
         if (Objects.isNull(workflowControllerService)) {
             workflowControllerService = WorkflowControllerService.getInstance();
+        }
+    }
+
+    private static void initializeListColumnService() {
+        if (Objects.isNull(listColumnService)) {
+            listColumnService = ListColumnService.getInstance();
         }
     }
 
@@ -616,5 +624,15 @@ public class ServiceManager {
     public static WorkflowControllerService getWorkflowControllerService() {
         initializeWorkflowControllerService();
         return workflowControllerService;
+    }
+
+    /**
+     * Initialize ColumnService if it is not yet initialized and return it.
+     *
+     * @return ColumnService object
+     */
+    public static ListColumnService getListColumnService() {
+        initializeListColumnService();
+        return listColumnService;
     }
 }
