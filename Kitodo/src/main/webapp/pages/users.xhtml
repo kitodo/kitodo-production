@@ -43,16 +43,20 @@
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
-        <h:form id="configureColumnsForm">
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button"
                                   label=""
+                                  converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
-                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
                                   value="#{UserForm.selectedColumns}">
-                <f:selectItems value="#{UserForm.selectedColumns}"/>
+                <f:selectItems value="#{UserForm.columns}"/>
                 <p:ajax update="usersTabView"/>
             </p:selectCheckboxMenu>
-
+            <p:commandButton action="#{UserForm.saveSelectedColumns()}"
+                             icon="fa fa-save fa-lg"
+                             style="margin-right: 10px;"
+                             title="#{msgs.saveColumnConfiguration}"/>
         </h:form>
     </ui:define>
 

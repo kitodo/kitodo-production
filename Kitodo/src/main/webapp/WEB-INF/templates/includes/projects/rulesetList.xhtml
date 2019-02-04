@@ -15,7 +15,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="rulesetTable"
                  var="item"
@@ -28,19 +27,19 @@
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.title')}">
+                  rendered="#{ProjectForm.showColumn('ruleset.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
                   sortBy="#{item.file.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.filename')}">
+                  rendered="#{ProjectForm.showColumn('ruleset.filename')}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 
         <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial"
                   sortBy="#{item.orderMetadataByRuleset}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'ruleset.sorting')}">
+                  rendered="#{ProjectForm.showColumn('ruleset.sorting')}">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
             </ui:fragment>

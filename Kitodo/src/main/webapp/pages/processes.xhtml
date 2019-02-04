@@ -51,16 +51,21 @@
                 </p:overlayPanel>
             </div>
         </h:form>
-        <h:form id="processesForm">
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button"
                                   label=""
+                                  converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
                                   style="float: right; margin-right: 0;"
-                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
                                   value="#{ProcessForm.selectedColumns}">
                 <f:selectItems value="#{ProcessForm.columns}" />
                 <p:ajax update="processesTabView"/>
             </p:selectCheckboxMenu>
+            <p:commandButton action="#{ProcessForm.saveSelectedColumns()}"
+                             icon="fa fa-save fa-lg"
+                             style="margin-right: 10px;"
+                             title="#{msgs.saveColumnConfiguration}"/>
         </h:form>
     </ui:define>
 

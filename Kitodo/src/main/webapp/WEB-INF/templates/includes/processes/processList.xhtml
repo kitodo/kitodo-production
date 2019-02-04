@@ -15,7 +15,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
         <p:dataTable id="processesTable" var="process" value="#{ProcessForm.lazyDTOModel}"
@@ -27,24 +26,25 @@
             <p:column id="titleColumn"
                       headerText="#{msgs.processTitle}"
                       filterBy="#{process.title}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.title')}">
+                      rendered="#{ProcessForm.showColumn('process.title')}">
                 <h:outputText value="#{process.title}"/>
             </p:column>
             <p:column id="progressColumn"
                       styleClass="progressColumn"
                       headerText="#{msgs.status}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.state')}">
+                      rendered="#{ProcessForm.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
             <p:column headerText="#{msgs.project}"
-                      rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), 'process.project')}">
+                      rendered="#{ProcessForm.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->
+            <!-- FIXME: save process properties configured in 'kitodo_config.properties' as "listColumns" to database when application starts! -->
             <p:columns value="#{ProcessForm.getProcessPropertyNames()}"
                        var="propertyName"
                        headerText="#{propertyName}"
-                       rendered="#{fn:contains(fn:join(ProcessForm.selectedColumns, '-'), propertyName)}">
+                       rendered="#{ProcessForm.showColumn(propertyName)}">
                 <h:outputText value="#{ProcessForm.getPropertyValue(process, propertyName)}"/>
             </p:columns>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
@@ -208,5 +208,4 @@
             <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
         </p:commandLink>
     </h:form>
-    <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
 </ui:composition>

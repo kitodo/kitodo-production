@@ -15,7 +15,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="workflowTable"
                  var="item"
@@ -28,25 +27,25 @@
 
         <p:column headerText="#{msgs.title}"
                   sortBy="#{item.title.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.title')}">
+                  rendered="#{ProjectForm.showColumn('workflow.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.filename}"
                   sortBy="#{item.fileName.keyword}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.filename')}">
+                  rendered="#{ProjectForm.showColumn('workflow.filename')}">
             <h:outputText value="#{item.fileName}"/>
         </p:column>
 
         <p:column headerText="#{msgs.active}"
                   sortBy="#{item.active}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.active')}">
+                  rendered="#{ProjectForm.showColumn('workflow.active')}">
             <h:outputText value="#{item.active}"/>
         </p:column>
 
         <p:column headerText="#{msgs.ready}"
                   sortBy="#{item.ready}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'workflow.ready')}">
+                  rendered="#{ProjectForm.showColumn('workflow.ready')}">
             <h:outputText value="#{item.ready}"/>
         </p:column>
 

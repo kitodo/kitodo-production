@@ -21,8 +21,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NameAlreadyBoundException;
@@ -46,6 +44,7 @@ import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.security.password.ValidPassword;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
+import org.kitodo.production.services.data.base.ListColumnService;
 
 @Named("UserForm")
 @SessionScoped
@@ -89,10 +88,19 @@ public class UserForm extends BaseForm {
     @PostConstruct
     public void init() {
         columns = new ArrayList<>();
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("user"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("role"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("client"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("ldapgroup"));
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("user"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("role"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("client"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ldapgroup"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
+        selectedColumns = new ArrayList<>();
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("user"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("role"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup"));
     }
 
 

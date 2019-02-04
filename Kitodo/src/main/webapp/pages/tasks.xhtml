@@ -19,16 +19,21 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.tasksCurrent}</h3>
-        <h:form id="taskForm">
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button"
                                   label=""
+                                  converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"
                                   style="float: right; margin-right: 0;"
-                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
                                   value="#{CurrentTaskForm.selectedColumns}">
                 <f:selectItems value="#{CurrentTaskForm.columns}" />
                 <p:ajax update="tasksTabView"/>
             </p:selectCheckboxMenu>
+            <p:commandButton action="#{CurrentTaskForm.saveSelectedColumns()}"
+                             icon="fa fa-save fa-lg"
+                             style="margin-right: 10px;"
+                             title="#{msgs.saveColumnConfiguration}"/>
         </h:form>
     </ui:define>
 

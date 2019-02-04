@@ -15,7 +15,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="docketTable"
                  var="item"
@@ -27,12 +26,12 @@
                  paginatorPosition="bottom">
 
         <p:column headerText="#{msgs.title}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docket.title')}">
+                  rendered="#{ProjectForm.showColumn('docket.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <p:column headerText="#{msgs.file}"
-                  rendered="#{fn:contains(fn:join(ProjectForm.selectedColumns, '-'), 'docket.filename')}">
+                  rendered="#{ProjectForm.showColumn('docket.filename')}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 

@@ -13,7 +13,6 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,12 +59,25 @@ public class ProjectForm extends BaseForm {
      */
     @PostConstruct
     public void init() {
+        // Lists of available list columns
         columns = new ArrayList<>();
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("project"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("template"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("workflow"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("docket"));
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("ruleset"));
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("project"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("template"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("workflow"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("docket"));
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ruleset"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
+
+        // Lists of selected list columns
+        selectedColumns = new ArrayList<>();
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("project"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket"));
+        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset"));
     }
 
     /**
@@ -448,7 +460,7 @@ public class ProjectForm extends BaseForm {
         if (mimeTypes.isEmpty()) {
             try {
                 Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-                List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
+                List<LanguageRange> languages = Collections.singletonList(new LanguageRange(language.toLanguageTag()));
                 mimeTypes = FileFormatsConfig.getFileFormats().parallelStream()
                         .collect(Collectors.toMap(locale -> locale.getLabel(languages), FileFormat::getMimeType,
                             (prior, recent) -> recent, TreeMap::new));

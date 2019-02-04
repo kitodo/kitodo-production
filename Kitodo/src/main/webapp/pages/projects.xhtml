@@ -21,14 +21,6 @@
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
                 rendered="#{SecurityAccessController.hasAnyAuthorityForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button"
-                                  label=""
-                                  title="#{msgs.configureColumns}"
-                                  rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}"
-                                  value="#{ProjectForm.selectedColumns}">
-                <f:selectItems value="#{ProjectForm.columns}" />
-                <p:ajax update="projectsTabView"/>
-            </p:selectCheckboxMenu>
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
@@ -48,6 +40,21 @@
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
+        </h:form>
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  value="#{ProjectForm.selectedColumns}">
+                <f:selectItems value="#{ProjectForm.columns}" />
+                <p:ajax update="projectsTabView"/>
+            </p:selectCheckboxMenu>
+            <p:commandButton action="#{ProjectForm.saveSelectedColumns()}"
+                             icon="fa fa-save fa-lg"
+                             style="margin-right: 10px;"
+                             title="#{msgs.saveColumnConfiguration}"/>
         </h:form>
     </ui:define>
 

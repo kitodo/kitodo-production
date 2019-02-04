@@ -132,10 +132,15 @@ public class ProcessForm extends TemplateBaseForm {
 
         columns = new ArrayList<>();
 
-        SelectItemGroup processColumGroup =
-                ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("process");
+        SelectItemGroup processColumnGroup = null;
+        try {
+            processColumnGroup = ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
 
         // Read process properties to display from configuration
+        // FIXME: require list of real ListColumn instances instead of just names here!
         SelectItem[] processPropertyColumnItems = new SelectItem[processPropertyNames.length];
         for (String propertyName : processPropertyNames) {
             processPropertyColumnItems[Arrays.asList(processPropertyNames).indexOf(propertyName)]
@@ -143,11 +148,13 @@ public class ProcessForm extends TemplateBaseForm {
         }
 
         SelectItem[] allColumns = Stream.concat(
-                        Stream.of(processColumGroup.getSelectItems()),
+                        Stream.of(processColumnGroup.getSelectItems()),
                         Stream.of(processPropertyColumnItems)).toArray(SelectItem[]::new);
         SelectItemGroup processColumns = new SelectItemGroup(Helper.getTranslation("process"));
         processColumns.setSelectItems(allColumns);
         columns.add(processColumns);
+
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
 
     }
 

@@ -24,8 +24,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -121,7 +119,12 @@ public class CurrentTaskForm extends BaseForm {
     @PostConstruct
     public void init() {
         columns = new ArrayList<>();
-        columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSeletItemGroup("task"));
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("task"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("task");
     }
 
     /**

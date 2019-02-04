@@ -34,5 +34,6 @@
             </ui:insert>
         </p:panel>
         <h:outputScript name="content.js" target="body" library="js"/>
+        <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
     </ui:define>
 </ui:composition>

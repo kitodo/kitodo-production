@@ -15,7 +15,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="rolesTable"
@@ -26,11 +25,11 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.role}"
-                  rendered="#{fn:contains(fn:join(RoleForm.selectedColumns, '-'), 'role.role')}">
+                  rendered="#{UserForm.showColumn('role.role')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.client}"
-                  rendered="#{fn:contains(fn:join(RoleForm.selectedColumns, '-'), 'role.client')}">
+                  rendered="#{UserForm.showColumn('role.client')}">
             <h:outputText value="#{item.client.name}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
