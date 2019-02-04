@@ -100,6 +100,16 @@ public class Structure {
     }
 
     /**
+     * Sets the label of this structure.
+     * 
+     * @param label
+     *            label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
      * Returns the meta-data on this structure.
      * 
      * @return the meta-data
@@ -118,34 +128,6 @@ public class Structure {
     }
 
     /**
-     * Returns the type of this structure.
-     * 
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Returns the views associated with this structure.
-     * 
-     * @return the views
-     */
-    public List<View> getViews() {
-        return views;
-    }
-
-    /**
-     * Sets the label of this structure.
-     * 
-     * @param label
-     *            label to set
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    /**
      * Sets the order label of this structure.
      * 
      * @param orderlabel
@@ -156,6 +138,15 @@ public class Structure {
     }
 
     /**
+     * Returns the type of this structure.
+     * 
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
      * Sets the type of this structure.
      * 
      * @param type
@@ -163,5 +154,14 @@ public class Structure {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Returns the views associated with this structure.
+     * 
+     * @return the views
+     */
+    public List<View> getViews() {
+        return views;
     }
 }

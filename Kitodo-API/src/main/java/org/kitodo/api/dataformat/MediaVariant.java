@@ -45,15 +45,6 @@ public class MediaVariant {
     }
 
     /**
-     * Returns the use of the media variant.
-     * 
-     * @return the use
-     */
-    public String getUse() {
-        return use;
-    }
-
-    /**
      * Sets the MIME type of the media variant.
      * 
      * @param mimeType
@@ -61,6 +52,15 @@ public class MediaVariant {
      */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    /**
+     * Returns the use of the media variant.
+     * 
+     * @return the use
+     */
+    public String getUse() {
+        return use;
     }
 
     /**

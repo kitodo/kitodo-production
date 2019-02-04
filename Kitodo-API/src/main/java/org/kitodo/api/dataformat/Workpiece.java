@@ -77,6 +77,16 @@ public class Workpiece {
     }
 
     /**
+     * Sets the creation date of the workpiece.
+     * 
+     * @param creationDate
+     *            creation date to set
+     */
+    public void setCreationDate(GregorianCalendar creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
      * Returns the edit history.
      * 
      * @return the edit history
@@ -95,6 +105,16 @@ public class Workpiece {
     }
 
     /**
+     * Sets the ID of the workpiece.
+     * 
+     * @param id
+     *            ID to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
      * Returns the media units of this workpiece.
      * 
      * @return the media units
@@ -110,26 +130,6 @@ public class Workpiece {
      */
     public Structure getStructure() {
         return structure;
-    }
-
-    /**
-     * Sets the creation date of the workpiece.
-     * 
-     * @param creationDate
-     *            creation date to set
-     */
-    public void setCreationDate(GregorianCalendar creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    /**
-     * Sets the ID of the workpiece.
-     * 
-     * @param id
-     *            ID to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**

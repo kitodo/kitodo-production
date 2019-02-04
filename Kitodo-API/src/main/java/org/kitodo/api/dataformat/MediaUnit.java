@@ -57,6 +57,16 @@ public class MediaUnit {
     }
 
     /**
+     * Sets the order label for this media unit.
+     * 
+     * @param orderlabel
+     *            order label to set
+     */
+    public void setOrderlabel(String orderlabel) {
+        this.orderlabel = orderlabel;
+    }
+
+    /**
      * Returns the order label for this media unit.
      * 
      * @return the order label
@@ -73,15 +83,5 @@ public class MediaUnit {
      */
     public void setOrder(int order) {
         this.order = order;
-    }
-
-    /**
-     * Sets the order label for this media unit.
-     * 
-     * @param orderlabel
-     *            order label to set
-     */
-    public void setOrderlabel(String orderlabel) {
-        this.orderlabel = orderlabel;
     }
 }
