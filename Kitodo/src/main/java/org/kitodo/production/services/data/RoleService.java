@@ -11,49 +11,30 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.RoleDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.RoleType;
-import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.dto.RoleDTO;
-import org.kitodo.production.dto.UserDTO;
-import org.kitodo.production.helper.RelatedProperty;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 
-public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
+public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
 
     private static RoleService instance = null;
 
     /**
-     * Constructor with Searcher and Indexer assigning.
+     * Constructor.
      */
     private RoleService() {
-        super(new RoleDAO(), new RoleType(), new Indexer<>(Role.class), new Searcher(Role.class));
-        this.indexer = new Indexer<>(Role.class);
+        super(new RoleDAO());
     }
 
     /**
@@ -72,84 +53,20 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
         return instance;
     }
 
-    /**
-     * Find all roles from index and covert results to format accepted by
-     * frontend. Right now there is no usage which demands all relations.
-     *
-     * @return list of RoleDTO objects
-     */
-    @Override
-    public List<RoleDTO> findAll() throws DataException {
-        return findAll(true);
-    }
-
-    /**
-     * Get all roles from index and covert results to format accepted by
-     * frontend. Right now there is no usage which demands all relations.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @return list of RoleDTO objects
-     */
-    @Override
-    public List<RoleDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return findAll(sort, offset, size, true);
-    }
-
-    /**
-     * Get all roles from index and covert results to format accepted by
-     * frontend. Right now there is no usage which demands all relations.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @param offset
-     *            start point for get results
-     * @param size
-     *            amount of requested results
-     * @param filters
-     *            filter for requested results
-     * @return list of RoleDTO objects
-     */
-    @Override
-    public List<RoleDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return findAll(sort, offset, size, false);
-        }
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return convertJSONObjectsToDTOs(
-                searcher.findDocuments(createQueryRolesForCurrentUser(filters).toString(), sort, offset, size), false);
-        }
-        return new ArrayList<>();
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Role");
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
+    public Long countResults(Map filters) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return null;
+            return countDatabaseRows();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return createQueryRolesForCurrentUser(filters).toString();
+            return countDatabaseRows();
         }
-        return null;
-    }
-
-    @Override
-    public List<Role> getAllNotIndexed() {
-        return getByQuery("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return 0L;
     }
 
     @Override
@@ -158,60 +75,23 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
-    /**
-     * Method saves users and tasks related to modified role.
-     *
-     * @param role
-     *            object
-     */
     @Override
-    protected void manageDependenciesForIndex(Role role) throws CustomResponseException, IOException {
-        manageTasksDependenciesForIndex(role);
-        manageUsersDependenciesForIndex(role);
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove role from list of
-     * roles and re-save task, if false only re-save task object.
-     *
-     * @param role
-     *            object
-     */
-    private void manageTasksDependenciesForIndex(Role role) throws CustomResponseException, IOException {
-        if (role.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : role.getTasks()) {
-                task.getRoles().remove(role);
-                ServiceManager.getTaskService().saveToIndex(task, false);
-            }
-        } else {
-            for (Task task : role.getTasks()) {
-                ServiceManager.getTaskService().saveToIndex(task, false);
-            }
+    @SuppressWarnings("unchecked")
+    public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), filters, first, pageSize);
         }
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove role from list of
-     * roles and re-save user, if false only re-save user object.
-     *
-     * @param role
-     *            object
-     */
-    private void manageUsersDependenciesForIndex(Role role) throws CustomResponseException, IOException {
-        if (role.getIndexAction() == IndexAction.DELETE) {
-            for (User user : role.getUsers()) {
-                user.getRoles().remove(role);
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
-        } else {
-            for (User user : role.getUsers()) {
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
+            return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
+                            + getSort(sortField, sortOrder),
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                pageSize);
         }
+        return new ArrayList<>();
     }
 
     /**
-     * Find all roles available to assign to the edited user. It will be displayed
+     * Get all roles available to assign to the edited user. It will be displayed
      * in the addRolesPopup.
      *
      * @param userId
@@ -220,21 +100,11 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      *            list of clients to which edited user is assigned
      * @return list of all matching roles
      */
-    public List<RoleDTO> findAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DataException {
-        return findAvailableForAssignToUser(userId, clients);
-    }
-
-    private List<RoleDTO> findAvailableForAssignToUser(Integer userId, List<Client> clients) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
+    public List<Role> getAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DAOException {
         if (Objects.nonNull(userId)) {
-            query.must(createSimpleQuery(RoleTypeField.USERS + ".id", userId, false));
-            //TODO: for new user this list is empty - only for edited condition to apply?
-            if (!clients.isEmpty()) {
-                query.must(createSetQueryForBeans(RoleTypeField.CLIENT_ID.getKey(), new ArrayList<>(clients), true));
-            }
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
+            return dao.getAllAvailableForAssignToUser(userId, clients);
         }
-        return findAll();
+        return getAll();
     }
 
     /**
@@ -243,80 +113,9 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
      * @param role
      *            object
      */
+    @Override
     public void refresh(Role role) {
         dao.refresh(role);
-    }
-
-    /**
-     * Find roles by id of user.
-     *
-     * @param id
-     *            of user
-     * @return list of JSON objects with roles for specific user id.
-     */
-    List<JsonObject> findByUserId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery(RoleTypeField.USERS + ".id", id, true);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find roles by login of user.
-     *
-     * @param login
-     *            of user
-     * @return list of search result with roles for specific user login
-     */
-    List<JsonObject> findByUserLogin(String login) throws DataException {
-        QueryBuilder query = createSimpleQuery(RoleTypeField.USERS + ".login", login, true);
-        return searcher.findDocuments(query.toString());
-    }
-
-    @Override
-    public RoleDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject roleJsonObject = jsonObject.getJsonObject("_source");
-        roleDTO.setTitle(RoleTypeField.TITLE.getStringValue(roleJsonObject));
-        roleDTO.setUsersSize(RoleTypeField.USERS.getSizeOfProperty(roleJsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(roleJsonObject, roleDTO);
-        } else {
-            addBasicUsersRelation(roleDTO, roleJsonObject);
-        }
-
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(RoleTypeField.CLIENT_ID.getIntValue(roleJsonObject));
-        clientDTO.setName(RoleTypeField.CLIENT_NAME.getStringValue(roleJsonObject));
-
-        roleDTO.setClient(clientDTO);
-        return roleDTO;
-    }
-
-    private void convertRelatedJSONObjects(JsonObject jsonObject, RoleDTO roleDTO) throws DataException {
-        roleDTO.setUsers(
-            convertRelatedJSONObjectToDTO(jsonObject, RoleTypeField.USERS.getKey(), ServiceManager.getUserService()));
-    }
-
-    private void addBasicUsersRelation(RoleDTO roleDTO, JsonObject jsonObject) {
-        if (roleDTO.getUsersSize() > 0) {
-            List<UserDTO> users = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserTypeField.NAME.getKey());
-            subKeys.add(UserTypeField.SURNAME.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                RoleTypeField.USERS.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                UserDTO user = new UserDTO();
-                user.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    user.setName(relatedProperty.getValues().get(0));
-                    user.setSurname(relatedProperty.getValues().get(1));
-                }
-                user.setFullName(ServiceManager.getUserService().getFullName(user));
-                users.add(user);
-            }
-            roleDTO.setUsers(users);
-        }
     }
 
     /**
@@ -333,12 +132,6 @@ public class RoleService extends TitleSearchService<Role, RoleDTO, RoleDAO> {
             stringAuthorizations.add(authority.getTitle());
         }
         return stringAuthorizations;
-    }
-
-    // TODO: filtering functionality
-    private QueryBuilder createQueryRolesForCurrentUser(Map filters) {
-        return createSimpleQuery(RoleTypeField.CLIENT_ID.getKey(), ServiceManager.getUserService().getSessionClientId(),
-            true);
     }
 
     /**

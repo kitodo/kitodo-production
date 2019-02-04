@@ -1,24 +1,5 @@
 {
     "mappings": {
-        "client": {
-            "dynamic": "strict",
-            "properties": {
-                "clientName": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                }
-            }
-        },
         "batch": {
             "dynamic": "strict",
             "properties": {
@@ -665,7 +646,41 @@
                     "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "processingUser": {
-                    "type": "long"
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "login": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            },
+                            "fielddata": true
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            },
+                            "fielddata": true
+                        },
+                        "surname": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            },
+                            "fielddata": true
+                        }
+                    }
                 },
                 "title": {
                     "type": "text",
@@ -697,75 +712,6 @@
                     "properties": {
                         "id": {
                             "type": "long"
-                        }
-                    }
-                }
-            }
-        },
-        "role": {
-            "dynamic": "strict",
-            "properties": {
-                "title": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                },
-                "users": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "login": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "surname": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "client": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
                         }
                     }
                 }
@@ -832,151 +778,6 @@
                     "properties": {
                         "id": {
                             "type": "long"
-                        }
-                    }
-                }
-            }
-        },
-        "user": {
-            "dynamic": "strict",
-            "properties": {
-                "active": {
-                    "type": "boolean"
-                },
-                "filters": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "value": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "location": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "login": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    },
-                    "fielddata": true
-                },
-                "ldapLogin": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    },
-                    "fielddata": true
-                },
-                "metadataLanguage": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "name": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "processingTasks": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        }
-                    }
-                },
-                "projects": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "active": {
-                            "type": "boolean"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "client": {
-                            "properties": {
-                                "id": {
-                                    "type": "long"
-                                }
-                            }
-                        }
-                    }
-                },
-                "clients": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "clientName": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "surname": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "roles": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
                         }
                     }
                 }

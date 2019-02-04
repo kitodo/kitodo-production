@@ -147,7 +147,7 @@ public class MockDatabase {
         Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
     }
 
-    public static void insertProcessesFull() throws DAOException, DataException {
+    public static void insertProcessesFull() throws Exception {
         insertRolesFull();
         insertDockets();
         insertRulesets();
@@ -165,7 +165,7 @@ public class MockDatabase {
         insertRemovableObjects();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException, WorkflowException {
+    public static void insertProcessesForWorkflowFull() throws Exception {
         insertRolesFull();
         insertDockets();
         insertRulesets();
@@ -182,7 +182,7 @@ public class MockDatabase {
         insertDataForParallelTasks();
     }
 
-    public static void insertRolesFull() throws DAOException, DataException {
+    public static void insertRolesFull() throws DAOException {
         insertAuthorities();
         insertClients();
         insertLdapGroups();
@@ -190,7 +190,7 @@ public class MockDatabase {
         insertUsers();
     }
 
-    public static void insertForAuthenticationTesting() throws DAOException, DataException {
+    public static void insertForAuthenticationTesting() throws Exception {
         insertAuthorities();
         insertLdapGroups();
         insertClients();
@@ -616,21 +616,21 @@ public class MockDatabase {
         ServiceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    public static void insertClients() throws DataException {
+    public static void insertClients() throws DAOException {
         Client client = new Client();
         client.setName("First client");
-        ServiceManager.getClientService().save(client);
+        ServiceManager.getClientService().saveToDatabase(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
-        ServiceManager.getClientService().save(secondClient);
+        ServiceManager.getClientService().saveToDatabase(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
-        ServiceManager.getClientService().save(thirdClient);
+        ServiceManager.getClientService().saveToDatabase(thirdClient);
     }
 
-    private static void insertProjects() throws DAOException, DataException {
+    private static void insertProjects() throws Exception {
         User firstUser = ServiceManager.getUserService().getById(1);
         User secondUser = ServiceManager.getUserService().getById(2);
 
@@ -669,7 +669,8 @@ public class MockDatabase {
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
-        ServiceManager.getUserService().save(firstUser);
+        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -689,8 +690,8 @@ public class MockDatabase {
 
         secondUser.getProjects().add(thirdProject);
         thirdUser.getProjects().add(thirdProject);
-        ServiceManager.getUserService().save(secondUser);
-        ServiceManager.getUserService().save(thirdUser);
+        ServiceManager.getUserService().saveToDatabase(secondUser);
+        ServiceManager.getUserService().saveToDatabase(thirdUser);
     }
 
     private static void insertFolders() throws DAOException, DataException {
@@ -780,7 +781,7 @@ public class MockDatabase {
         ServiceManager.getRulesetService().save(thirdRuleset);
     }
 
-    private static void insertTasks() throws DAOException, DataException {
+    private static void insertTasks() throws Exception {
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Role role = ServiceManager.getRoleService().getById(1);
 
@@ -817,9 +818,9 @@ public class MockDatabase {
             ServiceManager.getTaskService().save(task);
         }
 
-        ServiceManager.getUserService().save(firstUser);
-        ServiceManager.getUserService().save(secondUser);
-        ServiceManager.getUserService().save(blockedUser);
+        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getUserService().saveToDatabase(secondUser);
+        ServiceManager.getUserService().saveToDatabase(blockedUser);
 
         Process secondProcess = ServiceManager.getProcessService().getById(2);
 
@@ -838,6 +839,7 @@ public class MockDatabase {
         role.getTasks().add(eleventhTask);
         ServiceManager.getTaskService().save(eleventhTask);
         firstUser.getProcessingTasks().add(eleventhTask);
+        ServiceManager.getTaskService().saveToIndex(eleventhTask, true);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -852,7 +854,8 @@ public class MockDatabase {
         role.getTasks().add(twelfthTask);
         ServiceManager.getTaskService().save(twelfthTask);
         firstUser.getProcessingTasks().add(twelfthTask);
-        ServiceManager.getUserService().save(firstUser);
+        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getTaskService().saveToIndex(twelfthTask, true);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
@@ -866,7 +869,7 @@ public class MockDatabase {
         role.getTasks().add(thirteenTask);
         ServiceManager.getTaskService().save(thirteenTask);
 
-        ServiceManager.getRoleService().save(role);
+        ServiceManager.getRoleService().saveToDatabase(role);
     }
 
     private static List<Task> getTasks() {
@@ -953,7 +956,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(template);
     }
 
-    private static void insertUsers() throws DAOException, DataException {
+    private static void insertUsers() throws DAOException {
         SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
         Client firstClient = ServiceManager.getClientService().getById(1);
         Client secondClient = ServiceManager.getClientService().getById(2);
@@ -977,7 +980,7 @@ public class MockDatabase {
         firstUser.getRoles().add(adminRole);
         firstUser.getRoles().add(generalRole);
         firstUser.getClients().add(firstClient);
-        ServiceManager.getUserService().save(firstUser);
+        ServiceManager.getUserService().saveToDatabase(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");
@@ -992,7 +995,7 @@ public class MockDatabase {
         secondUser.getRoles().add(projectRoleForSecondClient);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
-        ServiceManager.getUserService().save(secondUser);
+        ServiceManager.getUserService().saveToDatabase(secondUser);
 
         User thirdUser = new User();
         thirdUser.setName("Anna");
@@ -1003,7 +1006,7 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         thirdUser.getRoles().add(adminRole);
-        ServiceManager.getUserService().save(thirdUser);
+        ServiceManager.getUserService().saveToDatabase(thirdUser);
 
         User fourthUser = new User();
         fourthUser.setName("Max");
@@ -1015,7 +1018,7 @@ public class MockDatabase {
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
         fourthUser.getRoles().add(withoutAuthoritiesRole);
-        ServiceManager.getUserService().save(fourthUser);
+        ServiceManager.getUserService().saveToDatabase(fourthUser);
 
         User fifthUser = new User();
         fifthUser.setName("Last");
@@ -1026,10 +1029,10 @@ public class MockDatabase {
         fifthUser.setLocation("Dresden");
         fifthUser.setTableSize(20);
         fifthUser.setLanguage("de");
-        ServiceManager.getUserService().save(fifthUser);
+        ServiceManager.getUserService().saveToDatabase(fifthUser);
     }
 
-    private static void insertRoles() throws DAOException, DataException {
+    private static void insertRoles() throws DAOException {
         List<Authority> allAuthorities = ServiceManager.getAuthorityService().getAll();
         Client client = ServiceManager.getClientService().getById(1);
 
@@ -1042,7 +1045,7 @@ public class MockDatabase {
             firstRole.getAuthorities().add(allAuthorities.get(i));
         }
 
-        ServiceManager.getRoleService().save(firstRole);
+        ServiceManager.getRoleService().saveToDatabase(firstRole);
 
         Role secondRole = new Role();
         secondRole.setTitle("General");
@@ -1053,7 +1056,7 @@ public class MockDatabase {
             secondRole.getAuthorities().add(allAuthorities.get(i));
         }
 
-        ServiceManager.getRoleService().save(secondRole);
+        ServiceManager.getRoleService().saveToDatabase(secondRole);
 
         Role thirdRole = new Role();
         thirdRole.setTitle("Random for first");
@@ -1065,7 +1068,7 @@ public class MockDatabase {
         userAuthoritiesForFirst.add(ServiceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
         thirdRole.setAuthorities(userAuthoritiesForFirst);
 
-        ServiceManager.getRoleService().save(thirdRole);
+        ServiceManager.getRoleService().saveToDatabase(thirdRole);
 
         Role fourthRole = new Role();
         fourthRole.setTitle("Random for second");
@@ -1083,12 +1086,12 @@ public class MockDatabase {
         userAuthoritiesForSecond.add(ServiceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
         fourthRole.setAuthorities(userAuthoritiesForSecond);
 
-        ServiceManager.getRoleService().save(fourthRole);
+        ServiceManager.getRoleService().saveToDatabase(fourthRole);
 
         Role fifthUserGroup = new Role();
         fifthUserGroup.setTitle("Without authorities");
         fifthUserGroup.setClient(client);
-        ServiceManager.getRoleService().save(fifthUserGroup);
+        ServiceManager.getRoleService().saveToDatabase(fifthUserGroup);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1110,7 +1113,7 @@ public class MockDatabase {
 
         user.getFilters().add(firstUserFilter);
         user.getFilters().add(secondUserFilter);
-        ServiceManager.getUserService().save(user);
+        ServiceManager.getUserService().saveToDatabase(user);
     }
 
     private static void insertWorkpieceProperties() throws DAOException, DataException {
@@ -1301,7 +1304,7 @@ public class MockDatabase {
 
         Client client = new Client();
         client.setName("Removable client");
-        ServiceManager.getClientService().save(client);
+        ServiceManager.getClientService().saveToDatabase(client);
         removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
 
         Client assignableClient = ServiceManager.getClientService().getById(1);
@@ -1321,13 +1324,13 @@ public class MockDatabase {
         User user = new User();
         user.setName("Removable user");
         user.getClients().add(assignableClient);
-        ServiceManager.getUserService().save(user);
+        ServiceManager.getUserService().saveToDatabase(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
         Role role = new Role();
         role.setTitle("Removable role");
         role.setClient(assignableClient);
-        ServiceManager.getRoleService().save(role);
+        ServiceManager.getRoleService().saveToDatabase(role);
         removableObjectIDs.put(ObjectType.ROLE.name(), role.getId());
 
     }

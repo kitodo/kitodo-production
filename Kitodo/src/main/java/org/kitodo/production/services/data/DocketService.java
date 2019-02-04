@@ -33,6 +33,7 @@ import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
@@ -72,13 +73,15 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
-    public String createCountQuery(Map filters) {
-        return getDocketsForCurrentUserQuery();
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(getDocketsForCurrentUserQuery());
     }
 
     @Override
-    public List<DocketDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getDocketsForCurrentUserQuery(), sort, offset, size),
+    public List<DocketDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getDocketsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 
@@ -179,7 +182,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     private String getDocketsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-                ServiceManager.getUserService().getSessionClientId(), true));
+            ServiceManager.getUserService().getSessionClientId(), true));
         return query.toString();
     }
 }

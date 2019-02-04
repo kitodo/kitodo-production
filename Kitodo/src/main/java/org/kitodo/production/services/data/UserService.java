@@ -29,53 +29,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.json.JsonObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.UserDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.UserType;
-import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.FilterDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.RoleDTO;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.RelatedProperty;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserService extends SearchService<User, UserDTO, UserDAO> implements UserDetailsService {
+public class UserService extends SearchDatabaseService<User, UserDAO> implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
@@ -83,10 +62,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
-     * Constructor with Searcher and Indexer assigning.
+     * Constructor.
      */
     private UserService() {
-        super(new UserDAO(), new UserType(), new Indexer<>(User.class), new Searcher(User.class));
+        super(new UserDAO());
     }
 
     /**
@@ -105,18 +84,29 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return instance;
     }
 
-    /**
-     * Method saves roles, properties and tasks related to modified user.
-     *
-     * @param user
-     *            object
-     */
     @Override
-    protected void manageDependenciesForIndex(User user) throws CustomResponseException, IOException {
-        manageFiltersDependenciesForIndex(user);
-        manageProjectsDependenciesForIndex(user);
-        manageTasksDependenciesForIndex(user);
-        manageRolesDependenciesForIndex(user);
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0");
+    }
+
+    @Override
+    public Long countResults(Map filters) throws DAOException {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return countDatabaseRows();
+        }
+
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return countDatabaseRows(
+                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0");
+        }
+        return 0L;
+    }
+
+    @Override
+    public List<User> getAllForSelectedClient() {
+        return dao.getByQuery(
+            "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -131,83 +121,20 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return new SecurityUserDetails(user);
     }
 
-    /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save project, if false only re-save project object.
-     *
-     * @param user
-     *            object
-     */
-    private void manageProjectsDependenciesForIndex(User user) throws CustomResponseException, IOException {
-        if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Project project : user.getProjects()) {
-                project.getUsers().remove(user);
-                ServiceManager.getProjectService().saveToIndex(project, false);
-            }
-        } else {
-            for (Project project : user.getProjects()) {
-                ServiceManager.getProjectService().saveToIndex(project, false);
-            }
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
+            return dao.getByQuery("FROM User WHERE deleted = 0"  + getSort(sortField, sortOrder), filters, first, pageSize);
         }
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove filter from the
-     * index, if false re-save filter object.
-     *
-     * @param user
-     *            object
-     */
-    private void manageFiltersDependenciesForIndex(User user) throws CustomResponseException, IOException {
-        if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Filter filter : user.getFilters()) {
-                ServiceManager.getFilterService().removeFromIndex(filter, false);
-            }
-        } else {
-            for (Filter filter : user.getFilters()) {
-                ServiceManager.getFilterService().saveToIndex(filter, false);
-            }
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
+            return dao.getByQuery(
+                "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
+                        + getSort(sortField, sortOrder),
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                pageSize);
         }
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save task, if false only re-save task object.
-     *
-     * @param user
-     *            object
-     */
-    private void manageTasksDependenciesForIndex(User user) throws CustomResponseException, IOException {
-        if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : user.getProcessingTasks()) {
-                task.setProcessingUser(null);
-                ServiceManager.getTaskService().saveToIndex(task, false);
-            }
-        } else {
-            for (Task task : user.getProcessingTasks()) {
-                ServiceManager.getTaskService().saveToIndex(task, false);
-            }
-        }
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save role, if false only re-save role object.
-     *
-     * @param user
-     *            object
-     */
-    private void manageRolesDependenciesForIndex(User user) throws CustomResponseException, IOException {
-        if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Role role : user.getRoles()) {
-                role.getUsers().remove(user);
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
-        } else {
-            for (Role role : user.getRoles()) {
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
-        }
+        return new ArrayList<>();
     }
 
     /**
@@ -309,15 +236,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return 0;
     }
 
-    /**
-     * Finds the current authenticated user and loads object dto from index.
-     *
-     * @return The user dto or null if no user is authenticated.
-     */
-    public UserDTO findAuthenticatedUser() throws DataException {
-        return findById(getAuthenticatedUser().getId());
-    }
-
     public List<User> getByQuery(String query, String parameter) throws DAOException {
         return dao.search(query, parameter);
     }
@@ -326,263 +244,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return dao.search(query, namedParameter, parameter);
     }
 
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = 0");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public String createCountQuery(Map filters) {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return null;
-        }
-
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return createQueryAllActiveUsersForCurrentUser().toString();
-        }
-        return null;
-    }
-
-    @Override
-    public List<User> getAllNotIndexed() {
-        return getByQuery("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<User> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
-    }
-
-    @Override
-    public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
-        }
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
-            return convertJSONObjectsToDTOs(searcher.findDocuments(createQueryAllActiveUsersForCurrentUser().toString(),
-                sortByLogin(), offset, size), false);
-        }
-        return new ArrayList<>();
-    }
-
     /**
-     * Get amount of users with exactly the same login like given but different
-     * id.
+     * Get amount of users with exactly the same login like given but different id.
      *
      * @param id
      *            of user
      * @param login
      *            of user
-     * @return amount of users with exactly the same login like given but
-     *         different id
+     * @return amount of users with exactly the same login like given but different
+     *         id
      */
-    public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        if (id != null) {
-            boolQuery.must(createSimpleQuery("_id", id, false));
-        }
-        boolQuery.must(createSimpleQuery(UserTypeField.LOGIN.getKey(), login, true));
-        return count(boolQuery.toString());
-    }
-
-    /**
-     * Refresh user object after update.
-     *
-     * @param user
-     *            object
-     */
-    public void refresh(User user) {
-        dao.refresh(user);
-    }
-
-    /**
-     * Find users with exact name.
-     *
-     * @param name
-     *            of the searched user
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByName(String name) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.NAME.getKey(), name, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find users with exact surname.
-     *
-     * @param surname
-     *            of the searched user
-     * @return list of JSON objects
-     */
-    List<JsonObject> findBySurname(String surname) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.SURNAME.getKey(), surname, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find users with exact full name.
-     *
-     * @param name
-     *            of the searched user
-     * @param surname
-     *            of the searched user
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByFullName(String name, String surname) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(UserTypeField.NAME.getKey(), name, true, Operator.AND));
-        query.must(createSimpleQuery(UserTypeField.SURNAME.getKey(), surname, true, Operator.AND));
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find user with exact login.
-     *
-     * @param login
-     *            of the searched user
-     * @return JSON objects
-     */
-    JsonObject findByLogin(String login) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.LOGIN.getKey(), login, true, Operator.AND);
-        return searcher.findDocument(query.toString());
-    }
-
-    /**
-     * Find user with exact LDAP login.
-     *
-     * @param ldapLogin
-     *            of the searched user
-     * @return search result
-     */
-    JsonObject findByLdapLogin(String ldapLogin) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.LDAP_LOGIN.getKey(), ldapLogin, true, Operator.AND);
-        return searcher.findDocument(query.toString());
-    }
-
-    /**
-     * Find active or inactive users.
-     *
-     * @param active
-     *            true - active user or false - inactive user
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByActive(boolean active) throws DataException {
-        return searcher.findDocuments(getQueryForActive(active).toString(), sortByLogin());
-    }
-
-    private QueryBuilder getQueryForActive(boolean active) {
-        return createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true);
-    }
-
-    /**
-     * Find users with exact location.
-     *
-     * @param location
-     *            of the searched user
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByLocation(String location) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.LOCATION.getKey(), location, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find users by id of role.
-     *
-     * @param id
-     *            of role
-     * @return list of JSON objects with users for specific role id
-     */
-    List<JsonObject> findByRoleId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".id", id, true);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find users by title of role.
-     *
-     * @param title
-     *            of role
-     * @return list of JSON objects with users for specific role title
-     */
-    List<JsonObject> findByRoleTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery(UserTypeField.ROLES + ".title", title, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find users by filter.
-     *
-     * @param value
-     *            of filter
-     * @return list of JSON objects with users for specific filter
-     */
-    List<JsonObject> findByFilter(String value) throws DataException {
-        List<JsonObject> filters = ServiceManager.getFilterService().findByValue(value, true);
-        return searcher.findDocuments(createSetQuery("filters.id", filters, true).toString());
-    }
-
-    /**
-     * Find users by processing tasks.
-     *
-     * @param id
-     *            of filter
-     * @return list of JSON objects with users for specific filter
-     */
-    List<UserDTO> findByProcessingTask(Integer id, boolean related) throws DataException {
-        List<JsonObject> jsonObjects = searcher
-                .findDocuments(createSimpleQuery("processingTasks.id", id, true).toString());
-        return convertJSONObjectsToDTOs(jsonObjects, related);
-    }
-
-    /**
-     * Find all visible users.
-     *
-     * @return a list of all visible users as UserDTO
-     */
-    public List<UserDTO> findAllVisibleUsers() throws DataException {
-        List<JsonObject> jsonObjects = findAllDocuments(sortByLogin());
-        return convertJSONObjectsToDTOs(jsonObjects, true);
-    }
-
-    /**
-     * Find all visible users with related objects.
-     *
-     * @return a list of all visible users as UserDTO
-     */
-    public List<UserDTO> findAllVisibleUsersWithRelations() throws DataException {
-        List<JsonObject> jsonObjects = findAllDocuments(sortByLogin());
-        return convertJSONObjectsToDTOs(jsonObjects, false);
-    }
-
-    /**
-     * Find all active users.
-     *
-     * @return a list of all active users as UserDTO
-     */
-    public List<UserDTO> findAllActiveUsers() throws DataException {
-        List<JsonObject> jsonObjects = findByActive(true);
-        return convertJSONObjectsToDTOs(jsonObjects, true);
-    }
-
-    /**
-     * Find all active users wit related objects.
-     *
-     * @return a list of all active users as UserDTO
-     */
-    public List<UserDTO> findAllActiveUsersWithRelations() throws DataException {
-        List<JsonObject> jsonObjects = findByActive(true);
-        return convertJSONObjectsToDTOs(jsonObjects, false);
-    }
-
-    private String sortByLogin() {
-        return SortBuilders.fieldSort(UserTypeField.LOGIN.getKey()).order(SortOrder.ASC).toString();
+    public Long getAmountOfUsersWithExactlyTheSameLogin(Integer id, String login) throws DAOException {
+        return dao.countUsersWithExactlyTheSameLogin(id, login);
     }
 
     /**
@@ -592,105 +265,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
         return dao.getAllActiveUsersSortedByNameAndSurname();
-    }
-
-    @Override
-    public UserDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject userJSONObject = jsonObject.getJsonObject("_source");
-        userDTO.setLogin(UserTypeField.LOGIN.getStringValue(userJSONObject));
-        userDTO.setName(UserTypeField.NAME.getStringValue(userJSONObject));
-        userDTO.setSurname(UserTypeField.SURNAME.getStringValue(userJSONObject));
-        userDTO.setActive(UserTypeField.ACTIVE.getBooleanValue(userJSONObject));
-        userDTO.setLdapLogin(UserTypeField.LDAP_LOGIN.getStringValue(userJSONObject));
-        userDTO.setLocation(UserTypeField.LOCATION.getStringValue(userJSONObject));
-        userDTO.setFullName(getFullName(userDTO));
-        userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
-        userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
-        userDTO.setClientsSize(UserTypeField.CLIENTS.getSizeOfProperty(userJSONObject));
-        userDTO.setRolesSize(UserTypeField.ROLES.getSizeOfProperty(userJSONObject));
-
-        if (!related) {
-            convertRelatedJSONObjects(userJSONObject, userDTO);
-        } else {
-            addBasicFilterRelation(userDTO, userJSONObject);
-            addBasicProjectRelation(userDTO, userJSONObject);
-            addBasicRoleRelation(userDTO, userJSONObject);
-        }
-
-        return userDTO;
-    }
-
-    private void convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
-        userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.FILTERS.getKey(),
-            ServiceManager.getFilterService()));
-        userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getKey(),
-            ServiceManager.getProjectService()));
-        userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
-            ServiceManager.getClientService()));
-        userDTO.setProcessingTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROCESSING_TASKS.getKey(),
-            ServiceManager.getTaskService()));
-        userDTO.setRoles(
-            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.ROLES.getKey(), ServiceManager.getRoleService()));
-    }
-
-    private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
-        if (userDTO.getFiltersSize() > 0) {
-            List<FilterDTO> filters = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(FilterTypeField.VALUE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserTypeField.FILTERS.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                FilterDTO filter = new FilterDTO();
-                filter.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    filter.setValue(relatedProperty.getValues().get(0));
-                }
-                filters.add(filter);
-            }
-            userDTO.setFilters(filters);
-        }
-    }
-
-    private void addBasicProjectRelation(UserDTO userDTO, JsonObject jsonObject) {
-        if (userDTO.getProjectsSize() > 0) {
-            List<ProjectDTO> projects = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(ProcessTypeField.TITLE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserTypeField.PROJECTS.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                ProjectDTO project = new ProjectDTO();
-                project.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    project.setTitle(relatedProperty.getValues().get(0));
-                }
-                project.setTitle(relatedProperty.getValues().get(0));
-                projects.add(project);
-            }
-            userDTO.setProjects(projects);
-        }
-    }
-
-    private void addBasicRoleRelation(UserDTO userDTO, JsonObject jsonObject) {
-        if (userDTO.getRolesSize() > 0) {
-            List<RoleDTO> roles = new ArrayList<>();
-            List<String> subKeys = new ArrayList<>();
-            subKeys.add(RoleTypeField.TITLE.getKey());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserTypeField.ROLES.getKey(), subKeys);
-            for (RelatedProperty relatedProperty : relatedProperties) {
-                RoleDTO role = new RoleDTO();
-                role.setId(relatedProperty.getId());
-                if (!relatedProperty.getValues().isEmpty()) {
-                    role.setTitle(relatedProperty.getValues().get(0));
-                }
-                roles.add(role);
-            }
-            userDTO.setRoles(roles);
-        }
     }
 
     /**
@@ -908,13 +482,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
                 .collect(Collectors.toList());
     }
 
-    private QueryBuilder createQueryAllActiveUsersForCurrentUser() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForActive(true));
-        query.must(createSimpleQuery(UserTypeField.CLIENTS + ".id", getSessionClientId(), true));
-        return query;
-    }
-
     /**
      * Changes the password for given User object.
      * 
@@ -923,7 +490,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @param newPassword
      *            The new password.
      */
-    public void changeUserPassword(User user, String newPassword) throws DataException {
+    public void changeUserPassword(User user, String newPassword) throws DAOException {
         User userWithNewPassword;
         if (user instanceof SecurityUserDetails) {
             userWithNewPassword = new User(user);
@@ -931,6 +498,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             userWithNewPassword = user;
         }
         userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
-        save(userWithNewPassword);
+        saveToDatabase(userWithNewPassword);
     }
 }

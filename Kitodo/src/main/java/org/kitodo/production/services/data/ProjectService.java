@@ -28,7 +28,6 @@ import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.ProjectDAO;
@@ -44,6 +43,7 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
@@ -79,10 +79,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
         manageProcessesDependenciesForIndex(project);
-        manageUsersDependenciesForIndex(project);
     }
 
     /**
@@ -103,25 +101,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         }
     }
 
-    /**
-     * Management od users for project object.
-     *
-     * @param project
-     *            object
-     */
-    private void manageUsersDependenciesForIndex(Project project) throws CustomResponseException, IOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            for (User user : project.getUsers()) {
-                user.getProjects().remove(project);
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
-        } else {
-            for (User user : project.getUsers()) {
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
-        }
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project");
@@ -133,8 +112,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public String createCountQuery(Map filters) {
-        return getProjectsForCurrentUserQuery();
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(getProjectsForCurrentUserQuery());
     }
 
     @Override
@@ -149,8 +128,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getProjectsForCurrentUserQuery(), sort, offset, size),
+    public List<ProjectDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getProjectsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 
@@ -235,8 +216,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of search result with projects for specific user login
      */
     List<JsonObject> findByUserLogin(String login) throws DataException {
-        JsonObject user = ServiceManager.getUserService().findByLogin(login);
-        return findByUserId(getIdFromJSONObject(user));
+        return searcher.findDocuments(getQueryForUserLogin(login, true).toString());
+    }
+
+    private QueryBuilder getQueryForUserLogin(String login, boolean contains) {
+        return createSimpleQuery(ProjectTypeField.USERS + ".login", login, contains);
     }
 
     private QueryBuilder getQueryForUserId(int id, boolean contains) {
@@ -250,15 +234,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      */
     public List<Project> getAllProjectsSortedByTitle() {
         return dao.getAllProjectsSortedByTitle();
-    }
-
-    /**
-     * Get all active projects sorted by title.
-     *
-     * @return all active projects sorted by title as Project objects
-     */
-    public List<Project> getAllActiveProjectsSortedByTitle() {
-        return dao.getAllActiveProjectsSortedByTitle();
     }
 
     @Override
@@ -303,10 +278,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        // TODO: not clear if project lists will need it
-        projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-                ServiceManager.getTemplateService()));
+            ServiceManager.getTemplateService()));
     }
 
     /**

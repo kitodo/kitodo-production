@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
@@ -80,9 +79,9 @@ public class RoleForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getRoleService().save(this.role);
+            ServiceManager.getRoleService().saveToDatabase(this.role);
             return roleListPath;
-        } catch (DataException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -99,7 +98,7 @@ public class RoleForm extends BaseForm {
                     user.getRoles().remove(this.role);
                 }
                 this.role.setUsers(new ArrayList<>());
-                ServiceManager.getRoleService().save(this.role);
+                ServiceManager.getRoleService().saveToDatabase(this.role);
             }
             if (!this.role.getTasks().isEmpty()) {
                 Helper.setErrorMessage("roleAssignedError");
@@ -107,10 +106,10 @@ public class RoleForm extends BaseForm {
             }
             if (!this.role.getAuthorities().isEmpty()) {
                 this.role.setAuthorities(new ArrayList<>());
-                ServiceManager.getRoleService().save(this.role);
+                ServiceManager.getRoleService().saveToDatabase(this.role);
             }
-            ServiceManager.getRoleService().remove(this.role);
-        } catch (DataException e) {
+            ServiceManager.getRoleService().removeFromDatabase(this.role);
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
         }
     }
@@ -210,14 +209,7 @@ public class RoleForm extends BaseForm {
      *            list of authority assigned to 'role'
      */
     public void setGlobalAssignableAuthorities(DualListModel<Authority> globalAuthoritiesModel) {
-        for (Authority authority : globalAuthoritiesModel.getSource()) {
-            this.role.getAuthorities().remove(authority);
-        }
-        for (Authority authority : globalAuthoritiesModel.getTarget()) {
-            if (!this.role.getAuthorities().contains(authority)) {
-                this.role.getAuthorities().add(authority);
-            }
-        }
+        setAssignableAuthorities(globalAuthoritiesModel);
     }
 
     /**
@@ -250,10 +242,14 @@ public class RoleForm extends BaseForm {
      *            list of authority assigned to 'role'
      */
     public void setClientAssignableAuthorities(DualListModel<Authority> clientAuthoritiesModel) {
-        for (Authority authority : clientAuthoritiesModel.getSource()) {
+        setAssignableAuthorities(clientAuthoritiesModel);
+    }
+
+    private void setAssignableAuthorities(DualListModel<Authority> authoritiesModel) {
+        for (Authority authority : authoritiesModel.getSource()) {
             this.role.getAuthorities().remove(authority);
         }
-        for (Authority authority : clientAuthoritiesModel.getTarget()) {
+        for (Authority authority : authoritiesModel.getTarget()) {
             if (!this.role.getAuthorities().contains(authority)) {
                 this.role.getAuthorities().add(authority);
             }

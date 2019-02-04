@@ -88,27 +88,29 @@ public class UserDAO extends BaseDAO<User> {
     }
 
     /**
+     * Count amount of users with exactly the same login like given but different
+     * id.
+     *
+     * @param id
+     *            of user
+     * @param login
+     *            of user
+     * @return list of users
+     */
+    public Long countUsersWithExactlyTheSameLogin(Integer id, String login) throws DAOException {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("id", id);
+        parameters.put("login", login);
+        return count("SELECT COUNT(*) FROM User WHERE id != :id AND login = :login",
+                parameters);
+    }
+
+    /**
      * Get all active users sorted by surname and name.
      *
      * @return sorted list of all active users as User objects
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
         return getByQuery("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
-    }
-
-    /**
-     * Get all active users visible for current user - user assigned to projects
-     * with selected client.
-     * 
-     * @param clientId
-     *            selected client id for current user
-     * @return list of users
-     */
-    public List<User> getAllActiveUsersByClientId(Integer clientId) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("clientId", clientId);
-        return getByQuery("SELECT u FROM User AS u JOIN u.projects AS p JOIN p.client AS c WHERE u.active = 1 AND "
-                + "u.deleted = 0 AND c.id = :clientId GROUP BY u.id",
-            parameters);
     }
 }

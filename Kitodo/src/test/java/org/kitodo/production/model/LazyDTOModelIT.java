@@ -11,14 +11,17 @@
 
 package org.kitodo.production.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.production.dto.ClientDTO;
+import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.primefaces.model.SortOrder;
@@ -43,16 +46,45 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List clients = clientService.findAll();
-        ClientDTO firstClient = (ClientDTO) clients.get(0);
-        ClientDTO lazyClient = (ClientDTO) lazyDTOModel.getRowData(String.valueOf(firstClient.getId()));
-        Assert.assertEquals(firstClient.getName(), lazyClient.getName());
+        List clients = clientService.getAll();
+        Client firstClient = (Client) clients.get(0);
+        Client lazyClient = (Client) lazyDTOModel.getRowData(String.valueOf(firstClient.getId()));
+        assertEquals(firstClient.getName(), lazyClient.getName());
     }
 
     @Test
-    public void shouldLoad() {
-        List clients = lazyDTOModel.load(0, 2, "clientName", SortOrder.ASCENDING, null);
-        ClientDTO client = (ClientDTO) clients.get(0);
-        Assert.assertEquals("Second client", client.getName());
+    public void shouldLoadFromDatabase() {
+        List clients = lazyDTOModel.load(0, 2, "name", SortOrder.ASCENDING, null);
+        assertEquals(2, clients.size());
+
+        clients = lazyDTOModel.load(0, 10, "name", SortOrder.ASCENDING, null);
+        assertEquals(3, clients.size());
+
+        Client client = (Client) clients.get(0);
+        assertEquals("First client", client.getName());
+
+        clients = lazyDTOModel.load(0, 2, "name", SortOrder.DESCENDING, null);
+        client = (Client) clients.get(0);
+        assertEquals("Second client", client.getName());
+    }
+
+    @Test
+    public void shouldLoadFromIndex() throws Exception {
+        MockDatabase.cleanDatabase();
+        MockDatabase.insertForAuthenticationTesting();
+        MockDatabase.insertDockets();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+
+        LazyDTOModel lazyDTOModelDocket = new LazyDTOModel(ServiceManager.getDocketService());
+
+        List dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
+        assertEquals(2, dockets.size());
+
+        DocketDTO docket = (DocketDTO) dockets.get(0);
+        assertEquals("default", docket.getTitle());
+
+        dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
+        docket = (DocketDTO) dockets.get(0);
+        assertEquals("tester", docket.getTitle());
     }
 }

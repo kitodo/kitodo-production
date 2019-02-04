@@ -20,7 +20,6 @@ import java.util.List;
 import org.junit.Test;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class UserDaoIT {
 
@@ -48,11 +47,9 @@ public class UserDaoIT {
     private List<User> getAuthorities() {
         User firstUser = new User();
         firstUser.setLogin("first_user");
-        firstUser.setIndexAction(IndexAction.DONE);
 
         User secondUser = new User();
         secondUser.setLogin("second_user");
-        secondUser.setIndexAction(IndexAction.INDEX);
 
         User thirdUser = new User();
         thirdUser.setLogin("third_user");

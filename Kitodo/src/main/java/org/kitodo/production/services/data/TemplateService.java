@@ -50,6 +50,7 @@ import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.primefaces.model.SortOrder;
 
 public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
@@ -91,6 +92,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     @Override
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserTemplatesQuery(filters).toString());
+    }
+
+    @Override
     public List<Template> getAllNotIndexed() {
         return getByQuery("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
@@ -98,6 +104,14 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     @Override
     public List<Template> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserTemplatesQuery(filters).toString(),
+            getSort(sortField, sortOrder), first, pageSize), false);
+
     }
 
     /**
@@ -194,18 +208,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         List<Integer> newList = new ArrayList<>(firstList);
         newList.removeAll(secondList);
         return newList;
-    }
-
-    @Override
-    public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(createUserTemplatesQuery(filters).toString(), sort, offset, size), false);
-
-    }
-
-    @Override
-    public String createCountQuery(Map filters) throws DataException {
-        return createUserTemplatesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {

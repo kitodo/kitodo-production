@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 
 public class ClientDaoIT {
 
@@ -53,11 +52,9 @@ public class ClientDaoIT {
     private List<Client> getAuthorities() {
         Client firstClient = new Client();
         firstClient.setName("first_client");
-        firstClient.setIndexAction(IndexAction.DONE);
 
         Client secondClient = new Client();
         secondClient.setName("second_client");
-        secondClient.setIndexAction(IndexAction.INDEX);
 
         Client thirdClient = new Client();
         thirdClient.setName("third_client");

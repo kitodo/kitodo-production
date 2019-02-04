@@ -27,8 +27,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
@@ -66,6 +68,7 @@ import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 
 public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
 
@@ -99,8 +102,18 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
+    public Long countResults(Map filters) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<LdapServer> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<LdapServer> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 
     private String buildUserDN(User inUser) {

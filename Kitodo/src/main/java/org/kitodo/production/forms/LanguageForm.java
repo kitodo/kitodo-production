@@ -167,11 +167,9 @@ public class LanguageForm implements Serializable {
         try {
             User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
             user.setLanguage(locale.toString());
-            ServiceManager.getUserService().save(user);
-        } catch (DataException e) {
-            Helper.setErrorMessage("Error in saving user", logger, e);
+            ServiceManager.getUserService().saveToDatabase(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error in retrieving user", logger, e);
+            Helper.setErrorMessage("Error in saving user", logger, e);
         }
         FacesContext context = FacesContext.getCurrentInstance();
         context.getViewRoot().setLocale(locale);

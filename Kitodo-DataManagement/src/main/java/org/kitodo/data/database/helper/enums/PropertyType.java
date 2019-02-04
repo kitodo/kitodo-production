@@ -15,7 +15,6 @@ package org.kitodo.data.database.helper.enums;
  * This enum contains property types, which can be used for display and
  * validation purpose Validation can be done by engaging validation classes,
  * which could be returned by the validation type Enum, contained in here.
- *
  * //TODO: do we need one such an Enum?
  */
 public enum PropertyType {

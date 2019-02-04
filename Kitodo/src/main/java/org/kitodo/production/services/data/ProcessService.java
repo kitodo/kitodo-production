@@ -113,7 +113,6 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -176,15 +175,36 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
-
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process");
     }
 
     @Override
-    public String createCountQuery(Map filters) throws DataException {
-        return createUserProcessesQuery(filters).toString();
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserProcessesQuery(filters).toString());
+    }
+
+    @Override
+    public List<Process> getAllNotIndexed() {
+        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Process> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
+            org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserProcessesQuery(filters).toString(),
+            getSort(sortField, sortOrder), first, pageSize), false);
+
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
@@ -223,7 +243,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (!this.showInactiveProjects) {
             query.must(getQueryProjectActive(true));
         }
-
         return query;
     }
 
@@ -408,26 +427,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
-    }
-
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Process> getAllNotIndexed() {
-        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Process> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -708,7 +707,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
-        processDTO.setBlockedUser(getBlockedUser(processDTO));
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
@@ -763,24 +761,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return result;
         }
         return batches;
-    }
-
-    /**
-     * Get blocked user for ProcessDTO.
-     *
-     * @return blocked metadata (user)
-     */
-    UserDTO getBlockedUser(ProcessDTO process) {
-        UserDTO result = null;
-        if (MetadataLock.isLocked(process.getId())) {
-            String userID = this.msp.getLockUser(process.getId());
-            try {
-                result = ServiceManager.getUserService().findById(Integer.valueOf(userID));
-            } catch (DataException | RuntimeException e) {
-                Helper.setErrorMessage("userNotFound", logger, e);
-            }
-        }
-        return result;
     }
 
     /**
@@ -1565,7 +1545,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.debug("exception: " + e);
         }
         try {
-            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(), process.getProcessBaseUri());
+            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(),
+                process.getProcessBaseUri());
             String folderName = fileService.getFileName(folder);
             folderName = folderName.substring(0, folderName.lastIndexOf('_'));
             folderName = folderName + "_" + methodName;
@@ -1720,7 +1701,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         List<String> translationList = Arrays.asList("Correction required", "Correction performed",
-                "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
+            "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         // filtering for correction and solution messages
         for (PropertyDTO property : lpe) {

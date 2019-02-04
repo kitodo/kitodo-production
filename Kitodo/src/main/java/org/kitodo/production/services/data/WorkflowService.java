@@ -31,6 +31,7 @@ import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
+import org.primefaces.model.SortOrder;
 
 public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
@@ -70,13 +71,15 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public String createCountQuery(Map filters) {
-        return getWorkflowsForCurrentUserQuery();
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(getWorkflowsForCurrentUserQuery());
     }
 
     @Override
-    public List<WorkflowDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getWorkflowsForCurrentUserQuery(), sort, offset, size),
+    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(getWorkflowsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
             false);
     }
 

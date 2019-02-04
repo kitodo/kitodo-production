@@ -12,10 +12,14 @@
 package org.kitodo.production.services.data.base;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
+import org.kitodo.data.exceptions.DataException;
+import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
 
@@ -37,6 +41,19 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return list of all objects for selected client from database
      */
     public abstract List<T> getAllForSelectedClient();
+
+    /**
+     *
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     *
+     * @return
+     */
+    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DAOException, DataException;
 
     /**
      * Method saves object to database.
@@ -85,6 +102,19 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     public Long countDatabaseRows(String query) throws DAOException {
         return dao.count(query);
     }
+
+    /**
+     * This function is used for count amount of results for frontend lists.
+     *
+     * @param filters
+     *            Map of parameters used for filtering
+     * @return amount of results
+     * @throws DAOException
+     *             that can be caused by Hibernate
+     * @throws DataException
+     *             that can be caused by ElasticSearch
+     */
+    public abstract Long countResults(Map filters) throws DAOException, DataException;
 
     /**
      * Method necessary for get from database object by id. It is used in removeById
@@ -150,5 +180,15 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      */
     public void refresh(T baseBean) {
         this.dao.refresh(baseBean);
+    }
+
+    protected String getSort(String sortField, SortOrder sortOrder) {
+        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+            return " ORDER BY " + sortField + " ASC";
+        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+            return  " ORDER BY " + sortField + " DESC";
+        } else {
+            return "";
+        }
     }
 }

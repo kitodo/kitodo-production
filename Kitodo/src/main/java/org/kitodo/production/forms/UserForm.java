@@ -33,8 +33,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.RoleDTO;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -115,11 +113,11 @@ public class UserForm extends BaseForm {
         }
 
         try {
-            if (userService.getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
+            if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
                 if (Objects.nonNull(this.passwordToEncrypt)) {
                     this.userObject.setPassword(passwordEncoder.encrypt(this.passwordToEncrypt));
                 }
-                userService.save(this.userObject);
+                userService.saveToDatabase(this.userObject);
 
                 if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                     loginForm.setLoggedUser(this.userObject);
@@ -130,7 +128,7 @@ public class UserForm extends BaseForm {
                 Helper.setErrorMessage("loginInUse");
                 return this.stayOnCurrentPage;
             }
-        } catch (DataException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -144,13 +142,6 @@ public class UserForm extends BaseForm {
         return this.userObject.getClients().isEmpty();
     }
 
-    private String getUserId() {
-        if (this.userObject.getId() != null) {
-            return this.userObject.getId().toString();
-        }
-        return null;
-    }
-
     /**
      * The function delete() deletes a user account.
      *
@@ -161,8 +152,8 @@ public class UserForm extends BaseForm {
      */
     public void delete() {
         try {
-            userService.remove(userObject);
-        } catch (DataException e) {
+            userService.removeFromDatabase(userObject);
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         }
     }
@@ -391,10 +382,10 @@ public class UserForm extends BaseForm {
      *
      * @return list of roles available for assignment to the user
      */
-    public List<RoleDTO> getRoles() {
+    public List<Role> getRoles() {
         try {
-            return ServiceManager.getRoleService().findAllAvailableForAssignToUser(this.userObject.getId(), this.userObject.getClients());
-        } catch (DataException e) {
+            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject.getId(), this.userObject.getClients());
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);
             return new LinkedList<>();
@@ -427,7 +418,7 @@ public class UserForm extends BaseForm {
      *            UserDTO to check
      * @return whether given UserDTO is checked in
      */
-    public boolean checkUserLoggedIn(UserDTO user) {
+    public boolean checkUserLoggedIn(User user) {
         for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {
             if (securitySession.getUserName().equals(user.getLogin())) {
                 return true;
@@ -450,7 +441,7 @@ public class UserForm extends BaseForm {
             }
             userService.changeUserPassword(userObject, this.passwordToEncrypt);
             Helper.setMessage("passwordChanged");
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         } catch (NoSuchAlgorithmException e) {
             Helper.setErrorMessage("ldap error", logger, e);

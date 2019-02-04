@@ -68,6 +68,7 @@ import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.base.TitleSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
+import org.primefaces.model.SortOrder;
 
 /**
  * The class provides a service for tasks. The service can be used to perform
@@ -128,10 +129,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (onlyOwnTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
-            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
             for (Role role : user.getRoles()) {
                 subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
@@ -153,15 +154,36 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        BoolQueryBuilder query = createUserTaskQuery();
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task");
     }
 
     @Override
-    public String createCountQuery(Map filters) throws DataException {
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public Long countResults(Map filters) throws DataException {
+        return searcher.countDocuments(createUserTaskQuery().toString());
+    }
+
+    @Override
+    public List<Task> getAllNotIndexed() {
+        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Task> getAllForSelectedClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+            throws DataException {
         BoolQueryBuilder query = createUserTaskQuery();
-        return query.toString();
+        return convertJSONObjectsToDTOs(
+            searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
     }
 
     /**
@@ -172,12 +194,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Task task)
-            throws CustomResponseException, DAOException, DataException, IOException {
+    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
-        manageProcessingUserDependenciesForIndex(task);
-        manageRolesDependenciesForIndex(task);
     }
 
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
@@ -203,45 +222,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             Template template = task.getTemplate();
             ServiceManager.getTemplateService().saveToIndex(template, false);
-        }
-    }
-
-    private void manageProcessingUserDependenciesForIndex(Task task)
-            throws CustomResponseException, DAOException, DataException, IOException {
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            User user = task.getProcessingUser();
-            if (user != null) {
-                user.getProcessingTasks().remove(task);
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
-        } else {
-            User user = task.getProcessingUser();
-            if (user != null) {
-                ServiceManager.getUserService().saveToIndex(user, false);
-            }
-            reIndexUserAfterRemoveFromProcessing(task);
-        }
-    }
-
-    private void reIndexUserAfterRemoveFromProcessing(Task task)
-            throws CustomResponseException, DAOException, DataException, IOException {
-        List<UserDTO> userDTOS = ServiceManager.getUserService().findByProcessingTask(task.getId(), true);
-        for (UserDTO userDTO : userDTOS) {
-            ServiceManager.getUserService().saveToIndex(ServiceManager.getUserService().getById(userDTO.getId()),
-                false);
-        }
-    }
-
-    private void manageRolesDependenciesForIndex(Task task) throws CustomResponseException, IOException {
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            for (Role role : task.getRoles()) {
-                role.getTasks().remove(task);
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
-        } else {
-            for (Role role : task.getRoles()) {
-                ServiceManager.getRoleService().saveToIndex(role, false);
-            }
         }
     }
 
@@ -283,26 +263,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return findDistinctValues(null, "title.keyword", true);
     }
 
-    @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Task> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * Get query for processing statuses.
      *
@@ -339,7 +299,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -358,7 +318,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Integer priority, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         return searcher.findDocuments(query.toString(), sort);
     }
@@ -378,7 +338,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
     }
@@ -400,7 +360,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
@@ -446,19 +406,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
         }
 
-        if (!related) {
-            convertRelatedJSONObjects(taskJSONObject, taskDTO);
+        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(taskJSONObject);
+        if (processingUser > 0) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(processingUser);
+            userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(taskJSONObject));
+            userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(taskJSONObject));
+            userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(taskJSONObject));
+            userDTO.setFullName(ServiceManager.getUserService().getFullName(userDTO));
+            taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;
-    }
-
-    private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
-        int processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
-        if (processingUser != 0) {
-            taskDTO.setProcessingUser(ServiceManager.getUserService().findById(processingUser, true));
-        }
-        taskDTO.setRoles(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.ROLES.getKey(), ServiceManager.getRoleService()));
     }
 
     private String getDateFromJsonValue(JsonValue date) {

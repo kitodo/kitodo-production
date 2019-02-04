@@ -11,12 +11,15 @@
 
 package org.kitodo.production.services.data;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.primefaces.model.SortOrder;
 
 public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
 
@@ -33,7 +36,17 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
+    public Long countResults(Map filters) throws DAOException {
+        return countDatabaseRows();
+    }
+
+    @Override
     public List<Folder> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Folder> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return new ArrayList<>();
     }
 }
