@@ -54,13 +54,13 @@ import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
-import org.kitodo.production.helper.GoobiScript;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
@@ -242,7 +242,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.process.setTitle(this.newProcessTitle);
 
             // remove Tiffwriter file
-            GoobiScript gs = new GoobiScript();
+            KitodoScriptService gs = new KitodoScriptService();
             List<Process> pro = new ArrayList<>();
             pro.add(this.process);
             gs.deleteTiffHeaderFile(pro);
@@ -830,7 +830,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void executeKitodoScriptForProcesses(List<ProcessDTO> processes) {
-        GoobiScript gs = new GoobiScript();
+        KitodoScriptService gs = new KitodoScriptService();
         try {
             gs.execute(ServiceManager.getProcessService().convertDtosToBeans(processes), this.kitodoScript);
         } catch (DAOException | DataException e) {

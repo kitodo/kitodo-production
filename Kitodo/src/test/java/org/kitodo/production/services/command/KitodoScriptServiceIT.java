@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper;
+package org.kitodo.production.services.command;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
-public class GoobiScriptIT {
+public class KitodoScriptServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -43,7 +43,7 @@ public class GoobiScriptIT {
 
     @Test
     public void shouldExecuteAddRoleScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         Task task = ServiceManager.getTaskService().getById(8);
         int amountOfRoles = task.getRoles().size();
@@ -51,7 +51,7 @@ public class GoobiScriptIT {
         String script = "action:addRole \"steptitle:Progress\" role:General";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
+        kitodoScript.execute(processes, script);
 
         task = ServiceManager.getTaskService().getById(8);
         assertEquals("Role was not correctly added to task!", amountOfRoles + 1, task.getRoles().size());
@@ -62,12 +62,12 @@ public class GoobiScriptIT {
         MockDatabase.cleanDatabase();
         MockDatabase.insertProcessesFull();
 
-        GoobiScript goobiScript = new GoobiScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setStepStatus \"steptitle:Progress\" status:3";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
+        kitodoScript.execute(processes, script);
 
         Task task = ServiceManager.getTaskService().getById(8);
         assertEquals("Processing status was not correctly changed!", TaskStatus.DONE, task.getProcessingStatusEnum());
@@ -75,12 +75,12 @@ public class GoobiScriptIT {
 
     @Test
     public void shouldExecuteAddShellScriptToTaskScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:addShellScriptToStep \"steptitle:Progress\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
+        kitodoScript.execute(processes, script);
 
         Task task = ServiceManager.getTaskService().getById(8);
         assertEquals("Script was not added to task - incorrect name!", "script", task.getScriptName());
@@ -89,12 +89,12 @@ public class GoobiScriptIT {
 
     @Test
     public void shouldExecuteSetPropertyTaskScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
+        kitodoScript.execute(processes, script);
 
         Task task = ServiceManager.getTaskService().getById(7);
         assertTrue("Task property was not set!", task.isTypeCloseVerify());
@@ -102,12 +102,12 @@ public class GoobiScriptIT {
 
     @Test
     public void shouldNotExecuteSetPropertyTaskScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
+        KitodoScriptService kitodoScript = new KitodoScriptService();
 
         String script = "action:setTaskProperty \"steptitle:Closed\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
         processes.add(ServiceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
+        kitodoScript.execute(processes, script);
 
         Task task = ServiceManager.getTaskService().getById(7);
         assertFalse("Task property was set - default value is false!", task.isTypeCloseVerify());

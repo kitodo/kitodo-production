@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.helper;
+package org.kitodo.production.services.command;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
@@ -41,13 +42,15 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
-public class GoobiScript {
-    private HashMap<String, String> parameters;
-    private static final Logger logger = LogManager.getLogger(GoobiScript.class);
+public class KitodoScriptService {
+    private Map<String, String> parameters;
+    private static final Logger logger = LogManager.getLogger(KitodoScriptService.class);
     private final FileService fileService = ServiceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
