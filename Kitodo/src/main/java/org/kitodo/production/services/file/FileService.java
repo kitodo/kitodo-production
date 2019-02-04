@@ -61,6 +61,9 @@ public class FileService {
     private static final Logger logger = LogManager.getLogger(FileService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
+    private volatile FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
+            FileManagementInterface.class).loadModule();
+
     /**
      * Creates a MetaDirectory.
      *
@@ -99,7 +102,6 @@ public class FileService {
      *         directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         if (Objects.nonNull(directoryName)) {
             return fileManagementModule.create(parentFolderUri, directoryName, false);
         }
@@ -134,7 +136,6 @@ public class FileService {
      * @return the uri of the new file
      */
     public URI createResource(String fileName) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.create(null, fileName, true);
     }
 
@@ -148,7 +149,6 @@ public class FileService {
      * @return the URI of the created resource
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.create(targetFolder, name, true);
     }
 
@@ -164,7 +164,6 @@ public class FileService {
      * @deprecated Use {@link #writeAsCurrentUser(URI)} instead.
      */
     public OutputStream write(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.write(uri);
     }
 
@@ -183,7 +182,6 @@ public class FileService {
      *             if write fails
      */
     public OutputStream write(URI uri, LockResult access) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.write(uri, access);
     }
 
@@ -213,7 +211,6 @@ public class FileService {
      * @deprecated Use {@link #readAsCurrentUser(URI)} instead.
      */
     public InputStream read(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.read(uri);
     }
 
@@ -232,7 +229,6 @@ public class FileService {
      *             if read fails
      */
     public InputStream read(URI uri, LockResult access) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.read(uri, access);
     }
 
@@ -249,7 +245,6 @@ public class FileService {
      *             is thrown if the rename fails permanently
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.rename(fileUri, newFileName);
     }
 
@@ -262,7 +257,6 @@ public class FileService {
      * @return number of files as Integer
      */
     public Integer getNumberOfFiles(URI directory) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getNumberOfFiles(null, directory);
     }
 
@@ -275,7 +269,6 @@ public class FileService {
      * @return number of files as Integer
      */
     public Integer getNumberOfImageFiles(URI directory) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getNumberOfFiles(ImageHelper.imageNameFilter, directory);
     }
 
@@ -287,7 +280,6 @@ public class FileService {
      * @return size of directory as Long
      */
     public Long getSizeOfDirectory(URI directory) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSizeOfDirectory(directory);
     }
 
@@ -300,7 +292,6 @@ public class FileService {
      *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.copy(sourceDirectory, targetDirectory);
     }
 
@@ -315,7 +306,6 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI sourceUri, URI destinationUri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.copy(sourceUri, destinationUri);
     }
 
@@ -330,7 +320,6 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.copy(sourceDirectory, targetDirectory);
     }
 
@@ -344,7 +333,6 @@ public class FileService {
      *             if get of module fails
      */
     public boolean delete(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.delete(uri);
     }
 
@@ -356,7 +344,6 @@ public class FileService {
      * @return true, if the file exists
      */
     public boolean fileExist(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.fileExist(uri);
     }
 
@@ -368,7 +355,6 @@ public class FileService {
      * @return true, if it is a file, false otherwise
      */
     public boolean isFile(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.isFile(uri);
     }
 
@@ -380,7 +366,6 @@ public class FileService {
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.isDirectory(dir);
     }
 
@@ -392,7 +377,6 @@ public class FileService {
      * @return true, if it's readable, false otherwise.
      */
     public boolean canRead(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.canRead(uri);
     }
 
@@ -404,7 +388,6 @@ public class FileService {
      * @return the name of the file
      */
     public String getFileName(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         String fileNameWithExtension = fileManagementModule.getFileNameWithExtension(uri);
         if (fileNameWithExtension.contains(".")) {
             return fileNameWithExtension.substring(0, fileNameWithExtension.indexOf('.'));
@@ -420,7 +403,6 @@ public class FileService {
      * @return the name of the file
      */
     public String getFileNameWithExtension(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getFileNameWithExtension(uri);
     }
 
@@ -435,7 +417,6 @@ public class FileService {
      *             if get of module fails
      */
     public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.move(sourceUri, targetUri);
     }
 
@@ -450,7 +431,6 @@ public class FileService {
      *             if get of module fails
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.move(sourceUri, targetUri);
     }
 
@@ -462,7 +442,6 @@ public class FileService {
      * @return a List of sub URIs
      */
     public List<URI> getSubUris(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(null, uri);
     }
 
@@ -476,7 +455,6 @@ public class FileService {
      * @return a List of sub URIs
      */
     public List<URI> getSubUris(FilenameFilter filter, URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(filter, uri);
     }
 
@@ -680,7 +658,6 @@ public class FileService {
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         URI processBaseUri = process.getProcessBaseUri();
         if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
@@ -720,7 +697,6 @@ public class FileService {
         if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, processTitle, processSubType,
             resourceName);
     }
@@ -745,7 +721,6 @@ public class FileService {
         if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
                 ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
@@ -803,7 +778,6 @@ public class FileService {
     public boolean deleteProcessContent(Process process) throws IOException {
         for (ProcessSubType processSubType : ProcessSubType.values()) {
             URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, null);
-            FileManagementInterface fileManagementModule = getFileManagementModule();
             if (!fileManagementModule.delete(processSubTypeURI)) {
                 return false;
             }
@@ -855,7 +829,6 @@ public class FileService {
      * @return true, if link creation was successful
      */
     public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.createSymLink(homeUri, targetUri, onlyRead, user.getLogin());
     }
 
@@ -867,18 +840,11 @@ public class FileService {
      * @return true, if deletion was successful
      */
     public boolean deleteSymLink(URI homeUri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.deleteSymLink(homeUri);
     }
 
     public File getFile(URI uri) {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getFile(uri);
-    }
-
-    private FileManagementInterface getFileManagementModule() {
-        KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class);
-        return loader.loadModule();
     }
 
     /**
@@ -984,7 +950,6 @@ public class FileService {
      *             is missing
      */
     public LockResult tryLock(Map<URI, LockingMode> requests) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.tryLock(getCurrentLockingUser(), requests);
     }
 }
