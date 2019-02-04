@@ -48,6 +48,7 @@
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.7</commons-lang3.version>
+        <org.apache.xmlgraphics.version>2.0</org.apache.xmlgraphics.version>
         <hamcrest.version>2.1-rc3</hamcrest.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
