@@ -11,11 +11,7 @@
 
 package org.kitodo.production.services.data.base;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -25,8 +21,10 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.SortOrder;
 
 public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
 
@@ -61,8 +59,18 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
+    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DAOException, DataException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM ListColumn");
+    }
+
+    @Override
+    public Long countResults(Map filters) throws DAOException, DataException {
+        throw new UnsupportedOperationException();
     }
 
 
@@ -118,7 +126,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
 
         client.setListColumns(new ArrayList<>(allClientColumns));
 
-        ServiceManager.getClientService().save(client);
+        ServiceManager.getClientService().saveToDatabase(client);
     }
 
     private ArrayList<String> getPrefixesFromListColumns(List<ListColumn> columns) throws Exception {
