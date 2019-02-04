@@ -513,14 +513,6 @@ public class ProcessServiceIT {
         assertEquals("Processes have different wikiField values!", process, actual);
     }
 
-    @Ignore("find out what exactly was created")
-    @Test
-    public void shouldCreateProcessDirs() throws Exception {
-        Process process = processService.getById(2);
-        processService.createProcessDirs(process);
-        // assertEquals("Process directories are not created!", expected, actual);
-    }
-
     @Test
     public void shouldGetDigitalDocument() throws Exception {
         FileLoader.createMetadataFile();

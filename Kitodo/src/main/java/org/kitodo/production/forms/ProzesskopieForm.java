@@ -718,8 +718,6 @@ public class ProzesskopieForm implements Serializable {
                 insertImagePath();
             }
 
-            // Create configured directories
-            ServiceManager.getProcessService().createProcessDirs(this.prozessKopie);
             ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
             startTaskScriptThreads();
