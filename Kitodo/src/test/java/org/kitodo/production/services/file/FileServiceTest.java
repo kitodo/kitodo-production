@@ -59,11 +59,13 @@ public class FileServiceTest {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);
 
-        boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
+        URI parentFolderUri = URI.create("fileServiceTest");
+        URI result = fileService.createMetaDirectory(parentFolderUri, "testMetaScript");
         File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
         ExecutionPermission.setNoExecutePermission(script);
 
-        assertTrue("Result of execution was incorrect!", result);
+        assertTrue("Result of execution was incorrect!",
+            URI.create((parentFolderUri.getPath() + '/' + "testMetaScript")).equals(result));
         assertTrue("Created resource is not directory!", file.isDirectory());
         assertFalse("Created resource is file!", file.isFile());
         assertTrue("Directory was not created!", file.exists());

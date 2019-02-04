@@ -217,6 +217,20 @@ public class Subfolder {
     }
 
     /**
+     * Returns the relative path to the directory storing the files.
+     * 
+     * @return relative path to the directory
+     */
+    public String getRelativeDirectoryPath() {
+        String pathWithVariables = folder.getPath();
+        int lastSeparator = pathWithVariables.lastIndexOf(File.separatorChar);
+        if (pathWithVariables.indexOf('*', lastSeparator) > -1) {
+            pathWithVariables = pathWithVariables.substring(0, lastSeparator);
+        }
+        return variableReplacer.replace(pathWithVariables);
+    }
+
+    /**
      * Returns the URI to a file in this folder.
      *
      * @param canonical

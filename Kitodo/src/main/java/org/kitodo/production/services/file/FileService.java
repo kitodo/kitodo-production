@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -41,6 +43,7 @@ import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
@@ -49,6 +52,7 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
@@ -75,7 +79,7 @@ public class FileService {
      * @throws IOException
      *             an IOException
      */
-    public boolean createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
+    URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
             CommandService commandService = ServiceManager.getCommandService();
             String path = FileSystems.getDefault()
@@ -84,11 +88,17 @@ public class FileService {
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
-            return commandResult.isSuccessful();
+            if (!commandResult.isSuccessful()) {
+                String message = MessageFormat.format(
+                    "Could not create directory {0} in {1}! No new directory was created", directoryName,
+                    parentFolderUri.getPath());
+                logger.warn(message);
+                throw new IOException(message);
+            }
         } else {
             logger.info("Metadata directory: " + directoryName + " already existed! No new directory was created");
-            return true;
         }
+        return URI.create(parentFolderUri.getPath() + '/' + directoryName);
     }
 
     /**
@@ -126,6 +136,27 @@ public class FileService {
             commandService.runCommand(new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME)),
                 commandParameter);
         }
+    }
+
+    /**
+     * Creates the folder structure needed for a process.
+     *
+     * @param process
+     *            the process
+     * @return the URI to the process location
+     */
+    public URI createProcessLocation(Process process) throws IOException {
+        URI processLocationUri = fileManagementModule.createProcessLocation(process.getId().toString());
+        for (Folder folder : process.getProject().getFolders()) {
+            if (folder.isCreateFolder()) {
+                URI parentFolderUri = processLocationUri;
+                for (String singleFolder : new Subfolder(process, folder).getRelativeDirectoryPath()
+                        .split(Pattern.quote(File.separator))) {
+                    parentFolderUri = createMetaDirectory(parentFolderUri, singleFolder);
+                }
+            }
+        }
+        return processLocationUri;
     }
 
     /**
