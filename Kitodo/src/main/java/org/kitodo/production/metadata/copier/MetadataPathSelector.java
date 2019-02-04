@@ -217,7 +217,11 @@ public class MetadataPathSelector extends MetadataSelector {
      * of the path aren’t available. This works recursively, by calling itself
      * on the subnode, if found, or returning null otherwise.
      *
+<<<<<<< HEAD
      * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface)
+=======
+     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.production.helper.metadata.legacytypeimplementations.ugh.LegacyDocStructHelperInterface)
+>>>>>>> Move LegacyDocStructHelperInterface to its appropriate package
      */
     @Override
     protected String findIn(LegacyDocStructHelperInterface supernode) {
