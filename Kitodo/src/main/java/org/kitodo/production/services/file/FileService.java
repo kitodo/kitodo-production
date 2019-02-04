@@ -118,7 +118,7 @@ public class FileService {
      *             If an I/O error occurs.
      */
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
-        if (!ServiceManager.getFileService().fileExist(dirName)) {
+        if (!fileExist(dirName)) {
             CommandService commandService = ServiceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getAbsolutePath());
             commandService.runCommand(new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME)),
@@ -908,7 +908,7 @@ public class FileService {
     public void createDummyImagesForProcess(Process process, int numberOfNewImages)
             throws IOException, URISyntaxException {
         URI imagesDirectory = getSourceDirectory(process);
-        int startValue = ServiceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
+        int startValue = getNumberOfFiles(imagesDirectory) + 1;
         URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames
