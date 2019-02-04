@@ -21,9 +21,7 @@ public class Metadata {
     private String key;
 
     /**
-     * Specifies the location of the meta-data entry in the METS file. METS
-     * allows the storage of meta-data in five different areas with different
-     * semantics. See {@link MdSec} for details.
+     * Returns the domain of the meta-data.
      *
      * @return the location of the meta-data entry
      */
@@ -41,11 +39,7 @@ public class Metadata {
     }
 
     /**
-     * Specifies the location of the meta-data entry in the METS file. METS
-     * allows the storage of meta-data in five different areas with different
-     * semantics. See {@link MdSec} for details. Note that you cannot set the
-     * location for a meta-data entry that is a member of a meta-data group
-     * differently from the location of the meta-data group.
+     * Sets the domain of the meta-data.
      *
      * @param domain
      *            location to set for the meta-data entry
