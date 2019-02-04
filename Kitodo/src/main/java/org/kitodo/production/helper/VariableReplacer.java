@@ -29,7 +29,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
@@ -290,7 +289,7 @@ public class VariableReplacer {
             LegacyMetadataTypeHelper mdt;
             try {
                 mdt = LegacyPrefsHelper.getMetadataType(this.prefs, metadata);
-            } catch (UghHelperException e) {
+            } catch (IllegalArgumentException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return "";
             }

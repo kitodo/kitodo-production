@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
@@ -186,7 +185,7 @@ public class CopyProcess extends ProzesskopieForm {
                                 field.setValue(md.getValue());
                             }
                         }
-                    } catch (UghHelperException e) {
+                    } catch (IllegalArgumentException e) {
                         Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
                 }

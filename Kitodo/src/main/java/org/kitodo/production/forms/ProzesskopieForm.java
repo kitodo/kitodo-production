@@ -62,7 +62,6 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
@@ -504,7 +503,7 @@ public class ProzesskopieForm implements Serializable {
                     md.setStringValue(field.getValue().replace("&amp;", "&"));
                 }
             }
-        } catch (UghHelperException e) {
+        } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -775,7 +774,7 @@ public class ProzesskopieForm implements Serializable {
                     }
                 }
             }
-        } catch (UghHelperException | RuntimeException e) {
+        } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -846,7 +845,7 @@ public class ProzesskopieForm implements Serializable {
 
             // write Rdf file
             ServiceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
-        } catch (UghHelperException e) {
+        } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("UghHelperException", logger, e);
         }
     }
@@ -965,7 +964,7 @@ public class ProzesskopieForm implements Serializable {
                 md.setStringValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
-            } catch (UghHelperException e) {
+            } catch (IllegalArgumentException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
@@ -982,7 +981,7 @@ public class ProzesskopieForm implements Serializable {
             for (LegacyMetadataHelper md : myCollections) {
                 colStruct.removeMetadata(md);
             }
-        } catch (UghHelperException e) {
+        } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getMessage(), logger, e);
         }
     }

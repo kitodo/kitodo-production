@@ -27,7 +27,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
@@ -89,10 +88,10 @@ public class LegacyPrefsHelper {
      * @return MetadataType
      */
     @Deprecated
-    public static LegacyMetadataTypeHelper getMetadataType(LegacyPrefsHelper inPrefs, String inName) throws UghHelperException {
+    public static LegacyMetadataTypeHelper getMetadataType(LegacyPrefsHelper inPrefs, String inName) {
         LegacyMetadataTypeHelper mdt = inPrefs.getMetadataTypeByName(inName);
         if (mdt == null) {
-            throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
+            throw new IllegalArgumentException("MetadataType does not exist in current Preferences: " + inName);
         }
         return mdt;
     }
