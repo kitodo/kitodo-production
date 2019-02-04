@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.dataformat.mets;
+package org.kitodo.api;
 
 /**
  * An enumeration of possible meta-data locations in a METS file. METS

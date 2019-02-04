@@ -11,8 +11,6 @@
 
 package org.kitodo.api;
 
-import org.kitodo.api.dataformat.mets.MdSec;
-
 public class Metadata {
     /**
      * In which conceptual area in the METS file this meta-data entry is stored.

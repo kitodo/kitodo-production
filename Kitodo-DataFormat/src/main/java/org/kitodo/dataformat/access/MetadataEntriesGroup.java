@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.kitodo.api.dataformat.mets.MdSec;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;

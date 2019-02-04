@@ -11,7 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
-import org.kitodo.api.dataformat.mets.MdSec;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 
 /**
