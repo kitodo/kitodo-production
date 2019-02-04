@@ -36,8 +36,8 @@ import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -178,10 +178,10 @@ public class CopyProcess extends ProzesskopieForm {
                             throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
+                            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
                                 ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
-                            LegacyMetadataHelper md = UghHelper.getMetadata(myTempStruct, mdt);
+                            LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
                             }
