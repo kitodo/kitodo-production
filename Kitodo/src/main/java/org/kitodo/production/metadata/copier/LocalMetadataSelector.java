@@ -12,7 +12,7 @@
 package org.kitodo.production.metadata.copier;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 public class LocalMetadataSelector extends MetadataSelector {
 

@@ -13,7 +13,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Connects a legacy reference to a media unit. This is a soldering class to

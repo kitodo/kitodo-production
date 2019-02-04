@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
@@ -189,7 +189,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findAll(org.kitodo.api.ugh.LegacyDocStructHelperInterface)
+     * @see org.kitodo.production.metadata.copier.MetadataSelector#findAll(org.kitodo.production.helper.metadata.legacytypeimplementations.ugh.LegacyDocStructHelperInterface)
      */
     @Override
     protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
@@ -217,7 +217,7 @@ public class MetadataPathSelector extends MetadataSelector {
      * of the path aren’t available. This works recursively, by calling itself
      * on the subnode, if found, or returning null otherwise.
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.api.ugh.LegacyDocStructHelperInterface)
+     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.production.helper.metadata.legacytypeimplementations.ugh.LegacyDocStructHelperInterface)
      */
     @Override
     protected String findIn(LegacyDocStructHelperInterface supernode) {

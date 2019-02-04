@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units
