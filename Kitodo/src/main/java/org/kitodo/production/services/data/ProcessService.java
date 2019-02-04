@@ -96,7 +96,6 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -203,7 +202,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return MetadataType
      */
     @Deprecated
-    public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) throws UghHelperException {
+    public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) {
         LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return LegacyPrefsHelper.getMetadataType(myPrefs, inName);
     }
