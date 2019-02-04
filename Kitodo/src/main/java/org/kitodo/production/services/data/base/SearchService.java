@@ -968,37 +968,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return new ArrayList<>();
     }
 
-    /**
-     * Converts properties' values returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @param key
-     *            to access JSONArray
-     * @param subKeys
-     *            to access specified values in objects of JSONArray
-     * @return display properties as list of Integers
-     */
-    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(Map<String, Object> object, String key,
-            List<String> subKeys) {
-        if (object != null) {
-            List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
-            List<RelatedProperty> relatedProperties = new ArrayList<>();
-            for (Map<String, Object> singleObject : jsonArray) {
-                RelatedProperty relatedProperty = new RelatedProperty();
-                relatedProperty.setId((Integer) singleObject.get("id"));
-                List<String> values = new ArrayList<>();
-                for (String subKey : subKeys) {
-                    values.add((String) singleObject.get(subKey));
-                }
-                relatedProperty.setValues(values);
-                relatedProperties.add(relatedProperty);
-            }
-            return relatedProperties;
-        }
-        return new ArrayList<>();
-    }
-
     protected SortBuilder getSortBuilder(String sortField, SortOrder sortOrder) {
         if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
             return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.ASC);
