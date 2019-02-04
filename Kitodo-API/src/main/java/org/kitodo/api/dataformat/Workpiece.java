@@ -77,9 +77,7 @@ public class Workpiece {
     }
 
     /**
-     * Returns the edit history. The head of each METS file has space for
-     * processing notes of the individual editors. In this way, the processing
-     * process of the digital representation can be understood.
+     * Returns the edit history.
      * 
      * @return the edit history
      */
