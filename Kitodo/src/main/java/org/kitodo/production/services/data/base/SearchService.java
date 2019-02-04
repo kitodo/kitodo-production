@@ -427,11 +427,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return amount of objects according to given query or 0 if query is null
      */
     public Long count(QueryBuilder query) throws DataException {
-        try {
-            return searcher.countDocuments(query);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
+        return countDocuments(query);
     }
 
     /**

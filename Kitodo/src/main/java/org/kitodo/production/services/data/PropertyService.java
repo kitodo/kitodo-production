@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -93,7 +94,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments();
+        return countDocuments(QueryBuilders.matchAllQuery());
     }
 
     @Override

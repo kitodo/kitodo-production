@@ -65,7 +65,7 @@ public class Searcher extends Index {
      * @return amount of all documents
      */
     public Long countDocuments() throws CustomResponseException, DataException {
-        return countDocuments(null);
+        return countDocuments(QueryBuilders.matchAllQuery());
     }
 
     /**
@@ -78,7 +78,7 @@ public class Searcher extends Index {
     public Long countDocuments(QueryBuilder query) throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
 
-        String response = restClient.countDocuments(overrideNullQuery(query));
+        String response = restClient.countDocuments(query);
         if (!response.equals("")) {
             try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
                 JsonObject result = jsonReader.readObject();
@@ -101,14 +101,7 @@ public class Searcher extends Index {
     public Aggregations aggregateDocuments(QueryBuilder query, AggregationBuilder aggregation)
             throws CustomResponseException, DataException {
         SearchRestClient restClient = initiateRestClient();
-        return restClient.aggregateDocuments(overrideNullQuery(query), aggregation);
-    }
-
-    private QueryBuilder overrideNullQuery(QueryBuilder query) {
-        if (query == null) {
-            return QueryBuilders.matchAllQuery();
-        }
-        return query;
+        return restClient.aggregateDocuments(query, aggregation);
     }
 
     /**

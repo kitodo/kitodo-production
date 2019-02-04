@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -257,7 +258,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return a list of titles
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
-        return findDistinctValues(null, "title.keyword", true);
+        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true);
     }
 
     /**
