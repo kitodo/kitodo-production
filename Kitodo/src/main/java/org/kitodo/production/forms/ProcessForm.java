@@ -19,18 +19,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -39,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
@@ -55,6 +55,7 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
+import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WebDav;
@@ -97,8 +98,10 @@ public class ProcessForm extends TemplateBaseForm {
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
 
-    private static String[] processPropertyNames =
-            ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(",");
+    private List<SelectItem> customColumns;
+
+    @Inject
+    private CustomListColumnInitializer initializer;
 
     /**
      * Constructor.
@@ -135,27 +138,29 @@ public class ProcessForm extends TemplateBaseForm {
         SelectItemGroup processColumnGroup = null;
         try {
             processColumnGroup = ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
+            columns.add(processColumnGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
 
         // Read process properties to display from configuration
-        // FIXME: require list of real ListColumn instances instead of just names here!
-        SelectItem[] processPropertyColumnItems = new SelectItem[processPropertyNames.length];
-        for (String propertyName : processPropertyNames) {
-            processPropertyColumnItems[Arrays.asList(processPropertyNames).indexOf(propertyName)]
-                            = new SelectItem(propertyName, propertyName);
-        }
-
-        SelectItem[] allColumns = Stream.concat(
-                        Stream.of(processColumnGroup.getSelectItems()),
-                        Stream.of(processPropertyColumnItems)).toArray(SelectItem[]::new);
-        SelectItemGroup processColumns = new SelectItemGroup(Helper.getTranslation("process"));
-        processColumns.setSelectItems(allColumns);
-        columns.add(processColumns);
+        customColumns = new ArrayList<>();
+        SelectItemGroup customColumnGroup = new SelectItemGroup(Helper.getTranslation("process"));
+        customColumnGroup.setSelectItems(ServiceManager.getListColumnService().getAllCustomListColumns().stream()
+                .map(listColumn -> new SelectItem(listColumn, listColumn.getTitle()))
+                .toArray(SelectItem[]::new));
+        customColumns.add(customColumnGroup);
 
         selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
 
+    }
+
+    /**
+     * Return list of process properties configured as custom list columns in kitodo configuration.
+     * @return list of process property names
+     */
+    public String[] getProcessPropertyNames() {
+        return initializer.getProcessProperties();
     }
 
     /**
@@ -1362,10 +1367,10 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Get list of names for process properties that should be displayed as columns in the process list.
-     * @return list of process property names
+     * Get list of custom list columns.
+     * @return list of custom list columns
      */
-    public static String[] getProcessPropertyNames() {
-        return processPropertyNames;
+    public List<SelectItem> getCustomColumns() {
+        return this.customColumns;
     }
 }

@@ -11,7 +11,12 @@
 
 package org.kitodo.production.services.data.base;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -111,6 +116,11 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Save given list of selected list columns to client of currently authenticated user.
+     * @param columns list columns
+     * @throws Exception thrown when prefix cannot be determined from given column names
+     */
     public void saveSelectedColumnsToClient(List<ListColumn> columns) throws Exception {
         Client client = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
 
@@ -141,5 +151,22 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
             }
         }
         return new ArrayList<>(prefixes);
+    }
+
+    public List<ListColumn> getAllCustomListColumns() {
+        return dao.getAllCustom();
+    }
+
+    /**
+     * Remove custom list columns from database.
+     */
+    // FIXME: prevent MySQLIntegrityConstraintViolationException when custom column is mapped to any client!
+    public void removeCustomListColumns() throws DAOException {
+        List<Integer> columnIds = dao.getAllCustom().stream()
+                .map(ListColumn::getId)
+                .collect(Collectors.toList());
+        for (int id : columnIds) {
+            dao.remove(id);
+        }
     }
 }

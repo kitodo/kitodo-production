@@ -37,6 +37,10 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
         return retrieveObjects("FROM ListColumn ORDER BY id ASC", offset, size);
     }
 
+    public List<ListColumn> getAllCustom() {
+        return getByQuery("FROM ListColumn WHERE custom = 1");
+    }
+
     @Override
     public List<ListColumn> getAllNotIndexed(int offset, int size) {
         throw new UnsupportedOperationException();
