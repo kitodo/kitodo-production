@@ -373,6 +373,31 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Metadata eines Docstructs ermitteln.
+     *
+     * @param inStruct
+     *            DocStruct object
+     * @param inMetadataType
+     *            MetadataType object
+     * @return Metadata
+     */
+    @Deprecated
+    public static LegacyMetadataHelper getMetadata(LegacyDocStructHelperInterface inStruct, LegacyMetadataTypeHelper inMetadataType) {
+        if (inStruct != null && inMetadataType != null) {
+            List<? extends LegacyMetadataHelper> all = inStruct.getAllMetadataByType(inMetadataType);
+            if (all.isEmpty()) {
+                LegacyMetadataHelper md = new LegacyMetadataHelper(inMetadataType);
+                md.setDocStruct(inStruct);
+                inStruct.addMetadata(md);
+                return md;
+            } else {
+                return all.get(0);
+            }
+        }
+        return null;
+    }
+
     @Deprecated
     public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
         //TODO remove

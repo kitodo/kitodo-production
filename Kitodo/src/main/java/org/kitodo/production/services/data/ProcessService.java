@@ -96,6 +96,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -110,6 +111,7 @@ import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -189,6 +191,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<Process> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * MetadataType aus Preferences eines Prozesses ermitteln.
+     *
+     * @param inProzess
+     *            Process object
+     * @param inName
+     *            String
+     * @return MetadataType
+     */
+    @Deprecated
+    public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) throws UghHelperException {
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
+        return LegacyPrefsHelper.getMetadataType(myPrefs, inName);
     }
 
     @Override

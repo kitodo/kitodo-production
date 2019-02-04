@@ -67,9 +67,9 @@ import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
-import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
@@ -78,6 +78,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.omnifaces.util.Ajax;
@@ -494,10 +495,10 @@ public class ProzesskopieForm implements Serializable {
                 throw new UnsupportedOperationException("Dead code pending removal");
             } else {
                 // evaluate the content in normal fields
-                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
+                LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     field.getMetadata());
-                LegacyMetadataHelper md = UghHelper.getMetadata(docStruct, mdt);
+                LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(docStruct, mdt);
                 if (md != null) {
                     field.setValue(md.getValue());
                     md.setStringValue(field.getValue().replace("&amp;", "&"));
@@ -760,15 +761,15 @@ public class ProzesskopieForm implements Serializable {
             if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
                 LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
                         .getPreferences(this.prozessKopie.getRuleset());
-                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
-                LegacyMetadataHelper metadata = UghHelper.getMetadata(tempStruct, mdt);
+                LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(prefs, field.getMetadata());
+                LegacyMetadataHelper metadata = LegacyLogicalDocStructHelper.getMetadata(tempStruct, mdt);
                 if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
                 // if the topstruct and the first child should be given the
                 // value
                 if (Objects.nonNull(tempChild)) {
-                    metadata = UghHelper.getMetadata(tempChild, mdt);
+                    metadata = LegacyLogicalDocStructHelper.getMetadata(tempChild, mdt);
                     if (Objects.nonNull(metadata)) {
                         metadata.setStringValue(field.getValue());
                     }
@@ -825,7 +826,7 @@ public class ProzesskopieForm implements Serializable {
     private void insertImagePath() throws IOException {
         LegacyMetsModsDigitalDocumentHelper digitalDocument = this.rdf.getDigitalDocument();
         try {
-            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+            LegacyMetadataTypeHelper mdt = ProcessService.getMetadataType(this.prozessKopie, "pathimagefiles");
             List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
             if (Objects.nonNull(allImagePaths)) {
@@ -958,7 +959,7 @@ public class ProzesskopieForm implements Serializable {
     private void addCollections(LegacyDocStructHelperInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                LegacyMetadataHelper md = new LegacyMetadataHelper(UghHelper.getMetadataType(
+                LegacyMetadataHelper md = new LegacyMetadataHelper(LegacyPrefsHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setStringValue(s);
@@ -975,7 +976,7 @@ public class ProzesskopieForm implements Serializable {
      */
     protected void removeCollections(LegacyDocStructHelperInterface colStruct, Process process) {
         try {
-            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
+            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
             ArrayList<LegacyMetadataHelper> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             for (LegacyMetadataHelper md : myCollections) {

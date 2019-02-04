@@ -289,7 +289,7 @@ public class VariableReplacer {
             /* MetadataType ermitteln und ggf. Fehler melden */
             LegacyMetadataTypeHelper mdt;
             try {
-                mdt = UghHelper.getMetadataType(this.prefs, metadata);
+                mdt = LegacyPrefsHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return "";
