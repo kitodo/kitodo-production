@@ -225,14 +225,14 @@ public class Reader {
             FlowNode nextNode = nextNodes.singleResult();
 
             if (nextNode instanceof EndEvent) {
-                tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
+                tasks.put((Task) node, new TaskInfo(ordering, true));
             } else {
-                tasks.put((Task) node, new TaskInfo(ordering, false, workflowCondition));
+                tasks.put((Task) node, new TaskInfo(ordering, false));
                 ordering++;
                 iterateOverNodes(nextNode, ordering, workflowCondition);
             }
         } else if (nextNodesSize == 0) {
-            tasks.put((Task) node, new TaskInfo(ordering, true, workflowCondition));
+            tasks.put((Task) node, new TaskInfo(ordering, true));
         } else {
             throw new WorkflowException(Helper.getTranslation("workflowExceptionMissingGateway",
                 Collections.singletonList(node.getName())));

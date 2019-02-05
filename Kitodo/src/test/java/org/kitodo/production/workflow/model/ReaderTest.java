@@ -186,7 +186,5 @@ public class ReaderTest {
         assertEquals("Process definition - workflow's task title was read incorrectly!", title, task.getName());
         assertEquals("Process definition - workflow's task ordering was determined incorrectly!", ordering,
             taskInfo.getOrdering());
-        assertEquals("Process definition - workflow's task conditions were determined incorrectly!", condition,
-            taskInfo.getCondition());
     }
 }

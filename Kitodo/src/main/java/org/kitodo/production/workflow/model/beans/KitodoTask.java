@@ -31,6 +31,8 @@ public class KitodoTask {
     private boolean typeAcceptClose;
     private boolean typeCloseVerify;
     private boolean batchStep;
+    private String conditionType;
+    private String conditionValue;
     private String userRoles;
 
     static final String NAMESPACE = "http://www.kitodo.org/template";
@@ -56,6 +58,8 @@ public class KitodoTask {
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
+        this.conditionType = task.getAttributeValueNs(NAMESPACE, "conditionType");
+        this.conditionValue = task.getAttributeValueNs(NAMESPACE, "conditionValue");
         this.userRoles = task.getAttributeValueNs(NAMESPACE, "permittedUserRole");
     }
 
@@ -317,6 +321,45 @@ public class KitodoTask {
      */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
+    }
+
+
+    /**
+     * Get condition type (XPath or Script) for conditional task.
+     *
+     * @return type of condition
+     */
+    public String getConditionType() {
+        return conditionType;
+    }
+
+    /**
+     * Set condition type (XPath or Script) for conditional task.
+     *
+     * @param conditionType
+     *            as java.lang.String
+     */
+    public void setConditionType(String conditionType) {
+        this.conditionType = conditionType;
+    }
+
+    /**
+     * Get condition value for conditional task.
+     *
+     * @return value of condition
+     */
+    public String getConditionValue() {
+        return conditionValue;
+    }
+
+    /**
+     * Set condition value for conditional task.
+     *
+     * @param conditionValue
+     *            as java.lang.String
+     */
+    public void setConditionValue(String conditionValue) {
+        this.conditionValue = conditionValue;
     }
 
     /**
