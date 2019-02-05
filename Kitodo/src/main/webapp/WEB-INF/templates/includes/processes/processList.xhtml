@@ -41,7 +41,6 @@
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->
-            <!-- FIXME: save process properties configured in 'kitodo_config.properties' as "listColumns" to database when application starts! -->
             <p:columns value="#{ProcessForm.getProcessPropertyNames()}"
                        var="propertyName"
                        headerText="#{fn:replace(propertyName, 'process.', '')}"
