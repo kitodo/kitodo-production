@@ -54,6 +54,8 @@
             <p:commandButton action="#{ProjectForm.saveSelectedColumns()}"
                              icon="fa fa-save fa-lg"
                              style="margin-right: 10px;"
+                             onclick="PF('notifications').renderMessage(
+                                 {'summary':'#{msgs.columnConfigurationSaved}','severity':'info'});"
                              title="#{msgs.saveColumnConfiguration}"/>
         </h:form>
     </ui:define>
