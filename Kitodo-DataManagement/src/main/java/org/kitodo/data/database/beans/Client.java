@@ -35,7 +35,7 @@ public class Client extends BaseBean {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "client_x_listColumn", joinColumns = {@JoinColumn(name = "client_id",
             foreignKey = @ForeignKey(name = "FK_client_id"))},
             inverseJoinColumns = {@JoinColumn(name = "column_id",

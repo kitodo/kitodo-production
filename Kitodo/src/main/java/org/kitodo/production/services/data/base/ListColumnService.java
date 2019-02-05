@@ -26,7 +26,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
@@ -64,7 +63,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DAOException, DataException {
+    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         throw new UnsupportedOperationException();
     }
 
@@ -74,7 +73,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
+    public Long countResults(Map filters) {
         throw new UnsupportedOperationException();
     }
 
@@ -160,13 +159,19 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     /**
      * Remove custom list columns from database.
      */
-    // FIXME: prevent MySQLIntegrityConstraintViolationException when custom column is mapped to any client!
     public void removeCustomListColumns() throws DAOException {
-        List<Integer> columnIds = dao.getAllCustom().stream()
+        List<ListColumn> customColumns = dao.getAllCustom();
+        for (Client client : ServiceManager.getClientService().getAll()) {
+            for (ListColumn cc : customColumns) {
+                client.getListColumns().remove(cc);
+            }
+            ServiceManager.getClientService().saveToDatabase(client);
+        }
+        List<Integer> columnIds = customColumns.stream()
                 .map(ListColumn::getId)
                 .collect(Collectors.toList());
         for (int id : columnIds) {
-            dao.remove(id);
+            removeFromDatabase(id);
         }
     }
 }

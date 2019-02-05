@@ -13,6 +13,7 @@ package org.kitodo.production.helper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -43,12 +44,12 @@ public class CustomListColumnInitializer {
      * @param context ServletContext
      */
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
-        processProperties = Arrays.stream(ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(","))
-                .filter(name -> !name.isEmpty())
-                .map(name -> PROCESS_PREFIX + name)
-                .toArray(String[]::new);
         try {
             ServiceManager.getListColumnService().removeCustomListColumns();
+            processProperties = Arrays.stream(ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(","))
+                    .filter(name -> !name.isEmpty())
+                    .map(name -> PROCESS_PREFIX + name)
+                    .toArray(String[]::new);
             List<String> availableColumnNames = ServiceManager.getListColumnService().getAllCustomListColumns().stream()
                     .map(ListColumn::getTitle)
                     .collect(Collectors.toList());
@@ -64,6 +65,10 @@ public class CustomListColumnInitializer {
             }
         } catch (DAOException e) {
             logger.error("Unable to save process property names from Kitodo configuration file as custom list columns to database!");
+        } catch (NoSuchElementException e) {
+            logger.error("Configuration key '"
+                    + ParameterCore.PROCESS_PROPERTIES.toString()
+                    + "' not found in configuration => unable to process properties as custom columns!");
         }
     }
 
