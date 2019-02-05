@@ -54,9 +54,13 @@
             <p:commandButton action="#{ProjectForm.saveSelectedColumns()}"
                              icon="fa fa-save fa-lg"
                              style="margin-right: 10px;"
-                             onclick="PF('notifications').renderMessage(
+                             oncomplete="PF('notifications').renderMessage(
                                  {'summary':'#{msgs.columnConfigurationSaved}','severity':'info'});"
-                             title="#{msgs.saveColumnConfiguration}"/>
+                             title="#{msgs.saveColumnConfiguration}">
+                <p:confirm header="#{msgs.confirmSavingColumnConfigurationTitle}"
+                           message="#{msgs.confirmSavingColumnConfigurationMessagee}"
+                           icon="ui-icon-alert"/>
+            </p:commandButton>
         </h:form>
     </ui:define>
 
