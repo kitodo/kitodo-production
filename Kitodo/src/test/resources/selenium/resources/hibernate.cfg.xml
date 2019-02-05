@@ -72,6 +72,7 @@
         <mapping class="org.kitodo.data.database.beans.Template"/>
         <mapping class="org.kitodo.data.database.beans.User"/>
         <mapping class="org.kitodo.data.database.beans.Workflow"/>
+        <mapping class="org.kitodo.data.database.beans.WorkflowCondition"/>
 
     </session-factory>
 

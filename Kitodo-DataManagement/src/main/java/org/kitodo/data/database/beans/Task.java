@@ -102,8 +102,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "workflowId")
     private String workflowId;
 
-    @Column(name = "workflowCondition")
-    private String workflowCondition;
+    @ManyToOne
+    @JoinColumn(name = "workflowCondition_id", foreignKey = @ForeignKey(name = "FK_task_workflowCondition_id"))
+    private WorkflowCondition workflowCondition;
 
     /**
      * This field contains information about user, which works on this task.
@@ -587,7 +588,7 @@ public class Task extends BaseIndexedBean {
      *
      * @return value of workflowCondition
      */
-    public String getWorkflowCondition() {
+    public WorkflowCondition getWorkflowCondition() {
         return workflowCondition;
     }
 
@@ -597,7 +598,7 @@ public class Task extends BaseIndexedBean {
      * @param workflowCondition
      *            as String
      */
-    public void setWorkflowCondition(String workflowCondition) {
+    public void setWorkflowCondition(WorkflowCondition workflowCondition) {
         this.workflowCondition = workflowCondition;
     }
 
