@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MdSec;
 
 public class WorkpieceIT {
 

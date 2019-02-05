@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat.mets;
 
+import org.kitodo.api.MdSec;
+
 /**
  * Abstract super-interface for the services that handle access to the
  * {@code <kitodo:metadata>} and {@code <kitodo:metadataGroup>} elements.
