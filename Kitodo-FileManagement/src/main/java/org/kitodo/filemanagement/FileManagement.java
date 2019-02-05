@@ -202,7 +202,7 @@ public class FileManagement implements FileManagementInterface {
         File renamedFile = new File(mappedNewFileURI);
 
         final int sleepIntervalMilliseconds = 20;
-        final int maxWaitMilliseconds = 150000; // 2½ minutes
+        final int maxWaitMilliseconds = KitodoConfig.getIntParameter(ParameterFileManagement.FILE_MAX_WAIT_MILLISECONDS);
 
         boolean success;
         int millisWaited = 0;
