@@ -49,7 +49,7 @@ public class MessageTest {
 
     @Test
     public void shouldGetStringFromDefaultBundle() {
-        System.out.println(Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready"));
+        assertEquals("Ready", Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready"));
     }
 
     @Test
