@@ -16,28 +16,9 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.kitodo.api.Metadata;
-
 /**
  * The administrative structure of the product of an element that passes through
  * a Production workflow.
- * 
- * <p>
- * A {@code Workpiece} has two essential characteristics: {@link MediaUnit}s and
- * an outline {@link Structure}. {@code MediaUnit}s are the types of every
- * single digital medium on a conceptual level, such as the individual pages of
- * a book. Each {@code MediaUnit} can be in different {@link MediaVariant}s (for
- * example, in different resolutions or file formats). Each {@code MediaVariant}
- * of a {@code MediaUnit} resides in a place described by an URI.
- * 
- * <p>
- * The {@code Structure} is a tree structure that can be finely subdivided, e.g.
- * a book, in which the chapters, in it individual elements such as tables or
- * figures. Each outline level points to the {@code MediaUnit}s that belong to
- * it via {@link View}s. Currently, a {@code View} always contains exactly one
- * {@code MediaUnit} unit, here a simple expandability is provided, so that in a
- * future version excerpts from {@code MediaUnit}s can be described. Each
- * outline level can be described with any {@link Metadata}.
  */
 public class Workpiece {
     /**

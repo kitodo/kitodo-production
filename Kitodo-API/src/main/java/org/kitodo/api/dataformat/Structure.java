@@ -37,15 +37,9 @@ public class Structure {
     private Collection<Metadata> metadata = new HashSet<>();
 
     /**
-     * The order label of this structure. This is needed very rarely. It is not
-     * displayed, and unlike the name suggests, it does not specify the order of
-     * this substructure along with other substructures within its parent
-     * structure, but the order is determined by the order of references from
-     * the parent tree to each substructure. The order label may be used to
-     * store the machine-readable value if the label contains a human-readable
-     * value that can be mapped to a machine-readable value. An example of this
-     * are calendar dates. For example, a label of “the fifteenth year of the
-     * reign of Tiberius Caesar” could be stored as “{@code -0006}”.
+     * The order label of this structure, used to store the machine-readable
+     * value if the label contains a human-readable value that can be mapped to
+     * a machine-readable value.
      */
     private String orderlabel;
 
@@ -67,19 +61,12 @@ public class Structure {
     private String type;
 
     /**
-     * The views on media units that this structure level comprises. Currently,
-     * only {@link AreaXmlElementAccess}s on media units as a whole are possible
-     * with Production, but here it has already been built for the future, that
-     * also {@code View}s on parts of {@link FileXmlElementAccess}s are to be
-     * made possible. The list of {@code View}s is aware of the order of the
-     * {@code MediaUnit}s encoded by the {@code MediaUnit}’s {@code order}
-     * property. Although this list implements the {@link List} interface, it
-     * always preserves the order as dictated by the {@code order} property of
-     * the {@code MediaUnit}s. Therefore, to reorder this list, you must change
-     * the {@code order} property of the {@code MediaUnit}s instead. It is not
-     * possible to code several sequences that are in conflict with each other.
+     * The views on {@link MediaUnit}s that this structure level comprises. The
+     * list ensures the enforcement of the order of the media units which is
+     * encoded by the media units’ {@code order} property. To reorder this list,
+     * you must change the order property of the media units.
      */
-    private final List<View> views = new SortedList<View>(view -> view.getMediaUnit().getOrder());
+    private final Collection<View> views = new SortedList<View>(view -> view.getMediaUnit().getOrder());
 
     /**
      * Returns the substructures associated with this structure.
@@ -161,7 +148,7 @@ public class Structure {
      * 
      * @return the views
      */
-    public List<View> getViews() {
+    public Collection<View> getViews() {
         return views;
     }
 }
