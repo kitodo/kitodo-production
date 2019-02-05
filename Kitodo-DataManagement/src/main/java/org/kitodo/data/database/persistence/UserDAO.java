@@ -42,9 +42,8 @@ public class UserDAO extends BaseDAO<User> {
     }
 
     @Override
-    public List<User> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
-            size);
+    public List<User> getAllNotIndexed(int offset, int size) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

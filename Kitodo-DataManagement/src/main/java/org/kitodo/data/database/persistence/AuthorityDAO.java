@@ -41,9 +41,8 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     }
 
     @Override
-    public List<Authority> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
-            offset, size);
+    public List<Authority> getAllNotIndexed(int offset, int size) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

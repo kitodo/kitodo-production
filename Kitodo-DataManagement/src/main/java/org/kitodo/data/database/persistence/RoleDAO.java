@@ -44,9 +44,8 @@ public class RoleDAO extends BaseDAO<Role> {
     }
 
     @Override
-    public List<Role> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Role WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
-            offset, size);
+    public List<Role> getAllNotIndexed(int offset, int size) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

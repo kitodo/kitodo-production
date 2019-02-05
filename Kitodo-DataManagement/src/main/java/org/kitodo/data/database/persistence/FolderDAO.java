@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.exceptions.NotImplementedException;
 
 public class FolderDAO extends BaseDAO<Folder> {
     private static final long serialVersionUID = -5506252462891480484L;
@@ -41,7 +40,7 @@ public class FolderDAO extends BaseDAO<Folder> {
 
     @Override
     public List<Folder> getAllNotIndexed(int offset, int size) {
-        throw  new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
