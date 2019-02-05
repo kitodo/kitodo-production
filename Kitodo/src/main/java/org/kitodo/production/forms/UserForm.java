@@ -384,7 +384,7 @@ public class UserForm extends BaseForm {
      */
     public List<Role> getRoles() {
         try {
-            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject.getId(), this.userObject.getClients());
+            return ServiceManager.getRoleService().getAllAvailableForAssignToUser(this.userObject);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.ROLE.getTranslationPlural() }, logger,
                 e);

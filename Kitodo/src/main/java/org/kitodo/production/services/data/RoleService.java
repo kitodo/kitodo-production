@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
@@ -94,15 +95,15 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
      * Get all roles available to assign to the edited user. It will be displayed
      * in the addRolesPopup.
      *
-     * @param userId
+     * @param user
      *            id of user which is going to be edited
-     * @param clients
-     *            list of clients to which edited user is assigned
      * @return list of all matching roles
      */
-    public List<Role> getAllAvailableForAssignToUser(Integer userId, List<Client> clients) throws DAOException {
-        if (Objects.nonNull(userId)) {
-            return dao.getAllAvailableForAssignToUser(userId, clients);
+    public List<Role> getAllAvailableForAssignToUser(User user) throws DAOException {
+        if (Objects.nonNull(user.getId())) {
+            List<Role> roles = dao.getAllAvailableForAssignToUser(user.getClients());
+            roles.removeAll(user.getRoles());
+            return roles;
         }
         return getAll();
     }
