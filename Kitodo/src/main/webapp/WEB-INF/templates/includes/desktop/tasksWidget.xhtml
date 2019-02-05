@@ -17,16 +17,25 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="taskTable" value="#{DesktopForm.tasks}" scrollable="true" var="task">
-        <p:column headerText="#{msgs.title}" id="taskTitle" styleClass="task-table-column">
+        <p:column headerText="#{msgs.title}"
+                  rendered="#{CurrentTaskForm.showColumn('task.title')}"
+                  id="taskTitle"
+                  styleClass="task-table-column">
             <h:outputText value="#{task.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.process}" id="taskProcess" styleClass="task-table-column">
+        <p:column headerText="#{msgs.process}"
+                  rendered="#{CurrentTaskForm.showColumn( 'task.process')}"
+                  id="taskProcess"
+                  styleClass="task-table-column">
             <h:outputText value="#{task.process.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.project}" id="taskProject" styleClass="task-table-column">
+        <p:column headerText="#{msgs.project}"
+                  id="taskProject" styleClass="task-table-column">
             <h:outputText value="#{task.process.project.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" id="taskActions" styleClass="actionsColumn task-table-column">
+        <p:column headerText="#{msgs.actions}" id="taskActions"
+                  rendered="#{CurrentTaskForm.showColumn('task.project')}"
+                  styleClass="actionsColumn task-table-column">
             <h:form id="actionForm">
                 <h:link outcome="taskEdit" id="editTask"
                         rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
