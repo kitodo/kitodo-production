@@ -152,6 +152,18 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
         return new ArrayList<>(prefixes);
     }
 
+    /**
+     * Retrieve and return all standard list columns from the database.
+     * @return list of standard listColumns
+     */
+    public List<ListColumn> getAllStandardListColumns() {
+        return dao.getAllStandard();
+    }
+
+    /**
+     * Retrieve and return all custom list columns from the database.
+     * @return list of custom listColumns
+     */
     public List<ListColumn> getAllCustomListColumns() {
         return dao.getAllCustom();
     }

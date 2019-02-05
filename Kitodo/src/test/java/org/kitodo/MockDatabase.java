@@ -60,6 +60,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.LinkingMode;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -371,6 +372,58 @@ public class MockDatabase {
         }
     }
 
+    private static void insertListColumns() throws DAOException {
+        List<ListColumn> listColumns = new ArrayList<>();
+
+        listColumns.add(new ListColumn("project.title"));
+        listColumns.add(new ListColumn("project.metsRightsOwner"));
+        listColumns.add(new ListColumn("project.active"));
+
+        listColumns.add(new ListColumn("template.title"));
+        listColumns.add(new ListColumn("template.ruleset"));
+
+        listColumns.add(new ListColumn("workflow.title"));
+        listColumns.add(new ListColumn("workflow.filename"));
+        listColumns.add(new ListColumn("workflow.active"));
+        listColumns.add(new ListColumn("workflow.ready"));
+
+        listColumns.add(new ListColumn("docket.title"));
+        listColumns.add(new ListColumn("docket.filename"));
+
+        listColumns.add(new ListColumn("ruleset.title"));
+        listColumns.add(new ListColumn("ruleset.filename"));
+        listColumns.add(new ListColumn("ruleset.sorting"));
+
+        listColumns.add(new ListColumn("task.title"));
+        listColumns.add(new ListColumn("task.process"));
+        listColumns.add(new ListColumn("task.project"));
+        listColumns.add(new ListColumn("task.state"));
+
+        listColumns.add(new ListColumn("process.title"));
+        listColumns.add(new ListColumn("process.status"));
+        listColumns.add(new ListColumn("process.project"));
+
+        listColumns.add(new ListColumn("user.username"));
+        listColumns.add(new ListColumn("user.location"));
+        listColumns.add(new ListColumn("user.roles"));
+        listColumns.add(new ListColumn("user.clients"));
+        listColumns.add(new ListColumn("user.projects"));
+        listColumns.add(new ListColumn("user.active"));
+
+        listColumns.add(new ListColumn("role.role"));
+        listColumns.add(new ListColumn("role.client"));
+
+        listColumns.add(new ListColumn("client.client"));
+
+        listColumns.add(new ListColumn("ldapgroup.ldapgroup"));
+        listColumns.add(new ListColumn("ldapgroup.home_directory"));
+        listColumns.add(new ListColumn("ldapgroup.gidNumber"));
+
+        for (ListColumn listColumn : listColumns) {
+            ServiceManager.getListColumnService().saveToDatabase(listColumn);
+        }
+    }
+
     private static void insertBatches() throws DAOException, DataException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
@@ -617,16 +670,21 @@ public class MockDatabase {
     }
 
     public static void insertClients() throws DAOException {
+        insertListColumns();
+
         Client client = new Client();
         client.setName("First client");
+        client = ServiceManager.getClientService().addStandardListColumns(client);
         ServiceManager.getClientService().saveToDatabase(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
+        secondClient = ServiceManager.getClientService().addStandardListColumns(secondClient);
         ServiceManager.getClientService().saveToDatabase(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
+        thirdClient = ServiceManager.getClientService().addStandardListColumns(thirdClient);
         ServiceManager.getClientService().saveToDatabase(thirdClient);
     }
 

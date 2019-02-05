@@ -83,6 +83,7 @@ public class ClientForm extends BaseForm {
      */
     public String newClient() {
         this.client = new Client();
+        this.client.setListColumns(ServiceManager.getListColumnService().getAllStandardListColumns());
         return clientEditPath;
     }
 
@@ -124,6 +125,7 @@ public class ClientForm extends BaseForm {
      */
     public void delete() {
         try {
+            this.client.getListColumns().clear();
             ServiceManager.getClientService().removeFromDatabase(this.client);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);

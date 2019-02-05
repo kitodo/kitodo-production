@@ -37,6 +37,20 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
         return retrieveObjects("FROM ListColumn ORDER BY id ASC", offset, size);
     }
 
+    /**
+     * Retrieve and return list of standard list columns.
+     *
+     * @return list of standard list columns
+     */
+    public List<ListColumn> getAllStandard() {
+        return getByQuery("FROM ListColumn WHERE custom = 0");
+    }
+
+    /**
+     * Retrieve and return list of custom list columns.
+     *
+     * @return list of custom list columns
+     */
     public List<ListColumn> getAllCustom() {
         return getByQuery("FROM ListColumn WHERE custom = 1");
     }

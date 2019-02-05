@@ -18,6 +18,7 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
@@ -78,5 +79,15 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     @Override
     public void refresh(Client client) {
         dao.refresh(client);
+    }
+
+    /**
+     * Add standard list columns to client.
+     * @param client Client to add standard list columns to.
+     * @return updated client
+     */
+    public Client addStandardListColumns(Client client) {
+        client.setListColumns(ServiceManager.getListColumnService().getAllStandardListColumns());
+        return client;
     }
 }
