@@ -45,11 +45,13 @@ public class CustomListColumnInitializer {
      */
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         try {
-            ServiceManager.getListColumnService().removeCustomListColumns();
             processProperties = Arrays.stream(ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(","))
                     .filter(name -> !name.isEmpty())
                     .map(name -> PROCESS_PREFIX + name)
                     .toArray(String[]::new);
+
+            ServiceManager.getListColumnService().removeProcessCustomListColumns(Arrays.asList(processProperties));
+
             List<String> availableColumnNames = ServiceManager.getListColumnService().getAllCustomListColumns().stream()
                     .map(ListColumn::getTitle)
                     .collect(Collectors.toList());
@@ -72,6 +74,11 @@ public class CustomListColumnInitializer {
         }
     }
 
+    /**
+     * Get names of process properties configured in kitodo_config.properties as custom columns for the process list
+     *
+     * @return array of process propterties
+     */
     public String[] getProcessProperties() {
         return processProperties;
     }

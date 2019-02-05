@@ -158,15 +158,24 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
 
     /**
      * Remove custom list columns from database.
+     *
+     * @param excludeList String array containing the names of custom columns that are not removed
      */
-    public void removeCustomListColumns() throws DAOException {
-        List<ListColumn> customColumns = dao.getAllCustom();
+    public void removeProcessCustomListColumns(List<String> excludeList) throws DAOException {
+        // don't remove columns whose titles are in the given excludeList
+        List<ListColumn> customColumns = dao.getAllCustom().stream()
+                .filter(column -> !excludeList.contains(column.getTitle()))
+                .collect(Collectors.toList());
+
+        // remove remaining custom columns from clients
         for (Client client : ServiceManager.getClientService().getAll()) {
             for (ListColumn cc : customColumns) {
                 client.getListColumns().remove(cc);
             }
             ServiceManager.getClientService().saveToDatabase(client);
         }
+
+        // remove custom columns themselves
         List<Integer> columnIds = customColumns.stream()
                 .map(ListColumn::getId)
                 .collect(Collectors.toList());
