@@ -26,7 +26,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
