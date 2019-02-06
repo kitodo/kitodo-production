@@ -90,6 +90,7 @@
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
         </p:tabView>
+        <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
