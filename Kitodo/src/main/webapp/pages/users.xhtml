@@ -51,18 +51,9 @@
                                   title="#{msgs.configureColumns}"
                                   value="#{UserForm.selectedColumns}">
                 <f:selectItems value="#{UserForm.columns}"/>
-                <p:ajax update="usersTabView"/>
+                <p:ajax listener="#{UserForm.saveSelectedColumns()}"
+                        update="usersTabView"/>
             </p:selectCheckboxMenu>
-            <p:commandButton action="#{UserForm.saveSelectedColumns()}"
-                             icon="fa fa-save fa-lg"
-                             style="margin-right: 10px;"
-                             oncomplete="PF('notifications').renderMessage(
-                                 {'summary':'#{msgs.columnConfigurationSaved}','severity':'info'});"
-                             title="#{msgs.saveColumnConfiguration}">
-                <p:confirm header="#{msgs.confirmSavingColumnConfigurationTitle}"
-                           message="#{msgs.confirmSavingColumnConfigurationMessagee}"
-                           icon="ui-icon-alert"/>
-            </p:commandButton>
         </h:form>
     </ui:define>
 

@@ -28,18 +28,9 @@
                                   style="float: right; margin-right: 0;"
                                   value="#{CurrentTaskForm.selectedColumns}">
                 <f:selectItems value="#{CurrentTaskForm.columns}" />
-                <p:ajax update="tasksTabView"/>
+                <p:ajax listener="#{CurrentTaskForm.saveSelectedColumns()}"
+                        update="tasksTabView"/>
             </p:selectCheckboxMenu>
-            <p:commandButton action="#{CurrentTaskForm.saveSelectedColumns()}"
-                             icon="fa fa-save fa-lg"
-                             style="margin-right: 10px;"
-                             oncomplete="PF('notifications').renderMessage(
-                                 {'summary':'#{msgs.columnConfigurationSaved}','severity':'info'});"
-                             title="#{msgs.saveColumnConfiguration}">
-                <p:confirm header="#{msgs.confirmSavingColumnConfigurationTitle}"
-                           message="#{msgs.confirmSavingColumnConfigurationMessagee}"
-                           icon="ui-icon-alert"/>
-            </p:commandButton>
         </h:form>
     </ui:define>
 
