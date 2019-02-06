@@ -44,7 +44,6 @@ import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.security.password.ValidPassword;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.UserService;
-import org.kitodo.production.services.data.base.ListColumnService;
 
 @Named("UserForm")
 @SessionScoped

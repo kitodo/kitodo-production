@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
@@ -244,7 +243,6 @@ public class BaseForm implements Serializable {
             ServiceManager.getListColumnService().saveSelectedColumnsToClient(selectedColumns);
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
-            e.printStackTrace();
         }
     }
 }

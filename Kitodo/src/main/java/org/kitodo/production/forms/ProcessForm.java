@@ -135,9 +135,10 @@ public class ProcessForm extends TemplateBaseForm {
 
         columns = new ArrayList<>();
 
-        SelectItemGroup processColumnGroup = null;
+        SelectItemGroup processColumnGroup;
         try {
-            processColumnGroup = ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
+            processColumnGroup =
+                    ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
             columns.add(processColumnGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
@@ -151,7 +152,8 @@ public class ProcessForm extends TemplateBaseForm {
                 .toArray(SelectItem[]::new));
         customColumns.add(customColumnGroup);
 
-        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
+        selectedColumns =
+                ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
 
     }
 
@@ -1364,13 +1366,5 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String getProcessEditReferer() {
         return this.processEditReferer;
-    }
-
-    /**
-     * Get list of custom list columns.
-     * @return list of custom list columns
-     */
-    public List<SelectItem> getCustomColumns() {
-        return this.customColumns;
     }
 }

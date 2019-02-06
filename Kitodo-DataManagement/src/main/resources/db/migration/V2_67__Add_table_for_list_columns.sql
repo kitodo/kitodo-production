@@ -9,9 +9,20 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
---
--- Migration: Add columns table
+-- Add column configuration authorities
+INSERT INTO authority (title) VALUES ('configureColumns_globalAssignable');
+INSERT INTO authority (title) VALUES ('configureColumns_clientAssignable');
 
+-- Add role for new authority to default Client ('Client_ChangeMe')
+INSERT INTO role (title, client_id) VALUES ('ConfigureColumns', 1);
+
+-- Add column configuration authorities to corresponding role
+INSERT INTO role_x_authority (role_id, authority_id)
+  VALUES ((SELECT id from role WHERE title = 'ConfigureColumns'), (SELECT id FROM  authority WHERE title = 'configureColumns_globalAssignable'));
+INSERT INTO role_x_authority (role_id, authority_id)
+  VALUES ((SELECT id from role WHERE title = 'ConfigureColumns'), (SELECT id FROM  authority WHERE title = 'configureColumns_clientAssignable'));
+
+-- Add columns table
 -- 1. Create listColumn table
 CREATE TABLE listColumn (
   id INT(11) NOT NULL AUTO_INCREMENT,

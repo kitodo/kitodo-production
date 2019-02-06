@@ -627,7 +627,7 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ColumnService if it is not yet initialized and return it.
+     * Initialize ListColumnService if it is not yet initialized and return it.
      *
      * @return ColumnService object
      */
