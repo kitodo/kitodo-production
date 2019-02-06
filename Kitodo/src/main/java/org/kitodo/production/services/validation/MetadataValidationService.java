@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -45,7 +43,7 @@ public class MetadataValidationService {
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
-        } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
         }
