@@ -17,6 +17,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -191,7 +192,7 @@ public class TaskManager {
      * @return the singleton TaskManager instance
      */
     static synchronized TaskManager singleton() {
-        if (singletonInstance == null) {
+        if (Objects.isNull(singletonInstance)) {
             singletonInstance = new TaskManager();
         }
         return singletonInstance;

@@ -193,7 +193,7 @@ public class ProzesskopieForm implements Serializable {
          * @return whether an error occurred when retrieving that hit
          */
         public boolean isError() {
-            return hit == null;
+            return Objects.isNull(hit);
         }
 
         /**
@@ -406,10 +406,10 @@ public class ProzesskopieForm implements Serializable {
      *         importCatalogue
      */
     private boolean pluginAvailableFor(String catalogue) {
-        if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
+        if (Objects.isNull(importCatalogue) || !importCatalogue.supportsCatalogue(catalogue)) {
             importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
         }
-        if (importCatalogue == null) {
+        if (Objects.isNull(importCatalogue)) {
             Helper.setErrorMessage("NoCataloguePluginForCatalogue", catalogue);
             return false;
         } else {
@@ -424,7 +424,7 @@ public class ProzesskopieForm implements Serializable {
      * Reset all configuration properties and fields.
      */
     protected void clearValues() {
-        if (this.opacKatalog == null) {
+        if (Objects.isNull(this.opacKatalog)) {
             this.opacKatalog = "";
         }
         this.standardFields = new HashMap<>();
@@ -475,12 +475,13 @@ public class ProzesskopieForm implements Serializable {
      * füllen.
      */
     private void fillFieldsFromMetadataFile() {
-        if (this.rdf != null) {
+        if (Objects.nonNull(this.rdf)) {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     proceedField(field);
-                    if (field.getValue() != null && !field.getValue().equals("")) {
-                        field.setValue(field.getValue().replace("&amp;", "&"));
+                    String value = field.getValue();
+                    if (Objects.nonNull(value) && !value.isEmpty()) {
+                        field.setValue(value.replace("&amp;", "&"));
                     }
                 }
             }
@@ -498,7 +499,7 @@ public class ProzesskopieForm implements Serializable {
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     field.getMetadata());
                 LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(docStruct, mdt);
-                if (md != null) {
+                if (Objects.nonNull(md)) {
                     field.setValue(md.getValue());
                     md.setStringValue(field.getValue().replace("&amp;", "&"));
                 }
@@ -519,7 +520,6 @@ public class ProzesskopieForm implements Serializable {
         }
         return docStruct;
     }
-
 
 
     /**
@@ -601,8 +601,9 @@ public class ProzesskopieForm implements Serializable {
          * Prüfung der additional-Eingaben, die angegeben werden müssen
          */
         for (AdditionalField field : this.additionalFields) {
-            if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
-                    && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
+            String value = field.getValue();
+            if ((Objects.isNull(value) || value.isEmpty()) && field.isRequired()
+                    && field.getShowDependingOnDoctype() && (StringUtils.isBlank(value))) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA,
                     " " + field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
@@ -614,20 +615,20 @@ public class ProzesskopieForm implements Serializable {
 
     protected boolean isProcessTitleCorrect(Process process) {
         boolean valid = true;
-
-        if (process.getTitle() == null || process.getTitle().equals("")) {
+        String title = process.getTitle();
+        if (Objects.isNull(title) || title.isEmpty()) {
             valid = false;
             Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
         }
 
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
-        if (!process.getTitle().matches(validateRegEx)) {
+        if (Objects.isNull(title) || !title.matches(validateRegEx)) {
             valid = false;
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
         }
 
-        if (process.getTitle() != null) {
-            valid = isProcessTitleAvailable(process.getTitle());
+        if (Objects.nonNull(title)) {
+            valid = isProcessTitleAvailable(title);
         }
         return valid;
     }
@@ -695,7 +696,7 @@ public class ProzesskopieForm implements Serializable {
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
          * stattfand, dann jetzt eine anlegen
          */
-        if (this.rdf == null) {
+        if (Objects.isNull(this.rdf)) {
             createNewFileformat();
         }
 
@@ -704,7 +705,7 @@ public class ProzesskopieForm implements Serializable {
          * oder frisch angelegt), dann diese ergänzen
          */
         try {
-            if (this.rdf != null) {
+            if (Objects.nonNull(this.rdf)) {
                 insertLogicalDocStruct();
 
                 for (AdditionalField field : this.additionalFields) {
@@ -787,15 +788,15 @@ public class ProzesskopieForm implements Serializable {
         LegacyDocStructHelperInterface populizer = null;
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
-            if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
+            if (Objects.nonNull(populizer.getAnchorClass()) && Objects.isNull(populizer.getAllChildren())) {
                 LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
-                while (docStructType.getAnchorClass() != null) {
+                while (Objects.nonNull(docStructType.getAnchorClass())) {
                     throw new UnsupportedOperationException("Dead code pending removal");
                 }
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
-            String name = populizer != null && populizer.getDocStructType() != null
+            String name = Objects.nonNull(populizer) && Objects.nonNull(populizer.getDocStructType())
                     ? populizer.getDocStructType().getName()
                     : null;
             Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.",
@@ -875,10 +876,10 @@ public class ProzesskopieForm implements Serializable {
         if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
             LegacyDocStructHelperInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata = new HashMap<>();
-            while (enricher.getAllChildren() != null) {
+            while (Objects.nonNull(enricher.getAllChildren())) {
                 // save higher level metadata for lower enrichment
                 List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
-                if (allMetadata == null) {
+                if (Objects.isNull(allMetadata)) {
                     allMetadata = Collections.emptyList();
                 }
                 iterateOverAllMetadata(higherLevelMetadata, allMetadata);
@@ -997,7 +998,7 @@ public class ProzesskopieForm implements Serializable {
             MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
             DivXmlElementAccessInterface structure = workpiece.getStructMap();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
-            if (configOpacDoctype != null) {
+            if (Objects.nonNull(configOpacDoctype)) {
                 // monograph
                 if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
                     workpiece.getStructMap().setType(configOpacDoctype.getRulesetType());
@@ -1082,8 +1083,7 @@ public class ProzesskopieForm implements Serializable {
     public void setDocType(String docType) {
         if (!this.docType.equals(docType)) {
             this.docType = docType;
-            if (rdf != null) {
-
+            if (Objects.nonNull(rdf)) {
                 LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
                 createNewFileformat();
@@ -1120,8 +1120,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
-
-        if (oldDocStruct.getAllMetadata() != null) {
+        if (Objects.nonNull(oldDocStruct.getAllMetadata())) {
             for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 newDocStruct.addMetadata(md);
             }
@@ -1146,7 +1145,7 @@ public class ProzesskopieForm implements Serializable {
      * @return a human-readable identifier for this object
      */
     public String getProzessVorlageTitel() {
-        return this.template != null ? this.template.getTitle() : null;
+        return this.template.getTitle();
     }
 
     /**
@@ -1231,7 +1230,7 @@ public class ProzesskopieForm implements Serializable {
      * @return true or false
      */
     public boolean isSingleChoiceCollection() {
-        return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
+        return getPossibleDigitalCollections().size() == 1;
     }
 
     /**
@@ -1398,11 +1397,11 @@ public class ProzesskopieForm implements Serializable {
                 field.setValue(String.valueOf(System.currentTimeMillis() + counter));
                 counter++;
             }
-            if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
-                    && currentTitle.length() == 0) {
+            if (Objects.nonNull(field.getMetadata()) && field.getMetadata().equals("TitleDocMain")
+                    && currentTitle.isEmpty()) {
                 currentTitle = field.getValue();
-            } else if (field.getMetadata() != null && field.getMetadata().equals(LIST_OF_CREATORS)
-                    && currentAuthors.length() == 0) {
+            } else if (Objects.nonNull(field.getMetadata()) && field.getMetadata().equals(LIST_OF_CREATORS)
+                    && currentAuthors.isEmpty()) {
                 currentAuthors = field.getValue();
             }
 
@@ -1421,9 +1420,9 @@ public class ProzesskopieForm implements Serializable {
                 newTitle.append(token, 1, token.length() - 1);
             } else if (token.startsWith("#")) {
                 // resolve strings beginning with # from generic fields
-                if (genericFields != null) {
+                if (Objects.nonNull(genericFields)) {
                     String genericValue = genericFields.get(token);
-                    if (genericValue != null) {
+                    if (Objects.nonNull(genericValue)) {
                         newTitle.append(genericValue);
                     }
                 }
@@ -1452,8 +1451,8 @@ public class ProzesskopieForm implements Serializable {
              */
             if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                     && additionalField.getShowDependingOnDoctype()
-                    && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                if (atstsl == null || atstsl.length() == 0) {
+                    && (Objects.isNull(additionalField.getValue()) || additionalField.getValue().isEmpty())) {
+                if (Objects.isNull(atstsl) || atstsl.isEmpty()) {
                     atstsl = createAtstsl(currentTitle, currentAuthors);
                 }
                 additionalField.setValue(this.atstsl);
@@ -1461,7 +1460,7 @@ public class ProzesskopieForm implements Serializable {
 
             // add the content to the title
             if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                    && additionalField.getValue() != null) {
+                    && Objects.nonNull(additionalField.getValue())) {
                 newTitle.append(calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
             }
         }
@@ -1486,7 +1485,7 @@ public class ProzesskopieForm implements Serializable {
                         Helper.getTranslation(INCOMPLETE_DATA) + "Volume number is not a valid number", logger, e);
                 }
             }
-            if (rueckgabe != null && rueckgabe.length() < 4) {
+            if (Objects.nonNull(rueckgabe) && rueckgabe.length() < 4) {
                 rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
             }
         }
@@ -1528,7 +1527,7 @@ public class ProzesskopieForm implements Serializable {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
                     if (additionalField.getTitle().equals("Titel") || additionalField.getTitle().equals("Title")
-                            && additionalField.getValue() != null && !additionalField.getValue().equals("")) {
+                            && Objects.nonNull(additionalField.getValue()) && !additionalField.getValue().isEmpty()) {
                         title = additionalField.getValue();
                     }
                     /*
@@ -1537,13 +1536,13 @@ public class ProzesskopieForm implements Serializable {
                      */
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
-                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                            && (Objects.isNull(additionalField.getValue()) || additionalField.getValue().isEmpty())) {
                         additionalField.setValue(this.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                            && additionalField.getValue() != null) {
+                            && Objects.nonNull(additionalField.getValue())) {
                         tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(additionalField.getTitle(),
                             additionalField.getValue()));
                     }
@@ -1578,7 +1577,7 @@ public class ProzesskopieForm implements Serializable {
      *            the imagesGuessed to set
      */
     public void setImagesGuessed(Integer imagesGuessed) {
-        if (imagesGuessed == null) {
+        if (Objects.isNull(imagesGuessed)) {
             imagesGuessed = 0;
         }
         this.guessedImages = imagesGuessed;
@@ -1605,7 +1604,7 @@ public class ProzesskopieForm implements Serializable {
      */
     public void setAddToWikiField(String addToWikiField) {
         this.addToWikiField = addToWikiField;
-        if (addToWikiField != null && !addToWikiField.equals("")) {
+        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
             User user = ServiceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             this.prozessKopie
@@ -1624,7 +1623,7 @@ public class ProzesskopieForm implements Serializable {
      */
     public static String createAtstsl(String title, String author) {
         StringBuilder result = new StringBuilder(8);
-        if (author != null && author.trim().length() > 0) {
+        if (Objects.nonNull(author) && !author.trim().isEmpty()) {
             result.append(getPartString(author, 4));
             result.append(getPartString(title, 4));
         } else {

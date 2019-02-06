@@ -51,7 +51,7 @@ public class WikiFieldHelper {
      */
     public static String getWikiMessage(Process process, String currentWikiFieldContent, String type, String value) {
         StringBuilder message = new StringBuilder();
-        if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
+        if (Objects.nonNull(currentWikiFieldContent) && !currentWikiFieldContent.isEmpty()) {
             message.append(currentWikiFieldContent);
             message.append(BREAK);
         }

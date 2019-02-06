@@ -11,6 +11,7 @@
 
 package org.goobi.mq;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.jms.Connection;
@@ -83,7 +84,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
         Optional<String> activeMQHost = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_HOST_URL);
         if (activeMQHost.isPresent()) {
             session = connectToServer(activeMQHost.get());
-            if (session != null) {
+            if (Objects.nonNull(session)) {
                 registerListeners(services);
                 Optional<String> activeMQResultsTopic = ConfigCore
                         .getOptionalString(ParameterCore.ACTIVE_MQ_RESULTS_TOPIC);
@@ -125,7 +126,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      */
     protected void registerListeners(ActiveMQProcessor[] processors) {
         for (ActiveMQProcessor processor : processors) {
-            if (processor.getQueueName() != null) {
+            if (Objects.nonNull(processor.getQueueName())) {
                 MessageConsumer messageChecker;
                 try {
                     Destination queue = session.createQueue(processor.getQueueName());
@@ -209,7 +210,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
         // Shut down all watchers on any queues
         for (ActiveMQProcessor service : services) {
             MessageConsumer watcher = service.getChecker();
-            if (watcher != null) {
+            if (Objects.nonNull(watcher)) {
                 try {
                     watcher.close();
                 } catch (JMSException e) {
@@ -220,7 +221,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
 
         // quit session
         try {
-            if (session != null) {
+            if (Objects.nonNull(session)) {
                 session.close();
             }
         } catch (JMSException e) {
@@ -229,7 +230,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
 
         // shut down connection
         try {
-            if (connection != null) {
+            if (Objects.nonNull(connection)) {
                 connection.close();
             }
         } catch (JMSException e) {

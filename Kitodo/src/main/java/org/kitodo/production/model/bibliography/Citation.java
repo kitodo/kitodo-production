@@ -235,7 +235,7 @@ public class Citation {
      *            a collection to add the entities to
      */
     private void addMultiple(String list, String separator, Collection<String> destination) {
-        if (list == null || list.trim().length() == 0) {
+        if (Objects.isNull(list) || list.trim().isEmpty()) {
             return;
         }
         while (list.contains(separator)) {
@@ -543,31 +543,31 @@ public class Citation {
                 appendNames(creators, result);
                 appendYear(result);
                 appendArticle(result);
-                if (part != null) {
+                if (Objects.nonNull(part)) {
                     result.append(' ');
                     result.append(part);
                 }
                 appendContainedIn(result);
                 appendTitle(result);
-                if (subseries != null) {
+                if (Objects.nonNull(subseries)) {
                     result.append(' ');
                     result.append(subseries);
                 }
-                if (volume != null) {
+                if (Objects.nonNull(volume)) {
                     result.append(' ');
                     result.append(volume);
                 }
-                if (published != null) {
+                if (Objects.nonNull(published)) {
                     result.append(" (");
                     result.append(published.toString(PUBLICATION_DATE_FORMAT));
                     result.append(')');
                 }
-                if (number != null) {
+                if (Objects.nonNull(number)) {
                     result.append(' ');
                     result.append(number);
                 }
                 appendPagerange(result);
-                if (accessed != null) {
+                if (Objects.nonNull(accessed)) {
                     result.append(" (");
                     appendAccessed(result);
                     result.append(')');
@@ -578,31 +578,31 @@ public class Citation {
                 appendNames(creators, result);
                 appendYear(result);
                 appendTitle(result);
-                if (employer != null) {
+                if (Objects.nonNull(employer)) {
                     result.append(' ');
                     result.append(employer);
                 }
-                if (place != null) {
+                if (Objects.nonNull(place)) {
                     result.append(' ');
                     result.append(place);
                 }
-                if (department != null && (employer != null || place != null)) {
+                if (Objects.nonNull(department) && (Objects.nonNull(employer) || Objects.nonNull(place))) {
                     result.append(',');
                 }
-                if (department != null) {
+                if (Objects.nonNull(department)) {
                     result.append(' ');
                     result.append(department);
                 }
-                if (type != null && (employer != null || place != null || department != null)) {
+                if (Objects.nonNull(type) && (Objects.nonNull(employer) || Objects.nonNull(place) || Objects.nonNull(department))) {
                     result.append(',');
                 }
-                if (type != null) {
+                if (Objects.nonNull(type)) {
                     result.append(' ');
                     result.append(type);
                 }
                 break;
             case STANDARD:
-                if (number != null) {
+                if (Objects.nonNull(number)) {
                     result.append(number);
                 }
                 appendEdition(result, false);
@@ -617,15 +617,15 @@ public class Citation {
                     appendTitle(result, null);
                     appendYearSimple(result);
                 }
-                if (published != null || accessed != null) {
+                if (Objects.nonNull(published) || Objects.nonNull(accessed)) {
                     result.append(" (");
-                    if (published != null) {
+                    if (Objects.nonNull(published)) {
                         appendPublished(result);
                     }
-                    if (published != null && accessed != null) {
+                    if (Objects.nonNull(published) && Objects.nonNull(accessed)) {
                         result.append(", ");
                     }
-                    if (accessed != null) {
+                    if (Objects.nonNull(accessed)) {
                         appendAccessed(result);
                     }
                     result.append(')');
@@ -680,7 +680,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendArticle(StringBuilder builder) {
-        if (dependentTitle != null) {
+        if (Objects.nonNull(dependentTitle)) {
             builder.append(": ");
             builder.append(Helper.getTranslation("citation.quotes.open"));
             builder.append(dependentTitle);
@@ -712,7 +712,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendEdition(StringBuilder builder, boolean sentenceMark) {
-        if (edition != null) {
+        if (Objects.nonNull(edition)) {
             builder.append(' ');
             builder.append(edition);
             if (sentenceMark && !(edition.endsWith(".") || edition.endsWith("?") || edition.endsWith("!"))) {
@@ -781,19 +781,19 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendOverallTitleAndNumber(StringBuilder builder) {
-        if (overallTitle != null || number != null) {
+        if (Objects.nonNull(overallTitle) || Objects.nonNull(number)) {
             builder.append(" (");
         }
-        if (overallTitle != null) {
+        if (Objects.nonNull(overallTitle)) {
             builder.append(overallTitle);
         }
-        if (overallTitle != null && number != null) {
+        if (Objects.nonNull(overallTitle) && Objects.nonNull(number)) {
             builder.append(' ');
         }
-        if (number != null) {
+        if (Objects.nonNull(number)) {
             builder.append(number);
         }
-        if (overallTitle != null || number != null) {
+        if (Objects.nonNull(overallTitle) || Objects.nonNull(number)) {
             builder.append(')');
         }
     }
@@ -806,7 +806,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendPagerange(StringBuilder builder) {
-        if (pages != null) {
+        if (Objects.nonNull(pages)) {
             builder.append(", ");
             builder.append(Helper.getTranslation("citation.pages"));
             builder.append(' ');
@@ -822,14 +822,14 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendPlaceAndPublisher(StringBuilder builder) {
-        if (place != null) {
+        if (Objects.nonNull(place)) {
             builder.append(' ');
             builder.append(place);
         }
-        if (place != null && publisher != null) {
+        if (Objects.nonNull(place) && Objects.nonNull(publisher)) {
             builder.append(" :");
         }
-        if (publisher != null) {
+        if (Objects.nonNull(publisher)) {
             builder.append(' ');
             builder.append(publisher);
         }
@@ -867,8 +867,8 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendTitle(StringBuilder builder, String prespan) {
-        if (title != null) {
-            if (prespan != null) {
+        if (Objects.nonNull(title)) {
+            if (Objects.nonNull(prespan)) {
                 builder.append(prespan);
             }
             builder.append("<span style=\"font-style: italic; \">");
@@ -887,7 +887,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendURL(StringBuilder builder) {
-        if (url != null) {
+        if (Objects.nonNull(url)) {
             builder.append(" &lt;");
             builder.append(url);
             builder.append("&gt;");
@@ -902,15 +902,15 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendVolumeInformation(StringBuilder builder) {
-        if (volume != null) {
+        if (Objects.nonNull(volume)) {
             builder.append(' ');
             builder.append(volume);
         }
-        if (volume != null && volumetitle != null) {
+        if (Objects.nonNull(volume) && Objects.nonNull(volumetitle)) {
             builder.append(':');
         }
 
-        if (volumetitle != null) {
+        if (Objects.nonNull(volumetitle)) {
             builder.append(' ');
             builder.append(volumetitle);
             if (!(volumetitle.endsWith(".") || volumetitle.endsWith("?") || volumetitle.endsWith("!"))) {
@@ -927,7 +927,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendYear(StringBuilder builder) {
-        if (year != null) {
+        if (Objects.nonNull(year)) {
             builder.append(" (");
             builder.append(year);
             builder.append(')');
@@ -942,7 +942,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendYearSimple(StringBuilder builder) {
-        if (year != null) {
+        if (Objects.nonNull(year)) {
             builder.append(' ');
             builder.append(year);
         }

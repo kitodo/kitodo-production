@@ -154,8 +154,7 @@ public class CopyProcess extends ProzesskopieForm {
      * füllen.
      */
     private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) {
-        if (myRdf != null) {
-
+        if (Objects.nonNull(myRdf)) {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
@@ -181,7 +180,7 @@ public class CopyProcess extends ProzesskopieForm {
                                 ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
                             LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(myTempStruct, mdt);
-                            if (md != null) {
+                            if (Objects.nonNull(md)) {
                                 field.setValue(md.getValue());
                             }
                         }
@@ -291,7 +290,7 @@ public class CopyProcess extends ProzesskopieForm {
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
          * stattfand, dann jetzt eine anlegen
          */
-        if (this.myRdf == null) {
+        if (Objects.isNull(this.myRdf)) {
             createNewFileformat();
         }
 
@@ -318,7 +317,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addProperties(ImportObject io) {
-        if (io == null) {
+        if (Objects.isNull(io)) {
             addAdditionalFields(this.additionalFields, this.prozessKopie);
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
@@ -364,7 +363,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     @Override
     public boolean isSingleChoiceCollection() {
-        return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
+        return getPossibleDigitalCollections().size() == 1;
 
     }
 
@@ -428,16 +427,17 @@ public class CopyProcess extends ProzesskopieForm {
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
                      * atstsl einsetzen, sofern noch nicht vorhanden
                      */
-                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
-                            && additionalField.getShowDependingOnDoctype()
-                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                    String title = additionalField.getTitle();
+                    String value = additionalField.getValue();
+                    if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
+                            && (Objects.isNull(value) || value.isEmpty())) {
                         additionalField.setValue(CopyProcess.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                            && additionalField.getValue() != null) {
-                        newTitle.append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                    if (title.equals(token) && additionalField.getShowDependingOnDoctype()
+                            && Objects.nonNull(value)) {
+                        newTitle.append(calcProcessTitleCheck(title, value));
                     }
                 }
             }
@@ -461,7 +461,7 @@ public class CopyProcess extends ProzesskopieForm {
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage(INCOMPLETE_DATA, "Bandnummer ist keine gültige Zahl", logger, e);
             }
-            if (result != null && result.length() < 4) {
+            if (Objects.nonNull(result) && result.length() < 4) {
                 result = "0000".substring(result.length()) + result;
             }
         }
@@ -497,17 +497,17 @@ public class CopyProcess extends ProzesskopieForm {
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
                      * atstsl einsetzen, sofern noch nicht vorhanden
                      */
-                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
-                            && additionalField.getShowDependingOnDoctype()
-                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                    String title = additionalField.getTitle();
+                    String value = additionalField.getValue();
+                    if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
+                            && (Objects.isNull(value) || value.isEmpty())) {
                         additionalField.setValue(CopyProcess.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
-                            && additionalField.getValue() != null) {
-                        tifHeaderImageDescriptionBuilder
-                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                    if (title.equals(string) && additionalField.getShowDependingOnDoctype()
+                            && Objects.nonNull(value)) {
+                        tifHeaderImageDescriptionBuilder.append(calcProcessTitleCheck(title, value));
                     }
                 }
             }
@@ -523,9 +523,7 @@ public class CopyProcess extends ProzesskopieForm {
         Property templateProperty = insertDataToProperty(property);
         templateProperty.getTemplates().add(template);
         List<Property> properties = template.getTemplates();
-        if (properties != null) {
-            properties.add(templateProperty);
-        }
+        properties.add(templateProperty);
     }
 
     private void addPropertyForProcess(Process process, Property property) {
@@ -536,9 +534,7 @@ public class CopyProcess extends ProzesskopieForm {
         Property processProperty = insertDataToProperty(property);
         processProperty.getProcesses().add(process);
         List<Property> properties = process.getProperties();
-        if (properties != null) {
-            properties.add(processProperty);
-        }
+        properties.add(processProperty);
     }
 
     private void addPropertyForWorkpiece(Process workpiece, Property property) {
@@ -549,9 +545,7 @@ public class CopyProcess extends ProzesskopieForm {
         Property workpieceProperty = insertDataToProperty(property);
         workpieceProperty.getWorkpieces().add(workpiece);
         List<Property> properties = workpiece.getWorkpieces();
-        if (properties != null) {
-            properties.add(workpieceProperty);
-        }
+        properties.add(workpieceProperty);
     }
 
     private boolean verifyProperty(List<Property> properties, Property property) {

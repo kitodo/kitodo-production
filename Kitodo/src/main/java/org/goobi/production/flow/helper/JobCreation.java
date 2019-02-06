@@ -138,7 +138,7 @@ public class JobCreation {
      * @return boolean
      */
     private static boolean testTitle(String title) throws DataException {
-        if (title != null) {
+        if (Objects.nonNull(title)) {
             Long amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
             if (amount > 0) {
                 Helper.setErrorMessage("processTitleAlreadyInUse");

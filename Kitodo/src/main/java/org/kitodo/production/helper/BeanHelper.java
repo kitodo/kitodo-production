@@ -45,9 +45,6 @@ public class BeanHelper {
         property.setValue(value);
         property.getProcesses().add(process);
         List<Property> properties = process.getProperties();
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
         properties.add(property);
     }
 
@@ -67,9 +64,6 @@ public class BeanHelper {
         property.setValue(value);
         property.getTemplates().add(template);
         List<Property> properties = template.getTemplates();
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
         properties.add(property);
     }
 
@@ -89,9 +83,6 @@ public class BeanHelper {
         property.setValue(value);
         property.getWorkpieces().add(workpiece);
         List<Property> properties = workpiece.getWorkpieces();
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
         properties.add(property);
     }
 

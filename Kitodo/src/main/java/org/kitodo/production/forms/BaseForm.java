@@ -109,7 +109,7 @@ public class BaseForm implements Serializable {
      * Add filter to user.
      */
     public void addFilterToUser() {
-        if (this.filter == null || this.filter.length() == 0) {
+        if (Objects.isNull(this.filter) || this.filter.isEmpty()) {
             return;
         }
         ServiceManager.getUserService().addFilter(getUser(), this.filter);
@@ -126,7 +126,7 @@ public class BaseForm implements Serializable {
      * Remove filter from user.
      */
     public void removeFilterFromUser() {
-        if (this.filter == null || this.filter.length() == 0) {
+        if (Objects.isNull(this.filter) || this.filter.isEmpty()) {
             return;
         }
         ServiceManager.getUserService().removeFilter(getUser(), this.filter);

@@ -12,6 +12,7 @@
 package org.kitodo.production.security;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
-        if (authentication != null && authentication.getDetails() != null) {
+        if (Objects.nonNull(authentication) && Objects.nonNull(authentication.getDetails())) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 UserDetails user = (UserDetails) principal;

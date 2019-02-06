@@ -408,7 +408,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private boolean evaluateFilterString(String stringFilterString, FilterString filterString, String prefix) {
         String lowerCaseFilterString = stringFilterString.toLowerCase();
-        if (prefix != null) {
+        if (Objects.nonNull(prefix)) {
             return lowerCaseFilterString.startsWith(prefix + filterString.getFilterEnglish())
                     || lowerCaseFilterString.startsWith(prefix + filterString.getFilterGerman());
         }
@@ -497,7 +497,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         int taskOrdering = 1;
         BoolQueryBuilder historicFilter = new BoolQueryBuilder();
         String taskTitle = getFilterValueFromFilterString(filterPart, FilterString.TASK);
-        if (taskTitle != null) {
+        if (Objects.nonNull(taskTitle)) {
             try {
                 taskOrdering = Integer.parseInt(taskTitle);
             } catch (NumberFormatException e) {
@@ -872,7 +872,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterAutomaticTasks(String filter, ObjectType objectType) throws DataException {
         BoolQueryBuilder typeAutomatic = new BoolQueryBuilder();
         String value = getFilterValueFromFilterString(filter, FilterString.TASKAUTOMATIC);
-        if (value != null) {
+        if (Objects.nonNull(value)) {
             typeAutomatic.must(
                 createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), value.equalsIgnoreCase("true"), true));
         }

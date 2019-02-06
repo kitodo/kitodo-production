@@ -89,7 +89,7 @@ public class WorkflowForm extends BaseForm {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
-            while (line != null) {
+            while (Objects.nonNull(line)) {
                 sb.append(line).append("\n");
                 line = bufferedReader.readLine();
             }

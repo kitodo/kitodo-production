@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @return The sessionRegistry.
      */
     public SessionRegistry getSessionRegistry() {
-        if (this.sessionRegistry == null) {
+        if (Objects.isNull(this.sessionRegistry)) {
             this.sessionRegistry = new SessionRegistryImpl();
         }
         return this.sessionRegistry;

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -50,7 +51,7 @@ public class ConfigCore extends KitodoConfig {
         FacesContext context = FacesContext.getCurrentInstance();
         String fileName;
         URI uri = null;
-        if (imagesPath != null) {
+        if (Objects.nonNull(imagesPath)) {
             uri = imagesPath;
         } else {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);

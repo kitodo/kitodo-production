@@ -199,7 +199,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     }
                     setWorkDetail(currentTitle);
 
-                    if (newProcess.getFileformat() == null) {
+                    if (Objects.isNull(newProcess.getFileformat())) {
                         newProcess.createNewFileformat();
                     }
                     createLogicalStructure(newProcess, issues, StringUtils.join(description, "\n\n"));
@@ -224,7 +224,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             saveFullBatch(currentTitle);
             setProgress(100);
         } catch (DataException | RuntimeException e) {
-            String message = currentTitle != null
+            String message = Objects.nonNull(currentTitle)
                     ? Helper.getTranslation("createNewspaperProcessesTask.MetadataNotAllowedException",
                         currentTitle)
                     : e.getClass().getSimpleName();
@@ -254,12 +254,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (RuntimeException e) {
             StringBuilder message = new StringBuilder();
             message.append("Could not add child ");
-            if (firstAddable != null) {
+            if (Objects.nonNull(firstAddable)) {
                 message.append(firstAddable);
                 message.append(' ');
             }
             message.append("to DocStrct");
-            if (docStruct.getDocStructType() == null) {
+            if (Objects.isNull(docStruct.getDocStructType())) {
                 message.append(" without type");
             } else {
                 message.append("Type ");
@@ -339,7 +339,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             // create the issue
             LegacyDocStructHelperInterface issue = createFirstChild(day, document, ruleset);
             String heading = individualIssue.getHeading();
-            if ((heading != null) && (heading.trim().length() > 0)) {
+            if (Objects.nonNull(heading) && !heading.trim().isEmpty()) {
                 addMetadatum(issue, issue.getDocStructType().getName(), heading, true);
             }
             addMetadatum(issue, year.getDocStructType().getName(), theYear, false);
@@ -368,7 +368,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (RuntimeException e) {
             if (fail) {
                 throw new ProcessCreationException("Could not create metadatum " + key + " in "
-                        + (level.getDocStructType() != null ? "DocStrctType " + level.getDocStructType().getName()
+                        + (Objects.nonNull(level.getDocStructType()) ? "DocStrctType " + level.getDocStructType().getName()
                                 : "anonymous DocStrctType")
                         + ": " + e.getClass().getSimpleName().replace("NullPointerException",
                             "No metadata types are associated with that DocStructType."),
@@ -390,13 +390,13 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            the title of the process
      */
     private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle) throws DataException {
-        if (createBatches != null) {
+        if (Objects.nonNull(createBatches)) {
             int lastIndex = issues.size() - 1;
             int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
-            if ((currentBreakMark != null) && (breakMark != currentBreakMark)) {
+            if (Objects.nonNull(currentBreakMark) && breakMark != currentBreakMark) {
                 flushLogisticsBatch(processTitle);
             }
-            if (batchLabel == null) {
+            if (Objects.isNull(batchLabel)) {
                 batchLabel = createBatches.format(issues.get(lastIndex).getDate());
             }
             logisticsBatch.getProcesses().add(process);

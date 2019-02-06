@@ -177,7 +177,7 @@ public class MassImportForm extends BaseForm {
 
             if (StringUtils.isNotEmpty(this.idList)) {
                 answer = this.plugin.generateFiles(generateRecordList());
-            } else if (this.importFile != null) {
+            } else if (Objects.nonNull(this.importFile)) {
                 this.plugin.setFile(this.importFile);
                 answer = getAnswer(this.plugin.generateRecordsFromFile());
             } else if (StringUtils.isNotEmpty(this.records)) {
@@ -211,7 +211,7 @@ public class MassImportForm extends BaseForm {
         }
 
         for (ImportObject io : answer) {
-            if (batch != null) {
+            if (Objects.nonNull(batch)) {
                 io.getBatches().add(batch);
             }
 
@@ -224,11 +224,11 @@ public class MassImportForm extends BaseForm {
     }
 
     private void removeFiles() throws IOException {
-        if (this.importFile != null) {
+        if (Objects.nonNull(this.importFile)) {
             Files.delete(this.importFile.toPath());
             this.importFile = null;
         }
-        if (selectedFilenames != null && !selectedFilenames.isEmpty()) {
+        if (Objects.nonNull(selectedFilenames) && !selectedFilenames.isEmpty()) {
             this.plugin.deleteFiles(this.selectedFilenames);
         }
     }
@@ -237,8 +237,7 @@ public class MassImportForm extends BaseForm {
      * File upload with binary copying.
      */
     public void uploadFile() throws IOException {
-
-        if (this.uploadedFile == null) {
+        if (Objects.isNull(this.uploadedFile)) {
             Helper.setErrorMessage("noFileSelected");
             return;
         }
@@ -274,8 +273,8 @@ public class MassImportForm extends BaseForm {
      */
 
     private boolean testForData() {
-        return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
-                && this.selectedFilenames.isEmpty());
+        return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records)
+                && (Objects.isNull(this.importFile)) && this.selectedFilenames.isEmpty());
     }
 
     private List<Record> generateRecordList() {
@@ -299,7 +298,7 @@ public class MassImportForm extends BaseForm {
     }
 
     private Batch getBatch() {
-        if (importFile != null) {
+        if (Objects.nonNull(importFile)) {
             List<String> arguments = new ArrayList<>();
             arguments.add(FilenameUtils.getBaseName(importFile.getAbsolutePath()));
             arguments.add(DateTimeFormat.shortDateTime().print(new DateTime()));
@@ -312,14 +311,13 @@ public class MassImportForm extends BaseForm {
     private void addProcessToList(ImportObject io) throws DataException, IOException {
         URI importFileName = io.getImportFileName();
         Process process = JobCreation.generateProcess(io, this.template);
-        if (process == null) {
+        if (Objects.isNull(process)) {
             if (Objects.nonNull(importFileName)
                     && !ServiceManager.getFileService().getFileName(importFileName).isEmpty()
-                    && selectedFilenames != null && !selectedFilenames.isEmpty()) {
+                    && Objects.nonNull(selectedFilenames) && !selectedFilenames.isEmpty()) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
             Helper.setErrorMessage("import failed for " + io.getProcessTitle() + ", process generation failed");
-
         } else {
             Helper.setMessage(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());
             this.processList.add(process);
@@ -330,7 +328,7 @@ public class MassImportForm extends BaseForm {
         URI importFileName = io.getImportFileName();
         Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage() });
         if (Objects.nonNull(importFileName) && !ServiceManager.getFileService().getFileName(importFileName).isEmpty()
-                && selectedFilenames != null && !selectedFilenames.isEmpty()) {
+                && Objects.nonNull(selectedFilenames) && !selectedFilenames.isEmpty()) {
             selectedFilenames.remove(importFileName.getRawPath());
         }
     }
@@ -529,7 +527,7 @@ public class MassImportForm extends BaseForm {
      * @return the format
      */
     public String getFormat() {
-        if (this.format == null) {
+        if (Objects.isNull(this.format)) {
             return null;
         }
         return this.format.getTitle();
@@ -543,7 +541,7 @@ public class MassImportForm extends BaseForm {
      */
     public void setCurrentPlugin(String currentPlugin) {
         this.currentPlugin = currentPlugin;
-        if (this.currentPlugin != null && this.currentPlugin.length() > 0) {
+        if (Objects.nonNull(this.currentPlugin) && !this.currentPlugin.isEmpty()) {
             this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.IMPORT, this.currentPlugin);
 
             if (Objects.nonNull(this.plugin)) {
@@ -672,7 +670,7 @@ public class MassImportForm extends BaseForm {
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
-            if (list != null) {
+            if (Objects.nonNull(list)) {
                 return "/pages/MultiMassImportPage2";
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
@@ -688,7 +686,7 @@ public class MassImportForm extends BaseForm {
      */
     public List<ImportProperty> getProperties() {
 
-        if (this.plugin != null) {
+        if (Objects.nonNull(this.plugin)) {
             return this.plugin.getProperties();
         }
         return new ArrayList<>();
@@ -733,7 +731,7 @@ public class MassImportForm extends BaseForm {
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
-            if (list != null) {
+            if (Objects.nonNull(list)) {
                 return list;
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {

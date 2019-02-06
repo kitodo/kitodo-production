@@ -15,7 +15,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -42,7 +44,7 @@ public class DigitalCollection {
      * @return list of digital collections as String
      */
     public static List<String> getDigitalCollections() {
-        if (digitalCollections == null) {
+        if (Objects.isNull(digitalCollections)) {
             digitalCollections = new ArrayList<>();
         }
         return digitalCollections;
@@ -54,7 +56,7 @@ public class DigitalCollection {
      * @return list of possible digital collections as String
      */
     public static List<String> getPossibleDigitalCollection() {
-        if (possibleDigitalCollection == null) {
+        if (Objects.isNull(possibleDigitalCollection)) {
             possibleDigitalCollection = new ArrayList<>();
         }
         return DigitalCollection.possibleDigitalCollection;
@@ -82,8 +84,9 @@ public class DigitalCollection {
             if (project.getName().equals(DEFAULT)) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
-                    if (digitalCollection.getAttribute(DEFAULT) != null
-                            && digitalCollection.getAttributeValue(DEFAULT).equalsIgnoreCase("true")) {
+                    Attribute defaultCollection = digitalCollection.getAttribute(DEFAULT);
+                    if (Objects.nonNull(defaultCollection)
+                            && defaultCollection.getValue().equalsIgnoreCase("true")) {
                         digitalCollections.add(digitalCollection.getText());
                     }
                     defaultCollections.add(digitalCollection.getText());
@@ -119,8 +122,9 @@ public class DigitalCollection {
             if (projectName.getText().equalsIgnoreCase(projectBean.getTitle())) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
-                    if (digitalCollection.getAttribute(DEFAULT) != null
-                            && digitalCollection.getAttributeValue(DEFAULT).equalsIgnoreCase("true")) {
+                    Attribute defaultCollection = digitalCollection.getAttribute(DEFAULT);
+                    if (Objects.nonNull(defaultCollection)
+                            && defaultCollection.getValue().equalsIgnoreCase("true")) {
                         digitalCollections.add(digitalCollection.getText());
                     }
                     possibleDigitalCollection.add(digitalCollection.getText());

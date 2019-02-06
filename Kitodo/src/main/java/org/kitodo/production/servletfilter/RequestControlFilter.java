@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,7 +175,7 @@ public class RequestControlFilter implements Filter {
         // get the object from the session. If it does not yet exist,
         // then create one.
         Object syncObj = session.getAttribute(SYNC_OBJECT_KEY);
-        if (syncObj == null) {
+        if (Objects.isNull(syncObj)) {
             syncObj = new Object();
             session.setAttribute(SYNC_OBJECT_KEY, syncObj);
         }
@@ -222,7 +223,7 @@ public class RequestControlFilter implements Filter {
      * @return true if the server is handling another request for this session
      */
     private boolean isRequestInProcess(HttpSession session) {
-        return session.getAttribute(REQUEST_IN_PROCESS) != null;
+        return Objects.nonNull(session.getAttribute(REQUEST_IN_PROCESS));
     }
 
     /**

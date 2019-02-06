@@ -214,7 +214,7 @@ public class Helper implements Observer, Serializable {
 
     private static String getExceptionMessage(Throwable e) {
         String message = e.getMessage();
-        if (message == null) {
+        if (Objects.isNull(message)) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             message = sw.toString();
@@ -273,13 +273,13 @@ public class Helper implements Observer, Serializable {
         String descript = getTranslation(description);
 
         compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
-        if (activeMQReporting != null) {
+        if (Objects.nonNull(activeMQReporting)) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
                     onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
         }
 
         FacesContext context = FacesContext.getCurrentInstance();
-        if (context != null) {
+        if (Objects.nonNull(context)) {
             context.addMessage(control,
                 new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
         } else {
@@ -356,7 +356,7 @@ public class Helper implements Observer, Serializable {
      * @return String
      */
     public static String getDateAsFormattedString(Date date) {
-        if (date == null) {
+        if (Objects.isNull(date)) {
             return "-";
         } else {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -384,7 +384,7 @@ public class Helper implements Observer, Serializable {
     private static void loadMessages() {
         commonMessages = new HashMap<>();
         errorMessages = new HashMap<>();
-        if (FacesContext.getCurrentInstance() != null) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
@@ -409,9 +409,9 @@ public class Helper implements Observer, Serializable {
         // running instance of ResourceBundle doesn't respond on user language
         // changes, workaround by instantiating it every time
 
-        if (FacesContext.getCurrentInstance() != null) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-            if (desiredLanguage != null) {
+            if (Objects.nonNull(desiredLanguage)) {
                 return getString(desiredLanguage, title);
             }
         }
@@ -420,7 +420,7 @@ public class Helper implements Observer, Serializable {
 
     public static String getTranslation(String inParameter, String inDefaultIfNull) {
         String result = getTranslation(inParameter);
-        return result != null && !result.equals(inParameter) ? result : inDefaultIfNull;
+        return Objects.nonNull(result) && !result.equals(inParameter) ? result : inDefaultIfNull;
     }
 
     /**

@@ -16,12 +16,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.services.ServiceManager;
 
 public class DmsImportThread extends Thread {
@@ -49,22 +51,22 @@ public class DmsImportThread extends Thread {
          * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter
          * Stelle, ansonsten lieber in neuem FehlerOrdner
          */
-        if (process.getProject().getDmsImportErrorPath() == null
-                || process.getProject().getDmsImportErrorPath().length() == 0) {
+        Project project = process.getProject();
+        if (Objects.isNull(project.getDmsImportErrorPath()) || project.getDmsImportErrorPath().isEmpty()) {
             this.fileError = new File(process.getProject().getDmsImportRootPath(), ats + ".log");
         } else {
             this.fileError = new File(process.getProject().getDmsImportErrorPath(), ats + ".log");
         }
 
-        this.fileXml = new File(process.getProject().getDmsImportRootPath(), ats + ".xml");
-        this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(), ats + ".xml");
-        if (process.getProject().isDmsImportCreateProcessFolder()) {
-            this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(),
+        this.fileXml = new File(project.getDmsImportRootPath(), ats + ".xml");
+        this.fileSuccess = new File(project.getDmsImportSuccessPath(), ats + ".xml");
+        if (project.isDmsImportCreateProcessFolder()) {
+            this.fileSuccess = new File(project.getDmsImportSuccessPath(),
                     ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + File.separator + ats
                             + ".xml");
         }
 
-        this.folderImages = new File(process.getProject().getDmsImportImagesPath(), ats + "_tif");
+        this.folderImages = new File(project.getDmsImportImagesPath(), ats + "_tif");
 
         if (this.fileError.exists()) {
             this.timeFileError = this.fileError.getAbsoluteFile().lastModified();
@@ -127,7 +129,7 @@ public class DmsImportThread extends Thread {
         try (InputStream inputStream = ServiceManager.getFileService().read(this.fileError.toURI());
                 BufferedReader r = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = r.readLine();
-            while (line != null) {
+            while (Objects.nonNull(line)) {
                 errorMessage.append(line);
                 errorMessage.append(" ");
                 line = r.readLine();

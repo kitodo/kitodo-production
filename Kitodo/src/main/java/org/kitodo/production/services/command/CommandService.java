@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import org.kitodo.api.command.CommandInterface;
@@ -42,7 +43,7 @@ public class CommandService {
      *             an IOException
      */
     public CommandResult runCommand(String script) throws IOException {
-        if (script == null) {
+        if (Objects.isNull(script)) {
             return null;
         }
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
@@ -69,7 +70,7 @@ public class CommandService {
      *             an IOException
      */
     public CommandResult runCommand(File scriptFile, List<String> parameter) throws IOException {
-        if (scriptFile == null) {
+        if (Objects.isNull(scriptFile)) {
             return null;
         }
         String script = generateScriptString(scriptFile, parameter);
@@ -88,7 +89,7 @@ public class CommandService {
      *             an IOException
      */
     public CommandResult runCommand(File scriptFile) throws IOException {
-        if (scriptFile == null) {
+        if (Objects.isNull(scriptFile)) {
             return null;
         }
         return runCommand(scriptFile.getAbsolutePath());
@@ -102,7 +103,7 @@ public class CommandService {
      *            The script.
      */
     public void runCommandAsync(String script) {
-        if (script != null) {
+        if (Objects.nonNull(script)) {
             KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
             CommandInterface commandInterface = serviceLoader.loadModule();
 
@@ -125,7 +126,7 @@ public class CommandService {
      *            The script parameters.
      */
     public void runCommandAsync(File scriptFile, List<String> parameter) {
-        if (scriptFile != null) {
+        if (Objects.nonNull(scriptFile)) {
             String script = generateScriptString(scriptFile, parameter);
             runCommandAsync(script);
         }
@@ -138,7 +139,7 @@ public class CommandService {
      *            The script file.
      */
     public void runCommandAsync(File scriptFile) {
-        if (scriptFile != null) {
+        if (Objects.nonNull(scriptFile)) {
             runCommandAsync(scriptFile.getAbsolutePath());
         }
     }
@@ -169,7 +170,7 @@ public class CommandService {
      */
     private String generateScriptString(File file, List<String> parameter) {
         String scriptString = file.getAbsolutePath();
-        if (parameter != null) {
+        if (Objects.nonNull(parameter)) {
             scriptString = scriptString + " " + String.join(" ", parameter);
         }
         return scriptString;

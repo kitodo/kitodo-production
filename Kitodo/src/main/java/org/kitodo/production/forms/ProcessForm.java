@@ -108,7 +108,7 @@ public class ProcessForm extends TemplateBaseForm {
          * Vorgangsdatum generell anzeigen?
          */
         User user = getUser();
-        if (user != null) {
+        if (Objects.nonNull(user)) {
             this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
         } else {
             this.anzeigeAnpassen.put("processDate", false);
@@ -126,8 +126,8 @@ public class ProcessForm extends TemplateBaseForm {
          * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
-        if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
+        if (Objects.nonNull(this.process) && Objects.nonNull(this.process.getTitle())) {
+            if (!this.process.getTitle().equals(this.newProcessTitle) && Objects.nonNull(this.newProcessTitle)
                     && !renameAfterProcessTitleChanged()) {
                 return this.stayOnCurrentPage;
             }
@@ -334,7 +334,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new template property.
      */
     public void createTemplateProperty() {
-        if (this.templates == null) {
+        if (Objects.isNull(this.templates)) {
             this.templates = new ArrayList<>();
         }
         Property newProperty = new Property();
@@ -347,7 +347,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new workpiece property.
      */
     public void createWorkpieceProperty() {
-        if (this.workpieces == null) {
+        if (Objects.isNull(this.workpieces)) {
             this.workpieces = new ArrayList<>();
         }
         Property newProperty = new Property();
@@ -1016,7 +1016,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Add to wiki field.
      */
     public void addToWikiField() {
-        if (addToWikiField != null && addToWikiField.length() > 0) {
+        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
             String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(getUser()) + ")";
             this.process.setWikiField(
                 WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
@@ -1121,7 +1121,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Create new property.
      */
     public void createNewProperty() {
-        if (this.properties == null) {
+        if (Objects.isNull(this.properties)) {
             this.properties = new ArrayList<>();
         }
         Property newProperty = new Property();

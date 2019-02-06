@@ -96,7 +96,7 @@ public class CalendarForm implements Serializable {
          * @return the day of month in enumerative form
          */
         public String getDay() {
-            if (date == null) {
+            if (Objects.isNull(date)) {
                 return null;
             }
             return Integer.toString(date.getDayOfMonth()).concat(".");
@@ -120,7 +120,7 @@ public class CalendarForm implements Serializable {
          * @return the cell’s CSS style class name
          */
         public String getStyleClass() {
-            if (date == null) {
+            if (Objects.isNull(date)) {
                 return null;
             }
             if (onBlock) {
@@ -721,23 +721,25 @@ public class CalendarForm implements Serializable {
      * some plausibility assumptions and sets hints otherwise.
      */
     private void checkBlockPlausibility() {
-        if (blockShowing.getFirstAppearance() != null && blockShowing.getLastAppearance() != null) {
-            if (blockShowing.getFirstAppearance().plusYears(100).isBefore(blockShowing.getLastAppearance())) {
+        LocalDate firstAppearance = blockShowing.getFirstAppearance();
+        LocalDate lastAppearance = blockShowing.getLastAppearance();
+        if (Objects.nonNull(firstAppearance) && Objects.nonNull(lastAppearance)) {
+            if (firstAppearance.plusYears(100).isBefore(lastAppearance)) {
                 Helper.setMessage(BLOCK + "long");
             }
-            if (blockShowing.getFirstAppearance().isAfter(blockShowing.getLastAppearance())) {
+            if (firstAppearance.isAfter(lastAppearance)) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
             }
-            if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
+            if (firstAppearance.isBefore(START_RELATION)) {
                 Helper.setMessage(BLOCK + "firstAppearance.early");
             }
-            if (blockShowing.getFirstAppearance().isAfter(today)) {
+            if (firstAppearance.isAfter(today)) {
                 Helper.setMessage(BLOCK + "firstAppearance.fiction");
             }
-            if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
+            if (lastAppearance.isBefore(START_RELATION)) {
                 Helper.setMessage(BLOCK + "lastAppearance.early");
             }
-            if (blockShowing.getLastAppearance().isAfter(today)) {
+            if (lastAppearance.isAfter(today)) {
                 Helper.setMessage(BLOCK + "lastAppearance.fiction");
             }
         }
@@ -784,7 +786,7 @@ public class CalendarForm implements Serializable {
     public void downloadClick() {
         boolean granularityWasTemporarilyAdded = false;
         try {
-            if (course == null || course.countIndividualIssues() == 0) {
+            if (Objects.isNull(course) || course.countIndividualIssues() == 0) {
                 Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
                 return;
             }
@@ -861,7 +863,7 @@ public class CalendarForm implements Serializable {
      * @return identifier of the selected block
      */
     public String getBlockChangerSelected() {
-        return blockShowing == null ? "" : Integer.toHexString(blockShowing.hashCode());
+        return Objects.isNull(blockShowing) ? "" : Integer.toHexString(blockShowing.hashCode());
     }
 
     /**
@@ -914,7 +916,7 @@ public class CalendarForm implements Serializable {
      * @return date of first appearance of currently showing block
      */
     public String getFirstAppearance() {
-        if (blockShowing != null && blockShowing.getFirstAppearance() != null) {
+        if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getFirstAppearance())) {
             return DateUtils.DATE_FORMATTER.print(blockShowing.getFirstAppearance());
         } else {
             return null;
@@ -928,7 +930,7 @@ public class CalendarForm implements Serializable {
      * @return the list of issues
      */
     public List<IssueController> getIssues() {
-        return blockShowing != null ? getIssues(blockShowing) : new ArrayList<>();
+        return Objects.nonNull(blockShowing) ? getIssues(blockShowing) : new ArrayList<>();
     }
 
     /**
@@ -940,7 +942,7 @@ public class CalendarForm implements Serializable {
      */
     private List<IssueController> getIssues(Block block) {
         List<IssueController> result = new ArrayList<>();
-        if (block != null) {
+        if (Objects.nonNull(block)) {
             for (Issue issue : block.getIssues()) {
                 result.add(new IssueController(issue, result.size()));
             }
@@ -955,7 +957,7 @@ public class CalendarForm implements Serializable {
      * @return date of last appearance of currently showing block
      */
     public String getLastAppearance() {
-        if (blockShowing != null && blockShowing.getLastAppearance() != null) {
+        if (Objects.nonNull(blockShowing) && Objects.nonNull(blockShowing.getLastAppearance())) {
             return DateUtils.DATE_FORMATTER.print(blockShowing.getLastAppearance());
         } else {
             return null;
@@ -1028,7 +1030,7 @@ public class CalendarForm implements Serializable {
      * is removed here again.
      */
     protected void neglectEmptyBlock() {
-        if (blockShowing != null && blockShowing.isEmpty()) {
+        if (Objects.nonNull(blockShowing) && blockShowing.isEmpty()) {
             course.remove(blockShowing);
             blockShowing = null;
         }
@@ -1044,7 +1046,7 @@ public class CalendarForm implements Serializable {
      * @return the screen to show next
      */
     public String nextClick() {
-        if (course == null || course.countIndividualIssues() < 1) {
+        if (Objects.isNull(course) || course.countIndividualIssues() < 1) {
             Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
             return null;
         }
@@ -1121,10 +1123,10 @@ public class CalendarForm implements Serializable {
                 .isBefore(nextYear); date = date.plusDays(1)) {
             Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
             cell.setDate(date);
-            if (currentBlock == null || !currentBlock.isMatch(date)) {
+            if (Objects.isNull(currentBlock) || !currentBlock.isMatch(date)) {
                 currentBlock = course.isMatch(date);
             }
-            if (currentBlock == null) {
+            if (Objects.isNull(currentBlock)) {
                 cell.setOnBlock(false);
             } else {
                 Integer hashCode = currentBlock.hashCode();
@@ -1176,7 +1178,7 @@ public class CalendarForm implements Serializable {
      *            hashCode() in hex of the block to be selected
      */
     public void setBlockChangerSelected(String value) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return;
         }
         blockChangerUnchanged = value.equals(Integer.toHexString(blockShowing.hashCode()));
@@ -1203,16 +1205,16 @@ public class CalendarForm implements Serializable {
         try {
             newFirstAppearance = parseDate(firstAppearance, "firstAppearance");
         } catch (IllegalArgumentException e) {
-            newFirstAppearance = blockShowing != null ? blockShowing.getFirstAppearance() : null;
+            newFirstAppearance = Objects.nonNull(blockShowing) ? blockShowing.getFirstAppearance() : null;
         }
         try {
-            if (blockShowing != null) {
+            if (Objects.nonNull(blockShowing)) {
                 if (blockChangerUnchanged && (Objects.isNull(blockShowing.getFirstAppearance())
                         || !blockShowing.getFirstAppearance().isEqual(newFirstAppearance))) {
                     firstAppearanceIsToChange = newFirstAppearance;
                 }
             } else {
-                if (newFirstAppearance != null) {
+                if (Objects.nonNull(newFirstAppearance)) {
                     blockShowing = new Block(course);
                     blockShowing.setFirstAppearance(newFirstAppearance);
                     course.add(blockShowing);
@@ -1239,19 +1241,19 @@ public class CalendarForm implements Serializable {
         try {
             newLastAppearance = parseDate(lastAppearance, "lastAppearance");
         } catch (IllegalArgumentException e) {
-            newLastAppearance = blockShowing != null ? blockShowing.getLastAppearance() : null;
+            newLastAppearance = Objects.nonNull(blockShowing) ? blockShowing.getLastAppearance() : null;
         }
         try {
-            if (blockShowing != null) {
+            if (Objects.nonNull(blockShowing)) {
                 if (blockChangerUnchanged) {
-                    if (firstAppearanceIsToChange == null) {
+                    if (Objects.isNull(firstAppearanceIsToChange)) {
                         executeForFirstAppearanceToChangeNull(newLastAppearance);
                     } else {
                         executeForFirstAppearanceToChange(newLastAppearance);
                     }
                 }
             } else {
-                if (newLastAppearance != null) {
+                if (Objects.nonNull(newLastAppearance)) {
                     blockShowing = new Block(course);
                     blockShowing.setLastAppearance(newLastAppearance);
                     course.add(blockShowing);
@@ -1265,8 +1267,8 @@ public class CalendarForm implements Serializable {
     }
 
     private void executeForFirstAppearanceToChangeNull(LocalDate newLastAppearance) {
-        if (blockShowing.getLastAppearance() == null || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
-            if (blockShowing.getFirstAppearance() != null
+        if (Objects.isNull(blockShowing.getLastAppearance()) || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+            if (Objects.nonNull(blockShowing.getFirstAppearance())
                     && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
@@ -1278,14 +1280,14 @@ public class CalendarForm implements Serializable {
     }
 
     private void executeForFirstAppearanceToChange(LocalDate newLastAppearance) {
-        if (blockShowing.getLastAppearance() == null || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+        if (Objects.isNull(blockShowing.getLastAppearance()) || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
         } else {
-            if (blockShowing.getLastAppearance() != null
+            if (Objects.nonNull(blockShowing.getLastAppearance())
                     && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
@@ -1326,7 +1328,7 @@ public class CalendarForm implements Serializable {
      */
     public void uploadClick() {
         try {
-            if (uploadedFile == null) {
+            if (Objects.isNull(uploadedFile)) {
                 Helper.setMessage(UPLOAD_ERROR, "calendar.upload.isEmpty");
                 return;
             }

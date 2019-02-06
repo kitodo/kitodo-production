@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
@@ -188,7 +189,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     @Override
     public void run() {
         try {
-            if (processesIterator == null) {
+            if (Objects.isNull(processesIterator)) {
                 batch = ServiceManager.getBatchService().getById(batchId);
                 processesIterator = batch.getProcesses().iterator();
             }
@@ -202,7 +203,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             }
         } catch (DAOException | IOException | RuntimeException | JAXBException e) {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
-                    + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
+                    + (Objects.nonNull(process) ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
         }
     }
@@ -258,7 +259,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private int getYear(LegacyMetsModsDigitalDocumentHelper act) {
         List<LegacyDocStructHelperInterface> children = act.getLogicalDocStruct().getAllChildren();
-        if (children == null) {
+        if (Objects.isNull(children)) {
             throw new IllegalArgumentException(
                     "Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of "
                             + "type " + yearLevelName + " is required.");
@@ -374,7 +375,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @return the list, Collections.emptyList() if the list is null
      */
     private static <T> List<T> skipIfNull(List<T> list) {
-        if (list == null) {
+        if (Objects.isNull(list)) {
             list = Collections.emptyList();
         }
         return list;
@@ -525,7 +526,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType, Integer rank) {
         int result = 0;
 
-        if (siblings == null || rank == null) {
+        if (Objects.isNull(siblings) || Objects.isNull(rank)) {
             return null;
         }
 
@@ -542,8 +543,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                                 return result;
                             }
                         } catch (NumberFormatException e) {
-                            String typeName = aforeborn.getDocStructType() != null
-                                    && aforeborn.getDocStructType().getName() != null
+                            String typeName = Objects.nonNull(aforeborn.getDocStructType())
+                                    && Objects.nonNull(aforeborn.getDocStructType().getName())
                                             ? aforeborn.getDocStructType().getName()
                                             : "cross-reference";
                             logger.warn(

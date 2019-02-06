@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -125,7 +126,7 @@ public class GranularityForm {
      */
     public void downloadClick() {
         try {
-            if (course == null || course.getNumberOfProcesses() < 1) {
+            if (Objects.isNull(course) || course.getNumberOfProcesses() < 1) {
                 Helper.setErrorMessage("errorDataIncomplete", "granularity.header");
                 return;
             }
@@ -155,7 +156,7 @@ public class GranularityForm {
     @SuppressWarnings("incomplete-switch")
     public List<SelectItem> getBatchOptions() {
         List<SelectItem> result = new ArrayList<>();
-        if (granularity == null) {
+        if (Objects.isNull(granularity)) {
             result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.noData")));
         } else if (granularity == Granularity.YEARS) {
             result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.notAvailable")));
@@ -196,7 +197,7 @@ public class GranularityForm {
      * @return the granularity level chosen by the user
      */
     public String getGranularity() {
-        if (granularity == null) {
+        if (Objects.isNull(granularity)) {
             return course.getNumberOfProcesses() == 0 ? "null" : "foreign";
         }
         return granularity.toString().toLowerCase();
@@ -226,7 +227,7 @@ public class GranularityForm {
     public String getLockMessage() {
         long perProcess = ConfigCore.getLongParameter(ParameterCore.MINIMAL_NUMBER_OF_PAGES, -1);
         if (getNumberOfProcesses() < 1 || perProcess < 1
-                || (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
+                || (Objects.nonNull(numberOfPages) && numberOfPages / getNumberOfProcesses() >= perProcess)) {
             return null;
         }
         double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
@@ -256,7 +257,7 @@ public class GranularityForm {
      */
     public Long getNumberOfPagesPerIssue() {
         if (course.countIndividualIssues() != 0) {
-            return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
+            return Objects.nonNull(numberOfPages) ? numberOfPages / course.countIndividualIssues() : null;
         } else {
             return 0L;
         }
@@ -270,7 +271,7 @@ public class GranularityForm {
      * @return an (optionally guessed) total number of pages
      */
     public Long getNumberOfPagesOptionallyGuessed() {
-        if (numberOfPages == null) {
+        if (Objects.isNull(numberOfPages)) {
             return course.guessTotalNumberOfPages();
         } else {
             return numberOfPages;
@@ -286,7 +287,7 @@ public class GranularityForm {
      * @return the number of processes that will be created
      */
     public int getNumberOfProcesses() {
-        if (course.getNumberOfProcesses() == 0 && granularity != null) {
+        if (Objects.isNull(course.getNumberOfProcesses()) && Objects.nonNull(granularity)) {
             course.splitInto(granularity);
         }
         return course.getNumberOfProcesses();
@@ -377,7 +378,7 @@ public class GranularityForm {
      *            new value to be stored
      */
     public void setNumberOfPagesPerIssue(Long value) {
-        numberOfPages = value == null ? null : value * course.countIndividualIssues();
+        numberOfPages = Objects.isNull(value) ? null : value * course.countIndividualIssues();
     }
 
     /**

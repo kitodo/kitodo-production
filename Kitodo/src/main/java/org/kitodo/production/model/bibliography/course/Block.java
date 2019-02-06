@@ -161,7 +161,7 @@ public class Block {
      * @return the count of issues
      */
     public long countIndividualIssues() {
-        if (firstAppearance == null || lastAppearance == null) {
+        if (Objects.isNull(firstAppearance) || Objects.isNull(lastAppearance)) {
             return 0;
         }
         long result = 0;
@@ -252,7 +252,7 @@ public class Block {
      * @return whether the block is dataless
      */
     public boolean isEmpty() {
-        return firstAppearance == null && lastAppearance == null && (issues == null || issues.isEmpty());
+        return Objects.isNull(firstAppearance) && Objects.isNull(lastAppearance) && (Objects.isNull(issues) || issues.isEmpty());
     }
 
     /**
@@ -321,7 +321,7 @@ public class Block {
      *             if the date would overlap with another block
      */
     public void setFirstAppearance(LocalDate firstAppearance) {
-        prohibitOverlaps(firstAppearance, lastAppearance != null ? lastAppearance : firstAppearance);
+        prohibitOverlaps(firstAppearance, Objects.nonNull(lastAppearance) ? lastAppearance : firstAppearance);
         try {
             if (!this.firstAppearance.equals(firstAppearance)) {
                 course.clearProcesses();
@@ -344,7 +344,7 @@ public class Block {
      *             if the date would overlap with another block
      */
     public void setLastAppearance(LocalDate lastAppearance) {
-        prohibitOverlaps(firstAppearance != null ? firstAppearance : lastAppearance, lastAppearance);
+        prohibitOverlaps(Objects.nonNull(firstAppearance) ? firstAppearance : lastAppearance, lastAppearance);
         try {
             if (!this.lastAppearance.equals(lastAppearance)) {
                 course.clearProcesses();
@@ -429,11 +429,11 @@ public class Block {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        if (firstAppearance != null) {
+        if (Objects.nonNull(firstAppearance)) {
             result.append(firstAppearance.toString());
         }
         result.append(" - ");
-        if (lastAppearance != null) {
+        if (Objects.nonNull(lastAppearance)) {
             result.append(lastAppearance.toString());
         }
         result.append(" [");
@@ -459,11 +459,11 @@ public class Block {
      */
     public String toString(DateTimeFormatter dateConverter) {
         StringBuilder result = new StringBuilder();
-        if (firstAppearance != null) {
+        if (Objects.nonNull(firstAppearance)) {
             result.append(dateConverter.print(firstAppearance));
         }
         result.append(" − ");
-        if (lastAppearance != null) {
+        if (Objects.nonNull(lastAppearance)) {
             result.append(dateConverter.print(lastAppearance));
         }
         return result.toString();
@@ -516,28 +516,28 @@ public class Block {
         }
 
         Block other = (Block) obj;
-        if (firstAppearance == null) {
-            if (other.firstAppearance != null) {
+        if (Objects.isNull(firstAppearance)) {
+            if (Objects.nonNull(other.firstAppearance)) {
                 return false;
             }
         } else if (!firstAppearance.equals(other.firstAppearance)) {
             return false;
         }
-        if (issues == null) {
-            if (other.issues != null) {
+        if (Objects.isNull(issues)) {
+            if (Objects.nonNull(other.issues)) {
                 return false;
             }
         } else if (!issues.equals(other.issues)) {
             return false;
         }
-        if (lastAppearance == null) {
-            if (other.lastAppearance != null) {
+        if (Objects.isNull(lastAppearance)) {
+            if (Objects.nonNull(other.lastAppearance)) {
                 return false;
             }
         } else if (!lastAppearance.equals(other.lastAppearance)) {
             return false;
         }
-        if (variant == null) {
+        if (Objects.isNull(variant)) {
             return other.variant == null;
         } else {
             return variant.equals(other.variant);

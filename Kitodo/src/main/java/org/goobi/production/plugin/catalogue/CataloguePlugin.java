@@ -254,7 +254,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the number of hits in this search
      */
     public long getNumberOfHits(Object searchResult, long timeout) {
-        if (searchResult == null) {
+        if (Objects.isNull(searchResult)) {
             return 0;
         }
         return invokeQuietly(plugin, getNumberOfHits, new Object[] {searchResult, timeout }, long.class);

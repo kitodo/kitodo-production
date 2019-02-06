@@ -100,7 +100,7 @@ public class FileService {
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        if (directoryName != null) {
+        if (Objects.nonNull(directoryName)) {
             return fileManagementModule.create(parentFolderUri, directoryName, false);
         }
         return URI.create("");
@@ -489,7 +489,7 @@ public class FileService {
      */
     private File[] listFiles(File file) {
         File[] unchecked = file.listFiles();
-        return unchecked != null ? unchecked : new File[0];
+        return Objects.nonNull(unchecked) ? unchecked : new File[0];
     }
 
     /**
@@ -682,7 +682,7 @@ public class FileService {
     public URI getProcessBaseUriForExistingProcess(Process process) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         URI processBaseUri = process.getProcessBaseUri();
-        if (processBaseUri == null && process.getId() != null) {
+        if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
         }
         return process.getProcessBaseUri();
@@ -708,7 +708,7 @@ public class FileService {
     public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
             ProcessSubType processSubType, String resourceName) {
 
-        if (processDataDirectory == null) {
+        if (Objects.isNull(processDataDirectory)) {
             try {
                 Process process = ServiceManager.getProcessService().getById(processId);
                 processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
@@ -717,7 +717,7 @@ public class FileService {
             }
         }
 
-        if (resourceName == null) {
+        if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
@@ -742,7 +742,7 @@ public class FileService {
 
         URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
 
-        if (resourceName == null) {
+        if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();

@@ -88,12 +88,12 @@ public class ImageHelper {
         }
 
         // the physical structure tree is only created if it does not exist yet
-        if (physicalStructure == null) {
+        if (Objects.isNull(physicalStructure)) {
             physicalStructure = createPhysicalStructure(process);
             this.mydocument.setPhysicalDocStruct(physicalStructure);
         }
 
-        if (directory == null) {
+        if (Objects.isNull(directory)) {
             checkIfImagesValid(process.getTitle(), ServiceManager.getProcessService().getImagesTifDirectory(true,
                 process.getId(), process.getTitle(), process.getProcessBaseUri()));
         } else {
@@ -104,7 +104,7 @@ public class ImageHelper {
         // retrieve existing pages/images
         LegacyLogicalDocStructTypeHelper newPage = this.myPrefs.getDocStrctTypeByName("page");
         List<LegacyDocStructHelperInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
-        if (oldPages == null) {
+        if (Objects.isNull(oldPages)) {
             oldPages = new ArrayList<>();
         }
 
@@ -121,7 +121,7 @@ public class ImageHelper {
             for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildren()) {
                 if (page.getImageName() != null) {
                     URI imageFile;
-                    if (directory == null) {
+                    if (Objects.isNull(directory)) {
                         imageFile = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
                             process.getTitle(), process.getProcessBaseUri()).resolve(page.getImageName());
                     } else {
@@ -207,7 +207,7 @@ public class ImageHelper {
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
             for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
                 List<? extends LegacyMetadataHelper> pageNoMetadata = page.getAllMetadataByType(mdt);
-                if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
+                if (Objects.isNull(pageNoMetadata) || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
                     break;
                 }

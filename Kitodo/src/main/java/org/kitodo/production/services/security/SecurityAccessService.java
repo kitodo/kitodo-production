@@ -46,7 +46,7 @@ public class SecurityAccessService {
 
     private Collection<? extends GrantedAuthority> getAuthoritiesOfCurrentAuthentication() {
         Authentication authentication = getCurrentAuthentication();
-        if (authentication != null) {
+        if (Objects.nonNull(authentication)) {
             return authentication.getAuthorities();
         } else {
             return new ArrayList<>();
@@ -84,7 +84,7 @@ public class SecurityAccessService {
      */
     public boolean isAuthenticated() {
         Authentication currentAuthentication = getCurrentAuthentication();
-        if (currentAuthentication != null) {
+        if (Objects.nonNull(currentAuthentication)) {
             return currentAuthentication.isAuthenticated();
         }
         return false;

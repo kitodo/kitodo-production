@@ -298,7 +298,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageProjectDependenciesForIndex(Process process)
             throws CustomResponseException, DataException, IOException {
-        if (process.getProject() != null) {
+        if (Objects.nonNull(process.getProject())) {
             ServiceManager.getProjectService().saveToIndex(process.getProject(), false);
         }
     }
@@ -607,9 +607,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private List<Map<String, Object>> findByProperty(String title, String value, String type, String key,
             boolean contains) throws DataException {
         List<Map<String, Object>> properties;
-        if (value == null) {
+        if (Objects.isNull(value)) {
             properties = ServiceManager.getPropertyService().findByTitle(title, type, contains);
-        } else if (title == null) {
+        } else if (Objects.isNull(title)) {
             properties = ServiceManager.getPropertyService().findByValue(value, type, contains);
         } else {
             properties = ServiceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
@@ -766,7 +766,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public List<Batch> getBatchesByType(Process process, Type type) {
         List<Batch> batches = process.getBatches();
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             List<Batch> result = new ArrayList<>(batches);
             result.removeIf(batch -> !(batch.getType().equals(type)));
             return result;
@@ -826,7 +826,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = directory;
         }
 
-        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
+        if (Objects.isNull(tifDirectory) && useFallBack && !SUFFIX.isEmpty()) {
             List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle, processBaseURI,
                 ProcessSubType.IMAGE, "");
             for (URI folder : folderList) {
@@ -842,7 +842,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI result = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE,
             null);
 
-        if (tifDirectory == null) {
+        if (Objects.isNull(tifDirectory)) {
             tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
@@ -861,13 +861,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     Boolean checkIfTifDirectoryExists(Integer processId, String processTitle, String processBaseURI) {
         URI testMe;
         try {
-            if (processBaseURI != null) {
+            if (Objects.nonNull(processBaseURI)) {
                 testMe = getImagesTifDirectory(true, processId, processTitle, URI.create(processBaseURI));
             } else {
                 testMe = getImagesTifDirectory(true, processId, processTitle, null);
             }
-            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                    && !fileService.getSubUris(testMe).isEmpty();
+            return fileService.fileExist(testMe) && !fileService.getSubUris(testMe).isEmpty();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             return false;
@@ -896,7 +895,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 origDirectory = directory;
             }
 
-            if (origDirectory == null && useFallBack && !SUFFIX.equals("")) {
+            if (Objects.isNull(origDirectory) && useFallBack && !SUFFIX.isEmpty()) {
                 List<URI> folderList = fileService.getSubUris(dir);
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(SUFFIX)) {
@@ -910,12 +909,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
-            if (origDirectory == null) {
+            if (Objects.isNull(origDirectory)) {
                 origDirectory = URI.create(result.toString() + DIRECTORY_PREFIX + "_"
                         + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
-            if (CREATE_ORIG_FOLDER_IF_NOT_EXISTS && process.getSortHelperStatus() != null
+            if (CREATE_ORIG_FOLDER_IF_NOT_EXISTS && Objects.nonNull(process.getSortHelperStatus())
                     && process.getSortHelperStatus().equals("100000000")) {
                 fileService.createDirectory(result, origDirectory.getRawPath());
             }
@@ -950,7 +949,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return path
      */
     public URI getProcessDataDirectory(Process process) {
-        if (process.getProcessBaseUri() == null) {
+        if (Objects.isNull(process.getProcessBaseUri())) {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
             try {
                 save(process);
@@ -990,11 +989,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return size
      */
     public int getPropertiesSize(Process process) {
-        if (process.getProperties() == null) {
-            return 0;
-        } else {
-            return process.getProperties().size();
-        }
+        return process.getProperties().size();
     }
 
     /**
@@ -1005,11 +1000,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return size
      */
     public int getWorkpiecesSize(Process process) {
-        if (process.getWorkpieces() == null) {
-            return 0;
-        } else {
-            return process.getWorkpieces().size();
-        }
+        return process.getWorkpieces().size();
     }
 
     /**
@@ -1020,11 +1011,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return size
      */
     public int getTemplatesSize(Process process) {
-        if (process.getTemplates() == null) {
-            return 0;
-        } else {
-            return process.getTemplates().size();
-        }
+        return process.getTemplates().size();
     }
 
     /**
@@ -1358,7 +1345,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         logger.debug("generate docket for process with id {}", process.getId());
         URI rootPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri();
         URI xsltFile;
-        if (process.getDocket() != null) {
+        if (Objects.nonNull(process.getDocket())) {
             xsltFile = ServiceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
             if (!fileService.fileExist(xsltFile)) {
                 Helper.setErrorMessage("docketMissing");
@@ -1579,7 +1566,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Process addToWikiField(String message, Process process) {
         StringBuilder composer = new StringBuilder();
-        if (process.getWikiField() != null && process.getWikiField().length() > 0) {
+        if (Objects.nonNull(process.getWikiField()) && !process.getWikiField().isEmpty()) {
             composer.append(process.getWikiField());
             composer.append("\r\n");
         }
@@ -1894,16 +1881,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
         // trim all metadata values
-        if (docStruct.getAllMetadata() != null) {
+        if (Objects.nonNull(docStruct.getAllMetadata())) {
             for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
-                if (md.getValue() != null) {
+                if (Objects.nonNull(md.getValue())) {
                     md.setStringValue(md.getValue().trim());
                 }
             }
         }
 
         // run through all children of docStruct
-        if (docStruct.getAllChildren() != null) {
+        if (Objects.nonNull(docStruct.getAllChildren())) {
             for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
@@ -2027,7 +2014,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * before creating mets file, change relative path to absolute -
          */
         LegacyMetsModsDigitalDocumentHelper dd = gdzfile.getDigitalDocument();
-        if (dd.getFileSet() == null) {
+        if (Objects.isNull(dd.getFileSet())) {
             Helper.setErrorMessage(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
         }
@@ -2038,7 +2025,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
-            if (topElement.getAllChildren() == null || topElement.getAllChildren().isEmpty()) {
+            if (Objects.isNull(topElement.getAllChildren()) || topElement.getAllChildren().isEmpty()) {
                 throw new IllegalStateException(process.getTitle()
                         + ": the topstruct element is marked as anchor, but does not have any children for "
                         + "physical docstrucs");
@@ -2050,9 +2037,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * if the top element does not have any image related, set them all
          */
-        if (topElement.getAllToReferences("logical_physical") == null
+        if (Objects.isNull(topElement.getAllToReferences("logical_physical"))
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
-            if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
+            if (Objects.nonNull(dd.getPhysicalDocStruct()) && Objects.nonNull(dd.getPhysicalDocStruct().getAllChildren())) {
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
@@ -2257,10 +2244,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         docketdata.setRulesetName(process.getRuleset().getTitle());
         docketdata.setComment(process.getWikiField());
 
-        if (!process.getTemplates().isEmpty() && process.getTemplates().get(0) != null) {
+        if (!process.getTemplates().isEmpty()) {
             docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates()));
         }
-        if (!process.getWorkpieces().isEmpty() && process.getWorkpieces().get(0) != null) {
+        if (!process.getWorkpieces().isEmpty()) {
             docketdata.setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces()));
         }
         docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));

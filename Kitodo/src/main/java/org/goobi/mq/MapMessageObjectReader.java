@@ -12,6 +12,7 @@
 package org.goobi.mq;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class MapMessageObjectReader {
      *            MapMessage object
      */
     public MapMessageObjectReader(MapMessage message) {
-        if (message == null) {
+        if (Objects.isNull(message)) {
             throw new IllegalArgumentException("MapMessageObjectReader: null argument in constructor.");
         }
         this.ticket = message;
@@ -68,7 +69,7 @@ public class MapMessageObjectReader {
         Set<String> result = new HashSet<>();
 
         Object collectionObject = ticket.getObject(key);
-        if (collectionObject == null) {
+        if (Objects.isNull(collectionObject)) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         if (!(collectionObject instanceof Collection<?>)) {
@@ -105,7 +106,7 @@ public class MapMessageObjectReader {
      */
     public String getMandatoryString(String key) throws JMSException {
         String result = ticket.getString(key);
-        if (result == null || result.length() == 0) {
+        if (Objects.isNull(result) || result.isEmpty()) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         return result;
@@ -172,8 +173,8 @@ public class MapMessageObjectReader {
         } catch (JMSException | RuntimeException e) {
             logger.error(e.getMessage(), e);
         }
-        if (mapObject == null) {
-            return null;
+        if (Objects.isNull(mapObject)) {
+            return Collections.emptyMap();
         }
 
         if (!(mapObject instanceof Map<?, ?>)) {
@@ -210,6 +211,6 @@ public class MapMessageObjectReader {
      */
     public boolean hasField(String string) throws JMSException {
         String result = ticket.getString(string);
-        return (result != null && result.length() > 0);
+        return (Objects.nonNull(result) && !result.isEmpty());
     }
 }

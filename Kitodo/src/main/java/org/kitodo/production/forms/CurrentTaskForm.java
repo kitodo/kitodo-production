@@ -104,7 +104,7 @@ public class CurrentTaskForm extends BaseForm {
          * Vorgangsdatum generell anzeigen?
          */
         User user = getUser();
-        if (user != null) {
+        if (Objects.nonNull(user)) {
             this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
         } else {
             this.anzeigeAnpassen.put("processDate", false);
@@ -190,7 +190,7 @@ public class CurrentTaskForm extends BaseForm {
             task.setProcessingTime(new Date());
             User user = getUser();
             ServiceManager.getTaskService().replaceProcessingUser(task, user);
-            if (task.getProcessingBegin() == null) {
+            if (Objects.isNull(task.getProcessingBegin())) {
                 task.setProcessingBegin(new Date());
             }
 
@@ -504,7 +504,7 @@ public class CurrentTaskForm extends BaseForm {
     public void calcHomeImages() {
         this.gesamtAnzahlImages = 0;
         User user = getUser();
-        if (user != null && user.isWithMassDownload()) {
+        if (Objects.nonNull(user) && user.isWithMassDownload()) {
             for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
                 try {
                     Task task = ServiceManager.getTaskService().getById(taskDTO.getId());
@@ -615,7 +615,7 @@ public class CurrentTaskForm extends BaseForm {
      *            provided by data table
      */
     public void setSelectedTasks(List<TaskDTO> selectedTasks) {
-        if (this.selectedTasks != null && !this.selectedTasks.isEmpty()) {
+        if (Objects.nonNull(this.selectedTasks) && !this.selectedTasks.isEmpty()) {
             for (TaskDTO task : this.selectedTasks) {
                 task.setSelected(false);
             }
@@ -780,7 +780,7 @@ public class CurrentTaskForm extends BaseForm {
      * Add to wiki field.
      */
     public void addToWikiField() {
-        if (addToWikiField != null && addToWikiField.length() > 0) {
+        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
             this.currentTask.setProcess(
                 ServiceManager.getProcessService().addToWikiField(this.addToWikiField, this.currentTask.getProcess()));
             this.addToWikiField = "";

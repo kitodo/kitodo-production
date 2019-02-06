@@ -281,7 +281,7 @@ public class ConfigProject {
     }
 
     private String cleanXmlFormattedString(String inString) {
-        if (inString != null) {
+        if (Objects.nonNull(inString)) {
             inString = inString.replaceAll("\t", " ");
             inString = inString.replaceAll("\n", " ");
             while (inString.contains("  ")) {
@@ -322,7 +322,7 @@ public class ConfigProject {
     }
 
     private String processNullValues(String value) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             value = "";
         }
         return value;

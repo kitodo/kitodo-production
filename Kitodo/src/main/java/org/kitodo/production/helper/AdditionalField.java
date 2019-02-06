@@ -12,6 +12,7 @@
 package org.kitodo.production.helper;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
@@ -49,7 +50,7 @@ public class AdditionalField {
      */
     public void setInitStart(String newValue) {
         this.initStart = newValue;
-        if (this.initStart == null) {
+        if (Objects.isNull(this.initStart)) {
             this.initStart = "";
         }
         this.value = this.initStart + this.value;
@@ -72,7 +73,7 @@ public class AdditionalField {
      */
     public void setInitEnd(String newValue) {
         this.initEnd = newValue;
-        if (this.initEnd == null) {
+        if (Objects.isNull(this.initEnd)) {
             this.initEnd = "";
         }
         this.value = this.value + this.initEnd;
@@ -97,7 +98,7 @@ public class AdditionalField {
      *            String
      */
     public void setValue(String newValue) {
-        if (newValue == null || newValue.equals(this.initStart)) {
+        if (Objects.isNull(newValue) || newValue.equals(this.initStart)) {
             newValue = "";
         }
         if (newValue.startsWith(this.initStart)) {
@@ -118,7 +119,7 @@ public class AdditionalField {
      *            input from as String
      */
     public void setFrom(String infrom) {
-        if (infrom != null && infrom.length() != 0) {
+        if (Objects.nonNull(infrom) && !infrom.isEmpty()) {
             this.from = infrom;
         }
     }
@@ -159,7 +160,7 @@ public class AdditionalField {
      */
     public void setDocstruct(String docstruct) {
         this.docstruct = docstruct;
-        if (this.docstruct == null) {
+        if (Objects.isNull(this.docstruct)) {
             this.docstruct = "topstruct";
         }
     }
@@ -184,7 +185,7 @@ public class AdditionalField {
      */
     public void setIsdoctype(String isdoctype) {
         this.isdoctype = isdoctype;
-        if (this.isdoctype == null) {
+        if (Objects.isNull(this.isdoctype)) {
             this.isdoctype = "";
         }
     }
@@ -201,7 +202,7 @@ public class AdditionalField {
      */
     public void setIsnotdoctype(String isnotdoctype) {
         this.isnotdoctype = isnotdoctype;
-        if (this.isnotdoctype == null) {
+        if (Objects.isNull(this.isnotdoctype)) {
             this.isnotdoctype = "";
         }
     }

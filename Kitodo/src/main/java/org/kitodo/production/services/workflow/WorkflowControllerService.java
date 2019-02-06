@@ -295,7 +295,7 @@ public class WorkflowControllerService {
                 task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
                 task.setProcessingTime(new Date());
                 taskService.replaceProcessingUser(task, getCurrentUser());
-                if (task.getProcessingBegin() == null) {
+                if (Objects.isNull(task.getProcessingBegin())) {
                     task.setProcessingBegin(new Date());
                 }
 

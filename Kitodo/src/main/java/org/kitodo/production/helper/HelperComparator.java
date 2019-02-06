@@ -13,6 +13,7 @@ package org.kitodo.production.helper;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Objects;
 
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
@@ -58,10 +59,10 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
         String firstName = firstMetadata.getLanguage(language);
         String secondName = secondMetadata.getLanguage(language);
-        if (firstName == null) {
+        if (Objects.isNull(firstName)) {
             firstName = "";
         }
-        if (secondName == null) {
+        if (Objects.isNull(secondName)) {
             secondName = "";
         }
         return firstName.compareToIgnoreCase(secondName);
@@ -84,10 +85,10 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
         String firstName = firstDocStructType.getNameByLanguage(language);
         String secondName = secondDocStructType.getNameByLanguage(language);
-        if (firstName == null) {
+        if (Objects.isNull(firstName)) {
             firstName = "";
         }
-        if (secondName == null) {
+        if (Objects.isNull(secondName)) {
             secondName = "";
         }
         return firstName.compareToIgnoreCase(secondName);

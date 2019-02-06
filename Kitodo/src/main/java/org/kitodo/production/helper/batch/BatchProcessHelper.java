@@ -13,6 +13,7 @@ package org.kitodo.production.helper.batch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -135,7 +136,7 @@ public class BatchProcessHelper extends BatchHelper {
 
             List<Property> propertyList = this.currentProcess.getProperties();
             for (Property processProperty : propertyList) {
-                if (processProperty.getTitle() == null) {
+                if (Objects.isNull(processProperty.getTitle())) {
                     this.currentProcess.getProperties().remove(processProperty);
                 }
             }
@@ -169,7 +170,7 @@ public class BatchProcessHelper extends BatchHelper {
 
                 List<Property> propertyList = process.getProperties();
                 for (Property nextProcessProperty : propertyList) {
-                    if (nextProcessProperty.getTitle() == null) {
+                    if (Objects.isNull(nextProcessProperty.getTitle())) {
                         process.getProperties().remove(nextProcessProperty);
                     }
                 }

@@ -200,7 +200,7 @@ public class ExportXmlLog {
 
         StringBuilder batches = new StringBuilder();
         for (Batch batch : process.getBatches()) {
-            if (batch.getType() != null) {
+            if (Objects.nonNull(batch.getType())) {
                 batches.append(ServiceManager.getBatchService().getTypeTranslated(batch));
                 batches.append(": ");
             }
@@ -348,7 +348,7 @@ public class ExportXmlLog {
         for (Property property : properties) {
             Element propertyElement = new Element(PROPERTY, xmlns);
             propertyElement.setAttribute(PROPERTY_IDENTIFIER, property.getTitle());
-            if (property.getValue() != null) {
+            if (Objects.nonNull(property.getValue())) {
                 propertyElement.setAttribute(VALUE, replacer(property.getValue()));
             } else {
                 propertyElement.setAttribute(VALUE, "");
@@ -402,7 +402,7 @@ public class ExportXmlLog {
             HashMap<String, String> fields = getMetsFieldsFromConfig(false);
             prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
 
-            if (anchorDoc != null) {
+            if (Objects.nonNull(anchorDoc)) {
                 fields = getMetsFieldsFromConfig(true);
                 prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
             }
@@ -449,7 +449,7 @@ public class ExportXmlLog {
     private void xmlTransformation(OutputStream out, Document doc, String filename)
             throws XSLTransformException, IOException {
         Document docTrans;
-        if (filename != null && filename.equals("")) {
+        if (Objects.nonNull(filename) && filename.isEmpty()) {
             XSLTransformer transformer;
             transformer = new XSLTransformer(filename);
             docTrans = transformer.transform(doc);
@@ -543,9 +543,9 @@ public class ExportXmlLog {
      * @return boolean
      */
     private boolean isNonOpenStateAndHasRegularUser(Task task) {
-        return (!TaskStatus.OPEN.equals(task.getProcessingStatusEnum())) && (task.getProcessingUser() != null)
+        return (!TaskStatus.OPEN.equals(task.getProcessingStatusEnum())) && (Objects.nonNull(task.getProcessingUser()))
                 && (task.getProcessingUser().getId() != 0)
-                && (ServiceManager.getUserService().getFullName(task.getProcessingUser()) != null);
+                && (Objects.nonNull(ServiceManager.getUserService().getFullName(task.getProcessingUser())));
     }
 
 }

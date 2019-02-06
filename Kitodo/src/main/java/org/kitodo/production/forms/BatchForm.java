@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
@@ -117,7 +118,7 @@ public class BatchForm extends BaseForm {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         QueryBuilder query = new BoolQueryBuilder();
 
-        if (this.processfilter != null) {
+        if (Objects.nonNull(this.processfilter)) {
             try {
                 query = ServiceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
                     false);
@@ -363,7 +364,7 @@ public class BatchForm extends BaseForm {
                 Batch selectedBatch = selectedBatches.get(0);
                 for (Batch batch : currentBatches) {
                     if (selectedBatch.getId().equals(batch.getId())) {
-                        batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
+                        batch.setTitle(Objects.isNull(batchTitle) || batchTitle.trim().isEmpty() ? null : batchTitle);
                         ServiceManager.getBatchService().save(batch);
                         batchTitle = "";
                         return;
@@ -384,7 +385,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {
             Batch batch;
-            if (batchTitle != null && batchTitle.trim().length() > 0) {
+            if (Objects.nonNull(batchTitle) && !batchTitle.trim().isEmpty()) {
                 batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
             } else {
                 batch = new Batch(Type.LOGISTIC, selectedProcesses);

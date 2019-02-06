@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -189,7 +190,7 @@ public class EmptyTask extends Thread implements INameableTask {
      * @return the duration since the task died
      */
     Duration getDurationDead() {
-        if (passedAway == null) {
+        if (Objects.isNull(passedAway)) {
             return null;
         }
         long elapsed = System.nanoTime() - passedAway;
@@ -228,15 +229,15 @@ public class EmptyTask extends Thread implements INameableTask {
         String label = Helper.getTranslation(state.toString().toLowerCase());
         switch (state) {
             case WORKING:
-                if (detail != null) {
+                if (Objects.nonNull(detail)) {
                     return label + " (" + detail + ")";
                 } else {
                     return label;
                 }
             case CRASHED:
-                if (exception.getMessage() != null) {
+                if (Objects.nonNull(exception.getMessage())) {
                     return label + " (" + exception.getMessage() + ")";
-                } else if (detail != null) {
+                } else if (Objects.nonNull(detail)) {
                     return label + " (" + detail + ")";
                 } else {
                     return label + " (" + exception.getClass().getSimpleName() + ")";
@@ -278,10 +279,10 @@ public class EmptyTask extends Thread implements INameableTask {
             case NEW:
                 return TaskState.NEW;
             case TERMINATED:
-                if (behaviour == null) {
+                if (Objects.isNull(behaviour)) {
                     behaviour = DEFAULT_BEHAVIOUR;
                 }
-                if (exception != null) {
+                if (Objects.nonNull(exception)) {
                     return TaskState.CRASHED;
                 }
                 if (Behaviour.PREPARE_FOR_RESTART.equals(behaviour)) {
@@ -305,7 +306,7 @@ public class EmptyTask extends Thread implements INameableTask {
      * @return the stack trace of the exception, if any
      */
     public String getLongMessage() {
-        if (exception == null) {
+        if (Objects.isNull(exception)) {
             return null;
         }
         return ExceptionUtils.getStackTrace(exception);
@@ -409,7 +410,7 @@ public class EmptyTask extends Thread implements INameableTask {
         if (exception instanceof InterruptedException) {
             Thread.currentThread().interrupt();
         }
-        if (this.exception == null && (!isInterrupted() || !(exception instanceof InterruptedException))) {
+        if (Objects.isNull(this.exception) && (!isInterrupted() || !(exception instanceof InterruptedException))) {
             if (exception instanceof Exception) {
                 this.exception = (Exception) exception;
             } else {
@@ -436,7 +437,7 @@ public class EmptyTask extends Thread implements INameableTask {
     protected void setNameDetail(String detail) {
         StringBuilder composer = new StringBuilder(119);
         composer.append(this.getDisplayName());
-        if (detail != null) {
+        if (Objects.nonNull(detail)) {
             composer.append(": ");
             composer.append(detail);
         }
