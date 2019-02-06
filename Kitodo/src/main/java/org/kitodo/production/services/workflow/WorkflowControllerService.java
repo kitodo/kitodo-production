@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -247,36 +248,7 @@ public class WorkflowControllerService {
         automaticTasks = new ArrayList<>();
         tasksToFinish = new ArrayList<>();
 
-        // check if there are tasks that take place in parallel but are not yet
-        // completed
-        List<Task> tasks = task.getProcess().getTasks();
-        List<Task> concurrentTasksForOpen = getConcurrentTasksForOpen(tasks, task);
-
-        if (concurrentTasksForOpen.isEmpty() && !isAnotherTaskInWorkWhichBlocksOtherTasks(tasks, task)) {
-            if (!task.isLast()) {
-                activateNextTasks(getAllHigherTasks(tasks, task));
-            }
-        } else {
-            activateConcurrentTasks(concurrentTasksForOpen);
-        }
-
-        Process process = task.getProcess();
-        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
-        Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
-        if (!process.getSortHelperImages().equals(numberOfFiles)) {
-            process.setSortHelperImages(numberOfFiles);
-            ServiceManager.getProcessService().save(process);
-        }
-
-        updateProcessSortHelperStatus(process);
-
-        for (Task automaticTask : automaticTasks) {
-            TaskScriptThread thread = new TaskScriptThread(automaticTask);
-            TaskManager.addTask(thread);
-        }
-        for (Task finish : tasksToFinish) {
-            close(finish);
-        }
+        activateTasksForClosedTask(task);
     }
 
     /**
@@ -469,6 +441,40 @@ public class WorkflowControllerService {
         }
     }
 
+    private void activateTasksForClosedTask(Task closedTask) throws DataException, IOException {
+        Process process = closedTask.getProcess();
+
+        // check if there are tasks that take place in parallel but are not yet
+        // completed
+        List<Task> tasks = process.getTasks();
+        List<Task> concurrentTasksForOpen = getConcurrentTasksForOpen(tasks, closedTask);
+
+        if (concurrentTasksForOpen.isEmpty() && !isAnotherTaskInWorkWhichBlocksOtherTasks(tasks, closedTask)) {
+            if (!closedTask.isLast()) {
+                activateNextTasks(getAllHigherTasks(tasks, closedTask));
+            }
+        } else {
+            activateConcurrentTasks(concurrentTasksForOpen);
+        }
+
+        URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
+        Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
+        if (!process.getSortHelperImages().equals(numberOfFiles)) {
+            process.setSortHelperImages(numberOfFiles);
+            ServiceManager.getProcessService().save(process);
+        }
+
+        updateProcessSortHelperStatus(process);
+
+        for (Task automaticTask : automaticTasks) {
+            TaskScriptThread thread = new TaskScriptThread(automaticTask);
+            TaskManager.addTask(thread);
+        }
+        for (Task finish : tasksToFinish) {
+            close(finish);
+        }
+    }
+
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -571,7 +577,7 @@ public class WorkflowControllerService {
     /**
      * Activate the concurrent tasks.
      */
-    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException {
+    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException, IOException {
         for (Task concurrentTask : concurrentTasks) {
             activateTask(concurrentTask);
         }
@@ -580,7 +586,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateNextTasks(List<Task> allHigherTasks) throws DataException {
+    private void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException {
         int ordering = 0;
         boolean matched = false;
         for (Task higherTask : allHigherTasks) {
@@ -598,15 +604,52 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateTask(Task task) throws DataException {
-        // activate the task if it is not fully automatic
-        task.setProcessingStatus(1);
-        task.setProcessingTime(new Date());
-        task.setEditType(4);
+    private void activateTask(Task task) throws DataException, IOException {
+        if (isWorkflowConditionFulfilled(task.getWorkflowCondition())) {
+            // activate the task if it is not fully automatic
+            task.setProcessingStatus(1);
+            task.setProcessingTime(new Date());
+            task.setEditType(4);
 
-        verifyTask(task);
+            verifyTask(task);
 
-        taskService.save(task);
+            taskService.save(task);
+        } else {
+            // close task as it is not going to be executed
+            task.setProcessingStatus(3);
+            task.setProcessingTime(new Date());
+            task.setProcessingEnd(new Date());
+            task.setEditType(4);
+
+            taskService.save(task);
+
+            activateTasksForClosedTask(task);
+        }
+    }
+
+    private boolean isWorkflowConditionFulfilled(WorkflowCondition workflowCondition) {
+        if (Objects.isNull(workflowCondition)) {
+            return true;
+        } else {
+            if (workflowCondition.getType().equals(WorkflowCondition.Type.SCRIPT)) {
+                return runScriptCondition(workflowCondition.getValue());
+            }
+
+            if (workflowCondition.getType().equals(WorkflowCondition.Type.XPATH)) {
+                return runXPathCondition(workflowCondition.getValue());
+            }
+            return true;
+        }
+    }
+
+    private boolean runScriptCondition(String scriptPath) {
+        // TODO: implement
+        return true;
+    }
+
+    private boolean runXPathCondition(String xpath) {
+        // TODO: implement
+        return true;
     }
 
     private void verifyTask(Task task) {

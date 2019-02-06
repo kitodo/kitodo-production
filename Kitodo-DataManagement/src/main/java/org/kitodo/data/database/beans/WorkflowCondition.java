@@ -11,16 +11,38 @@
 
 package org.kitodo.data.database.beans;
 
+import java.security.InvalidParameterException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "workflowCondition")
 public class WorkflowCondition extends BaseBean {
 
+    private static final long serialVersionUID = -5187947220333984868L;
+
+    /**
+     * Enum for workflow condition type. Types:
+     *
+     * <dl>
+     * <dt>SCRIPT</dt>
+     * <dd>path to executable script will be used for value</dd>
+     * <dt>XPATH</dt>
+     * <dd> expression to search ine metadata file will be used for value</dd>
+     * </dl>
+     */
+    public enum Type {
+        SCRIPT,
+        XPATH
+    }
+
     @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Column(name = "value")
     private String value;
@@ -37,7 +59,13 @@ public class WorkflowCondition extends BaseBean {
      *            of workflow condition
      */
     public WorkflowCondition(String type, String value) {
-        this.type = type;
+        if (type.equalsIgnoreCase("script")) {
+            this.type = Type.SCRIPT;
+        } else if (type.equalsIgnoreCase("xpath")) {
+            this.type = Type.XPATH;
+        } else {
+            throw new InvalidParameterException("Type should be script or XPath, but was " +  type);
+        }
         this.value = value;
     }
 
@@ -46,7 +74,7 @@ public class WorkflowCondition extends BaseBean {
      *
      * @return value of type
      */
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
@@ -56,7 +84,7 @@ public class WorkflowCondition extends BaseBean {
      * @param type
      *            as java.lang.String
      */
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
