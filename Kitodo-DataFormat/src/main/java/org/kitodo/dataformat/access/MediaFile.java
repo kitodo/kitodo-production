@@ -25,6 +25,14 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
  */
 public class MediaFile implements FLocatXmlElementAccessInterface {
     /**
+     * Some magic numbers that are used in the METS XML file representation of
+     * this structure to describe relations between XML elements. They need to
+     * be stored because some scatty third-party scripts rely on them not being
+     * changed anymore once assigned.
+     */
+    private final String metsReferrerId;
+
+    /**
      * References computer file.
      */
     private URI uri;
@@ -35,17 +43,19 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      * of media file.
      */
     public MediaFile() {
+        metsReferrerId = UUID.randomUUID().toString();
     }
 
     /**
      * Constructor for creating a new media file reference from METS F locat.
      * 
-     * @param fLocat
-     *            F locat to create a new media file reference from
+     * @param file
+     *            File to create a new media file reference from
      */
-    MediaFile(FLocat fLocat) {
+    MediaFile(FileType file) {
+        metsReferrerId = file.getID();
         try {
-            uri = new URI(fLocat.getHref());
+            uri = new URI(file.getFLocat().get(0).getHref());
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -83,7 +93,7 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      */
     FileType toFile(String mimeType) {
         FileType file = new FileType();
-        file.setID(UUID.randomUUID().toString());
+        file.setID(metsReferrerId);
         file.setMIMETYPE(mimeType);
         FLocat fLocat = new FLocat();
         fLocat.setLOCTYPE("URL");

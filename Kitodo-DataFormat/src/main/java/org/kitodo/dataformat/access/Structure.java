@@ -11,6 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -65,6 +66,14 @@ public class Structure implements DivXmlElementAccessInterface {
     private Collection<MetadataAccessInterface> metadata = new HashSet<>();
 
     /**
+     * Some magic numbers that are used in the METS XML file representation of
+     * this structure to describe relations between XML elements. They need to
+     * be stored because some scatty third-party scripts rely on them not being
+     * changed anymore once assigned.
+     */
+    private final String metsReferrerId;
+
+    /**
      * The order label of this structure. This is needed very rarely. It is not
      * displayed, and unlike the name suggests, it does not specify the order of
      * this substructure along with other substructures within its parent
@@ -115,6 +124,7 @@ public class Structure implements DivXmlElementAccessInterface {
      * called via the service loader to get a new structure.
      */
     public Structure() {
+        metsReferrerId = UUID.randomUUID().toString();
     }
 
     /**
@@ -138,6 +148,7 @@ public class Structure implements DivXmlElementAccessInterface {
         for (Object mdSec : div.getADMID()) {
             readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec));
         }
+        metsReferrerId = div.getID();
         orderlabel = div.getORDERLABEL();
         substructures = div.getDiv().stream().map(child -> new Structure(child, mets, mediaUnitsMap))
                 .collect(Collectors.toCollection(LinkedList::new));
@@ -308,18 +319,18 @@ public class Structure implements DivXmlElementAccessInterface {
     DivType toDiv(Map<MediaUnit, String> mediaUnitIDs,
             LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
-        String divId = UUID.randomUUID().toString();
-        div.setID(divId);
+        div.setID(metsReferrerId);
         div.setLABEL(label);
         div.setORDERLABEL(orderlabel);
         div.setTYPE(type);
         smLinkData.addAll(views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
-                .map(mediaUnitId -> Pair.of(divId, mediaUnitId)).collect(Collectors.toList()));
+                .map(mediaUnitId -> Pair.of(metsReferrerId, mediaUnitId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            dmdSec.setID(UUID.randomUUID().toString());
+            String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
+            dmdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
@@ -380,10 +391,10 @@ public class Structure implements DivXmlElementAccessInterface {
      */
     private Optional<AmdSecType> createAmdSec(DivType div) {
         AmdSecType amdSec = new AmdSecType();
-        return addMdSec(createMdSec(MdSec.SOURCE_MD), AmdSecType::getSourceMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), AmdSecType::getDigiprovMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.RIGHTS_MD), AmdSecType::getRightsMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.TECH_MD), AmdSecType::getTechMD, amdSec, div)
+        return addMdSec(createMdSec(MdSec.SOURCE_MD), MdSec.SOURCE_MD, AmdSecType::getSourceMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), MdSec.DIGIPROV_MD, AmdSecType::getDigiprovMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.RIGHTS_MD), MdSec.RIGHTS_MD, AmdSecType::getRightsMD, amdSec, div)
+                | addMdSec(createMdSec(MdSec.TECH_MD), MdSec.TECH_MD, AmdSecType::getTechMD, amdSec, div)
                         ? Optional.of(amdSec)
                         : Optional.empty();
     }
@@ -395,6 +406,8 @@ public class Structure implements DivXmlElementAccessInterface {
      * 
      * @param optionalMdSec
      *            perhaps existing meta-data section to be added if it exists
+     * @param mdSecType
+     *            the type of the mdSec, used in ID generation
      * @param mdSecTypeGetter
      *            the getter via which the meta-data section can be added to the
      *            administrative meta-data section
@@ -407,15 +420,15 @@ public class Structure implements DivXmlElementAccessInterface {
      * @return whether something has been added to the administrative meta-data
      *         section
      */
-    private static boolean addMdSec(Optional<MdSecType> optionalMdSec,
-            Function<AmdSecType, List<MdSecType>> mdSecTypeGetter,
-            AmdSecType amdSec, DivType div) {
+    private boolean addMdSec(Optional<MdSecType> optionalMdSec, MdSec mdSecType,
+            Function<AmdSecType, List<MdSecType>> mdSecTypeGetter, AmdSecType amdSec, DivType div) {
 
         if (!optionalMdSec.isPresent()) {
             return false;
         } else {
             MdSecType mdSec = optionalMdSec.get();
-            mdSec.setID(UUID.randomUUID().toString());
+            String name = metsReferrerId + ':' + mdSecType.toString();
+            mdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
             mdSecTypeGetter.apply(amdSec).add(mdSec);
             div.getADMID().add(mdSec);
             return true;
