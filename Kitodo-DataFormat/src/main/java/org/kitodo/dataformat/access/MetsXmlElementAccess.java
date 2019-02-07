@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -120,7 +122,10 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                             newUseXmlAttributeAccess -> newUseXmlAttributeAccess.getMediaVariant().getUse(),
                             UseXmlAttributeAccess::getMediaVariant))
                 : new HashMap<>();
-        List<DivType> physicalDivs = getStructMapsStreamByType(mets, "PHYSICAL").findFirst().get().getDiv().getDiv();
+        Optional<StructMapType> optionalPhysicalStructMap = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
+        List<DivType> physicalDivs = optionalPhysicalStructMap.isPresent()
+                ? optionalPhysicalStructMap.get().getDiv().getDiv()
+                : Collections.emptyList();
         Map<String, FileXmlElementAccess> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
         for (DivType div : physicalDivs) {
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(div, mets, useXmlAttributeAccess);
