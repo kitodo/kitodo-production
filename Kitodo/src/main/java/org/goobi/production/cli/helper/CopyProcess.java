@@ -178,7 +178,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* welches Metadatum */
                     try {
                         if (field.getMetadata().equals("ListOfCreators")) {
-                            field.setValue(getAuthors(myTempStruct.getAllPersons()));
+                            throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(

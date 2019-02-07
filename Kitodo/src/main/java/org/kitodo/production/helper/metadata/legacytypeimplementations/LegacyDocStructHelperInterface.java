@@ -12,10 +12,8 @@
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
@@ -209,16 +207,6 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data of the given type
      */
     List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
-
-    /**
-     * Returns a list of all persons. If no {@code Person} objects are
-     * available, {@code null} is returned.
-     *
-     * @return all persons
-     */
-    default List<PersonInterface> getAllPersons() {
-        return Collections.emptyList();
-    }
 
     /**
      * Returns incoming or outgoing {@code Reference}s.

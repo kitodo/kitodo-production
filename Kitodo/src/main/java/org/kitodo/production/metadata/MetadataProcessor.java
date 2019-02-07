@@ -53,9 +53,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
-import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -117,9 +114,7 @@ public class MetadataProcessor {
     private LegacyMetsModsDigitalDocumentHelper gdzfile;
     private LegacyDocStructHelperInterface docStruct;
     private List<MetadataImpl> myMetadaten = new LinkedList<>();
-    private List<MetaPerson> metaPersonList = new LinkedList<>();
     private MetadataImpl currentMetadata;
-    private MetaPerson curPerson;
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
     private Process process;
     private LegacyPrefsHelper myPrefs;
@@ -270,7 +265,6 @@ public class MetadataProcessor {
      *
      */
     public void copyPerson() {
-        PersonInterface per;
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
@@ -615,7 +609,6 @@ public class MetadataProcessor {
     private void saveMetadataAsBean(LegacyDocStructHelperInterface inStrukturelement) {
         this.docStruct = inStrukturelement;
         LinkedList<MetadataImpl> lsMeta = new LinkedList<>();
-        LinkedList<MetaPerson> lsPers = new LinkedList<>();
 
         /*
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
@@ -632,7 +625,6 @@ public class MetadataProcessor {
         }
 
         this.myMetadaten = lsMeta;
-        this.metaPersonList = lsPers;
 
         determinePagesStructure(this.docStruct);
     }
@@ -1804,12 +1796,13 @@ public class MetadataProcessor {
         this.myMetadaten = myMetadaten;
     }
 
-    public List<MetaPerson> getMetaPersonList() {
-        return this.metaPersonList;
+    public List<?> getMetaPersonList() {
+        // Dead code pending removal. TODO remove
+        return Collections.emptyList();
     }
 
-    public void setMetaPersonList(List<MetaPerson> metaPersonList) {
-        this.metaPersonList = metaPersonList;
+    public void setMetaPersonList(List<?> metaPersonList) {
+        // Dead code pending removal. TODO remove
     }
 
     public MetadataImpl getCurrentMetadata() {
@@ -1820,12 +1813,13 @@ public class MetadataProcessor {
         this.currentMetadata = currentMetadata;
     }
 
-    public MetaPerson getCurPerson() {
-        return this.curPerson;
+    public Void getCurPerson() {
+        // Dead code pending removal. TODO remove
+        return null;
     }
 
-    public void setCurPerson(MetaPerson curPerson) {
-        this.curPerson = curPerson;
+    public void setCurPerson(Object curPerson) {
+        // Dead code pending removal. TODO remove
     }
 
     public URI getCurrentTifFolder() {
@@ -1960,7 +1954,7 @@ public class MetadataProcessor {
      *            meta-data group type to look for
      * @return whether the type is available to add
      */
-    public boolean canCreate(MetadataGroupTypeInterface type) {
+    public boolean canCreate(Object type) {
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
@@ -1970,7 +1964,7 @@ public class MetadataProcessor {
      * @param metadataGroup
      *            metadata group to delete.
      */
-    public void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
+    public void removeMetadataGroupFromCurrentDocStruct(Object metadataGroup) {
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 

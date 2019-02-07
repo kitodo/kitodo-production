@@ -38,9 +38,6 @@ import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
 import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
-import org.kitodo.api.ugh.MetadataGroupInterface;
-import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
@@ -138,16 +135,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public void addMetadataGroup(MetadataGroupInterface metadataGroup) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void addPerson(PersonInterface person) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         AreaXmlElementAccessInterface view = metsService.createAreaXmlElementAccess();
@@ -195,11 +182,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             default:
                 throw new IllegalArgumentException(domain.name());
         }
-    }
-
-    public List<MetadataGroupTypeInterface> getAddableMetadataGroupTypes() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -288,21 +270,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             }
         }
         return result;
-    }
-
-    public List<MetadataGroupInterface> getAllMetadataGroups() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public List<PersonInterface> getAllPersons() {
-        return Collections.emptyList();
-    }
-
-    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -448,16 +415,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 break;
             }
         }
-    }
-
-    public void removeMetadataGroup(MetadataGroupInterface metadataGroup) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    public void removePerson(PersonInterface person) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
