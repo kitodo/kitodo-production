@@ -46,8 +46,8 @@ public class CustomListColumnInitializer {
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         try {
             processProperties = Arrays.stream(ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(","))
-                    .filter(name -> !name.isEmpty())
-                    .map(name -> PROCESS_PREFIX + name)
+                    .filter(name -> !name.trim().isEmpty())
+                    .map(name -> PROCESS_PREFIX + name.trim())
                     .toArray(String[]::new);
 
             ServiceManager.getListColumnService().removeProcessCustomListColumns(Arrays.asList(processProperties));
