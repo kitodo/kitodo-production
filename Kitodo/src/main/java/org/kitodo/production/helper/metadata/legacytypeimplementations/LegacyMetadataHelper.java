@@ -13,7 +13,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code

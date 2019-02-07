@@ -27,7 +27,6 @@ import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 

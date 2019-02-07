@@ -24,7 +24,6 @@ import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units

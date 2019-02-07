@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper.metadata;
+package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,11 +17,6 @@ import java.util.List;
 
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 
 /**
  * One node of a tree depicting the structure of the document.

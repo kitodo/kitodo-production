@@ -28,7 +28,6 @@ import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.helper.metadata.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
