@@ -90,6 +90,9 @@ public class Converter {
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
+            if (Objects.nonNull(task.getWorkflowCondition())) {
+                ServiceManager.getWorkflowConditionService().saveToDatabase(task.getWorkflowCondition());
+            }
             task.setTemplate(template);
             template.getTasks().add(task);
         }

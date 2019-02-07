@@ -27,7 +27,7 @@
             <bpmn2:outgoing>SequenceFlow_0n2rxt4</bpmn2:outgoing>
         </bpmn2:parallelGateway>
         <bpmn2:sequenceFlow id="SequenceFlow_14kxxow" sourceRef="Task2" targetRef="ParallelGateway2_in"/>
-        <bpmn2:task id="Task3" name="Task3">
+        <bpmn2:task id="Task3" name="Task3" template:conditionType="XPath" template:conditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_0z1l896</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_006rbcv</bpmn2:outgoing>
         </bpmn2:task>
