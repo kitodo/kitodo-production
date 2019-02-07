@@ -72,13 +72,6 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
-import org.kitodo.api.ugh.ContentFileInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -118,9 +111,11 @@ import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
@@ -1198,7 +1193,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return filer format
      */
-    public FileformatInterface readMetadataFile(Process process)
+    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process)
             throws ReadException, IOException, PreferencesException {
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
@@ -1209,10 +1204,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         String type = MetadataHelper.getMetaFileType(metadataFileUri);
         logger.debug("current meta.xml file type for id {}: {}", process.getId(), type);
 
-        FileformatInterface ff = determineFileFormat(type, process);
+        LegacyMetsModsDigitalDocumentHelper ff = determineFileFormat(type, process);
         try {
             ff.read(ServiceManager.getFileService().getFile(metadataFileUri).toString());
-        } catch (ReadException e) {
+        } catch (IOException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setErrorMessage("metadataCorrupt", logger, e);
             } else {
@@ -1231,10 +1226,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            The Preferences
      * @return The fileFormat.
      */
-    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
+    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(URI metadataFile, LegacyPrefsHelper prefs)
             throws IOException, PreferencesException, ReadException {
         String type = MetadataHelper.getMetaFileType(metadataFile);
-        FileformatInterface ff;
+        LegacyMetsModsDigitalDocumentHelper ff;
         switch (type) {
             case "metsmods":
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
@@ -1250,15 +1245,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
-    private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
-        FileformatInterface fileFormat;
+    private LegacyMetsModsDigitalDocumentHelper determineFileFormat(String type, Process process) throws PreferencesException {
+        LegacyMetsModsDigitalDocumentHelper fileFormat;
         RulesetService rulesetService = ServiceManager.getRulesetService();
 
         switch (type) {
             case "metsmods":
-                fileFormat = UghImplementation.INSTANCE
-                        .createMetsModsImportExport(rulesetService.getPreferences(process.getRuleset()));
-                break;
             case "mets":
                 fileFormat = new LegacyMetsModsDigitalDocumentHelper(
                         ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
@@ -1280,13 +1272,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return file format
      */
-    public FileformatInterface readMetadataAsTemplateFile(Process process)
+    public LegacyMetsModsDigitalDocumentHelper readMetadataAsTemplateFile(Process process)
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
             String type = MetadataHelper.getMetaFileType(processSubTypeURI);
             logger.debug("current template.xml file type: {}", type);
-            FileformatInterface ff = determineFileFormat(type, process);
+            LegacyMetsModsDigitalDocumentHelper ff = determineFileFormat(type, process);
             String processSubTypePath = fileService.getFile(processSubTypeURI).getAbsolutePath();
             ff.read(processSubTypePath);
             return ff;
@@ -1655,7 +1647,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    public DigitalDocumentInterface getDigitalDocument(Process process)
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process)
             throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
     }
@@ -1728,11 +1720,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException, JAXBException {
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = getNormalizedTitle(process.getTitle());
 
         // read document
-        FileformatInterface gdzfile = readDocument(preferences, process);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(preferences, process);
         if (Objects.isNull(gdzfile)) {
             return false;
         }
@@ -1806,10 +1798,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private FileformatInterface readDocument(PrefsInterface preferences, Process process)
+    private LegacyMetsModsDigitalDocumentHelper readDocument(LegacyPrefsHelper preferences, Process process)
             throws IOException, PreferencesException {
-        FileformatInterface gdzFile;
-        FileformatInterface newFile;
+        LegacyMetsModsDigitalDocumentHelper gdzFile;
+        LegacyMetsModsDigitalDocumentHelper newFile;
         try {
             URI metadataPath = fileService.getMetadataFilePath(process);
             gdzFile = readMetadataFile(metadataPath, preferences);
@@ -1875,7 +1867,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            as Process object
      * @return false if no exception appeared
      */
-    public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
+    public boolean handleExceptionsForConfiguration(LegacyMetsModsDigitalDocumentHelper newFile, Process process) {
         Optional<String> rules = ConfigCore.getOptionalString(ParameterCore.COPY_DATA_ON_EXPORT);
         if (rules.isPresent()) {
             try {
@@ -1895,10 +1887,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param docStruct
      *            metadata to be trimmed
      */
-    private void trimAllMetadata(DocStructInterface docStruct) {
+    private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
         // trim all metadata values
         if (docStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : docStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setStringValue(md.getValue().trim());
                 }
@@ -1907,7 +1899,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // run through all children of docStruct
         if (docStruct.getAllChildren() != null) {
-            for (DocStructInterface child : docStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }
@@ -2018,17 +2010,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
+    protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        MetsModsImportExportInterface mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
-        DigitalDocumentInterface dd = gdzfile.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper dd = gdzfile.getDigitalDocument();
         if (dd.getFileSet() == null) {
             Helper.setErrorMessage(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
@@ -2038,7 +2030,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * get the topstruct element of the digital document depending on anchor
          * property
          */
-        DocStructInterface topElement = dd.getLogicalDocStruct();
+        LegacyDocStructHelperInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
             if (topElement.getAllChildren() == null || topElement.getAllChildren().isEmpty()) {
                 throw new PreferencesException(process.getTitle()
@@ -2058,7 +2050,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
-                for (DocStructInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
+                for (LegacyDocStructHelperInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
@@ -2067,7 +2059,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        for (ContentFileInterface cf : dd.getFileSet().getAllFiles()) {
+        for (LegacyContentFileHelper cf : dd.getFileSet().getAllFiles()) {
             String location = cf.getLocation();
             // If the file's location string shoes no sign of any protocol,
             // use the file protocol.

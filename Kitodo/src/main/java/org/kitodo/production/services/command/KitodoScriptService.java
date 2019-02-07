@@ -26,9 +26,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -45,6 +42,8 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -166,7 +165,7 @@ public class KitodoScriptService {
     private void updateContentFiles(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
+                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
                 rdf.getDigitalDocument().addAllContentFiles();
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
@@ -512,14 +511,14 @@ public class KitodoScriptService {
     public void updateImagePath(List<Process> processes) {
         for (Process process : processes) {
             try {
-                FileformatInterface rdf = ServiceManager.getProcessService().readMetadataFile(process);
-                MetadataTypeInterface mdt = UghHelper.getMetadataType(process, "pathimagefiles");
-                List<? extends MetadataInterface> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
+                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
+                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(process, "pathimagefiles");
+                List<? extends LegacyMetadataHelper> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
-                for (MetadataInterface md : allImagePaths) {
+                for (LegacyMetadataHelper md : allImagePaths) {
                     rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                 }
-                MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
+                LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata.setStringValue("file:/" + fileService.getImagesDirectory(process)
                             + process.getTitle() + DIRECTORY_SUFFIX);
@@ -530,7 +529,7 @@ public class KitodoScriptService {
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
-            } catch (UghHelperException | MetadataTypeNotAllowedException | PreferencesException | IOException
+            } catch (UghHelperException | PreferencesException | IOException
                     | ReadException | WriteException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
             }

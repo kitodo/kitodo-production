@@ -45,6 +45,9 @@ import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 public class PluginLoader {
     private static final Logger logger = LogManager.getLogger(PluginLoader.class);
 
+    private static final short INTERNAL_CLASSES_COUNT = 4;
+    private static final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -171,8 +174,6 @@ public class PluginLoader {
      */
     @SuppressWarnings("unchecked")
     public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
-        final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
-        final short INTERNAL_CLASSES_COUNT = 4;
         ArrayList<T> result = new ArrayList<>();
 
         PluginType type = UnspecificPlugin.typeOf(clazz);

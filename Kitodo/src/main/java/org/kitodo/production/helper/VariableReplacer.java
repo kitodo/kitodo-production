@@ -24,17 +24,17 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
@@ -49,8 +49,8 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    private DigitalDocumentInterface dd;
-    private PrefsInterface prefs;
+    private LegacyMetsModsDigitalDocumentHelper dd;
+    private LegacyPrefsHelper prefs;
     // $(meta.abc)
     private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
 
@@ -78,7 +78,7 @@ public class VariableReplacer {
      * @param s
      *            Task object
      */
-    public VariableReplacer(DigitalDocumentInterface inDigitalDocument, PrefsInterface inPrefs, Process p, Task s) {
+    public VariableReplacer(LegacyMetsModsDigitalDocumentHelper inDigitalDocument, LegacyPrefsHelper inPrefs, Process p, Task s) {
         this.dd = inDigitalDocument;
         this.prefs = inPrefs;
         this.process = p;
@@ -280,14 +280,14 @@ public class VariableReplacer {
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
         if (this.dd != null) {
             /* TopStruct und FirstChild ermitteln */
-            DocStructInterface topstruct = this.dd.getLogicalDocStruct();
-            DocStructInterface firstchildstruct = null;
+            LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
+            LegacyDocStructHelperInterface firstchildstruct = null;
             if (Objects.nonNull(topstruct.getAllChildren()) && !topstruct.getAllChildren().isEmpty()) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
 
             /* MetadataType ermitteln und ggf. Fehler melden */
-            MetadataTypeInterface mdt;
+            LegacyMetadataTypeHelper mdt;
             try {
                 mdt = UghHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
@@ -344,8 +344,8 @@ public class VariableReplacer {
      * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
      * zurückgegeben.
      */
-    private String getMetadataValue(DocStructInterface inDocstruct, MetadataTypeInterface mdt) {
-        List<? extends MetadataInterface> mds = inDocstruct.getAllMetadataByType(mdt);
+    private String getMetadataValue(LegacyDocStructHelperInterface inDocstruct, LegacyMetadataTypeHelper mdt) {
+        List<? extends LegacyMetadataHelper> mds = inDocstruct.getAllMetadataByType(mdt);
         if (!mds.isEmpty()) {
             return mds.get(0).getValue();
         } else {

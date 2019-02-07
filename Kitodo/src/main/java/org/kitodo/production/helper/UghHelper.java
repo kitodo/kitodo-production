@@ -15,14 +15,12 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class UghHelper {
@@ -44,8 +42,8 @@ public class UghHelper {
      *            String
      * @return MetadataType
      */
-    public static MetadataTypeInterface getMetadataType(Process inProzess, String inName) throws UghHelperException {
-        PrefsInterface myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
+    public static LegacyMetadataTypeHelper getMetadataType(Process inProzess, String inName) throws UghHelperException {
+        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return getMetadataType(myPrefs, inName);
     }
 
@@ -58,8 +56,8 @@ public class UghHelper {
      *            String
      * @return MetadataType
      */
-    public static MetadataTypeInterface getMetadataType(PrefsInterface inPrefs, String inName) throws UghHelperException {
-        MetadataTypeInterface mdt = inPrefs.getMetadataTypeByName(inName);
+    public static LegacyMetadataTypeHelper getMetadataType(LegacyPrefsHelper inPrefs, String inName) throws UghHelperException {
+        LegacyMetadataTypeHelper mdt = inPrefs.getMetadataTypeByName(inName);
         if (mdt == null) {
             throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
         }
@@ -75,19 +73,14 @@ public class UghHelper {
      *            MetadataType object
      * @return Metadata
      */
-    public static MetadataInterface getMetadata(DocStructInterface inStruct, MetadataTypeInterface inMetadataType) {
+    public static LegacyMetadataHelper getMetadata(LegacyDocStructHelperInterface inStruct, LegacyMetadataTypeHelper inMetadataType) {
         if (inStruct != null && inMetadataType != null) {
-            List<? extends MetadataInterface> all = inStruct.getAllMetadataByType(inMetadataType);
+            List<? extends LegacyMetadataHelper> all = inStruct.getAllMetadataByType(inMetadataType);
             if (all.isEmpty()) {
-                try {
-                    MetadataInterface md = new LegacyMetadataHelper(inMetadataType);
-                    md.setDocStruct(inStruct);
-                    inStruct.addMetadata(md);
-                    return md;
-                } catch (MetadataTypeNotAllowedException e) {
-                    logger.debug(e.getMessage());
-                    return null;
-                }
+                LegacyMetadataHelper md = new LegacyMetadataHelper(inMetadataType);
+                md.setDocStruct(inStruct);
+                inStruct.addMetadata(md);
+                return md;
             } else {
                 return all.get(0);
             }

@@ -44,7 +44,6 @@ import org.goobi.production.properties.ImportProperty;
 import org.jdom.JDOMException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
@@ -56,6 +55,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.UploadedFile;
 
@@ -168,7 +168,7 @@ public class MassImportForm extends BaseForm {
             List<ImportObject> answer = new ArrayList<>();
 
             // found list with ids
-            PrefsInterface prefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             String tempFolder = ConfigCore.getParameter(ParameterCore.DIR_TEMP);
             this.plugin.setImportFolder(tempFolder);
             this.plugin.setPrefs(prefs);

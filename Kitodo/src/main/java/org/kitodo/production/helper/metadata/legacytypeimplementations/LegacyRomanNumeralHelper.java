@@ -11,7 +11,6 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.production.helper.metadata.RomanNumeral;
 
 /**
@@ -19,28 +18,24 @@ import org.kitodo.production.helper.metadata.RomanNumeral;
  * a soldering class to keep legacy code operational which is about to be
  * removed. Do not use this class.
  */
-public class LegacyRomanNumeralHelper implements RomanNumeralInterface {
+public class LegacyRomanNumeralHelper {
     /**
      * The value of the Roman numeral accessed via this soldering class.
      */
     private int value;
 
-    @Override
     public String getNumber() {
         return RomanNumeral.format(value, true);
     }
 
-    @Override
     public int intValue() {
         return value;
     }
 
-    @Override
     public void setValue(int value) {
         this.value = value;
     }
 
-    @Override
     public void setValue(String value) {
         this.value = RomanNumeral.parseInt(value);
     }

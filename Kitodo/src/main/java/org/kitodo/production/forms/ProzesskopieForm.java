@@ -47,19 +47,10 @@ import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
@@ -83,7 +74,10 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.WikiFieldHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.copier.CopierData;
@@ -253,7 +247,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private transient CataloguePlugin importCatalogue;
 
-    private FileformatInterface rdf;
+    private LegacyMetsModsDigitalDocumentHelper rdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -499,16 +493,16 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void proceedField(AdditionalField field) throws PreferencesException {
-        DocStructInterface docStruct = getDocStruct(field);
+        LegacyDocStructHelperInterface docStruct = getDocStruct(field);
         try {
             if (field.getMetadata().equals(LIST_OF_CREATORS)) {
                 field.setValue(getAuthors(docStruct.getAllPersons()));
             } else {
                 // evaluate the content in normal fields
-                MetadataTypeInterface mdt = UghHelper.getMetadataType(
+                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     field.getMetadata());
-                MetadataInterface md = UghHelper.getMetadata(docStruct, mdt);
+                LegacyMetadataHelper md = UghHelper.getMetadata(docStruct, mdt);
                 if (md != null) {
                     field.setValue(md.getValue());
                     md.setStringValue(field.getValue().replace("&amp;", "&"));
@@ -519,9 +513,9 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private DocStructInterface getDocStruct(AdditionalField field) throws PreferencesException {
-        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
-        DocStructInterface docStruct = digitalDocument.getLogicalDocStruct();
+    private LegacyDocStructHelperInterface getDocStruct(AdditionalField field) throws PreferencesException {
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = this.rdf.getDigitalDocument();
+        LegacyDocStructHelperInterface docStruct = digitalDocument.getLogicalDocStruct();
         if (field.getDocstruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
         }
@@ -608,12 +602,10 @@ public class ProzesskopieForm implements Serializable {
      */
     private void removeCollectionsForChildren() {
         try {
-            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+            LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct, this.prozessKopie);
-        } catch (PreferencesException e) {
-            Helper.setErrorMessage("Error on creating process", logger, e);
         } catch (RuntimeException e) {
             logger.debug("das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden", e);
         }
@@ -770,8 +762,8 @@ public class ProzesskopieForm implements Serializable {
 
     private void processAdditionalField(AdditionalField field) throws PreferencesException {
         // which DocStruct
-        DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-        DocStructInterface tempChild = null;
+        LegacyDocStructHelperInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        LegacyDocStructHelperInterface tempChild = null;
         String fieldDocStruct = field.getDocstruct();
         if (fieldDocStruct.equals(FIRST_CHILD)) {
             try {
@@ -796,10 +788,10 @@ public class ProzesskopieForm implements Serializable {
         try {
             // except for the authors, take all additional into the metadata
             if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-                PrefsInterface prefs = ServiceManager.getRulesetService()
+                LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
                         .getPreferences(this.prozessKopie.getRuleset());
-                MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
-                MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
+                LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
+                LegacyMetadataHelper metadata = UghHelper.getMetadata(tempStruct, mdt);
                 if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
@@ -822,15 +814,14 @@ public class ProzesskopieForm implements Serializable {
      * insert logical doc structures until you reach it.
      */
     private void insertLogicalDocStruct() {
-        DocStructInterface populizer = null;
+        LegacyDocStructHelperInterface populizer = null;
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                PrefsInterface ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
-                DocStructTypeInterface docStructType = populizer.getDocStructType();
+                LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
+                LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
                 while (docStructType.getAnchorClass() != null) {
-                    populizer = populizer.createChild(docStructType.getAllAllowedDocStructTypes().get(0),
-                        rdf.getDigitalDocument(), ruleset);
+                    throw new UnsupportedOperationException("Dead code pending removal");
                 }
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -839,13 +830,11 @@ public class ProzesskopieForm implements Serializable {
                     : null;
             Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.",
                 logger, e);
-        } catch (UGHException catchAll) {
-            Helper.setErrorMessage(catchAll.getLocalizedMessage(), logger, catchAll);
         }
     }
 
     private void insertCollections() throws PreferencesException {
-        DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
         if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
                 && !colStruct.getAllChildren().isEmpty()) {
             try {
@@ -864,17 +853,17 @@ public class ProzesskopieForm implements Serializable {
      * Insert image path and delete any existing ones first.
      */
     private void insertImagePath() throws IOException, PreferencesException, WriteException {
-        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = this.rdf.getDigitalDocument();
         try {
-            MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-            List<? extends MetadataInterface> allImagePaths = digitalDocument.getPhysicalDocStruct()
+            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+            List<? extends LegacyMetadataHelper> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
             if (Objects.nonNull(allImagePaths)) {
-                for (MetadataInterface metadata : allImagePaths) {
+                for (LegacyMetadataHelper metadata : allImagePaths) {
                     digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
                 }
             }
-            MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
+            LegacyMetadataHelper newMetadata = new LegacyMetadataHelper(mdt);
             String path = ServiceManager.getFileService().getImagesDirectory(this.prozessKopie)
                     + this.prozessKopie.getTitle().trim() + "_" + DIRECTORY_SUFFIX;
             if (SystemUtils.IS_OS_WINDOWS) {
@@ -890,8 +879,6 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
         } catch (UghHelperException e) {
             Helper.setErrorMessage("UghHelperException", logger, e);
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
         }
     }
 
@@ -918,18 +905,18 @@ public class ProzesskopieForm implements Serializable {
      */
     private void updateMetadata() throws PreferencesException {
         if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
-            DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
-            Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
+            LegacyDocStructHelperInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
+            Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
                 // save higher level metadata for lower enrichment
-                List<MetadataInterface> allMetadata = enricher.getAllMetadata();
+                List<LegacyMetadataHelper> allMetadata = enricher.getAllMetadata();
                 if (allMetadata == null) {
                     allMetadata = Collections.emptyList();
                 }
                 iterateOverAllMetadata(higherLevelMetadata, allMetadata);
 
                 // enrich children with inherited metadata
-                for (DocStructInterface nextChild : enricher.getAllChildren()) {
+                for (LegacyDocStructHelperInterface nextChild : enricher.getAllChildren()) {
                     enricher = nextChild;
                     iterateOverHigherLevelMetadata(enricher, higherLevelMetadata);
                 }
@@ -937,12 +924,12 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void iterateOverAllMetadata(Map<String, Map<String, MetadataInterface>> higherLevelMetadata,
-            List<MetadataInterface> allMetadata) {
-        for (MetadataInterface available : allMetadata) {
+    private void iterateOverAllMetadata(Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata,
+            List<LegacyMetadataHelper> allMetadata) {
+        for (LegacyMetadataHelper available : allMetadata) {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
-            Map<String, MetadataInterface> availableMetadata = higherLevelMetadata.containsKey(availableKey)
+            Map<String, LegacyMetadataHelper> availableMetadata = higherLevelMetadata.containsKey(availableKey)
                     ? higherLevelMetadata.get(availableKey)
                     : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
@@ -952,16 +939,16 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void iterateOverHigherLevelMetadata(DocStructInterface enricher,
-            Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
-        for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
+    private void iterateOverHigherLevelMetadata(LegacyDocStructHelperInterface enricher,
+            Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata) {
+        for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
             boolean addable = false;
-            List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
+            List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
             if (Objects.isNull(addableTypesNotNull)) {
                 addableTypesNotNull = Collections.emptyList();
             }
-            for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
+            for (LegacyMetadataTypeHelper addableMetadata : addableTypesNotNull) {
                 if (addableMetadata.getName().equals(enrichable)) {
                     addable = true;
                     break;
@@ -970,23 +957,19 @@ public class ProzesskopieForm implements Serializable {
             if (!addable) {
                 continue;
             }
-            there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
+            there: for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue()
                     .entrySet()) {
-                List<MetadataInterface> amNotNull = enricher.getAllMetadata();
+                List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
                 }
-                for (MetadataInterface existentMetadata : amNotNull) {
+                for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
                             && existentMetadata.getValue().equals(higherElement.getKey())) {
                         continue there;
                     }
                 }
-                try {
-                    enricher.addMetadata(higherElement.getValue());
-                } catch (UGHException e) {
-                    Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") }, logger, e);
-                }
+                enricher.addMetadata(higherElement.getValue());
             }
         }
     }
@@ -1004,16 +987,16 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void addCollections(DocStructInterface colStruct) {
+    private void addCollections(LegacyDocStructHelperInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                MetadataInterface md = new LegacyMetadataHelper(UghHelper.getMetadataType(
+                LegacyMetadataHelper md = new LegacyMetadataHelper(UghHelper.getMetadataType(
                     ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setStringValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
-            } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+            } catch (UghHelperException | DocStructHasNoTypeException e) {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
@@ -1022,12 +1005,12 @@ public class ProzesskopieForm implements Serializable {
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
-    protected void removeCollections(DocStructInterface colStruct, Process process) {
+    protected void removeCollections(LegacyDocStructHelperInterface colStruct, Process process) {
         try {
-            MetadataTypeInterface mdt = UghHelper.getMetadataType(
+            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
-            ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
-            for (MetadataInterface md : myCollections) {
+            ArrayList<LegacyMetadataHelper> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
+            for (LegacyMetadataHelper md : myCollections) {
                 colStruct.removeMetadata(md);
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
@@ -1133,41 +1116,35 @@ public class ProzesskopieForm implements Serializable {
             this.docType = docType;
             if (rdf != null) {
 
-                FileformatInterface tmp = rdf;
+                LegacyMetsModsDigitalDocumentHelper tmp = rdf;
 
                 createNewFileformat();
-                try {
-                    if (rdf.getDigitalDocument().getLogicalDocStruct()
-                            .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
-                        rdf = tmp;
-                    } else {
-                        DocStructInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
-                        DocStructInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
-                        // both have no children
-                        if (oldLogicalDocstruct.getAllChildren() == null
-                                && newLogicalDocstruct.getAllChildren() == null) {
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                        } else if (oldLogicalDocstruct.getAllChildren() != null
-                                && newLogicalDocstruct.getAllChildren() == null) {
-                            // old has a child, new has no child
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
-                        } else if (oldLogicalDocstruct.getAllChildren() == null
-                                && newLogicalDocstruct.getAllChildren() != null) {
-                            // new has a child, but old not
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.copy(true, false),
-                                newLogicalDocstruct.getAllChildren().get(0));
-                        } else if (oldLogicalDocstruct.getAllChildren() != null
-                                && newLogicalDocstruct.getAllChildren() != null) {
-                            // both have children
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
-                                newLogicalDocstruct.getAllChildren().get(0));
-                        }
+                if (rdf.getDigitalDocument().getLogicalDocStruct()
+                        .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
+                    rdf = tmp;
+                } else {
+                    LegacyDocStructHelperInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+                    LegacyDocStructHelperInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
+                    // both have no children
+                    if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() == null) {
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                    } else if (oldLogicalDocstruct.getAllChildren() != null
+                            && newLogicalDocstruct.getAllChildren() == null) {
+                        // old has a child, new has no child
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
+                    } else if (oldLogicalDocstruct.getAllChildren() == null
+                            && newLogicalDocstruct.getAllChildren() != null) {
+                        // new has a child, but old not
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        throw new UnsupportedOperationException("Dead code pending removal");
+                    } else if (oldLogicalDocstruct.getAllChildren() != null
+                            && newLogicalDocstruct.getAllChildren() != null) {
+                        // both have children
+                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
+                            newLogicalDocstruct.getAllChildren().get(0));
                     }
-                } catch (PreferencesException e) {
-                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 try {
                     fillFieldsFromMetadataFile();
@@ -1178,13 +1155,13 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void copyMetadata(DocStructInterface oldDocStruct, DocStructInterface newDocStruct) {
+    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
 
         if (oldDocStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : oldDocStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
-                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                } catch (DocStructHasNoTypeException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
@@ -1192,8 +1169,8 @@ public class ProzesskopieForm implements Serializable {
         if (oldDocStruct.getAllPersons() != null) {
             for (PersonInterface p : oldDocStruct.getAllPersons()) {
                 try {
-                    newDocStruct.addPerson(p);
-                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    throw new UnsupportedOperationException("Dead code pending removal");
+                } catch (DocStructHasNoTypeException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
@@ -1846,7 +1823,7 @@ public class ProzesskopieForm implements Serializable {
      *
      * @return the metadata file in memory
      */
-    public FileformatInterface getFileformat() {
+    public LegacyMetsModsDigitalDocumentHelper getFileformat() {
         return rdf;
     }
 

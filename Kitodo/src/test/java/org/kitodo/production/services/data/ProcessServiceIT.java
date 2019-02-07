@@ -32,10 +32,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -452,7 +448,7 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         Process process = processService.getById(1);
-        DigitalDocumentInterface digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
 
         String processTitle = process.getTitle();
         String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
@@ -466,8 +462,8 @@ public class ProcessServiceIT {
         FileLoader.createMetadataTemplateFile();
 
         Process process = processService.getById(1);
-        FileformatInterface fileFormat = processService.readMetadataAsTemplateFile(process);
-        assertTrue("Read template file has incorrect file format!", fileFormat instanceof MetsModsInterface);
+        LegacyMetsModsDigitalDocumentHelper fileFormat = processService.readMetadataAsTemplateFile(process);
+        assertTrue("Read template file has incorrect file format!", fileFormat instanceof LegacyMetsModsDigitalDocumentHelper);
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
         assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
 
@@ -478,7 +474,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         Process process = processService.getById(1);
-        PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
+        LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(
             new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
@@ -528,7 +524,7 @@ public class ProcessServiceIT {
     public void shouldGetDigitalDocument() throws Exception {
         FileLoader.createMetadataFile();
 
-        DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(1));
+        LegacyMetsModsDigitalDocumentHelper actual = processService.getDigitalDocument(processService.getById(1));
         assertEquals("Metadata size in digital document is incorrect!", 1,
             actual.getLogicalDocStruct().getAllMetadata().size());
 

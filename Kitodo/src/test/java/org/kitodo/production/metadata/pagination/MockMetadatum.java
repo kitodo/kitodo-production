@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.Metadata;
 
 class MockMetadata implements Metadata {
@@ -37,7 +37,7 @@ class MockMetadata implements Metadata {
         return null;
     }
 
-    public MetadataInterface getMd() {
+    public LegacyMetadataHelper getMd() {
         return null;
     }
 
@@ -63,7 +63,7 @@ class MockMetadata implements Metadata {
     public void setItems(List<SelectItem> items) {
     }
 
-    public void setMd(MetadataInterface md) {
+    public void setMd(LegacyMetadataHelper md) {
     }
 
     public void setSelectedItem(String selectedItem) {

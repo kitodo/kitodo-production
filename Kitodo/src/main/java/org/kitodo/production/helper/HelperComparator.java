@@ -14,10 +14,10 @@ package org.kitodo.production.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.production.enums.SortType;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
@@ -51,8 +51,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadataTypes(Object firstObject, Object secondObject) {
-        MetadataTypeInterface firstMetadata = (MetadataTypeInterface) firstObject;
-        MetadataTypeInterface secondMetadata = (MetadataTypeInterface) secondObject;
+        LegacyMetadataTypeHelper firstMetadata = (LegacyMetadataTypeHelper) firstObject;
+        LegacyMetadataTypeHelper secondMetadata = (LegacyMetadataTypeHelper) secondObject;
 
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
@@ -68,25 +68,17 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadata(Object firstObject, Object secondObject) {
-        MetadataInterface firstMetadata = (MetadataInterface) firstObject;
-        MetadataInterface secondMetadata = (MetadataInterface) secondObject;
+        LegacyMetadataHelper firstMetadata = (LegacyMetadataHelper) firstObject;
+        LegacyMetadataHelper secondMetadata = (LegacyMetadataHelper) secondObject;
 
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 
-        String firstName = firstMetadata.getMetadataType().getNameByLanguage(language);
-        String secondName = secondMetadata.getMetadataType().getNameByLanguage(language);
-        if (firstName == null) {
-            firstName = firstMetadata.getMetadataType().getName();
-        }
-        if (secondName == null) {
-            secondName = secondMetadata.getMetadataType().getName();
-        }
-        return firstName.compareToIgnoreCase(secondName);
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private int compareDocStructTypes(Object firstObject, Object secondObject) {
-        DocStructTypeInterface firstDocStructType = (DocStructTypeInterface) firstObject;
-        DocStructTypeInterface secondDocStructType = (DocStructTypeInterface) secondObject;
+        LegacyLogicalDocStructTypeHelper firstDocStructType = (LegacyLogicalDocStructTypeHelper) firstObject;
+        LegacyLogicalDocStructTypeHelper secondDocStructType = (LegacyLogicalDocStructTypeHelper) secondObject;
 
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
 

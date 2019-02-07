@@ -20,23 +20,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.ugh.ContentFileInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.FileSetInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataGroupTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.VirtualFileGroupInterface;
-import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units
@@ -44,7 +31,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
  * about to be removed. Do not use this class.
  */
 
-public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStructInterface {
+public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterface {
     private static final Logger logger = LogManager.getLogger(LegacyFileSetDocStructHelper.class);
 
     /**
@@ -56,88 +43,79 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         this.mediaUnits = mediaUnits;
     }
 
-    @Override
-    public void addFile(ContentFileInterface contentFile) {
+    public void addFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void addVirtualFileGroup(VirtualFileGroupInterface virtualFileGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public Iterable<ContentFileInterface> getAllFiles() {
+    public Iterable<LegacyContentFileHelper> getAllFiles() {
+        //TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public void removeFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void removeFile(ContentFileInterface contentFile) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(LegacyDocStructHelperInterface child) {
         mediaUnits.add(((LegacyInnerPhysicalDocStructHelper) child).getMediaUnit());
     }
 
     @Override
-    public void addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException {
+    public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void addContentFile(ContentFileInterface contentFile) {
+    public void addContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException {
+    public void addMetadata(LegacyMetadataHelper metadata) {
         /*
          * Legacy code tries to add (empty) meta-data entries here. I guess this
          * is a bug.
          */
     }
 
-    @Override
-    public DocStructInterface addMetadata(String metadataType, String value) throws MetadataTypeNotAllowedException {
-        //TODO remove
+    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
+        // TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public void addMetadataGroup(MetadataGroupInterface metadataGroup) {
+        // TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public void addPerson(PersonInterface person) {
+        // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException {
+    public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException {
+    public LegacyDocStructHelperInterface copy(boolean copyMetaData, Boolean recursive) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public ReferenceInterface addReferenceTo(DocStructInterface docStruct, String type) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public DocStructInterface copy(boolean copyMetaData, Boolean recursive) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public DocStructInterface createChild(String docStructType, DigitalDocumentInterface digitalDocument,
-            PrefsInterface prefs) throws TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
+    public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
+            LegacyPrefsHelper prefs) {
 
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -149,21 +127,20 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public List<MetadataGroupTypeInterface> getAddableMetadataGroupTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataTypeInterface> getAddableMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<DocStructInterface> getAllChildren() {
-        List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
+    public List<LegacyDocStructHelperInterface> getAllChildren() {
+        List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
             result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
@@ -171,43 +148,39 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     }
 
     @Override
-    public List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
-        List<DocStructInterface> result = new ArrayList<>(mediaUnits.size());
+    public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
+        List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
         for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
             result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
         return result;
     }
 
-    @Override
-    public List<ContentFileInterface> getAllContentFiles() {
+    public List<LegacyContentFileHelper> getAllContentFiles() {
+        //TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public List<LegacyReferenceHelper> getAllFromReferences() {
+        //TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<ReferenceInterface> getAllFromReferences() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public List<MetadataInterface> getAllIdentifierMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    public List<MetadataInterface> getAllMetadata() {
+    public List<LegacyMetadataHelper> getAllMetadata() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType) {
+    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
     }
 
-    @Override
     public List<MetadataGroupInterface> getAllMetadataGroups() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -219,14 +192,13 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public List<PersonInterface> getAllPersonsByType(MetadataTypeInterface metadataType) {
+    public List<PersonInterface> getAllPersonsByType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<ReferenceInterface> getAllReferences(String direction) {
+    public List<LegacyReferenceHelper> getAllReferences(String direction) {
         /*
          * Although the method is called because the same loop is used for
          * logical and physical structure elements, it must come back empty.
@@ -235,18 +207,17 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
     }
 
     @Override
-    public Collection<ReferenceInterface> getAllToReferences() {
+    public Collection<LegacyReferenceHelper> getAllToReferences() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public Collection<ReferenceInterface> getAllToReferences(String type) {
+    public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public Object getAllVisibleMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
@@ -258,14 +229,13 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public DocStructInterface getChild(String type, String identifierField, String identifier) {
+    public LegacyDocStructHelperInterface getChild(String type, String identifierField, String identifier) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataTypeInterface> getDisplayMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -276,26 +246,25 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public DocStructInterface getNextChild(DocStructInterface predecessor) {
+    public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public DocStructInterface getParent() {
+    public LegacyDocStructHelperInterface getParent() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public List<MetadataTypeInterface> getPossibleMetadataTypes() {
+    public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public DocStructTypeInterface getDocStructType() {
+    public LegacyLogicalDocStructTypeHelper getDocStructType() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
@@ -306,63 +275,56 @@ public class LegacyFileSetDocStructHelper implements FileSetInterface, DocStruct
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
-    public DocStructTypeInterface getType() {
+    public LegacyLogicalDocStructTypeHelper getType() {
         StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
         logger.log(Level.WARN, "Method {}.{}() invokes {}.{}(), bypassing the interface!", stackTrace[1].getClassName(),
             stackTrace[1].getMethodName(), stackTrace[0].getClassName(), stackTrace[0].getMethodName());
         return getDocStructType();
     }
 
-    @Override
-    public boolean isDocStructTypeAllowedAsChild(DocStructTypeInterface type) {
+    public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
+        // TODO remove
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    public void removeChild(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void removeChild(DocStructInterface docStruct) {
-        //TODO remove
+    public void removeContentFile(LegacyContentFileHelper contentFile) {
+        // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException {
+    public void removeMetadata(LegacyMetadataHelper metaDatum) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void removeMetadata(MetadataInterface metaDatum) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
     public void removeMetadataGroup(MetadataGroupInterface metadataGroup) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void removePerson(PersonInterface person) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
-    public void removeReferenceTo(DocStructInterface target) {
+    public void removeReferenceTo(LegacyDocStructHelperInterface target) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setImageName(String imageName) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void setType(DocStructTypeInterface docStructType) {
+    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

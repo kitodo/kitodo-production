@@ -41,26 +41,21 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.ContentFileInterface;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
-import org.kitodo.api.ugh.RomanNumeralInterface;
-import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
@@ -69,12 +64,12 @@ import org.kitodo.production.services.file.FileService;
 
 public class ImageHelper {
     private static final Logger logger = LogManager.getLogger(ImageHelper.class);
-    private final PrefsInterface myPrefs;
-    private final DigitalDocumentInterface mydocument;
+    private final LegacyPrefsHelper myPrefs;
+    private final LegacyMetsModsDigitalDocumentHelper mydocument;
     private int myLastImage = 0;
     private static final FileService fileService = ServiceManager.getFileService();
 
-    public ImageHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public ImageHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
         this.myPrefs = inPrefs;
         this.mydocument = inDocument;
     }
@@ -87,9 +82,9 @@ public class ImageHelper {
      * delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, URI directory) throws IOException {
-        DocStructInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
-        DocStructInterface logicalStructure = this.mydocument.getLogicalDocStruct();
-        List<DocStructInterface> allChildren = logicalStructure.getAllChildren();
+        LegacyDocStructHelperInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
+        LegacyDocStructHelperInterface logicalStructure = this.mydocument.getLogicalDocStruct();
+        List<LegacyDocStructHelperInterface> allChildren = logicalStructure.getAllChildren();
         while (logicalStructure.getDocStructType().getAnchorClass() != null && Objects.nonNull(allChildren)
                 && !allChildren.isEmpty()) {
             logicalStructure = allChildren.get(0);
@@ -110,8 +105,8 @@ public class ImageHelper {
         }
 
         // retrieve existing pages/images
-        DocStructTypeInterface newPage = this.myPrefs.getDocStrctTypeByName("page");
-        List<DocStructInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
+        LegacyLogicalDocStructTypeHelper newPage = this.myPrefs.getDocStrctTypeByName("page");
+        List<LegacyDocStructHelperInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
             oldPages = new ArrayList<>();
         }
@@ -122,11 +117,11 @@ public class ImageHelper {
         }
 
         String defaultPagination = ConfigCore.getParameterOrDefaultValue(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION);
-        Map<String, DocStructInterface> assignedImages = new HashMap<>();
-        List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
+        Map<String, LegacyDocStructHelperInterface> assignedImages = new HashMap<>();
+        List<LegacyDocStructHelperInterface> pageElementsWithoutImages = new ArrayList<>();
 
         if (physicalStructure.getAllChildren() != null && !physicalStructure.getAllChildren().isEmpty()) {
-            for (DocStructInterface page : physicalStructure.getAllChildren()) {
+            for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildren()) {
                 if (page.getImageName() != null) {
                     URI imageFile;
                     if (directory == null) {
@@ -139,12 +134,7 @@ public class ImageHelper {
                     if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
                     } else {
-                        try {
-                            page.removeContentFile(page.getAllContentFiles().get(0));
-                            pageElementsWithoutImages.add(page);
-                        } catch (ContentFileNotLinkedException e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                        throw new UnsupportedOperationException("Dead code pending removal");
                     }
                 } else {
                     pageElementsWithoutImages.add(page);
@@ -158,18 +148,15 @@ public class ImageHelper {
 
         // case 1: existing pages but no images (some images are removed)
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
-            for (DocStructInterface pageToRemove : pageElementsWithoutImages) {
+            for (LegacyDocStructHelperInterface pageToRemove : pageElementsWithoutImages) {
                 physicalStructure.removeChild(pageToRemove);
-                List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-                for (ReferenceInterface ref : refs) {
-                    ref.getSource().removeReferenceTo(pageToRemove);
-                }
+                throw new UnsupportedOperationException("Dead code pending removal");
             }
         } else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
             // case 2: no page docs but images (some images are added)
             int currentPhysicalOrder = assignedImages.size();
             for (URI newImage : imagesWithoutPageElements) {
-                DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
+                LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
                 try {
                     // physical page no
                     physicalStructure.addChild(dsPage);
@@ -183,13 +170,13 @@ public class ImageHelper {
                     // image name
                     dsPage.addContentFile(createContentFile(newImage));
 
-                } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
+                } catch (MetadataTypeNotAllowedException e) {
                     logger.error(e.getMessage(), e);
                 }
             }
         } else {
             // case 3: empty page docs and unassinged images
-            for (DocStructInterface page : pageElementsWithoutImages) {
+            for (LegacyDocStructHelperInterface page : pageElementsWithoutImages) {
                 if (!imagesWithoutPageElements.isEmpty()) {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
@@ -198,17 +185,14 @@ public class ImageHelper {
                 } else {
                     // remove page
                     physicalStructure.removeChild(page);
-                    List<ReferenceInterface> refs = new ArrayList<>(page.getAllFromReferences());
-                    for (ReferenceInterface ref : refs) {
-                        ref.getSource().removeReferenceTo(page);
-                    }
+                    throw new UnsupportedOperationException("Dead code pending removal");
                 }
             }
             if (!imagesWithoutPageElements.isEmpty()) {
                 // create new page elements
                 int currentPhysicalOrder = physicalStructure.getAllChildren().size();
                 for (URI newImage : imagesWithoutPageElements) {
-                    DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
+                    LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
                     try {
                         // physical page no
                         physicalStructure.addChild(dsPage);
@@ -221,7 +205,7 @@ public class ImageHelper {
 
                         // image name
                         dsPage.addContentFile(createContentFile(newImage));
-                    } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
+                    } catch (MetadataTypeNotAllowedException e) {
                         logger.error(e.getMessage(), e);
                     }
                 }
@@ -229,15 +213,15 @@ public class ImageHelper {
             }
         }
         int currentPhysicalOrder = 1;
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-            for (DocStructInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
-                List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
+            for (LegacyDocStructHelperInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
+                List<? extends LegacyMetadataHelper> pageNoMetadata = page.getAllMetadataByType(mdt);
                 if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
                     break;
                 }
-                for (MetadataInterface pageNo : pageNoMetadata) {
+                for (LegacyMetadataHelper pageNo : pageNoMetadata) {
                     pageNo.setStringValue(String.valueOf(currentPhysicalOrder));
                 }
                 currentPhysicalOrder++;
@@ -404,11 +388,11 @@ public class ImageHelper {
      *            DocStruct object
      * @return list of Strings
      */
-    public List<URI> getImageFiles(DocStructInterface physical) {
+    public List<URI> getImageFiles(LegacyDocStructHelperInterface physical) {
         List<URI> orderedFileList = new ArrayList<>();
-        List<DocStructInterface> pages = physical.getAllChildren();
+        List<LegacyDocStructHelperInterface> pages = physical.getAllChildren();
         if (pages != null) {
-            for (DocStructInterface page : pages) {
+            for (LegacyDocStructHelperInterface page : pages) {
                 URI filename = URI.create(page.getImageName());
                 orderedFileList.add(filename);
             }
@@ -468,9 +452,9 @@ public class ImageHelper {
 
     private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
         List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<LegacyDocStructHelperInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
         if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
+            for (LegacyDocStructHelperInterface page : pagesList) {
                 String fileName = page.getImageName();
                 String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
                 for (URI currentImage : dataList) {
@@ -485,27 +469,27 @@ public class ImageHelper {
         return orderedFileNameList;
     }
 
-    private DocStructInterface createPhysicalStructure(Process process) throws IOException {
-        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
-        DocStructInterface physicalStructure = this.mydocument.createDocStruct(dst);
+    private LegacyDocStructHelperInterface createPhysicalStructure(Process process) throws IOException {
+        LegacyLogicalDocStructTypeHelper dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
+        LegacyDocStructHelperInterface physicalStructure = this.mydocument.createDocStruct(dst);
 
         // problems with FilePath
-        MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+        LegacyMetadataTypeHelper metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
         try {
-            MetadataInterface mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
+            LegacyMetadataHelper mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
             URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
                 process.getTitle(), process.getProcessBaseUri());
             String pathString = new File(pathURI).getPath();
             mdForPath.setStringValue(pathString);
             physicalStructure.addMetadata(mdForPath);
-        } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+        } catch (DocStructHasNoTypeException e) {
             logger.error(e.getMessage(), e);
         }
 
         return physicalStructure;
     }
 
-    private List<URI> getImagesWithoutPageElements(Process process, Map<String, DocStructInterface> assignedImages) {
+    private List<URI> getImagesWithoutPageElements(Process process, Map<String, LegacyDocStructHelperInterface> assignedImages) {
         List<URI> imagesWithoutPageElements = new ArrayList<>();
         try {
             List<URI> imageNamesInMediaFolder = getDataFiles(process);
@@ -529,10 +513,10 @@ public class ImageHelper {
      *            as String
      * @return Metadata object
      */
-    private MetadataInterface createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
+    private LegacyMetadataHelper createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
-        MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
+        LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(determinePagination(currentPhysicalOrder, defaultPagination));
         return metadata;
     }
@@ -544,10 +528,10 @@ public class ImageHelper {
      *            as int
      * @return Metadata object
      */
-    private MetadataInterface createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
+    private LegacyMetadataHelper createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
-        MetadataTypeInterface metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        MetadataInterface metadata = new LegacyMetadataHelper(metadataType);
+        LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(String.valueOf(currentPhysicalOrder));
         return metadata;
     }
@@ -559,8 +543,8 @@ public class ImageHelper {
      *            URI to image
      * @return ContentFile object
      */
-    private ContentFileInterface createContentFile(URI image) {
-        ContentFileInterface contentFile = new LegacyContentFileHelper();
+    private LegacyContentFileHelper createContentFile(URI image) {
+        LegacyContentFileHelper contentFile = new LegacyContentFileHelper();
         contentFile.setLocation(image.getPath());
         return contentFile;
     }
@@ -580,7 +564,7 @@ public class ImageHelper {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase(
             (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
-            RomanNumeralInterface roman = new LegacyRomanNumeralHelper();
+            LegacyRomanNumeralHelper roman = new LegacyRomanNumeralHelper();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {

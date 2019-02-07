@@ -25,10 +25,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -40,6 +36,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
@@ -142,13 +140,13 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
+    public boolean startExport(Process process, URI inZielVerzeichnis, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException, WriteException, PreferencesException, JAXBException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
-        FileformatInterface gdzfile = readDocument(process, newFile);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile);
         if (Objects.isNull(gdzfile)) {
             return false;
         }
@@ -220,7 +218,7 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
+    private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
         try {
             String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
             if (Objects.nonNull(rules)) {
@@ -274,8 +272,8 @@ public class ExportDms extends ExportMets {
         return true;
     }
 
-    private FileformatInterface readDocument(Process process, DigitalDocumentInterface newFile) {
-        FileformatInterface gdzfile;
+    private LegacyMetsModsDigitalDocumentHelper readDocument(Process process, LegacyMetsModsDigitalDocumentHelper newFile) {
+        LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
@@ -319,7 +317,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
+    private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, PreferencesException, WriteException, JAXBException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
@@ -392,7 +390,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void exportWithoutImport(Process process, FileformatInterface gdzfile, URI destinationDirectory)
+    private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
             throws IOException, PreferencesException, WriteException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -428,10 +426,10 @@ public class ExportDms extends ExportMets {
      * Run through all metadata and children of given docstruct to trim the strings
      * calls itself recursively.
      */
-    private void trimAllMetadata(DocStructInterface inStruct) {
+    private void trimAllMetadata(LegacyDocStructHelperInterface inStruct) {
         // trim all metadata values
         if (inStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : inStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setStringValue(md.getValue().trim());
                 }
@@ -440,7 +438,7 @@ public class ExportDms extends ExportMets {
 
         // run through all children of docstruct
         if (inStruct.getAllChildren() != null) {
-            for (DocStructInterface child : inStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }

@@ -503,6 +503,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
+                ModificationItem[] mods = new ModificationItem[4];
+
                 // encryption of password and Base64-Encoding
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
@@ -511,20 +513,18 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",
                         "{" + passwordEncryption + "}" + encryptedPassword);
+                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
 
                 // change attribute lanmgrPassword
                 BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
+                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
 
                 // change attribute ntlmPassword
                 BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
+                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
 
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
                         String.valueOf(System.currentTimeMillis() / 1000L));
-
-                ModificationItem[] mods = new ModificationItem[4];
-                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
-                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
-                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
 
                 DirContext ctx = new InitialDirContext(env);

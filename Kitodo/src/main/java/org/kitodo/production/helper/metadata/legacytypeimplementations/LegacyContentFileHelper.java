@@ -14,7 +14,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import java.io.File;
 
 import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.ugh.ContentFileInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
@@ -23,7 +22,7 @@ import org.kitodo.production.services.dataformat.MetsService;
  * keep legacy code operational which is about to be removed. Do not use this
  * class.
  */
-public class LegacyContentFileHelper implements ContentFileInterface {
+public class LegacyContentFileHelper {
 
     private static final MetsService metsService = ServiceManager.getMetsService();
 
@@ -36,12 +35,10 @@ public class LegacyContentFileHelper implements ContentFileInterface {
         mediaFile = metsService.createFLocatXmlElementAccess();
     }
 
-    @Override
     public String getLocation() {
         return mediaFile.getUri().toString();
     }
 
-    @Override
     public void setLocation(String fileName) {
         mediaFile.setUri(new File(fileName).toURI());
     }
@@ -49,5 +46,4 @@ public class LegacyContentFileHelper implements ContentFileInterface {
     public FLocatXmlElementAccessInterface getMediaFile() {
         return mediaFile;
     }
-
 }

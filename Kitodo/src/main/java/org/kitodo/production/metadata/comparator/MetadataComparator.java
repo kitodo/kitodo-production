@@ -16,10 +16,10 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 
-public class MetadataComparator implements Comparator<MetadataInterface> {
+public class MetadataComparator implements Comparator<LegacyMetadataHelper> {
     private static final Logger logger = LogManager.getLogger(MetadataComparator.class);
     private String language;
 
@@ -28,7 +28,7 @@ public class MetadataComparator implements Comparator<MetadataInterface> {
     }
 
     @Override
-    public int compare(MetadataInterface firstMetadata, MetadataInterface secondMetadata) {
+    public int compare(LegacyMetadataHelper firstMetadata, LegacyMetadataHelper secondMetadata) {
         if (Objects.isNull(firstMetadata)) {
             return -1;
         }
@@ -38,10 +38,10 @@ public class MetadataComparator implements Comparator<MetadataInterface> {
         String firstName;
         String secondName;
         try {
-            MetadataTypeInterface firstMetadataType = firstMetadata.getMetadataType();
-            MetadataTypeInterface secondMetadataType = secondMetadata.getMetadataType();
-            firstName = firstMetadataType.getNameByLanguage(this.language);
-            secondName = secondMetadataType.getNameByLanguage(this.language);
+            LegacyMetadataTypeHelper firstMetadataType = firstMetadata.getMetadataType();
+            LegacyMetadataTypeHelper secondMetadataType = secondMetadata.getMetadataType();
+            firstName = firstMetadataType.getLanguage(this.language);
+            secondName = secondMetadataType.getLanguage(this.language);
         } catch (NullPointerException e) {
             logger.debug("Language {} for metadata {} or {} is missing in ruleset", this.language,
                     firstMetadata.getMetadataType(), secondMetadata.getMetadataType());

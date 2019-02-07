@@ -15,23 +15,22 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Represents the only existing legacy doc struct type from the physical map
  * named “page”. This is a soldering class to keep legacy code operational which
  * is about to be removed. Do not use this class.
  */
-public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructTypeInterface {
+public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDocStructTypeHelper {
     private static final Logger logger = LogManager.getLogger(LegacyInnerPhysicalDocStructTypePageHelper.class);
 
     /**
      * The sole doc struct type instance “page”.
      */
-    public static final DocStructTypeInterface INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
+    public static final LegacyLogicalDocStructTypeHelper INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
 
     private LegacyInnerPhysicalDocStructTypePageHelper() {
+        super(null);
     }
 
     @Override
@@ -41,8 +40,8 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
     }
 
     @Override
-    public List<MetadataTypeInterface> getAllMetadataTypes() {
-        //TODO remove
+    public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
+        // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
@@ -68,7 +67,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper implements DocStructType
     }
 
     @Override
-    public String getNumberOfMetadataType(MetadataTypeInterface metadataType) {
+    public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }

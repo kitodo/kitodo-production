@@ -27,21 +27,18 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.metadata.comparator.MetadataComparator;
 import org.kitodo.production.services.ServiceManager;
 
@@ -49,10 +46,10 @@ public class MetadataHelper {
     private static final Logger logger = LogManager.getLogger(MetadataHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
-    private PrefsInterface prefs;
-    private DigitalDocumentInterface digitalDocument;
+    private LegacyPrefsHelper prefs;
+    private LegacyMetsModsDigitalDocumentHelper digitalDocument;
 
-    public MetadataHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public MetadataHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
         this.prefs = inPrefs;
         this.digitalDocument = inDocument;
     }
@@ -78,7 +75,7 @@ public class MetadataHelper {
     /**
      * die MetadatenTypen zurückgeben.
      */
-    public SelectItem[] getAddableDocStructTypen(DocStructInterface inStruct, boolean checkTypesFromParent) {
+    public SelectItem[] getAddableDocStructTypen(LegacyDocStructHelperInterface inStruct, boolean checkTypesFromParent) {
         /*
          * zuerst mal die addierbaren Metadatentypen ermitteln
          */
@@ -99,9 +96,9 @@ public class MetadataHelper {
             return myTypes;
         }
 
-        List<DocStructTypeInterface> newTypes = new ArrayList<>();
+        List<LegacyLogicalDocStructTypeHelper> newTypes = new ArrayList<>();
         for (String tempTitel : types) {
-            DocStructTypeInterface dst = this.prefs.getDocStrctTypeByName(tempTitel);
+            LegacyLogicalDocStructTypeHelper dst = this.prefs.getDocStrctTypeByName(tempTitel);
             if (dst != null) {
                 newTypes.add(dst);
             } else {
@@ -125,7 +122,7 @@ public class MetadataHelper {
         // und anschliessend alle Elemente in das Array packen
         zaehler = 0;
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
-        for (DocStructTypeInterface docStructType : newTypes) {
+        for (LegacyLogicalDocStructTypeHelper docStructType : newTypes) {
             String label = docStructType.getNameByLanguage(language);
             if (label == null) {
                 label = docStructType.getName();
@@ -140,10 +137,10 @@ public class MetadataHelper {
      * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv
      * aufrufen.
      */
-    public void deleteAllUnusedElements(DocStructInterface inStruct) {
+    public void deleteAllUnusedElements(LegacyDocStructHelperInterface inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
         if (Objects.nonNull(inStruct.getAllChildren())) {
-            for (DocStructInterface child : inStruct.getAllChildren()) {
+            for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
                 deleteAllUnusedElements(child);
             }
         }
@@ -153,39 +150,39 @@ public class MetadataHelper {
      * die erste Imagenummer zurückgeben.
      */
     // FIXME: alphanumerisch
-    public String getImageNumber(DocStructInterface inStrukturelement, int inPageNumber) {
+    public String getImageNumber(LegacyDocStructHelperInterface inStrukturelement, int inPageNumber) {
         String rueckgabe = "";
 
         if (inStrukturelement == null) {
             return "";
         }
-        List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
+        List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
             references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;
                 Integer secondPage = 0;
-                final MetadataTypeInterface mdt = MetadataHelper.this.prefs
+                final LegacyMetadataTypeHelper mdt = MetadataHelper.this.prefs
                         .getMetadataTypeByName("physPageNumber");
-                List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
+                List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final MetadataInterface page = listMetadata.get(0);
+                    final LegacyMetadataHelper page = listMetadata.get(0);
                     firstPage = Integer.parseInt(page.getValue());
                 }
                 listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final MetadataInterface page = listMetadata.get(0);
+                    final LegacyMetadataHelper page = listMetadata.get(0);
                     secondPage = Integer.parseInt(page.getValue());
                 }
                 return firstPage.compareTo(secondPage);
             });
 
-            MetadataTypeInterface mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends MetadataInterface> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
+            LegacyMetadataTypeHelper mdt = this.prefs.getMetadataTypeByName("physPageNumber");
+            List<? extends LegacyMetadataHelper> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                MetadataInterface meineSeite = listSeiten.get(0);
+                LegacyMetadataHelper meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
             mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
@@ -194,7 +191,7 @@ public class MetadataHelper {
                 listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                MetadataInterface meineSeite = listSeiten.get(0);
+                LegacyMetadataHelper meineSeite = listSeiten.get(0);
                 rueckgabe += ":" + meineSeite.getValue();
             }
         }
@@ -205,12 +202,12 @@ public class MetadataHelper {
      * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
      * DefaultDisplay-Metadaten ergänzen.
      */
-    public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(DocStructInterface inStruct,
+    public List<? extends LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
-        List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
+        List<LegacyMetadataTypeHelper> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
         if (displayMetadataTypes != null) {
-            for (MetadataTypeInterface mdt : displayMetadataTypes) {
+            for (LegacyMetadataTypeHelper mdt : displayMetadataTypes) {
                 // check, if mdt is already in the allMDs Metadata list, if not
                 // - add it
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
@@ -218,11 +215,11 @@ public class MetadataHelper {
                         if (mdt.isPerson()) {
                             throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
-                            MetadataInterface md = new LegacyMetadataHelper(mdt);
+                            LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
-                    } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                    } catch (DocStructHasNoTypeException e) {
                         logger.error(e.getMessage(), e);
                     }
                 }
@@ -234,13 +231,9 @@ public class MetadataHelper {
          * sortieren
          */
         if (inIsPerson) {
-            List<PersonInterface> person = inStruct.getAllPersons();
-            if (person != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                person.sort(new MetadataComparator(inLanguage));
-            }
-            return person;
+            throw new UnsupportedOperationException("Dead code pending removal");
         } else {
-            List<MetadataInterface> metadata = inStruct.getAllMetadata();
+            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
             if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
                 metadata.sort(new MetadataComparator(inLanguage));
             }
@@ -250,14 +243,14 @@ public class MetadataHelper {
     }
 
     /** TODO: Replace it, after Maven is kicked :). */
-    private List<MetadataInterface> getAllVisibleMetadataHack(DocStructInterface inStruct) {
+    private List<LegacyMetadataHelper> getAllVisibleMetadataHack(LegacyDocStructHelperInterface inStruct) {
 
         // Start with the list of all metadata.
-        List<MetadataInterface> result = new LinkedList<>();
+        List<LegacyMetadataHelper> result = new LinkedList<>();
 
         // Iterate over all metadata.
         if (inStruct.getAllMetadata() != null) {
-            for (MetadataInterface md : inStruct.getAllMetadata()) {
+            for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
                 // If the metadata has some value and it does not start with the
                 // HIDDEN_METADATA_CHAR, add it to the result list.
                 if (!md.getMetadataType().getName().startsWith("_")) {
@@ -306,7 +299,7 @@ public class MetadataHelper {
      *            MetadataType object
      * @return localized Title of metadata type
      */
-    public String getMetadatatypeLanguage(MetadataTypeInterface inMdt) {
+    public String getMetadatatypeLanguage(LegacyMetadataTypeHelper inMdt) {
         String label = inMdt.getLanguage(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = inMdt.getName();
@@ -324,18 +317,18 @@ public class MetadataHelper {
      *            der aktuellen Person, damit diese ggf. in die Liste mit
      *            übernommen wird
      */
-    public List<SelectItem> getAddablePersonRoles(DocStructInterface myDocStruct, String inRoleName) {
+    public List<SelectItem> getAddablePersonRoles(LegacyDocStructHelperInterface myDocStruct, String inRoleName) {
         ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln
          */
-        List<MetadataTypeInterface> types = myDocStruct.getPossibleMetadataTypes();
+        List<LegacyMetadataTypeHelper> types = myDocStruct.getPossibleMetadataTypes();
         if (types == null) {
             types = new ArrayList<>();
         }
         if (inRoleName != null && inRoleName.length() > 0) {
             boolean addRole = true;
-            for (MetadataTypeInterface mdt : types) {
+            for (LegacyMetadataTypeHelper mdt : types) {
                 if (mdt.getName().equals(inRoleName)) {
                     addRole = false;
                 }
@@ -349,7 +342,7 @@ public class MetadataHelper {
          * alle Metadatentypen, die keine Person sind, oder mit einem
          * Unterstrich anfangen rausnehmen
          */
-        for (MetadataTypeInterface mdt : new ArrayList<>(types)) {
+        for (LegacyMetadataTypeHelper mdt : new ArrayList<>(types)) {
             if (!mdt.isPerson()) {
                 types.remove(mdt);
             }
@@ -359,13 +352,13 @@ public class MetadataHelper {
         c.setSortType(SortType.METADATA_TYPE);
         types.sort(c);
 
-        for (MetadataTypeInterface mdt : types) {
+        for (LegacyMetadataTypeHelper mdt : types) {
             myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));
         }
         return myList;
     }
 
-    public PrefsInterface getPrefs() {
+    public LegacyPrefsHelper getPrefs() {
         return this.prefs;
     }
 }

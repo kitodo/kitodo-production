@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.services.validation;
+package org.kitodo.services.validation;
 
 import java.io.IOException;
 import java.util.List;

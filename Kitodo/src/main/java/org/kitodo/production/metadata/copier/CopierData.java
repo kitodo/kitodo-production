@@ -11,14 +11,11 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -39,7 +36,7 @@ public class CopierData {
     /**
      * The workspace file to modify.
      */
-    private final FileformatInterface fileformat;
+    private final LegacyMetsModsDigitalDocumentHelper fileformat;
 
     /**
      * The Goobi process corresponding to the workspace file.
@@ -72,7 +69,7 @@ public class CopierData {
      * @param process
      *            the related goobi process
      */
-    public CopierData(FileformatInterface fileformat, Process process) {
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Process process) {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
@@ -87,7 +84,7 @@ public class CopierData {
      * @param template
      *            the related goobi process
      */
-    public CopierData(FileformatInterface fileformat, Template template) {
+    public CopierData(LegacyMetsModsDigitalDocumentHelper fileformat, Template template) {
         this.fileformat = fileformat;
         this.template = template;
         this.destination = null;
@@ -110,12 +107,8 @@ public class CopierData {
      *
      * @return the digital document
      */
-    DigitalDocumentInterface getDigitalDocument() {
-        try {
-            return fileformat.getDigitalDocument();
-        } catch (PreferencesException e) {
-            throw new MetadataException(e.getMessage(), e);
-        }
+    LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
+        return fileformat.getDigitalDocument();
     }
 
     /**
@@ -123,7 +116,7 @@ public class CopierData {
      *
      * @return the logical document structure
      */
-    public DocStructInterface getLogicalDocStruct() {
+    public LegacyDocStructHelperInterface getLogicalDocStruct() {
         return getDigitalDocument().getLogicalDocStruct();
     }
 
@@ -132,7 +125,7 @@ public class CopierData {
      *
      * @return the required ruleset.
      */
-    public PrefsInterface getPreferences() {
+    public LegacyPrefsHelper getPreferences() {
         return ServiceManager.getRulesetService().getPreferences((process).getRuleset());
     }
 

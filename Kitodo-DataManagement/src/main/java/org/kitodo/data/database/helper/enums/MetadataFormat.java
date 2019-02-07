@@ -11,26 +11,19 @@
 
 package org.kitodo.data.database.helper.enums;
 
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
-import org.kitodo.api.ugh.RDFFileInterface;
-import org.kitodo.api.ugh.XStreamInterface;
-
 public enum MetadataFormat {
 
-    RDF("Rdf", true, RDFFileInterface.class),
-    METS("Mets", true, MetsModsInterface.class),
-    XSTREAM("XStream", true, XStreamInterface.class),
-    METS_AND_RDF("Mets & Rdf", false, null);
+    RDF("Rdf", true),
+    METS("Mets", true),
+    XSTREAM("XStream", true),
+    METS_AND_RDF("Mets & Rdf", false);
 
     private final String name;
     private final boolean usableForInternal;
-    private final Class<? extends FileformatInterface> clazz;
 
-    MetadataFormat(String inName, boolean inUsableForInternal, Class<? extends FileformatInterface> implClass) {
+    MetadataFormat(String inName, boolean inUsableForInternal) {
         this.name = inName;
         this.usableForInternal = inUsableForInternal;
-        this.clazz = implClass;
     }
 
     public String getName() {
@@ -59,9 +52,5 @@ public enum MetadataFormat {
 
     public static MetadataFormat getDefaultFileFormat() {
         return XSTREAM;
-    }
-
-    public Class<? extends FileformatInterface> getImplClass() {
-        return this.clazz;
     }
 }

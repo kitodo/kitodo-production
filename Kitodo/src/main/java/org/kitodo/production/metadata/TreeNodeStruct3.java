@@ -13,14 +13,14 @@ package org.kitodo.production.metadata;
 
 import java.util.ArrayList;
 
-import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.TreeNode;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 public class TreeNodeStruct3 extends TreeNode {
 
-    private DocStructInterface struct;
+    private LegacyDocStructHelperInterface struct;
     private String firstImage;
     private String lastImage;
     private String zblNummer;
@@ -56,7 +56,7 @@ public class TreeNodeStruct3 extends TreeNode {
      * @param struct
      *            as DocStruct
      */
-    public TreeNodeStruct3(String label, DocStructInterface struct) {
+    public TreeNodeStruct3(String label, LegacyDocStructHelperInterface struct) {
         this.label = label;
         this.struct = struct;
     }
@@ -112,11 +112,11 @@ public class TreeNodeStruct3 extends TreeNode {
         this.lastImage = lastImage;
     }
 
-    public DocStructInterface getStruct() {
+    public LegacyDocStructHelperInterface getStruct() {
         return this.struct;
     }
 
-    public void setStruct(DocStructInterface struct) {
+    public void setStruct(LegacyDocStructHelperInterface struct) {
         this.struct = struct;
     }
 

@@ -27,15 +27,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.FileSetInterface;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
-import org.kitodo.api.ugh.MetsModsInterface;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
@@ -49,9 +40,33 @@ import org.kitodo.production.services.file.FileService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyMetsModsDigitalDocumentHelper
-        implements DigitalDocumentInterface, MetsModsInterface, MetsModsImportExportInterface {
+public class LegacyMetsModsDigitalDocumentHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetsModsDigitalDocumentHelper.class);
+
+    /**
+     * For each meta data element of this type that is associated with a
+     * DocStruct element of the logical structure tree of a digital document, a
+     * METS pointer element will be created during export.
+     */
+    public static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
+
+    /**
+     * If there is a meta data element of this type associated with a DocStruct
+     * element of the logical structure tree of a digital document, a LABEL
+     * attribute will be attached to the logical div element during export which
+     * will have assigned the value assigned to the last meta data element of
+     * this type associated with the DocStruct element.
+     */
+    public static final String CREATE_LABEL_ATTRIBUTE_TYPE = "TitleDocMain";
+
+    /**
+     * If there is a meta data element of this type associated with a DocStruct
+     * element of the logical structure tree of a digital document, an
+     * ORDERLABEL attribute will be attached to the logical div element during
+     * export which will have assigned the value assigned to the last meta data
+     * element of this type associated with the DocStruct element.
+     */
+    public static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
 
     private static final MetsService metsService = ServiceManager.getMetsService();
     private static final FileService fileService = ServiceManager.getFileService();
@@ -121,7 +136,11 @@ public class LegacyMetsModsDigitalDocumentHelper
         this.workpiece = workpiece;
     }
 
-    @Override
+    /**
+     * Add all content files to the digital document according to the
+     * pathimagefiles meta-data. The pages in the physical DocStruct must
+     * already exist!
+     */
     public void addAllContentFiles() {
         /*
          * In the legacy implementation, this method must be called to fully
@@ -131,8 +150,15 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
-    public DocStructInterface createDocStruct(DocStructTypeInterface docStructType) {
+    /**
+     * Creates a document structure with the given document structure type for
+     * the Digital Document.
+     *
+     * @param docStructType
+     *            document structure type for the new document structure
+     * @return the new document structure
+     */
+    public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
             return new LegacyLogicalDocStructHelper(metsService.createDivXmlElementAccess(), null, ruleset, priorityList);
         } else {
@@ -162,23 +188,19 @@ public class LegacyMetsModsDigitalDocumentHelper
         return message;
     }
 
-    @Override
-    public DigitalDocumentInterface getDigitalDocument() throws PreferencesException {
+    public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;
     }
 
-    @Override
-    public FileSetInterface getFileSet() {
+    public LegacyFileSetDocStructHelper getFileSet() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
-    @Override
-    public DocStructInterface getLogicalDocStruct() {
+    public LegacyDocStructHelperInterface getLogicalDocStruct() {
         return new LegacyLogicalDocStructHelper(workpiece.getStructMap(), null, ruleset, priorityList);
     }
 
-    @Override
-    public DocStructInterface getPhysicalDocStruct() {
+    public LegacyDocStructHelperInterface getPhysicalDocStruct() {
         return new LegacyFileSetDocStructHelper(workpiece.getFileGrp());
     }
 
@@ -191,14 +213,20 @@ public class LegacyMetsModsDigitalDocumentHelper
         return workpiece;
     }
 
-    @Override
     public void overrideContentFiles(List<String> images) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void read(String path) throws ReadException {
+    /**
+     * Reads a file and creates a digital document instance.
+     *
+     * @param path
+     *            full path to file which should be read
+     * @throws IOException
+     *             may be thrown if reading fails
+     */
+    public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
 
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
@@ -208,33 +236,35 @@ public class LegacyMetsModsDigitalDocumentHelper
                     workpiece.read(in);
                 }
             } else {
-                throw new ReadException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult));
             }
-        } catch (IOException e) {
-            throw new ReadException(e.getMessage(), e);
         }
     }
 
-    @Override
-    public void setDigitalDocument(DigitalDocumentInterface digitalDocument) {
-        LegacyMetsModsDigitalDocumentHelper metsKitodoDocument = (LegacyMetsModsDigitalDocumentHelper) digitalDocument;
+    public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper metsKitodoDocument) {
         this.workpiece = metsKitodoDocument.workpiece;
     }
 
-    @Override
-    public void setLogicalDocStruct(DocStructInterface docStruct) {
+    public void setLogicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void setPhysicalDocStruct(DocStructInterface docStruct) {
+    public void setPhysicalDocStruct(LegacyDocStructHelperInterface docStruct) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public void write(String filename) throws PreferencesException, WriteException {
+    /**
+     * Writes the content of the DigitalDocument instance to a file. The file
+     * format must already have a DigitalDocument instance.
+     *
+     * @param filename
+     *            full path to the file
+     * @throws IOException
+     *             may be thrown if writing fails
+     */
+    public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
 
         try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
@@ -244,10 +274,8 @@ public class LegacyMetsModsDigitalDocumentHelper
                     workpiece.save(out);
                 }
             } else {
-                throw new WriteException(createLockErrorMessage(uri, lockResult));
+                throw new IOException(createLockErrorMessage(uri, lockResult));
             }
-        } catch (IOException e) {
-            throw new WriteException(e.getMessage(), e);
         }
     }
 
@@ -284,7 +312,12 @@ public class LegacyMetsModsDigitalDocumentHelper
         return exception;
     }
 
-    @Override
+    /**
+     * Sets the content IDs of the METS/MODS import export.
+     *
+     * @param contentIDs
+     *            the content IDs to set
+     */
     public void setContentIDs(String contentIDs) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -292,7 +325,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the digital provenience presentation of the METS/MODS import export.
+     *
+     * @param digiprovPresentation
+     *            the digital provenience presentation to set
+     */
     public void setDigiprovPresentation(String digiprovPresentation) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -300,7 +338,13 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the digital provenience presentation anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovPresentationAnchor
+     *            the digital provenience presentation anchor to set
+     */
     public void setDigiprovPresentationAnchor(String digiprovPresentationAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -308,7 +352,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the digital provenience reference of the METS/MODS import export.
+     *
+     * @param digiprovReference
+     *            the digital provenience reference to set
+     */
     public void setDigiprovReference(String digiprovReference) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -316,7 +365,13 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the digital provenience reference anchor of the METS/MODS import
+     * export.
+     *
+     * @param digiprovReferenceAnchor
+     *            the digital provenience reference anchor to set
+     */
     public void setDigiprovReferenceAnchor(String digiprovReferenceAnchor) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -324,7 +379,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the mets:mptr anchor URL of the METS/MODS import export.
+     *
+     * @param mptrAnchorUrl
+     *            the mets:mptr anchor URL to set
+     */
     public void setMptrAnchorUrl(String mptrAnchorUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -332,7 +392,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Adds a mets:mptr URL to the METS/MODS import export.
+     *
+     * @param mptrUrl
+     *            the mets:mptr URL to set
+     */
     public void setMptrUrl(String mptrUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -340,7 +405,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the purl URL of the METS/MODS import export.
+     *
+     * @param purlUrl
+     *            the purl URL to set
+     */
     public void setPurlUrl(String purlUrl) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -348,7 +418,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the rights owner of the METS/MODS import export.
+     *
+     * @param rightsOwner
+     *            the rights owner to set
+     */
     public void setRightsOwner(String rightsOwner) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -356,7 +431,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the rights owner contact of the METS/MODS import export.
+     *
+     * @param rightsOwnerContact
+     *            the rights owner contact to set
+     */
     public void setRightsOwnerContact(String rightsOwnerContact) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -364,7 +444,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the rights owner logo of the METS/MODS import export.
+     *
+     * @param rightsOwnerLogo
+     *            the rights owner logo to set
+     */
     public void setRightsOwnerLogo(String rightsOwnerLogo) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -372,7 +457,12 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets the rights owner site URL of the METS/MODS import export.
+     *
+     * @param rightsOwnerSiteURL
+     *            the rights owner site URL to set
+     */
     public void setRightsOwnerSiteURL(String rightsOwnerSiteURL) {
         /*
          * This is already done by the schema service. There is nothing to do
@@ -380,7 +470,13 @@ public class LegacyMetsModsDigitalDocumentHelper
          */
     }
 
-    @Override
+    /**
+     * Sets whether the METS/MODS import export shall write a local file group.
+     *
+     * @param writeLocalFileGroup
+     *            whether the METS/MODS import export shall write a local file
+     *            group
+     */
     public void setWriteLocal(boolean writeLocalFileGroup) {
         /*
          * This is already done by the schema service. There is nothing to do

@@ -22,14 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.MetsModsImportExportInterface;
-import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -37,6 +29,9 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.CourseToGerman;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -249,14 +244,14 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            rule set the document is based on
      * @return the created child
      */
-    private DocStructInterface createFirstChild(DocStructInterface docStruct, DigitalDocumentInterface document,
-            PrefsInterface ruleset) {
+    private LegacyDocStructHelperInterface createFirstChild(LegacyDocStructHelperInterface docStruct,
+            LegacyMetsModsDigitalDocumentHelper document, LegacyPrefsHelper ruleset) {
 
         String firstAddable = null;
         try {
             firstAddable = docStruct.getDocStructType().getAllAllowedDocStructTypes().get(0);
-            return docStruct.createChild(firstAddable, document, ruleset);
-        } catch (TypeNotAllowedAsChildException | TypeNotAllowedForParentException | RuntimeException e) {
+            throw new UnsupportedOperationException("Dead code pending removal");
+        } catch (RuntimeException e) {
             StringBuilder message = new StringBuilder();
             message.append("Could not add child ");
             if (firstAddable != null) {
@@ -296,57 +291,53 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             String publicationRun) {
 
         // initialise
-        PrefsInterface ruleset = ServiceManager.getRulesetService()
+        LegacyPrefsHelper ruleset = ServiceManager.getRulesetService()
                 .getPreferences(newProcess.getProzessKopie().getRuleset());
-        DigitalDocumentInterface document;
-        try {
-            document = newProcess.getFileformat().getDigitalDocument();
-        } catch (PreferencesException e) {
-            throw new ProcessCreationException(e.getMessage(), e);
-        }
-        DocStructInterface newspaper = document.getLogicalDocStruct();
+        LegacyMetsModsDigitalDocumentHelper document;
+        document = newProcess.getFileformat().getDigitalDocument();
+        LegacyDocStructHelperInterface newspaper = document.getLogicalDocStruct();
 
         // try to add the publication run
         addMetadatum(newspaper, "PublicationRun", publicationRun, false);
 
         // create the year level
-        DocStructInterface year = createFirstChild(newspaper, document, ruleset);
+        LegacyDocStructHelperInterface year = createFirstChild(newspaper, document, ruleset);
         String theYear = Integer.toString(issues.get(0).getDate().getYear());
-        addMetadatum(year, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+        addMetadatum(year, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
         // create the month level
-        Map<Integer, DocStructInterface> months = new HashMap<>();
-        Map<LocalDate, DocStructInterface> days = new HashMap<>(488);
+        Map<Integer, LegacyDocStructHelperInterface> months = new HashMap<>();
+        Map<LocalDate, LegacyDocStructHelperInterface> days = new HashMap<>(488);
         for (IndividualIssue individualIssue : issues) {
             LocalDate date = individualIssue.getDate();
             Integer monthNo = date.getMonthOfYear();
             if (!months.containsKey(monthNo)) {
-                DocStructInterface newMonth = createFirstChild(year, document, ruleset);
-                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                LegacyDocStructHelperInterface newMonth = createFirstChild(year, document, ruleset);
+                addMetadatum(newMonth, LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     monthNo.toString(), true);
                 addMetadatum(newMonth, year.getDocStructType().getName(), theYear, false);
-                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(),
+                addMetadatum(newMonth, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(),
                     false);
                 months.put(monthNo, newMonth);
             }
-            DocStructInterface month = months.get(monthNo);
+            LegacyDocStructHelperInterface month = months.get(monthNo);
 
             // create the day level
             if (!days.containsKey(date)) {
-                DocStructInterface newDay = createFirstChild(month, document, ruleset);
-                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                LegacyDocStructHelperInterface newDay = createFirstChild(month, document, ruleset);
+                addMetadatum(newDay, LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                     Integer.toString(date.getDayOfMonth()), true);
                 addMetadatum(newDay, year.getDocStructType().getName(), theYear, false);
                 addMetadatum(newDay, month.getDocStructType().getName(), Integer.toString(date.getMonthOfYear()),
                     false);
-                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE,
+                addMetadatum(newDay, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE,
                     Integer.toString(date.getDayOfMonth()), false);
                 days.put(date, newDay);
             }
-            DocStructInterface day = days.get(date);
+            LegacyDocStructHelperInterface day = days.get(date);
 
             // create the issue
-            DocStructInterface issue = createFirstChild(day, document, ruleset);
+            LegacyDocStructHelperInterface issue = createFirstChild(day, document, ruleset);
             String heading = individualIssue.getHeading();
             if ((heading != null) && (heading.trim().length() > 0)) {
                 addMetadatum(issue, issue.getDocStructType().getName(), heading, true);
@@ -354,7 +345,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             addMetadatum(issue, year.getDocStructType().getName(), theYear, false);
             addMetadatum(issue, month.getDocStructType().getName(), Integer.toString(date.getMonthOfYear()), false);
             addMetadatum(issue, day.getDocStructType().getName(), Integer.toString(date.getDayOfMonth()), false);
-            addMetadatum(issue, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
+            addMetadatum(issue, LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
         }
     }
 
@@ -371,10 +362,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      * @param fail
      *            if true, throws an error on fail, otherwise returns silently
      */
-    private void addMetadatum(DocStructInterface level, String key, String value, boolean fail) {
+    private void addMetadatum(LegacyDocStructHelperInterface level, String key, String value, boolean fail) {
         try {
-            level.addMetadata(key, value);
-        } catch (MetadataTypeNotAllowedException | RuntimeException e) {
+            throw new UnsupportedOperationException("Dead code pending removal");
+        } catch (RuntimeException e) {
             if (fail) {
                 throw new ProcessCreationException("Could not create metadatum " + key + " in "
                         + (level.getDocStructType() != null ? "DocStrctType " + level.getDocStructType().getName()

@@ -13,21 +13,18 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.MetadataInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code
  * operational which is about to be removed. Do not use this class.
  */
-public class LegacyMetadataHelper implements MetadataInterface {
+public class LegacyMetadataHelper {
     private static final Logger logger = LogManager.getLogger(LegacyMetadataHelper.class);
 
     /**
      * The legacy type of the legacy metadata.
      */
-    private MetadataTypeInterface type;
+    private LegacyMetadataTypeHelper type;
 
     /**
      * The value of the legacy metadata.
@@ -40,46 +37,46 @@ public class LegacyMetadataHelper implements MetadataInterface {
     private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
     LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
-            MetadataTypeInterface type, String value) {
+            LegacyMetadataTypeHelper type, String value) {
         this.type = type;
         this.value = value;
         this.legacyInnerPhysicalDocStructHelper = legacyInnerPhysicalDocStructHelper;
     }
 
-    public LegacyMetadataHelper(MetadataTypeInterface type) {
+    public LegacyMetadataHelper(LegacyMetadataTypeHelper type) {
         this.type = type;
         this.value = "";
     }
 
-    @Override
     public LegacyInnerPhysicalDocStructHelper getDocStruct() {
         return legacyInnerPhysicalDocStructHelper;
     }
 
-    @Override
-    public MetadataTypeInterface getMetadataType() {
+    public LegacyMetadataTypeHelper getMetadataType() {
         return type;
     }
 
-    @Override
     public String getValue() {
         return value;
     }
 
-    @Override
-    public void setDocStruct(DocStructInterface docStruct) {
+    /**
+     * Sets the document structure entity to which this object belongs to.
+     *
+     * @param docStruct
+     *            document structure entity to which this object belongs
+     */
+    public void setDocStruct(LegacyDocStructHelperInterface docStruct) {
         if (docStruct instanceof LegacyInnerPhysicalDocStructHelper) {
             this.legacyInnerPhysicalDocStructHelper = (LegacyInnerPhysicalDocStructHelper) docStruct;
         }
     }
 
-    @Override
-    public void setType(MetadataTypeInterface metadataType) {
+    public void setType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
     public void setStringValue(String value) {
         this.value = value;
     }

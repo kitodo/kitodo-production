@@ -15,13 +15,13 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.metadata.MetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -33,14 +33,14 @@ import org.kitodo.production.helper.metadata.MetadataHelper;
 public class MetaPerson {
     private PersonInterface p;
     private int identifier;
-    private final PrefsInterface myPrefs;
-    private final DocStructInterface myDocStruct;
+    private final LegacyPrefsHelper myPrefs;
+    private final LegacyDocStructHelperInterface myDocStruct;
     private final MetadataHelper mdh;
 
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetaPerson(PersonInterface p, int inID, PrefsInterface inPrefs, DocStructInterface inStruct) {
+    public MetaPerson(PersonInterface p, int inID, LegacyPrefsHelper inPrefs, LegacyDocStructHelperInterface inStruct) {
         this.myPrefs = inPrefs;
         this.p = p;
         this.identifier = inID;
@@ -146,8 +146,8 @@ public class MetaPerson {
      */
     public void setRolle(String inRolle) {
         this.p.setRole(inRolle);
-        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
-        this.p.setType(mdt);
+        LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     public List<SelectItem> getAddableRollen() {

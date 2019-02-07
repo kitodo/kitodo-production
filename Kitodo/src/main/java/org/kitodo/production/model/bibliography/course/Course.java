@@ -151,6 +151,9 @@ public class Course extends ArrayList<Block> {
      */
     private static final String ELEMENT_BLOCK = "title";
 
+    private static final int WEEKDAY_PAGES = 40;
+    private static final int SUNDAY_PAGES = 240;
+
     /**
      * List of Lists of Issues, each representing a process.
      */
@@ -430,9 +433,6 @@ public class Course extends ArrayList<Block> {
      * @return a guessed total number of pages for the full course of appearance
      */
     public long guessTotalNumberOfPages() {
-        final int WEEKDAY_PAGES = 40;
-        final int SUNDAY_PAGES = 240;
-
         long result = 0;
         for (Block block : this) {
             LocalDate lastAppearance = block.getLastAppearance();

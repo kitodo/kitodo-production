@@ -42,6 +42,9 @@ import org.joda.time.LocalDate;
  */
 public class Issue {
 
+    private static final int APPEARED = 1;
+    private static final int NOT_APPEARED = 0;
+
     /**
      * Course of appearance this issue is in.
      */
@@ -399,8 +402,6 @@ public class Issue {
      *            last day of the date range
      */
     void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
-        final int APPEARED = 1;
-        final int NOT_APPEARED = 0;
         Set<LocalDate> remainingAdditions = new HashSet<>();
         Set<LocalDate> remainingExclusions = new HashSet<>();
 

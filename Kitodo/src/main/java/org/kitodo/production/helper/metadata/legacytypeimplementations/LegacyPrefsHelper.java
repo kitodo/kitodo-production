@@ -26,9 +26,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
-import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
@@ -40,7 +37,7 @@ import org.kitodo.production.services.dataeditor.RulesetManagementService;
  * Connects a legacy prefs to a ruleset. This is a soldering class to keep
  * legacy code operational which is about to be removed. Do not use this class.
  */
-public class LegacyPrefsHelper implements PrefsInterface {
+public class LegacyPrefsHelper {
     private static final Logger logger = LogManager.getLogger(LegacyPrefsHelper.class);
 
     private static final RulesetManagementService rulesetManagementService = ServiceManager
@@ -51,14 +48,20 @@ public class LegacyPrefsHelper implements PrefsInterface {
      */
     private RulesetManagementInterface ruleset;
 
-    @Override
-    public List<DocStructTypeInterface> getAllDocStructTypes() {
+    public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    @Override
-    public DocStructTypeInterface getDocStrctTypeByName(String identifier) {
+    /**
+     * Returns the {@code DocStructType} named by its identifier, if there is
+     * such in the rule set. Otherwise returns {@code null}.
+     *
+     * @param identifier
+     *            identifier (internal name) of the {@code DocStructType}
+     * @return the {@code DocStructType}, otherwise {@code null}.
+     */
+    public LegacyLogicalDocStructTypeHelper getDocStrctTypeByName(String identifier) {
         switch (identifier) {
             case "page":
                 return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
@@ -74,8 +77,14 @@ public class LegacyPrefsHelper implements PrefsInterface {
         }
     }
 
-    @Override
-    public MetadataTypeInterface getMetadataTypeByName(String identifier) {
+    /**
+     * Needs string as parameter and returns MetadataType object with this name.
+     *
+     * @param identifier
+     *            parameter
+     * @return MetadataType object with this name
+     */
+    public LegacyMetadataTypeHelper getMetadataTypeByName(String identifier) {
         switch (identifier) {
             case "logicalPageNumber":
                 return LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDERLABEL;
@@ -119,15 +128,18 @@ public class LegacyPrefsHelper implements PrefsInterface {
         return ruleset;
     }
 
-    @Override
-    public void loadPrefs(String fileName) throws PreferencesException {
+    /**
+     * Loads all known DocStruct types from the prefs XML file.
+     *
+     * @param fileName
+     *            file to load
+     * @throws PreferencesException
+     *             if the preferences file has none, or the wrong root tag
+     */
+    public void loadPrefs(String fileName) throws IOException {
         File rulesetFile = new File(fileName);
         RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();
-        try {
-            ruleset.load(rulesetFile);
-        } catch (IOException e) {
-            throw new PreferencesException("Error reading " + fileName + ": " + e.getMessage(), e);
-        }
+        ruleset.load(rulesetFile);
         this.ruleset = ruleset;
     }
 

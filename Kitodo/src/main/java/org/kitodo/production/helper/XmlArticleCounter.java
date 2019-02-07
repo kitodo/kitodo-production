@@ -16,15 +16,14 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class XmlArticleCounter {
@@ -46,7 +45,7 @@ public class XmlArticleCounter {
         int result = 0;
 
         // read document
-        FileformatInterface gdzfile;
+        LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
             gdzfile = ServiceManager.getProcessService().readMetadataFile(myProcess);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
@@ -54,16 +53,9 @@ public class XmlArticleCounter {
             return -1;
         }
 
-        // DocStruct rukursiv durchlaufen
-        try {
-            DigitalDocumentInterface document = gdzfile.getDigitalDocument();
-            DocStructInterface logicalTopstruct = document.getLogicalDocStruct();
-            result += getNumberOfUghElements(logicalTopstruct, inType);
-        } catch (PreferencesException e) {
-            Helper.setErrorMessage("[" + myProcess.getId() + "] "
-                    + Helper.getTranslation("cannotGetDigitalDocument") + ": ", logger, e);
-            result = 0;
-        }
+        LegacyMetsModsDigitalDocumentHelper document = gdzfile.getDigitalDocument();
+        LegacyDocStructHelperInterface logicalTopstruct = document.getLogicalDocStruct();
+        result += getNumberOfUghElements(logicalTopstruct, inType);
 
         // save the determined number in the process
         myProcess.setSortHelperArticles(result);
@@ -84,7 +76,7 @@ public class XmlArticleCounter {
      * @param inType
      *            CountType object
      */
-    public int getNumberOfUghElements(DocStructInterface inStruct, CountType inType) {
+    public int getNumberOfUghElements(LegacyDocStructHelperInterface inStruct, CountType inType) {
         int result = 0;
         if (inStruct != null) {
             /*
@@ -100,7 +92,7 @@ public class XmlArticleCounter {
 
             // call children recursive
             if (inStruct.getAllChildren() != null) {
-                for (DocStructInterface struct : inStruct.getAllChildren()) {
+                for (LegacyDocStructHelperInterface struct : inStruct.getAllChildren()) {
                     result += getNumberOfUghElements(struct, inType);
                 }
             }
@@ -108,7 +100,7 @@ public class XmlArticleCounter {
         return result;
     }
 
-    private int countNonEmptyPersons(DocStructInterface inStruct) {
+    private int countNonEmptyPersons(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
         List<PersonInterface> persons = inStruct.getAllPersons();
         if (persons != null) {
@@ -122,11 +114,11 @@ public class XmlArticleCounter {
         return result;
     }
 
-    private int countNonEmptyMetadata(DocStructInterface inStruct) {
+    private int countNonEmptyMetadata(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
-        List<MetadataInterface> allMetadata = inStruct.getAllMetadata();
+        List<LegacyMetadataHelper> allMetadata = inStruct.getAllMetadata();
         if (allMetadata != null) {
-            for (MetadataInterface md : allMetadata) {
+            for (LegacyMetadataHelper md : allMetadata) {
                 String value = md.getValue();
                 if (value != null && value.trim().length() > 0) {
                     result++;
