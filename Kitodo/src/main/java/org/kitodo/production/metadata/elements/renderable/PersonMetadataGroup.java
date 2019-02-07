@@ -11,7 +11,6 @@
 
 package org.kitodo.production.metadata.elements.renderable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -23,12 +22,8 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.legacy.UghImplementation;
-import org.kitodo.production.metadata.MetadataProcessor;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -49,9 +44,6 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
         FIRSTNAME("vorname", false),
         LASTNAME("nachname", false);
 
-        private boolean isIdentifier;
-        private String resourceKey;
-
         /**
          * Field constructor. Creates a Field enum constant.
          *
@@ -63,27 +55,6 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
          *            an identifier
          */
         Field(String resourceKey, boolean isIdentifier) {
-            this.isIdentifier = isIdentifier;
-            this.resourceKey = resourceKey;
-        }
-
-        /**
-         * Returns a key string to look up the translated labels for the field
-         * in the messages file.
-         *
-         * @return key string to look up the labels for the field
-         */
-        private String getResourceKey() {
-            return resourceKey;
-        }
-
-        /**
-         * Returns whether or not the given field is an identifier.
-         *
-         * @return whether the given field is an identifier
-         */
-        private boolean isIdentifier() {
-            return isIdentifier;
         }
     }
 
@@ -131,39 +102,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
     private static MetadataGroupTypeInterface getGroupTypeFor(MetadataTypeInterface type) {
-        MetadataGroupTypeInterface result = UghImplementation.INSTANCE.createMetadataGroupType();
-        result.setName(type.getName());
-        result.setAllLanguages(type.getAllLanguages());
-        if (type.getNum() != null) {
-            result.setNum(type.getNum());
-        }
-        for (Field field : Field.values()) {
-            result.addMetadataType(getMetadataTypeFor(type, field));
-        }
-        return result;
-    }
-
-    /**
-     * Creates a fictitious MetadataType for the given field of the given
-     * metadata type, assuming that the latter is a person. The method is called
-     * from the constructor and thus should not be overloaded.
-     *
-     * @param type
-     *            a metadata type which represents a person
-     * @param field
-     *            a field of the person record
-     * @return a fictitious MetadataGroupType with the person’s subfields
-     */
-    private static MetadataTypeInterface getMetadataTypeFor(MetadataTypeInterface type, Field field) {
-        MetadataTypeInterface result = UghImplementation.INSTANCE.createMetadataType();
-        result.setName(type.getName() + '.' + field.toString());
-        if (type.getNum() != null) {
-            result.setNum(type.getNum());
-        }
-        result.setAllLanguages(Helper.getAllStrings(field.getResourceKey()));
-        result.setPerson(false);
-        result.setIdentifier(field.isIdentifier());
-        return result;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -265,21 +204,6 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
     @Override
     public List<PersonInterface> toMetadata() {
         PersonInterface person;
-        try {
-            person = UghImplementation.INSTANCE.createPerson(metadataType);
-        } catch (MetadataTypeNotAllowedException e) {
-            throw new NullPointerException(e.getMessage());
-        }
-        String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
-        if (normdataRecord != null && normdataRecord.length() > 0
-                && !normdataRecord.equals(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""))) {
-            String[] authorityFile = MetadataProcessor.parseAuthorityFileArgs(normdataRecord);
-            person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-        }
-        person.setFirstName(getField(Field.FIRSTNAME).getValue());
-        person.setLastName(getField(Field.LASTNAME).getValue());
-        List<PersonInterface> result = new ArrayList<>(1);
-        result.add(person);
-        return result;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 }

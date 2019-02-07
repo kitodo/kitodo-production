@@ -33,15 +33,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.api.ugh.DigitalDocumentInterface;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
-import org.kitodo.api.ugh.PicaPlusInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -167,15 +162,6 @@ public class SRUHelper {
     public static FileformatInterface parsePicaFormat(Node pica, PrefsInterface prefs)
             throws ReadException, PreferencesException {
 
-        PicaPlusInterface pp = UghImplementation.INSTANCE.createPicaPlus(prefs);
-        pp.read(pica);
-        DigitalDocumentInterface dd = pp.getDigitalDocument();
-        FileformatInterface ff = UghImplementation.INSTANCE.createXStream(prefs);
-        ff.setDigitalDocument(dd);
-        /* BoundBook hinzufügen */
-        DocStructTypeInterface dst = prefs.getDocStrctTypeByName("BoundBook");
-        DocStructInterface dsBoundBook = dd.createDocStruct(dst);
-        dd.setPhysicalDocStruct(dsBoundBook);
-        return ff;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 }

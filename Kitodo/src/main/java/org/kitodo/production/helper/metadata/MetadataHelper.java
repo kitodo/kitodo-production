@@ -42,7 +42,6 @@ import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
-import org.kitodo.production.legacy.UghImplementation;
 import org.kitodo.production.metadata.comparator.MetadataComparator;
 import org.kitodo.production.services.ServiceManager;
 
@@ -217,9 +216,7 @@ public class MetadataHelper {
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
                     try {
                         if (mdt.isPerson()) {
-                            PersonInterface p = UghImplementation.INSTANCE.createPerson(mdt);
-                            p.setRole(mdt.getName());
-                            inStruct.addPerson(p);
+                            throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
                             MetadataInterface md = new LegacyMetadataHelper(mdt);
                             inStruct.addMetadata(md); // add this new metadata

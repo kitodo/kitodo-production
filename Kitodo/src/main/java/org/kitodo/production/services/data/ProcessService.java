@@ -85,7 +85,6 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Folder;
@@ -1243,12 +1242,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             case "mets":
                 ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
                 break;
-            case "xstream":
-                ff = UghImplementation.INSTANCE.createXStream(prefs);
-                break;
             default:
-                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
         }
         ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
 
@@ -1268,14 +1263,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 fileFormat = new LegacyMetsModsDigitalDocumentHelper(
                         ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
                 break;
-            case "xstream":
-                fileFormat = UghImplementation.INSTANCE
-                        .createXStream(rulesetService.getPreferences(process.getRuleset()));
-                break;
             default:
-                fileFormat = UghImplementation.INSTANCE
-                        .createRDFFile(rulesetService.getPreferences(process.getRuleset()));
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
         }
         return fileFormat;
     }
@@ -1830,8 +1819,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     break;
                 case METS_AND_RDF:
                 default:
-                    newFile = UghImplementation.INSTANCE.createRDFFile(preferences);
-                    break;
+                    throw new UnsupportedOperationException("Dead code pending removal");
             }
             newFile.setDigitalDocument(gdzFile.getDigitalDocument());
             gdzFile = newFile;
@@ -2174,15 +2162,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
             throws JAXBException {
-        VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(folder.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
-        virtualFileGroup.setMimetype(folder.getMimeType());
-        if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
-            virtualFileGroup.setFileSuffix(
-                folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
-        }
-        return virtualFileGroup;
+
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
