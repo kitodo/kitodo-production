@@ -102,13 +102,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private MetsXmlElementAccess(Mets mets) {
         this();
-        workpiece.setCreationDate(mets.getMetsHdr().getCREATEDATE().toGregorianCalendar());
-        for (Agent agent : mets.getMetsHdr().getAgent()) {
-            workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
-        }
-        MetsDocumentID metsDocumentID = mets.getMetsHdr().getMetsDocumentID();
-        if (Objects.nonNull(metsDocumentID)) {
-            workpiece.setId(metsDocumentID.getID());
+        MetsHdr metsHdr = mets.getMetsHdr();
+        if (metsHdr != null) {
+            workpiece.setCreationDate(metsHdr.getCREATEDATE().toGregorianCalendar());
+            for (Agent agent : metsHdr.getAgent()) {
+                workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
+            }
+            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
+            if (Objects.nonNull(metsDocumentID)) {
+                workpiece.setId(metsDocumentID.getID());
+            }
         }
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> useXmlAttributeAccess = fileSec != null
