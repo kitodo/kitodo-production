@@ -38,7 +38,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
 import org.primefaces.model.SortOrder;
@@ -210,7 +210,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      * @return preferences
      */
     public PrefsInterface getPreferences(Ruleset ruleset) {
-        PrefsInterface myPreferences = UghImplementation.INSTANCE.createPrefs();
+        PrefsInterface myPreferences = new LegacyPrefsHelper();
         try {
             myPreferences.loadPrefs(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + ruleset.getFile());
         } catch (PreferencesException e) {

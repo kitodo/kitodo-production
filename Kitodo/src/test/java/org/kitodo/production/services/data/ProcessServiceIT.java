@@ -44,7 +44,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -478,7 +479,8 @@ public class ProcessServiceIT {
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         Process process = processService.getById(1);
         PrefsInterface preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        fileService.writeMetadataAsTemplateFile(UghImplementation.INSTANCE.createMetsMods(preferences), process);
+        fileService.writeMetadataAsTemplateFile(
+            new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
         assertTrue("It was not possible to write metadata as template file!", condition);
 

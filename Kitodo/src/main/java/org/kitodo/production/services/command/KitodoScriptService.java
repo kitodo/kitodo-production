@@ -44,7 +44,7 @@ import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.UghHelper;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -519,7 +519,7 @@ public class KitodoScriptService {
                 for (MetadataInterface md : allImagePaths) {
                     rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                 }
-                MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface newMetadata = new LegacyMetadataHelper(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata.setStringValue("file:/" + fileService.getImagesDirectory(process)
                             + process.getTitle() + DIRECTORY_SUFFIX);

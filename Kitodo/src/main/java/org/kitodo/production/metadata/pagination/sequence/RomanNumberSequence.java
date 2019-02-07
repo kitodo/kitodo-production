@@ -14,7 +14,7 @@ package org.kitodo.production.metadata.pagination.sequence;
 import java.util.ArrayList;
 
 import org.kitodo.api.ugh.RomanNumeralInterface;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 
 public class RomanNumberSequence extends ArrayList<String> {
 
@@ -33,7 +33,7 @@ public class RomanNumberSequence extends ArrayList<String> {
     }
 
     private void generateElements(int start, int end, int increment) {
-        RomanNumeralInterface r = UghImplementation.INSTANCE.createRomanNumeral();
+        RomanNumeralInterface r = new LegacyRomanNumeralHelper();
         for (int i = start; i <= end; i = (i + increment)) {
             r.setValue(i);
             this.add(r.toString());

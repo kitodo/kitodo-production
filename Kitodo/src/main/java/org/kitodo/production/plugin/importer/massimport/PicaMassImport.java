@@ -78,7 +78,9 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -178,7 +180,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             } else {
                 // generating ats
                 ats = createAtstsl(currentTitle, author);
-                MetadataInterface atstsl = UghImplementation.INSTANCE.createMetadata(atsType);
+                MetadataInterface atstsl = new LegacyMetadataHelper(atsType);
                 atstsl.setStringValue(ats);
                 logicalDS.addMetadata(atstsl);
             }
@@ -212,7 +214,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             try {
                 // pathimagefiles
                 MetadataTypeInterface mdt = prefs.getMetadataTypeByName("pathimagefiles");
-                MetadataInterface newmd = UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface newmd = new LegacyMetadataHelper(mdt);
                 newmd.setStringValue("/images/");
                 digitalDocument.getPhysicalDocStruct().addMetadata(newmd);
 
@@ -225,13 +227,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                         volumes = Collections.emptyList();
                     }
                     for (String collection : this.currentCollectionList) {
-                        MetadataInterface mdCollection = UghImplementation.INSTANCE.createMetadata(mdTypeCollection);
+                        MetadataInterface mdCollection = new LegacyMetadataHelper(mdTypeCollection);
                         mdCollection.setStringValue(collection);
                         topLogicalStruct.addMetadata(mdCollection);
                         for (DocStructInterface volume : volumes) {
                             try {
-                                MetadataInterface mdCollectionForVolume = UghImplementation.INSTANCE
-                                        .createMetadata(mdTypeCollection);
+                                MetadataInterface mdCollectionForVolume = new LegacyMetadataHelper(mdTypeCollection);
                                 mdCollectionForVolume.setStringValue(collection);
                                 volume.addMetadata(mdCollectionForVolume);
                             } catch (MetadataTypeNotAllowedException e) {
@@ -437,7 +438,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (ff != null) {
                 r.setId(this.currentIdentifier);
                 try {
-                    MetsModsInterface mm = UghImplementation.INSTANCE.createMetsMods(this.prefs);
+                    MetsModsInterface mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) this.prefs).getRuleset());
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
                     logger.debug("Writing '{}' into given folder...", fileName);

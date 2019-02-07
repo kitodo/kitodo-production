@@ -20,9 +20,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.production.legacy.UghImplementation;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.metadata.display.Item;
 import org.kitodo.production.metadata.display.enums.BindState;
 import org.kitodo.production.metadata.display.enums.DisplayType;
@@ -206,11 +205,7 @@ public abstract class RenderableMetadata {
      */
     protected MetadataInterface getMetadata(String value) {
         MetadataInterface result;
-        try {
-            result = UghImplementation.INSTANCE.createMetadata(metadataType);
-        } catch (MetadataTypeNotAllowedException e) {
-            throw new NullPointerException(e.getMessage());
-        }
+        result = new LegacyMetadataHelper(metadataType);
         result.setStringValue(value);
         return result;
     }

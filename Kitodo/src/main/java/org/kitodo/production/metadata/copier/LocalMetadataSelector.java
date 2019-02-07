@@ -21,6 +21,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.legacy.UghImplementation;
 
 /**
@@ -186,14 +187,7 @@ public class LocalMetadataSelector extends MetadataSelector {
     private void tryToCreateANewMetadatum(CopierData data, DocStructInterface logicalNode, String value) {
         MetadataInterface copy;
         try {
-            copy = UghImplementation.INSTANCE
-                    .createMetadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
-        } catch (MetadataTypeNotAllowedException e) {
-            // copy rules aren’t related to the rule set but depend on it, so
-            // copy rules that don’t work with the current rule set are ignored
-            logger.debug("Cannot create metadata element {}: The type isn’t defined by the rule set used.",
-                selector.getName());
-            return;
+            copy = new LegacyMetadataHelper(data.getPreferences().getMetadataTypeByName(selector.getName()));
         } catch (RuntimeException e) {
             // copy rule failed, skip it
             logger.debug("Cannot create metadata element {}: Accessing the rule set failed with exception: {}",

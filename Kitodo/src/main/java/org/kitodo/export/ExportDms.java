@@ -40,6 +40,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.ExportDmsTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -278,7 +280,7 @@ public class ExportDms extends ExportMets {
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
-                    gdzfile = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
+                    gdzfile = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) this.myPrefs).getRuleset());
                     break;
                 case METS_AND_RDF:
                 default:
