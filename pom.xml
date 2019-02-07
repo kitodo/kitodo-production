@@ -135,6 +135,23 @@
         <module>Kitodo</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <inherited>false</inherited>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>modules</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
     <profiles>
         <profile>
             <id>all-tests</id>
