@@ -292,11 +292,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         FileSec fileSec = new FileSec();
 
         Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits = new HashMap<>();
+        Map<Pair<UseXmlAttributeAccess, URI>, String> fileIds = new HashMap<>();
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
             for (Entry<MediaVariant, URI> variantEntry : mediaUnit.getMediaFiles().entrySet()) {
                 UseXmlAttributeAccess use = new UseXmlAttributeAccess(variantEntry.getKey());
                 useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
-                useToMediaUnits.get(use).add(variantEntry.getValue());
+                URI uri = variantEntry.getValue();
+                useToMediaUnits.get(use).add(uri);
+                if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
+                    fileIds.put(Pair.of(use, uri), ((MediaUnitMetsReferrerStorage) mediaUnit).getFileId(uri));
+                }
             }
         }
 
@@ -306,7 +311,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             fileGrp.setUSE(useXmlAttributeAccess.getMediaVariant().getUse());
             String mimeType = useXmlAttributeAccess.getMediaVariant().getMimeType();
             Map<URI, FileType> files = fileGrpData.getValue().parallelStream()
-                    .map(uri -> Pair.of(uri, new FLocatXmlElementAccess(uri).toFile(mimeType)))
+                    .map(uri -> Pair.of(uri,
+                        new FLocatXmlElementAccess(uri).toFile(mimeType,
+                            fileIds.get(Pair.of(useXmlAttributeAccess, uri)))))
                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
             mediaFilesToIDFiles.putAll(files);
             fileGrp.getFile().addAll(files.values());

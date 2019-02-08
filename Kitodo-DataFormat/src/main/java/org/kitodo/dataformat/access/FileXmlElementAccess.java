@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.dataformat.MediaUnit;
@@ -30,14 +29,14 @@ public class FileXmlElementAccess {
     /**
      * The data object of this file XML element access.
      */
-    private final MediaUnit mediaUnit;
+    private final MediaUnitMetsReferrerStorage mediaUnit;
 
     /**
      * Public constructor for a new media unit. This constructor can be used
      * with the service loader to get a new instance of media unit.
      */
     public FileXmlElementAccess() {
-        mediaUnit = new MediaUnit();
+        mediaUnit = new MediaUnitMetsReferrerStorage();
     }
 
     /**
@@ -54,6 +53,7 @@ public class FileXmlElementAccess {
      */
     FileXmlElementAccess(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess) {
         this();
+        mediaUnit.setDivId(div.getID());
         Map<MediaVariant, URI> mediaFiles = div.getFptr().parallelStream().map(Fptr::getFILEID)
                 .filter(FileType.class::isInstance)
                 .map(FileType.class::cast)
@@ -63,14 +63,21 @@ public class FileXmlElementAccess {
                             .orElseThrow(() -> new IllegalArgumentException(
                                     "Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>"))
                             .getUSE()),
-                    file -> new FLocatXmlElementAccess(file).getUri()));
+                    file -> mediaUnit.storeFileId(new FLocatXmlElementAccess(file)).getUri()));
         mediaUnit.getMediaFiles().putAll(mediaFiles);
         mediaUnit.setOrder(div.getORDER().intValue());
         mediaUnit.setOrderlabel(div.getORDERLABEL());
     }
 
     public FileXmlElementAccess(MediaUnit mediaUnit) {
-        this.mediaUnit = mediaUnit;
+        if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
+            this.mediaUnit = (MediaUnitMetsReferrerStorage) mediaUnit;
+        } else {
+            this.mediaUnit = new MediaUnitMetsReferrerStorage();
+            this.mediaUnit.getMediaFiles().putAll(mediaUnit.getMediaFiles());
+            this.mediaUnit.setOrder(mediaUnit.getOrder());
+            this.mediaUnit.setOrderlabel(mediaUnit.getOrderlabel());
+        }
     }
 
     MediaUnit getMediaUnit() {
@@ -92,7 +99,7 @@ public class FileXmlElementAccess {
             Map<MediaUnit, String> mediaUnitIDs) {
 
         DivType div = new DivType();
-        String divId = UUID.randomUUID().toString();
+        String divId = mediaUnit.getDivId();
         div.setID(divId);
         mediaUnitIDs.put(mediaUnit, divId);
         div.setORDER(BigInteger.valueOf(mediaUnit.getOrder()));

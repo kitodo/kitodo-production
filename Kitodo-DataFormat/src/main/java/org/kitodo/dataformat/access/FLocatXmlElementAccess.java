@@ -29,7 +29,7 @@ public class FLocatXmlElementAccess {
      * be stored because some scatty third-party scripts rely on them not being
      * changed anymore once assigned.
      */
-    private final String metsReferrerId;
+    private String metsReferrerId;
 
     /**
      * References computer file.
@@ -42,7 +42,6 @@ public class FLocatXmlElementAccess {
      * of media file.
      */
     FLocatXmlElementAccess(URI uri) {
-        metsReferrerId = UUID.randomUUID().toString();
         this.uri = uri;
     }
 
@@ -61,6 +60,10 @@ public class FLocatXmlElementAccess {
         }
     }
 
+    String getFileId() {
+        return metsReferrerId;
+    }
+
     public URI getUri() {
         return uri;
     }
@@ -74,9 +77,9 @@ public class FLocatXmlElementAccess {
      *            obtained when the URI is downloaded
      * @return a METS {@code <file>} element
      */
-    FileType toFile(String mimeType) {
+    FileType toFile(String mimeType, String metsReferrerId) {
         FileType file = new FileType();
-        file.setID(metsReferrerId);
+        file.setID(metsReferrerId == null ? UUID.randomUUID().toString() : metsReferrerId);
         file.setMIMETYPE(mimeType);
         FLocat fLocat = new FLocat();
         fLocat.setLOCTYPE("URL");
