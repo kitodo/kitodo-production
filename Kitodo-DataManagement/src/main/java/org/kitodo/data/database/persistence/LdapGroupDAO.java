@@ -15,9 +15,7 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.exceptions.NotImplementedException;
 
-@SuppressWarnings("serial")
 public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     @Override
@@ -52,6 +50,6 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     @Override
     public List<LdapGroup> getAllNotIndexed(int offset, int size) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
