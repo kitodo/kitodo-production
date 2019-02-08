@@ -144,7 +144,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>modules</directory>
+                            <directory>Kitodo/modules</directory>
                         </fileset>
                     </filesets>
                 </configuration>
