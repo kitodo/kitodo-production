@@ -46,7 +46,7 @@ public class FolderDAO extends BaseDAO<Folder> {
     @Override
     public Folder save(Folder folder) throws DAOException {
         storeObject(folder);
-        return retrieveObject(Folder.class, folder.getId());
+        return folder;
     }
 
     @Override
