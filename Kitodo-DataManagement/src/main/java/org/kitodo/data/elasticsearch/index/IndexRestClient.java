@@ -12,36 +12,37 @@
 package org.kitodo.data.elasticsearch.index;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.ResponseListener;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of Elastic Search REST Client for index package.
  */
 public class IndexRestClient extends KitodoRestClient {
 
-    private static final Logger logger = LogManager.getLogger(IndexRestClient.class);
-
     /**
      * IndexRestClient singleton.
      */
     private static IndexRestClient instance = null;
+    private final Object lock = new Object();
 
     private IndexRestClient() {
     }
@@ -75,11 +76,15 @@ public class IndexRestClient extends KitodoRestClient {
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    public void addDocument(HttpEntity entity, Integer id, boolean forceRefresh)
+    public void addDocument(Map<String, Object> entity, Integer id, boolean forceRefresh)
             throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest(HttpMethod.PUT,
-            "/" + this.getIndex() + "/" + this.getType() + "/" + id, getParameters(forceRefresh), entity);
-        processStatusCode(indexResponse.getStatusLine());
+        IndexRequest indexRequest = new IndexRequest(this.index, this.type, String.valueOf(id)).source(entity);
+        if (forceRefresh) {
+            indexRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+        }
+
+        IndexResponse indexResponse = highLevelClient.index(indexRequest);
+        processStatusCode(indexResponse.status());
     }
 
     /**
@@ -89,28 +94,42 @@ public class IndexRestClient extends KitodoRestClient {
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    void addType(Map<Integer, HttpEntity> documentsToIndex) throws InterruptedException, CustomResponseException {
-        final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
-        final ArrayList<String> output = new ArrayList<>();
+    void addTypeSync(Map<Integer, Map<String, Object>> documentsToIndex) throws CustomResponseException {
+        BulkRequest bulkRequest = prepareBulkRequest(documentsToIndex);
 
-        for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
-            restClient.performRequestAsync(HttpMethod.PUT, "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
-                Collections.emptyMap(), entry.getValue(), new ResponseListener() {
-                    @Override
-                    public void onSuccess(Response response) {
-                        output.add(response.toString());
-                        latch.countDown();
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        output.add(exception.getMessage());
-                        latch.countDown();
-                    }
-                });
+        try {
+            BulkResponse bulkResponse = highLevelClient.bulk(bulkRequest);
+            if (bulkResponse.hasFailures()) {
+                throw new CustomResponseException(bulkResponse.buildFailureMessage());
+            }
+        } catch (IOException e) {
+            throw new CustomResponseException(e);
         }
-        latch.await();
-        filterAsynchronousResponses(output);
+    }
+
+    /**
+     * Add list of documents to the index. This method will be used for add whole
+     * table to the index. It performs asynchronous request.
+     *
+     * @param documentsToIndex
+     *            list of json documents to the index
+     */
+    void addTypeAsync(Map<Integer, Map<String, Object>> documentsToIndex) {
+        BulkRequest bulkRequest = prepareBulkRequest(documentsToIndex);
+
+        ResponseListener responseListener = new ResponseListener(this.type, documentsToIndex.size());
+        highLevelClient.bulkAsync(bulkRequest, responseListener);
+
+        synchronized (lock) {
+            while (Objects.isNull(responseListener.getBulkResponse())) {
+                try {
+                    lock.wait(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -122,16 +141,18 @@ public class IndexRestClient extends KitodoRestClient {
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
-    void deleteDocument(Integer id, boolean forceRefresh) throws IOException, CustomResponseException {
+    void deleteDocument(Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
+        DeleteRequest deleteRequest = new DeleteRequest(this.index, this.type, String.valueOf(id));
+        if (forceRefresh) {
+            deleteRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+        }
+
         try {
-            restClient.performRequest(HttpMethod.DELETE, "/" + this.getIndex() + "/" + this.getType() + "/" + id,
-                getParameters(forceRefresh));
+            highLevelClient.delete(deleteRequest);
         } catch (ResponseException e) {
-            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-                logger.debug(e.getMessage());
-            } else {
-                throw new CustomResponseException(e.getMessage());
-            }
+            handleResponseException(e);
+        }  catch (IOException e) {
+            throw new DataException(e);
         }
     }
 
@@ -148,33 +169,19 @@ public class IndexRestClient extends KitodoRestClient {
                 + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
                 + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest(HttpMethod.PUT,
+        Response indexResponse = client.performRequest(HttpMethod.PUT,
             "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types", Collections.emptyMap(), entity);
         processStatusCode(indexResponse.getStatusLine());
     }
 
-    private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
-        if (!responses.isEmpty()) {
-            for (String response : responses) {
-                if (response == null || response.equals("")) {
-                    throw new CustomResponseException(
-                            "ElasticSearch failed to add one or more documents for unknown reason!");
-                } else {
-                    if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
-                        throw new CustomResponseException(
-                                "ElasticSearch failed to add one or more documents! Reason: " + response);
-                    }
-                }
-            }
-        } else {
-            throw new CustomResponseException("ElasticSearch failed to add all documents for unknown reason!");
-        }
-    }
+    private BulkRequest prepareBulkRequest(Map<Integer, Map<String, Object>> documentsToIndex) {
+        BulkRequest bulkRequest = new BulkRequest();
 
-    private Map<String, String> getParameters(boolean forceRefresh) {
-        if (forceRefresh) {
-            return Collections.singletonMap("refresh", "true");
+        for (Map.Entry<Integer, Map<String, Object>> entry : documentsToIndex.entrySet()) {
+            IndexRequest indexRequest = new IndexRequest(this.index, this.type, String.valueOf(entry.getKey()));
+            bulkRequest.add(indexRequest.source(entry.getValue()));
         }
-        return Collections.emptyMap();
+
+        return bulkRequest;
     }
 }

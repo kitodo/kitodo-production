@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -62,7 +63,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldCountAllProjectsAccordingToQuery() {
-        String query = matchQuery("title", "First project").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("title", "First project").operator(Operator.AND);
         await().untilAsserted(
             () -> assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query)));
     }

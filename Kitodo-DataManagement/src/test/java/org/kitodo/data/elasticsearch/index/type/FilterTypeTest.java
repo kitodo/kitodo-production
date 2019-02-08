@@ -13,16 +13,10 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
@@ -60,9 +54,7 @@ public class FilterTypeTest {
         FilterType filterType = new FilterType();
 
         Filter filter = prepareData().get(0);
-        HttpEntity document = filterType.createDocument(filter);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = filterType.createDocument(filter);
 
         assertEquals("Key value doesn't match to given value!", "\"id:1\"",
             FilterTypeField.VALUE.getStringValue(actual));
@@ -74,9 +66,7 @@ public class FilterTypeTest {
         FilterType filterType = new FilterType();
 
         Filter filter = prepareData().get(1);
-        HttpEntity document = filterType.createDocument(filter);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = filterType.createDocument(filter);
 
         assertEquals("Key value doesn't match to given value!", "\"id:2\"",
             FilterTypeField.VALUE.getStringValue(actual));
@@ -88,9 +78,8 @@ public class FilterTypeTest {
         FilterType filterType = new FilterType();
 
         Filter filter = prepareData().get(0);
-        HttpEntity document = filterType.createDocument(filter);
+        Map<String, Object> actual = filterType.createDocument(filter);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
     }
 
@@ -99,7 +88,7 @@ public class FilterTypeTest {
         FilterType filterType = new FilterType();
 
         List<Filter> filters = prepareData();
-        Map<Integer, HttpEntity> documents = filterType.createDocuments(filters);
+        Map<Integer, Map<String, Object>> documents = filterType.createDocuments(filters);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

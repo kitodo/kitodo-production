@@ -147,7 +147,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      * @throws DAOException
      *             if there is an error at connection or reading database
      * @throws UsernameNotFoundException
-     *             if no user can be found by ldaplogin and normal login
+     *             if no user can be found by ldap login and normal login
      */
     public User getByLdapLoginWithFallback(String login) throws DAOException, UsernameNotFoundException {
         User user;

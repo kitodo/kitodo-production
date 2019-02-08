@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,12 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Docket;
@@ -99,9 +92,7 @@ public class TemplateTypeTest {
         TemplateType templateType = new TemplateType();
 
         Template template = prepareData().get(0);
-        HttpEntity document = templateType.createDocument(template);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = templateType.createDocument(template);
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             TemplateTypeField.TITLE.getStringValue(actual));
@@ -113,24 +104,24 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
+        List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 1, projects.size());
 
-        JsonObject project = projects.getJsonObject(0);
+        Map<String, Object> project = projects.get(0);
         assertEquals("Key projects.id doesn't match to given value!", 1,
                 ProjectTypeField.ID.getIntValue(project));
         assertEquals("Key projects.title doesn't match to given value!", "Project",
                 ProjectTypeField.TITLE.getStringValue(project));
 
-        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 2, tasks.size());
 
-        JsonObject task = tasks.getJsonObject(0);
+        Map<String, Object> task = tasks.get(0);
         assertEquals("Key tasks.id doesn't match to given value!", 1, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task one",
             TaskTypeField.TITLE.getStringValue(task));
 
-        task = tasks.getJsonObject(1);
+        task = tasks.get(1);
         assertEquals("Key tasks.id doesn't match to given value!", 2, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task two",
             TaskTypeField.TITLE.getStringValue(task));
@@ -141,9 +132,7 @@ public class TemplateTypeTest {
         TemplateType templateType = new TemplateType();
 
         Template template = prepareData().get(1);
-        HttpEntity document = templateType.createDocument(template);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = templateType.createDocument(template);
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             TemplateTypeField.TITLE.getStringValue(actual));
@@ -155,16 +144,16 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 1, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
+        List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 1, projects.size());
 
-        JsonObject project = projects.getJsonObject(0);
+        Map<String, Object> project = projects.get(0);
         assertEquals("Key projects.id doesn't match to given value!", 1,
                 ProjectTypeField.ID.getIntValue(project));
         assertEquals("Key projects.title doesn't match to given value!", "Project",
                 ProjectTypeField.TITLE.getStringValue(project));
 
-        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -173,9 +162,7 @@ public class TemplateTypeTest {
         TemplateType templateType = new TemplateType();
 
         Template template = prepareData().get(2);
-        HttpEntity document = templateType.createDocument(template);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = templateType.createDocument(template);
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             TemplateTypeField.TITLE.getStringValue(actual));
@@ -187,10 +174,10 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
+        List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
 
-        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -199,17 +186,16 @@ public class TemplateTypeTest {
         TemplateType templateType = new TemplateType();
 
         Template template = prepareData().get(0);
-        HttpEntity document = templateType.createDocument(template);
+        Map<String, Object> actual = templateType.createDocument(template);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 10, actual.keySet().size());
 
-        JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
-        JsonObject project = projects.getJsonObject(0);
+        List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
+        Map<String, Object> project = projects.get(0);
         assertEquals("Amount of keys in projects is incorrect!", 3, project.keySet().size());
 
-        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
-        JsonObject task = tasks.getJsonObject(0);
+        List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
+        Map<String, Object> task = tasks.get(0);
         assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }
 
@@ -218,7 +204,7 @@ public class TemplateTypeTest {
         TemplateType templateType = new TemplateType();
 
         List<Template> templates = prepareData();
-        Map<Integer, HttpEntity> documents = templateType.createDocuments(templates);
+        Map<Integer, Map<String, Object>> documents = templateType.createDocuments(templates);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 

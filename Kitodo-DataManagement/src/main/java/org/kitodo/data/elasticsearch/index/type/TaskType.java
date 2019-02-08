@@ -11,9 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -25,7 +24,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 public class TaskType extends BaseType<Task> {
 
     @Override
-    JsonObject getJsonObject(Task task) {
+    Map<String, Object> getJsonObject(Task task) {
         int processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
                 : 0;
         int editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
@@ -33,45 +32,45 @@ public class TaskType extends BaseType<Task> {
         int processId = task.getProcess() != null ? task.getProcess().getId() : 0;
         int templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
 
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
-        jsonObjectBuilder.add(TaskTypeField.PRIORITY.getKey(), task.getPriority());
-        jsonObjectBuilder.add(TaskTypeField.ORDERING.getKey(), task.getOrdering());
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus);
-        jsonObjectBuilder.add(TaskTypeField.EDIT_TYPE.getKey(), editType);
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_TIME.getKey(), getFormattedDate(task.getProcessingTime()));
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_BEGIN.getKey(), getFormattedDate(task.getProcessingBegin()));
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_END.getKey(), getFormattedDate(task.getProcessingEnd()));
-        jsonObjectBuilder.add(TaskTypeField.HOME_DIRECTORY.getKey(), preventNull(String.valueOf(task.getHomeDirectory())));
-        jsonObjectBuilder.add(TaskTypeField.TYPE_METADATA.getKey(), task.isTypeMetadata());
-        jsonObjectBuilder.add(TaskTypeField.TYPE_AUTOMATIC.getKey(), task.isTypeAutomatic());
-        jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_READ.getKey(), task.isTypeImagesRead());
-        jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_WRITE.getKey(), task.isTypeImagesWrite());
-        jsonObjectBuilder.add(TaskTypeField.BATCH_STEP.getKey(), task.isBatchStep());
-        jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser);
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
+        jsonObject.put(TaskTypeField.PRIORITY.getKey(), task.getPriority());
+        jsonObject.put(TaskTypeField.ORDERING.getKey(), task.getOrdering());
+        jsonObject.put(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus);
+        jsonObject.put(TaskTypeField.EDIT_TYPE.getKey(), editType);
+        jsonObject.put(TaskTypeField.PROCESSING_TIME.getKey(), getFormattedDate(task.getProcessingTime()));
+        jsonObject.put(TaskTypeField.PROCESSING_BEGIN.getKey(), getFormattedDate(task.getProcessingBegin()));
+        jsonObject.put(TaskTypeField.PROCESSING_END.getKey(), getFormattedDate(task.getProcessingEnd()));
+        jsonObject.put(TaskTypeField.HOME_DIRECTORY.getKey(), preventNull(String.valueOf(task.getHomeDirectory())));
+        jsonObject.put(TaskTypeField.TYPE_METADATA.getKey(), task.isTypeMetadata());
+        jsonObject.put(TaskTypeField.TYPE_AUTOMATIC.getKey(), task.isTypeAutomatic());
+        jsonObject.put(TaskTypeField.TYPE_IMAGES_READ.getKey(), task.isTypeImagesRead());
+        jsonObject.put(TaskTypeField.TYPE_IMAGES_WRITE.getKey(), task.isTypeImagesWrite());
+        jsonObject.put(TaskTypeField.BATCH_STEP.getKey(), task.isBatchStep());
+        jsonObject.put(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser);
         if (processingUser > 0) {
             User user = task.getProcessingUser();
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_LOGIN.getKey(), user.getLogin());
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_NAME.getKey(), user.getName());
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), user.getSurname());
+            jsonObject.put(TaskTypeField.PROCESSING_USER_LOGIN.getKey(), user.getLogin());
+            jsonObject.put(TaskTypeField.PROCESSING_USER_NAME.getKey(), user.getName());
+            jsonObject.put(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), user.getSurname());
         } else {
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_LOGIN.getKey(),"");
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_NAME.getKey(), "");
-            jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), "");
+            jsonObject.put(TaskTypeField.PROCESSING_USER_LOGIN.getKey(),"");
+            jsonObject.put(TaskTypeField.PROCESSING_USER_NAME.getKey(), "");
+            jsonObject.put(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), "");
         }
-        jsonObjectBuilder.add(TaskTypeField.PROCESS_ID.getKey(), processId);
+        jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), processId);
         if (processId > 0) {
-            jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), task.getProcess().getTitle());
+            jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), task.getProcess().getTitle());
         } else {
-            jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), "");
+            jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), "");
         }
-        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
+        jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
         if (templateId > 0) {
-            jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), task.getTemplate().getTitle());
+            jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), task.getTemplate().getTitle());
         } else {
-            jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), "");
+            jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), "");
         }
-        jsonObjectBuilder.add(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
-        return jsonObjectBuilder.build();
+        jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
+        return jsonObject;
     }
 }

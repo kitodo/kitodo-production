@@ -11,9 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
@@ -22,29 +21,28 @@ import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 public class TemplateType extends BaseType<Template> {
 
     @Override
-    public JsonObject getJsonObject(Template template) {
-
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-
-        jsonObjectBuilder.add(TemplateTypeField.TITLE.getKey(), template.getTitle());
-        jsonObjectBuilder.add(TemplateTypeField.CREATION_DATE.getKey(), getFormattedDate(template.getCreationDate()));
-        jsonObjectBuilder.add(TemplateTypeField.ACTIVE.getKey(), template.isActive());
-        jsonObjectBuilder.add(TemplateTypeField.SORT_HELPER_STATUS.getKey(),
-            preventNull(template.getSortHelperStatus()));
+    public Map<String, Object> getJsonObject(Template template) {
         String workflowTitle = template.getWorkflow() != null ? template.getWorkflow().getTitle() : "";
-        jsonObjectBuilder.add(TemplateTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
         String diagramFileName = template.getWorkflow() != null ? template.getWorkflow().getFileName() : "";
-        jsonObjectBuilder.add(TemplateTypeField.WORKFLOW_FILE_NAME.getKey(), diagramFileName);
         int ruleset = template.getRuleset() != null ? template.getRuleset().getId() : 0;
-        jsonObjectBuilder.add(TemplateTypeField.RULESET.getKey(), ruleset);
         int docket = template.getDocket() != null ? template.getDocket().getId() : 0;
-        jsonObjectBuilder.add(TemplateTypeField.DOCKET.getKey(), docket);
-        jsonObjectBuilder.add(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
-        if (template.getProjects().isEmpty()) {
-            jsonObjectBuilder.add(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID, 0);
-        }
-        jsonObjectBuilder.add(TemplateTypeField.TASKS.getKey(), addObjectRelation(template.getTasks(), true));
 
-        return jsonObjectBuilder.build();
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(TemplateTypeField.TITLE.getKey(), template.getTitle());
+        jsonObject.put(TemplateTypeField.CREATION_DATE.getKey(), getFormattedDate(template.getCreationDate()));
+        jsonObject.put(TemplateTypeField.ACTIVE.getKey(), template.isActive());
+        jsonObject.put(TemplateTypeField.SORT_HELPER_STATUS.getKey(),
+            preventNull(template.getSortHelperStatus()));
+        jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
+        jsonObject.put(TemplateTypeField.WORKFLOW_FILE_NAME.getKey(), diagramFileName);
+        jsonObject.put(TemplateTypeField.RULESET.getKey(), ruleset);
+        jsonObject.put(TemplateTypeField.DOCKET.getKey(), docket);
+        jsonObject.put(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
+        if (template.getProjects().isEmpty()) {
+            jsonObject.put(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID, 0);
+        }
+        jsonObject.put(TemplateTypeField.TASKS.getKey(), addObjectRelation(template.getTasks(), true));
+
+        return jsonObject;
     }
 }

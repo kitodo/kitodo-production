@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -82,14 +80,13 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(getRulesetsForCurrentUserQuery());
+        return countDocuments(getRulesetsForCurrentUserQuery());
     }
 
     @Override
     public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(getRulesetsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+        return findByQuery(getRulesetsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
     }
 
@@ -105,18 +102,17 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public RulesetDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         RulesetDTO rulesetDTO = new RulesetDTO();
         rulesetDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
-        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
-        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
+        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
         rulesetDTO.setOrderMetadataByRuleset(
-            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
+            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(jsonObject));
 
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(rulesetJSONObject));
-        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(rulesetJSONObject));
+        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
+        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
         rulesetDTO.setClientDTO(clientDTO);
         return rulesetDTO;
@@ -140,9 +136,9 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public JsonObject findByFile(String file) throws DataException {
+    public Map<String, Object> findByFile(String file) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true);
-        return searcher.findDocument(queryBuilder.toString());
+        return findDocument(queryBuilder);
     }
 
     /**
@@ -152,9 +148,9 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return list of JSON objects
      */
-    public List<JsonObject> findByFileContent(String fileContent) throws DataException {
+    public List<Map<String, Object>> findByFileContent(String fileContent) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE_CONTENT.getKey(), fileContent, true);
-        return searcher.findDocuments(queryBuilder.toString());
+        return findDocuments(queryBuilder);
     }
 
     /**
@@ -164,9 +160,9 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched rulesets
      * @return search result
      */
-    List<JsonObject> findByClientId(Integer clientId) throws DataException {
+    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
         QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -178,11 +174,11 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public JsonObject findByTitleAndFile(String title, String file) throws DataException {
+    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.must(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true, Operator.AND));
-        return searcher.findDocument(query.toString());
+        return findDocument(query);
     }
 
     /**
@@ -194,11 +190,11 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public List<JsonObject> findByTitleOrFile(String title, String file) throws DataException {
+    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true));
         query.should(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true));
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -218,10 +214,10 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         return myPreferences;
     }
 
-    private String getRulesetsForCurrentUserQuery() {
+    private QueryBuilder getRulesetsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-            ServiceManager.getUserService().getSessionClientId(), true));
-        return query.toString();
+                ServiceManager.getUserService().getSessionClientId(), true));
+        return query;
     }
 }

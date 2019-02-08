@@ -12,7 +12,8 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,11 +23,20 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 
 /**
@@ -34,14 +44,13 @@ import org.kitodo.data.exceptions.DataException;
  */
 public class SearchRestClient extends KitodoRestClient {
 
-    private static final Logger logger = LogManager.getLogger(SearchRestClient.class);
-
     /**
      * SearchRestClient singleton.
      */
     private static SearchRestClient instance = null;
 
-    private SearchRestClient() {}
+    private SearchRestClient() {
+    }
 
     /**
      * Return singleton variable of type SearchRestClient.
@@ -67,8 +76,8 @@ public class SearchRestClient extends KitodoRestClient {
      *            to find a document
      * @return http entity as String
      */
-    String countDocuments(String query) throws DataException {
-        String wrappedQuery = "{\n \"query\": " + query + "\n}";
+    String countDocuments(QueryBuilder query) throws CustomResponseException, DataException {
+        String wrappedQuery = "{\n \"query\": " + query.toString() + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         return performRequest(entity, HttpMethod.GET, "_count");
     }
@@ -83,10 +92,25 @@ public class SearchRestClient extends KitodoRestClient {
      *            conditions as String
      * @return http entity as String
      */
-    String aggregateDocuments(String query, String aggregation) throws DataException {
-        String wrappedQuery = "{\n \"query\": " + query + "\n,\n \"aggs\": " + aggregation + "\n}";
-        HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        return performRequest(entity, HttpMethod.POST, "_search?size=0");
+    Aggregations aggregateDocuments(QueryBuilder query, AggregationBuilder aggregation)
+            throws CustomResponseException, DataException {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(query);
+        sourceBuilder.aggregation(aggregation);
+
+        SearchRequest searchRequest = new SearchRequest(this.index);
+        searchRequest.types(this.type);
+        searchRequest.source(sourceBuilder);
+
+        try {
+            SearchResponse response = highLevelClient.search(searchRequest);
+            return response.getAggregations();
+        } catch (ResponseException e) {
+            handleResponseException(e);
+            return new Aggregations(new ArrayList<>());
+        } catch (IOException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -96,18 +120,21 @@ public class SearchRestClient extends KitodoRestClient {
      *            of searched document
      * @return http entity as String
      */
-    String getDocument(Integer id) throws DataException {
-        String output = "";
+    Map<String, Object> getDocument(Integer id) throws CustomResponseException, DataException {
         try {
-            Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/" + type + "/" + id.toString(),
-                    getParameter());
-            output = EntityUtils.toString(response.getEntity());
+            GetRequest getRequest = new GetRequest(this.index, this.type, String.valueOf(id));
+            GetResponse getResponse = highLevelClient.get(getRequest);
+            if (getResponse.isExists()) {
+                Map<String, Object> response = getResponse.getSourceAsMap();
+                response.put("id", getResponse.getId());
+                return response;
+            }
         } catch (ResponseException e) {
             handleResponseException(e);
         } catch (IOException e) {
             throw new DataException(e);
         }
-        return output;
+        return Collections.emptyMap();
     }
 
     /**
@@ -123,45 +150,43 @@ public class SearchRestClient extends KitodoRestClient {
      *            as Integer
      * @return http entity as String
      */
-    String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
-        String output = "";
-        String wrappedQuery;
-        Map<String, String> parameters;
+    SearchHits getDocument(QueryBuilder query, SortBuilder sort, Integer offset, Integer size)
+            throws CustomResponseException, DataException {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(query);
         if (Objects.nonNull(sort)) {
-            String wrappedSort = "\n \"sort\": [" + sort + "]\n";
-            wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
+            sourceBuilder.sort(sort);
+        }
+        if (Objects.nonNull(offset)) {
+            sourceBuilder.from(offset);
+        }
+        if (Objects.nonNull(size)) {
+            sourceBuilder.size(size);
         } else {
-            wrappedQuery = "{\n \"query\": " + query + "\n}";
+            sourceBuilder.size(1000);
         }
 
-        if ( Objects.nonNull(offset) && Objects.nonNull(size)) {
-            parameters = getParameter(offset.toString(), size.toString());
-        } else if (Objects.isNull(offset) && Objects.nonNull(size)) {
-            parameters = getParameter(null, size.toString());
-        } else if (Objects.nonNull(offset) && Objects.isNull(size)) {
-            parameters = getParameter(offset.toString(),"10000");
-        } else {
-            parameters = getParameter(null, "10000");
-        }
+        SearchRequest searchRequest = new SearchRequest(this.index);
+        searchRequest.types(this.type);
+        searchRequest.source(sourceBuilder);
 
-        HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
-            Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/" + type + "/_search?",
-                    parameters, entity);
-            output = EntityUtils.toString(response.getEntity());
+            SearchResponse response = highLevelClient.search(searchRequest);
+            return response.getHits();
         } catch (ResponseException e) {
             handleResponseException(e);
+            return SearchHits.empty();
         } catch (IOException e) {
             throw new DataException(e);
         }
-        return output;
     }
 
-    private String performRequest(HttpEntity entity, String httpMethod, String urlRequest) throws DataException {
+    private String performRequest(HttpEntity entity, String httpMethod, String urlRequest)
+            throws CustomResponseException, DataException {
         String output = "";
         try {
-            Response response = restClient.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
-                    getParameter(), entity);
+            Response response = client.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
+                Collections.singletonMap("pretty", "true"), entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -169,33 +194,5 @@ public class SearchRestClient extends KitodoRestClient {
             throw new DataException(e);
         }
         return output;
-    }
-
-    private Map<String, String> getParameter() {
-        return getParameter(null, null);
-    }
-
-    private Map<String, String> getParameter(String offset, String size) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("pretty", "true");
-
-        if (Objects.nonNull(offset) && Objects.nonNull(size)) {
-            parameters.put("from", offset);
-            parameters.put("size", size);
-            return parameters;
-        } else if (Objects.isNull(offset) && Objects.nonNull(size)) {
-            parameters.put("size", size);
-            return parameters;
-        } else {
-            return parameters;
-        }
-    }
-
-    private void handleResponseException(ResponseException e) throws DataException {
-        if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-            logger.debug(e.getMessage());
-        } else {
-            throw new DataException(e);
-        }
     }
 }

@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
@@ -72,14 +71,13 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(getWorkflowsForCurrentUserQuery());
+        return countDocuments(getWorkflowsForCurrentUserQuery());
     }
 
     @Override
     public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(getWorkflowsForCurrentUserQuery(), getSort(sortField, sortOrder), first, pageSize),
+        return findByQuery(getWorkflowsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
     }
 
@@ -95,22 +93,21 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public WorkflowDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");
-        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(workflowJSONObject));
-        workflowDTO.setFileName(WorkflowTypeField.FILE_NAME.getStringValue(workflowJSONObject));
-        workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
-        workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
+        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
+        workflowDTO.setFileName(WorkflowTypeField.FILE_NAME.getStringValue(jsonObject));
+        workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(jsonObject));
+        workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(jsonObject));
         return workflowDTO;
     }
 
-    private String getWorkflowsForCurrentUserQuery() {
+    private QueryBuilder getWorkflowsForCurrentUserQuery() {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
             ServiceManager.getUserService().getSessionClientId(), true));
-        return query.toString();
+        return query;
     }
 
     /**

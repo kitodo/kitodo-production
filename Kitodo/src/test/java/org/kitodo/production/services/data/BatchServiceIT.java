@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -60,7 +61,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldCountAllBatchesAccordingToQuery() {
-        String query = matchQuery("title", "First batch").operator(Operator.AND).toString();
+        QueryBuilder query = matchQuery("title", "First batch").operator(Operator.AND);
         await().untilAsserted(
             () -> assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query)));
     }

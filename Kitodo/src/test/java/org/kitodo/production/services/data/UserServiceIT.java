@@ -36,7 +36,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -73,8 +72,7 @@ public class UserServiceIT {
         /*BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.mustNot(matchQuery("_id", "1"));
         boolQuery.must(matchQuery("login", "kowal"));
-        await().untilAsserted(
-            () -> assertEquals("User was found!", Long.valueOf(0), userService.count(boolQuery.toString())));
+        await().untilAsserted(() -> assertEquals("User was found!", Long.valueOf(0), userService.count(boolQuery)));
 
         await().untilAsserted(() -> assertEquals("User was found!", Long.valueOf(0),
             userService.getAmountOfUsersWithExactlyTheSameLogin("1", "kowal")));
@@ -83,7 +81,7 @@ public class UserServiceIT {
         boolQuerySecond.must(matchQuery("_id", "1"));
         boolQuerySecond.must(matchQuery("login", "kowal"));
         await().untilAsserted(
-            () -> assertEquals("User was not found!", Long.valueOf(1), userService.count(boolQuerySecond.toString())));
+            () -> assertEquals("User was not found!", Long.valueOf(1), userService.count(boolQuerySecond)));
 
         await().untilAsserted(() -> assertEquals("User was not found!", Long.valueOf(1),
             userService.getAmountOfUsersWithExactlyTheSameLogin(null, "kowal")));
@@ -152,8 +150,7 @@ public class UserServiceIT {
 
         User user = new User();
         user.setLogin("Cascade");
-        user.getRoles().add(
-            roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+        user.getRoles().add(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
@@ -165,8 +162,7 @@ public class UserServiceIT {
         size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
         assertEquals("Role was removed from database!", 1, size);
 
-        roleService
-                .removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
+        roleService.removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test

@@ -13,22 +13,13 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.BaseTemplateBean;
@@ -53,22 +44,20 @@ import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterface<T> {
 
     @Override
-    public HttpEntity createDocument(T baseIndexedBean) {
-        JsonObject baseIndexedObject = getJsonObject(baseIndexedBean);
-
-        return new NStringEntity(baseIndexedObject.toString(), ContentType.APPLICATION_JSON);
+    public Map<String, Object> createDocument(T baseIndexedBean) {
+        return getJsonObject(baseIndexedBean);
     }
 
     @Override
-    public Map<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
-        Map<Integer, HttpEntity> documents = new HashMap<>();
+    public Map<Integer, Map<String, Object>> createDocuments(List<T> baseIndexedBeans) {
+        Map<Integer, Map<String, Object>> documents = new HashMap<>();
         for (T bean : baseIndexedBeans) {
             documents.put(bean.getId(), createDocument(bean));
         }
         return documents;
     }
 
-    abstract JsonObject getJsonObject(T baseIndexedBean);
+    abstract Map<String, Object> getJsonObject(T baseIndexedBean);
 
     /**
      * Method for adding relationship between bean objects.
@@ -81,17 +70,17 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            object
      * @return JSONArray
      */
-    <F extends BaseBean> JsonArray addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
-        JsonArrayBuilder result = Json.createArrayBuilder();
+    <F extends BaseBean> List addObjectRelation(List<F> objects, boolean addAdditionalProperties) {
+        List<Map<String, Object>> result = new ArrayList<>();
         for (F property : objects) {
-            JsonObjectBuilder jsonObject = Json.createObjectBuilder();
-            jsonObject.add(BatchTypeField.ID.getKey(), property.getId());
+            Map<String, Object> jsonObject = new HashMap<>();
+            jsonObject.put(BatchTypeField.ID.getKey(), property.getId());
             if (addAdditionalProperties) {
                 getAdditionalProperties(jsonObject, property);
             }
-            result.add(jsonObject.build());
+            result.add(jsonObject);
         }
-        return result.build();
+        return result;
     }
 
     /**
@@ -101,38 +90,38 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            list
      * @return JSONArray
      */
-    <F extends BaseBean> JsonArray addObjectRelation(List<F> objects) {
+    <F extends BaseBean> List addObjectRelation(List<F> objects) {
         return addObjectRelation(objects, false);
     }
 
-    private void getAdditionalProperties(JsonObjectBuilder jsonObject, BaseBean property) {
+    private void getAdditionalProperties(Map<String, Object> jsonObject, BaseBean property) {
         if (property instanceof Batch) {
             Batch batch = (Batch) property;
-            jsonObject.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
+            jsonObject.put(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
             String type = batch.getType() != null ? batch.getType().toString() : "";
-            jsonObject.add(BatchTypeField.TYPE.getKey(), type);
+            jsonObject.put(BatchTypeField.TYPE.getKey(), type);
         } else if (property instanceof BaseTemplateBean) {
-            jsonObject.add(ProcessTypeField.TITLE.getKey(),
+            jsonObject.put(ProcessTypeField.TITLE.getKey(),
                     preventNull(((BaseTemplateBean) property).getTitle()));
         } else if (property instanceof Project) {
             Project project = (Project) property;
-            jsonObject.add(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
-            jsonObject.add(ProjectTypeField.ACTIVE.getKey(), project.isActive());
+            jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
+            jsonObject.put(ProjectTypeField.ACTIVE.getKey(), project.isActive());
             if (Objects.nonNull(project.getClient())) {
-                jsonObject.add(ProjectTypeField.CLIENT_ID.getKey(), project.getClient().getId());
+                jsonObject.put(ProjectTypeField.CLIENT_ID.getKey(), project.getClient().getId());
             }
         } else if (property instanceof User) {
             User user = (User) property;
-            jsonObject.add(UserTypeField.LOGIN.getKey(), preventNull(user.getLogin()));
-            jsonObject.add(UserTypeField.NAME.getKey(), preventNull(user.getName()));
-            jsonObject.add(UserTypeField.SURNAME.getKey(), preventNull(user.getSurname()));
+            jsonObject.put(UserTypeField.LOGIN.getKey(), preventNull(user.getLogin()));
+            jsonObject.put(UserTypeField.NAME.getKey(), preventNull(user.getName()));
+            jsonObject.put(UserTypeField.SURNAME.getKey(), preventNull(user.getSurname()));
         } else if (property instanceof Role) {
-            jsonObject.add(RoleTypeField.TITLE.getKey(),
+            jsonObject.put(RoleTypeField.TITLE.getKey(),
                     preventNull(((Role) property).getTitle()));
         } else if (property instanceof Task) {
-            jsonObject.add(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
+            jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
         } else if (property instanceof Filter) {
-            jsonObject.add(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
+            jsonObject.put(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
         }
     }
 
@@ -144,12 +133,12 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            as Date
      * @return formatted date as JsonValue - String or NULL
      */
-    JsonValue getFormattedDate(Date date) {
+    String getFormattedDate(Date date) {
         if (Objects.nonNull(date)) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            return Json.createValue(dateFormat.format(date));
+            return dateFormat.format(date);
         }
-        return JsonValue.NULL;
+        return "";
     }
 
     String preventNull(String value) {

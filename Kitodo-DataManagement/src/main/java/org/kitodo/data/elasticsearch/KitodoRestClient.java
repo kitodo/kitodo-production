@@ -26,20 +26,30 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.action.main.MainResponse;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.rest.RestStatus;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.api.RestClientInterface;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of Elastic Search REST Client for Index Module.
  */
 public abstract class KitodoRestClient implements RestClientInterface {
 
+    private static final Logger logger = LogManager.getLogger(KitodoRestClient.class);
+
     protected String index;
     protected String type;
-    protected RestClient restClient;
+    protected RestClient client;
+    protected RestHighLevelClient highLevelClient;
 
     /**
      * Create REST client.
@@ -66,7 +76,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
         if (ConfigMain.getBooleanParameter("elasticsearch.useAuthentication")) {
             initiateClientWithAuth(host, port, protocol);
         } else {
-            restClient = RestClient.builder(new HttpHost(host, port, protocol)).build();
+            client = RestClient.builder(new HttpHost(host, port, protocol)).build();
+            highLevelClient = new RestHighLevelClient(client);
         }
     }
 
@@ -87,8 +98,9 @@ public abstract class KitodoRestClient implements RestClientInterface {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
 
-        restClient = RestClient.builder(new HttpHost(host, port, protocol)).setHttpClientConfigCallback(
+        client = RestClient.builder(new HttpHost(host, port, protocol)).setHttpClientConfigCallback(
             httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)).build();
+        highLevelClient = new RestHighLevelClient(client);
     }
 
     /**
@@ -97,8 +109,18 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return information about the server
      */
     public String getServerInformation() throws IOException {
-        Response response = restClient.performRequest(HttpMethod.GET, "/", Collections.singletonMap("pretty", "true"));
+        Response response = client.performRequest(HttpMethod.GET, "/", Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
+    }
+
+    /**
+     * Get information about client server.
+     *
+     * @return information about the server
+     */
+    public String getServerInfo() throws IOException {
+        MainResponse response = highLevelClient.info();
+        return response.toString();
     }
 
     /**
@@ -107,7 +129,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return mapping
      */
     public String getMapping() throws IOException {
-        Response response = restClient.performRequest(HttpMethod.GET, "/" + index + "/_mapping",
+        Response response = client.performRequest(HttpMethod.GET, "/" + index + "/_mapping",
             Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
@@ -132,7 +154,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest(HttpMethod.PUT, "/" + index, Collections.emptyMap(), entity);
+        Response indexResponse = client.performRequest(HttpMethod.PUT, "/" + index, Collections.emptyMap(), entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -143,7 +165,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return false if doesn't exists, true if exists
      */
     public boolean indexExists() throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest(HttpMethod.GET, "/" + index, Collections.emptyMap());
+        Response indexResponse = client.performRequest(HttpMethod.GET, "/" + index, Collections.emptyMap());
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -152,7 +174,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * Delete the whole index. Used for cleaning after tests!
      */
     public void deleteIndex() throws IOException {
-        restClient.performRequest(HttpMethod.DELETE, "/" + index);
+        client.performRequest(HttpMethod.DELETE, "/" + index);
     }
 
     /**
@@ -193,13 +215,31 @@ public abstract class KitodoRestClient implements RestClientInterface {
         this.type = type;
     }
 
+    protected void handleResponseException(ResponseException e) throws CustomResponseException {
+        if (e.getResponse().getStatusLine().getStatusCode() == 404) {
+            logger.debug(e.getMessage(), e);
+        } else {
+            throw new CustomResponseException(e);
+        }
+    }
+
     protected int processStatusCode(StatusLine statusLine) throws CustomResponseException {
         int statusCode = statusLine.getStatusCode();
-        if (statusCode >= 400 && statusCode <= 499) {
-            throw new CustomResponseException("Client error: " + statusLine.toString());
-        } else if (statusCode >= 500 && statusCode <= 599) {
-            throw new CustomResponseException("Server error: " + statusLine.toString());
-        }
+        processStatusCode(statusCode, statusLine);
         return statusCode;
+    }
+
+    protected int processStatusCode(RestStatus restStatus) throws CustomResponseException {
+        int statusCode = restStatus.getStatus();
+        processStatusCode(statusCode, restStatus);
+        return statusCode;
+    }
+
+    private void processStatusCode(int statusCode, Object restStatus) throws CustomResponseException {
+        if (statusCode >= 400 && statusCode <= 499) {
+            throw new CustomResponseException("Client error: " + restStatus.toString());
+        } else if (statusCode >= 500 && statusCode <= 599) {
+            throw new CustomResponseException("Server error: " + restStatus.toString());
+        }
     }
 }

@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,12 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
@@ -129,9 +122,7 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         Process process = prepareData().get(0);
-        HttpEntity document = processType.createDocument(process);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(process);
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             ProcessTypeField.TITLE.getStringValue(actual));
@@ -164,32 +155,32 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 1, ProcessTypeField.RULESET.getIntValue(actual));
 
-        JsonArray templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
+        List<Map<String, Object>> properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
 
-        JsonArray workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
+        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
+        List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 1, batches.size());
 
-        JsonObject batch = batches.getJsonObject(0);
+        Map<String, Object> batch = batches.get(0);
         assertEquals("Key batches.id doesn't match to given value!", 1, BatchTypeField.ID.getIntValue(batch));
         assertEquals("Key batches.title doesn't match to given value!", "First",
             BatchTypeField.TITLE.getStringValue(batch));
 
-        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 2, tasks.size());
 
-        JsonObject task = tasks.getJsonObject(0);
+        Map<String, Object> task = tasks.get(0);
         assertEquals("Key tasks.id doesn't match to given value!", 1, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task one",
             TaskTypeField.TITLE.getStringValue(task));
 
-        task = tasks.getJsonObject(1);
+        task = tasks.get(1);
         assertEquals("Key tasks.id doesn't match to given value!", 2, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task two",
             TaskTypeField.TITLE.getStringValue(task));
@@ -200,9 +191,7 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         Process process = prepareData().get(1);
-        HttpEntity document = processType.createDocument(process);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(process);
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             ProcessTypeField.TITLE.getStringValue(actual));
@@ -235,26 +224,26 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 1, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, ProcessTypeField.RULESET.getIntValue(actual));
 
-        JsonArray templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
 
-        JsonArray workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
+        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
+        List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
 
-        JsonArray properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
+        List<Map<String, Object>> properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 2, properties.size());
 
-        JsonObject property = properties.getJsonObject(0);
+        Map<String, Object> property = properties.get(0);
         assertEquals("Key properties.id doesn't match to given value!", 1,
             PropertyTypeField.ID.getIntValue(property));
 
-        property = properties.getJsonObject(1);
+        property = properties.get(1);
         assertEquals("Key properties.id doesn't match to given value!", 2,
             PropertyTypeField.ID.getIntValue(property));
     }
@@ -264,9 +253,7 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         Process process = prepareData().get(2);
-        HttpEntity document = processType.createDocument(process);
-
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        Map<String, Object> actual = processType.createDocument(process);
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             ProcessTypeField.TITLE.getStringValue(actual));
@@ -299,19 +286,19 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, ProcessTypeField.RULESET.getIntValue(actual));
 
-        JsonArray templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
+        List<Map<String, Object>> templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
+        List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
 
-        JsonArray workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
+        List<Map<String, Object>> workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
+        List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
 
-        JsonArray properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
+        List<Map<String, Object>> properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
     }
 
@@ -320,17 +307,16 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         Process process = prepareData().get(0);
-        HttpEntity document = processType.createDocument(process);
+        Map<String, Object> actual = processType.createDocument(process);
 
-        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
 
-        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
-        JsonObject batch = batches.getJsonObject(0);
+        List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
+        Map<String, Object> batch = batches.get(0);
         assertEquals("Amount of keys in batches is incorrect!", 3, batch.keySet().size());
 
-        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
-        JsonObject task = tasks.getJsonObject(0);
+        List<Map<String, Object>> tasks = ProcessTypeField.TASKS.getJsonArray(actual);
+        Map<String, Object> task = tasks.get(0);
         assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }
 
@@ -339,7 +325,7 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         List<Process> processes = prepareData();
-        Map<Integer, HttpEntity> documents = processType.createDocuments(processes);
+        Map<Integer, Map<String, Object>> documents = processType.createDocuments(processes);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 

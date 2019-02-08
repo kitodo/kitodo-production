@@ -44,9 +44,6 @@ import java.util.Set;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -64,6 +61,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -181,7 +179,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(createUserProcessesQuery(filters).toString());
+        return countDocuments(createUserProcessesQuery(filters));
     }
 
     @Override
@@ -197,9 +195,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(createUserProcessesQuery(filters).toString(),
-            getSort(sortField, sortOrder), first, pageSize), false);
-
+        return findByQuery(createUserProcessesQuery(filters),
+            getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
@@ -266,7 +263,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param process
      *            object
      */
-    private void manageBatchesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+    private void manageBatchesDependenciesForIndex(Process process)
+            throws CustomResponseException, DataException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Batch batch : process.getBatches()) {
                 batch.getProcesses().remove(process);
@@ -285,7 +283,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param process
      *            object
      */
-    private void manageProjectDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+    private void manageProjectDependenciesForIndex(Process process)
+            throws CustomResponseException, DataException, IOException {
         if (process.getProject() != null) {
             ServiceManager.getProjectService().saveToIndex(process.getProject(), false);
         }
@@ -298,7 +297,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param process
      *            object
      */
-    private void managePropertiesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+    private void managePropertiesDependenciesForIndex(Process process)
+            throws CustomResponseException, DataException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property property : process.getProperties()) {
                 ServiceManager.getPropertyService().removeFromIndex(property, false);
@@ -345,8 +345,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             ServiceManager.getTaskService().saveToIndex(task, false);
         }
 
-        List<JsonObject> searchResults = ServiceManager.getTaskService().findByProcessId(process.getId());
-        for (JsonObject object : searchResults) {
+        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByProcessId(process.getId());
+        for (Map<String, Object> object : searchResults) {
             index.add(getIdFromJSONObject(object));
         }
 
@@ -368,7 +368,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param process
      *            object
      */
-    private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+    private void manageTemplatesDependenciesForIndex(Process process)
+            throws CustomResponseException, DataException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property template : process.getTemplates()) {
                 ServiceManager.getPropertyService().removeFromIndex(template, false);
@@ -387,7 +388,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param process
      *            object
      */
-    private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+    private void manageWorkpiecesDependenciesForIndex(Process process)
+            throws CustomResponseException, DataException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property workpiece : process.getWorkpieces()) {
                 ServiceManager.getPropertyService().removeFromIndex(workpiece, false);
@@ -429,9 +431,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         dao.refresh(process);
     }
 
-    List<JsonObject> findForCurrentSessionClient() throws DataException {
-        return searcher.findDocuments(
-            getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()).toString());
+    List<Map<String, Object>> findForCurrentSessionClient() throws DataException {
+        return findDocuments(
+            getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
     }
 
     /**
@@ -442,8 +444,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of ProcessDTO objects with processes for specific process id
      */
     public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
-        List<JsonObject> processes = searcher.findDocuments(getQueryProjectId(id).toString());
-        return convertJSONObjectsToDTOs(processes, related);
+        return findByQuery(getQueryProjectId(id), related);
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
@@ -465,12 +466,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * Find processes by docket id.
      *
      * @param docketId
-     *            id of dockett for search
+     *            id of docket for search
      * @return list of JSON objects with processes for specific docket id
      */
-    public List<JsonObject> findByDocket(int docketId) throws DataException {
+    public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docketId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -480,9 +481,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            id of ruleset for search
      * @return list of JSON objects with processes for specific ruleset id
      */
-    public List<JsonObject> findByRuleset(int rulesetId) throws DataException {
+    public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -492,8 +493,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of process
      * @return list of JSON objects with processes for specific process id
      */
-    List<JsonObject> findByProjectTitle(String title) throws DataException {
-        return searcher.findDocuments(getQueryProjectTitle(title).toString());
+    List<Map<String, Object>> findByProjectTitle(String title) throws DataException {
+        return findDocuments(getQueryProjectTitle(title));
     }
 
     /**
@@ -503,9 +504,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of process
      * @return list of JSON objects with processes for specific batch id
      */
-    List<JsonObject> findByBatchId(Integer id) throws DataException {
+    List<Map<String, Object>> findByBatchId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.id", id, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -515,9 +516,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of batch
      * @return list of JSON objects with processes for specific batch title
      */
-    List<JsonObject> findByBatchTitle(String title) throws DataException {
+    List<Map<String, Object>> findByBatchTitle(String title) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.title", title, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -531,7 +532,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JsonObject> findByProcessProperty(String title, String value, boolean contains) throws DataException {
+    public List<Map<String, Object>> findByProcessProperty(String title, String value, boolean contains)
+            throws DataException {
         return findByProperty(title, value, "process", "properties.id", contains);
     }
 
@@ -546,7 +548,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JsonObject> findByTemplateProperty(String title, String value, boolean contains) throws DataException {
+    public List<Map<String, Object>> findByTemplateProperty(String title, String value, boolean contains)
+            throws DataException {
         return findByProperty(title, value, "template", "templates.id", contains);
     }
 
@@ -561,7 +564,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JsonObject> findByWorkpieceProperty(String title, String value, boolean contains) throws DataException {
+    public List<Map<String, Object>> findByWorkpieceProperty(String title, String value, boolean contains)
+            throws DataException {
         return findByProperty(title, value, "workpiece", "workpieces.id", contains);
     }
 
@@ -587,9 +591,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    private List<JsonObject> findByProperty(String title, String value, String type, String key, boolean contains)
-            throws DataException {
-        List<JsonObject> properties;
+    private List<Map<String, Object>> findByProperty(String title, String value, String type, String key,
+            boolean contains) throws DataException {
+        List<Map<String, Object>> properties;
         if (value == null) {
             properties = ServiceManager.getPropertyService().findByTitle(title, type, contains);
         } else if (title == null) {
@@ -598,12 +602,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             properties = ServiceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
-        return searcher.findDocuments(createSetQuery(key, properties, true).toString());
+        return findDocuments(createSetQuery(key, properties, true));
     }
 
     List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
         QueryBuilder query = createSetQuery("project.id", projectIds, true);
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
+        return findByQuery(query, related);
     }
 
     /**
@@ -638,8 +642,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            ASC or DESC as SortOrder
      * @return sort
      */
-    public String sortByCreationDate(SortOrder sortOrder) {
-        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getKey()).order(sortOrder).toString();
+    public SortBuilder sortByCreationDate(SortOrder sortOrder) {
+        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getKey()).order(sortOrder);
     }
 
     /**
@@ -658,36 +662,35 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public ProcessDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject processJSONObject = jsonObject.getJsonObject("_source");
-        processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(processJSONObject));
-        processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
-        processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
-        processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getKey(),
+        processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
+        processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
+        processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
+        processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.PROPERTIES.getKey(),
             ServiceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(processJSONObject));
-        processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getKey()));
-        processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(processJSONObject));
-        processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(processJSONObject));
+        processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
+        processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
+        processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
+        processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
-        processDTO.setBatches(getBatchesForProcessDTO(processJSONObject));
+        processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
         if (!related) {
-            convertRelatedJSONObjects(processJSONObject, processDTO);
+            convertRelatedJSONObjects(jsonObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(processJSONObject));
-            projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(processJSONObject));
-            projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(processJSONObject));
+            projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
+            projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+            projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
             processDTO.setProject(ServiceManager.getProjectService().findById(project));
@@ -704,14 +707,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
     }
 
-    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
-        JsonArray jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
+    private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
+        List<Map<String, Object>> jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
         List<BatchDTO> batchDTOList = new ArrayList<>();
-        for (JsonValue singleObject : jsonArray) {
+        for (Map<String, Object> singleObject : jsonArray) {
             BatchDTO batchDTO = new BatchDTO();
-            batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject.asJsonObject()));
-            batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject.asJsonObject()));
-            batchDTO.setType(BatchTypeField.TYPE.getStringValue(singleObject.asJsonObject()));
+            batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject));
+            batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject));
+            batchDTO.setType(BatchTypeField.TYPE.getStringValue(singleObject));
             batchDTOList.add(batchDTO);
         }
         return batchDTOList;
@@ -1555,10 +1558,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The addMessageToWikiField() method is a helper method which composes the
-     * new wiki field using a StringBuilder. The message is encoded using HTML
-     * entities to prevent certain characters from playing merry havoc when the
-     * message box shall be rendered in a browser later.
+     * The addMessageToWikiField() method is a helper method which composes the new
+     * wiki field using a StringBuilder. The message is encoded using HTML entities
+     * to prevent certain characters from playing merry havoc when the message box
+     * shall be rendered in a browser later.
      *
      * @param message
      *            the message to append
@@ -1606,8 +1609,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to
-     * the wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to the
+     * wiki field of the process.
      *
      * @param user
      *            to sign the message with
@@ -1620,8 +1623,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within kitodo_config.properties
+     * The method createProcessDirs() starts creation of directories configured by
+     * parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
@@ -1633,18 +1636,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this
-     * process.
+     * The function getDigitalDocument() returns the digital act of this process.
      *
      * @return the digital act of this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
+     *             if the no node corresponding to the file format is available in
+     *             the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws IOException
-     *             if creating the process directory or reading the meta data
-     *             file fails
+     *             if creating the process directory or reading the meta data file
+     *             fails
      */
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process)
             throws PreferencesException, ReadException, IOException {
@@ -1652,8 +1654,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Filter and sort after creation date list of process properties for
-     * correction and solution messages.
+     * Filter and sort after creation date list of process properties for correction
+     * and solution messages.
      *
      * @return list of ProcessProperty objects
      */
@@ -1702,7 +1704,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return amount as Long
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-        return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND).toString());
+        return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND));
     }
 
     /**
@@ -1765,9 +1767,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
-         * den Import-Ordner oder ins Benutzerhome anschliessend den
-         * Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den
+         * Import-Ordner oder ins Benutzerhome anschliessend den Import-Thread starten
          */
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -1880,8 +1881,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Run through all metadata and children of given docStruct to trim the
-     * strings calls itself recursively.
+     * Run through all metadata and children of given docStruct to trim the strings
+     * calls itself recursively.
      *
      * @param docStruct
      *            metadata to be trimmed
@@ -1964,7 +1965,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         Project project = process.getProject();
 
         // determine the output path
-        URI tifDirectory = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
+        URI tifDirectory = getImagesTifDirectory(true, process.getId(), process.getTitle(),
+            process.getProcessBaseUri());
 
         // copy the source folder to the destination folder
         if (fileService.fileExist(tifDirectory) && !fileService.getSubUris(tifDirectory).isEmpty()) {
@@ -2073,8 +2075,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die
-         * Metsstruktur übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
+         * übernommen
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!

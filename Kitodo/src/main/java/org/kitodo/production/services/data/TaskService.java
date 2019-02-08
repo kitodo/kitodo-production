@@ -21,8 +21,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,6 +28,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -147,7 +147,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
 
-        List<JsonObject> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
+        List<Map<String, Object>> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
         query.must(createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processes, true));
 
         return query;
@@ -165,7 +165,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments(createUserTaskQuery().toString());
+        return countDocuments(createUserTaskQuery());
     }
 
     @Override
@@ -181,9 +181,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        BoolQueryBuilder query = createUserTaskQuery();
-        return convertJSONObjectsToDTOs(
-            searcher.findDocuments(query.toString(), getSort(sortField, sortOrder), first, pageSize), false);
+        return findByQuery(createUserTaskQuery(), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     /**
@@ -194,12 +192,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
     }
 
-    private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
             Process process = task.getProcess();
             if (process != null) {
@@ -212,7 +210,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
         if (task.getIndexAction().equals(IndexAction.DELETE)) {
             Template template = task.getTemplate();
             if (Objects.nonNull(template)) {
@@ -260,7 +258,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return a list of titles
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
-        return findDistinctValues(null, "title.keyword", true);
+        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true);
     }
 
     /**
@@ -281,9 +279,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            of process
      * @return list of JSON objects with tasks for specific process id
      */
-    List<JsonObject> findByProcessId(Integer id) throws DataException {
+    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), id, true);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     /**
@@ -295,12 +293,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            id of processing user
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusAndUser(TaskStatus taskStatus, Integer processingUser, String sort)
+    List<Map<String, Object>> findByProcessingStatusAndUser(TaskStatus taskStatus, Integer processingUser, SortBuilder sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        return searcher.findDocuments(query.toString(), sort);
+        return findDocuments(query, sort);
     }
 
     /**
@@ -314,13 +312,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Integer
      * @return list of task as JSONObject objects
      */
-    private List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
-            Integer priority, String sort) throws DataException {
+    private List<Map<String, Object>> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
+            Integer priority, SortBuilder sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
-        return searcher.findDocuments(query.toString(), sort);
+        return findDocuments(query, sort);
     }
 
     /**
@@ -334,13 +332,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    private List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-            boolean typeAutomatic, String sort) throws DataException {
+    private List<Map<String, Object>> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+            boolean typeAutomatic, SortBuilder sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
-        return searcher.findDocuments(query.toString(), sort);
+        return findDocuments(query, sort);
     }
 
     /**
@@ -356,71 +354,63 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
-            Integer processingUser, Integer priority, boolean typeAutomatic, String sort) throws DataException {
+    private List<Map<String, Object>> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
+            Integer processingUser, Integer priority, boolean typeAutomatic, SortBuilder sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
-        return searcher.findDocuments(query.toString(), sort);
+        return findDocuments(query, sort);
     }
 
     @Override
-    public TaskDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public TaskDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject taskJSONObject = jsonObject.getJsonObject("_source");
-        taskDTO.setTitle(TaskTypeField.TITLE.getStringValue(taskJSONObject));
+        taskDTO.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
-        taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(taskJSONObject));
-        taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(taskJSONObject));
-        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
+        taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(jsonObject));
+        taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
+        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
         taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        int editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
+        int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
-        JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
-        taskDTO.setProcessingTime(getDateFromJsonValue(processingTime));
-        JsonValue processingBegin = taskJSONObject.get(TaskTypeField.PROCESSING_BEGIN.getKey());
-        taskDTO.setProcessingBegin(getDateFromJsonValue(processingBegin));
-        JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getKey());
-        taskDTO.setProcessingEnd(getDateFromJsonValue(processingEnd));
-        taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
-        taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
-        taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
-        taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
-        taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
-        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(taskJSONObject));
+        taskDTO.setProcessingTime(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
+        taskDTO.setProcessingBegin(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
+        taskDTO.setProcessingEnd(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+        taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
+        taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
+        taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
+        taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
+        taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
+        taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
          * are displayed in the task list and reading the template list would result in
          * never-ending loops as the list of templates reads the list of tasks.
          */
-        int process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
+        int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
         if (process > 0) {
             taskDTO.setProcess(ServiceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(ServiceManager.getProcessService()
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
         }
 
-        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(taskJSONObject);
+        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
         if (processingUser > 0) {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(processingUser);
-            userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(taskJSONObject));
-            userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(taskJSONObject));
-            userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(taskJSONObject));
+            userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
+            userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
+            userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
             userDTO.setFullName(ServiceManager.getUserService().getFullName(userDTO));
             taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;
-    }
-
-    private String getDateFromJsonValue(JsonValue date) {
-        return date != JsonValue.NULL ? date.toString().replace("\"", "") : "";
     }
 
     /**
@@ -748,9 +738,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenTasksForCurrentUser(SortBuilder sort) throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
+        List<Map<String,Object>> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -762,9 +752,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(SortBuilder sort) throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
+        List<Map<String, Object>> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -776,9 +766,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(SortBuilder sort) throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
+        List<Map<String, Object>> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
             sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -791,9 +781,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            possible sort query according to which results will be sorted
      * @return the list of tasks as TaskDTO objects
      */
-    public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(SortBuilder sort) throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
+        List<Map<String, Object>> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
             10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }

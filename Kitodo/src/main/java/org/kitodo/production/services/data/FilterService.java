@@ -20,13 +20,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.json.JsonObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Filter;
@@ -97,7 +96,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     @Override
     public Long countResults(Map filters) throws DataException {
-        return searcher.countDocuments();
+        return countDocuments(QueryBuilders.matchAllQuery());
     }
 
     @Override
@@ -124,17 +123,16 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            of the searched filter
      * @return list of JSON objects with properties
      */
-    List<JsonObject> findByValue(String value, boolean contains) throws DataException {
+    List<Map<String, Object>> findByValue(String value, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery(FilterTypeField.VALUE.getKey(), value, contains, Operator.AND);
-        return searcher.findDocuments(query.toString());
+        return findDocuments(query);
     }
 
     @Override
-    public FilterDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+    public FilterDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         FilterDTO filterDTO = new FilterDTO();
         filterDTO.setId(getIdFromJSONObject(jsonObject));
-        JsonObject filterJSONObject = jsonObject.getJsonObject("_source");
-        filterDTO.setValue(FilterTypeField.VALUE.getStringValue(filterJSONObject));
+        filterDTO.setValue(FilterTypeField.VALUE.getStringValue(jsonObject));
         return filterDTO;
     }
 
@@ -847,7 +845,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         /*List<TaskDTO> taskDTOS = new ArrayList<>();
         String login = getFilterValueFromFilterString(filter, FilterString.TASKDONEUSER);
         try {
-            JsonObject user = ServiceManager.getUserService().findByLogin(login);
+            Map<String, Object> user = ServiceManager.getUserService().findByLogin(login);
             UserDTO userDTO = ServiceManager.getUserService().convertJSONObjectToDTO(user, false);
             taskDTOS = userDTO.getProcessingTasks();
         } catch (DataException e) {
@@ -932,7 +930,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterProcessProperty(String filter, boolean negate, ObjectType objectType)
             throws DataException {
         /* Filtering by signature */
-        List<JsonObject> processes;
+        List<Map<String, Object>> processes;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
             processes = ServiceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
@@ -976,7 +974,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
         // Filtering by signature
-        List<JsonObject> templates;
+        List<Map<String, Object>> templates;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
             templates = ServiceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
@@ -1008,7 +1006,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
         // filter according signature
-        List<JsonObject> workpieces;
+        List<Map<String, Object>> workpieces;
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
             FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {

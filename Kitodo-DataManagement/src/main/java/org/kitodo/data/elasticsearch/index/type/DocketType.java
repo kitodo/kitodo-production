@@ -11,11 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
@@ -26,16 +24,16 @@ import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 public class DocketType extends BaseType<Docket> {
 
     @Override
-    JsonObject getJsonObject(Docket docket) {
-        Integer clientId = Objects.nonNull(docket.getClient()) ? docket.getClient().getId() : 0;
+    Map<String, Object> getJsonObject(Docket docket) {
+        int clientId = Objects.nonNull(docket.getClient()) ? docket.getClient().getId() : 0;
         String clientName = Objects.nonNull(docket.getClient()) ? docket.getClient().getName() : "";
 
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(DocketTypeField.TITLE.getKey(), preventNull(docket.getTitle()));
-        jsonObjectBuilder.add(DocketTypeField.FILE.getKey(), preventNull(docket.getFile()));
-        jsonObjectBuilder.add(DocketTypeField.ACTIVE.getKey(), docket.isActive());
-        jsonObjectBuilder.add(DocketTypeField.CLIENT_ID.getKey(), clientId);
-        jsonObjectBuilder.add(DocketTypeField.CLIENT_NAME.getKey(), clientName);
-        return jsonObjectBuilder.build();
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(DocketTypeField.TITLE.getKey(), preventNull(docket.getTitle()));
+        jsonObject.put(DocketTypeField.FILE.getKey(), preventNull(docket.getFile()));
+        jsonObject.put(DocketTypeField.ACTIVE.getKey(), docket.isActive());
+        jsonObject.put(DocketTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObject.put(DocketTypeField.CLIENT_NAME.getKey(), clientName);
+        return jsonObject;
     }
 }

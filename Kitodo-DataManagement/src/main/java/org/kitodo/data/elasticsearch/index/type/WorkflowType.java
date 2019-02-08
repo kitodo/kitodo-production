@@ -11,11 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
@@ -23,16 +21,16 @@ import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
 public class WorkflowType extends BaseType<Workflow> {
 
     @Override
-    JsonObject getJsonObject(Workflow workflow) {
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(WorkflowTypeField.TITLE.getKey(), preventNull(workflow.getTitle()));
-        jsonObjectBuilder.add(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
-        jsonObjectBuilder.add(WorkflowTypeField.READY.getKey(), workflow.isReady());
-        jsonObjectBuilder.add(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
+    Map<String, Object> getJsonObject(Workflow workflow) {
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(WorkflowTypeField.TITLE.getKey(), preventNull(workflow.getTitle()));
+        jsonObject.put(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
+        jsonObject.put(WorkflowTypeField.READY.getKey(), workflow.isReady());
+        jsonObject.put(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
         if (Objects.nonNull(workflow.getClient())) {
-            jsonObjectBuilder.add(WorkflowTypeField.CLIENT_ID.getKey(), workflow.getClient().getId());
-            jsonObjectBuilder.add(WorkflowTypeField.CLIENT_NAME.getKey(), preventNull(workflow.getClient().getName()));
+            jsonObject.put(WorkflowTypeField.CLIENT_ID.getKey(), workflow.getClient().getId());
+            jsonObject.put(WorkflowTypeField.CLIENT_NAME.getKey(), preventNull(workflow.getClient().getName()));
         }
-        return jsonObjectBuilder.build();
+        return jsonObject;
     }
 }

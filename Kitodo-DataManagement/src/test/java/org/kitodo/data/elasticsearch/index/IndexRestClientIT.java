@@ -11,9 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import static org.junit.Assert.assertTrue;
+import java.util.Map;
 
-import javax.json.JsonObject;
+import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.node.Node;
 import org.junit.After;
@@ -61,46 +61,68 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldAddDocument() throws Exception {
-        JsonObject response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response.toString()));
+        Map<String, Object> response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response));
 
         restClient.addDocument(MockEntity.createEntities().get(1), 1, false);
 
         response = searcher.findDocument(1);
-        assertTrue("Add of document has failed!", isFound(response.toString()));
+        assertTrue("Add of document has failed!", isFound(response));
     }
 
     @Test
-    public void shouldAddType() throws Exception {
-        JsonObject response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response.toString()));
+    public void shouldAddTypeAsync() throws Exception {
+        Map<String, Object> response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response));
         response = searcher.findDocument(2);
-        assertTrue("Document exists!", !isFound(response.toString()));
+        assertTrue("Document exists!", !isFound(response));
 
-        restClient.addType(MockEntity.createEntities());
+        restClient.addTypeSync(MockEntity.createEntities());
 
         response = searcher.findDocument(1);
-        assertTrue("Add of type has failed - document id 1!", isFound(response.toString()));
+        assertTrue("Add of type has failed - document id 1!", isFound(response));
         response = searcher.findDocument(2);
-        assertTrue("Add of type has failed - document id 2!", isFound(response.toString()));
+        assertTrue("Add of type has failed - document id 2!", isFound(response));
+
+    }
+
+    @Test
+    public void shouldAddTypeSync() throws Exception {
+        Map<String, Object> response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response));
+        response = searcher.findDocument(2);
+        assertTrue("Document exists!", !isFound(response));
+
+        restClient.addTypeAsync(MockEntity.createEntities());
+
+        response = searcher.findDocument(1);
+        assertTrue("Add of type has failed - document id 1!", isFound(response));
+        response = searcher.findDocument(2);
+        assertTrue("Add of type has failed - document id 2!", isFound(response));
 
     }
 
     @Test
     public void shouldDeleteDocument() throws Exception {
-        restClient.addType(MockEntity.createEntities());
+        restClient.addTypeSync(MockEntity.createEntities());
 
-        JsonObject response = searcher.findDocument(1);
-        assertTrue("Document doesn't exist!", isFound(response.toString()));
+        Map<String, Object> response = searcher.findDocument(1);
+        assertTrue("Document doesn't exist!", isFound(response));
 
         restClient.deleteDocument(1, false);
         response = searcher.findDocument(1);
-        assertTrue("Delete of document has failed!", !isFound(response.toString()));
+        assertTrue("Delete of document has failed!", !isFound(response));
 
         // remove even if document doesn't exist should be possible
         restClient.deleteDocument(100, false);
         response = searcher.findDocument(100);
-        assertTrue("Delete of document has failed!", !isFound(response.toString()));
+        assertTrue("Delete of document has failed!", !isFound(response));
+    }
+
+    @Test
+    public void shouldGetServerInfo() throws Exception {
+        System.out.println(restClient.getServerInformation());
+        System.out.println(restClient.getServerInfo());
     }
 
     private static IndexRestClient initializeRestClient() {
@@ -110,7 +132,7 @@ public class IndexRestClientIT {
         return restClient;
     }
 
-    private static boolean isFound(String response) {
-        return response.contains("found");
+    private static boolean isFound(Map<String, Object> response) {
+        return !response.isEmpty();
     }
 }

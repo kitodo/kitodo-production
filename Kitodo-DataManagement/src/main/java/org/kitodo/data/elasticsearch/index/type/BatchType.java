@@ -11,9 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
@@ -24,13 +23,13 @@ import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 public class BatchType extends BaseType<Batch> {
 
     @Override
-    JsonObject getJsonObject(Batch batch) {
+    Map<String, Object> getJsonObject(Batch batch) {
         String type = batch.getType() != null ? batch.getType().toString() : "";
 
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
-        jsonObjectBuilder.add(BatchTypeField.TYPE.getKey(), type);
-        jsonObjectBuilder.add(BatchTypeField.PROCESSES.getKey(), addObjectRelation(batch.getProcesses(), true));
-        return jsonObjectBuilder.build();
+        Map<String, Object> jsonObject = new HashMap<>();
+        jsonObject.put(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
+        jsonObject.put(BatchTypeField.TYPE.getKey(), type);
+        jsonObject.put(BatchTypeField.PROCESSES.getKey(), addObjectRelation(batch.getProcesses(), true));
+        return jsonObject;
     }
 }

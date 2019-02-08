@@ -11,12 +11,17 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import java.util.Map;
+
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,7 +37,7 @@ public class SearchRestClientIT {
     private static Node node;
     private static SearchRestClient searchRestClient;
     private static String testIndexName;
-    private static String query = "{\n\"match_all\" : {}\n}";
+    private static QueryBuilder query = QueryBuilders.matchAllQuery();
 
     @BeforeClass
     public static void prepareIndex() throws Exception {
@@ -67,26 +72,29 @@ public class SearchRestClientIT {
 
     @Test
     public void shouldGetDocumentById() {
-        await().untilAsserted(() -> assertTrue("Get of document has failed!",
-            searchRestClient.getDocument(1).contains("\"found\" : true")));
+        await().untilAsserted(() -> assertTrue("Get of document has failed - source is empty!",
+            !searchRestClient.getDocument(1).isEmpty()));
+
+        await().untilAsserted(() -> assertEquals("Get of document has failed - id is incorrect!", 1,
+            (int) Integer.valueOf((String) searchRestClient.getDocument(1).get("id"))));
     }
 
     @Test
     public void shouldGetDocumentByQuery() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!",
-            StringUtils.countMatches(searchRestClient.getDocument(query, null, null, null), "\"_id\""), 4));
+        await().untilAsserted(() -> assertEquals("Get of document has failed!", 4,
+            searchRestClient.getDocument(query, null, null, null).getHits().length));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithSize() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!",
-            StringUtils.countMatches(searchRestClient.getDocument(query, null, null, 3), "\"_id\""), 3));
+        await().untilAsserted(() -> assertEquals("Get of document has failed!", 3,
+            searchRestClient.getDocument(query, null, null, 3).getHits().length));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithOffsetAndSize() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!",
-            StringUtils.countMatches(searchRestClient.getDocument(query, null, 2, 3), "\"_id\""), 2));
+        await().untilAsserted(() -> assertEquals("Get of document has failed!", 2,
+            searchRestClient.getDocument(query, null, 2, 3).getHits().length));
     }
 
     private static SearchRestClient initializeSearchRestClient() {
