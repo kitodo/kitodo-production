@@ -11,7 +11,6 @@
 
 package org.kitodo.dataformat.access;
 
-
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;

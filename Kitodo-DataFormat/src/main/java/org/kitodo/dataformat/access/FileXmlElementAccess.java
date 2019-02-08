@@ -69,7 +69,7 @@ public class FileXmlElementAccess {
         mediaUnit.setOrderlabel(div.getORDERLABEL());
     }
 
-    public FileXmlElementAccess(MediaUnit mediaUnit) {
+    FileXmlElementAccess(MediaUnit mediaUnit) {
         if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
             this.mediaUnit = (MediaUnitMetsReferrerStorage) mediaUnit;
         } else {
