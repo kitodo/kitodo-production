@@ -28,12 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -137,16 +131,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws HibernateException
      *             if the batch isn’t attached to a Hibernate session and cannot
      *             be reattached either
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
-     * @throws ReadException
-     *             if the meta data file cannot be read
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    public ExportNewspaperBatchTask(Batch batch) throws PreferencesException, ReadException, IOException {
+    public ExportNewspaperBatchTask(Batch batch) throws IOException {
         super(batch.getLabel());
         batchId = batch.getId();
         action = 1;
@@ -211,16 +200,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             if (action == 2) {
                 runForActionTwo();
             }
-        } catch (DAOException | ReadException | PreferencesException | IOException | TypeNotAllowedForParentException
-                | MetadataTypeNotAllowedException | TypeNotAllowedAsChildException | WriteException | RuntimeException
-                | JAXBException e) {
+        } catch (DAOException | IOException | RuntimeException | JAXBException e) {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
         }
     }
 
-    private void runForActionOne() throws IOException, PreferencesException, ReadException {
+    private void runForActionOne() throws IOException {
         while (processesIterator.hasNext()) {
             if (isInterrupted()) {
                 return;
@@ -239,9 +226,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         dividend = 0;
     }
 
-    private void runForActionTwo()
-            throws IOException, MetadataTypeNotAllowedException, PreferencesException, ReadException,
-            TypeNotAllowedAsChildException, TypeNotAllowedForParentException, WriteException, JAXBException {
+    private void runForActionTwo() throws IOException, JAXBException {
         while (processesIterator.hasNext()) {
             if (isInterrupted()) {
                 return;
@@ -268,18 +253,18 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param act
      *            act to examine
      * @return the year
-     * @throws ReadException
+     * @throws IllegalArgumentException
      *             if one of the preconditions fails
      */
-    private int getYear(LegacyMetsModsDigitalDocumentHelper act) throws ReadException {
+    private int getYear(LegacyMetsModsDigitalDocumentHelper act) {
         List<LegacyDocStructHelperInterface> children = act.getLogicalDocStruct().getAllChildren();
         if (children == null) {
-            throw new ReadException(
+            throw new IllegalArgumentException(
                     "Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of "
                             + "type " + yearLevelName + " is required.");
         }
         if (children.size() > 1) {
-            throw new ReadException(
+            throw new IllegalArgumentException(
                     "Could not get date year: Logical structure has several elements. Exactly one element (of type "
                             + yearLevelName + ") is required.");
         }
@@ -287,10 +272,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             return getMetadataIntValueByName(children.get(0),
                 LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE);
         } catch (NoSuchElementException nose) {
-            throw new ReadException("Could not get date year: " + yearLevelName + " has no meta data field "
+            throw new IllegalArgumentException("Could not get date year: " + yearLevelName + " has no meta data field "
                     + LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE + '.');
         } catch (NumberFormatException uber) {
-            throw new ReadException(
+            throw new IllegalArgumentException(
                     "Could not get date year: " + LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE
                             + " value from " + yearLevelName + " cannot be interpeted as whole number.");
         }
@@ -330,18 +315,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param process
      *            process whese year anchor pointer shall be returned
      * @return URL to retrieve the year data
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
-     * @throws ReadException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    private static String getMetsYearAnchorPointerURL(Process process)
-            throws PreferencesException, ReadException, IOException {
+    private static String getMetsYearAnchorPointerURL(Process process) throws IOException {
         VariableReplacer replacer = new VariableReplacer(ServiceManager.getProcessService().getDigitalDocument(process),
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
@@ -419,16 +397,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param process
      *            process to take values for path variables from
      * @return the METS pointer URL of the process
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set used
-     * @throws ReadException
-     *             if the meta data file cannot be read
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, IOException {
+    static String getMetsPointerURL(Process process) throws IOException {
         VariableReplacer replacer = new VariableReplacer(ServiceManager.getProcessService().getDigitalDocument(process),
                 ServiceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
@@ -448,27 +421,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param issues
      *            a map with all issues and their pointer URLs
      * @return an enriched MetsModsImportExport object
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set used
-     * @throws ReadException
-     *             if the meta data file cannot be read
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws TypeNotAllowedForParentException
-     *             is thrown, if this DocStruct is not allowed for a parent
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
     private LegacyMetsModsDigitalDocumentHelper buildExportableMetsMods(Process process, HashMap<Integer, String> years,
-            ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, IOException,
-            TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+            ArrayListMap<LocalDate, String> issues) throws IOException {
 
         LegacyPrefsHelper ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
@@ -500,16 +458,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            int
      * @param ruleSet
      *            the rule set this process is based on
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, LegacyMetsModsDigitalDocumentHelper act,
-            LegacyPrefsHelper ruleSet) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+            LegacyPrefsHelper ruleSet) {
 
         for (Map.Entry<Integer, String> year : years.entrySet()) {
             if (year.getKey() != ownYear) {
@@ -543,17 +494,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            rule set the act is based on
      * @return the first child matching the given conditions, if any, or a newly
      *         created child with these properties otherwise
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
     private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type,
             String identifierField, String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act,
-            LegacyPrefsHelper ruleset) throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+            LegacyPrefsHelper ruleset) {
 
         try {
             throw new UnsupportedOperationException("Dead code pending removal");
@@ -630,19 +574,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            also skipped
      * @param ruleSet
      *            rule set the process is based on
-     * @throws TypeNotAllowedForParentException
-     *             is thrown, if this DocStruct is not allowed for a parent
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
      */
     private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
-            String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleSet)
-            throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+            String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleSet) {
         for (int i = 0; i < issues.size(); i++) {
             if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
                 insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
@@ -662,19 +596,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            date of the issue to create a pointer to
      * @param metsPointerURL
      *            URL of the issue
-     * @throws TypeNotAllowedForParentException
-     *             is thrown, if this DocStruct is not allowed for a parent
-     * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not
-     *             allow the MetadataType or if the maximum number of Metadata
-     *             (of this type) is already available
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
      */
     private void insertIssueReference(LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleset, LocalDate date,
-            String metsPointerURL)
-            throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+            String metsPointerURL) {
         LegacyDocStructHelperInterface year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
             LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
             LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);

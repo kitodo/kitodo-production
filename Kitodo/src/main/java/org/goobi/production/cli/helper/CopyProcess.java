@@ -24,9 +24,6 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -34,13 +31,12 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.UghHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -181,15 +177,15 @@ public class CopyProcess extends ProzesskopieForm {
                             throw new UnsupportedOperationException("Dead code pending removal");
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            LegacyMetadataTypeHelper mdt = UghHelper.getMetadataType(
+                            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
                                 ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
-                            LegacyMetadataHelper md = UghHelper.getMetadata(myTempStruct, mdt);
+                            LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
                             }
                         }
-                    } catch (UghHelperException e) {
+                    } catch (IllegalArgumentException e) {
                         Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
                 }
@@ -235,7 +231,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         try {
             this.myRdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
-        } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
 
@@ -276,9 +272,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io)
-            throws ReadException, IOException, PreferencesException, WriteException {
-
+    public Process createProcess(ImportObject io) throws IOException {
         addProperties(io);
         updateTasks(this.prozessKopie);
 

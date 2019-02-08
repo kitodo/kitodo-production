@@ -27,6 +27,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
     /**
      * The sole doc struct type instance “page”.
      */
+    @Deprecated
     public static final LegacyLogicalDocStructTypeHelper INSTANCE = new LegacyInnerPhysicalDocStructTypePageHelper();
 
     private LegacyInnerPhysicalDocStructTypePageHelper() {
@@ -34,29 +35,34 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
     }
 
     @Override
+    @Deprecated
     public List<String> getAllAllowedDocStructTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
         // TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public String getAnchorClass() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public String getName() {
         return "page";
     }
 
     @Override
+    @Deprecated
     public String getNameByLanguage(String language) {
         switch (language) {
             case "de":
@@ -67,6 +73,7 @@ public class LegacyInnerPhysicalDocStructTypePageHelper extends LegacyLogicalDoc
     }
 
     @Override
+    @Deprecated
     public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

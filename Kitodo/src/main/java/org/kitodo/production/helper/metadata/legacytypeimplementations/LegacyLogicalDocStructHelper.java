@@ -86,6 +86,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void addChild(LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
@@ -93,6 +94,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
@@ -100,12 +102,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void addContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
@@ -141,12 +145,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
         AreaXmlElementAccessInterface view = metsService.createAreaXmlElementAccess();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
@@ -155,12 +161,15 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         return new LegacyReferenceHelper(target);
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface copy(boolean copyMetaData, Boolean recursive) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
-    public LegacyDocStructHelperInterface createChild(String docStructType, LegacyMetsModsDigitalDocumentHelper digitalDocument,
+    @Deprecated
+    public LegacyDocStructHelperInterface createChild(String docStructType,
+            LegacyMetsModsDigitalDocumentHelper digitalDocument,
             LegacyPrefsHelper prefs) {
 
         //TODO remove
@@ -168,6 +177,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void deleteUnusedPersonsAndMetadata() {
         Iterator<MetadataAccessInterface> metadataAccessInterfaceIterator = structure.getMetadata().iterator();
         while (metadataAccessInterfaceIterator.hasNext()) {
@@ -196,6 +206,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType));
@@ -209,6 +220,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
         List<LegacyDocStructHelperInterface> wrappedChildren = new ArrayList<>();
         for (DivXmlElementAccessInterface child : structure.getChildren()) {
@@ -218,28 +230,33 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType,
             String metaDataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public List<LegacyContentFileHelper> getAllContentFiles() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public List<LegacyReferenceHelper> getAllFromReferences() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
@@ -261,6 +278,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
@@ -284,6 +302,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public List<LegacyReferenceHelper> getAllReferences(String direction) {
         switch (direction) {
             case "to":
@@ -300,11 +319,13 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public Collection<LegacyReferenceHelper> getAllToReferences() {
         return getAllReferences("to");
     }
 
     @Override
+    @Deprecated
     public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         switch (type) {
             case "logical_physical":
@@ -320,23 +341,27 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
+    @Deprecated
     public Object getAllVisibleMetadata() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public String getAnchorClass() {
         // The replacement of the UGH library has no concept of anchor classes.
         return null;
     }
 
+    @Deprecated
     public LegacyDocStructHelperInterface getChild(String type, String identifierField, String identifier) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         List<LegacyMetadataTypeHelper> result = new LinkedList<>();
         Map<MetadataAccessInterface, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
@@ -353,22 +378,51 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public String getImageName() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Metadata eines Docstructs ermitteln.
+     *
+     * @param inStruct
+     *            DocStruct object
+     * @param inMetadataType
+     *            MetadataType object
+     * @return Metadata
+     */
+    @Deprecated
+    public static LegacyMetadataHelper getMetadata(LegacyDocStructHelperInterface inStruct, LegacyMetadataTypeHelper inMetadataType) {
+        if (inStruct != null && inMetadataType != null) {
+            List<? extends LegacyMetadataHelper> all = inStruct.getAllMetadataByType(inMetadataType);
+            if (all.isEmpty()) {
+                LegacyMetadataHelper md = new LegacyMetadataHelper(inMetadataType);
+                md.setDocStruct(inStruct);
+                inStruct.addMetadata(md);
+                return md;
+            } else {
+                return all.get(0);
+            }
+        }
+        return null;
+    }
+
+    @Deprecated
     public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public LegacyDocStructHelperInterface getParent() {
         return parent;
     }
 
     @Override
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
         /*
          * The method is a doublet (in the interface, as well as doubled code in
@@ -378,6 +432,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getDocStructType() {
         return new LegacyLogicalDocStructTypeHelper(divisionView);
     }
@@ -388,6 +443,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
      * 
      * @return Method delegated to {@link #getDocStructType()}
      */
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper getType() {
         if (!logger.isTraceEnabled()) {
             StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
@@ -398,23 +454,27 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         return getDocStructType();
     }
 
+    @Deprecated
     public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
         return divisionView.getAllowedSubstructuralElements().containsKey(type.getName());
     }
 
     @Override
+    @Deprecated
     public void removeChild(LegacyDocStructHelperInterface docStruct) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) docStruct;
         legacyLogicalDocStructHelperChild.parent = null;
         structure.getChildren().remove(legacyLogicalDocStructHelperChild.structure);
     }
 
+    @Deprecated
     public void removeContentFile(LegacyContentFileHelper contentFile) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
+    @Deprecated
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
         Iterator<MetadataAccessInterface> entries = structure.getMetadata().iterator();
         String metadataTypeName = metaDatum.getMetadataType().getName();
@@ -429,6 +489,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     }
 
     @Override
+    @Deprecated
     public void removeReferenceTo(LegacyDocStructHelperInterface target) {
         FileXmlElementAccessInterface mediaUnit = ((LegacyInnerPhysicalDocStructHelper) target).getMediaUnit();
         Iterator<AreaXmlElementAccessInterface> areaXmlElementAccessInterfaceIterator = structure.getAreas().iterator();
@@ -441,11 +502,13 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
+    @Deprecated
     public void setImageName(String imageName) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

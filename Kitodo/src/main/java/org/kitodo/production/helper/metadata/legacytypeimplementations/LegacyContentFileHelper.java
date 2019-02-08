@@ -31,18 +31,22 @@ public class LegacyContentFileHelper {
      */
     private FLocatXmlElementAccessInterface mediaFile;
 
+    @Deprecated
     public LegacyContentFileHelper() {
         mediaFile = metsService.createFLocatXmlElementAccess();
     }
 
+    @Deprecated
     public String getLocation() {
         return mediaFile.getUri().toString();
     }
 
+    @Deprecated
     public void setLocation(String fileName) {
         mediaFile.setUri(new File(fileName).toURI());
     }
 
+    @Deprecated
     public FLocatXmlElementAccessInterface getMediaFile() {
         return mediaFile;
     }

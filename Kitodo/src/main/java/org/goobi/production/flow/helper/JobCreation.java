@@ -22,9 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -97,13 +94,11 @@ public class JobCreation {
             try {
                 p = cp.createProcess(io);
                 startThreads(p, basepath, metsfile);
-            } catch (ReadException | PreferencesException | IOException e) {
+            } catch (IOException e) {
                 Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving",
                     new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
-            } catch (WriteException e) {
-                Helper.setErrorMessage("Cannot write file " + processTitle, logger, e);
             }
         } else {
             logger.error("title " + processTitle + "is invalid");

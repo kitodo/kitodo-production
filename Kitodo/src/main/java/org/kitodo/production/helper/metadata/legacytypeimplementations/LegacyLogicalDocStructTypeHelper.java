@@ -31,31 +31,38 @@ public class LegacyLogicalDocStructTypeHelper {
      */
     private StructuralElementViewInterface divisionView;
 
+    @Deprecated
     public LegacyLogicalDocStructTypeHelper(StructuralElementViewInterface divisionView) {
         this.divisionView = divisionView;
     }
 
+    @Deprecated
     public List<String> getAllAllowedDocStructTypes() {
         return new ArrayList<>(divisionView.getAllowedSubstructuralElements().keySet());
     }
 
+    @Deprecated
     public List<LegacyMetadataTypeHelper> getAllMetadataTypes() {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    @Deprecated
     public String getAnchorClass() {
         return null;
     }
 
+    @Deprecated
     public String getName() {
         return divisionView.getId();
     }
 
+    @Deprecated
     public String getNameByLanguage(String language) {
         return divisionView.getLabel();
     }
 
+    @Deprecated
     public String getNumberOfMetadataType(LegacyMetadataTypeHelper metadataType) {
         //TODO remove
         throw andLog(new UnsupportedOperationException("Not yet implemented"));

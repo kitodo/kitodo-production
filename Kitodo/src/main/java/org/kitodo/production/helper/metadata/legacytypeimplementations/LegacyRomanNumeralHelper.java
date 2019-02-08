@@ -24,23 +24,28 @@ public class LegacyRomanNumeralHelper {
      */
     private int value;
 
+    @Deprecated
     public String getNumber() {
         return RomanNumeral.format(value, true);
     }
 
+    @Deprecated
     public int intValue() {
         return value;
     }
 
+    @Deprecated
     public void setValue(int value) {
         this.value = value;
     }
 
+    @Deprecated
     public void setValue(String value) {
         this.value = RomanNumeral.parseInt(value);
     }
 
     @Override
+    @Deprecated
     public String toString() {
         return getNumber();
     }

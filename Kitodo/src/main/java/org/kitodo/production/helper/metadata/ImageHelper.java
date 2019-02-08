@@ -41,8 +41,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -55,7 +53,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
@@ -157,22 +154,18 @@ public class ImageHelper {
             int currentPhysicalOrder = assignedImages.size();
             for (URI newImage : imagesWithoutPageElements) {
                 LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
-                try {
-                    // physical page no
-                    physicalStructure.addChild(dsPage);
-                    currentPhysicalOrder++;
-                    dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
-                    // logical page no
-                    dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
-                    logicalStructure.addReferenceTo(dsPage, "logical_physical");
+                // physical page no
+                physicalStructure.addChild(dsPage);
+                currentPhysicalOrder++;
+                dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
-                    // image name
-                    dsPage.addContentFile(createContentFile(newImage));
+                // logical page no
+                dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
+                logicalStructure.addReferenceTo(dsPage, "logical_physical");
 
-                } catch (MetadataTypeNotAllowedException e) {
-                    logger.error(e.getMessage(), e);
-                }
+                // image name
+                dsPage.addContentFile(createContentFile(newImage));
             }
         } else {
             // case 3: empty page docs and unassinged images
@@ -193,21 +186,18 @@ public class ImageHelper {
                 int currentPhysicalOrder = physicalStructure.getAllChildren().size();
                 for (URI newImage : imagesWithoutPageElements) {
                     LegacyDocStructHelperInterface dsPage = this.mydocument.createDocStruct(newPage);
-                    try {
-                        // physical page no
-                        physicalStructure.addChild(dsPage);
-                        currentPhysicalOrder++;
-                        dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
-                        // logical page no
-                        dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
-                        logicalStructure.addReferenceTo(dsPage, "logical_physical");
+                    // physical page no
+                    physicalStructure.addChild(dsPage);
+                    currentPhysicalOrder++;
+                    dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
-                        // image name
-                        dsPage.addContentFile(createContentFile(newImage));
-                    } catch (MetadataTypeNotAllowedException e) {
-                        logger.error(e.getMessage(), e);
-                    }
+                    // logical page no
+                    dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
+                    logicalStructure.addReferenceTo(dsPage, "logical_physical");
+
+                    // image name
+                    dsPage.addContentFile(createContentFile(newImage));
                 }
 
             }
@@ -475,17 +465,12 @@ public class ImageHelper {
 
         // problems with FilePath
         LegacyMetadataTypeHelper metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
-        try {
-            LegacyMetadataHelper mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
-            URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
-                process.getTitle(), process.getProcessBaseUri());
-            String pathString = new File(pathURI).getPath();
-            mdForPath.setStringValue(pathString);
-            physicalStructure.addMetadata(mdForPath);
-        } catch (DocStructHasNoTypeException e) {
-            logger.error(e.getMessage(), e);
-        }
-
+        LegacyMetadataHelper mdForPath = new LegacyMetadataHelper(metadataTypeForPath);
+        URI pathURI = ServiceManager.getProcessService().getImagesTifDirectory(false, process.getId(),
+            process.getTitle(), process.getProcessBaseUri());
+        String pathString = new File(pathURI).getPath();
+        mdForPath.setStringValue(pathString);
+        physicalStructure.addMetadata(mdForPath);
         return physicalStructure;
     }
 
@@ -513,8 +498,8 @@ public class ImageHelper {
      *            as String
      * @return Metadata object
      */
-    private LegacyMetadataHelper createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
-            throws MetadataTypeNotAllowedException {
+    private LegacyMetadataHelper createMetadataForLogicalPageNumber(int currentPhysicalOrder,
+            String defaultPagination) {
         LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(determinePagination(currentPhysicalOrder, defaultPagination));
@@ -528,8 +513,7 @@ public class ImageHelper {
      *            as int
      * @return Metadata object
      */
-    private LegacyMetadataHelper createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
-            throws MetadataTypeNotAllowedException {
+    private LegacyMetadataHelper createMetadataForPhysicalPageNumber(int currentPhysicalOrder) {
         LegacyMetadataTypeHelper metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
         LegacyMetadataHelper metadata = new LegacyMetadataHelper(metadataType);
         metadata.setStringValue(String.valueOf(currentPhysicalOrder));
