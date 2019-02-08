@@ -84,4 +84,46 @@ public class MediaUnit {
     public void setOrderlabel(String orderlabel) {
         this.orderlabel = orderlabel;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        result = prime * result + order;
+        result = prime * result + ((orderlabel == null) ? 0 : orderlabel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof MediaUnit)) {
+            return false;
+        }
+        MediaUnit other = (MediaUnit) obj;
+        if (mediaFiles == null) {
+            if (other.mediaFiles != null) {
+                return false;
+            }
+        } else if (!mediaFiles.equals(other.mediaFiles)) {
+            return false;
+        }
+        if (order != other.order) {
+            return false;
+        }
+        if (orderlabel == null) {
+            if (other.orderlabel != null) {
+                return false;
+            }
+        } else if (!orderlabel.equals(other.orderlabel)) {
+            return false;
+        }
+        return true;
+    }
 }

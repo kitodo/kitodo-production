@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -199,7 +200,9 @@ public class MetsXmlElementAccessIT {
         workpiece.getEditHistory().add(note);
 
         // write file
-        new MetsXmlElementAccess().save(workpiece, new FileOutputStream(new File("src/test/resources/out.xml")));
+        try (OutputStream out = new FileOutputStream(new File("src/test/resources/out.xml"))) {
+            new MetsXmlElementAccess().save(workpiece, out);
+        }
 
         // read the file and see if everything is in it
         Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));

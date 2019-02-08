@@ -74,4 +74,15 @@ class MediaUnitMetsReferrerStorage extends MediaUnit {
     String getFileId(URI key) {
         return metsFileReferrerIds.get(key);
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
 }
