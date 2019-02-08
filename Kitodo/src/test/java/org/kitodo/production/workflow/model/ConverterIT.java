@@ -48,11 +48,11 @@ public class ConverterIT {
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
-        assertCorrectTask(tasks.get(1), "ScriptTask", 2, "${type==1}");
+        assertCorrectTask(tasks.get(1), "ScriptTask", 2, "/mets:mets/mets:metsHdr");
 
-        assertCorrectTask(tasks.get(2), "Task3", 2, "${type==2}");
+        assertCorrectTask(tasks.get(2), "Task3", 2, "/mets:nothing");
 
-        assertCorrectTask(tasks.get(3), "Task4", 2, "default");
+        assertCorrectTask(tasks.get(3), "Task4", 2, "/mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/kitodo:kitodo");
 
         assertCorrectTask(tasks.get(4), "Task5", 3);
         assertTrue("Process definition - workflow's task last property were determined incorrectly!",
@@ -78,11 +78,11 @@ public class ConverterIT {
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
-        assertCorrectTask(tasks.get(1), "ScriptTask", 2, "${type==1}");
+        assertCorrectTask(tasks.get(1), "ScriptTask", 2, "/mets:mets/mets:metsHdr");
 
-        assertCorrectTask(tasks.get(2), "Task3", 2, "${type==2}");
+        assertCorrectTask(tasks.get(2), "Task3", 2, "/mets:nothing");
 
-        assertCorrectTask(tasks.get(3), "Task4", 2, "default");
+        assertCorrectTask(tasks.get(3), "Task4", 2, "/mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/kitodo:kitodo");
 
         assertCorrectTask(tasks.get(4), "Task5", 3);
         assertTrue("Process definition - workflow's task last property were determined incorrectly!",

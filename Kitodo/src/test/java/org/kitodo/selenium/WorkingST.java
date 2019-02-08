@@ -107,27 +107,29 @@ public class WorkingST extends BaseTestSelenium {
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
         Task task = ServiceManager.getTaskService().getById(19);
-        assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+        assertEquals("Task '" + task.getTitle() + "'  was not closed!", TaskStatus.DONE,
+            task.getProcessingStatusEnum());
 
         task = ServiceManager.getTaskService().getById(20);
-        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        assertEquals("Task '" + task.getTitle() + "' can not be taken by user!", TaskStatus.OPEN,
+            task.getProcessingStatusEnum());
         task = ServiceManager.getTaskService().getById(21);
-        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        assertEquals("Task '" + task.getTitle() + "' can be taken by user!", TaskStatus.DONE,
+            task.getProcessingStatusEnum());
         task = ServiceManager.getTaskService().getById(22);
-        assertEquals("Task can not be taken by user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        assertEquals("Task '" + task.getTitle() + "'  can not be taken by user!", TaskStatus.OPEN,
+            task.getProcessingStatusEnum());
 
-        tasksPage.takeOpenTask("Task3", "Parallel");
+        tasksPage.takeOpenTask("Task4", "Parallel");
         assertTrue("Redirection after click take task was not successful", currentTasksEditPage.isAt());
 
-        task = ServiceManager.getTaskService().getById(21);
-        assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
+        task = ServiceManager.getTaskService().getById(22);
+        assertEquals("Task '" + task.getTitle() + "' was not taken by user!", TaskStatus.INWORK,
+            task.getProcessingStatusEnum());
 
         task = ServiceManager.getTaskService().getById(20);
-        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED,
-            task.getProcessingStatusEnum());
-        task = ServiceManager.getTaskService().getById(22);
-        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED,
-            task.getProcessingStatusEnum());
+        assertEquals("Task '" + task.getTitle() + "' was not blocked after concurrent task was taken by user!",
+            TaskStatus.LOCKED, task.getProcessingStatusEnum());
     }
 
     @Test

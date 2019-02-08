@@ -180,6 +180,7 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertDataForParallelTasks();
+        insertDataForScriptParallelTasks();
     }
 
     public static void insertRolesFull() throws DAOException {
@@ -1270,6 +1271,44 @@ public class MockDatabase {
         fifthProcess.setDocket(template.getDocket());
         fifthProcess.setRuleset(template.getRuleset());
         ServiceManager.getProcessService().save(fifthProcess);
+    }
+
+    private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+        Workflow workflow = new Workflow("gateway-test5", "gateway-test5");
+        workflow.setActive(true);
+        workflow.setReady(true);
+        workflow.setClient(ServiceManager.getClientService().getById(1));
+        ServiceManager.getWorkflowService().save(workflow);
+
+        Project project = ServiceManager.getProjectService().getById(1);
+
+        Converter converter = new Converter("gateway-test5");
+
+        Template template = new Template();
+        template.setTitle("Parallel Script Template");
+        converter.convertWorkflowToTemplate(template);
+        template.setDocket(ServiceManager.getDocketService().getById(1));
+        template.setRuleset(ServiceManager.getRulesetService().getById(1));
+        template.setWorkflow(workflow);
+        template.getProjects().add(project);
+        ServiceManager.getTemplateService().save(template);
+
+        Process firstProcess = new Process();
+        firstProcess.setTitle("Script");
+        firstProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, firstProcess);
+        firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(0).setProcessingUser(ServiceManager.getUserService().getById(1));
+        firstProcess.getTasks().get(1).setProcessingStatus(0);
+        firstProcess.getTasks().get(2).setProcessingStatus(0);
+        firstProcess.getTasks().get(3).setProcessingStatus(0);
+        firstProcess.getTasks().get(4).setProcessingStatus(0);
+
+        firstProcess.setProject(project);
+        firstProcess.setDocket(template.getDocket());
+        firstProcess.setRuleset(template.getRuleset());
+        ServiceManager.getProcessService().save(firstProcess);
     }
 
     /**
