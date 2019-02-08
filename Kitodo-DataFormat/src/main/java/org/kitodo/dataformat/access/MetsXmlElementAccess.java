@@ -132,6 +132,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             workpiece.getMediaUnits().add(fileXmlElementAccess.getMediaUnit());
             divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
         }
+        if (mets.getStructLink() == null) {
+            mets.setStructLink(new StructLink());
+        }
         Map<String, Set<FileXmlElementAccess>> mediaUnitsMap = mets.getStructLink().getSmLinkOrSmLinkGrp().parallelStream()
                 .filter(SmLink.class::isInstance).map(SmLink.class::cast)
                 .collect(new MultiMapCollector<>(SmLink::getFrom, smLink -> divIDsToMediaUnits.get(smLink.getTo())));
