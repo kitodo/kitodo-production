@@ -46,7 +46,7 @@ import org.kitodo.production.services.dataformat.MetsService;
  * soldering class to keep legacy code operational which is about to be removed.
  * Do not use this class.
  */
-public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterface {
+public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterface, BindingSaveInterface {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructHelper.class);
 
     private static final MetsService metsService = ServiceManager.getMetsService();
@@ -116,17 +116,28 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 : Optional.empty();
         if (!optionalDomain.isPresent() || !optionalDomain.get().equals(Domain.METS_DIV)) {
             MetadataXmlElementAccessInterface metadataEntry = metsService.createMetadataXmlElementAccess();
-            metadataEntry.setType(metadata.getMetadataType().getName());
-            metadataEntry.setDomain(domainToMdSec(optionalDomain.orElse(Domain.DESCRIPTION)));
-            metadataEntry.setValue(metadata.getValue());
+            metadata.setBinding(this, metadataEntry, optionalDomain.orElse(Domain.DESCRIPTION));
+            metadata.saveToBinding();
             structure.getMetadata().add(metadataEntry);
         } else {
+            metadata.setBinding(this, null, Domain.METS_DIV);
+            metadata.saveToBinding();
+        }
+    }
+
+    @Override
+    public void saveMetadata(LegacyMetadataHelper metadata) {
+        if (Domain.METS_DIV.equals(metadata.getDomain())) {
             try {
                 structure.getClass().getMethod("set".concat(metadata.getMetadataType().getName()), String.class)
                         .invoke(structure, metadata.getValue());
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
+        } else if (metadata.getBinding() != null) {
+            metadata.getBinding().setType(metadata.getMetadataType().getName());
+            metadata.getBinding().setDomain(domainToMdSec(metadata.getDomain()));
+            metadata.getBinding().setValue(metadata.getValue());
         }
     }
 

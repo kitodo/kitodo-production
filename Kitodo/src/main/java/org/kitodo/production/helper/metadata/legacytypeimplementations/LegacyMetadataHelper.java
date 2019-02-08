@@ -13,6 +13,8 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code
@@ -36,6 +38,12 @@ public class LegacyMetadataHelper {
      */
     private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
+    private BindingSaveInterface bindingSaveInterface;
+
+    private MetadataXmlElementAccessInterface binding;
+
+    private Domain domain;
+
     LegacyMetadataHelper(LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper,
             LegacyMetadataTypeHelper type, String value) {
         this.type = type;
@@ -48,8 +56,16 @@ public class LegacyMetadataHelper {
         this.value = "";
     }
 
+    public MetadataXmlElementAccessInterface getBinding() {
+        return binding;
+    }
+
     public LegacyInnerPhysicalDocStructHelper getDocStruct() {
         return legacyInnerPhysicalDocStructHelper;
+    }
+
+    public Domain getDomain() {
+        return domain;
     }
 
     public LegacyMetadataTypeHelper getMetadataType() {
@@ -58,6 +74,35 @@ public class LegacyMetadataHelper {
 
     public String getValue() {
         return value;
+    }
+
+    /**
+     * This allows the meta-data to be saved.
+     */
+    public void saveToBinding() {
+        bindingSaveInterface.saveMetadata(this);
+    }
+
+    /**
+     * Sets the binding to a meta-data XML access interface through a binding
+     * save interface. This is needed so that the meta-data in its container can
+     * automatically save itself if its value is subsequently changed. In fact,
+     * the value may be, aside from the value of a meta-data entry, the value of
+     * a field of the container, which makes the matter a bit unwieldy.
+     * 
+     * @param bsi
+     *            thee binding save interface via which the meta-data can
+     *            automatically save itself afterwards
+     * @param binding
+     *            the meta-data entry where the value should be stored, if
+     *            applicable
+     * @param domain
+     *            the domain where the meta-data entry is stored
+     */
+    public void setBinding(BindingSaveInterface bsi, MetadataXmlElementAccessInterface binding, Domain domain) {
+        this.bindingSaveInterface = bsi;
+        this.binding = binding;
+        this.domain = domain;
     }
 
     /**
@@ -79,6 +124,9 @@ public class LegacyMetadataHelper {
 
     public void setStringValue(String value) {
         this.value = value;
+        if (bindingSaveInterface != null) {
+            saveToBinding();
+        }
     }
 
     /**
