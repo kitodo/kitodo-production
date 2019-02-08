@@ -414,7 +414,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 r.setId(this.currentIdentifier);
                 try {
                     LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(
-                            ((LegacyPrefsHelper) this.prefs).getRuleset());
+                            this.prefs.getRuleset());
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
                     logger.debug("Writing '{}' into given folder...", fileName);

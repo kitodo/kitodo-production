@@ -53,7 +53,6 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.RelatedProperty;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -956,6 +955,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            JSONObject
      * @return display properties as list of Integers
      */
+    @SuppressWarnings("unchecked")
     private List<Integer> getRelatedPropertyForDTO(Map<String, Object> object, String key) {
         if (object != null) {
             List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);

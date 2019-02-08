@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -156,7 +154,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     setProgress(100 * stepcounter / maxsize);
                 }
             }
-        } catch (IOException | RuntimeException | JAXBException e) {
+        } catch (IOException | RuntimeException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));

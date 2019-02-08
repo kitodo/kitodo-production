@@ -991,8 +991,8 @@ public class ProzesskopieForm implements Serializable {
      * file must be created for it.
      */
     public void createNewFileformat() {
-        RulesetManagementInterface ruleset = ((LegacyPrefsHelper) ServiceManager.getRulesetService()
-                .getPreferences(this.prozessKopie.getRuleset())).getRuleset();
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
+                .getPreferences(this.prozessKopie.getRuleset()).getRuleset();
         try {
             MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
             DivXmlElementAccessInterface structure = workpiece.getStructMap();

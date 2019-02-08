@@ -15,10 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;

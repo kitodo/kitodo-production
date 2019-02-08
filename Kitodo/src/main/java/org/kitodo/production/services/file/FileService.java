@@ -49,7 +49,6 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
@@ -510,7 +509,7 @@ public class FileService {
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
             case METS:
-                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) rulesetService.getPreferences(ruleset)).getRuleset());
+                ff = new LegacyMetsModsDigitalDocumentHelper(rulesetService.getPreferences(ruleset).getRuleset());
                 break;
             default:
                 throw new UnsupportedOperationException("Dead code pending removal");

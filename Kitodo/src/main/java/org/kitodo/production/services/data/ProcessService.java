@@ -1246,10 +1246,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         LegacyMetsModsDigitalDocumentHelper ff;
         switch (type) {
             case "metsmods":
-                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
+                ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
                 break;
             case "mets":
-                ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset());
+                ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
                 break;
             default:
                 throw new UnsupportedOperationException("Dead code pending removal");
@@ -1267,7 +1267,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             case "metsmods":
             case "mets":
                 fileFormat = new LegacyMetsModsDigitalDocumentHelper(
-                        ((LegacyPrefsHelper) rulesetService.getPreferences(process.getRuleset())).getRuleset());
+                        rulesetService.getPreferences(process.getRuleset()).getRuleset());
                 break;
             default:
                 throw new UnsupportedOperationException("Dead code pending removal");
@@ -1725,7 +1725,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
-            throws IOException, JAXBException {
+            throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = getNormalizedTitle(process.getTitle());
 
@@ -1812,7 +1812,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             gdzFile = readMetadataFile(metadataPath, preferences);
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
-                    newFile = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
+                    newFile = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
                     break;
                 case METS_AND_RDF:
                 default:
@@ -2017,9 +2017,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the FileFormat-Object to use for Mets-Writing
      */
     protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            boolean writeLocalFilegroup) throws IOException, JAXBException {
+            boolean writeLocalFilegroup) throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset());
+        LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
