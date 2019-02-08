@@ -14,7 +14,6 @@ package org.kitodo.production.metadata.pagination;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.Metadata;
@@ -105,10 +104,6 @@ public class Paginator {
         int end = determinePaginationEndValue(start);
         List sequence = determineSequenceFromPaginationType(start, end);
 
-        if (Objects.isNull(sequence)) {
-            sequence = new ArrayList();
-        }
-
         if (fictitiousPagination) {
             sequence = addSquareBracketsToEachInSequence(sequence);
         }
@@ -192,7 +187,7 @@ public class Paginator {
 
     @SuppressWarnings("unchecked")
     private List determineSequenceFromPaginationType(int start, int end) {
-        List sequence = null;
+        List sequence;
         int increment = paginationMode.equals(Mode.COLUMNS) ? 2 : 1;
 
         switch (paginationType) {

@@ -72,7 +72,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -110,7 +110,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -138,7 +138,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
             this.myRdf.read(this.metadataFile.getPath());
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getDocStructType().getName();
 
@@ -310,7 +310,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         LegacyMetsModsDigitalDocumentHelper ff;
         try {
-            ff = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) myPrefs).getRuleset());
+            ff = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
             ff.read(this.metadataFile.getPath());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

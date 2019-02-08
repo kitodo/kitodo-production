@@ -21,8 +21,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -681,7 +679,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             } else {
                 abortTask(task);
             }
-        } catch (IOException | JAXBException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }

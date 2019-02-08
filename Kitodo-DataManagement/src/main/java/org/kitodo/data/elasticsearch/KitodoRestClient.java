@@ -37,7 +37,6 @@ import org.elasticsearch.rest.RestStatus;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.api.RestClientInterface;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of Elastic Search REST Client for Index Module.

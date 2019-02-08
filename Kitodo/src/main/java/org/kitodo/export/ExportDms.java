@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +34,6 @@ import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.ExportDmsTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -114,7 +111,7 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (IOException | RuntimeException | JAXBException e) {
+        } catch (IOException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
@@ -137,7 +134,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     public boolean startExport(Process process, URI inZielVerzeichnis, LegacyMetsModsDigitalDocumentHelper newFile)
-            throws IOException, JAXBException {
+            throws IOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
@@ -273,7 +270,7 @@ public class ExportDms extends ExportMets {
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
-                    gdzfile = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) this.myPrefs).getRuleset());
+                    gdzfile = new LegacyMetsModsDigitalDocumentHelper(this.myPrefs.getRuleset());
                     break;
                 case METS_AND_RDF:
                 default:
@@ -314,7 +311,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
-            throws IOException, JAXBException {
+            throws IOException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
         if (exportDmsTask != null) {
@@ -387,7 +384,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void exportWithoutImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI destinationDirectory)
-            throws IOException, JAXBException {
+            throws IOException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
             writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile);

@@ -63,7 +63,7 @@ public class SchemaService {
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(
-                new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) prefs).getRuleset(), workpiece), prefs,
+                new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset(), workpiece), prefs,
                 process, null);
 
         addVirtualFileGroupsToMetsMods(workpiece, process);
@@ -157,8 +157,7 @@ public class SchemaService {
                 useLocalFolder = optionalUseLocalFolderByName.get();
             }
         }
-        Subfolder useLocalSubfolder = new Subfolder(process, useLocalFolder);
-        return useLocalSubfolder;
+        return new Subfolder(process, useLocalFolder);
     }
 
     /**

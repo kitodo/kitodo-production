@@ -429,7 +429,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             ArrayListMap<LocalDate, String> issues) throws IOException {
 
         LegacyPrefsHelper ruleSet = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        LegacyMetsModsDigitalDocumentHelper result = new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) ruleSet).getRuleset());
+        LegacyMetsModsDigitalDocumentHelper result = new LegacyMetsModsDigitalDocumentHelper(ruleSet.getRuleset());
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         result.read(ServiceManager.getFileService().getFile(metadataFilePath).toString());
 
