@@ -21,26 +21,22 @@
             <bpmn2:outgoing>SequenceFlow_1f396uv</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_1vvzyyf" sourceRef="Task1" targetRef="Task2"/>
-        <bpmn2:exclusiveGateway id="ExclusiveGateway_in">
+        <bpmn2:parallelGateway id="ParallelGateway2_in">
             <bpmn2:incoming>SequenceFlow_1f396uv</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0f366nz</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_0g2nbgo</bpmn2:outgoing>
-        </bpmn2:exclusiveGateway>
-        <bpmn2:sequenceFlow id="SequenceFlow_1f396uv" sourceRef="Task2" targetRef="ExclusiveGateway_in"/>
-        <bpmn2:task id="Task7" name="Task7" template:permittedUserRole="1">
+        </bpmn2:parallelGateway>
+        <bpmn2:sequenceFlow id="SequenceFlow_1f396uv" sourceRef="Task2" targetRef="ParallelGateway2_in"/>
+        <bpmn2:task id="Task7" name="Task7" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=1">
             <bpmn2:incoming>SequenceFlow_0f366nz</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_10ic0ev</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0f366nz" name="type=1" sourceRef="ExclusiveGateway_in" targetRef="Task7">
-            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">type=1</bpmn2:conditionExpression>
-        </bpmn2:sequenceFlow>
-        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1">
+        <bpmn2:sequenceFlow id="SequenceFlow_0f366nz" name="type=1" sourceRef="ParallelGateway2_in" targetRef="Task7"/>
+        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_0g2nbgo</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1osx7de</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0g2nbgo" name="type=2" sourceRef="ExclusiveGateway_in" targetRef="Task3">
-            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">type=2</bpmn2:conditionExpression>
-        </bpmn2:sequenceFlow>
+        <bpmn2:sequenceFlow id="SequenceFlow_0g2nbgo" name="type=2" sourceRef="ParallelGateway2_in" targetRef="Task3"/>
         <bpmn2:endEvent id="EndEvent_1rbragg">
             <bpmn2:incoming>SequenceFlow_10ic0ev</bpmn2:incoming>
         </bpmn2:endEvent>
@@ -51,12 +47,12 @@
             <bpmn2:outgoing>SequenceFlow_13yaev1</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_114kacr</bpmn2:outgoing>
         </bpmn2:parallelGateway>
-        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1">
+        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_13yaev1</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1j37a00</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_13yaev1" name="type=1" sourceRef="ParallelGateway_in" targetRef="Task4"/>
-        <bpmn2:task id="Task5" name="Task5" template:permittedUserRole="1">
+        <bpmn2:task id="Task5" name="Task5" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_114kacr</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_08opkq7</bpmn2:outgoing>
         </bpmn2:task>
@@ -68,7 +64,7 @@
             <bpmn2:outgoing>SequenceFlow_0parww7</bpmn2:outgoing>
         </bpmn2:parallelGateway>
         <bpmn2:sequenceFlow id="SequenceFlow_08opkq7" sourceRef="Task5" targetRef="ParallelGateway_out"/>
-        <bpmn2:task id="Task6" name="Task6" template:permittedUserRole="1">
+        <bpmn2:task id="Task6" name="Task6" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_0parww7</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0mx9f13</bpmn2:outgoing>
         </bpmn2:task>
@@ -103,7 +99,7 @@
                     <dc:Bounds x="623" y="237" width="0" height="12"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNShape id="ExclusiveGateway_in_di" bpmnElement="ExclusiveGateway_in"
+            <bpmndi:BPMNShape id="ParallelGateway2_in_di" bpmnElement="ParallelGateway2_in"
                               isMarkerVisible="true">
                 <dc:Bounds x="798" y="233" width="50" height="50"/>
                 <bpmndi:BPMNLabel>

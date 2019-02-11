@@ -15,7 +15,6 @@ public class TaskInfo {
 
     private int ordering;
     private boolean last;
-    private String condition;
 
     /**
      * Public constructor for task information which are determined out of task
@@ -28,13 +27,10 @@ public class TaskInfo {
      *            when task is followed by EndEvent it is marked as the last task in
      *            the workflow, useful for cases when branch is followed by one task
      *            in one path and many tasks in another path
-     * @param condition
-     *            for conditional branches
      */
-    public TaskInfo(int ordering, boolean last, String condition) {
+    public TaskInfo(int ordering, boolean last) {
         this.ordering = ordering;
         this.last = last;
-        this.condition = condition;
     }
 
     /**
@@ -73,24 +69,5 @@ public class TaskInfo {
      */
     public void setLast(boolean last) {
         this.last = last;
-    }
-
-    /**
-     * Get condition for conditional branch.
-     *
-     * @return value of condition
-     */
-    public String getCondition() {
-        return condition;
-    }
-
-    /**
-     * Set condition for conditional branch.
-     *
-     * @param condition
-     *            as java.lang.String
-     */
-    public void setCondition(String condition) {
-        this.condition = condition;
     }
 }

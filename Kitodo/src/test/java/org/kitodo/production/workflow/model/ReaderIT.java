@@ -11,7 +11,11 @@
 
 package org.kitodo.production.workflow.model;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -23,28 +27,30 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
+import org.kitodo.MockDatabase;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.workflow.model.beans.Diagram;
 import org.kitodo.production.workflow.model.beans.TaskInfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-public class ReaderTest {
+public class ReaderIT {
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @BeforeClass
     public static void setUp() throws Exception {
+        MockDatabase.startNode();
+        MockDatabase.insertRolesFull();
+
         FileLoader.createExtendedDiagramTestFile();
     }
 
     @AfterClass
-    public static void tearDown() throws IOException {
+    public static void tearDown() throws Exception {
         FileLoader.deleteExtendedDiagramTestFile();
+
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -186,7 +192,5 @@ public class ReaderTest {
         assertEquals("Process definition - workflow's task title was read incorrectly!", title, task.getName());
         assertEquals("Process definition - workflow's task ordering was determined incorrectly!", ordering,
             taskInfo.getOrdering());
-        assertEquals("Process definition - workflow's task conditions were determined incorrectly!", condition,
-            taskInfo.getCondition());
     }
 }

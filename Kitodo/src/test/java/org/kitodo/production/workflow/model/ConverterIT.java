@@ -1,7 +1,12 @@
 package org.kitodo.production.workflow.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -12,10 +17,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.WorkflowException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class ConverterIT {
 
@@ -43,7 +44,7 @@ public class ConverterIT {
 
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
-        assertCorrectTask(tasks.get(0), "Task1", 1, "");
+        assertCorrectTask(tasks.get(0), "Task1", 1);
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
@@ -53,7 +54,7 @@ public class ConverterIT {
 
         assertCorrectTask(tasks.get(3), "Task4", 2, "default");
 
-        assertCorrectTask(tasks.get(4), "Task5", 3, "");
+        assertCorrectTask(tasks.get(4), "Task5", 3);
         assertTrue("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(4).isLast());
     }
@@ -69,11 +70,11 @@ public class ConverterIT {
         List<Task> tasks = template.getTasks();
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
-        assertCorrectTask(tasks.get(0), "Task1", 1, "");
+        assertCorrectTask(tasks.get(0), "Task1", 1);
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
-        assertCorrectTask(tasks.get(0), "Task1", 1, "");
+        assertCorrectTask(tasks.get(0), "Task1", 1);
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
@@ -83,7 +84,7 @@ public class ConverterIT {
 
         assertCorrectTask(tasks.get(3), "Task4", 2, "default");
 
-        assertCorrectTask(tasks.get(4), "Task5", 3, "");
+        assertCorrectTask(tasks.get(4), "Task5", 3);
         assertTrue("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(4).isLast());
     }
@@ -120,11 +121,11 @@ public class ConverterIT {
         List<Task> tasks = template.getTasks();
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));
 
-        assertCorrectTask(tasks.get(0), "Task1", 1, "");
+        assertCorrectTask(tasks.get(0), "Task1", 1);
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
             tasks.get(0).isLast());
 
-        assertCorrectTask(tasks.get(1), "Task2", 2, "");
+        assertCorrectTask(tasks.get(1), "Task2", 2);
 
         assertCorrectTask(tasks.get(2), "Task3", 3, "type=2");
         assertFalse("Process definition - workflow's task last property were determined incorrectly!",
@@ -143,11 +144,17 @@ public class ConverterIT {
             tasks.get(6).isLast());
     }
 
+    private void assertCorrectTask(Task task, String title, int ordering) {
+        assertCorrectTask(task, title, ordering, null);
+    }
+
     private void assertCorrectTask(Task task, String title, int ordering, String workflowCondition) {
         assertEquals("Process definition - workflow's task title was read incorrectly!", title, task.getTitle());
         assertEquals("Process definition - workflow's task ordering was determined incorrectly!", ordering,
             task.getOrdering().intValue());
-        assertEquals("Process definition - workflow's task conditions were determined incorrectly!", workflowCondition,
-            task.getWorkflowCondition());
+        if (Objects.nonNull(workflowCondition)) {
+            assertEquals("Process definition - workflow's task conditions were determined incorrectly!", workflowCondition,
+                    task.getWorkflowCondition().getValue());
+        }
     }
 }

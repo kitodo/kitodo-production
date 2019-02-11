@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.camunda.bpm.model.bpmn.instance.ScriptTask;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.helper.Helper;
@@ -88,6 +90,9 @@ public class Converter {
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
+            if (Objects.nonNull(task.getWorkflowCondition())) {
+                ServiceManager.getWorkflowConditionService().saveToDatabase(task.getWorkflowCondition());
+            }
             task.setTemplate(template);
             template.getTasks().add(task);
         }
@@ -112,12 +117,15 @@ public class Converter {
         task.setTypeExportDMS(kitodoTask.isTypeExportDms());
         task.setTypeAcceptClose(kitodoTask.isTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.isTypeCloseVerify());
-        task.setWorkflowCondition(taskInfo.getCondition());
+
+        if (Objects.nonNull(kitodoTask.getConditionType()) && Objects.nonNull(kitodoTask.getConditionValue())) {
+            task.setWorkflowCondition(new WorkflowCondition(kitodoTask.getConditionType(), kitodoTask.getConditionValue()));
+        }
 
         try {
             String[] userRoleIds = kitodoTask.getUserRoles().split(",");
-            for (int i = 0; i < userRoleIds.length; i++) {
-                int userRoleId = Integer.parseInt(userRoleIds[i].trim());
+            for (String userRoleString : userRoleIds) {
+                int userRoleId = Integer.parseInt(userRoleString.trim());
                 task.getRoles().add(ServiceManager.getRoleService().getById(userRoleId));
             }
         } catch (NullPointerException e) {

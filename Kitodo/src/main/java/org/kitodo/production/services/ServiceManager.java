@@ -31,6 +31,7 @@ import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.data.UserService;
+import org.kitodo.production.services.data.WorkflowConditionService;
 import org.kitodo.production.services.data.WorkflowService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
@@ -68,6 +69,7 @@ public class ServiceManager {
     private static RoleService roleService;
     private static UserService userService;
     private static WorkflowService workflowService;
+    private static WorkflowConditionService workflowConditionService;
     private static FileService fileService;
     private static CommandService commandService;
     private static SchemaService schemaService;
@@ -220,6 +222,12 @@ public class ServiceManager {
     private static void initializeWorkflowService() {
         if (Objects.isNull(workflowService)) {
             workflowService = WorkflowService.getInstance();
+        }
+    }
+
+    private static void initializeWorkflowConditionService() {
+        if (Objects.isNull(workflowConditionService)) {
+            workflowConditionService = WorkflowConditionService.getInstance();
         }
     }
 
@@ -511,6 +519,17 @@ public class ServiceManager {
     public static WorkflowService getWorkflowService() {
         initializeWorkflowService();
         return workflowService;
+    }
+
+    /**
+     * Initialize WorkflowConditionService if it is not yet initialized and next return
+     * it.
+     *
+     * @return WorkflowConditionService object
+     */
+    public static WorkflowConditionService getWorkflowConditionService() {
+        initializeWorkflowConditionService();
+        return workflowConditionService;
     }
 
     /**

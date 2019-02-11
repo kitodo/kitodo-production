@@ -28,49 +28,45 @@
             <bpmn2:outgoing>SequenceFlow_01aiben</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_1lorl6y" sourceRef="StartEvent_1" targetRef="Task1"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_01aiben" sourceRef="Task1" targetRef="ExclusiveGateway_in"/>
-        <bpmn2:exclusiveGateway id="ExclusiveGateway_in">
+        <bpmn2:sequenceFlow id="SequenceFlow_01aiben" sourceRef="Task1" targetRef="ParallelGateway_in"/>
+        <bpmn2:parallelGateway id="ParallelGateway_in">
             <bpmn2:incoming>SequenceFlow_01aiben</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1ly8wvr</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_0r2wyjn</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_0wjq1nt</bpmn2:outgoing>
-        </bpmn2:exclusiveGateway>
-        <bpmn2:sequenceFlow id="SequenceFlow_1ly8wvr" name="${type==2}" sourceRef="ExclusiveGateway_in"
-                            targetRef="Task3">
-            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${type==2}</bpmn2:conditionExpression>
-        </bpmn2:sequenceFlow>
-        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1, 2">
+        </bpmn2:parallelGateway>
+        <bpmn2:sequenceFlow id="SequenceFlow_1ly8wvr" name="${type==2}" sourceRef="ParallelGateway_in"
+                            targetRef="Task3"/>
+        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1, 2" template:conditionType="XPath" template:conditionValue="default">
             <bpmn2:incoming>SequenceFlow_0r2wyjn</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1wv3bob</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_0r2wyjn" name="else" sourceRef="ExclusiveGateway_in" targetRef="Task4"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_0wjq1nt" name="${type==1}" sourceRef="ExclusiveGateway_in"
-                            targetRef="Task2">
-            <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${type==1}</bpmn2:conditionExpression>
-        </bpmn2:sequenceFlow>
-        <bpmn2:exclusiveGateway id="ExclusiveGateway_out">
+        <bpmn2:sequenceFlow id="SequenceFlow_0r2wyjn" name="else" sourceRef="ParallelGateway_in" targetRef="Task4"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_0wjq1nt" name="${type==1}" sourceRef="ParallelGateway_in"
+                            targetRef="Task2"/>
+        <bpmn2:parallelGateway id="ParallelGateway_out">
             <bpmn2:incoming>SequenceFlow_0ngyjvz</bpmn2:incoming>
             <bpmn2:incoming>SequenceFlow_1uklv3e</bpmn2:incoming>
             <bpmn2:incoming>SequenceFlow_1wv3bob</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1jbjxez</bpmn2:outgoing>
-        </bpmn2:exclusiveGateway>
-        <bpmn2:sequenceFlow id="SequenceFlow_0ngyjvz" sourceRef="Task2" targetRef="ExclusiveGateway_out"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_1uklv3e" sourceRef="Task3" targetRef="ExclusiveGateway_out"/>
-        <bpmn2:sequenceFlow id="SequenceFlow_1wv3bob" sourceRef="Task4" targetRef="ExclusiveGateway_out"/>
+        </bpmn2:parallelGateway>
+        <bpmn2:sequenceFlow id="SequenceFlow_0ngyjvz" sourceRef="Task2" targetRef="ParallelGateway_out"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_1uklv3e" sourceRef="Task3" targetRef="ParallelGateway_out"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_1wv3bob" sourceRef="Task4" targetRef="ParallelGateway_out"/>
         <bpmn2:task id="Task5" name="Task5" template:permittedUserRole="1">
             <bpmn2:incoming>SequenceFlow_1jbjxez</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1k2yq4g</bpmn2:outgoing>
         </bpmn2:task>
-        <bpmn2:sequenceFlow id="SequenceFlow_1jbjxez" sourceRef="ExclusiveGateway_out" targetRef="Task5"/>
+        <bpmn2:sequenceFlow id="SequenceFlow_1jbjxez" sourceRef="ParallelGateway_out" targetRef="Task5"/>
         <bpmn2:endEvent id="EndEvent_1b8lei6">
             <bpmn2:incoming>SequenceFlow_1k2yq4g</bpmn2:incoming>
         </bpmn2:endEvent>
         <bpmn2:sequenceFlow id="SequenceFlow_1k2yq4g" sourceRef="Task5" targetRef="EndEvent_1b8lei6"/>
-        <bpmn2:scriptTask id="Task2" name="ScriptTask" template:permittedUserRole="1">
+        <bpmn2:scriptTask id="Task2" name="ScriptTask" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="${type==1}">
             <bpmn2:incoming>SequenceFlow_0wjq1nt</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0ngyjvz</bpmn2:outgoing>
         </bpmn2:scriptTask>
-        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1">
+        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="${type==2}">
             <bpmn2:incoming>SequenceFlow_1ly8wvr</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1uklv3e</bpmn2:outgoing>
         </bpmn2:task>
@@ -97,7 +93,7 @@
                     <dc:Bounds x="629.5" y="237" width="0" height="12"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNShape id="ExclusiveGateway_in_di" bpmnElement="ExclusiveGateway_in" isMarkerVisible="true">
+            <bpmndi:BPMNShape id="ParallelGateway_in_di" bpmnElement="ParallelGateway_in" isMarkerVisible="true">
                 <dc:Bounds x="661" y="233" width="50" height="50"/>
                 <bpmndi:BPMNLabel>
                     <dc:Bounds x="686" y="211" width="0" height="12"/>
@@ -129,7 +125,7 @@
                     <dc:Bounds x="674" y="184" width="54" height="12"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNShape id="ExclusiveGateway_out_di" bpmnElement="ExclusiveGateway_out" isMarkerVisible="true">
+            <bpmndi:BPMNShape id="ParallelGateway_out_di" bpmnElement="ParallelGateway_out" isMarkerVisible="true">
                 <dc:Bounds x="907" y="233" width="50" height="50"/>
                 <bpmndi:BPMNLabel>
                     <dc:Bounds x="967" y="252" width="0" height="12"/>
