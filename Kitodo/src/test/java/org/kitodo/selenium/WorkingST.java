@@ -84,6 +84,8 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void editOwnedTaskTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
         tasksPage.goTo().editOwnedTask(12);
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
@@ -96,6 +98,8 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void editOwnedTaskAndTakeNextForParallelWorkflowTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
         tasksPage.editOwnedTask(19);
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
