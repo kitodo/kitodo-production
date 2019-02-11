@@ -19,7 +19,8 @@ public enum ParameterFileManagement implements ParameterInterface {
      * Directory suffix for created image directory on process creation.
      */
     DIRECTORY_SUFFIX("DIRECTORY_SUFFIX"),
-    CREATE_SOURCE_FOLDER("createSourceFolder");
+    CREATE_SOURCE_FOLDER("createSourceFolder"),
+    FILE_MAX_WAIT_MILLISECONDS("file.maxWaitMilliseconds");
 
     private String name;
 

@@ -34,12 +34,6 @@ public class FileServiceIT {
         fileService.delete(URI.create("fileServiceTest"));
     }
 
-    /**
-     * This is a very long running Test. It's testing, what happens if the
-     * MAX_WAIT_MILLIS is reached in the rename method. This is actually set to
-     * 2,5 minutes, thats why I excludet it to an IT test.
-     *
-     */
     @Test
     public void testRenameFileWithLockedFile() throws IOException {
         FileService fileService = new FileService();
