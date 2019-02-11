@@ -123,9 +123,11 @@ public class WorkingST extends BaseTestSelenium {
         assertEquals("Task was not taken by user!", TaskStatus.INWORK, task.getProcessingStatusEnum());
 
         task = ServiceManager.getTaskService().getById(20);
-        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
+        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED,
+            task.getProcessingStatusEnum());
         task = ServiceManager.getTaskService().getById(22);
-        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
+        assertEquals("Task was not blocked after concurrent task was taken by user!", TaskStatus.LOCKED,
+            task.getProcessingStatusEnum());
     }
 
     @Test
@@ -138,9 +140,14 @@ public class WorkingST extends BaseTestSelenium {
     public void downloadLogTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        processesPage.goTo().downloadLog();
-        assertTrue("Log file was not downloaded",
-            new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second__process_log.xml").exists());
+        File directory = new File("../../../../src/test/resources/users/");
+
+        if (directory.exists() || directory.mkdir()) {
+            processesPage.goTo().downloadLog();
+            assertTrue("Log file was not downloaded",
+                new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second__process_log.xml")
+                        .exists());
+        }
     }
 
     @Test

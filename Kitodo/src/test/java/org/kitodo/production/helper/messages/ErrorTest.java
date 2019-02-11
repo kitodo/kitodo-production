@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper.messages;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import org.kitodo.production.services.file.FileService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ErrorTest {
 
@@ -53,13 +55,18 @@ public class ErrorTest {
 
     @Test
     public void shouldGetStringFromCustomBundle() throws Exception {
-        fileService.createDirectory(URI.create(""), "custom");
-        FileLoader.createCustomErrors();
+        File messageDirectory = new File("src/test/resources/custom");
 
-        String value = Message.getResourceBundle(defaultBundle, customBundle, locale).getString("error");
-        assertEquals("Test custom error", value);
+        if (messageDirectory.mkdir()) {
+            FileLoader.createCustomErrors();
 
-        FileLoader.deleteCustomErrors();
-        fileService.delete(URI.create("custom"));
+            String value = Message.getResourceBundle(defaultBundle, customBundle, locale).getString("error");
+            assertEquals("Test custom error", value);
+
+            FileLoader.deleteCustomErrors();
+            messageDirectory.delete();
+        } else {
+            fail("Directory for custom messages was not created!");
+        }
     }
 }
