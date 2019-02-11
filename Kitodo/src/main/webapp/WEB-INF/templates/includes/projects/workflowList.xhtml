@@ -53,13 +53,13 @@
             <h:outputText>
                 <h:form>
                     <h:link id="viewWorkflow" outcome="workflowEdit" title="#{msgs.workflowView}"
-                            rendered="#{SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow() and item.ready)}">
                         <i class="fa fa-eye fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
                     <h:link id="editWorkflow" outcome="workflowEdit" title="#{msgs.editWorkflow}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}">
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and not item.ready}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>

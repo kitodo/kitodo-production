@@ -23,6 +23,16 @@
         <f:viewAction action="#{WorkflowForm.load(id)}"/>
     </f:metadata>
 
+    <ui:param name="isCreateMode"
+              value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title eq null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+    <ui:param name="isDuplicateMode"
+              value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+    <ui:param name="isEditMode"
+              value="#{WorkflowForm.workflow.id ne null and not WorkflowForm.workflow.ready and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
+
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body"/>
         <script>
@@ -31,17 +41,16 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.createNewWorkflow}"
-                          rendered="#{WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName eq null}"/>
-            <h:outputText value="#{msgs.duplicateWorkflow}"
-                          rendered="#{WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName ne null}"/>
-            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
-                          rendered="#{WorkflowForm.workflow.title ne null and WorkflowForm.workflow.fileName ne null}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.workflowView} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          action="#{WorkflowForm.saveAndRedirect}" 
                          widgetVar="save"
                          value="#{msgs.save}"
+                         rendered="#{isEditMode || isCreateMode || isDuplicateMode}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
@@ -64,7 +73,12 @@
     <ui:define name="pageTabView">
         <p:tabView id="workflowTabView">
             <p:tab title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/workflowEdit/workflowEditDetails.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/workflowEdit/workflowEditDetails.xhtml">
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isDuplicateMode" value="#{isDuplicateMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -74,10 +88,10 @@
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">
-                <h:outputText value="#{msgs.editWorkflow}" rendered="#{WorkflowForm.workflow.id ne null}"/>
-                <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{WorkflowForm.workflow.id eq null}"/>
-                <h:outputText value="#{msgs.duplicateWorkflow}"
-                              rendered="#{empty WorkflowForm.workflow.title and not empty WorkflowForm.workflow.fileName}"/>
+                <h:outputText value="#{msgs.editWorkflow}" rendered="#{isEditMode}"/>
+                <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
+                <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
+                <h:outputText value="#{msgs.workflowView}" rendered="#{isViewMode}"/>
             </a>
         </li>
     </ui:define>

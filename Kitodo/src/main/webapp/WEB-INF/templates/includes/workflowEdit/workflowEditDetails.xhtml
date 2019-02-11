@@ -25,7 +25,7 @@
     <p:panelGrid columns="2" layout="grid">
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
-            <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input"
+            <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input" disabled="#{isViewMode}"
                          value="#{WorkflowForm.workflow.fileName}"
                          required="true"/>
             <div class="workflow-editor-hidden">
@@ -43,11 +43,11 @@
         <p:row>
             <p:outputLabel for="active" value="#{msgs.active}"/>
             <p:selectBooleanCheckbox id="active" styleClass="switch input workflow-editor-checkbox"
-                                     value="#{WorkflowForm.workflow.active}"
+                                     value="#{WorkflowForm.workflow.active}" disabled="#{isViewMode}"
                                      onchange="toggleSave()"/>
             <p:outputLabel for="ready" value="#{msgs.ready}"/>
             <p:selectBooleanCheckbox id="ready" styleClass="switch input workflow-editor-checkbox"
-                                     value="#{WorkflowForm.workflow.ready}"
+                                     value="#{WorkflowForm.workflow.ready}" disabled="#{isViewMode}"
                                      onchange="toggleSave()"/>
         </p:row>
     </p:panelGrid>
