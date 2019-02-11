@@ -61,12 +61,6 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
     }
 
     @Override
-    public ListColumn save(ListColumn column) throws DAOException {
-        storeObject(column);
-        return retrieveObject(ListColumn.class, column.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(ListColumn.class, id);
     }
