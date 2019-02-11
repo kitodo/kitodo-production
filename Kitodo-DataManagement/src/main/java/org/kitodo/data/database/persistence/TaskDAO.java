@@ -49,12 +49,6 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     @Override
-    public Task save(Task task) throws DAOException {
-        storeObject(task);
-        return retrieveObject(Task.class, task.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Task.class, id);
     }

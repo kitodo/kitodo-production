@@ -47,12 +47,6 @@ public class UserDAO extends BaseDAO<User> {
     }
 
     @Override
-    public User save(User user) throws DAOException {
-        storeObject(user);
-        return user;
-    }
-
-    @Override
     public void remove(User user) throws DAOException {
         user.selfDestruct();
         save(user);

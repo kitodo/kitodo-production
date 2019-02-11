@@ -46,12 +46,6 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     }
 
     @Override
-    public Authority save(Authority authority) throws DAOException {
-        storeObject(authority);
-        return authority;
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Authority.class, id);
     }

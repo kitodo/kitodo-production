@@ -79,12 +79,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @param baseBean
      *            object to persist
-     * @return stored object
      * @throws DAOException
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    public abstract T save(T baseBean) throws DAOException;
+    public void save(T baseBean) throws DAOException {
+        storeObject(baseBean);
+    }
 
     /**
      * Removes BaseBean object specified by the given id from the database.

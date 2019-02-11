@@ -320,7 +320,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void save(T baseIndexedBean) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
-            T savedBean = saveToDatabase(baseIndexedBean);
+            saveToDatabase(baseIndexedBean);
+            // TODO: find out why properties lists are save double
+            T savedBean = getById(baseIndexedBean.getId());
             saveToIndex(savedBean, true);
             manageDependenciesForIndex(savedBean);
             savedBean.setIndexAction(IndexAction.DONE);
@@ -377,7 +379,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void remove(T baseIndexedBean) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.DELETE);
-            T savedBean = saveToDatabase(baseIndexedBean);
+            saveToDatabase(baseIndexedBean);
+            T savedBean = getById(baseIndexedBean.getId());
             removeFromIndex(savedBean, true);
             manageDependenciesForIndex(savedBean);
             removeFromDatabase(savedBean);

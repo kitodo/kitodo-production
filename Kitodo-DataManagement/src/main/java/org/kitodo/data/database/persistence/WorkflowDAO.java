@@ -49,12 +49,6 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     @Override
-    public Workflow save(Workflow workflow) throws DAOException {
-        storeObject(workflow);
-        return retrieveObject(Workflow.class, workflow.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Workflow.class, id);
     }

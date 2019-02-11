@@ -51,12 +51,6 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     @Override
-    public Batch save(Batch batch) throws DAOException {
-        storeObject(batch);
-        return retrieveObject(Batch.class, batch.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Batch.class, id);
     }
