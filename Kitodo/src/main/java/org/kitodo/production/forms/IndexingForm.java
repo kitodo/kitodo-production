@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class IndexingForm {
 
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
-    private final Map<ObjectType, Integer> countDatabaseObjects;
+    private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
     private int indexLimit = 20000;
     private int pause = 1000;
 
@@ -130,16 +129,22 @@ public class IndexingForm {
 
         prepareIndexWorker();
 
-        Map<ObjectType, Integer> result = new EnumMap<>(ObjectType.class);
-        for (ObjectType objectType : objectTypes) {
-            result.put(objectType, getNumberOfDatabaseObjects(objectType));
-        }
-        countDatabaseObjects = Collections.unmodifiableMap(result);
+        countDatabaseObjects();
 
         if (indexExists()) {
             for (ObjectType objectType : objectTypes) {
                 indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
             }
+        }
+    }
+
+    /**
+     * Count database objects. Execute it on application start and next on button
+     * click.
+     */
+    public void countDatabaseObjects() {
+        for (ObjectType objectType : objectTypes) {
+            countDatabaseObjects.put(objectType, getNumberOfDatabaseObjects(objectType));
         }
     }
 
