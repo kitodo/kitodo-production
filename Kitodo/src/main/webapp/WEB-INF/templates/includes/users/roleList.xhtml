@@ -24,10 +24,12 @@
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.role}">
+        <p:column headerText="#{msgs.role}"
+                  rendered="#{UserForm.showColumn('role.role')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.client}">
+        <p:column headerText="#{msgs.client}"
+                  rendered="#{UserForm.showColumn('role.client')}">
             <h:outputText value="#{item.client.name}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">

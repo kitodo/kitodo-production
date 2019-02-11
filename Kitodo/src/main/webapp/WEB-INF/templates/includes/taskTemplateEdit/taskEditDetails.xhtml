@@ -25,7 +25,7 @@
                             <f:param value="#{generator.label}"/>
                         </h:outputFormat>
                     </p:outputLabel>
-                    <p:selectBooleanCheckbox id="generator" value="#{generator.value}" class="input">
+                    <p:selectBooleanCheckbox id="generator" value="#{generator.value}" styleClass="switch input">
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectBooleanCheckbox>
                 </div>
@@ -37,7 +37,7 @@
                             <f:param value="#{validator.label}"/>
                         </h:outputFormat>
                     </p:outputLabel>
-                    <p:selectBooleanCheckbox id="validator" value="#{validator.value}" class="input">
+                    <p:selectBooleanCheckbox id="validator" value="#{validator.value}" styleClass="switch input">
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectBooleanCheckbox>
                 </div>

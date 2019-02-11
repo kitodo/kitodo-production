@@ -20,13 +20,16 @@
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.ldapGroup}">
+        <p:column headerText="#{msgs.ldapGroup}"
+                  rendered="#{UserForm.showColumn('ldapgroup.ldapgroup')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.homeDirectory}">
+        <p:column headerText="#{msgs.homeDirectory}"
+                  rendered="#{UserForm.showColumn('ldapgroup.home_directory')}">
             <h:outputText value="#{item.homeDirectory}"/>
         </p:column>
-        <p:column headerText="gidNumber">
+        <p:column headerText="gidNumber"
+                  rendered="#{UserForm.showColumn('ldapgroup.gidNumber')}">
             <h:outputText value="#{item.gidNumber}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
@@ -58,7 +61,7 @@
             <p:row>
                 <div>
                     <p:outputLabel for="useLdap" value="#{msgs.ldapActiveNote}"/>
-                    <p:selectBooleanCheckbox id="useLdap" styleClass="input"
+                    <p:selectBooleanCheckbox id="useLdap" styleClass="switch input"
                                              value="#{AuthenticationController.ldapAuthentication}">
                         <p:ajax event="change"/>
                     </p:selectBooleanCheckbox>

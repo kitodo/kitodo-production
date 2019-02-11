@@ -25,15 +25,21 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.title}"
+                  sortBy="#{item.title}"
+                  rendered="#{ProjectForm.showColumn('ruleset.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.file}">
+        <p:column headerText="#{msgs.file}"
+                  sortBy="#{item.file.keyword}"
+                  rendered="#{ProjectForm.showColumn('ruleset.filename')}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial">
+        <p:column headerText="#{msgs.metadataSortByRuleset}" styleClass="checkboxColumn" style="width: initial"
+                  sortBy="#{item.orderMetadataByRuleset}"
+                  rendered="#{ProjectForm.showColumn('ruleset.sorting')}">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
             </ui:fragment>

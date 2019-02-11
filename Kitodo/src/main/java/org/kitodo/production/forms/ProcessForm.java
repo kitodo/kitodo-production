@@ -25,8 +25,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -48,8 +51,10 @@ import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
+import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WebDav;
@@ -92,6 +97,11 @@ public class ProcessForm extends TemplateBaseForm {
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
 
+    private List<SelectItem> customColumns;
+
+    @Inject
+    private CustomListColumnInitializer initializer;
+
     /**
      * Constructor.
      */
@@ -114,6 +124,60 @@ public class ProcessForm extends TemplateBaseForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+    }
+
+    /**
+     * Initialize SelectItems used for configuring displayed columns in process list.
+     */
+    @PostConstruct
+    public void init() {
+
+        columns = new ArrayList<>();
+
+        SelectItemGroup processColumnGroup;
+        try {
+            processColumnGroup =
+                    ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
+            columns.add(processColumnGroup);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
+
+        // Read process properties to display from configuration
+        customColumns = new ArrayList<>();
+        SelectItemGroup customColumnGroup = new SelectItemGroup(Helper.getTranslation("process"));
+        customColumnGroup.setSelectItems(ServiceManager.getListColumnService().getAllCustomListColumns().stream()
+                .map(listColumn -> new SelectItem(listColumn, listColumn.getTitle()))
+                .toArray(SelectItem[]::new));
+        customColumns.add(customColumnGroup);
+
+        selectedColumns =
+                ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
+
+    }
+
+    /**
+     * Return list of process properties configured as custom list columns in kitodo configuration.
+     * @return list of process property names
+     */
+    public String[] getProcessPropertyNames() {
+        return initializer.getProcessProperties();
+    }
+
+    /**
+     * Retrieve and return process property value of property with given name 'propertyName' from given ProcessDTO
+     * 'process'.
+     * @param process the ProcessDTO object from which the property value is retrieved
+     * @param propertyName name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName', empty String otherwise
+     */
+    public static String getPropertyValue(ProcessDTO process, String propertyName) {
+        for (PropertyDTO property : process.getProperties()) {
+            if (property.getTitle().equals(propertyName)) {
+                return property.getValue();
+            }
+        }
+        return "";
     }
 
     /**

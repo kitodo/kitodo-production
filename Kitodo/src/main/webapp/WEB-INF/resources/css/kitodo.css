@@ -915,6 +915,20 @@ main i.fa {
     width: 100%;
 }
 
+.configure-columns-button {
+    display: inline-block !important;
+    margin-right: 16px;
+}
+
+.configure-columns-button .ui-selectcheckboxmenu-label::after {
+    font-family: 'FontAwesome';
+    content: '\f0db';
+}
+
+.configure-columns-button .ui-selectcheckboxmenu-trigger {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -1281,13 +1295,12 @@ footer {
     margin-right: 10px;
 }
 
-/* TODO: style needs to be adjusted */
 .ui-datatable tr th.checkboxListColumn {
     padding-left: 7px;
     height: 35px;
     padding-top: 3px;
     margin-top: -5px;
-    vertical-align: top;
+    vertical-align: inherit;
 }
 
 .ui-datatable tr th.checkboxListColumn,

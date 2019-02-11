@@ -26,6 +26,7 @@ import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -34,6 +35,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.PropertyTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RoleTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
@@ -61,7 +63,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
 
     /**
      * Method for adding relationship between bean objects.
-     * 
+     *
      * @param objects
      *            list
      * @param addAdditionalProperties
@@ -85,7 +87,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
 
     /**
      * Method for adding relationship between bean objects.
-     * 
+     *
      * @param objects
      *            list
      * @return JSONArray
@@ -122,13 +124,17 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
         } else if (property instanceof Filter) {
             jsonObject.put(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
+        } else if (property instanceof Property) {
+            Property processProperty = (Property) property;
+            jsonObject.put(PropertyTypeField.TITLE.getKey(), preventNull((processProperty.getTitle())));
+            jsonObject.put(PropertyTypeField.VALUE.getKey(), preventNull((processProperty.getValue())));
         }
     }
 
     /**
      * Method used for formatting Date as JsonValue. It will help to change fast a
      * way of Date formatting or expected String format.
-     * 
+     *
      * @param date
      *            as Date
      * @return formatted date as JsonValue - String or NULL

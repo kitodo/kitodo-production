@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
@@ -110,6 +111,20 @@ public class CurrentTaskForm extends BaseForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
+    }
+
+    /**
+     * Initialize the list of displayed list columns.
+     */
+    @PostConstruct
+    public void init() {
+        columns = new ArrayList<>();
+        try {
+            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("task"));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
+        selectedColumns = ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("task");
     }
 
     /**

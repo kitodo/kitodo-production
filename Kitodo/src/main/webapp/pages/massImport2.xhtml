@@ -87,7 +87,7 @@
                         <!--  Boolean -->
                         <h:panelGroup id="propertyBoolean" rendered="#{(property.type.name == 'boolean')}">
                             <p:selectBooleanCheckbox id="checkbox" value="#{property.booleanValue}"
-                                                     required="#{property.required}"/>
+                                                     styleClass="switch" required="#{property.required}"/>
                         </h:panelGroup>
 
                         <!--  Date  -->

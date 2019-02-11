@@ -53,7 +53,7 @@
             </div>
             <div>
                 <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
-                <p:selectBooleanCheckbox id="active" styleClass="input" disabled="#{isViewMode || isConfigMode}"
+                <p:selectBooleanCheckbox id="active" styleClass="switch input" disabled="#{isViewMode || isConfigMode}"
                                          value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
             </div>
             <div>
@@ -124,14 +124,14 @@
             </div>
             <div>
                 <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
-                <p:selectBooleanCheckbox id="withMassDownload" styleClass="input" disabled="#{isViewMode}"
+                <p:selectBooleanCheckbox id="withMassDownload" styleClass="switch input" disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.withMassDownload}"
                                          onchange="toggleSave()"/>
             </div>
             <div>
                 <!-- show process data in my tasks -->
                 <p:outputLabel for="show-process-data" value="#{msgs.showProcessInTaskList}" />
-                <p:selectBooleanCheckbox id="show-process-data" styleClass="input" onchange="toggleSave()"
+                <p:selectBooleanCheckbox id="show-process-data" styleClass="switch input" onchange="toggleSave()"
                                          disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
             </div>
         </p:row>

@@ -20,13 +20,19 @@
                  value="#{DesktopForm.processes}"
                  scrollable="true"
                  var="process">
-        <p:column headerText="#{msgs.title}" styleClass="process-table-column">
+        <p:column headerText="#{msgs.title}"
+                  rendered="#{ProcessForm.showColumn('process.title')}"
+                  styleClass="process-table-column">
             <h:outputText value="#{process.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.status}" styleClass="process-table-column">
+        <p:column headerText="#{msgs.status}"
+                  rendered="#{ProcessForm.showColumn('process.state')}"
+                  styleClass="process-table-column">
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
-        <p:column headerText="#{msgs.project}" styleClass="process-table-column">
+        <p:column headerText="#{msgs.project}"
+                  rendered="#{ProcessForm.showColumn('process.project')}"
+                  styleClass="process-table-column">
             <h:outputText value="#{process.project.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">

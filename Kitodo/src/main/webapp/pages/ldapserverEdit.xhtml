@@ -93,7 +93,7 @@
                         <div>
                             <p:outputLabel for="ssl" value="Ssl"/>
                             <p:selectBooleanCheckbox id="ssl"
-                                                     styleClass="input"
+                                                     styleClass="switch input"
                                                      disabled="#{isViewMode}"
                                                      value="#{LdapServerForm.ldapServer.useSsl}"
                                                      onchange="toggleSave()"/>
@@ -150,7 +150,7 @@
                         <div>
                             <p:outputLabel for="readOnly" value="readOnly"/>
                             <p:selectBooleanCheckbox id="readOnly"
-                                                     styleClass="input"
+                                                     styleClass="switch input"
                                                      disabled="#{isViewMode}"
                                                      value="#{LdapServerForm.ldapServer.readOnly}"
                                                      onchange="toggleSave()"/>

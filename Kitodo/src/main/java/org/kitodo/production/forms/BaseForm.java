@@ -15,7 +15,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.faces.model.SelectItem;
+
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.TabChangeEvent;
@@ -45,6 +49,9 @@ public class BaseForm implements Serializable {
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
     protected static final String DEFAULT_LINK = "desktop";
+
+    protected List<SelectItem> columns;
+    protected List<ListColumn> selectedColumns;
 
     /**
      * Getter: return lazyDTOModel.
@@ -179,5 +186,63 @@ public class BaseForm implements Serializable {
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;
+    }
+
+    /**
+     * Get list of configurable columns.
+     * @return list of configurable columns
+     */
+    public List<SelectItem> getColumns() {
+        return columns;
+    }
+
+    /**
+     * Set list of configurable columns.
+     * @param columns list of columns
+     */
+    public void setColumns(List<SelectItem> columns) {
+        this.columns = columns;
+    }
+
+    /**
+     * Get list of selected columns.
+     * @return list of selected columns
+     */
+    public List<ListColumn> getSelectedColumns() {
+        return selectedColumns;
+    }
+
+    /**
+     * Set list of selected columns.
+     * @param columns list of selected columns
+     */
+    public void setSelectedColumns(List<ListColumn> columns) {
+        this.selectedColumns = columns;
+    }
+
+    /**
+     * Checks whether the column with the provided name 'columnName' should be
+     * shown be displayed in the corresponding list view or not.
+     * @param columnName name of the column
+     * @return true, if column should be displayed; false if column should be hidden
+     */
+    public boolean showColumn(String columnName) {
+        for (ListColumn listColumn : this.selectedColumns) {
+            if (listColumn.getTitle().equals(columnName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Save selected columns to current client.
+     */
+    public void saveSelectedColumns() {
+        try {
+            ServiceManager.getListColumnService().saveSelectedColumnsToClient(selectedColumns);
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+        }
     }
 }

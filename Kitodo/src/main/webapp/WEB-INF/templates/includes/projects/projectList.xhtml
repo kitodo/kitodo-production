@@ -32,15 +32,19 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.title}"
+                  rendered="#{ProjectForm.showColumn('project.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.metsRightsOwner}">
+        <p:column headerText="#{msgs.metsRightsOwner}"
+                  rendered="#{ProjectForm.showColumn('project.metsRightsOwner')}">
             <h:outputText value="#{item.metsRightsOwner}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.active}" styleClass="checkboxColumn">
+        <p:column headerText="#{msgs.active}"
+                  styleClass="checkboxColumn"
+                  rendered="#{ProjectForm.showColumn('project.active')}">
             <h:outputText>
                 <ui:fragment rendered="#{item.isActive()}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
@@ -51,7 +55,8 @@
             </h:outputText>
         </p:column>
 
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}"
+                  styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
                         outcome="projectEdit" title="#{msgs.projectView}">

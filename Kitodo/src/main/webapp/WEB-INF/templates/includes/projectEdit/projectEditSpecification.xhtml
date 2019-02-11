@@ -55,7 +55,7 @@
             </div>
             <div>
                 <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
-                <p:selectBooleanCheckbox id="automaticExport" value="#{ProjectForm.project.useDmsImport}" class="input">
+                <p:selectBooleanCheckbox id="automaticExport" value="#{ProjectForm.project.useDmsImport}" styleClass="switch input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
@@ -92,7 +92,7 @@
             </div>
             <div>
                 <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />
-                <p:selectBooleanCheckbox id="createDir" class="input" value="#{ProjectForm.project.dmsImportCreateProcessFolder}">
+                <p:selectBooleanCheckbox id="createDir" value="#{ProjectForm.project.dmsImportCreateProcessFolder}" styleClass="switch input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>

@@ -15,9 +15,23 @@
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.tasksCurrent}</h3>
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  style="float: right; margin-right: 0;"
+                                  value="#{CurrentTaskForm.selectedColumns}">
+                <f:selectItems value="#{CurrentTaskForm.columns}" />
+                <p:ajax listener="#{CurrentTaskForm.saveSelectedColumns()}"
+                        update="tasksTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -26,6 +40,7 @@
                 <ui:include src="/WEB-INF/templates/includes/tasks/taskList.xhtml"/>
             </p:tab>
         </p:tabView>
+        <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

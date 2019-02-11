@@ -27,11 +27,13 @@
             <p:rowToggler/>
         </p:column>
 
-        <p:column headerText="#{msgs.task}">
+        <p:column headerText="#{msgs.task}"
+                  rendered="#{CurrentTaskForm.showColumn('task.title')}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.process}">
+        <p:column headerText="#{msgs.process}"
+                  rendered="#{CurrentTaskForm.showColumn( 'task.process')}">
             <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                 <i class="fa fa-pencil-square-o fa-lg"/>
@@ -40,11 +42,13 @@
             <h:outputText value=" #{item.process.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.project}">
+        <p:column headerText="#{msgs.project}"
+                  rendered="#{CurrentTaskForm.showColumn('task.project')}">
             <h:outputText value="#{item.process.project.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.status}">
+        <p:column headerText="#{msgs.status}"
+                  rendered="#{CurrentTaskForm.showColumn('task.state')}">
             <h:panelGroup class="task-status"
                           title="#{item.processingStatusTitle}"
                           style="margin-right:10px; background-color:
