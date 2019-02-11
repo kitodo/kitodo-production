@@ -46,12 +46,6 @@ public class DocketDAO extends BaseDAO<Docket> {
     }
 
     @Override
-    public Docket save(Docket docket) throws DAOException {
-        storeObject(docket);
-        return retrieveObject(Docket.class, docket.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Docket.class, id);
     }

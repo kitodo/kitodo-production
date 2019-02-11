@@ -21,12 +21,6 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     private static final long serialVersionUID = 1913256950316879121L;
 
     @Override
-    public Ruleset save(Ruleset ruleset) throws DAOException {
-        storeObject(ruleset);
-        return retrieveObject(Ruleset.class, ruleset.getId());
-    }
-
-    @Override
     public Ruleset getById(Integer id) throws DAOException {
         Ruleset result = retrieveObject(Ruleset.class, id);
         if (result == null) {

@@ -49,12 +49,6 @@ public class FilterDAO extends BaseDAO<Filter> {
     }
 
     @Override
-    public Filter save(Filter filter) throws DAOException {
-        storeObject(filter);
-        return retrieveObject(Filter.class, filter.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Filter.class, id);
     }

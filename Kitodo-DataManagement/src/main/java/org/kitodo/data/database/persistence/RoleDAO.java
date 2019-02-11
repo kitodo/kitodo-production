@@ -49,12 +49,6 @@ public class RoleDAO extends BaseDAO<Role> {
     }
 
     @Override
-    public Role save(Role role) throws DAOException {
-        storeObject(role);
-        return role;
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Role.class, id);
     }

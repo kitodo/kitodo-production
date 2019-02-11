@@ -19,12 +19,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     @Override
-    public LdapGroup save(LdapGroup ldapGroup) throws DAOException {
-        storeObject(ldapGroup);
-        return ldapGroup;
-    }
-
-    @Override
     public LdapGroup getById(Integer id) throws DAOException {
         LdapGroup result = retrieveObject(LdapGroup.class, id);
         if (result == null) {

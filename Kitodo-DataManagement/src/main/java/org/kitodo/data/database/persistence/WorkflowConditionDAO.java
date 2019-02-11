@@ -45,12 +45,6 @@ public class WorkflowConditionDAO extends BaseDAO<WorkflowCondition> {
     }
 
     @Override
-    public WorkflowCondition save(WorkflowCondition workflowCondition) throws DAOException {
-        storeObject(workflowCondition);
-        return retrieveObject(WorkflowCondition.class, workflowCondition.getId());
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(WorkflowCondition.class, id);
     }

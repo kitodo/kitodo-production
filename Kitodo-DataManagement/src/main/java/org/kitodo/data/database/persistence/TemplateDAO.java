@@ -47,12 +47,6 @@ public class TemplateDAO extends BaseDAO<Template> {
             offset, size);
     }
 
-    @Override
-    public Template save(Template process) throws DAOException {
-        storeObject(process);
-        return retrieveObject(Template.class, process.getId());
-    }
-
     /**
      * Save list of templates.
      *

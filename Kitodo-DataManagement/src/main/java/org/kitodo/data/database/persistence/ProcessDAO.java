@@ -45,12 +45,6 @@ public class ProcessDAO extends BaseDAO<Process> {
             offset, size);
     }
 
-    @Override
-    public Process save(Process process) throws DAOException {
-        storeObject(process);
-        return retrieveObject(Process.class, process.getId());
-    }
-
     /**
      * Save process with regard to its progress.
      *
@@ -58,14 +52,13 @@ public class ProcessDAO extends BaseDAO<Process> {
      *            object
      * @param progress
      *            service
-     * @return process object
      * @throws DAOException
      *             an exception that can be thrown from the underlying save()
      *             procedure failure.
      */
-    public Process save(Process process, String progress) throws DAOException {
+    public void save(Process process, String progress) throws DAOException {
         process.setSortHelperStatus(progress);
-        return save(process);
+        save(process);
     }
 
     /**

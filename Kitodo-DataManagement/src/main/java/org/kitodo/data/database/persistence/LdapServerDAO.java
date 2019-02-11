@@ -17,11 +17,6 @@ import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class LdapServerDAO extends BaseDAO<LdapServer> {
-    @Override
-    public LdapServer save(LdapServer ldapGroup) throws DAOException {
-        storeObject(ldapGroup);
-        return ldapGroup;
-    }
 
     @Override
     public LdapServer getById(Integer id) throws DAOException {

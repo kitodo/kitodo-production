@@ -45,12 +45,6 @@ public class ClientDAO extends BaseDAO<Client> {
     }
 
     @Override
-    public Client save(Client client) throws DAOException {
-        storeObject(client);
-        return client;
-    }
-
-    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Client.class, id);
     }

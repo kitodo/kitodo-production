@@ -67,8 +67,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseIndexedBean
      *            object
      */
-    public T saveToDatabase(T baseIndexedBean) throws DAOException {
-        return dao.save(baseIndexedBean);
+    public void saveToDatabase(T baseIndexedBean) throws DAOException {
+        dao.save(baseIndexedBean);
     }
 
     /**

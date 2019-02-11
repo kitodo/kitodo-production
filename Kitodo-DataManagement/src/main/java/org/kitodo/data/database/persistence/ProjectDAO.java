@@ -11,21 +11,13 @@
 
 package org.kitodo.data.database.persistence;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class ProjectDAO extends BaseDAO<Project> {
     private static final long serialVersionUID = -9050627256118458325L;
-
-    @Override
-    public Project save(Project project) throws DAOException {
-        storeObject(project);
-        return retrieveObject(Project.class, project.getId());
-    }
 
     @Override
     public Project getById(Integer id) throws DAOException {
@@ -54,9 +46,7 @@ public class ProjectDAO extends BaseDAO<Project> {
 
     @Override
     public void remove(Integer id) throws DAOException {
-        if (id != null) {
-            removeObject(Project.class, id);
-        }
+        removeObject(Project.class, id);
     }
 
     /**
@@ -75,18 +65,5 @@ public class ProjectDAO extends BaseDAO<Project> {
      */
     public List<Project> getAllActiveProjectsSortedByTitle() {
         return getByQuery("FROM Project WHERE active = 1 ORDER BY title ASC");
-    }
-
-    /**
-     * Gets projects from given list of ids.
-     *
-     * @param projectIds
-     *            list of project ids
-     * @return list of projects
-     */
-    public List<Project> getByIds(List<Integer> projectIds) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectIds", projectIds);
-        return getByQuery("FROM Project WHERE id IN :projectIds", parameters);
     }
 }
