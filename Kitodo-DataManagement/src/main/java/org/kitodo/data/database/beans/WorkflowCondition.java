@@ -32,7 +32,7 @@ public class WorkflowCondition extends BaseBean {
      * <dt>SCRIPT</dt>
      * <dd>path to executable script will be used for value</dd>
      * <dt>XPATH</dt>
-     * <dd> expression to search ine metadata file will be used for value</dd>
+     * <dd>expression to search in the metadata file will be used for value</dd>
      * </dl>
      */
     public enum Type {
