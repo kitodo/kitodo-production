@@ -51,7 +51,7 @@ public class WorkflowServiceIT {
     @Test
     public void shouldGetAllWorkflows() throws Exception {
         List<Workflow> workflows = workflowService.getAll();
-        assertEquals("Workflows were not found in database!", 2, workflows.size());
+        assertEquals("Workflows were not found in database!", 3, workflows.size());
     }
 
     @Test

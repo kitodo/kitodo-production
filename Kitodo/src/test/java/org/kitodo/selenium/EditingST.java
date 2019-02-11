@@ -101,7 +101,7 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editWorkflowTest() throws Exception {
         projectsPage.editWorkflow();
-        assertEquals("Header for edit ruleset is incorrect", "Workflow bearbeiten (say-hello)",
+        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test-hello)",
             Pages.getWorkflowEditPage().getHeaderText());
     }
 

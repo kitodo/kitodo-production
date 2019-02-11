@@ -94,7 +94,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement editTemplateLink;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit.jsf?id=1']")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit.jsf?id=2']")
     private WebElement editWorkflowLink;
 
     @SuppressWarnings("unused")
