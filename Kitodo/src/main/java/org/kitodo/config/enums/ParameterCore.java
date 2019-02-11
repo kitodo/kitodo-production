@@ -631,7 +631,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Process properties to display in process list.
      */
-    PROCESS_PROPERTIES(new Parameter<>("processProperties")),
+    PROCESS_PROPERTIES(new Parameter<>("processPropertyColumns")),
 
     /*
      * ActiveMQ web services
@@ -661,7 +661,7 @@ public enum ParameterCore implements ParameterInterface {
 
     /**
      * Private constructor to hide the implicit public one.
-     * 
+     *
      * @param parameter
      *            for config
      */

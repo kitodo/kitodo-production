@@ -90,10 +90,10 @@ CREATE TABLE client_x_listColumn (
   client_id INT(11) NOT NULL,
   column_id INT(11) NOT NULL,
   PRIMARY KEY ( client_id, column_id ),
-  KEY FK_client_id (client_id),
-  KEY FK_column_id (column_id),
-  CONSTRAINT FK_client_id FOREIGN KEY (client_id) REFERENCES client(id),
-  CONSTRAINT FK_column_id FOREIGN KEY (column_id) REFERENCES listColumn(id)
+  KEY FK_client_x_listColumn_client_id (client_id),
+  KEY FK_client_x_listColumn_column_id (column_id),
+  CONSTRAINT FK_client_x_listColumn_client_id FOREIGN KEY (client_id) REFERENCES client(id),
+  CONSTRAINT FK_client_x_listColumn_column_id FOREIGN KEY (column_id) REFERENCES listColumn(id)
 );
 
 -- 4. Add standard mappings
