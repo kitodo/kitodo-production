@@ -530,7 +530,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             return null;
         }
 
-        SIBLINGS: for (LegacyDocStructHelperInterface aforeborn : siblings) {
+        boolean rankTooSmall = false;
+        for (LegacyDocStructHelperInterface aforeborn : siblings) {
             List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
             if (allMetadata != null) {
                 for (LegacyMetadataHelper metadataElement : allMetadata) {
@@ -538,7 +539,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         try {
                             if (Integer.parseInt(metadataElement.getValue()) < rank) {
                                 result++;
-                                continue SIBLINGS;
+                                rankTooSmall=true;
+                                break;
                             } else {
                                 return result;
                             }
@@ -555,7 +557,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     }
                 }
             }
-            return null;
+            if (!rankTooSmall) {
+                return null;
+            }
         }
         return result;
     }

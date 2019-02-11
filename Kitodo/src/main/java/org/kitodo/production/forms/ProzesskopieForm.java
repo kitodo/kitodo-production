@@ -211,7 +211,8 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
+    private static final String DIRECTORY_SUFFIX = ConfigCore
+            .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
     private String atstsl = "";
     private Integer guessedImages = 0;
@@ -284,7 +285,8 @@ public class ProzesskopieForm implements Serializable {
             this.template = ServiceManager.getTemplateService().getById(templateId);
             this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
+            Helper.setErrorMessage(
+                "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return null;
         }
 
@@ -624,7 +626,7 @@ public class ProzesskopieForm implements Serializable {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (Objects.isNull(title) || !title.matches(validateRegEx)) {
             valid = false;
-            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
         }
 
         if (Objects.nonNull(title)) {
@@ -650,8 +652,8 @@ public class ProzesskopieForm implements Serializable {
             return false;
         }
         if (amount > 0) {
-            Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA)
-                    + Helper.getTranslation("processTitleAlreadyInUse"));
+            Helper.setErrorMessage(
+                Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("processTitleAlreadyInUse"));
             return false;
         }
         return true;
@@ -899,8 +901,7 @@ public class ProzesskopieForm implements Serializable {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
             Map<String, LegacyMetadataHelper> availableMetadata = higherLevelMetadata.containsKey(availableKey)
-                    ? higherLevelMetadata.get(availableKey)
-                    : new HashMap<>();
+                    ? higherLevelMetadata.get(availableKey) : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
                 availableMetadata.put(availableValue, available);
             }
@@ -910,7 +911,8 @@ public class ProzesskopieForm implements Serializable {
 
     private void iterateOverHigherLevelMetadata(LegacyDocStructHelperInterface enricher,
             Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata) {
-        for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
+        for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata
+                .entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
             boolean addable = false;
             List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
@@ -926,8 +928,10 @@ public class ProzesskopieForm implements Serializable {
             if (!addable) {
                 continue;
             }
-            there: for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue()
-                    .entrySet()) {
+
+            boolean metadataEqualsParent = false;
+
+            for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue().entrySet()) {
                 List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
@@ -935,10 +939,14 @@ public class ProzesskopieForm implements Serializable {
                 for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
                             && existentMetadata.getValue().equals(higherElement.getKey())) {
-                        continue there;
+                        metadataEqualsParent = true;
+                        break;
                     }
                 }
-                enricher.addMetadata(higherElement.getValue());
+                if (!metadataEqualsParent) {
+                    enricher.addMetadata(higherElement.getValue());
+                }
+
             }
         }
     }
@@ -1170,7 +1178,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set process for choice list.
      *
-     * @param processForChoice as Process object
+     * @param processForChoice
+     *            as Process object
      */
     public void setProcessForChoice(Process processForChoice) {
         this.processForChoice = processForChoice;
@@ -1519,7 +1528,8 @@ public class ProzesskopieForm implements Serializable {
             } else if (token.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
-                    tifHeaderImageDescriptionBuilder.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
+                    tifHeaderImageDescriptionBuilder
+                            .append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
                 } catch (FileNotFoundException | RuntimeException e) {
                     Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
                 }
