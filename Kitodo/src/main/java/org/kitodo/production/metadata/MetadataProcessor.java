@@ -2441,8 +2441,8 @@ public class MetadataProcessor {
      */
     public String getPageImageFilePath(LegacyDocStructHelperInterface pageDocStruct) {
         final String errorMessage = "IMAGE_PATH_NOT_FOUND";
-        LegacyPrefsHelper LegacyPrefsHelper = this.metaHelper.getPrefs();
-        LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataTypeByName("physPageNumber");
+        LegacyPrefsHelper legacyPrefsHelper = this.metaHelper.getPrefs();
+        LegacyMetadataTypeHelper mdt = legacyPrefsHelper.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
         List<? extends LegacyMetadataHelper> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
 
