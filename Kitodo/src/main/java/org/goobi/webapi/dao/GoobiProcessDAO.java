@@ -134,7 +134,7 @@ public class GoobiProcessDAO {
             @SuppressWarnings(value = "unchecked")
             List<GoobiProcessStep> list = criteria.list();
 
-            if ((list != null) && (!list.isEmpty())) {
+            if (Objects.nonNull(list) && !list.isEmpty()) {
                 result.addAll(list);
             }
         } catch (HibernateException e) {

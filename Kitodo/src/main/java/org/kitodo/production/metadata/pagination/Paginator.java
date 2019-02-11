@@ -14,6 +14,7 @@ package org.kitodo.production.metadata.pagination;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
 import org.kitodo.production.metadata.Metadata;
@@ -70,7 +71,7 @@ public class Paginator {
     }
 
     private void assertSelectionIsNotNull() {
-        if (selectedPages == null || selectedPages.length == 0) {
+        if (Objects.isNull(selectedPages) || selectedPages.length == 0) {
             throw new IllegalArgumentException("No pages selected for pagination.");
         }
     }

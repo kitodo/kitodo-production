@@ -13,6 +13,7 @@ package de.unigoettingen.sub.search.opac;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.context.FacesContext;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -91,9 +92,9 @@ public class ConfigOpacDoctype {
      */
     public String getLocalizedLabel() {
         String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-        if (currentLocale != null && !currentLocale.equals("")) {
+        if (Objects.nonNull(currentLocale) && !currentLocale.isEmpty()) {
             String answer = this.labels.get(currentLocale);
-            if (answer != null && !answer.equals("")) {
+            if (Objects.nonNull(answer) && !answer.isEmpty()) {
                 return answer;
             }
         }

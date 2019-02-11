@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -82,7 +83,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     @Override
     public void run() {
         setStatusProgress(30);
-        if ((this.getProcess() == null) || (this.targetFolder == null) || (this.internalServletPath == null)) {
+        if (Objects.isNull(getProcess()) || Objects.isNull(this.targetFolder) || Objects.isNull(this.internalServletPath)) {
             setStatusMessage("parameters for temporary and final folder and internal servlet path not defined");
             setStatusProgress(-1);
             return;
@@ -91,8 +92,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
         try {
             // define path for mets and pdfs
             new File("");
-            URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
-            final URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
+            URI tempPdf = fileService.createResource(getProcess().getTitle() + ".pdf");
+            final URI finalPdf = fileService.createResource(this.targetFolder, getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore
                     .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();
@@ -132,7 +133,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             fileService.copyFile(tempPdf, finalPdf);
             logger.debug("pdf copied to {}; now start cleaning up", finalPdf);
             fileService.delete(tempPdf);
-            if (this.metsURL != null) {
+            if (Objects.nonNull(this.metsURL)) {
                 File tempMets = new File(this.metsURL.toString());
                 Files.delete(tempMets.toPath());
             }
@@ -158,7 +159,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 logger.error("Error while reporting error to user in file " + uri, e);
             }
         } finally {
-            if (method != null) {
+            if (Objects.nonNull(method)) {
                 method.releaseConnection();
             }
 
@@ -171,16 +172,16 @@ public class CreatePdfFromServletThread extends LongRunningTask {
         String contentServerUrl = ConfigCore.getParameter(ParameterCore.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
-        if (ServiceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
+        if (ServiceManager.getMetadataValidationService().validate(this.getProcess()) && Objects.nonNull(this.metsURL)) {
             // if no contentserverurl defined use internal
             // goobiContentServerServlet
-            if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
+            if (Objects.isNull(contentServerUrl) || contentServerUrl.isEmpty()) {
                 contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
             }
             return new URL(contentServerUrl + this.metsURL);
             // mets data does not exist or is invalid
         } else {
-            if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
+            if (Objects.isNull(contentServerUrl) || contentServerUrl.isEmpty()) {
                 contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
             }
             StringBuilder url = new StringBuilder();

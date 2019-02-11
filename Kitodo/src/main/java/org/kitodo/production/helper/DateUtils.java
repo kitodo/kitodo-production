@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper;
 
+import java.util.Objects;
 import java.util.TreeSet;
 
 import org.joda.time.DateTimeConstants;
@@ -92,7 +93,7 @@ public class DateUtils {
      * @return whether the two dates are in the same year
      */
     public static boolean sameYear(LocalDate current, LocalDate next) {
-        if (next == null) {
+        if (Objects.isNull(next)) {
             return false;
         }
         return current.getYear() == next.getYear();

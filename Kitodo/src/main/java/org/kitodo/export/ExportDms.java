@@ -112,7 +112,7 @@ public class ExportDms extends ExportMets {
             return startExport(process, inZielVerzeichnis,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (IOException | RuntimeException e) {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
             } else {
@@ -190,7 +190,7 @@ public class ExportDms extends ExportMets {
             }
             prepareUserDirectory(zielVerzeichnis);
         }
-        if (exportDmsTask != null) {
+        if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(1);
         }
 
@@ -218,7 +218,7 @@ public class ExportDms extends ExportMets {
                 try {
                     new DataCopier(rules).process(new CopierData(gdzfile, process));
                 } catch (ConfigurationException e) {
-                    if (exportDmsTask != null) {
+                    if (Objects.nonNull(exportDmsTask)) {
                         exportDmsTask.setException(e);
                     } else {
                         Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
@@ -280,7 +280,7 @@ public class ExportDms extends ExportMets {
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
         } catch (RuntimeException e) {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
             } else {
@@ -301,7 +301,7 @@ public class ExportDms extends ExportMets {
             directoryDownload(process, destinationDirectory);
             return true;
         } catch (IOException | InterruptedException | RuntimeException e) {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
             } else {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
@@ -314,7 +314,7 @@ public class ExportDms extends ExportMets {
             throws IOException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
-        if (exportDmsTask != null) {
+        if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
         if (MetadataFormat.findFileFormatsHelperByName(fileFormat) == MetadataFormat.METS) {
@@ -335,7 +335,7 @@ public class ExportDms extends ExportMets {
         if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
             exportWithTimeLimit(process);
         }
-        if (exportDmsTask != null) {
+        if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
         }
     }
@@ -352,7 +352,7 @@ public class ExportDms extends ExportMets {
                 asyncThread.stopThread();
             }
         } catch (InterruptedException e) {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)));
             } else {
@@ -362,14 +362,14 @@ public class ExportDms extends ExportMets {
         }
 
         String result = asyncThread.getResult();
-        if (result.length() > 0) {
-            if (exportDmsTask != null) {
+        if (!result.isEmpty()) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(new RuntimeException(processTitle + ": " + result));
             } else {
                 Helper.setErrorMessage(processTitle + ": ", result);
             }
         } else {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setProgress(100);
             } else {
                 Helper.setMessage(process.getTitle() + ": ", "exportFinished");
@@ -421,16 +421,16 @@ public class ExportDms extends ExportMets {
      */
     private void trimAllMetadata(LegacyDocStructHelperInterface inStruct) {
         // trim all metadata values
-        if (inStruct.getAllMetadata() != null) {
+        if (Objects.nonNull(inStruct.getAllMetadata())) {
             for (LegacyMetadataHelper md : inStruct.getAllMetadata()) {
-                if (md.getValue() != null) {
+                if (Objects.nonNull(md.getValue())) {
                     md.setStringValue(md.getValue().trim());
                 }
             }
         }
 
         // run through all children of docstruct
-        if (inStruct.getAllChildren() != null) {
+        if (Objects.nonNull(inStruct.getAllChildren())) {
             for (LegacyDocStructHelperInterface child : inStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
@@ -455,7 +455,7 @@ public class ExportDms extends ExportMets {
         downloadSources(process, userHome, atsPpnBand);
         downloadOCR(process, userHome, atsPpnBand);
 
-        if (exportDmsTask != null) {
+        if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(null);
         }
     }
@@ -495,7 +495,7 @@ public class ExportDms extends ExportMets {
     private void copyFiles(List<URI> files, URI destination) throws IOException {
         for (URI file : files) {
             if (fileService.isFile(file)) {
-                if (exportDmsTask != null) {
+                if (Objects.nonNull(exportDmsTask)) {
                     exportDmsTask.setWorkDetail(fileService.getFileName(file));
                 }
                 URI target = destination.resolve(fileService.getFileName(file));
@@ -547,7 +547,7 @@ public class ExportDms extends ExportMets {
 
             copyTifFilesForProcess(tifOrdner, zielTif);
 
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setWorkDetail(null);
             }
         }
@@ -557,12 +557,12 @@ public class ExportDms extends ExportMets {
             throws IOException, InterruptedException {
         List<URI> files = fileService.getSubUris(ImageHelper.dataFilter, tifSourceDirectory);
         for (int i = 0; i < files.size(); i++) {
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
             }
 
             fileService.copyFile(files.get(i), tifDestinationDirectory);
-            if (exportDmsTask != null) {
+            if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
                 if (exportDmsTask.isInterrupted()) {
                     throw new InterruptedException();
@@ -572,7 +572,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void handleException(Exception e, String processTitle) {
-        if (exportDmsTask != null) {
+        if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setException(e);
             logger.error("Could not create destination directory", e);
         } else {

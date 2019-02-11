@@ -267,7 +267,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void removeFromIndex(T baseIndexedBean, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
         indexer.setMethod(HttpMethod.DELETE);
-        if (baseIndexedBean != null) {
+        if (Objects.nonNull(baseIndexedBean)) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
     }
@@ -675,7 +675,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     protected QueryBuilder createSetQuery(String key, Set<? extends Object> values, boolean contains) {
         if (contains && !values.isEmpty()) {
             return termsQuery(key, values);
-        } else if (!contains && values != null) {
+        } else if (!contains && Objects.nonNull(values)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(termsQuery(key, values));
         } else {
@@ -716,9 +716,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, Integer id, boolean contains) {
-        if (contains && id != null) {
+        if (contains && Objects.nonNull(id)) {
             return matchQuery(key, id);
-        } else if (!contains && id != null) {
+        } else if (!contains && Objects.nonNull(id)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(matchQuery(key, id));
         } else {
@@ -741,9 +741,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, Boolean condition, boolean contains) {
-        if (contains && condition != null) {
+        if (contains && Objects.nonNull(condition)) {
             return matchQuery(key, condition);
-        } else if (!contains && condition != null) {
+        } else if (!contains && Objects.nonNull(condition)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(matchQuery(key, condition));
         } else {
@@ -790,7 +790,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator) {
-        if (operator == null) {
+        if (Objects.isNull(operator)) {
             operator = Operator.OR;
         }
 
@@ -957,7 +957,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     @SuppressWarnings("unchecked")
     private List<Integer> getRelatedPropertyForDTO(Map<String, Object> object, String key) {
-        if (object != null) {
+        if (Objects.nonNull(object)) {
             List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
             List<Integer> ids = new ArrayList<>();
             for (Map<String, Object> singleObject : jsonArray) {

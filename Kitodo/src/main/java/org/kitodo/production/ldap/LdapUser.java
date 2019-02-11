@@ -90,7 +90,7 @@ public class LdapUser implements DirContext {
             }
 
             LdapGroup ldapGroup = user.getLdapGroup();
-            if (ldapGroup.getObjectClasses() == null) {
+            if (Objects.isNull(ldapGroup.getObjectClasses())) {
                 throw new NamingException("no objectclass defined");
             }
 
@@ -171,7 +171,7 @@ public class LdapUser implements DirContext {
      * @return String with replaced variables
      */
     private String replaceVariables(String inString, User inUser, String inUidNumber) {
-        if (inString == null) {
+        if (Objects.isNull(inString)) {
             return "";
         }
         String result = inString.replaceAll("\\{login\\}", inUser.getLogin());
@@ -298,7 +298,7 @@ public class LdapUser implements DirContext {
         Attribute target;
         for (String id : ids) {
             target = this.attributes.get(id);
-            if (target != null) {
+            if (Objects.nonNull(target)) {
                 answer.put(target);
             }
         }

@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -175,7 +176,7 @@ public class WebDav implements Serializable {
             }
 
             URI destination = userHome;
-            if (currentUser.isWithMassDownload() && process.getProject() != null) {
+            if (currentUser.isWithMassDownload() && Objects.nonNull(process.getProject())) {
                 destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
             }
             destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();

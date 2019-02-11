@@ -13,6 +13,7 @@ package org.kitodo.production.helper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,7 +76,7 @@ public class XmlArticleCounter {
      */
     public int getNumberOfUghElements(LegacyDocStructHelperInterface inStruct, CountType inType) {
         int result = 0;
-        if (inStruct != null) {
+        if (Objects.nonNull(inStruct)) {
             /*
              * increment number of docstructs, or add number of metadata
              * elements
@@ -87,7 +88,7 @@ public class XmlArticleCounter {
             }
 
             // call children recursive
-            if (inStruct.getAllChildren() != null) {
+            if (Objects.nonNull(inStruct.getAllChildren())) {
                 for (LegacyDocStructHelperInterface struct : inStruct.getAllChildren()) {
                     result += getNumberOfUghElements(struct, inType);
                 }
@@ -99,10 +100,10 @@ public class XmlArticleCounter {
     private int countNonEmptyMetadata(LegacyDocStructHelperInterface inStruct) {
         int result = 0;
         List<LegacyMetadataHelper> allMetadata = inStruct.getAllMetadata();
-        if (allMetadata != null) {
+        if (Objects.nonNull(allMetadata)) {
             for (LegacyMetadataHelper md : allMetadata) {
                 String value = md.getValue();
-                if (value != null && value.trim().length() > 0) {
+                if (Objects.nonNull(value) && !value.trim().isEmpty()) {
                     result++;
                 }
             }

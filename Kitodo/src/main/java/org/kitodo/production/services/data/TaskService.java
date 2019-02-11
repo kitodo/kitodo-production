@@ -195,7 +195,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
             Process process = task.getProcess();
-            if (process != null) {
+            if (Objects.nonNull(process)) {
                 process.getTasks().remove(task);
                 ServiceManager.getProcessService().saveToIndex(process, false);
             }
@@ -490,11 +490,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return size of roles assigned to task
      */
     public int getRolesSize(Task task) {
-        if (task.getRoles() == null) {
-            return 0;
-        } else {
-            return task.getRoles().size();
-        }
+        return task.getRoles().size();
     }
 
     /**
@@ -505,9 +501,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public String getTitleWithUserName(Task task) {
         String result = task.getTitle();
-        if (task.getProcessingUser() != null && task.getProcessingUser().getId() != null
-                && task.getProcessingUser().getId() != 0) {
-            result += " (" + ServiceManager.getUserService().getFullName(task.getProcessingUser()) + ")";
+        User user = task.getProcessingUser();
+        if (Objects.nonNull(user) && Objects.nonNull(user.getId())) {
+            result += " (" + ServiceManager.getUserService().getFullName(user) + ")";
         }
         return result;
     }
@@ -528,7 +524,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return script path as String
      */
     public String getScriptPath(Task task) {
-        if (task.getScriptPath() != null && !task.getScriptPath().equals("")) {
+        if (Objects.nonNull(task.getScriptPath()) && !task.getScriptPath().isEmpty()) {
             return task.getScriptPath();
         }
         return "";
@@ -546,7 +542,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return int
      */
     public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
-        if (script == null || script.length() == 0) {
+        if (Objects.isNull(script) || script.isEmpty()) {
             return false;
         }
         script = script.replace("{", "(").replace("}", ")");
@@ -591,7 +587,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
         logger.debug("starting script {}", script);
-        if (script != null && !script.equals(" ") && script.length() != 0) {
+        if (Objects.nonNull(script) && !script.trim().isEmpty()) {
             scriptFinishedSuccessful = executeScript(task, script, automatic);
         }
         if (!scriptFinishedSuccessful) {
@@ -653,7 +649,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             ImageGenerator generator = new ImageGenerator(sourceFolder, GenerationMode.ALL, foldersToGenerate);
             generator.setSupervisor(executingThread);
             generator.run();
-            finishOrReturnAutomaticTask(task, automatic, executingThread.getException() == null);
+            finishOrReturnAutomaticTask(task, automatic, Objects.isNull(executingThread.getException()));
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

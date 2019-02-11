@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 import javax.xml.bind.JAXBException;
@@ -129,7 +130,7 @@ public class BatchTaskHelper extends BatchHelper {
         Process p = ServiceManager.getProcessService().getById(this.currentStep.getProcess().getId());
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
-            if (processProperty.getTitle() == null) {
+            if (Objects.isNull(processProperty.getTitle())) {
                 p.getProperties().remove(processProperty);
             }
         }
@@ -314,7 +315,7 @@ public class BatchTaskHelper extends BatchHelper {
      * Add to wiki field.
      */
     public void addToWikiField() {
-        if (addToWikiField != null && addToWikiField.length() > 0) {
+        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
             User user = ServiceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
@@ -332,7 +333,7 @@ public class BatchTaskHelper extends BatchHelper {
      * Add to wiki field for all.
      */
     public void addToWikiFieldForAll() {
-        if (addToWikiField != null && addToWikiField.length() > 0) {
+        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
             User user = ServiceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
             for (Task task : this.steps) {
@@ -484,7 +485,7 @@ public class BatchTaskHelper extends BatchHelper {
     }
 
     private boolean isPropertyInvalid(Property property, Task task) {
-        if (property.getValue() == null || property.getValue().equals("")) {
+        if (Objects.isNull(property.getValue()) || property.getValue().isEmpty()) {
             Helper.setErrorMessage("BatchPropertyEmpty",
                 new Object[] {property.getTitle(), task.getProcess().getTitle() });
             return true;

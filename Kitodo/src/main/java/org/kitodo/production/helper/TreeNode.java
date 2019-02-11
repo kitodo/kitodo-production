@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class TreeNode {
     protected boolean expanded = false;
@@ -206,7 +207,7 @@ public class TreeNode {
      * @return boolean
      */
     public boolean getHasChildren() {
-        return this.children != null && !this.children.isEmpty();
+        return Objects.nonNull(this.children) && !this.children.isEmpty();
     }
 
 }

@@ -119,6 +119,8 @@ public class Process extends BaseTemplateBean {
     public Process() {
         this.title = "";
         this.properties = new ArrayList<>();
+        this.workpieces = new ArrayList<>();
+        this.templates = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.inChoiceListShown = false;
         this.creationDate = new Date();

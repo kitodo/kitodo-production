@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -62,7 +63,7 @@ public class XMLUtils {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        if (indent != null) {
+        if (Objects.nonNull(indent)) {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indent.toString());
         }
@@ -83,7 +84,7 @@ public class XMLUtils {
      *             if no child node with that name can be found
      */
     public static Element getFirstChildWithTagName(Node data, String tagName) {
-        for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
+        for (Node element = data.getFirstChild(); Objects.nonNull(element); element = element.getNextSibling()) {
             if (!(element instanceof Element)) {
                 continue;
             }

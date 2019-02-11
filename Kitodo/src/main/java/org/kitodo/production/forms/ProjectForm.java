@@ -103,7 +103,7 @@ public class ProjectForm extends BaseForm {
         if (Objects.nonNull(this.project)) {
             for (Integer id : folderIds) {
                 for (Folder f : this.project.getFolders()) {
-                    if (f.getId() == null ? id == null : f.getId().equals(id)) {
+                    if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
                         this.project.getFolders().remove(f);
                         break;
                     }
@@ -182,7 +182,7 @@ public class ProjectForm extends BaseForm {
         ServiceManager.getProjectService().evict(this.project);
         // call this to make saving and deleting permanent
         this.commitFolders();
-        if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
+        if (Objects.isNull(this.project.getTitle()) || this.project.getTitle().isEmpty()) {
             Helper.setErrorMessage("errorProjectNoTitleGiven");
             return this.stayOnCurrentPage;
         } else {
@@ -250,9 +250,6 @@ public class ProjectForm extends BaseForm {
      * Save folder.
      */
     public void saveFolder() {
-        if (this.project.getFolders() == null) {
-            this.project.setFolders(new ArrayList<>());
-        }
         if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
         }
@@ -395,7 +392,7 @@ public class ProjectForm extends BaseForm {
 
         for (Integer id : this.deletedFolders) {
             for (Folder f : this.project.getFolders()) {
-                if (f.getId() == null ? id == null : f.getId().equals(id)) {
+                if (Objects.isNull(f.getId()) ? Objects.isNull(id) : f.getId().equals(id)) {
                     filteredFolderList.remove(f);
                     break;
                 }
@@ -456,7 +453,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getGeneratorSource() {
         Folder source = project.getGeneratorSource();
-        return source == null ? null : source.toString();
+        return Objects.isNull(source) ? null : source.toString();
     }
 
     /**
@@ -477,7 +474,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getMediaView() {
         Folder mediaView = project.getMediaView();
-        return mediaView == null ? null : mediaView.toString();
+        return Objects.isNull(mediaView) ? null : mediaView.toString();
     }
 
     /**
@@ -497,7 +494,7 @@ public class ProjectForm extends BaseForm {
      */
     public String getPreview() {
         Folder preview = project.getPreview();
-        return preview == null ? null : preview.toString();
+        return Objects.isNull(preview) ? null : preview.toString();
     }
 
     /**

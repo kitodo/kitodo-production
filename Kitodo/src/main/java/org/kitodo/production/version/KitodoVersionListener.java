@@ -13,6 +13,7 @@ package org.kitodo.production.version;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.jar.Manifest;
 
 import javax.servlet.ServletContext;
@@ -37,7 +38,7 @@ public class KitodoVersionListener implements ServletContextListener, HttpSessio
         ServletContext context = sce.getServletContext();
         InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
         // Use Manifest to setup version information
-        if (rs != null) {
+        if (Objects.nonNull(rs)) {
             try {
                 Manifest m = new Manifest(rs);
                 KitodoVersion.setupFromManifest(m);

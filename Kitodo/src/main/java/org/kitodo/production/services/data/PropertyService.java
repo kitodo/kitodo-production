@@ -161,7 +161,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     public List<Map<String,Object>> findByTitle(String title, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return findDocuments(query);
@@ -181,7 +181,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     List<Map<String,Object>> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.VALUE.getKey(), value, contains, Operator.AND));
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return findDocuments(query);
@@ -206,7 +206,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
         query.must(createSimpleQuery(PropertyTypeField.VALUE.getKey(), value, contains, Operator.AND));
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return findDocuments(query);

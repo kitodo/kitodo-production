@@ -15,6 +15,7 @@ import com.sun.jersey.api.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -51,10 +52,9 @@ public class Processes {
     @GET
     @Path("{ppnIdentifier}")
     public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
-
         GoobiProcess process = GoobiProcessDAO.getProcessByPPN(ippn);
 
-        if (process == null) {
+        if (Objects.isNull(process)) {
             throw new NotFoundException("No such process.");
         }
 
@@ -71,7 +71,6 @@ public class Processes {
     @GET
     @Path("{ppnIdentifier}/steps")
     public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
-
         List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
 
         if (resultList.isEmpty()) {

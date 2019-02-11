@@ -11,6 +11,8 @@
 
 package org.goobi.production.enums;
 
+import java.util.Objects;
+
 public enum ImportFormat {
 
     PICA("1", "pica"),
@@ -34,7 +36,7 @@ public enum ImportFormat {
      * @return ImportFormat
      */
     public static ImportFormat getTypeFromValue(String editType) {
-        if (editType != null) {
+        if (Objects.nonNull(editType)) {
             for (ImportFormat ss : values()) {
                 if (ss.getValue().equals(editType)) {
                     return ss;
@@ -52,7 +54,7 @@ public enum ImportFormat {
      * @return ImportFormat
      */
     public static ImportFormat getTypeFromTitle(String editType) {
-        if (editType != null) {
+        if (Objects.nonNull(editType)) {
             for (ImportFormat ss : values()) {
                 if (ss.getTitle().equals(editType)) {
                     return ss;

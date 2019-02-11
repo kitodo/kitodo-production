@@ -13,6 +13,7 @@ package org.kitodo.production.services.schema;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
@@ -150,7 +151,7 @@ public class SchemaService {
      */
     private Subfolder getUseLocalSubfolder(Process process) {
         Folder useLocalFolder = process.getProject().getGeneratorSource();
-        if (useLocalFolder == null) {
+        if (Objects.isNull(useLocalFolder)) {
             Optional<Folder> optionalUseLocalFolderByName = process.getProject().getFolders().parallelStream()
                     .filter(folder -> folder.getFileGroup().equals("LOCAL")).findAny();
             if (optionalUseLocalFolderByName.isPresent()) {

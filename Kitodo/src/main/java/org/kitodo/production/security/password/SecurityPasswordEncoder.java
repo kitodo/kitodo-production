@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -92,7 +93,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
      * @return encrypted string or null on error
      */
     public String encrypt(String messageToEncrypt) {
-        if (messageToEncrypt == null) {
+        if (Objects.isNull(messageToEncrypt)) {
             messageToEncrypt = "";
         }
 

@@ -90,9 +90,9 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     private MessageResolver getLocalizedMessages() {
         String messageFile = "password_en.properties";
 
-        if (FacesContext.getCurrentInstance() != null) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-            if (desiredLanguage != null && desiredLanguage.equals(Locale.GERMAN)) {
+            if (Objects.nonNull(desiredLanguage) && desiredLanguage.equals(Locale.GERMAN)) {
                 messageFile = "password_de.properties";
             }
         }

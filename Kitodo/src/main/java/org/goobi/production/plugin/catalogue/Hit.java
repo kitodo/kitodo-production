@@ -12,6 +12,7 @@
 package org.goobi.production.plugin.catalogue;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -171,7 +172,7 @@ public class Hit {
      */
     private DateTime getAccessTime() {
         String accessed = getAs("accessed", String.class);
-        return accessed != null ? new DateTime(accessed) : null;
+        return Objects.nonNull(accessed) ? new DateTime(accessed) : null;
     }
 
     /**
@@ -203,7 +204,7 @@ public class Hit {
     @SuppressWarnings("unchecked")
     private <T> T getAs(String key, Class<T> clazz) {
         Object value = data.get(key);
-        if (value == null || clazz.isAssignableFrom(value.getClass())) {
+        if (Objects.isNull(value) || clazz.isAssignableFrom(value.getClass())) {
             return (T) value;
         } else {
             throw new ClassCastException("Bad content type of field " + key + " (" + value.getClass().getName()
@@ -219,7 +220,7 @@ public class Hit {
      */
     private LocalDate getDatePublished() {
         String date = getAs("date", String.class);
-        return date != null ? new LocalDate(date) : null;
+        return Objects.nonNull(date) ? new LocalDate(date) : null;
     }
 
     /**
@@ -314,7 +315,7 @@ public class Hit {
     private String getPages() {
         final Pattern pageRange = Pattern.compile("(\\d+)(\\s*-\\s*)(\\d+)");
         String pages = getAs("pages", String.class);
-        if (pages != null) {
+        if (Objects.nonNull(pages)) {
             Matcher pageRangeMatcher = pageRange.matcher(pages);
             if (pageRangeMatcher.matches() && pageRangeMatcher.group(3).length() < pageRangeMatcher.group(1).length()) {
                 pages = pageRangeMatcher.group(1) + pageRangeMatcher.group(2)

@@ -210,7 +210,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return true if the title or label contain s, false otherwise
      */
     public boolean contains(Batch batch, CharSequence sequence) {
-        return sequence == null || batch.getTitle() != null && batch.getTitle().contains(sequence)
+        return Objects.isNull(sequence) || Objects.nonNull(batch.getTitle()) && batch.getTitle().contains(sequence)
                 || getNumericLabel(batch).contains(sequence);
     }
 
@@ -235,7 +235,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     public String getLabel(Batch batch) {
-        return batch.getTitle() != null ? batch.getTitle() : getNumericLabel(batch);
+        return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
     }
 
     /**
@@ -248,7 +248,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     public String getLabel(BatchDTO batch) {
-        return batch.getTitle() != null ? batch.getTitle() : getNumericLabel(batch);
+        return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
     }
 
     /**
@@ -279,7 +279,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return the display label for the batch type
      */
     public String getTypeTranslated(Batch batch) {
-        if (batch.getType() != null) {
+        if (Objects.nonNull(batch.getType())) {
             return Helper.getTranslation("batch_type_".concat(batch.getType().toString().toLowerCase()));
         } else {
             return "";
@@ -305,11 +305,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public String toString(Batch batch) {
         try {
-            StringBuilder result = new StringBuilder(batch.getTitle() != null ? batch.getTitle().length() + 20 : 30);
+            StringBuilder result = new StringBuilder(Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
             try {
-                if (batch.getTitle() != null) {
+                if (Objects.nonNull(batch.getTitle())) {
                     result.append(batch.getTitle());
-                } else if (batch.getId() != null) {
+                } else if (Objects.nonNull(batch.getId())) {
                     result.append(Helper.getTranslation("batch", "Batch"));
                     result.append(' ');
                     result.append(batch.getId());
@@ -318,16 +318,16 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
                 }
                 result.append(" (");
                 String extent = Helper.getTranslation("numProzesse", "{0} processes");
-                String size = batch.getProcesses() != null ? Integer.toString(batch.getProcesses().size()) : "−";
+                String size = Integer.toString(batch.getProcesses().size());
                 result.append(extent.replaceFirst("\\{0\\}", size));
             } catch (RuntimeException unexpected) {
                 result.setLength(0);
-                result.append(batch.getTitle() != null ? batch.getTitle() : batch.getId());
+                result.append(Objects.nonNull(batch.getTitle()) ? batch.getTitle() : batch.getId());
                 result.append(" (");
-                result.append(batch.getProcesses() != null ? batch.getProcesses().size() : null);
+                result.append(batch.getProcesses().size());
             }
             result.append(')');
-            if (batch.getType() != null) {
+            if (Objects.nonNull(batch.getType())) {
                 result.append(" [");
                 // TODO: check out method
                 result.append(getTypeTranslated(batch));

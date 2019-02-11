@@ -14,6 +14,7 @@ package org.kitodo.production.helper.tasks;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
@@ -191,15 +192,15 @@ public class TaskSitter implements Runnable, ServletContextListener {
                                 break;
                             case PREPARE_FOR_RESTART:
                                 EmptyTask replacement = task.replace();
-                                if (replacement != null) {
+                                if (Objects.nonNull(replacement)) {
                                     position.set(replacement);
                                     launchableThreads.addLast(replacement);
                                 }
                                 break;
                             default: // case KEEP_FOR_A_WHILE
-                                boolean taskFinishedSuccessfully = task.getException() == null;
+                                boolean taskFinishedSuccessfully = Objects.isNull(task.getException());
                                 Duration durationDead = task.getDurationDead();
-                                if (durationDead == null) {
+                                if (Objects.isNull(durationDead)) {
                                     task.setTimeOfDeath();
                                 } else if (durationDead
                                         .isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {

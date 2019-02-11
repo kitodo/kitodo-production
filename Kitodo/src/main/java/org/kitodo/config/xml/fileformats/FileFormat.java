@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -145,7 +146,7 @@ public class FileFormat {
         Map<Locale, String> labels = label.stream()
                 .collect(Collectors.toMap(locale -> locale.getLanguage().orElse(UNDEFINED_LOCALE), Label::getValue));
         Locale lookup = Locale.lookup(languageRanges, labels.keySet());
-        if (lookup == null && languageRanges != UNDEFINED_LANGUAGE_RANGE) {
+        if (Objects.isNull(lookup) && !languageRanges.equals(UNDEFINED_LANGUAGE_RANGE)) {
             lookup = Locale.lookup(UNDEFINED_LANGUAGE_RANGE, labels.keySet());
         }
         return Optional.ofNullable(labels.get(lookup)).orElse(mimeType);

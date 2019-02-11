@@ -93,7 +93,7 @@ public class VariableReplacer {
      * @return replaced String
      */
     public String replace(String inString) {
-        if (inString == null) {
+        if (Objects.isNull(inString)) {
             return "";
         }
 
@@ -201,7 +201,7 @@ public class VariableReplacer {
     }
 
     private String replaceStringForTask(String input) {
-        if (this.task != null) {
+        if (Objects.nonNull(this.task)) {
             String taskId = String.valueOf(this.task.getId());
             String taskName = this.task.getTitle();
 
@@ -277,7 +277,7 @@ public class VariableReplacer {
      * FirstChild) und zurückgeben.
      */
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
-        if (this.dd != null) {
+        if (Objects.nonNull(this.dd)) {
             /* TopStruct und FirstChild ermitteln */
             LegacyDocStructHelperInterface topstruct = this.dd.getLogicalDocStruct();
             LegacyDocStructHelperInterface firstchildstruct = null;
@@ -296,7 +296,7 @@ public class VariableReplacer {
 
             String resultTop = getMetadataValue(topstruct, mdt);
             String resultFirst = null;
-            if (firstchildstruct != null) {
+            if (Objects.nonNull(firstchildstruct)) {
                 resultFirst = getMetadataValue(firstchildstruct, mdt);
             }
             return getResultAccordingToMetadataLevel(inLevel, metadata, resultFirst, resultTop);

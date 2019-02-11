@@ -14,6 +14,7 @@ package org.kitodo.production.helper.tasks;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -156,7 +157,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             }
         } catch (IOException | RuntimeException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
-                    + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
+                    + (Objects.nonNull(process) ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
             logger.error(e.getMessage(), e);
         }

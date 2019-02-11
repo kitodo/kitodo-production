@@ -86,43 +86,43 @@ public class ServiceManager {
     }
 
     private static void initializeAuthorizationService() {
-        if (authorityService == null) {
+        if (Objects.isNull(authorityService)) {
             authorityService = AuthorityService.getInstance();
         }
     }
 
     private static void initializeBatchService() {
-        if (batchService == null) {
+        if (Objects.isNull(batchService)) {
             batchService = BatchService.getInstance();
         }
     }
 
     private static void initializeClientService() {
-        if (clientService == null) {
+        if (Objects.isNull(clientService)) {
             clientService = ClientService.getInstance();
         }
     }
 
     private static void initializeDataEditorService() {
-        if (dataEditorService == null) {
+        if (Objects.isNull(dataEditorService)) {
             dataEditorService = new DataEditorService();
         }
     }
 
     private static void initializeDocketService() {
-        if (docketService == null) {
+        if (Objects.isNull(docketService)) {
             docketService = DocketService.getInstance();
         }
     }
 
     private static void initializeFilterService() {
-        if (filterService == null) {
+        if (Objects.isNull(filterService)) {
             filterService = FilterService.getInstance();
         }
     }
 
     private static void initializeImageService() {
-        if (imageService == null) {
+        if (Objects.isNull(imageService)) {
             imageService = ImageService.getInstance();
         }
     }
@@ -134,139 +134,139 @@ public class ServiceManager {
     }
 
     private static void initializeLdapGroupService() {
-        if (ldapGroupService == null) {
+        if (Objects.isNull(ldapGroupService)) {
             ldapGroupService = new LdapGroupService();
         }
     }
 
     private static void initializeLdapServerService() {
-        if (ldapServerService == null) {
+        if (Objects.isNull(ldapServerService)) {
             ldapServerService = LdapServerService.getInstance();
         }
     }
 
     private static void initializeMetsService() {
-        if (metsService == null) {
+        if (Objects.isNull(metsService)) {
             metsService = MetsService.getInstance();
         }
     }
 
     private static void initializePropertyService() {
-        if (propertyService == null) {
+        if (Objects.isNull(propertyService)) {
             propertyService = PropertyService.getInstance();
         }
     }
 
     private static void initializeProcessService() {
-        if (processService == null) {
+        if (Objects.isNull(processService)) {
             processService = ProcessService.getInstance();
         }
     }
 
     private static void initializeFolderService() {
-        if (folderService == null) {
+        if (Objects.isNull(folderService)) {
             folderService = new FolderService();
         }
     }
 
     private static void initializeProjectService() {
-        if (projectService == null) {
+        if (Objects.isNull(projectService)) {
             projectService = ProjectService.getInstance();
         }
     }
 
     private static void initializeRulesetService() {
-        if (rulesetService == null) {
+        if (Objects.isNull(rulesetService)) {
             rulesetService = RulesetService.getInstance();
         }
     }
 
     private static void initializeSessionService() {
-        if (sessionService == null) {
+        if (Objects.isNull(sessionService)) {
             sessionService = SessionService.getInstance();
         }
     }
 
     private static void initializeSecurityAccessService() {
-        if (securityAccessService == null) {
+        if (Objects.isNull(securityAccessService)) {
             securityAccessService = SecurityAccessService.getInstance();
         }
     }
 
     private static void initializeTaskService() {
-        if (taskService == null) {
+        if (Objects.isNull(taskService)) {
             taskService = TaskService.getInstance();
         }
     }
 
     private static void initializeTemplateService() {
-        if (templateService == null) {
+        if (Objects.isNull(templateService)) {
             templateService = TemplateService.getInstance();
         }
     }
 
     private static void initializeRoleService() {
-        if (roleService == null) {
+        if (Objects.isNull(roleService)) {
             roleService = RoleService.getInstance();
         }
     }
 
     private static void initializeUserService() {
-        if (userService == null) {
+        if (Objects.isNull(userService)) {
             userService = UserService.getInstance();
         }
     }
 
     private static void initializeWorkflowService() {
-        if (workflowService == null) {
+        if (Objects.isNull(workflowService)) {
             workflowService = WorkflowService.getInstance();
         }
     }
 
     private static void initializeFileService() {
-        if (fileService == null) {
+        if (Objects.isNull(fileService)) {
             fileService = new FileService();
         }
     }
 
     private static void initializeCommandService() {
-        if (commandService == null) {
+        if (Objects.isNull(commandService)) {
             commandService = new CommandService();
         }
     }
 
     private static void initializeSchemaService() {
-        if (schemaService == null) {
+        if (Objects.isNull(schemaService)) {
             schemaService = new SchemaService();
         }
     }
 
     private static void initializeFileStructureValidationService() {
-        if (fileStructureValidationService == null) {
+        if (Objects.isNull(fileStructureValidationService)) {
             fileStructureValidationService = new FileStructureValidationService();
         }
     }
 
     private static void initializeLongTermPreservationValidationService() {
-        if (longTermPreservationValidationService == null) {
+        if (Objects.isNull(longTermPreservationValidationService)) {
             longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
     private static void initializeMetadataValidationService() {
-        if (metadataValidationService == null) {
+        if (Objects.isNull(metadataValidationService)) {
             metadataValidationService = new MetadataValidationService();
         }
     }
 
     private static void initializeRulesetManagementService() {
-        if (rulesetManagementService == null) {
+        if (Objects.isNull(rulesetManagementService)) {
             rulesetManagementService = RulesetManagementService.getInstance();
         }
     }
 
     private static void initializeWorkflowControllerService() {
-        if (workflowControllerService == null) {
+        if (Objects.isNull(workflowControllerService)) {
             workflowControllerService = WorkflowControllerService.getInstance();
         }
     }

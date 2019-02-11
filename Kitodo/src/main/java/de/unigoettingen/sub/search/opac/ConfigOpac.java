@@ -43,7 +43,7 @@ public class ConfigOpac {
     private static XMLConfiguration config;
 
     private static XMLConfiguration getConfig() throws FileNotFoundException {
-        if (config != null) {
+        if (Objects.nonNull(config)) {
             return config;
         }
 

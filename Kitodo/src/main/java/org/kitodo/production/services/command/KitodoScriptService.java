@@ -74,7 +74,7 @@ public class KitodoScriptService {
         }
 
         // pass the appropriate method with the correct parameters
-        if (this.parameters.get("action") == null) {
+        if (Objects.isNull(this.parameters.get("action"))) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
                 " - possible: 'action:swapsteps, action:adduser, action:addrole, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
@@ -127,7 +127,7 @@ public class KitodoScriptService {
             case "runscript":
                 String taskName = this.parameters.get("stepname");
                 String scriptName = this.parameters.get(SCRIPT);
-                if (scriptName == null) {
+                if (Objects.isNull(scriptName)) {
                     Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "", "Missing parameter");
                 } else {
                     runScript(processes, taskName, scriptName);
@@ -136,7 +136,7 @@ public class KitodoScriptService {
             case "deleteProcess":
                 String value = parameters.get("contentOnly");
                 boolean contentOnly = true;
-                if (value != null && value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
+                if (Objects.nonNull(value) && value.equalsIgnoreCase("false")) {
                     contentOnly = false;
                 }
                 deleteProcess(processes, contentOnly);
@@ -205,7 +205,7 @@ public class KitodoScriptService {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equalsIgnoreCase(taskName)) {
-                    if (scriptName != null) {
+                    if (Objects.nonNull(scriptName)) {
                         if (task.getScriptName().equals(scriptName)) {
                             String path = task.getScriptPath();
                             ServiceManager.getTaskService().executeScript(task, path, false);
@@ -310,15 +310,13 @@ public class KitodoScriptService {
 
     private void executeActionForAddShellToScript(List<Process> processes) {
         for (Process process : processes) {
-            if (process.getTasks() != null) {
-                for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                        task.setScriptPath(this.parameters.get(SCRIPT));
-                        task.setScriptName(this.parameters.get("label"));
-                        saveProcess(process);
-                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
-                        break;
-                    }
+            for (Task task : process.getTasks()) {
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
+                    task.setScriptPath(this.parameters.get(SCRIPT));
+                    task.setScriptName(this.parameters.get("label"));
+                    saveProcess(process);
+                    Helper.setMessage(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
+                    break;
                 }
             }
         }
@@ -359,36 +357,33 @@ public class KitodoScriptService {
 
     private void executeActionForSetTaskProperty(List<Process> processes, String property, String value) {
         for (Process process : processes) {
-            if (process.getTasks() != null) {
-                for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-
-                        if (property.equals("metadata")) {
-                            task.setTypeMetadata(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("automatic")) {
-                            task.setTypeAutomatic(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("batch")) {
-                            task.setBatchStep(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("readimages")) {
-                            task.setTypeImagesRead(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("writeimages")) {
-                            task.setTypeImagesWrite(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("validate")) {
-                            task.setTypeCloseVerify(Boolean.parseBoolean(value));
-                        }
-                        if (property.equals("exportdms")) {
-                            task.setTypeExportDMS(Boolean.parseBoolean(value));
-                        }
-
-                        saveProcess(process);
-                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Error while saving process: ", process.getTitle());
-                        break;
+            for (Task task : process.getTasks()) {
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
+                    if (property.equals("metadata")) {
+                        task.setTypeMetadata(Boolean.parseBoolean(value));
                     }
+                    if (property.equals("automatic")) {
+                        task.setTypeAutomatic(Boolean.parseBoolean(value));
+                    }
+                    if (property.equals("batch")) {
+                        task.setBatchStep(Boolean.parseBoolean(value));
+                    }
+                    if (property.equals("readimages")) {
+                        task.setTypeImagesRead(Boolean.parseBoolean(value));
+                    }
+                    if (property.equals("writeimages")) {
+                        task.setTypeImagesWrite(Boolean.parseBoolean(value));
+                    }
+                    if (property.equals("validate")) {
+                        task.setTypeCloseVerify(Boolean.parseBoolean(value));
+                    }
+                    if (property.equals("exportdms")) {
+                        task.setTypeExportDMS(Boolean.parseBoolean(value));
+                    }
+
+                    saveProcess(process);
+                    Helper.setMessage(KITODO_SCRIPT_FIELD, "Error while saving process: ", process.getTitle());
+                    break;
                 }
             }
         }
@@ -509,7 +504,7 @@ public class KitodoScriptService {
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
-        boolean withoutImages = exportImages != null && exportImages.equalsIgnoreCase(String.valueOf(Boolean.FALSE));
+        boolean withoutImages = Objects.nonNull(exportImages) && exportImages.equalsIgnoreCase("false");
         for (Process process : processes) {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);

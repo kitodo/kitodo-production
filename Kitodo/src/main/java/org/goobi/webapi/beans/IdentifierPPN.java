@@ -11,6 +11,7 @@
 
 package org.goobi.webapi.beans;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class IdentifierPPN {
         Pattern pattern;
         Matcher matcher;
 
-        if ((identifier == null) || (identifier.length() == 0)) {
+        if (Objects.isNull(identifier) || identifier.isEmpty()) {
             result = false;
         } else {
             pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);

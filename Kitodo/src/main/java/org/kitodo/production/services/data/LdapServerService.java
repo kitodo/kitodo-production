@@ -119,7 +119,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     private String buildUserDN(User inUser) {
         String userDN = inUser.getLdapGroup().getUserDN();
         userDN = userDN.replaceAll("\\{login\\}", inUser.getLogin());
-        if (inUser.getLdapLogin() != null) {
+        if (Objects.nonNull(inUser.getLdapLogin())) {
             userDN = userDN.replaceAll("\\{ldaplogin\\}", inUser.getLdapLogin());
         }
         userDN = userDN.replaceAll("\\{firstname\\}", inUser.getName());
@@ -240,7 +240,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 logger.error("JNDI error:", e);
                 return false;
             } finally {
-                if (tls != null) {
+                if (Objects.nonNull(tls)) {
                     try {
                         // Tear down TLS connection
                         tls.close();
@@ -248,7 +248,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         logger.error(e.getMessage(), e);
                     }
                 }
-                if (ctx != null) {
+                if (Objects.nonNull(ctx)) {
                     try {
                         // Close LDAP connection
                         ctx.close();
@@ -272,7 +272,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 logger.debug("start classic ldap authentication");
                 logger.debug("user DN is {}", buildUserDN(user));
 
-                if (ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST) == null) {
+                if (Objects.isNull(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST))) {
                     logger.debug("ldap attribute to test is null");
                     DirContext ctx = new InitialDirContext(env);
                     ctx.close();
@@ -348,7 +348,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
                 return Paths.get(userFolderBasePath, user.getLogin()).toUri();
             } finally {
-                if (tls != null) {
+                if (Objects.nonNull(tls)) {
                     try {
                         // Tear down TLS connection
                         tls.close();
@@ -356,7 +356,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         logger.error(e.getMessage(), e);
                     }
                 }
-                if (ctx != null) {
+                if (Objects.nonNull(ctx)) {
                     try {
                         // Close LDAP connection
                         ctx.close();
@@ -381,7 +381,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             logger.error(e.getMessage(), e);
         }
 
-        if (userFolderPath != null && !userFolderPath.isAbsolute()) {
+        if (Objects.nonNull(userFolderPath) && !userFolderPath.isAbsolute()) {
             if (userFolderPath.getPath().startsWith("/")) {
                 userFolderPath = ServiceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
             }

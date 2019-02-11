@@ -272,8 +272,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
         boolean digitalCollectionsXmlExists = KitodoConfigFile.DIGITAL_COLLECTIONS.exists();
 
-        return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
-                && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
+        return Objects.nonNull(project.getTitle()) && Objects.nonNull(project.template) && project.getFileFormatDmsExport() != null
+                && Objects.nonNull(project.getFileFormatInternal()) && digitalCollectionsXmlExists && projectsXmlExists;
     }
 
     /**

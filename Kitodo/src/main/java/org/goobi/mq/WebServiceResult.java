@@ -11,6 +11,8 @@
 
 package org.goobi.mq;
 
+import java.util.Objects;
+
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
@@ -68,12 +70,11 @@ public class WebServiceResult {
      * Send.
      */
     public void send() {
-        if (ActiveMQDirector.getResultsTopic() == null) {
-
+        if (Objects.isNull(ActiveMQDirector.getResultsTopic())) {
             // If reporting to ActiveMQ is disabled, write log message
             logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
                 "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
-                        + (message != null ? " (" + message + ")" : ""));
+                        + (Objects.nonNull(message) ? " (" + message + ")" : ""));
         } else {
             try {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
@@ -83,7 +84,7 @@ public class WebServiceResult {
                 report.setString("queue", queueName);
                 report.setString("id", id);
                 report.setString("level", level.toLowerCase());
-                if (message != null) {
+                if (Objects.nonNull(message)) {
                     report.setString("message", message);
                 }
 
@@ -91,7 +92,7 @@ public class WebServiceResult {
 
             } catch (JMSException | RuntimeException e) {
                 logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
-                        + (message != null ? ": " + message : "") + "): Giving up.", e);
+                        + (Objects.nonNull(message) ? ": " + message : "") + "): Giving up.", e);
             }
         }
     }

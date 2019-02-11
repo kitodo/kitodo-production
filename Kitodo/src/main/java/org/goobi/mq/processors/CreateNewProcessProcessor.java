@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.jms.JMSException;
@@ -125,13 +126,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
         try {
             ProzesskopieForm newProcess = newProcessFromTemplate(template);
             newProcess.setDigitalCollections(validCollectionsForProcess(collections, newProcess));
-            if (opac != null) {
+            if (Objects.nonNull(opac)) {
                 getBibliorgaphicData(newProcess, opac, field, value);
             }
-            if (docType != null && docTypeIsPossible(newProcess, docType)) {
+            if (Objects.nonNull(docType) && docTypeIsPossible(newProcess, docType)) {
                 newProcess.setDocType(docType);
             }
-            if (userFields != null) {
+            if (Objects.nonNull(userFields)) {
                 setUserFields(newProcess, userFields);
             }
             newProcess.calculateProcessTitle();
@@ -229,7 +230,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      */
     private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) {
         Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
-        if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE)) {
+        if (Objects.isNull(fieldIsUsed) || fieldIsUsed.equals(Boolean.FALSE)) {
             throw new IllegalArgumentException(
                     "Bad argument “docType”: Selected template doesn’t provide " + "the standard field “doctype”.");
         }
@@ -318,7 +319,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
         for (AdditionalField field : form.getAdditionalFields()) {
             String value = field.getValue();
-            if (value != null && value.length() > 0) {
+            if (Objects.nonNull(value) && !value.isEmpty()) {
                 result++;
             }
         }

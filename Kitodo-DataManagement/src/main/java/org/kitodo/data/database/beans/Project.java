@@ -199,6 +199,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     public Project() {
         this.processes = new ArrayList<>();
         this.users = new ArrayList<>();
+        this.folders = new ArrayList<>();
         this.useDmsImport = false;
         this.dmsImportTimeOut = 0;
         this.dmsImportImagesPath = "";

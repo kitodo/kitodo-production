@@ -61,7 +61,7 @@ public class BatchHelper {
     }
 
     Process prepareProcessWithProperty(Process process, Property processProperty) {
-        if (processProperty.getTitle() != null) {
+        if (Objects.nonNull(processProperty.getTitle())) {
             boolean match = false;
             for (Property processPe : process.getProperties()) {
                 if (Objects.nonNull(processPe.getTitle()) && (processProperty.getTitle().equals(processPe.getTitle()))) {

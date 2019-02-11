@@ -14,6 +14,7 @@ package org.goobi.webapi.beans;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -55,7 +56,7 @@ public class ProjectsRootNode {
      *            ProjectsRootNode to create a copy from
      */
     public ProjectsRootNode(ProjectsRootNode toCopy) {
-        this.projects = toCopy.projects != null ? new ArrayList<>(toCopy.projects) : null;
+        this.projects = Objects.nonNull(toCopy.projects) ? new ArrayList<>(toCopy.projects) : new ArrayList<>();
     }
 
     public void setProjects(List<Project> projects) {

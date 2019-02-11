@@ -224,7 +224,7 @@ public class RoleForm extends BaseForm {
     public DualListModel<Authority> getClientAssignableAuthorities() {
         List<Authority> assignedAuthorities = ServiceManager.getAuthorityService()
                 .filterAssignableToClients(this.role.getAuthorities());
-        List<Authority> availableAuthorities = null;
+        List<Authority> availableAuthorities = new ArrayList<>();
         try {
             availableAuthorities = ServiceManager.getAuthorityService().getAllAssignableToClients();
             availableAuthorities.removeAll(assignedAuthorities);

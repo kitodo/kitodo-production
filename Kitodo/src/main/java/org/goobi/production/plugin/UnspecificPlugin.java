@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.catalogue.CataloguePlugin;
@@ -165,7 +166,7 @@ public abstract class UnspecificPlugin {
      *            the configuration map created by the PluginLoader
      */
     void configure(Map<String, String> configuration) {
-        if (configure != null) {
+        if (Objects.nonNull(configure)) {
             invokeQuietly(plugin, configure, configuration, null);
         }
     }

@@ -559,7 +559,7 @@ public class IndexingForm {
     }
 
     private SearchService getService(ObjectType objectType) {
-        if (!searchServices.containsKey(objectType) || searchServices.get(objectType) == null) {
+        if (!searchServices.containsKey(objectType) || Objects.isNull(searchServices.get(objectType))) {
             switch (objectType) {
                 case BATCH:
                     searchServices.put(objectType, ServiceManager.getBatchService());
@@ -619,7 +619,7 @@ public class IndexingForm {
 
     private void updateCount(ObjectType objectType) {
         SearchService searchService = getService(objectType);
-        if (searchService != null) {
+        if (Objects.nonNull(searchService)) {
             try {
                 indexedObjects.put(objectType, toIntExact(searchService.count()));
             } catch (DataException e) {
@@ -639,7 +639,7 @@ public class IndexingForm {
     private int getNumberOfDatabaseObjects(ObjectType objectType) {
         try {
             SearchService searchService = searchServices.get(objectType);
-            if (searchService != null) {
+            if (Objects.nonNull(searchService)) {
                 return toIntExact(searchService.countDatabaseRows());
             }
         } catch (DAOException e) {

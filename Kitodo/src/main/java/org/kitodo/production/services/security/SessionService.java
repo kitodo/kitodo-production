@@ -63,7 +63,7 @@ public class SessionService {
             if (principal instanceof SecurityUserDetails) {
                 user = (SecurityUserDetails) principal;
             }
-            if (user != null) {
+            if (Objects.nonNull(user)) {
                 List<SessionInformation> activeSessionInformation = new ArrayList<>(sessionRegistry.getAllSessions(principal, false));
 
                 for (SessionInformation sessionInformation : activeSessionInformation) {
