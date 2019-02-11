@@ -48,7 +48,7 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     @Override
     public Authority save(Authority authority) throws DAOException {
         storeObject(authority);
-        return retrieveObject(Authority.class, authority.getId());
+        return authority;
     }
 
     @Override

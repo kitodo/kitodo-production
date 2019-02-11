@@ -20,7 +20,7 @@ public class LdapServerDAO extends BaseDAO<LdapServer> {
     @Override
     public LdapServer save(LdapServer ldapGroup) throws DAOException {
         storeObject(ldapGroup);
-        return retrieveObject(LdapServer.class, ldapGroup.getId());
+        return ldapGroup;
     }
 
     @Override

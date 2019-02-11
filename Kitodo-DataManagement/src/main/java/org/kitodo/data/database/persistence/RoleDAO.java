@@ -51,7 +51,7 @@ public class RoleDAO extends BaseDAO<Role> {
     @Override
     public Role save(Role role) throws DAOException {
         storeObject(role);
-        return retrieveObject(Role.class, role.getId());
+        return role;
     }
 
     @Override

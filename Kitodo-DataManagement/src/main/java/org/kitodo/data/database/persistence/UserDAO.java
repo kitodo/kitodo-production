@@ -49,7 +49,7 @@ public class UserDAO extends BaseDAO<User> {
     @Override
     public User save(User user) throws DAOException {
         storeObject(user);
-        return retrieveObject(User.class, user.getId());
+        return user;
     }
 
     @Override
