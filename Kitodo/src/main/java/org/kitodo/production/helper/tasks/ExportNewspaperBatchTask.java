@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -201,7 +199,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             if (action == 2) {
                 runForActionTwo();
             }
-        } catch (DAOException | IOException | RuntimeException | JAXBException e) {
+        } catch (DAOException | IOException | RuntimeException e) {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (Objects.nonNull(process) ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
@@ -227,7 +225,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         dividend = 0;
     }
 
-    private void runForActionTwo() throws IOException, JAXBException {
+    private void runForActionTwo() throws IOException {
         while (processesIterator.hasNext()) {
             if (isInterrupted()) {
                 return;
@@ -530,7 +528,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             return null;
         }
 
-        SIBLINGS: for (LegacyDocStructHelperInterface aforeborn : siblings) {
+        boolean rankTooSmall = false;
+        for (LegacyDocStructHelperInterface aforeborn : siblings) {
             List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
             if (allMetadata != null) {
                 for (LegacyMetadataHelper metadataElement : allMetadata) {
@@ -538,7 +537,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         try {
                             if (Integer.parseInt(metadataElement.getValue()) < rank) {
                                 result++;
-                                continue SIBLINGS;
+                                rankTooSmall = true;
+                                break;
                             } else {
                                 return result;
                             }
@@ -555,7 +555,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     }
                 }
             }
-            return null;
+            if (!rankTooSmall) {
+                return null;
+            }
         }
         return result;
     }
