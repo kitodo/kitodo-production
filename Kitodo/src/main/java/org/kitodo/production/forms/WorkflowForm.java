@@ -116,7 +116,7 @@ public class WorkflowForm extends BaseForm {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
-            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle() }, logger, e);
+            Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger, e);
             return this.stayOnCurrentPage;
         }
     }
