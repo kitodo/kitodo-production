@@ -63,11 +63,11 @@ import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -77,8 +77,8 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.exceptions.WorkflowException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
@@ -745,10 +745,19 @@ public class MockDatabase {
         fifthFolder.setCreateFolder(true);
         fifthFolder.setLinkingMode(LinkingMode.ALL);
 
+        firstFolder.setProject(project);
         project.getFolders().add(firstFolder);
+
+        secondFolder.setProject(project);
         project.getFolders().add(secondFolder);
+
+        thirdFolder.setProject(project);
         project.getFolders().add(thirdFolder);
+
+        fourthFolder.setProject(project);
         project.getFolders().add(fourthFolder);
+
+        fifthFolder.setProject(project);
         project.getFolders().add(fifthFolder);
 
         ServiceManager.getProjectService().save(project);
