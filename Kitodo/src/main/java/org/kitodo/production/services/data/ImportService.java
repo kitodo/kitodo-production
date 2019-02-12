@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -151,6 +152,7 @@ public class ImportService {
 
     private Document transformXmlByXslt(String xmlString, File stylesheetFile) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setNamespaceAware(true);
         try {
             SAXBuilder saxBuilder = new SAXBuilder();

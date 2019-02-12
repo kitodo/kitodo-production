@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -114,7 +115,9 @@ public class XMLUtils {
      */
     public static Document load(InputStream data) throws SAXException, IOException {
         try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(data);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            return documentBuilderFactory.newDocumentBuilder().parse(data);
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -133,7 +136,9 @@ public class XMLUtils {
      */
     public static Document newDocument() throws IOException {
         try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            return documentBuilderFactory.newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage(), e);
         }
