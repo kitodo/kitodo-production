@@ -97,8 +97,6 @@ public class ProcessForm extends TemplateBaseForm {
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
 
-    private List<SelectItem> customColumns;
-
     @Inject
     private CustomListColumnInitializer initializer;
 
@@ -144,7 +142,7 @@ public class ProcessForm extends TemplateBaseForm {
         }
 
         // Read process properties to display from configuration
-        customColumns = new ArrayList<>();
+        List<SelectItem> customColumns = new ArrayList<>();
         SelectItemGroup customColumnGroup = new SelectItemGroup(Helper.getTranslation("process"));
         customColumnGroup.setSelectItems(ServiceManager.getListColumnService().getAllCustomListColumns().stream()
                 .map(listColumn -> new SelectItem(listColumn, listColumn.getTitle()))
