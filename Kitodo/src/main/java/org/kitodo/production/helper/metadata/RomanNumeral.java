@@ -86,54 +86,34 @@ public class RomanNumeral {
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
                 case 'c':
-                    if (result >= D) {
-                        result -= C;
-                    } else {
-                        result += C;
-                    }
+                    result = calculateSignModulated(result, D, C);
                     break;
                 case 'd':
-                    if (result >= M) {
-                        result -= D;
-                    } else {
-                        result += D;
-                    }
+                    result = calculateSignModulated(result, M, D);
                     break;
                 case 'i':
-                    if (result >= V) {
-                        result -= I;
-                    } else {
-                        result += I;
-                    }
+                    result = calculateSignModulated(result, V, I);
                     break;
                 case 'l':
-                    if (result >= C) {
-                        result -= L;
-                    } else {
-                        result += L;
-                    }
+                    result = calculateSignModulated(result, C, L);
                     break;
                 case 'm':
                     result += M;
                     break;
                 case 'v':
-                    if (result >= X) {
-                        result -= V;
-                    } else {
-                        result += V;
-                    }
+                    result = calculateSignModulated(result, X, V);
                     break;
                 case 'x':
-                    if (result >= L) {
-                        result -= X;
-                    } else {
-                        result += X;
-                    }
+                    result = calculateSignModulated(result, L, X);
                     break;
                 default:
                     throw new NumberFormatException("For string: " + value);
             }
         }
         return result;
+    }
+
+    private static int calculateSignModulated(int input, int direction, int modifier) {
+        return input < direction ? input + modifier : input - modifier;
     }
 }
