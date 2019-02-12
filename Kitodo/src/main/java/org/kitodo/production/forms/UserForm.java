@@ -14,7 +14,6 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -86,20 +85,8 @@ public class UserForm extends BaseForm {
      */
     @PostConstruct
     public void init() {
-        columns = new ArrayList<>();
-        try {
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("user"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("role"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("client"));
-            columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("ldapgroup"));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
-        }
-        selectedColumns = new ArrayList<>();
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("user"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("role"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup"));
+        columns = ProjectForm.listsOfAvailableListColumns();
+        selectedColumns = ProjectForm.listsOfSelectedListColumns();
     }
 
 

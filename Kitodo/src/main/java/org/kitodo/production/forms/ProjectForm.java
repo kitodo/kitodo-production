@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -59,8 +61,17 @@ public class ProjectForm extends BaseForm {
      */
     @PostConstruct
     public void init() {
-        // Lists of available list columns
-        columns = new ArrayList<>();
+        this.columns = listsOfAvailableListColumns();
+        this.selectedColumns = listsOfSelectedListColumns();
+    }
+
+    /**
+     * Lists of available list columns.
+     * 
+     * @return available list columns
+     */
+    static List<SelectItem> listsOfAvailableListColumns() {
+        List<SelectItem> columns = new ArrayList<>();
         try {
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("project"));
             columns.add(ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("template"));
@@ -70,14 +81,22 @@ public class ProjectForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
+        return columns;
+    }
 
-        // Lists of selected list columns
-        selectedColumns = new ArrayList<>();
+    /**
+     * Lists of selected list columns.
+     * 
+     * @return selected list columns
+     */
+    static List<ListColumn> listsOfSelectedListColumns() {
+        List<ListColumn> selectedColumns = new ArrayList<>();
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("project"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset"));
+        return selectedColumns;
     }
 
     /**
