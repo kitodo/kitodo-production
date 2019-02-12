@@ -46,6 +46,9 @@ import org.kitodo.production.services.ServiceManager;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
+
+    private static final String CANNOT_DETERMINE_POSITION = "Cannot determine position to place {} correctly because the "
+            + "sorting criterion of one of its siblings is \"{}\", but must be numeric.";
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
     /**
@@ -531,35 +534,44 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         boolean rankTooSmall = false;
         for (LegacyDocStructHelperInterface aforeborn : siblings) {
             List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
-            if (allMetadata != null) {
-                for (LegacyMetadataHelper metadataElement : allMetadata) {
-                    if (metadataElement.getMetadataType().getName().equals(metadataType)) {
-                        try {
-                            if (Integer.parseInt(metadataElement.getValue()) < rank) {
-                                result++;
-                                rankTooSmall = true;
-                                break;
-                            } else {
-                                return result;
-                            }
-                        } catch (NumberFormatException e) {
-                            String typeName = Objects.nonNull(aforeborn.getDocStructType())
-                                    && Objects.nonNull(aforeborn.getDocStructType().getName())
-                                            ? aforeborn.getDocStructType().getName()
-                                            : "cross-reference";
-                            logger.warn(
-                                "Cannot determine position to place {} correctly because the sorting criterion "
-                                        + "of one of its siblings is \"{}\", but must be numeric.",
-                                typeName, metadataElement.getValue());
-                        }
-                    }
+            if (allMetadata == null) {
+                return null;
+            }
+            for (LegacyMetadataHelper metadataElement : allMetadata) {
+                if (!metadataElement.getMetadataType().getName().equals(metadataType)) {
+                    continue;
                 }
+                int parseInt;
+                try {
+                    parseInt = Integer.parseInt(metadataElement.getValue());
+                } catch (NumberFormatException e) {
+                    String typeName = Objects.nonNull(aforeborn.getDocStructType())
+                            && Objects.nonNull(aforeborn.getDocStructType().getName())
+                                    ? aforeborn.getDocStructType().getName()
+                                    : "cross-reference";
+                    logger.warn(CANNOT_DETERMINE_POSITION, typeName, metadataElement.getValue());
+                    continue;
+                }
+                if (parseInt >= rank) {
+                    return result;
+                }
+                result++;
+                rankTooSmall = true;
+                break;
             }
             if (!rankTooSmall) {
                 return null;
             }
         }
         return result;
+    }
+
+    private static int[] _f(List<LegacyMetadataHelper> allMetadata) {
+        if (allMetadata == null) {
+            return new int[0];
+        }
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
