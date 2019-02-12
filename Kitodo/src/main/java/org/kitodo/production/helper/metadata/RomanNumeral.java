@@ -16,6 +16,10 @@ package org.kitodo.production.helper.metadata;
  */
 public class RomanNumeral {
 
+    private RomanNumeral() {
+        // hide implicit constructor
+    }
+
     /**
      * These are the string constants that represent the hundreds of the roman
      * numeral.
@@ -77,7 +81,7 @@ public class RomanNumeral {
      * @throws NumberFormatException
      *             if the string cannot be parsed as an integer
      */
-    public static final int parseInt(String value) {
+    public static int parseInt(String value) {
         int result = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {

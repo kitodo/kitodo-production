@@ -239,12 +239,13 @@ public class Citation {
             return;
         }
         while (list.contains(separator)) {
-            if (list.substring(0, list.indexOf(separator)).trim().length() > 0) {
-                destination.add(list.substring(0, list.indexOf(separator)).trim());
+            String content = list.substring(0, list.indexOf(separator)).trim();
+            if (!content.isEmpty()) {
+                destination.add(content);
             }
             list = list.substring(list.indexOf(separator) + 1);
         }
-        if (list.trim().length() > 0) {
+        if (!list.trim().isEmpty()) {
             destination.add(list.trim());
         }
     }

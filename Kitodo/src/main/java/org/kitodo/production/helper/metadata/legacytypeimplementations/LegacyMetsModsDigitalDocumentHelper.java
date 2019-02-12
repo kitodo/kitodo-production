@@ -79,7 +79,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     /**
      * The workpiece accessed via this soldering class.
      */
-    private MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
+    private MetsXmlElementAccessInterface workpiece;
 
     /**
      * The current ruleset.

@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;

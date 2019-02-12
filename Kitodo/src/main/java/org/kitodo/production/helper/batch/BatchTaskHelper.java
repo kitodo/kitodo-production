@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.faces.model.SelectItem;
-import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +31,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
@@ -377,7 +375,7 @@ public class BatchTaskHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
             }

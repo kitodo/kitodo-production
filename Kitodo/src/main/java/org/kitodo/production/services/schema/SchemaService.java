@@ -129,9 +129,9 @@ public class SchemaService {
              */
             for (Folder folder : folders) {
                 Subfolder useFolder = new Subfolder(process, folder);
-                if (!mediaUnit.getAllUsesWithFLocats().parallelStream().map(Entry::getKey)
+                if (mediaUnit.getAllUsesWithFLocats().parallelStream().map(Entry::getKey)
                         .map(UseXmlAttributeAccessInterface::getUse)
-                        .anyMatch(use -> use.equals(folder.getFileGroup()))) {
+                        .noneMatch(use -> use.equals(folder.getFileGroup()))) {
                     if ((folder.getLinkingMode().equals(LinkingMode.ALL)
                             || (folder.getLinkingMode().equals(LinkingMode.EXISTING)
                                     && useFolder.getURIIfExists(canonical).isPresent()))) {

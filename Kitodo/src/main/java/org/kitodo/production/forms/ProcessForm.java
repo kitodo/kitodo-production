@@ -31,7 +31,6 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +46,6 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
@@ -527,7 +525,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (ExportFileException | IOException | RuntimeException | JAXBException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -548,7 +546,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                 new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
@@ -587,7 +585,7 @@ public class ProcessForm extends TemplateBaseForm {
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
-            } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
             }

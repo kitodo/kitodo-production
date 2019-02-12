@@ -806,7 +806,7 @@ public class MetadataProcessor {
      * sets the specified pages.
      */
     public void addSingleNodeWithPages() {
-        LegacyDocStructHelperInterface docStruct = null;
+        LegacyDocStructHelperInterface docStruct;
         LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         docStruct = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement, 1,
             null, null);
@@ -2588,7 +2588,7 @@ public class MetadataProcessor {
             if (comments[0].isEmpty()) {
                 List<String> list = new ArrayList<>(Arrays.asList(comments));
                 list.remove(list.get(0));
-                comments = list.toArray(new String[list.size()]);
+                comments = list.toArray(new String[0]);
             }
             return comments;
         }

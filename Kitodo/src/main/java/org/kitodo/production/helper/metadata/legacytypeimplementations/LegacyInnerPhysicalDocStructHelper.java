@@ -81,7 +81,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Override
     @Deprecated
     public void addContentFile(LegacyContentFileHelper contentFile) {
-        mediaUnit.putFLocatForUse(local, ((LegacyContentFileHelper) contentFile).getMediaFile());
+        mediaUnit.putFLocatForUse(local, contentFile.getMediaFile());
     }
 
     @Override

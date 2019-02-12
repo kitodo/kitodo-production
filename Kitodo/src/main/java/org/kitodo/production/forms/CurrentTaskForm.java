@@ -15,17 +15,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +40,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
 import org.kitodo.production.dto.TaskDTO;
@@ -656,7 +654,7 @@ public class CurrentTaskForm extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.currentTask.getProcess());
-        } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
         }
     }
@@ -718,7 +716,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return whether action links should be displayed
      */
     public boolean isShowingGenerationActions() {
-        return TaskService.generatableFoldersFromProjects(Arrays.asList(currentTask.getProcess().getProject()).stream())
+        return TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess().getProject()))
                 .findAny().isPresent();
     }
 
