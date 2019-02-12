@@ -124,20 +124,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
-     * Saves a BaseBean object to the database.
-     *
-     * @param baseBean
-     *            object to persist
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
-     */
-    // TODO: in the future all save should be without get
-    public void saveWithoutGet(T baseBean) throws DAOException {
-        storeObject(baseBean);
-    }
-
-    /**
      * Refresh given bean object.
      * 
      * @param baseBean
