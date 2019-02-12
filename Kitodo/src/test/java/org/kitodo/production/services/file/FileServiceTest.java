@@ -505,7 +505,7 @@ public class FileServiceTest {
     @Test
     public void testCreateBackupFile() throws IOException {
         Process process = new Process();
-        process.setId(2);
+        process.setId(12);
         process.setProcessBaseUri(URI.create("12"));
 
         assertFalse(fileService.fileExist(URI.create("12/meta.xml.1")));

@@ -14,6 +14,7 @@ package org.kitodo.production.services.workflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -44,6 +45,8 @@ public class WorkflowControllerServiceIT {
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
     private static final File scriptCreateSymLink = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
+    private static final File scriptNotWorking = new File("src/test/resources/scripts/not_working_script.sh");
+    private static final File scriptWorking = new File("src/test/resources/scripts/working_script.sh");
     private static final FileService fileService = ServiceManager.getFileService();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final WorkflowControllerService workflowService = ServiceManager.getWorkflowControllerService();
@@ -59,6 +62,8 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setExecutePermission(scriptNotWorking);
+            ExecutionPermission.setExecutePermission(scriptWorking);
         }
     }
 
@@ -71,6 +76,8 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setNoExecutePermission(scriptNotWorking);
+            ExecutionPermission.setNoExecutePermission(scriptWorking);
         }
 
         fileService.delete(URI.create("users"));
@@ -156,12 +163,14 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
+        // Task 2 and 4 are set up to open because they are concurrent and conditions were evaluated to true
         Task nextTask = taskService.getById(20);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatusEnum());
 
+        // Task 3 has XPath which evaluates to false - it gets immediately closed
         nextTask = taskService.getById(21);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
             nextTask.getProcessingStatusEnum());
 
         nextTask = taskService.getById(22);
@@ -180,10 +189,12 @@ public class WorkflowControllerServiceIT {
         workflowService.close(task);
         assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
+        // Task 3 has XPath which evaluates to false - it gets immediately closed
         Task nextTask = taskService.getById(26);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
             nextTask.getProcessingStatusEnum());
 
+        // Task 3 and 4 are concurrent - 3 got immediately finished, 4 is set to open
         nextTask = taskService.getById(27);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatusEnum());
@@ -205,7 +216,7 @@ public class WorkflowControllerServiceIT {
             nextTask.getProcessingStatusEnum());
 
         nextTask = taskService.getById(32);
-        assertEquals("Task '" + nextTask.getTitle() + "' was not set to open!", TaskStatus.LOCKED,
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set to locked!", TaskStatus.LOCKED,
             nextTask.getProcessingStatusEnum());
 
         nextTask = taskService.getById(33);
@@ -243,6 +254,35 @@ public class WorkflowControllerServiceIT {
         Task nextTask = taskService.getById(43);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatusEnum());
+    }
+
+    @Test
+    public void shouldCloseForProcessWithScriptParallelTasks() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        // if you want to execute test on windows change sh to bat in gateway-test5.bpmn20.xml
+
+        Task task = taskService.getById(49);
+
+        workflowService.close(task);
+        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+
+        // Task 2 and 4 are set up to open because they are concurrent and conditions were evaluated to true
+        Task nextTask = taskService.getById(50);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+                nextTask.getProcessingStatusEnum());
+
+        // Task 3 has Script which evaluates to false - it gets immediately closed
+        nextTask = taskService.getById(51);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
+                nextTask.getProcessingStatusEnum());
+
+        nextTask = taskService.getById(52);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+                nextTask.getProcessingStatusEnum());
+
+        nextTask = taskService.getById(53);
+        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
+                nextTask.getProcessingStatusEnum());
     }
 
     @Test
