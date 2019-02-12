@@ -43,11 +43,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Deprecated
     public final MediaVariant local = new MediaVariant();
 
-    {
-        local.setUse("LOCAL");
-        local.setMimeType("image/tiff");
-    }
-
     /**
      * The media unit accessed via this soldering class.
      */
