@@ -759,26 +759,34 @@ public class ProzesskopieForm implements Serializable {
         }
         // which Metadata
         try {
-            // except for the authors, take all additional into the metadata
-            if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-                LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
-                        .getPreferences(this.prozessKopie.getRuleset());
-                LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(prefs, field.getMetadata());
-                LegacyMetadataHelper metadata = LegacyLogicalDocStructHelper.getMetadata(tempStruct, mdt);
+            processAdditionalFieldWhichMetadata(field, tempStruct, tempChild);
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Except for the authors, take all additional into the metadata.
+     */
+    private void processAdditionalFieldWhichMetadata(AdditionalField field, LegacyDocStructHelperInterface tempStruct,
+            LegacyDocStructHelperInterface tempChild) {
+
+        if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
+            LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
+                    .getPreferences(this.prozessKopie.getRuleset());
+            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(prefs, field.getMetadata());
+            LegacyMetadataHelper metadata = LegacyLogicalDocStructHelper.getMetadata(tempStruct, mdt);
+            if (Objects.nonNull(metadata)) {
+                metadata.setStringValue(field.getValue());
+            }
+            // if the topstruct and the first child should be given the
+            // value
+            if (Objects.nonNull(tempChild)) {
+                metadata = LegacyLogicalDocStructHelper.getMetadata(tempChild, mdt);
                 if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
-                // if the topstruct and the first child should be given the
-                // value
-                if (Objects.nonNull(tempChild)) {
-                    metadata = LegacyLogicalDocStructHelper.getMetadata(tempChild, mdt);
-                    if (Objects.nonNull(metadata)) {
-                        metadata.setStringValue(field.getValue());
-                    }
-                }
             }
-        } catch (RuntimeException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
