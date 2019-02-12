@@ -186,7 +186,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
 
     @Override
     @Deprecated
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+    public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
             return Objects.nonNull(mediaUnit)
                     ? Arrays.asList(

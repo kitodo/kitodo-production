@@ -279,7 +279,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     @Deprecated
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+    public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));

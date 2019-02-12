@@ -204,7 +204,7 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data of the given type
      */
     @Deprecated
-    List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
+    List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
 
     /**
      * Returns incoming or outgoing {@code Reference}s.

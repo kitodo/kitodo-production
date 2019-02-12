@@ -175,7 +175,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     @Deprecated
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+    public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         return Collections.emptyList();
     }
 
