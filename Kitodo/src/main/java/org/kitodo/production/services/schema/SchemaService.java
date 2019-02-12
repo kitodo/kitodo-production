@@ -96,44 +96,51 @@ public class SchemaService {
     }
 
     private void addVirtualFileGroupsToMetsMods(Workpiece workpiece, Process process) {
-
         List<Folder> folders = process.getProject().getFolders();
         Subfolder useLocalSubfolder = getUseLocalSubfolder(process);
-
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
             String canonical = useLocalSubfolder.getCanonical(mediaUnit.getMediaFiles().get(LOCAL));
+            removeFLocatsForUnwantedUses(process, folders, mediaUnit, canonical);
+            addMissingUses(process, folders, mediaUnit, canonical);
+        }
+    }
 
-            /*
-             * If the media unit contains a media variant that is unknown, has
-             * linking mode NO or has linking mode EXISTING but the file does
-             * not exist, remove it.
-             */
-            for (Entry<MediaVariant, URI> mediaFileEntry : mediaUnit.getMediaFiles().entrySet()) {
-                String use = mediaFileEntry.getKey().getUse();
-                Optional<Folder> optionalFolderForUse = folders.parallelStream()
-                        .filter(folder -> use.equals(folder.getFileGroup())).findAny();
-                if (!optionalFolderForUse.isPresent()
-                        || optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.NO)
-                        || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
-                                && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
-                                        .isPresent())) {
-                    mediaUnit.getMediaFiles().remove(mediaFileEntry.getKey());
-                }
+    /**
+     * If the media unit contains a media variant that is unknown, has linking
+     * mode NO or has linking mode EXISTING but the file does not exist, remove
+     * it.
+     */
+    private void removeFLocatsForUnwantedUses(Process process, List<Folder> folders,
+            MediaUnit mediaUnit,
+            String canonical) {
+        for (Entry<MediaVariant, URI> mediaFileForMediaVariant : mediaUnit.getMediaFiles().entrySet()) {
+            String use = mediaFileForMediaVariant.getKey().getUse();
+            Optional<Folder> optionalFolderForUse = folders.parallelStream()
+                    .filter(folder -> use.equals(folder.getFileGroup())).findAny();
+            if (!optionalFolderForUse.isPresent()
+                    || optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.NO)
+                    || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
+                            && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
+                                    .isPresent())) {
+                mediaUnit.getMediaFiles().remove(mediaFileForMediaVariant.getKey());
             }
+        }
+    }
 
-            /*
-             * If the media unit is missing a variant that has linking mode ALL
-             * or has linking mode EXISTING and the file does exist, add it.
-             */
-            for (Folder folder : folders) {
-                Subfolder useFolder = new Subfolder(process, folder);
-                if (mediaUnit.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
-                        .noneMatch(use -> use.equals(folder.getFileGroup()))) {
-                    if ((folder.getLinkingMode().equals(LinkingMode.ALL)
-                            || (folder.getLinkingMode().equals(LinkingMode.EXISTING)
-                                    && useFolder.getURIIfExists(canonical).isPresent()))) {
-                        addUse(useFolder, canonical, mediaUnit);
-                    }
+    /**
+     * If the media unit is missing a variant that has linking mode ALL or has
+     * linking mode EXISTING and the file does exist, add it.
+     */
+    private void addMissingUses(Process process, List<Folder> folders, MediaUnit mediaUnit,
+            String canonical) {
+        for (Folder folder : folders) {
+            Subfolder useFolder = new Subfolder(process, folder);
+            if (mediaUnit.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
+                    .noneMatch(use -> use.equals(folder.getFileGroup()))) {
+                if ((folder.getLinkingMode().equals(LinkingMode.ALL)
+                        || (folder.getLinkingMode().equals(LinkingMode.EXISTING)
+                                && useFolder.getURIIfExists(canonical).isPresent()))) {
+                    addUse(useFolder, canonical, mediaUnit);
                 }
             }
         }
