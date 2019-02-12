@@ -160,9 +160,9 @@ public class LegacyPrefsHelper {
     @Deprecated
     public void loadPrefs(String fileName) throws IOException {
         File rulesetFile = new File(fileName);
-        RulesetManagementInterface ruleset = rulesetManagementService.getRulesetManagement();
-        ruleset.load(rulesetFile);
-        this.ruleset = ruleset;
+        RulesetManagementInterface loadRuleset = rulesetManagementService.getRulesetManagement();
+        loadRuleset.load(rulesetFile);
+        this.ruleset = loadRuleset;
     }
 
     /**
