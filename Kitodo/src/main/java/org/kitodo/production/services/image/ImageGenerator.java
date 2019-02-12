@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -86,7 +85,7 @@ public class ImageGenerator implements Runnable {
     /**
      * Task in the TaskManager that runs this ImageGenerator.
      */
-    private Optional<EmptyTask> supervisor = Optional.empty();
+    private EmptyTask supervisor;
 
     /**
      * List of elements to be generated.
@@ -324,8 +323,8 @@ public class ImageGenerator implements Runnable {
      *            what the supervisor should do
      */
     public void letTheSupervisorDo(Consumer<EmptyTask> action) {
-        if (supervisor.isPresent()) {
-            action.accept(supervisor.get());
+        if (supervisor != null) {
+            action.accept(supervisor);
         }
     }
 
@@ -367,7 +366,7 @@ public class ImageGenerator implements Runnable {
             state.accept(this);
             setPosition(getPosition() + 1);
             setProgress();
-            if (supervisor.isPresent() && supervisor.get().isInterrupted()) {
+            if (supervisor != null && supervisor.isInterrupted()) {
                 return;
             }
         } while (!(state.equals(ImageGeneratorStep.GENERATE_IMAGES)
@@ -389,7 +388,7 @@ public class ImageGenerator implements Runnable {
      * Calculates and reports the progress of the task.
      */
     private void setProgress() {
-        if (supervisor.isPresent()) {
+        if (supervisor != null) {
             int checked = state.equals(ImageGeneratorStep.GENERATE_IMAGES)
                     ? getMode().equals(GenerationMode.ALL) ? 1 : sources.size()
                     : 0;
@@ -397,7 +396,7 @@ public class ImageGenerator implements Runnable {
                     && state.equals(ImageGeneratorStep.DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0 : getPosition();
             int total = sources.size() + (getMode().equals(GenerationMode.ALL) ? 1 : getContentToBeGenerated().size())
                     + 1;
-            supervisor.get().setProgress(100d * (1 + checked + generated) / total);
+            supervisor.setProgress(100d * (1 + checked + generated) / total);
         }
     }
 
@@ -419,6 +418,6 @@ public class ImageGenerator implements Runnable {
      *            supervisor task to set
      */
     public void setSupervisor(EmptyTask supervisor) {
-        this.supervisor = Optional.of(supervisor);
+        this.supervisor = supervisor;
     }
 }
