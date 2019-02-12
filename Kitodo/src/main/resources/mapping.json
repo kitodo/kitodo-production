@@ -335,7 +335,13 @@
                     "type": "long"
                 },
                 "processBaseUri": {
-                    "type": "long"
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
                 },
                 "project": {
                     "properties": {
@@ -493,9 +499,6 @@
                     "ignore_malformed": true
                 },
                 "docket": {
-                    "type": "long"
-                },
-                "processBaseUri": {
                     "type": "long"
                 },
                 "projects": {

@@ -124,6 +124,20 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Saves a BaseBean object to the database.
+     *
+     * @param baseBean
+     *            object to persist
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    // TODO: in the future all save should be without get
+    public void saveWithoutGet(T baseBean) throws DAOException {
+        storeObject(baseBean);
+    }
+
+    /**
      * Refresh given bean object.
      * 
      * @param baseBean
@@ -370,7 +384,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveAllObjects(Class cls) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query query = session.createQuery("FROM " + cls.getSimpleName());
+            Query query = session.createQuery("FROM " + cls.getSimpleName() + " ORDER BY id ASC");
             return (List<T>) query.list();
         } catch (HibernateException e) {
             throw new DAOException(e);

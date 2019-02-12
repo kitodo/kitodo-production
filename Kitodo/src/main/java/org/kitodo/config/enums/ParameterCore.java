@@ -655,7 +655,7 @@ public enum ParameterCore implements ParameterInterface {
      * Elasticsearch properties
      */
 
-    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 1000));
+    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500));
 
     private Parameter parameter;
 
