@@ -200,42 +200,47 @@ public class MetadataHelper {
     }
 
     /**
-     * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
-     * DefaultDisplay-Metadaten ergänzen.
+     * Determine all meta-data of the transferred DocStruct and complete the
+     * missing DefaultDisplay meta-data.
      */
     public List<LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
-        List<LegacyMetadataTypeHelper> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
-        /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
+
+        supplementDefaultMetadata(inStruct, inStruct.getDisplayMetadataTypes());
+
+        /*
+         * if you do not want to sort by ruleset, sort alphabetically here
+         */
+        if (!inProzess.getRuleset().isOrderMetadataByRuleset()) {
+            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
+            if (metadata != null) {
+                metadata.sort(new MetadataComparator(inLanguage));
+            }
+        }
+
+        return getAllVisibleMetadataHack(inStruct);
+    }
+
+    /**
+     * If default metadata exist, supplement it if necessary.
+     */
+    private void supplementDefaultMetadata(LegacyDocStructHelperInterface inStruct,
+            List<LegacyMetadataTypeHelper> displayMetadataTypes) {
         if (displayMetadataTypes != null) {
             for (LegacyMetadataTypeHelper mdt : displayMetadataTypes) {
-                // check, if mdt is already in the allMDs Metadata list, if not
-                // - add it
+                /*
+                 * check, if mdt is already in the allMDs Metadata list, if not
+                 * - add it
+                 */
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
                     if (mdt.isPerson()) {
                         throw new UnsupportedOperationException("Dead code pending removal");
                     } else {
                         LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
-                        inStruct.addMetadata(md); // add this new metadata
-                        // element
+                        inStruct.addMetadata(md);
                     }
                 }
             }
-        }
-
-        /*
-         * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch
-         * sortieren
-         */
-        if (inIsPerson) {
-            throw new UnsupportedOperationException("Dead code pending removal");
-        } else {
-            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
-            if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                metadata.sort(new MetadataComparator(inLanguage));
-            }
-            return getAllVisibleMetadataHack(inStruct);
-
         }
     }
 
