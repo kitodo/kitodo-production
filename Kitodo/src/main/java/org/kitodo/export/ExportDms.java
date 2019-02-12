@@ -215,20 +215,28 @@ public class ExportDms extends ExportMets {
         try {
             String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
             if (Objects.nonNull(rules)) {
-                try {
-                    new DataCopier(rules).process(new CopierData(gdzfile, process));
-                } catch (ConfigurationException e) {
-                    if (Objects.nonNull(exportDmsTask)) {
-                        exportDmsTask.setException(e);
-                    } else {
-                        Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
-                    }
+                if (!executeDataCopierProcess(gdzfile, process, rules)) {
                     return false;
                 }
             }
         } catch (NoSuchElementException e) {
             logger.catching(Level.TRACE, e);
             // no configuration simply means here is nothing to do
+        }
+        return true;
+    }
+
+    private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process,
+            String rules) {
+        try {
+            new DataCopier(rules).process(new CopierData(gdzfile, process));
+        } catch (ConfigurationException e) {
+            if (Objects.nonNull(exportDmsTask)) {
+                exportDmsTask.setException(e);
+            } else {
+                Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+                return false;
+            }
         }
         return true;
     }
