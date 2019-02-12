@@ -29,7 +29,7 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectManyCheckbox  id="project" value="#{TemplateForm.template.projects}" layout="grid" converter="#{projectConverter}"
+                <p:selectManyCheckbox  id="project" value="#{TemplateForm.assignedProjects}" layout="grid" columns="3" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{TemplateForm.projects}" var="project" itemLabel="#{project.title}" itemValue="#{project}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
