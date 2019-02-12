@@ -47,12 +47,6 @@ public class LegacyPrefsHelper {
      */
     private RulesetManagementInterface ruleset;
 
-    @Deprecated
-    public List<LegacyLogicalDocStructTypeHelper> getAllDocStructTypes() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     /**
      * Returns the {@code DocStructType} named by its identifier, if there is
      * such in the rule set. Otherwise returns {@code null}.
@@ -163,38 +157,5 @@ public class LegacyPrefsHelper {
         RulesetManagementInterface loadRuleset = rulesetManagementService.getRulesetManagement();
         loadRuleset.load(rulesetFile);
         this.ruleset = loadRuleset;
-    }
-
-    /**
-     * This method generates a comprehensible log message in case something was
-     * overlooked and one of the unimplemented methods should ever be called in
-     * operation. The name was chosen deliberately short in order to keep the
-     * calling code clear. This method must be implemented in every class
-     * because it uses the logger tailored to the class.
-     * 
-     * @param exception
-     *            created {@code UnsupportedOperationException}
-     * @return the exception
-     */
-    private static RuntimeException andLog(UnsupportedOperationException exception) {
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        StringBuilder buffer = new StringBuilder(255);
-        buffer.append(stackTrace[1].getClassName());
-        buffer.append('.');
-        buffer.append(stackTrace[1].getMethodName());
-        buffer.append("()");
-        if (stackTrace[1].getLineNumber() > -1) {
-            buffer.append(" line ");
-            buffer.append(stackTrace[1].getLineNumber());
-        }
-        buffer.append(" unexpectedly called unimplemented ");
-        buffer.append(stackTrace[0].getMethodName());
-        buffer.append("()");
-        if (exception.getMessage() != null) {
-            buffer.append(": ");
-            buffer.append(exception.getMessage());
-        }
-        logger.error(buffer.toString());
-        return exception;
     }
 }
