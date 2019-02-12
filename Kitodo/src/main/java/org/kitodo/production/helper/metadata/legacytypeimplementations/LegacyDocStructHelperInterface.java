@@ -14,6 +14,9 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * One node of a tree depicting the structure of the document.
  *
@@ -41,6 +44,7 @@ import java.util.List;
  * certain meta-data and children a permitted or forbidden.
  */
 public interface LegacyDocStructHelperInterface {
+    static final Logger logger = LogManager.getLogger(LegacyDocStructHelperInterface.class);
 
     /**
      * Adds another {@code DocStruct} as a child to this instance. The new child
@@ -50,7 +54,9 @@ public interface LegacyDocStructHelperInterface {
      *            DocStruct to be added
      */
     @Deprecated
-    void addChild(LegacyDocStructHelperInterface child);
+    default void addChild(LegacyDocStructHelperInterface child) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Adds a DocStruct object as a child to this instance. The new child will
@@ -65,7 +71,9 @@ public interface LegacyDocStructHelperInterface {
      *            DocStruct to be added
      */
     @Deprecated
-    void addChild(Integer index, LegacyDocStructHelperInterface child);
+    default void addChild(Integer index, LegacyDocStructHelperInterface child) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Adds a new reference to a content file, and adds the content file to the
@@ -75,7 +83,9 @@ public interface LegacyDocStructHelperInterface {
      *            content file to add
      */
     @Deprecated
-    void addContentFile(LegacyContentFileHelper contentFile);
+    default void addContentFile(LegacyContentFileHelper contentFile) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Adds a meta-data object to this instance. The method checks, if it is
@@ -98,7 +108,9 @@ public interface LegacyDocStructHelperInterface {
      *            meta-data object to add
      */
     @Deprecated
-    void addMetadata(LegacyMetadataHelper metadata);
+    default void addMetadata(LegacyMetadataHelper metadata) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Adds an outgoing reference to another {@code DocStruct} instance.
@@ -118,7 +130,9 @@ public interface LegacyDocStructHelperInterface {
      *         linking both DocStructs. The return value is never used.
      */
     @Deprecated
-    LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type);
+    default LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * This method cleans the meta-data and person list of instances which do
@@ -137,7 +151,9 @@ public interface LegacyDocStructHelperInterface {
      * </ul>
      */
     @Deprecated
-    void deleteUnusedPersonsAndMetadata();
+    default void deleteUnusedPersonsAndMetadata() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all meta-data types that can be added to this instance and shall
@@ -153,7 +169,9 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data types that users can add to this instance
      */
     @Deprecated
-    List<LegacyMetadataTypeHelper> getAddableMetadataTypes();
+    default List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns a list containing all children of this DocStruct. If this
@@ -162,7 +180,9 @@ public interface LegacyDocStructHelperInterface {
      * @return all children of this DocStruct
      */
     @Deprecated
-    List<LegacyDocStructHelperInterface> getAllChildren();
+    default List<LegacyDocStructHelperInterface> getAllChildren() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all children of this instance which are of a given type and have
@@ -180,7 +200,10 @@ public interface LegacyDocStructHelperInterface {
      * @return all children of the given type and with the given meta-data
      */
     @Deprecated
-    List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType, String metaDataType);
+    default List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType,
+            String metaDataType) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all meta-data from this instance. If no {@code Metadata} is
@@ -190,7 +213,9 @@ public interface LegacyDocStructHelperInterface {
      *         {@code Collection<>} would be sufficient.
      */
     @Deprecated
-    List<LegacyMetadataHelper> getAllMetadata();
+    default List<LegacyMetadataHelper> getAllMetadata() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all meta-data of a given type, including persons. Can be used to
@@ -204,7 +229,9 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data of the given type
      */
     @Deprecated
-    List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType);
+    default List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns incoming or outgoing {@code Reference}s.
@@ -215,7 +242,9 @@ public interface LegacyDocStructHelperInterface {
      * @return incoming or outgoing {@code Reference}s
      */
     @Deprecated
-    List<LegacyReferenceHelper> getAllReferences(String direction);
+    default List<LegacyReferenceHelper> getAllReferences(String direction) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all references that are directed from this instance to another.
@@ -224,7 +253,9 @@ public interface LegacyDocStructHelperInterface {
      * @return all outgoing {@code Reference}s
      */
     @Deprecated
-    Collection<LegacyReferenceHelper> getAllToReferences();
+    default Collection<LegacyReferenceHelper> getAllToReferences() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all references that are directed from this instance to another
@@ -238,7 +269,9 @@ public interface LegacyDocStructHelperInterface {
      *         for size()=0.
      */
     @Deprecated
-    Collection<LegacyReferenceHelper> getAllToReferences(String type);
+    default Collection<LegacyReferenceHelper> getAllToReferences(String type) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Retrieves the name of the anchor structure, if any, or null otherwise.
@@ -268,7 +301,9 @@ public interface LegacyDocStructHelperInterface {
      * @return all meta-data group types that shall always be displayed
      */
     @Deprecated
-    List<LegacyMetadataTypeHelper> getDisplayMetadataTypes();
+    default List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns the image name.
@@ -276,7 +311,9 @@ public interface LegacyDocStructHelperInterface {
      * @return the image name
      */
     @Deprecated
-    String getImageName();
+    default String getImageName() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns the parent of this instance. Returns {@code null} if this
@@ -285,7 +322,9 @@ public interface LegacyDocStructHelperInterface {
      * @return the parent, if any
      */
     @Deprecated
-    LegacyDocStructHelperInterface getParent();
+    default LegacyDocStructHelperInterface getParent() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns all meta-data types that can be added to this instance. Includes
@@ -301,7 +340,9 @@ public interface LegacyDocStructHelperInterface {
      *         type of {@code Collection<>} would be sufficient.
      */
     @Deprecated
-    List<LegacyMetadataTypeHelper> getPossibleMetadataTypes();
+    default List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Get the type of this DocStruct.
@@ -309,7 +350,9 @@ public interface LegacyDocStructHelperInterface {
      * @return the type of this DocStruct
      */
     @Deprecated
-    LegacyLogicalDocStructTypeHelper getDocStructType();
+    default LegacyLogicalDocStructTypeHelper getDocStructType() {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Returns whether a {@code DocStruct} of the given {@code DocStructType} is
@@ -320,7 +363,9 @@ public interface LegacyDocStructHelperInterface {
      * @return true, if {@code DocStruct} of this type can be added; otherwise
      *         false
      */
-    boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type);
+    default boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Removes a child from this instance.
@@ -329,7 +374,9 @@ public interface LegacyDocStructHelperInterface {
      *            to be removed
      */
     @Deprecated
-    void removeChild(LegacyDocStructHelperInterface docStruct);
+    default void removeChild(LegacyDocStructHelperInterface docStruct) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Removes a meta-datum from this instance. If (according to configuration)
@@ -340,7 +387,9 @@ public interface LegacyDocStructHelperInterface {
      *            meta-datum which should be removed
      */
     @Deprecated
-    void removeMetadata(LegacyMetadataHelper metaDatum);
+    default void removeMetadata(LegacyMetadataHelper metaDatum) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
 
     /**
      * Removes an outgoing reference. An outgoing reference is a reference to
@@ -351,5 +400,39 @@ public interface LegacyDocStructHelperInterface {
      *            {@code DocStruct}
      */
     @Deprecated
-    void removeReferenceTo(LegacyDocStructHelperInterface target);
+    default void removeReferenceTo(LegacyDocStructHelperInterface target) {
+        throw andLog(new UnsupportedOperationException("Not yet implemented"));
+    }
+
+    /**
+     * This method generates a comprehensible log message in case something was
+     * overlooked and one of the unimplemented methods should ever be called in
+     * operation. The name was chosen deliberately short in order to keep the
+     * calling code clear.
+     * 
+     * @param exception
+     *            created {@code UnsupportedOperationException}
+     * @return the exception
+     */
+    static RuntimeException andLog(UnsupportedOperationException exception) {
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        StringBuilder buffer = new StringBuilder(255);
+        buffer.append(stackTrace[1].getClassName());
+        buffer.append('.');
+        buffer.append(stackTrace[1].getMethodName());
+        buffer.append("()");
+        if (stackTrace[1].getLineNumber() > -1) {
+            buffer.append(" line ");
+            buffer.append(stackTrace[1].getLineNumber());
+        }
+        buffer.append(" unexpectedly called unimplemented ");
+        buffer.append(stackTrace[0].getMethodName());
+        buffer.append("()");
+        if (exception.getMessage() != null) {
+            buffer.append(": ");
+            buffer.append(exception.getMessage());
+        }
+        logger.error(buffer.toString());
+        return exception;
+    }
 }
