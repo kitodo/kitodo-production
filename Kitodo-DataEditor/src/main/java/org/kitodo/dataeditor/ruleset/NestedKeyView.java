@@ -206,6 +206,57 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     }
 
     /**
+     * Adds the keys selected by the user to be added to the list of keys to
+     * add. This procedure is a part of the function to
+     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
+     * 
+     * @param auxiliaryTable
+     *            the target table. If the key is already here, it will not be
+     *            added a second time.
+     * @param universalRule
+     *            the rule provides the key
+     * @param additionalKeys
+     *            list of the key marked as being added by the user
+     * @param toBeSorted
+     *            write access to the list of keys to be sorted
+     */
+    private final <V> void addAdditionalKeys(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable,
+            UniversalRule universalRule, Collection<String> additionalKeys,
+            HashMap<String, AuxiliaryTableRow<V>> toBeSorted) {
+        for (String additionalKey : additionalKeys) {
+            if (!auxiliaryTable.containsKey(additionalKey) && !toBeSorted.containsKey(additionalKey)) {
+                Optional<Key> optionalKey = universalRule.isUnspecifiedUnrestricted() ? Optional.empty()
+                        : ruleset.getKey(additionalKey);
+                UniversalKey universalKey = optionalKey.isPresent() ? new UniversalKey(ruleset, optionalKey.get())
+                        : new UniversalKey(ruleset, additionalKey);
+                toBeSorted.put(additionalKey, new AuxiliaryTableRow<>(universalKey, settings));
+            }
+        }
+    }
+
+    /**
+     * If the rule is unspecified unrestricted, the remaining keys are added to
+     * the keys to be sorted. This procedure is a part of the function to
+     * {@link #cerateAuxiliaryTableWithKeysToBeSorted(LinkedHashMap, UniversalRule, Collection, Collection)}.
+     * 
+     * @param auxiliaryTable
+     *            the target table. If the key is already here, it will not be
+     *            added a second time.
+     * @param universalKeys
+     *            the keys to be checked
+     * @param toBeSorted
+     *            write access to the list of keys to be sorted
+     */
+    private final <V> void addRemainingKeys(LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable,
+            Collection<UniversalKey> universalKeys, HashMap<String, AuxiliaryTableRow<V>> toBeSorted) {
+        for (UniversalKey universalKey : universalKeys) {
+            if (!auxiliaryTable.containsKey(universalKey.getId())) {
+                toBeSorted.put(universalKey.getId(), new AuxiliaryTableRow<>(universalKey, settings));
+            }
+        }
+    }
+
+    /**
      * Generates an auxiliary table for additional keys. These will later be
      * sorted alphabetically and the key will be added below the given order.
      * This table contains values if there is no restriction rule or if the
@@ -229,23 +280,13 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     private final <V> HashMap<String, AuxiliaryTableRow<V>> cerateAuxiliaryTableWithKeysToBeSorted(
             LinkedHashMap<String, AuxiliaryTableRow<V>> auxiliaryTable, UniversalRule universalRule,
             Collection<UniversalKey> universalKeys, Collection<String> additionalKeys) {
+
         HashMap<String, AuxiliaryTableRow<V>> toBeSorted = new HashMap<>();
+
         if (universalRule.isUnspecifiedUnrestricted()) {
-            for (UniversalKey universalKey : universalKeys) {
-                if (!auxiliaryTable.containsKey(universalKey.getId())) {
-                    toBeSorted.put(universalKey.getId(), new AuxiliaryTableRow<>(universalKey, settings));
-                }
-            }
+            addRemainingKeys(auxiliaryTable, universalKeys, toBeSorted);
         }
-        for (String additionalKey : additionalKeys) {
-            if (!auxiliaryTable.containsKey(additionalKey) && !toBeSorted.containsKey(additionalKey)) {
-                Optional<Key> optionalKey = universalRule.isUnspecifiedUnrestricted() ? Optional.empty()
-                        : ruleset.getKey(additionalKey);
-                UniversalKey universalKey = optionalKey.isPresent() ? new UniversalKey(ruleset, optionalKey.get())
-                        : new UniversalKey(ruleset, additionalKey);
-                toBeSorted.put(additionalKey, new AuxiliaryTableRow<>(universalKey, settings));
-            }
-        }
+        addAdditionalKeys(auxiliaryTable, universalRule, additionalKeys, toBeSorted);
         return toBeSorted;
     }
 
