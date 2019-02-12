@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,22 @@ public class MetadataHelper {
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private LegacyPrefsHelper prefs;
+    private final Comparator<? super LegacyReferenceHelper> referencesSorter = (firstObject, secondObject) -> {
+        Integer firstPage = 0;
+        Integer secondPage = 0;
+        final LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("physPageNumber");
+        List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
+        if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+            final LegacyMetadataHelper page = listMetadata.get(0);
+            firstPage = Integer.parseInt(page.getValue());
+        }
+        listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
+        if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+            final LegacyMetadataHelper page = listMetadata.get(0);
+            secondPage = Integer.parseInt(page.getValue());
+        }
+        return firstPage.compareTo(secondPage);
+    };
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
 
     public MetadataHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
@@ -150,51 +167,36 @@ public class MetadataHelper {
      */
     // FIXME: alphanumerisch
     public String getImageNumber(LegacyDocStructHelperInterface inStrukturelement, int inPageNumber) {
-        String rueckgabe = "";
+        String result = "";
 
         if (inStrukturelement == null) {
             return "";
         }
         List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
-            references.sort((firstObject, secondObject) -> {
-                Integer firstPage = 0;
-                Integer secondPage = 0;
-                final LegacyMetadataTypeHelper mdt = MetadataHelper.this.prefs
-                        .getMetadataTypeByName("physPageNumber");
-                List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
-                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final LegacyMetadataHelper page = listMetadata.get(0);
-                    firstPage = Integer.parseInt(page.getValue());
-                }
-                listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
-                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final LegacyMetadataHelper page = listMetadata.get(0);
-                    secondPage = Integer.parseInt(page.getValue());
-                }
-                return firstPage.compareTo(secondPage);
-            });
-
-            LegacyMetadataTypeHelper mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends LegacyMetadataHelper> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
-            if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
-            }
-            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                LegacyMetadataHelper meineSeite = listSeiten.get(0);
-                rueckgabe += meineSeite.getValue();
-            }
-            mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
-            listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
-            if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
-            }
-            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                LegacyMetadataHelper meineSeite = listSeiten.get(0);
-                rueckgabe += ":" + meineSeite.getValue();
+            references.sort(referencesSorter);
+            result = getMetadataPageNumber("physPageNumber", inPageNumber, references);
+            String pageNumber = getMetadataPageNumber("logicalPageNumber", inPageNumber, references);
+            if (!pageNumber.isEmpty()) {
+                result += ":" + pageNumber;
             }
         }
-        return rueckgabe;
+        return result;
+    }
+
+    private String getMetadataPageNumber(String metadataType, int inPageNumber,
+            List<LegacyReferenceHelper> references) {
+        LegacyMetadataTypeHelper metadataTypeHelper = this.prefs.getMetadataTypeByName(metadataType);
+        List<? extends LegacyMetadataHelper> pages = references.get(0).getTarget()
+                .getAllMetadataByType(metadataTypeHelper);
+        if (inPageNumber == PAGENUMBER_LAST) {
+            pages = references.get(references.size() - 1).getTarget().getAllMetadataByType(metadataTypeHelper);
+        }
+        if (Objects.nonNull(pages) && !pages.isEmpty()) {
+            LegacyMetadataHelper meineSeite = pages.get(0);
+            return meineSeite.getValue();
+        }
+        return "";
     }
 
     /**
