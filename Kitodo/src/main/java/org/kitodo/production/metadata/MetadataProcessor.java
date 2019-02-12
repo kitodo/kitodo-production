@@ -1771,9 +1771,9 @@ public class MetadataProcessor {
         this.myMetadaten = myMetadaten;
     }
 
-    public List<?> getMetaPersonList() {
+    public List getMetaPersonList() {
         // Dead code pending removal. TODO remove
-        return Collections.emptyList();
+        return Collections.EMPTY_LIST;
     }
 
     public void setMetaPersonList(List<?> metaPersonList) {
