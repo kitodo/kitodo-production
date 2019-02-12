@@ -380,9 +380,7 @@ public class Structure implements DivXmlElementAccessInterface {
 
     /**
      * Generates an {@code <amdSec>} if administrative meta-data exists on this
-     * structure. Remarkable in this function is the bitwise OR, so that in any
-     * case all sections are generated, which would not be the case with logical
-     * OR.
+     * structure.
      * 
      * @param div
      *            div where ADMID references must be added to the generated
@@ -391,12 +389,12 @@ public class Structure implements DivXmlElementAccessInterface {
      */
     private Optional<AmdSecType> createAmdSec(DivType div) {
         AmdSecType amdSec = new AmdSecType();
-        return addMdSec(createMdSec(MdSec.SOURCE_MD), MdSec.SOURCE_MD, AmdSecType::getSourceMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.DIGIPROV_MD), MdSec.DIGIPROV_MD, AmdSecType::getDigiprovMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.RIGHTS_MD), MdSec.RIGHTS_MD, AmdSecType::getRightsMD, amdSec, div)
-                | addMdSec(createMdSec(MdSec.TECH_MD), MdSec.TECH_MD, AmdSecType::getTechMD, amdSec, div)
-                        ? Optional.of(amdSec)
-                        : Optional.empty();
+        boolean source = addMdSec(createMdSec(MdSec.SOURCE_MD), MdSec.SOURCE_MD, AmdSecType::getSourceMD, amdSec, div);
+        boolean digiprov = addMdSec(createMdSec(MdSec.DIGIPROV_MD), MdSec.DIGIPROV_MD, AmdSecType::getDigiprovMD,
+            amdSec, div);
+        boolean rights = addMdSec(createMdSec(MdSec.RIGHTS_MD), MdSec.RIGHTS_MD, AmdSecType::getRightsMD, amdSec, div);
+        boolean tech = addMdSec(createMdSec(MdSec.TECH_MD), MdSec.TECH_MD, AmdSecType::getTechMD, amdSec, div);
+        return source || digiprov || rights || tech ? Optional.of(amdSec) : Optional.empty();
     }
 
     /**
