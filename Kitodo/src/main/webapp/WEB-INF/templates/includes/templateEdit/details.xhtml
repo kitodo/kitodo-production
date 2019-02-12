@@ -29,11 +29,11 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectManyMenu id="project" value="#{TemplateForm.template.projects}" converter="#{projectConverter}"
+                <p:selectManyCheckbox  id="project" value="#{TemplateForm.template.projects}" layout="grid" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{TemplateForm.projects}" var="project" itemLabel="#{project.title}" itemValue="#{project}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectManyMenu>
+                </p:selectManyCheckbox >
             </div>
 
             <div>
