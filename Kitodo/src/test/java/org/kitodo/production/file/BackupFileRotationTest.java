@@ -39,20 +39,20 @@ public class BackupFileRotationTest {
 
     @Before
     public void setUp() throws Exception {
-        URI directory = fileService.createDirectory(URI.create(""), "2");
+        URI directory = fileService.createDirectory(URI.create(""), "12");
         fileService.createResource(directory, BACKUP_FILE_NAME);
     }
 
     @After
     public void tearDown() throws Exception {
-        fileService.delete(URI.create("2"));
+        fileService.delete(URI.create("12"));
     }
 
     @Test
     public void shouldCreateSingleBackupFile() throws Exception {
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         int numberOfBackups = 1;
         runBackup(numberOfBackups, process);
         assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
@@ -61,8 +61,8 @@ public class BackupFileRotationTest {
     @Test
     public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         int numberOfBackups = 1;
         String content = "Test One.";
         URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
@@ -74,8 +74,8 @@ public class BackupFileRotationTest {
     @Test
     public void modifiedDateShouldNotChangedOnBackup() throws IOException {
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         int numberOfBackups = 1;
         long originalModifiedDate = getLastModifiedFileDate(
                 processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
@@ -90,8 +90,8 @@ public class BackupFileRotationTest {
         FileService fileService = new FileService();
 
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
 
         runBackup(numberOfBackups, process);
 
@@ -106,8 +106,8 @@ public class BackupFileRotationTest {
         String content1 = "Test One.";
         int numberOfBackups = 2;
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         URI resolve = fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         writeFile(resolve, content1);
         runBackup(numberOfBackups, process);
@@ -125,8 +125,8 @@ public class BackupFileRotationTest {
         long expectedLastModifiedDate;
         int numberOfBackups = 2;
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         expectedLastModifiedDate = getLastModifiedFileDate(
                 processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
 
@@ -143,8 +143,8 @@ public class BackupFileRotationTest {
         int numberOfBackups = 3;
 
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         runBackup(numberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
@@ -162,8 +162,8 @@ public class BackupFileRotationTest {
         String content1 = "Test One.";
 
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
         writeFile(correctURI, content1);
         runBackup(numberOfBackups, process);
@@ -179,8 +179,8 @@ public class BackupFileRotationTest {
     public void noBackupIsPerformedWithNumberOfBackupsSetToZero() throws Exception {
         int numberOfBackups = 0;
         Process process = new Process();
-        process.setId(3);
-        process.setProcessBaseUri(URI.create("3"));
+        process.setId(13);
+        process.setProcessBaseUri(URI.create("13"));
         runBackup(numberOfBackups, process);
         assertFileNotExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
     }
@@ -189,8 +189,8 @@ public class BackupFileRotationTest {
     public void nothingHappensIfFilePatternDontMatch() throws Exception {
         int numberOfBackups = 1;
         Process process = new Process();
-        process.setId(2);
-        process.setProcessBaseUri(URI.create("2"));
+        process.setId(12);
+        process.setProcessBaseUri(URI.create("12"));
         runBackup(numberOfBackups, "veryLongMatchingToNothingName", process);
 
         assertFileNotExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");

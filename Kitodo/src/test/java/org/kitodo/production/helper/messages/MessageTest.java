@@ -11,21 +11,19 @@
 
 package org.kitodo.production.helper.messages;
 
-import java.net.URI;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
 
 import org.junit.Test;
 import org.kitodo.FileLoader;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class MessageTest {
 
-    private static final FileService fileService = ServiceManager.getFileService();
     private final Locale locale = new Locale("EN");
     private final String customBundle = "messages";
     private final String defaultBundle = "messages.messages";
@@ -54,13 +52,18 @@ public class MessageTest {
 
     @Test
     public void shouldGetStringFromCustomBundle() throws Exception {
-        fileService.createDirectory(URI.create(""), "custom");
-        FileLoader.createCustomMessages();
+        File messageDirectory = new File("src/test/resources/custom");
 
-        String value = Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready");
-        assertEquals("Test custom message", value);
+        if (messageDirectory.mkdir()) {
+            FileLoader.createCustomMessages();
 
-        FileLoader.deleteCustomMessages();
-        fileService.delete(URI.create("custom"));
+            String value = Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready");
+            assertEquals("Test custom message", value);
+
+            FileLoader.deleteCustomMessages();
+            messageDirectory.delete();
+        } else {
+            fail("Directory for custom messages was not created!");
+        }
     }
 }

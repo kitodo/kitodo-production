@@ -53,7 +53,7 @@ public class ConfigCoreTest {
 
     @Test
     public void shouldGetKitodoDataDirectory() {
-        String expected = "src/test/resources/";
+        String expected = "src/test/resources/metadata/";
 
         assertEquals("Directory was queried incorrectly!", expected, ConfigCore.getKitodoDataDirectory());
     }
