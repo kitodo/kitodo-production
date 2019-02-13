@@ -947,12 +947,26 @@ Metadata Editor
 
 #metadataEditorHeader {
     padding: 1em 16px;
-    margin-bottom: 1em;
+}
+
+/* FIXME: don't use static number in width! */
+#metadataEditorHeader h3 {
+    width: 68%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 #metadataEditorHeader .ui-panel,
 #metadataEditorHeader .ui-panel-content {
     padding: 0;
+}
+
+#metadataEditorHeader .button-wrapper {
+    vertical-align: top;
+    white-space: nowrap;
+    float: right;
 }
 
 #metadataEditorWrapper {
