@@ -157,37 +157,43 @@ public class CopyProcess extends ProzesskopieForm {
         if (Objects.nonNull(myRdf)) {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                    /* welches Docstruct */
-
-                    LegacyDocStructHelperInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
-                    if (field.getDocstruct().equals("firstchild")) {
-                        try {
-                            myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-                        } catch (RuntimeException e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    }
-                    if (field.getDocstruct().equals("boundbook")) {
-                        myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
-                    }
-                    /* welches Metadatum */
+                    LegacyDocStructHelperInterface myTempStruct = getDocstructForMetadataFile(myRdf, field);
                     try {
-                        if (field.getMetadata().equals("ListOfCreators")) {
-                            throw new UnsupportedOperationException("Dead code pending removal");
-                        } else {
-                            /* bei normalen Feldern die Inhalte auswerten */
-                            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
-                                ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                field.getMetadata());
-                            LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(myTempStruct, mdt);
-                            if (Objects.nonNull(md)) {
-                                field.setValue(md.getValue());
-                            }
-                        }
+                        setMetadataForMetadataFile(field, myTempStruct);
                     } catch (IllegalArgumentException e) {
                         Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
                 }
+            }
+        }
+    }
+
+    private LegacyDocStructHelperInterface getDocstructForMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf,
+            AdditionalField field) {
+        LegacyDocStructHelperInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+        if (field.getDocstruct().equals("firstchild")) {
+            try {
+                myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+            } catch (RuntimeException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (field.getDocstruct().equals("boundbook")) {
+            myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
+        }
+        return myTempStruct;
+    }
+
+    private void setMetadataForMetadataFile(AdditionalField field, LegacyDocStructHelperInterface myTempStruct) {
+        if (field.getMetadata().equals("ListOfCreators")) {
+            throw new UnsupportedOperationException("Dead code pending removal");
+        } else {
+            /* evaluate the content in normal fields */
+            LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(
+                ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
+            LegacyMetadataHelper md = LegacyLogicalDocStructHelper.getMetadata(myTempStruct, mdt);
+            if (Objects.nonNull(md)) {
+                field.setValue(md.getValue());
             }
         }
     }
