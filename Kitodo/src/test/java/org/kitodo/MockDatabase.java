@@ -1215,25 +1215,25 @@ public class MockDatabase {
     }
 
     public static void insertWorkflows() throws DAOException, DataException {
-        Workflow firstWorkflow = new Workflow("say-hello", "test");
+        Workflow firstWorkflow = new Workflow("test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);
 
-        Workflow secondWorkflow = new Workflow("test-hello", "test");
+        Workflow secondWorkflow = new Workflow("test");
         secondWorkflow.setReady(false);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
 
-        Workflow thirdWorkflow = new Workflow("gateway", "gateway");
+        Workflow thirdWorkflow = new Workflow("gateway");
         thirdWorkflow.setReady(false);
         thirdWorkflow.setClient(ServiceManager.getClientService().getById(2));
         ServiceManager.getWorkflowService().save(thirdWorkflow);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
-        Workflow workflow = new Workflow("gateway-test1", "gateway-test1");
+        Workflow workflow = new Workflow("gateway-test1");
         workflow.setActive(true);
         workflow.setReady(true);
         workflow.setClient(ServiceManager.getClientService().getById(1));
@@ -1337,7 +1337,7 @@ public class MockDatabase {
     }
 
     private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
-        Workflow workflow = new Workflow("gateway-test5", "gateway-test5");
+        Workflow workflow = new Workflow("gateway-test5");
         workflow.setActive(true);
         workflow.setReady(true);
         workflow.setClient(ServiceManager.getClientService().getById(1));

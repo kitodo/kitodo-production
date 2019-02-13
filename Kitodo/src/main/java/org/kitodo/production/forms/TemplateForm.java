@@ -125,7 +125,7 @@ public class TemplateForm extends TemplateBaseForm {
         if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
             try {
                 if (this.template.getTasks().isEmpty()) {
-                    Converter converter = new Converter(this.template.getWorkflow().getFileName());
+                    Converter converter = new Converter(this.template.getWorkflow().getTitle());
                     converter.convertWorkflowToTemplate(this.template);
                 }
             } catch (DAOException e) {
@@ -190,7 +190,7 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public InputStream getTasksDiagram() {
         if (Objects.nonNull(this.template.getWorkflow())) {
-            return ServiceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getFileName());
+            return ServiceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getTitle());
         }
         return ServiceManager.getTemplateService().getTasksDiagram("");
     }

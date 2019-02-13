@@ -24,9 +24,9 @@
 
     <p:panelGrid columns="2" layout="grid">
         <p:row>
-            <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
-            <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input" disabled="#{isViewMode}"
-                         value="#{WorkflowForm.workflow.fileName}"
+            <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
+            <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
+                         value="#{WorkflowForm.workflow.title}"
                          required="true"/>
             <div class="workflow-editor-hidden">
 	            <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
@@ -36,7 +36,7 @@
 	            </p:selectOneMenu>
 	            <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
 	                             action="#{WorkflowForm.readXMLDiagram}"
-	                             rendered="#{WorkflowForm.workflow.fileName ne null}"
+	                             rendered="#{WorkflowForm.workflow.title ne null}"
 	                             immediate="true"/>
             </div>
         </p:row>

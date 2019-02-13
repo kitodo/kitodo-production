@@ -138,7 +138,7 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
-        workflow.setFileName("testWorkflow");
+        workflow.setTitle("testWorkflow");
         projectsPage.createNewWorkflow();
         assertEquals("Header for create new workflow is incorrect", "Neuen Workflow anlegen",
             Pages.getWorkflowEditPage().getHeaderText());
@@ -147,7 +147,7 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Redirection after save was not successful", projectsPage.isAt());
 
         List<String> workflowTitles = projectsPage.getWorkflowTitles();
-        boolean workflowAvailable = workflowTitles.contains("Process_1");
+        boolean workflowAvailable = workflowTitles.contains("testWorkflow");
         assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
     }
 

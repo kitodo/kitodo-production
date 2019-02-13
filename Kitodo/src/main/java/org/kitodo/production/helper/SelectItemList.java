@@ -175,9 +175,9 @@ public class SelectItemList {
      */
     public static List<SelectItem> getWorkflows(List<Workflow> workflows) {
         List<SelectItem> selectItems = new ArrayList<>();
-        workflows.sort(Comparator.comparing(Workflow::getFileName));
+        workflows.sort(Comparator.comparing(Workflow::getTitle));
         for (Workflow workflow : workflows) {
-            selectItems.add(new SelectItem(workflow, workflow.getFileName(), null));
+            selectItems.add(new SelectItem(workflow, workflow.getTitle(), null));
         }
         return selectItems;
     }

@@ -33,14 +33,12 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.workflow.model.beans.Diagram;
 import org.kitodo.production.workflow.model.beans.TaskInfo;
 
 public class Reader {
 
     private BpmnModelInstance modelInstance;
     private Map<Task, TaskInfo> tasks;
-    private Diagram workflow;
 
     /**
      * Constructor with diagram name as parameter. It loads modelInstance from file
@@ -101,15 +99,6 @@ public class Reader {
         this.tasks = tasks;
     }
 
-    /**
-     * Get workflow.
-     *
-     * @return value of workflow
-     */
-    public Diagram getWorkflow() {
-        return workflow;
-    }
-
     void readWorkflowTasks() throws WorkflowException {
         tasks = new LinkedHashMap<>();
 
@@ -139,7 +128,6 @@ public class Reader {
         if (Objects.isNull(process)) {
             throw new IOException("It looks that given file or input stream contains invalid BPMN diagram!");
         }
-        this.workflow = new Diagram(process);
     }
 
     /**

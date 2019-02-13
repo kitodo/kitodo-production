@@ -34,9 +34,6 @@ public class Workflow extends BaseIndexedBean {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "fileName")
-    private String fileName;
-
     @Column(name = "active")
     private Boolean active = true;
 
@@ -61,12 +58,9 @@ public class Workflow extends BaseIndexedBean {
      * 
      * @param title
      *            of workflow
-     * @param fileName
-     *            in which diagram is stored
      */
-    public Workflow(String title, String fileName) {
+    public Workflow(String title) {
         this.title = title;
-        this.fileName = fileName;
     }
 
     /**
@@ -86,25 +80,6 @@ public class Workflow extends BaseIndexedBean {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get file name of file in which diagram workflow is stored.
-     *
-     * @return value of file name
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * Set file name of file in which diagram workflow is stored.
-     *
-     * @param fileName
-     *            as String
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     /**
@@ -207,6 +182,6 @@ public class Workflow extends BaseIndexedBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, fileName, active, ready);
+        return Objects.hash(title, active, ready);
     }
 }

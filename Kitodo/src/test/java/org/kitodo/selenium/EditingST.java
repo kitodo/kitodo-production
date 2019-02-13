@@ -74,8 +74,7 @@ public class EditingST extends BaseTestSelenium {
 
         Process processAfterEdit = ServiceManager.getProcessService().getById(1);
 
-        assertEquals("Incorrect amount of template properties", 4,
-                processAfterEdit.getTemplates().size());
+        assertEquals("Incorrect amount of template properties", 4, processAfterEdit.getTemplates().size());
     }
 
     @Test
@@ -116,15 +115,15 @@ public class EditingST extends BaseTestSelenium {
     @Test
     public void editWorkflowTest() throws Exception {
         projectsPage.editWorkflow();
-        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test-hello)",
-                Pages.getWorkflowEditPage().getHeaderText());
+        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test)",
+            Pages.getWorkflowEditPage().getHeaderText());
     }
 
     @Test
     public void editDocketTest() throws Exception {
         projectsPage.editDocket();
         assertEquals("Header for edit docket is incorrect", "Laufzettel bearbeiten (default)",
-                Pages.getDocketEditPage().getHeaderText());
+            Pages.getDocketEditPage().getHeaderText());
     }
 
     @Test

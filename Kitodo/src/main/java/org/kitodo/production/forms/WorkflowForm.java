@@ -50,7 +50,6 @@ import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.workflow.model.Reader;
-import org.kitodo.production.workflow.model.beans.Diagram;
 
 @Named("WorkflowForm")
 @SessionScoped
@@ -82,7 +81,7 @@ public class WorkflowForm extends BaseForm {
      */
     public void readXMLDiagram() {
         URI xmlDiagramURI = new File(
-                ConfigCore.getKitodoDiagramDirectory() + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
+                ConfigCore.getKitodoDiagramDirectory() + encodeXMLDiagramName(this.workflow.getTitle())).toURI();
 
         try (InputStream inputStream = fileService.read(xmlDiagramURI);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -132,8 +131,8 @@ public class WorkflowForm extends BaseForm {
 
                 String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
                 URI svgDiagramURI = new File(
-                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + SVG_EXTENSION).toURI();
-                URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(this.workflow.getFileName()))
+                        diagramDirectory + decodeXMLDiagramName(this.workflow.getTitle()) + SVG_EXTENSION).toURI();
+                URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(this.workflow.getTitle()))
                         .toURI();
 
                 fileService.delete(svgDiagramURI);
@@ -175,7 +174,7 @@ public class WorkflowForm extends BaseForm {
     }
 
     private Map<String, URI> getDiagramUris() {
-        return getDiagramUris(this.workflow.getFileName());
+        return getDiagramUris(this.workflow.getTitle());
     }
 
     private Map<String, URI> getDiagramUris(String fileName) {
@@ -215,11 +214,10 @@ public class WorkflowForm extends BaseForm {
     }
 
     private void saveWorkflow() {
-        String decodedXMLDiagramName = decodeXMLDiagramName(this.workflow.getFileName());
+        // TODO: Erik needs to make field inivisible in the editor
+        String decodedXMLDiagramName = decodeXMLDiagramName(this.workflow.getTitle());
         try {
             Reader reader = new Reader(decodedXMLDiagramName);
-            Diagram diagram = reader.getWorkflow();
-            this.workflow.setTitle(diagram.getId());
             ServiceManager.getWorkflowService().save(this.workflow);
         } catch (DataException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -250,7 +248,7 @@ public class WorkflowForm extends BaseForm {
         try {
             Workflow baseWorkflow = ServiceManager.getWorkflowService().getById(itemId);
 
-            Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow.getFileName());
+            Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow.getTitle());
 
             URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
             URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
