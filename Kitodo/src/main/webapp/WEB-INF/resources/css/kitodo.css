@@ -792,13 +792,13 @@ main i.fa {
 
 #login-section h3 {
     font-size: 22px;
-    margin-bottom: 1.3em;
+    margin-bottom: 32px;
 }
 
 #login-section input[id=username], #login-section input[type=password] {
     border: 1px solid #0071bc;
     border-radius: 3px;
-    padding: 10px;
+    padding: 9px 10px;
     line-height: 0px;
     font-size: 16px;
     color: #0071bc;
@@ -812,7 +812,7 @@ main i.fa {
 }
 
 #login-section div {
-    margin-bottom: 1.3em;
+    margin-bottom: 16px;
 }
 
 #login-section button {
@@ -820,7 +820,7 @@ main i.fa {
     border-radius: 3px;
     border: 1px solid #0071bc;
     color: #fff;
-    padding: 10px;
+    padding: 8px 10px;
 }
 
 #login-section button .button-text {
@@ -840,6 +840,12 @@ main i.fa {
     cursor: pointer;
 }
 
+#login-section form div label {
+    margin-bottom: 8px;
+    display: block;
+    line-height: 16px;
+}
+
 .login-note {
     background: #999;
     margin: 32px -32px 0 -32px;
@@ -847,6 +853,7 @@ main i.fa {
     color: #d8d8d8;
     hyphens: auto;
     line-height: 22px;
+    border-radius: 0 0 3px 3px;
 }
 
 .legal-dialog {
@@ -1450,7 +1457,7 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 20px;
+        margin-top: 36px;
         }
 
     #portal-header .wrapper {
@@ -1486,13 +1493,14 @@ min 700px
         text-align: center !important;
         display: block !important;
         width: 100% !important;
-        margin-bottom: 32px;
+        margin-bottom: 36px;
     }
 
     #kitodo-logo {
-        display: inline-block;
-        margin-right: 30px;
-        }
+        display: block;
+        width: auto !important;
+        margin: auto !important;
+    }
 
     .login-screen #kitodo-logo {
         margin: 0;
