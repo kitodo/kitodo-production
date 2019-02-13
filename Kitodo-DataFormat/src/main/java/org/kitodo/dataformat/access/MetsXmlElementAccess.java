@@ -105,7 +105,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private MetsXmlElementAccess(Mets mets) {
         this();
         MetsHdr metsHdr = mets.getMetsHdr();
-        if (metsHdr != null) {
+        if (Objects.nonNull(metsHdr)) {
             workpiece.setCreationDate(metsHdr.getCREATEDATE().toGregorianCalendar());
             for (Agent agent : metsHdr.getAgent()) {
                 workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
