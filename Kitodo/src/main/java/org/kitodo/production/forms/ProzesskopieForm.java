@@ -911,11 +911,11 @@ public class ProzesskopieForm implements Serializable {
 
     private void iterateOverHigherLevelMetadata(LegacyDocStructHelperInterface enricher,
             Map<String, Map<String, LegacyMetadataHelper>> higherLevelMetadata) {
-        HIGHER: for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata
+        for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata
                 .entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
             if (!isAddable(enricher, enrichable)) {
-                continue HIGHER;
+                continue;
             }
 
             for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue().entrySet()) {
@@ -923,13 +923,19 @@ public class ProzesskopieForm implements Serializable {
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
                 }
+                boolean breakMiddle = false;
                 for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
                             && existentMetadata.getValue().equals(higherElement.getKey())) {
-                        continue HIGHER;
+                        breakMiddle = true;
+                        break;
                     }
                 }
-                enricher.addMetadata(higherElement.getValue());
+                if (breakMiddle) {
+                    break;
+                } else {
+                    enricher.addMetadata(higherElement.getValue());
+                }
             }
         }
     }
