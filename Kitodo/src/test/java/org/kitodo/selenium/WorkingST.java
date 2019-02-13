@@ -19,8 +19,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.config.KitodoConfig;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -142,14 +140,11 @@ public class WorkingST extends BaseTestSelenium {
     public void downloadLogTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        File directory = new File("../../../../src/test/resources/users/");
+        processesPage.goTo().downloadLog();
+        File logFile = new File("src/test/resources/users/kowal/Second__process_log.xml");
+        assertTrue("Log file was not downloaded", logFile.exists());
 
-        if (directory.exists() || directory.mkdir()) {
-            processesPage.goTo().downloadLog();
-            assertTrue("Log file was not downloaded",
-                new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second__process_log.xml")
-                        .exists());
-        }
+        logFile.delete();
     }
 
     @Test

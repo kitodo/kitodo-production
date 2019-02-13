@@ -12,7 +12,6 @@
 package org.kitodo.selenium.testframework;
 
 import java.io.File;
-import java.net.URI;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
@@ -25,12 +24,10 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 
 public class BaseTestSelenium {
 
-    private static final FileService fileService = ServiceManager.getFileService();
+    private static final File usersDirectory = new File("src/test/resources/users");
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -38,7 +35,8 @@ public class BaseTestSelenium {
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
 
-        fileService.createDirectory(URI.create(""), "users");
+        usersDirectory.mkdir();
+
         FileLoader.createDiagramTestFile();
         FileLoader.createConfigProjectsFile();
         FileLoader.createDigitalCollectionsFile();
@@ -67,7 +65,8 @@ public class BaseTestSelenium {
         FileLoader.deleteDigitalCollectionsFile();
         FileLoader.deleteConfigProjectsFile();
         FileLoader.deleteDiagramTestFile();
-        fileService.delete(URI.create("users"));
+
+        usersDirectory.delete();
 
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
