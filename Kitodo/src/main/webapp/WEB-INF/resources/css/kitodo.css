@@ -971,9 +971,6 @@ Metadata Editor
 
 #metadataEditorWrapper {
     height: 700px;
-    margin-left: 16px;
-    margin-right: 16px;
-    width: calc(100% - 32px);
     white-space: nowrap;
     border-top: solid 3px grey;
 }
@@ -1076,6 +1073,15 @@ Metadata Editor
     padding: 0;
 }
 
+#metadataEditorContainer {
+    margin: auto 16px;
+    padding: 0;
+}
+
+#metadataEditorContainer > .ui-widget-content {
+    padding: 0;
+}
+
 #metadataEditorWrapper .resizer {
     display: inline-block;
     height: 100%;
@@ -1163,7 +1169,7 @@ Column content
 
 #structureTreeForm\:structurePanel {
     overflow-y: scroll;
-    height: 50%;
+    height: calc(100% - 140px);
     box-sizing: border-box;
 }
 
@@ -1175,12 +1181,8 @@ Column content
     overflow-x: hidden;
 }
 
-#structureTreeForm\:actionButtons .ui-panelgrid-cell {
-    padding: 2px;
-}
-
-#structureTreeForm\:actionButtons .ui-button {
-    width: 100%;
+#structureTreeForm button.secondary {
+    margin: 4px;
 }
 
 .pagination-active {

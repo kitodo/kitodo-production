@@ -18,28 +18,33 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
     <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
-        <p:panelGrid id="actionButtons" columns="1" rendered="#{not MetadataProcessor.showPagination}">
-            <p:commandButton id="newButton" value="#{msgs.newElement}"
+        <ui:fragment id="actionButtons" rendered="#{not MetadataProcessor.showPagination}">
+            <p:commandButton id="newButton" title="#{msgs.newElement}"
                              onclick="PF('dialogAddDocStrucType').show();"
-                             icon="fa fa-plus-circle fa-lg"
+                             styleClass="secondary"
+                             icon="fa fa-plus fa-sm"
                              iconPos="right">
                 <p:ajax update="dialogAddDocStrucTypeForm"/>
             </p:commandButton>
-            <p:commandButton id="deleteButton" value="#{msgs.delete}"
-                             action="#{MetadataProcessor.deleteNode}"
-                             update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
-                             icon="fa fa-minus-circle fa-lg"
-                             iconPos="right"/>
-            <p:commandButton id="linkButton" value="#{msgs.link}"
-                             icon="fa fa-link fa-lg"
+            <p:commandButton id="linkButton" title="#{msgs.link}"
+                             styleClass="secondary"
+                             icon="fa fa-link fa-sm"
                              onclick="PF('dialogEditPages').show();"
                              iconPos="right"/>
+            <p:commandButton id="deleteButton" title="#{msgs.delete}"
+                             action="#{MetadataProcessor.deleteNode}"
+                             update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                             styleClass="secondary"
+                             icon="fa fa-trash fa-sm"
+                             iconPos="right"/>
             <p:commandButton id="pagingButton" value="#{msgs.pagination}"
+                             title="#{msgs.pagination}"
                              action="#{MetadataProcessor.setShowPagination(true)}"
                              update="structureTreeForm"
-                             icon="fa fa-list-ol fa-lg"
+                             styleClass="secondary"
+                             icon="fa fa-list-ol fa-sm"
                              iconPos="right"/>
-        </p:panelGrid>
+        </ui:fragment>
         <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
             <h:panelGroup rendered="#{MetadataProcessor.showPagination}">
                 <p:selectManyMenu id="paginationSelection" value="#{MetadataProcessor.allPagesSelection}" style="height: 100%"
