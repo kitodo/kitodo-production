@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,22 +46,6 @@ public class MetadataHelper {
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private LegacyPrefsHelper prefs;
-    private final Comparator<? super LegacyReferenceHelper> referencesSorter = (firstObject, secondObject) -> {
-        Integer firstPage = 0;
-        Integer secondPage = 0;
-        final LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("physPageNumber");
-        List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
-        if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-            final LegacyMetadataHelper page = listMetadata.get(0);
-            firstPage = Integer.parseInt(page.getValue());
-        }
-        listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
-        if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-            final LegacyMetadataHelper page = listMetadata.get(0);
-            secondPage = Integer.parseInt(page.getValue());
-        }
-        return firstPage.compareTo(secondPage);
-    };
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
 
     public MetadataHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
@@ -174,7 +157,7 @@ public class MetadataHelper {
         }
         List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
-            references.sort(referencesSorter);
+            references.sort(new ReferencesSortHelper(prefs));
             result = getMetadataPageNumber("physPageNumber", inPageNumber, references);
             String pageNumber = getMetadataPageNumber("logicalPageNumber", inPageNumber, references);
             if (!pageNumber.isEmpty()) {
