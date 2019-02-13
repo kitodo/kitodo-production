@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
@@ -79,15 +78,6 @@ public class TemplateForm extends TemplateBaseForm {
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
         ServiceManager.getTemplateService().setShowInactiveTemplates(showInactiveTemplates);
-    }
-
-    /**
-     * This method initializes the template list without any filter whenever the
-     * bean is constructed.
-     */
-    @PostConstruct
-    public void initializeTemplateList() {
-        setFilter("");
     }
 
     /**
