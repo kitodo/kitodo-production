@@ -198,11 +198,11 @@ public class ExportDms extends ExportMets {
             exportDmsTask.setProgress(1);
         }
 
-        return export(process, gdzfile, zielVerzeichnis, userHome);
+        return exportImagesAndMetsToDestinationUri(process, gdzfile, zielVerzeichnis, userHome);
     }
 
-    private boolean export(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI zielVerzeichnis,
-            URI userHome) throws IOException {
+    private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
+            URI zielVerzeichnis, URI userHome) throws IOException {
         boolean downloadImages = downloadImages(process, userHome, zielVerzeichnis);
         if (!downloadImages) {
             return false;
