@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +28,6 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -512,7 +509,7 @@ public class KitodoScriptService {
                     dms.setExportFullText(exportFulltext);
                 }
                 dms.startExport(process);
-            } catch (IOException | ExportFileException | JAXBException e) {
+            } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
         }

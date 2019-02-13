@@ -585,8 +585,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (DataException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                            + "' caused an error\n");
+                    logError(filter);
                 }
                 break;
             case MAX:
@@ -597,8 +596,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (DataException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                            + "' caused an error\n");
+                    logError(filter);
                 }
                 break;
             case MIN:
@@ -609,8 +607,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (DataException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                            + "' caused an error\n");
+                    logError(filter);
                 }
                 break;
             case NAME:
@@ -622,8 +619,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (DataException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                            + "' caused an error\n");
+                    logError(filter);
                 }
                 break;
             case RANGE:
@@ -641,13 +637,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                         logger.error("stepdone is preset, don't use 'step' filters");
                     } catch (DataException | RuntimeException e1) {
                         logger.error(e1.getMessage(), e1);
-                        logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                                + "' caused an error\n");
+                        logError(filter);
                     }
                 } catch (DataException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                            + "' caused an error\n");
+                    logError(filter);
                 }
                 break;
             case UNKNOWN:
@@ -657,6 +651,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 break;
         }
         return new BoolQueryBuilder();
+    }
+
+    private void logError(String filter) {
+        logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
+                + "' caused an error\n");
     }
 
     /**

@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
@@ -28,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -47,7 +45,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws IOException, ExportFileException, JAXBException {
+    public boolean startExport(Process process) throws IOException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
@@ -61,7 +59,7 @@ public class ExportMets {
      * @param userHome
      *            String
      */
-    public boolean startExport(Process process, URI userHome) throws IOException, ExportFileException, JAXBException {
+    public boolean startExport(Process process, URI userHome) throws IOException {
 
         /*
          * Read Document
@@ -111,7 +109,7 @@ public class ExportMets {
     protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
             throws IOException {
 
-        MetsXmlElementAccessInterface workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();
+        MetsXmlElementAccessInterface workpiece = gdzfile.getWorkpiece();
         ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
         /*
          * We write to the user’s home directory or to the hotfolder here, not

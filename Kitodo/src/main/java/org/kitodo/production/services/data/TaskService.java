@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -474,7 +473,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         Process process = task.getProcess();
         Template template = task.getTemplate();
         if (Objects.nonNull(process)) {
-            return Arrays.asList(process.getProject());
+            return Collections.singletonList(process.getProject());
         } else if (Objects.nonNull(template)) {
             return template.getProjects();
         } else {

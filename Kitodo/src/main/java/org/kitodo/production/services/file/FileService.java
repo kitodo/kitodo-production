@@ -949,7 +949,7 @@ public class FileService {
      *             is missing
      */
     public LockResult tryLock(URI uri, LockingMode lockingMode) throws IOException {
-        return tryLock(Arrays.asList(uri), lockingMode);
+        return tryLock(Collections.singletonList(uri), lockingMode);
     }
 
     /**

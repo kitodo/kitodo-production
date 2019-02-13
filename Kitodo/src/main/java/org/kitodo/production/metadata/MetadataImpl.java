@@ -139,14 +139,16 @@ public class MetadataImpl implements Metadata {
                 }
             }
         } else {
+            StringBuilder valuesBuilder = new StringBuilder();
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
                 if (i.getIsSelected()) {
-                    values = values + ";" + i.getValue();
+                    valuesBuilder.append(i.getValue());
+                    valuesBuilder.append(";");
                     this.selectedItems.add(i.getLabel());
                 }
             }
-            if (values != null) {
-                setValue(values);
+            if (valuesBuilder.length() > 0) {
+                setValue(valuesBuilder.toString());
             }
         }
         return this.selectedItems;

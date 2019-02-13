@@ -13,7 +13,6 @@ package org.kitodo.export;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 
@@ -30,6 +29,10 @@ import org.kitodo.data.database.beans.Process;
 
 public class XsltHelper {
 
+    private XsltHelper() {
+        // private constructor to hide implicit one
+    }
+
     /**
      * Transforms a xml file by xslt and returns the result as string.
      *
@@ -41,10 +44,10 @@ public class XsltHelper {
         StreamSource xsltSource = new StreamSource(xslFile.getPath());
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(xsltSource);
-        try (OutputStream outputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             StreamResult result = new StreamResult(outputStream);
             transformer.transform(source, result);
-            return (ByteArrayOutputStream) outputStream;
+            return outputStream;
         }
     }
 

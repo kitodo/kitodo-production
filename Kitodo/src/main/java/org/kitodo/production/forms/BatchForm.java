@@ -20,7 +20,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +33,6 @@ import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProcessDTO;
@@ -464,7 +462,7 @@ public class BatchForm extends BaseForm {
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
-            } catch (IOException | ExportFileException | RuntimeException | JAXBException e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;

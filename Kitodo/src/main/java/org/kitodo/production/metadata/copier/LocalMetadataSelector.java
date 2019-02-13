@@ -11,12 +11,11 @@
 
 package org.kitodo.production.metadata.copier;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 public class LocalMetadataSelector extends MetadataSelector {
 
-    public LocalMetadataSelector(String path) throws ConfigurationException {
+    public LocalMetadataSelector(String path) {
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
