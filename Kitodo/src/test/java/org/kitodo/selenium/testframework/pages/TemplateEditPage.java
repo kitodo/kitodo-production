@@ -75,6 +75,11 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
         return this;
     }
 
+    public TemplateEditPage addSecondProject() {
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(1).click();
+        return this;
+    }
+
     public TemplateEditPage editTemplateTask() throws Exception {
         switchToTabByIndex(TabIndex.TEMPLATE_TASKS.getIndex(), templateTabView);
         editTaskLink.click();

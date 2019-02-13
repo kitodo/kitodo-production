@@ -226,6 +226,9 @@ public class Browser {
 
     public static String getCellDataByRow(WebElement row, int columnIndex) {
         List<WebElement> cells = getCellsOfRow(row);
+        if(cells.size()<=columnIndex){
+            return "";
+        }
         return cells.get(columnIndex).getText();
     }
 

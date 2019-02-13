@@ -15,7 +15,6 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -237,10 +236,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement detailsTable = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateDetailTable"));
-        //TODO: find way to read this table without excpetion...
-        //List<String> details = getTableDataByColumn(detailsTable, 1);
-        //details.addAll(getTableDataByColumn(detailsTable, 3));
-        return new ArrayList<>();
+        List<String> details = getTableDataByColumn(detailsTable, 1);
+        details.addAll(getTableDataByColumn(detailsTable, 3));
+        return details;
     }
 
     /**
@@ -395,6 +393,14 @@ public class ProjectsPage extends Page<ProjectsPage> {
                 projectsTabView);
     }
 
+    /**
+     * Switch to template Tab.
+     */
+    public ProjectsPage goToTemplateTab() throws Exception {
+        switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
+        return this;
+
+    }
     /**
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).

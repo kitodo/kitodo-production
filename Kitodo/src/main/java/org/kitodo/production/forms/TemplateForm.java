@@ -312,7 +312,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return value of assigned projects
      */
-    public List<Project> getAssignedProjects(){
+    public List<Project> getAssignedProjects() {
         return assignedProjects;
     }
 
@@ -321,7 +321,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @param assignedProjects as assignedProjects
      */
-    public void setAssignedProjects(ArrayList<Project> assignedProjects){
+    public void setAssignedProjects(ArrayList<Project> assignedProjects) {
         this.assignedProjects = assignedProjects;
     }
 
