@@ -248,15 +248,14 @@ public class ProjectForm extends BaseForm {
      * Remove.
      */
     public void delete() {
-        if (!this.project.getUsers().isEmpty()) {
-            Helper.setErrorMessage("userAssignedError");
-        } else {
-            try {
-                ServiceManager.getProjectService().remove(this.project);
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
-                    logger, e);
+        try {
+            for (User user : this.project.getUsers()) {
+                user.getProjects().remove(this.project);
+                ServiceManager.getUserService().saveToDatabase(user);
             }
+            ServiceManager.getProjectService().remove(this.project);
+        } catch (DAOException | DataException e) {
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
         }
     }
 
