@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -323,7 +324,7 @@ public class ImageGenerator implements Runnable {
      *            what the supervisor should do
      */
     public void letTheSupervisorDo(Consumer<EmptyTask> action) {
-        if (supervisor != null) {
+        if (Objects.nonNull(supervisor)) {
             action.accept(supervisor);
         }
     }
@@ -366,7 +367,7 @@ public class ImageGenerator implements Runnable {
             state.accept(this);
             setPosition(getPosition() + 1);
             setProgress();
-            if (supervisor != null && supervisor.isInterrupted()) {
+            if (Objects.nonNull(supervisor) && supervisor.isInterrupted()) {
                 return;
             }
         } while (!(state.equals(ImageGeneratorStep.GENERATE_IMAGES)
@@ -388,7 +389,7 @@ public class ImageGenerator implements Runnable {
      * Calculates and reports the progress of the task.
      */
     private void setProgress() {
-        if (supervisor != null) {
+        if (Objects.nonNull(supervisor)) {
             int checked = state.equals(ImageGeneratorStep.GENERATE_IMAGES)
                     ? getMode().equals(GenerationMode.ALL) ? 1 : sources.size()
                     : 0;
