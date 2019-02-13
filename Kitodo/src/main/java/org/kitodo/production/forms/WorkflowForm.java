@@ -62,7 +62,6 @@ public class WorkflowForm extends BaseForm {
     private transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
-    private String newFileName;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private static final String SVG_EXTENSION = ".svg";
     private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
@@ -157,11 +156,6 @@ public class WorkflowForm extends BaseForm {
 
         Map<String, URI> diagramsUris = getDiagramUris();
 
-        if (isWorkflowAlreadyInUse(this.workflow)) {
-            this.newFileName = decodeXMLDiagramName(this.workflow.getFileName()) + "_" + Helper.generateRandomString(3);
-            diagramsUris = getDiagramUris(this.newFileName);
-        }
-
         URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
         URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
@@ -226,22 +220,10 @@ public class WorkflowForm extends BaseForm {
             Reader reader = new Reader(decodedXMLDiagramName);
             Diagram diagram = reader.getWorkflow();
             this.workflow.setTitle(diagram.getId());
-            if (isWorkflowAlreadyInUse(this.workflow)) {
-                Workflow newWorkflow = new Workflow(diagram.getId(), this.newFileName);
-                newWorkflow.setActive(this.workflow.isActive());
-                newWorkflow.setReady(this.workflow.isReady());
-                newWorkflow.setClient(this.workflow.getClient());
-                this.workflow.setActive(false);
-                ServiceManager.getWorkflowService().save(newWorkflow);
-            }
             ServiceManager.getWorkflowService().save(this.workflow);
         } catch (DataException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    private boolean isWorkflowAlreadyInUse(Workflow workflow) {
-        return workflow.isReady();
     }
 
     /**

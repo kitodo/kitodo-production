@@ -1221,10 +1221,15 @@ public class MockDatabase {
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);
 
-        Workflow secondWorkflow = new Workflow("gateway", "gateway");
+        Workflow secondWorkflow = new Workflow("test-hello", "test");
         secondWorkflow.setReady(false);
-        secondWorkflow.setClient(ServiceManager.getClientService().getById(2));
+        secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
+
+        Workflow thirdWorkflow = new Workflow("gateway", "gateway");
+        thirdWorkflow.setReady(false);
+        thirdWorkflow.setClient(ServiceManager.getClientService().getById(2));
+        ServiceManager.getWorkflowService().save(thirdWorkflow);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {

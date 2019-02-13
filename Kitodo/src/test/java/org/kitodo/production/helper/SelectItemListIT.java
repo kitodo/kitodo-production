@@ -176,12 +176,13 @@ public class SelectItemListIT {
         WorkflowService workflowService = ServiceManager.getWorkflowService();
 
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 2, SelectItemList.getWorkflows(workflowService.getAll()).size()));
+            () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getWorkflows(workflowService.getAll()).size()));
 
         List<SelectItem> selectItems = SelectItemList.getWorkflows(workflowService.getAll());
 
         assertEquals("First item is not sorted correctly!", "gateway", selectItems.get(0).getLabel());
         assertEquals("Second item is not sorted correctly!", "test", selectItems.get(1).getLabel());
+        assertEquals("Second item is not sorted correctly!", "test", selectItems.get(2).getLabel());
 
         assertThat("First item is not a Workflow type!", selectItems.get(0).getValue(), instanceOf(Workflow.class));
     }
