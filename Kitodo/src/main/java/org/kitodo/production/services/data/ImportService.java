@@ -11,8 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -156,10 +154,10 @@ public class ImportService {
             SAXBuilder saxBuilder = new SAXBuilder();
             DOMOutputter outputter = new DOMOutputter();
             StreamSource transformSource = new StreamSource(stylesheetFile);
-            TransformerFactoryImpl transformerFactoryImpl = new TransformerFactoryImpl();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
             File outputFile = File.createTempFile("transformed", "xml");
             try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-                Transformer xsltTransformer = transformerFactoryImpl.newTransformer(transformSource);
+                Transformer xsltTransformer = transformerFactory.newTransformer(transformSource);
                 TransformerHandler handler = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
                 handler.setResult(new StreamResult(outputStream));
                 Result saxResult = new SAXResult(handler);
