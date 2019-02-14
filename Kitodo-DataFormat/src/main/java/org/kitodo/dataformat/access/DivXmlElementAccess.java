@@ -12,6 +12,8 @@
 package org.kitodo.dataformat.access;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -41,6 +42,8 @@ import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.MdSecType.MdWrap;
 import org.kitodo.dataformat.metskitodo.MdSecType.MdWrap.XmlData;
+import org.kitodo.dataformat.metskitodo.MetadataGroupType;
+import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 /**
@@ -158,19 +161,23 @@ public class DivXmlElementAccess extends Structure {
      *            type of meta-data section
      */
     private final void readMetadata(MdSecType mdSec, MdSec mdSecType) {
-        super.getMetadata()
-                .addAll(
-                    mdSec.getMdWrap().getXmlData().getAny().parallelStream().filter(JAXBElement.class::isInstance)
-                            .map(JAXBElement.class::cast).map(JAXBElement::getValue)
-                            .filter(KitodoType.class::isInstance).map(KitodoType.class::cast)
-                            .flatMap(kitodoType -> Stream.concat(
-                                kitodoType.getMetadata().parallelStream()
-                                        .map(metadataType -> new MetadataXmlElementAccess(mdSecType,
-                                                metadataType).getMetadataEntry()),
-                                kitodoType.getMetadataGroup().parallelStream()
-                                        .map(metadataGroupType -> new MetadataGroupXmlElementAccess(mdSecType,
-                                                metadataGroupType).getMetadataGroup())))
-                            .collect(Collectors.toList()));
+        Collection<Metadata> metadata = new HashSet<>();
+        for (Object object : mdSec.getMdWrap().getXmlData().getAny()) {
+            if (object instanceof JAXBElement) {
+                JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
+                Object value = jaxbElement.getValue();
+                if (value instanceof KitodoType) {
+                    KitodoType kitodoType = (KitodoType) value;
+                    for (MetadataType metadataEntry : kitodoType.getMetadata()) {
+                        metadata.add(new MetadataXmlElementAccess(mdSecType, metadataEntry).getMetadataEntry());
+                    }
+                    for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
+                        metadata.add(new MetadataGroupXmlElementAccess(mdSecType, metadataGroup).getMetadataGroup());
+                    }
+                }
+            }
+        }
+        super.getMetadata().addAll(metadata);
     }
 
     /**
