@@ -39,13 +39,6 @@
                         <ui:include src="/WEB-INF/templates/includes/header.xhtml" />
                     </ui:insert>
                 </header>
-                <h:panelGroup id="breadcrumb-wrapper" layout="block" rendered="#{not request.requestURI.endsWith('login.jsf')}">
-                    <ul id="breadcrumb">
-                        <ui:insert name="breadcrumbs">
-                            <ui:include src="/WEB-INF/templates/includes/breadcrumbs.xhtml" />
-                        </ui:insert>
-                    </ul>
-                </h:panelGroup>
                 <main class="flex-item" role="main">
                     <ui:insert name="content">
                         <ui:include src="/WEB-INF/templates/includes/content.xhtml" />

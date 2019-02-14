@@ -116,12 +116,8 @@ body.first-visit #portal-header {
     }
 
 #portal-header section {
-    display: block;
+    display: inline-block;
     vertical-align: top;
-    }
-
-#portal-header #portal-logo {
-    width: 25%;
     }
 
 #kitodo-logo {
@@ -138,15 +134,15 @@ body.first-visit #portal-header {
     text-align: center;
 }
 
-#portal-header #portal-search {
-    width: 100%;
-    }
+#portal-search {
+    margin-left: var(--default-double-size);
+    margin-right: var(--default-full-size);
+}
 
 #portal-search form {
     background: #064f80;
     border-radius: 3px;
     display: table;
-    width: 100%;
     white-space: nowrap;
     }
 
@@ -423,46 +419,24 @@ body.first-visit #portal-header {
     vertical-align: middle;
 }
 
-#breadcrumb-wrapper {
-    padding: 0 16px;
-    }
-
-#breadcrumb {
-    display: block !important;
-    clear: both;
-    margin: 10px auto;
-    text-align: left;
-    color: #fff;
-    font-size: 0px;
-    width: 100%;
-    }
-
-#breadcrumb li {
-    list-style-type: none;
+#breadcrumbMenu a.ui-menuitem-link {
+    background-color: #064f80;
+    border-radius: 3px;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
     display: inline-block;
-    }
+    text-align: center;
+}
 
-#breadcrumb li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    }
+#breadcrumbMenu {
+    padding: 0;
+}
 
-#breadcrumb li a:hover {
-    color: #1b2b36;
-    }
-
-#breadcrumb li a:before {
-    font-family: FontAwesome;
-    content: "\f054";
-    padding: 0px 10px;
-    }
-
-#breadcrumb li:first-child a:before {
-    content: " " !important;
-    padding: 0px;
-    }
-
+#breadcrumbMenu a.ui-menuitem-link {
+    margin-top: 0;
+    color: white;
+}
 
 
 /*----------------------------------------------------------------------
@@ -1679,19 +1653,11 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 36px;
+        margin-top: var(--default-full-size);
         }
 
     #portal-header .wrapper {
         display: table;
-        }
-
-    #portal-header section {
-        display: table-cell;
-        }
-
-    #portal-header #portal-search {
-        width: 50%;
         }
 
     #search-form\:search-field {
@@ -1709,6 +1675,7 @@ min 700px
         position: relative;
         top: auto;
         right: auto;
+        float: right;
         }
 
     #portal-header section.login-screen {
@@ -1719,9 +1686,9 @@ min 700px
     }
 
     #kitodo-logo {
-        display: block;
         width: auto !important;
         margin: auto !important;
+        display: inline-block;
     }
 
     .login-screen #kitodo-logo {

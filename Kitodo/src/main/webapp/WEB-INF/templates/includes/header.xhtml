@@ -21,7 +21,7 @@
 
         <section id="portal-logo">
             <h:outputLink value="desktop.jsf">
-                <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" width="160" id="kitodo-logo"/>
+                <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" height="36" id="kitodo-logo"/>
             </h:outputLink>
             <h:outputLink value="desktop.jsf">
                 <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
@@ -29,9 +29,13 @@
         </section>
 
         <section id="portal-search">
-            <h:form id="search-form" action="" style="display:none">
-                <p:inputText id="search-field" a:placeholder="#{msgs.searchPlaceholder}"/><p:inputText id="search-field-short" a:placeholder="#{msgs.search}"/><button type="submit"><i class="fa fa-search"/></button>
+            <h:form id="search-form" action="">
+                <p:inputText id="search-field" a:placeholder="#{msgs.search}"/><p:inputText id="search-field-short" a:placeholder="#{msgs.search}"/><button type="submit"><i class="fa fa-search"/></button>
             </h:form>
+        </section>
+
+        <section id="breadcrumbs">
+            <p:breadCrumb id="breadcrumbMenu" model="#{breadcrumbMenuModel.breadcrumbModel}"/>
         </section>
 
         <section id="portal-nav">
