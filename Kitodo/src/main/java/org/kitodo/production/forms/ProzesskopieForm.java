@@ -62,6 +62,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
@@ -672,9 +673,8 @@ public class ProzesskopieForm implements Serializable {
         try {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
             ServiceManager.getProcessService().save(this.prozessKopie);
-            ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("process") }, logger, e);
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular()}, logger, e);
             return null;
         }
 
@@ -702,10 +702,15 @@ public class ProzesskopieForm implements Serializable {
             createNewFileformat();
         }
 
-        /*
-         * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
-         * oder frisch angelegt), dann diese ergänzen
-         */
+        processRdfConfiguration();
+
+        return processListPath;
+    }
+
+    /**
+     * If there is an RDF configuration (for example, from the OPAC import, or freshly created), then supplement these.
+     */
+    private void processRdfConfiguration() {
         try {
             if (Objects.nonNull(this.rdf)) {
                 insertLogicalDocStruct();
@@ -726,11 +731,9 @@ public class ProzesskopieForm implements Serializable {
             ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
             startTaskScriptThreads();
-
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return processListPath;
     }
 
     private void processAdditionalField(AdditionalField field) {
