@@ -63,7 +63,7 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
     public TemplateEditPage insertTemplateData(Template template) {
         titleInput.sendKeys(template.getTitle());
-        Browser.getDriver().findElements(By.className("ui-selectlistbox-item")).get(0).click();
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(0).click();
         clickElement(workflowSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(workflowSelect.getAttribute("id") + "_0")));
 
@@ -72,6 +72,11 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
         clickElement(docketSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(docketSelect.getAttribute("id") + "_1")));
+        return this;
+    }
+
+    public TemplateEditPage addSecondProject() {
+        Browser.getDriver().findElements(By.className("ui-chkbox")).get(1).click();
         return this;
     }
 

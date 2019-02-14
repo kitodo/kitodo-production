@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +49,7 @@ public class TemplateForm extends TemplateBaseForm {
     private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
     private Template template;
+    private List<Project> assignedProjects = new ArrayList<>();
     private Task task;
     private boolean showInactiveTemplates = false;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -88,6 +90,7 @@ public class TemplateForm extends TemplateBaseForm {
     public String newTemplate() {
         this.template = new Template();
         this.template.setTitle("");
+        this.assignedProjects.clear();
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -104,6 +107,8 @@ public class TemplateForm extends TemplateBaseForm {
         try {
             Template baseTemplate = ServiceManager.getTemplateService().getById(itemId);
             this.template = ServiceManager.getTemplateService().duplicateTemplate(baseTemplate);
+            this.assignedProjects.clear();
+            this.assignedProjects.addAll(template.getProjects());
             return templateEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
@@ -133,6 +138,9 @@ public class TemplateForm extends TemplateBaseForm {
                 Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
                 return this.stayOnCurrentPage;
             }
+
+            this.template.getProjects().clear();
+            this.template.getProjects().addAll(assignedProjects);
 
             try {
                 ServiceManager.getTemplateService().save(this.template);
@@ -295,6 +303,26 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public void setTemplate(Template template) {
         this.template = template;
+        this.assignedProjects.clear();
+        this.assignedProjects.addAll(template.getProjects());
+    }
+
+    /**
+     * Get assignedProjects.
+     *
+     * @return value of assigned projects
+     */
+    public List<Project> getAssignedProjects() {
+        return assignedProjects;
+    }
+
+    /**
+     * Set assignedProjects.
+     *
+     * @param assignedProjects as assignedProjects
+     */
+    public void setAssignedProjects(ArrayList<Project> assignedProjects) {
+        this.assignedProjects = assignedProjects;
     }
 
     /**

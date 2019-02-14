@@ -13,8 +13,11 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+
+import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
@@ -23,13 +26,14 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.kitodo.production.services.ServiceManager;
 
 public class EditingST extends BaseTestSelenium {
 
@@ -93,23 +97,34 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editTemplateTest() throws Exception {
-        projectsPage.editTemplate();
+        projectsPage = projectsPage.goToTemplateTab();
+        List<String> templateDetails = projectsPage.getTemplateDetails();
+        assertTrue("The first project should be assigned to this template", templateDetails.contains("First project"));
+        assertFalse("The template is already assigned to second Project",
+            templateDetails.stream().anyMatch(listString -> listString.contains("Second project")));
+
+        TemplateEditPage editTemplatePage = projectsPage.editTemplate();
         assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (First template)",
             Pages.getTemplateEditPage().getHeaderText());
+
+        editTemplatePage.addSecondProject();
+        templateDetails = editTemplatePage.save().getTemplateDetails();
+        assertTrue("The second project should be assigned to this template",
+            templateDetails.stream().anyMatch(listString -> listString.contains("Second project")));
     }
 
     @Test
     public void editWorkflowTest() throws Exception {
         projectsPage.editWorkflow();
         assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test-hello)",
-            Pages.getWorkflowEditPage().getHeaderText());
+                Pages.getWorkflowEditPage().getHeaderText());
     }
 
     @Test
     public void editDocketTest() throws Exception {
         projectsPage.editDocket();
         assertEquals("Header for edit docket is incorrect", "Laufzettel bearbeiten (default)",
-            Pages.getDocketEditPage().getHeaderText());
+                Pages.getDocketEditPage().getHeaderText());
     }
 
     @Test
