@@ -60,10 +60,20 @@ public class FLocatXmlElementAccess {
         }
     }
 
+    /**
+     * Returns the METS file ID of the F locat XML element access.
+     * 
+     * @return the ID
+     */
     String getFileId() {
         return metsReferrerId;
     }
 
+    /**
+     * Returns the URI of the F locat XML element access.
+     * 
+     * @return the URI
+     */
     public URI getUri() {
         return uri;
     }
