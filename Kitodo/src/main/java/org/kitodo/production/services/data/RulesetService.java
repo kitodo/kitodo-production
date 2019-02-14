@@ -142,18 +142,6 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     /**
-     * Find rulesets with exact file content.
-     *
-     * @param fileContent
-     *            of the searched ruleset
-     * @return list of JSON objects
-     */
-    public List<Map<String, Object>> findByFileContent(String fileContent) throws DataException {
-        QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE_CONTENT.getKey(), fileContent, true);
-        return findDocuments(queryBuilder);
-    }
-
-    /**
      * Find rulesets for client id.
      *
      * @param clientId
