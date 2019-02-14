@@ -35,7 +35,8 @@ public enum ProcessTypeField implements TypeInterface {
     TASKS("tasks"),
     PROPERTIES("properties"),
     TEMPLATES("templates"),
-    WORKPIECES("workpieces");
+    WORKPIECES("workpieces"),
+    META_XML("meta.xml");
 
     private String name;
 
