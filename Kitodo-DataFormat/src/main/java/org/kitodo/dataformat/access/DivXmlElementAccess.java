@@ -12,12 +12,11 @@
 package org.kitodo.dataformat.access;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -30,9 +29,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -46,24 +48,12 @@ import org.kitodo.dataformat.metskitodo.Mets;
  * structure can be subdivided into arbitrary finely granular
  * {@link #substructures}. It can be described by {@link #metadata}.
  */
-public class Structure implements DivXmlElementAccessInterface {
+public class DivXmlElementAccess extends Structure {
     /**
      * The qualified name of the Kitodo meta-data format, needed to assemble the
      * meta-data entries in METS using JAXB.
      */
     private static final QName KITODO_QNAME = new QName("http://meta.kitodo.org/v1/", "kitodo");
-
-    /**
-     * The label for this structure. The label is displayed in the graphical
-     * representation of the structure tree for this level.
-     */
-    private String label;
-
-    /**
-     * The meta-data for this structure. This structure level can be described
-     * with any meta-data.
-     */
-    private Collection<MetadataAccessInterface> metadata = new HashSet<>();
 
     /**
      * Some magic numbers that are used in the METS XML file representation of
@@ -74,57 +64,20 @@ public class Structure implements DivXmlElementAccessInterface {
     private final String metsReferrerId;
 
     /**
-     * The order label of this structure. This is needed very rarely. It is not
-     * displayed, and unlike the name suggests, it does not specify the order of
-     * this substructure along with other substructures within its parent
-     * structure, but the order is determined by the order of references from
-     * the parent tree to each substructure. The order label may be used to
-     * store the machine-readable value if the label contains a human-readable
-     * value that can be mapped to a machine-readable value. An example of this
-     * are calendar dates. For example, a label of “the fifteenth year of the
-     * reign of Tiberius Caesar” could be stored as “{@code -0006}”.
+     * Creates a new DivXmlElementAccess.
      */
-    private String orderlabel;
-
-    /**
-     * The substructures of this structure, which form the structure tree. The
-     * order of the substructures described by the order of the {@code <div>}
-     * elements in the {@code <structMap TYPE="LOGICAL">} in the METS file.
-     */
-    private List<DivXmlElementAccessInterface> substructures = new LinkedList<>();
-
-    /**
-     * The type of structure, for example, book, chapter, page. Although the
-     * data type of this variable is a string, it is recommended to use a
-     * controlled vocabulary. If the generated METS files are to be used with
-     * the DFG Viewer, the list of possible structure types is defined.
-     * 
-     * @see "https://dfg-viewer.de/en/structural-data-set/"
-     */
-    private String type;
-
-    /**
-     * The views on media units that this structure level comprises. Currently,
-     * only {@link View}s on media units as a whole are possible with
-     * Production, but here it has already been built for the future, that also
-     * {@code View}s on parts of {@link MediaUnit}s are to be made possible. The
-     * list of {@code View}s is aware of the order of the {@code MediaUnit}s
-     * encoded by the {@code MediaUnit}’s {@code order} property. Although this
-     * list implements the {@link List} interface, it always preserves the order
-     * as dictated by the {@code order} property of the {@code MediaUnit}s.
-     * Therefore, to reorder this list, you must change the {@code order}
-     * property of the {@code MediaUnit}s instead. It is not possible to code
-     * several sequences that are in conflict with each other.
-     */
-    private final List<AreaXmlElementAccessInterface> views = new SortedList<AreaXmlElementAccessInterface>(
-        areaXmlElementAccessInterface -> areaXmlElementAccessInterface.getFile().getOrder());
-
-    /**
-     * Public constructor to create a new structure. This constructor can be
-     * called via the service loader to get a new structure.
-     */
-    public Structure() {
+    public DivXmlElementAccess() {
+        super();
         metsReferrerId = UUID.randomUUID().toString();
+    }
+
+    /**
+     * Creates a new DivXmlElementAccess for an existing structure.
+     */
+    DivXmlElementAccess(Structure structure) {
+        super(structure);
+        metsReferrerId = structure instanceof DivXmlElementAccess ? ((DivXmlElementAccess) structure).metsReferrerId
+                : UUID.randomUUID().toString();
     }
 
     /**
@@ -140,8 +93,9 @@ public class Structure implements DivXmlElementAccessInterface {
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
      */
-    Structure(DivType div, Mets mets, Map<String, Set<MediaUnit>> mediaUnitsMap) {
-        label = div.getLABEL();
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
+        super();
+        super.setLabel(div.getLABEL());
         for (Object mdSec : div.getDMDID()) {
             readMetadata((MdSecType) mdSec, MdSec.DMD_SEC);
         }
@@ -149,13 +103,18 @@ public class Structure implements DivXmlElementAccessInterface {
             readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec));
         }
         metsReferrerId = div.getID();
-        orderlabel = div.getORDERLABEL();
-        substructures = div.getDiv().stream().map(child -> new Structure(child, mets, mediaUnitsMap))
-                .collect(Collectors.toCollection(LinkedList::new));
-        type = div.getTYPE();
-        Set<MediaUnit> mediaUnits = mediaUnitsMap.get(div.getID());
-        if (mediaUnits != null) {
-            mediaUnits.stream().map(View::new).forEach(views::add);
+        super.setOrderlabel(div.getORDERLABEL());
+        for (DivType child : div.getDiv()) {
+            super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap));
+        }
+        super.setType(div.getTYPE());
+        Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
+        if (Objects.nonNull(fileXmlElementAccesses)) {
+            for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
+                if (Objects.nonNull(fileXmlElementAccess)) {
+                    super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
+                }
+            }
         }
     }
 
@@ -199,108 +158,19 @@ public class Structure implements DivXmlElementAccessInterface {
      *            type of meta-data section
      */
     private final void readMetadata(MdSecType mdSec, MdSec mdSecType) {
-        metadata.addAll(mdSec.getMdWrap().getXmlData().getAny().parallelStream().filter(JAXBElement.class::isInstance)
-                .map(JAXBElement.class::cast).map(JAXBElement::getValue).filter(KitodoType.class::isInstance)
-                .map(KitodoType.class::cast)
-                .flatMap(kitodoType -> Stream.concat(
-                    kitodoType.getMetadata().parallelStream()
-                            .map(metadataType -> new MetadataEntry(mdSecType, metadataType)),
-                    kitodoType.getMetadataGroup().parallelStream()
-                            .map(metadataGroupType -> new MetadataEntriesGroup(mdSecType, metadataGroupType))))
-                .collect(Collectors.toList()));
-    }
-
-    /**
-     * Returns the views associated with this structure.
-     * 
-     * @return the views
-     */
-    @Override
-    public List<AreaXmlElementAccessInterface> getAreas() {
-        return views;
-    }
-
-    /**
-     * Returns the substructures associated with this structure.
-     * 
-     * @return the substructures
-     */
-    @Override
-    public List<DivXmlElementAccessInterface> getChildren() {
-        return substructures;
-    }
-
-    /**
-     * Returns the label of this structure.
-     * 
-     * @return the label
-     */
-    @Override
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Returns the meta-data on this structure.
-     * 
-     * @return the meta-data
-     */
-    @Override
-    public Collection<MetadataAccessInterface> getMetadata() {
-        return metadata;
-    }
-
-    /**
-     * Returns the order label of this structure.
-     * 
-     * @return the order label
-     */
-    @Override
-    public String getOrderlabel() {
-        return orderlabel;
-    }
-
-    /**
-     * Returns the type of this structure.
-     * 
-     * @return the type
-     */
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the label of this structure.
-     * 
-     * @param label
-     *            label to set
-     */
-    @Override
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    /**
-     * Sets the order label of this structure.
-     * 
-     * @param orderlabel
-     *            order label to set
-     */
-    @Override
-    public void setOrderlabel(String orderlabel) {
-        this.orderlabel = orderlabel;
-    }
-
-    /**
-     * Sets the type of this structure.
-     * 
-     * @param type
-     *            type to set
-     */
-    @Override
-    public void setType(String type) {
-        this.type = type;
+        super.getMetadata()
+                .addAll(
+                    mdSec.getMdWrap().getXmlData().getAny().parallelStream().filter(JAXBElement.class::isInstance)
+                            .map(JAXBElement.class::cast).map(JAXBElement::getValue)
+                            .filter(KitodoType.class::isInstance).map(KitodoType.class::cast)
+                            .flatMap(kitodoType -> Stream.concat(
+                                kitodoType.getMetadata().parallelStream()
+                                        .map(metadataType -> new MetadataXmlElementAccess(mdSecType,
+                                                metadataType).getMetadataEntry()),
+                                kitodoType.getMetadataGroup().parallelStream()
+                                        .map(metadataGroupType -> new MetadataGroupXmlElementAccess(mdSecType,
+                                                metadataGroupType).getMetadataGroup())))
+                            .collect(Collectors.toList()));
     }
 
     /**
@@ -316,14 +186,13 @@ public class Structure implements DivXmlElementAccessInterface {
      *            the METS structure in which the meta-data is added
      * @return a METS {@code <div>} element
      */
-    DivType toDiv(Map<MediaUnit, String> mediaUnitIDs,
-            LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+    DivType toDiv(Map<MediaUnit, String> mediaUnitIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
-        div.setLABEL(label);
-        div.setORDERLABEL(orderlabel);
-        div.setTYPE(type);
-        smLinkData.addAll(views.parallelStream().map(AreaXmlElementAccessInterface::getFile).map(mediaUnitIDs::get)
+        div.setLABEL(super.getLabel());
+        div.setORDERLABEL(super.getOrderlabel());
+        div.setTYPE(super.getType());
+        smLinkData.addAll(super.getViews().parallelStream().map(View::getMediaUnit).map(mediaUnitIDs::get)
                 .map(mediaUnitId -> Pair.of(metsReferrerId, mediaUnitId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
@@ -340,8 +209,8 @@ public class Structure implements DivXmlElementAccessInterface {
             mets.getAmdSec().add(admSec);
         }
 
-        for (DivXmlElementAccessInterface substructure : substructures) {
-            div.getDiv().add(((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (Structure substructure : super.getChildren()) {
+            div.getDiv().add(new DivXmlElementAccess(substructure).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }
@@ -356,12 +225,13 @@ public class Structure implements DivXmlElementAccessInterface {
      */
     private Optional<MdSecType> createMdSec(MdSec domain) {
         KitodoType kitodoType = new KitodoType();
-        for (MetadataAccessInterface entry : metadata) {
+        for (Metadata entry : super.getMetadata()) {
             if (domain.equals(entry.getDomain())) {
                 if (entry instanceof MetadataEntry) {
-                    kitodoType.getMetadata().add(((MetadataEntry) entry).toMetadata());
-                } else if (entry instanceof MetadataEntriesGroup) {
-                    kitodoType.getMetadataGroup().add(((MetadataEntriesGroup) entry).toMetadataGroup());
+                    kitodoType.getMetadata().add(new MetadataXmlElementAccess((MetadataEntry) entry).toMetadata());
+                } else if (entry instanceof MetadataGroup) {
+                    kitodoType.getMetadataGroup()
+                            .add(new MetadataGroupXmlElementAccess((MetadataGroup) entry).toXMLMetadataGroup());
                 }
             }
         }

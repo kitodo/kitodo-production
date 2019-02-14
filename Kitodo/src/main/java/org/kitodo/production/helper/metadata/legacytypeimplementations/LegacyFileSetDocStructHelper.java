@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.api.dataformat.MediaUnit;
 
 /**
  * Connects a legacy file set its corresponding doc struct to a media units
@@ -33,10 +33,10 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     /**
      * The media units list accessed via this soldering class.
      */
-    private List<FileXmlElementAccessInterface> mediaUnits;
+    private List<MediaUnit> mediaUnits;
 
     @Deprecated
-    public LegacyFileSetDocStructHelper(List<FileXmlElementAccessInterface> mediaUnits) {
+    public LegacyFileSetDocStructHelper(List<MediaUnit> mediaUnits) {
         this.mediaUnits = mediaUnits;
     }
 
@@ -133,7 +133,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
         List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
-        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+        for (MediaUnit mediaUnit : mediaUnits) {
             result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
         return result;
@@ -143,7 +143,7 @@ public class LegacyFileSetDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String page, String asterisk) {
         List<LegacyDocStructHelperInterface> result = new ArrayList<>(mediaUnits.size());
-        for (FileXmlElementAccessInterface mediaUnit : mediaUnits) {
+        for (MediaUnit mediaUnit : mediaUnits) {
             result.add(new LegacyInnerPhysicalDocStructHelper(mediaUnit));
         }
         return result;

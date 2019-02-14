@@ -12,6 +12,7 @@
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,9 +22,8 @@ import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
@@ -42,7 +42,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
      * the service loader is an instance variable.
      */
     @Deprecated
-    public final UseXmlAttributeAccessInterface local = metsService.createUseXmlAttributeAccess();
+    public final MediaVariant local = new MediaVariant();
 
     {
         local.setUse("LOCAL");
@@ -52,15 +52,15 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     /**
      * The media unit accessed via this soldering class.
      */
-    private FileXmlElementAccessInterface mediaUnit;
+    private MediaUnit mediaUnit;
 
     @Deprecated
     public LegacyInnerPhysicalDocStructHelper() {
-        this.mediaUnit = metsService.createFileXmlElementAccess();
+        this.mediaUnit = new MediaUnit();
     }
 
     @Deprecated
-    public LegacyInnerPhysicalDocStructHelper(FileXmlElementAccessInterface mediaUnit) {
+    public LegacyInnerPhysicalDocStructHelper(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
     }
 
@@ -81,7 +81,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Override
     @Deprecated
     public void addContentFile(LegacyContentFileHelper contentFile) {
-        mediaUnit.putFLocatForUse(local, contentFile.getMediaFile());
+        mediaUnit.getMediaFiles().put(local, ((LegacyContentFileHelper) contentFile).getMediaFile());
     }
 
     @Override
@@ -254,11 +254,11 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Override
     @Deprecated
     public String getImageName() {
-        FLocatXmlElementAccessInterface uri = this.mediaUnit.getFLocatForUse(local);
-        return new File(uri.getUri().getPath()).getName();
+        URI uri = mediaUnit.getMediaFiles().get(local);
+        return new File(uri.getPath()).getName();
     }
 
-    FileXmlElementAccessInterface getMediaUnit() {
+    MediaUnit getMediaUnit() {
         return mediaUnit;
     }
 

@@ -13,8 +13,8 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
 
 /**
  * Represents a legacy metadata. This is a soldering class to keep legacy code
@@ -40,7 +40,7 @@ public class LegacyMetadataHelper {
 
     private BindingSaveInterface bindingSaveInterface;
 
-    private MetadataXmlElementAccessInterface binding;
+    private MetadataEntry binding;
 
     private Domain domain;
 
@@ -58,7 +58,7 @@ public class LegacyMetadataHelper {
     }
 
     @Deprecated
-    public MetadataXmlElementAccessInterface getBinding() {
+    public MetadataEntry getBinding() {
         return binding;
     }
 
@@ -105,7 +105,7 @@ public class LegacyMetadataHelper {
      * @param domain
      *            the domain where the meta-data entry is stored
      */
-    public void setBinding(BindingSaveInterface bsi, MetadataXmlElementAccessInterface binding, Domain domain) {
+    public void setBinding(BindingSaveInterface bsi, MetadataEntry binding, Domain domain) {
         this.bindingSaveInterface = bsi;
         this.binding = binding;
         this.domain = domain;

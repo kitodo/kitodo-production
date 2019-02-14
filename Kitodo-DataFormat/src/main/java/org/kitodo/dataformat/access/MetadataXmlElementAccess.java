@@ -12,26 +12,27 @@
 package org.kitodo.dataformat.access;
 
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 
 /**
  * A meta-data entry. A meta-data entry consists of a key and a value. The key
- * is stored in the superclass {@link Metadata}. There is also the domain, that
+ * is stored in the superclass {@link MetadataXmlElementsAccess}. There is also the domain, that
  * is an indication in which container within the METS file the meta-data entry
  * is stored.
  */
-public class MetadataEntry extends Metadata implements MetadataXmlElementAccessInterface {
+public class MetadataXmlElementAccess extends MetadataXmlElementsAccess {
     /**
-     * The value of the meta-data entry.
+     * The data object of this meta-data XML element access.
      */
-    private String value;
+    private final MetadataEntry metadataEntry;
 
     /**
      * Public constructor for creating a new meta-data entry. This constructor
      * can be used with the service loader to create a new meta-data entry.
      */
-    public MetadataEntry() {
+    public MetadataXmlElementAccess() {
+        metadataEntry = new MetadataEntry();
     }
 
     /**
@@ -42,31 +43,19 @@ public class MetadataEntry extends Metadata implements MetadataXmlElementAccessI
      * @param metadataType
      *            Kitodo meta-data object (input)
      */
-    MetadataEntry(MdSec domain, MetadataType metadataType) {
-        super.domain = domain;
-        super.type = metadataType.getName();
-        this.value = metadataType.getValue();
+    MetadataXmlElementAccess(MdSec domain, MetadataType metadataType) {
+        this();
+        metadataEntry.setDomain(domain);
+        metadataEntry.setKey(metadataType.getName());
+        metadataEntry.setValue(metadataType.getValue());
     }
 
-    /**
-     * Returns the value of the meta-data entry.
-     * 
-     * @return the value
-     */
-    @Override
-    public String getValue() {
-        return value;
+    MetadataXmlElementAccess(MetadataEntry metadataEntry) {
+        this.metadataEntry = metadataEntry;
     }
 
-    /**
-     * Sets the value of the meta-data entry.
-     * 
-     * @param value
-     *            value to set
-     */
-    @Override
-    public void setValue(String value) {
-        this.value = value;
+    MetadataEntry getMetadataEntry() {
+        return metadataEntry;
     }
 
     /**
@@ -76,8 +65,8 @@ public class MetadataEntry extends Metadata implements MetadataXmlElementAccessI
      */
     MetadataType toMetadata() {
         MetadataType metadataType = new MetadataType();
-        metadataType.setName(super.type);
-        metadataType.setValue(this.value);
+        metadataType.setName(metadataEntry.getKey());
+        metadataType.setValue(metadataEntry.getValue());
         return metadataType;
     }
 }

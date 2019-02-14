@@ -24,7 +24,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
@@ -109,14 +109,14 @@ public class ExportMets {
     protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
             throws IOException {
 
-        MetsXmlElementAccessInterface workpiece = gdzfile.getWorkpiece();
+        Workpiece workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();
         ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
         /*
          * We write to the user’s home directory or to the hotfolder here, not
          * to a content repository, therefore no use of file service.
          */
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            workpiece.save(out);
+            ServiceManager.getMetsService().save(workpiece, out);
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray())) {
                 StreamSource source = new StreamSource(byteArrayInputStream);
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {

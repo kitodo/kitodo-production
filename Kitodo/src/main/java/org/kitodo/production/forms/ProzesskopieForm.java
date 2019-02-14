@@ -45,8 +45,8 @@ import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.config.DigitalCollection;
@@ -1011,13 +1011,13 @@ public class ProzesskopieForm implements Serializable {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
                 .getPreferences(this.prozessKopie.getRuleset()).getRuleset();
         try {
-            MetsXmlElementAccessInterface workpiece = metsService.createMetsXmlElementAccess();
-            DivXmlElementAccessInterface structure = workpiece.getStructMap();
+            Workpiece workpiece = new Workpiece();
+            Structure structure = workpiece.getStructure();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
             if (Objects.nonNull(configOpacDoctype)) {
                 // monograph
                 if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
-                    workpiece.getStructMap().setType(configOpacDoctype.getRulesetType());
+                    workpiece.getStructure().setType(configOpacDoctype.getRulesetType());
                     this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isPeriodical()) {
                     // journal
@@ -1049,8 +1049,8 @@ public class ProzesskopieForm implements Serializable {
      * @param type
      *            type of child to create
      */
-    private void addChild(DivXmlElementAccessInterface structure, String type) {
-        DivXmlElementAccessInterface volume = metsService.createDivXmlElementAccess();
+    private void addChild(Structure structure, String type) {
+        Structure volume = new Structure();
         volume.setType(type);
         structure.getChildren().add(volume);
     }

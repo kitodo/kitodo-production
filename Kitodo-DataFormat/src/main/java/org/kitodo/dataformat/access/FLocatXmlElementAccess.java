@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.FileType.FLocat;
 
@@ -23,27 +22,27 @@ import org.kitodo.dataformat.metskitodo.FileType.FLocat;
  * A media file is a reference to a computer file on the data store. Since it is
  * referenced by URI, it can also be in the world wide web.
  */
-public class MediaFile implements FLocatXmlElementAccessInterface {
+public class FLocatXmlElementAccess {
     /**
      * Some magic numbers that are used in the METS XML file representation of
      * this structure to describe relations between XML elements. They need to
      * be stored because some scatty third-party scripts rely on them not being
      * changed anymore once assigned.
      */
-    private final String metsReferrerId;
+    private String metsReferrerId;
 
     /**
      * References computer file.
      */
-    private URI uri;
+    private final URI uri;
 
     /**
      * Public constructor for creating a new media file reference. This
      * constructor can be used with the service manager to create a new instance
      * of media file.
      */
-    public MediaFile() {
-        metsReferrerId = UUID.randomUUID().toString();
+    FLocatXmlElementAccess(URI uri) {
+        this.uri = uri;
     }
 
     /**
@@ -52,7 +51,7 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      * @param file
      *            File to create a new media file reference from
      */
-    MediaFile(FileType file) {
+    FLocatXmlElementAccess(FileType file) {
         metsReferrerId = file.getID();
         try {
             uri = new URI(file.getFLocat().get(0).getHref());
@@ -62,24 +61,21 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
     }
 
     /**
-     * Returns the URI for accessing the computer file.
+     * Returns the METS file ID of the F locat XML element access.
      * 
-     * @return the URI
+     * @return the ID
      */
-    @Override
-    public URI getUri() {
-        return uri;
+    String getFileId() {
+        return metsReferrerId;
     }
 
     /**
-     * Sets a URI.
+     * Returns the URI of the F locat XML element access.
      * 
-     * @param href
-     *            URI to set
+     * @return the URI
      */
-    @Override
-    public void setUri(URI href) {
-        this.uri = href;
+    public URI getUri() {
+        return uri;
     }
 
     /**
@@ -91,9 +87,9 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
      *            obtained when the URI is downloaded
      * @return a METS {@code <file>} element
      */
-    FileType toFile(String mimeType) {
+    FileType toFile(String mimeType, String metsReferrerId) {
         FileType file = new FileType();
-        file.setID(metsReferrerId);
+        file.setID(metsReferrerId == null ? UUID.randomUUID().toString() : metsReferrerId);
         file.setMIMETYPE(mimeType);
         FLocat fLocat = new FLocat();
         fLocat.setLOCTYPE("URL");
@@ -101,5 +97,4 @@ public class MediaFile implements FLocatXmlElementAccessInterface {
         file.getFLocat().add(fLocat);
         return file;
     }
-
 }

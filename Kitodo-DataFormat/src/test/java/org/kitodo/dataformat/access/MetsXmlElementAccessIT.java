@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -28,9 +28,16 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.ProcessingNote;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataformat.Workpiece;
 
-public class WorkpieceIT {
+public class MetsXmlElementAccessIT {
 
     private static final File OUT_FILE = new File("src/test/resources/out.xml");
 
@@ -42,25 +49,25 @@ public class WorkpieceIT {
      * Tests loading a workpiece from a METS file.
      */
     @Test
-    public void testReadXML() throws Exception {
-        Workpiece workpiece = new Workpiece();
-        workpiece.read(new FileInputStream(new File("src/test/resources/meta.xml")));
+    public void testRead() throws Exception {
+        Workpiece workpiece = new MetsXmlElementAccess()
+                .read(new FileInputStream(new File("src/test/resources/meta.xml")));
 
         // METS file has 183 associated images
-        assertEquals(183, workpiece.getFileGrp().size());
+        assertEquals(183, workpiece.getMediaUnits().size());
 
         // all pages are linked to the root element
-        assertEquals(workpiece.getFileGrp().size(), workpiece.getStructMap().getAreas().size());
+        assertEquals(workpiece.getMediaUnits().size(), workpiece.getStructure().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getStructMap().getChildren().size());
+        assertEquals(16, workpiece.getStructure().getChildren().size());
 
         // root node has 11 meta-data entries
-        assertEquals(11, workpiece.getStructMap().getMetadata().size());
+        assertEquals(11, workpiece.getStructure().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
-            workpiece.getFileGrp().get(0).getAllUsesWithFLocats().iterator().next().getValue().getUri());
+            workpiece.getMediaUnits().get(0).getMediaFiles().entrySet().iterator().next().getValue());
 
         // pagination can be read
         assertEquals(
@@ -79,12 +86,12 @@ public class WorkpieceIT {
                 "uncounted", "uncounted", "113", "114", "115", "116", "117", "118", "uncounted", "uncounted", "119",
                 "120", "uncounted", "uncounted", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
                 "131", "132", "133", "134", "uncounted", "uncounted", "uncounted"),
-            workpiece.getFileGrp().stream().map(FileXmlElementAccessInterface::getOrderlabel)
+            workpiece.getMediaUnits().stream().map(MediaUnit::getOrderlabel)
                     .collect(Collectors.toList()));
     }
 
     @Test
-    public void testWriteXML() throws Exception {
+    public void testSave() throws Exception {
         Workpiece workpiece = new Workpiece();
         workpiece.setId("1");
 
@@ -95,81 +102,80 @@ public class WorkpieceIT {
         local.setUse("LOCAL");
         local.setMimeType("image/tiff");
         for (int i = 1; i <= 4; i++) {
-            MediaFile path = new MediaFile();
-            path.setUri(new URI(String.format("images/leaflet_media/%08d.tif", i)));
+            URI path = new URI(String.format("images/leaflet_media/%08d.tif", i));
             MediaUnit mediaUnit = new MediaUnit();
             mediaUnit.setOrder(i);
-            mediaUnit.putFLocatForUse(local, path);
+            mediaUnit.getMediaFiles().put(local, path);
             pages.add(mediaUnit);
-            workpiece.getFileGrp().add(mediaUnit);
+            workpiece.getMediaUnits().add(mediaUnit);
         }
 
         // create document structure
-        workpiece.getStructMap().setType("leaflet");
-        workpiece.getStructMap().setLabel("The Leaflet");
+        workpiece.getStructure().setType("leaflet");
+        workpiece.getStructure().setLabel("The Leaflet");
         for (MediaUnit page : pages) {
             View view = new View();
-            view.setFile(page);
-            workpiece.getStructMap().getAreas().add(view);
+            view.setMediaUnit(page);
+            workpiece.getStructure().getViews().add(view);
         }
 
         Structure frontCover = new Structure();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
-        view.setFile(pages.get(0));
-        frontCover.getAreas().add(view);
-        workpiece.getStructMap().getChildren().add(frontCover);
+        view.setMediaUnit(pages.get(0));
+        frontCover.getViews().add(view);
+        workpiece.getStructure().getChildren().add(frontCover);
 
         Structure inside = new Structure();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
-        view.setFile(pages.get(1));
-        inside.getAreas().add(view);
+        view.setMediaUnit(pages.get(1));
+        inside.getViews().add(view);
         view = new View();
-        view.setFile(pages.get(2));
-        inside.getAreas().add(view);
-        workpiece.getStructMap().getChildren().add(inside);
+        view.setMediaUnit(pages.get(2));
+        inside.getViews().add(view);
+        workpiece.getStructure().getChildren().add(inside);
 
         Structure backCover = new Structure();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
-        view.setFile(pages.get(3));
-        backCover.getAreas().add(view);
-        workpiece.getStructMap().getChildren().add(backCover);
+        view.setMediaUnit(pages.get(3));
+        backCover.getViews().add(view);
+        workpiece.getStructure().getChildren().add(backCover);
 
         // add metadata
         MetadataEntry title = new MetadataEntry();
-        title.setType("title");
+        title.setKey("title");
         title.setDomain(MdSec.DMD_SEC);
         title.setValue("The title");
         frontCover.getMetadata().add(title);
-        MetadataEntriesGroup author = new MetadataEntriesGroup();
-        author.setType("author");
+        MetadataGroup author = new MetadataGroup();
+        author.setKey("author");
         author.setDomain(MdSec.DMD_SEC);
         MetadataEntry firstName = new MetadataEntry();
-        firstName.setType("firstName");
+        firstName.setKey("firstName");
         firstName.setValue("Alice");
-        author.getMetadata().add(firstName);
+        author.getGroup().add(firstName);
         MetadataEntry lastName = new MetadataEntry();
-        lastName.setType("firstName");
+        lastName.setKey("firstName");
         lastName.setValue("Smith");
-        author.getMetadata().add(lastName);
+        author.getGroup().add(lastName);
         frontCover.getMetadata().add(author);
 
         MetadataEntry imagesConverted = new MetadataEntry();
-        imagesConverted.setType("imageConversionHint");
+        imagesConverted.setKey("imageConversionHint");
         imagesConverted.setDomain(MdSec.DIGIPROV_MD);
         imagesConverted.setValue("Images have been converted from TIFF to JPEG.");
-        workpiece.getStructMap().getMetadata().add(imagesConverted);
+        workpiece.getStructure().getMetadata().add(imagesConverted);
         frontCover.getMetadata().add(imagesConverted);
         inside.getMetadata().add(imagesConverted);
         backCover.getMetadata().add(imagesConverted);
 
         MetadataEntry copyright = new MetadataEntry();
-        copyright.setType("rights");
+        copyright.setKey("rights");
         copyright.setDomain(MdSec.RIGHTS_MD);
         copyright.setValue("© 2018 All rights reserved");
         backCover.getMetadata().add(copyright);
@@ -178,12 +184,11 @@ public class WorkpieceIT {
         MediaVariant max = new MediaVariant();
         max.setUse("MAX");
         max.setMimeType("image/jpeg");
-        for (FileXmlElementAccessInterface mediaUnit : workpiece.getFileGrp()) {
-            String tiffFile = mediaUnit.getFLocatForUse(local).getUri().toString();
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            String tiffFile = mediaUnit.getMediaFiles().get(local).toString();
             String jpgFile = tiffFile.replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
-            MediaFile path = new MediaFile();
-            path.setUri(new URI(jpgFile));
-            mediaUnit.putFLocatForUse(max, path);
+            URI path = new URI(jpgFile);
+            mediaUnit.getMediaFiles().put(max, path);
         }
 
         // leave a note
@@ -192,26 +197,23 @@ public class WorkpieceIT {
         note.setNote(new SimpleDateFormat("[dd.MM.yyyy HH:mm] ").format(new Date()) + "Process created");
         note.setRole("CREATOR");
         note.setType("software");
-        workpiece.getMetsHdr().add(note);
+        workpiece.getEditHistory().add(note);
 
         // write file
-        try (FileOutputStream out = new FileOutputStream(OUT_FILE)) {
-            workpiece.save(out);
+        try (OutputStream out = new FileOutputStream(new File("src/test/resources/out.xml"))) {
+            new MetsXmlElementAccess().save(workpiece, out);
         }
 
         // read the file and see if everything is in it
-        Workpiece reread = new Workpiece();
-        try (InputStream inputStream = new FileInputStream(OUT_FILE)) {
-            reread.read(inputStream);
-        }
+        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
 
-        assertEquals(1, reread.getMetsHdr().size());
-        assertEquals(4, reread.getFileGrp().size());
-        for (FileXmlElementAccessInterface mediaUnit : reread.getFileGrp()) {
-            assertEquals(2, mediaUnit.getAllUsesWithFLocats().size());
+        assertEquals(1, reread.getEditHistory().size());
+        assertEquals(4, reread.getMediaUnits().size());
+        for (MediaUnit mediaUnit : reread.getMediaUnits()) {
+            assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        Structure structureRoot = reread.getStructMap();
-        assertEquals(4, structureRoot.getAreas().size());
+        Structure structureRoot = reread.getStructure();
+        assertEquals(4, structureRoot.getViews().size());
         assertEquals(3, structureRoot.getChildren().size());
         assertEquals(1, structureRoot.getMetadata().size());
 

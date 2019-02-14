@@ -11,17 +11,17 @@
 
 package org.kitodo.production.services.schema;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.mets.FLocatXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.UseXmlAttributeAccessInterface;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
@@ -40,7 +40,7 @@ import org.kitodo.production.services.dataformat.MetsService;
 public class SchemaService {
 
     private static final MetsService METS_SERVICE = ServiceManager.getMetsService();
-    private static final UseXmlAttributeAccessInterface LOCAL = new LegacyInnerPhysicalDocStructHelper().local;
+    private static final MediaVariant LOCAL = new LegacyInnerPhysicalDocStructHelper().local;
 
     /**
      * Temporal method for separate file conversion from ExportMets class
@@ -55,8 +55,8 @@ public class SchemaService {
      * @param process
      *            object
      */
-    public <T extends ExportMets> void tempConvert(MetsXmlElementAccessInterface workpiece, T exportMets,
-            LegacyPrefsHelper prefs, Process process) {
+    public <T extends ExportMets> void tempConvert(Workpiece workpiece, T exportMets, LegacyPrefsHelper prefs,
+            Process process) {
         /*
          * wenn Filegroups definiert wurden, werden diese jetzt in die
          * Metsstruktur übernommen
@@ -87,31 +87,29 @@ public class SchemaService {
 
     }
 
-    private void set(MetsXmlElementAccessInterface workpiece, MdSec domain, String key, String value) {
-        MetadataXmlElementAccessInterface entry = METS_SERVICE.createMetadataXmlElementAccess();
-        entry.setType(key);
+    private void set(Workpiece workpiece, MdSec domain, String key, String value) {
+        MetadataEntry entry = new MetadataEntry();
+        entry.setKey(key);
         entry.setDomain(domain);
         entry.setValue(value);
-        workpiece.getStructMap().getMetadata().add(entry);
-
+        workpiece.getStructure().getMetadata().add(entry);
     }
 
-    private void addVirtualFileGroupsToMetsMods(MetsXmlElementAccessInterface workpiece, Process process) {
+    private void addVirtualFileGroupsToMetsMods(Workpiece workpiece, Process process) {
 
         List<Folder> folders = process.getProject().getFolders();
         Subfolder useLocalSubfolder = getUseLocalSubfolder(process);
 
-        for (FileXmlElementAccessInterface mediaUnit : workpiece.getFileGrp()) {
-            String canonical = useLocalSubfolder.getCanonical(mediaUnit.getFLocatForUse(LOCAL).getUri());
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            String canonical = useLocalSubfolder.getCanonical(mediaUnit.getMediaFiles().get(LOCAL));
 
             /*
              * If the media unit contains a media variant that is unknown, has
              * linking mode NO or has linking mode EXISTING but the file does
              * not exist, remove it.
              */
-            for (Entry<? extends UseXmlAttributeAccessInterface, ? extends FLocatXmlElementAccessInterface> mediaFileForMediaVariant
-                    : mediaUnit.getAllUsesWithFLocats()) {
-                String use = mediaFileForMediaVariant.getKey().getUse();
+            for (Entry<MediaVariant, URI> mediaFileEntry : mediaUnit.getMediaFiles().entrySet()) {
+                String use = mediaFileEntry.getKey().getUse();
                 Optional<Folder> optionalFolderForUse = folders.parallelStream()
                         .filter(folder -> use.equals(folder.getFileGroup())).findAny();
                 if (!optionalFolderForUse.isPresent()
@@ -119,7 +117,7 @@ public class SchemaService {
                         || (optionalFolderForUse.get().getLinkingMode().equals(LinkingMode.EXISTING)
                                 && new Subfolder(process, optionalFolderForUse.get()).getURIIfExists(canonical)
                                         .isPresent())) {
-                    mediaUnit.removeFLocatForUse(mediaFileForMediaVariant.getKey());
+                    mediaUnit.getMediaFiles().remove(mediaFileEntry.getKey());
                 }
             }
 
@@ -129,8 +127,7 @@ public class SchemaService {
              */
             for (Folder folder : folders) {
                 Subfolder useFolder = new Subfolder(process, folder);
-                if (mediaUnit.getAllUsesWithFLocats().parallelStream().map(Entry::getKey)
-                        .map(UseXmlAttributeAccessInterface::getUse)
+                if (mediaUnit.getMediaFiles().entrySet().parallelStream().map(Entry::getKey).map(MediaVariant::getUse)
                         .noneMatch(use -> use.equals(folder.getFileGroup()))) {
                     if ((folder.getLinkingMode().equals(LinkingMode.ALL)
                             || (folder.getLinkingMode().equals(LinkingMode.EXISTING)
@@ -171,12 +168,11 @@ public class SchemaService {
      * @param mediaUnit
      *            media unit to add to
      */
-    private void addUse(Subfolder useFolder, String canonical, FileXmlElementAccessInterface mediaUnit) {
-        UseXmlAttributeAccessInterface mediaVariant = METS_SERVICE.createUseXmlAttributeAccess();
+    private void addUse(Subfolder useFolder, String canonical, MediaUnit mediaUnit) {
+        MediaVariant mediaVariant = new MediaVariant();
         mediaVariant.setUse(useFolder.getFolder().getFileGroup());
         mediaVariant.setMimeType(useFolder.getFolder().getMimeType());
-        FLocatXmlElementAccessInterface mediaFile = METS_SERVICE.createFLocatXmlElementAccess();
-        mediaFile.setUri(useFolder.getUri(canonical));
-        mediaUnit.putFLocatForUse(mediaVariant, mediaFile);
+        URI mediaFile = useFolder.getUri(canonical);
+        mediaUnit.getMediaFiles().put(mediaVariant, mediaFile);
     }
 }
