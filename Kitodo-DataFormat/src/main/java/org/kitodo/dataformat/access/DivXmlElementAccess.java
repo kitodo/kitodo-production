@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -108,9 +109,11 @@ public class DivXmlElementAccess extends Structure {
         }
         super.setType(div.getTYPE());
         Set<FileXmlElementAccess> fileXmlElementAccesses = mediaUnitsMap.get(div.getID());
-        if (fileXmlElementAccesses != null) {
+        if (Objects.nonNull(fileXmlElementAccesses)) {
             for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
-                super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
+                if (Objects.nonNull(fileXmlElementAccess)) {
+                    super.getViews().add(new AreaXmlElementAccess(fileXmlElementAccess).getView());
+                }
             }
         }
     }
