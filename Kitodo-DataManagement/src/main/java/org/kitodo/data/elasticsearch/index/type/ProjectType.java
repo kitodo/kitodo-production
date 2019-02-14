@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
@@ -39,8 +38,6 @@ public class ProjectType extends BaseType<Project> {
             folders.add(folderObject);
         }
 
-        String clientName = Objects.nonNull(project.getClient()) ? project.getClient().getName() : "";
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
         jsonObject.put(ProjectTypeField.START_DATE.getKey(), getFormattedDate(project.getStartDate()));
@@ -55,7 +52,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObject.put(ProjectTypeField.TEMPLATES.getKey(), addObjectRelation(project.getTemplates(), true));
         jsonObject.put(ProjectTypeField.USERS.getKey(), addObjectRelation(project.getUsers(), true));
         jsonObject.put(ProjectTypeField.CLIENT_ID.getKey(), getId(project.getClient()));
-        jsonObject.put(ProjectTypeField.CLIENT_NAME.getKey(), clientName);
+        jsonObject.put(ProjectTypeField.CLIENT_NAME.getKey(), getTitle(project.getClient()));
         jsonObject.put(ProjectTypeField.FOLDER.getKey(), folders);
         return jsonObject;
     }

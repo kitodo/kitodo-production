@@ -22,7 +22,6 @@ public class TemplateType extends BaseType<Template> {
 
     @Override
     public Map<String, Object> getJsonObject(Template template) {
-        String workflowTitle = template.getWorkflow() != null ? template.getWorkflow().getTitle() : "";
         String diagramFileName = template.getWorkflow() != null ? template.getWorkflow().getFileName() : "";
 
         Map<String, Object> jsonObject = new HashMap<>();
@@ -31,7 +30,7 @@ public class TemplateType extends BaseType<Template> {
         jsonObject.put(TemplateTypeField.ACTIVE.getKey(), template.isActive());
         jsonObject.put(TemplateTypeField.SORT_HELPER_STATUS.getKey(),
             preventNull(template.getSortHelperStatus()));
-        jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
+        jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), getTitle(template.getWorkflow()));
         jsonObject.put(TemplateTypeField.WORKFLOW_FILE_NAME.getKey(), diagramFileName);
         jsonObject.put(TemplateTypeField.RULESET.getKey(), getId(template.getRuleset()));
         jsonObject.put(TemplateTypeField.DOCKET.getKey(), getId(template.getDocket()));

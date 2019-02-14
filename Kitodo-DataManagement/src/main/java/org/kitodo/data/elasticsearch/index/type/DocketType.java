@@ -13,7 +13,6 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
@@ -25,14 +24,12 @@ public class DocketType extends BaseType<Docket> {
 
     @Override
     Map<String, Object> getJsonObject(Docket docket) {
-        String clientName = Objects.nonNull(docket.getClient()) ? docket.getClient().getName() : "";
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(DocketTypeField.TITLE.getKey(), preventNull(docket.getTitle()));
         jsonObject.put(DocketTypeField.FILE.getKey(), preventNull(docket.getFile()));
         jsonObject.put(DocketTypeField.ACTIVE.getKey(), docket.isActive());
         jsonObject.put(DocketTypeField.CLIENT_ID.getKey(), getId(docket.getClient()));
-        jsonObject.put(DocketTypeField.CLIENT_NAME.getKey(), clientName);
+        jsonObject.put(DocketTypeField.CLIENT_NAME.getKey(), getTitle(docket.getClient()));
         return jsonObject;
     }
 }

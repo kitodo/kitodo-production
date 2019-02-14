@@ -13,9 +13,7 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
@@ -27,10 +25,8 @@ public class ProcessType extends BaseType<Process> {
     @Override
     Map<String, Object> getJsonObject(Process process) {
         String processBaseUri = process.getProcessBaseUri() != null ? process.getProcessBaseUri().getRawPath() : "";
-        String projectTitle = process.getProject() != null ? process.getProject().getTitle() : "";
         boolean projectActive = process.getProject() != null && process.getProject().isActive();
         int projectClientId = process.getProject() != null ? getId(process.getProject().getClient()) : 0;
-        String templateTitle = process.getTemplate() != null ? process.getTemplate().getTitle() : "";
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(process.getTitle()));
@@ -43,9 +39,9 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.SORT_HELPER_METADATA.getKey(), process.getSortHelperMetadata());
         jsonObject.put(ProcessTypeField.PROCESS_BASE_URI.getKey(), processBaseUri);
         jsonObject.put(ProcessTypeField.TEMPLATE_ID.getKey(), getId(process.getTemplate()));
-        jsonObject.put(ProcessTypeField.TEMPLATE_TITLE.getKey(), templateTitle);
+        jsonObject.put(ProcessTypeField.TEMPLATE_TITLE.getKey(), getTitle(process.getTemplate()));
         jsonObject.put(ProcessTypeField.PROJECT_ID.getKey(), getId(process.getProject()));
-        jsonObject.put(ProcessTypeField.PROJECT_TITLE.getKey(), projectTitle);
+        jsonObject.put(ProcessTypeField.PROJECT_TITLE.getKey(), getTitle(process.getProject()));
         jsonObject.put(ProcessTypeField.PROJECT_ACTIVE.getKey(), projectActive);
         jsonObject.put(ProcessTypeField.PROJECT_CLIENT_ID.getKey(), projectClientId);
         jsonObject.put(ProcessTypeField.RULESET.getKey(), getId(process.getRuleset()));

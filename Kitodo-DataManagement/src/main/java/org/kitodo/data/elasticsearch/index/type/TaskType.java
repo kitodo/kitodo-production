@@ -29,8 +29,6 @@ public class TaskType extends BaseType<Task> {
                 : 0;
         int editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
         int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
-        int processId = task.getProcess() != null ? task.getProcess().getId() : 0;
-        int templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
@@ -58,18 +56,10 @@ public class TaskType extends BaseType<Task> {
             jsonObject.put(TaskTypeField.PROCESSING_USER_NAME.getKey(), "");
             jsonObject.put(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), "");
         }
-        jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), processId);
-        if (processId > 0) {
-            jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), task.getProcess().getTitle());
-        } else {
-            jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), "");
-        }
-        jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
-        if (templateId > 0) {
-            jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), task.getTemplate().getTitle());
-        } else {
-            jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), "");
-        }
+        jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
+        jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
+        jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), getId(task.getTemplate()));
+        jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), getTitle(task.getTemplate()));
         jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObject;
     }
