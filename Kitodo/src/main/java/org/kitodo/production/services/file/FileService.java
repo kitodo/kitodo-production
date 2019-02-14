@@ -196,7 +196,7 @@ public class FileService {
      * 
      * @return the user name for locks
      */
-    private String getCurrentLockingUser() {
+    public static String getCurrentLockingUser() {
         UserService userService = ServiceManager.getUserService();
         User currentUser = userService.getAuthenticatedUser();
         return Objects.nonNull(currentUser) ? userService.getFullName(currentUser) : SYSTEM_LOCKING_USER;

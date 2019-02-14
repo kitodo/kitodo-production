@@ -12,7 +12,12 @@
 package org.kitodo.api.validation.metadata;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Locale.LanguageRange;
+import java.util.Map;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
@@ -24,10 +29,48 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *
      * @param metsFileUri
      *            The uri to the mets file which should be validated.
+     * @param lockingUser
+     *            User requesting a lock on the URI to the METS file
      * @param rulesetFileUri
      *            The uri to the ruleset file to validate against.
+     * @param metadataLanguage
+     *            The list of languages preferred by the requesting user to
+     *            display the meta-data labels
+     * @param translations
+     *            A map containing the validation error messages translated into
+     *            the requesting user’s language. The map must contain the
+     *            following entries: {@code metadataInvalidData},
+     *            {@code metadataMandatoryElement}, {@code metadataMediaError},
+     *            {@code metadataMediaUnassigned},
+     *            {@code metadataNotEnoughElements},
+     *            {@code metadataNotOneElement}, and
+     *            {@code metadataStructureWithoutMedia}.
      * @return A validation result.
      */
-    ValidationResult validate(URI metsFileUri, URI rulesetFileUri);
+    ValidationResult validate(URI metsFileUri, String lockingUser, URI rulesetFileUri,
+            List<LanguageRange> metadataLanguage, Map<String, String> translations);
 
+    /**
+     * Validates if a workpiece is confirm to a ruleset.
+     *
+     * @param workpiece
+     *            The workpiece which should be validated.
+     * @param ruleset
+     *            The ruleset to validate against.
+     * @param metadataLanguage
+     *            The list of languages preferred by the requesting user to
+     *            display the meta-data labels
+     * @param translations
+     *            A map containing the validation error messages translated into
+     *            the requesting user’s language. The map must contain the
+     *            following entries: {@code metadataInvalidData},
+     *            {@code metadataMandatoryElement}, {@code metadataMediaError},
+     *            {@code metadataMediaUnassigned},
+     *            {@code metadataNotEnoughElements},
+     *            {@code metadataNotOneElement}, and
+     *            {@code metadataStructureWithoutMedia}.
+     * @return A validation result.
+     */
+    ValidationResult validate(MetsXmlElementAccessInterface workpiece, RulesetManagementInterface ruleset,
+            List<LanguageRange> metadataLanguage, Map<String, String> translations);
 }
