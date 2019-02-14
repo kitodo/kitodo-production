@@ -39,7 +39,6 @@ public class ProjectType extends BaseType<Project> {
             folders.add(folderObject);
         }
 
-        int clientId = Objects.nonNull(project.getClient()) ? project.getClient().getId() : 0;
         String clientName = Objects.nonNull(project.getClient()) ? project.getClient().getName() : "";
 
         Map<String, Object> jsonObject = new HashMap<>();
@@ -55,7 +54,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObject.put(ProjectTypeField.PROCESSES.getKey(), addObjectRelation(project.getProcesses(), true));
         jsonObject.put(ProjectTypeField.TEMPLATES.getKey(), addObjectRelation(project.getTemplates(), true));
         jsonObject.put(ProjectTypeField.USERS.getKey(), addObjectRelation(project.getUsers(), true));
-        jsonObject.put(ProjectTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObject.put(ProjectTypeField.CLIENT_ID.getKey(), getId(project.getClient()));
         jsonObject.put(ProjectTypeField.CLIENT_NAME.getKey(), clientName);
         jsonObject.put(ProjectTypeField.FOLDER.getKey(), folders);
         return jsonObject;
