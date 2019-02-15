@@ -47,6 +47,7 @@ public class WorkflowControllerServiceIT {
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
     private static final File scriptNotWorking = new File("src/test/resources/scripts/not_working_script.sh");
     private static final File scriptWorking = new File("src/test/resources/scripts/working_script.sh");
+    private static final File usersDirectory = new File("src/test/resources/users");
     private static final FileService fileService = ServiceManager.getFileService();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final WorkflowControllerService workflowService = ServiceManager.getWorkflowControllerService();
@@ -57,7 +58,7 @@ public class WorkflowControllerServiceIT {
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
 
-        fileService.createDirectory(URI.create(""), "users");
+        usersDirectory.mkdir();
 
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
@@ -80,7 +81,7 @@ public class WorkflowControllerServiceIT {
             ExecutionPermission.setNoExecutePermission(scriptWorking);
         }
 
-        fileService.delete(URI.create("users"));
+        usersDirectory.delete();
     }
 
     @Test
