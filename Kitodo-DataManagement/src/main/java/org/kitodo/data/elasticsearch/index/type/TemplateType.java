@@ -24,8 +24,6 @@ public class TemplateType extends BaseType<Template> {
     public Map<String, Object> getJsonObject(Template template) {
         String workflowTitle = template.getWorkflow() != null ? template.getWorkflow().getTitle() : "";
         String diagramFileName = template.getWorkflow() != null ? template.getWorkflow().getFileName() : "";
-        int ruleset = template.getRuleset() != null ? template.getRuleset().getId() : 0;
-        int docket = template.getDocket() != null ? template.getDocket().getId() : 0;
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(TemplateTypeField.TITLE.getKey(), template.getTitle());
@@ -35,8 +33,8 @@ public class TemplateType extends BaseType<Template> {
             preventNull(template.getSortHelperStatus()));
         jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
         jsonObject.put(TemplateTypeField.WORKFLOW_FILE_NAME.getKey(), diagramFileName);
-        jsonObject.put(TemplateTypeField.RULESET.getKey(), ruleset);
-        jsonObject.put(TemplateTypeField.DOCKET.getKey(), docket);
+        jsonObject.put(TemplateTypeField.RULESET.getKey(), getId(template.getRuleset()));
+        jsonObject.put(TemplateTypeField.DOCKET.getKey(), getId(template.getDocket()));
         jsonObject.put(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
         if (template.getProjects().isEmpty()) {
             jsonObject.put(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID, 0);

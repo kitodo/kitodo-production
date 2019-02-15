@@ -24,11 +24,9 @@ public class FilterType extends BaseType<Filter> {
 
     @Override
     Map<String, Object> getJsonObject(Filter filter) {
-        int user = filter.getUser() != null ? filter.getUser().getId() : 0;
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(FilterTypeField.VALUE.getKey(), preventNull(filter.getValue()));
-        jsonObject.put(FilterTypeField.USER.getKey(), user);
+        jsonObject.put(FilterTypeField.USER.getKey(), getId(filter.getUser()));
         return jsonObject;
     }
 }

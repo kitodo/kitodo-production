@@ -25,7 +25,6 @@ public class RulesetType extends BaseType<Ruleset> {
 
     @Override
     Map<String, Object> getJsonObject(Ruleset ruleset) {
-        int clientId = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getId() : 0;
         String clientName = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getName() : "";
 
         Map<String, Object> jsonObject = new HashMap<>();
@@ -34,7 +33,7 @@ public class RulesetType extends BaseType<Ruleset> {
         jsonObject.put(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
         jsonObject.put(RulesetTypeField.FILE_CONTENT.getKey(), "");
         jsonObject.put(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
-        jsonObject.put(RulesetTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObject.put(RulesetTypeField.CLIENT_ID.getKey(), getId(ruleset.getClient()));
         jsonObject.put(RulesetTypeField.CLIENT_NAME.getKey(), clientName);
         return jsonObject;
     }

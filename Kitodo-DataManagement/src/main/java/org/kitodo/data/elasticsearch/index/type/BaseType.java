@@ -153,4 +153,11 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         }
         return value;
     }
+
+    int getId(BaseBean baseBean) {
+        if (Objects.nonNull(baseBean)) {
+            return baseBean.getId();
+        }
+        return 0;
+    }
 }
