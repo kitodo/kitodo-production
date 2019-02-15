@@ -126,12 +126,9 @@ public class ExportXmlLog {
         Element root = new Element("processes");
         answer.setRootElement(root);
         Namespace xmlns = Namespace.getNamespace(NAMESPACE);
-
-        Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        root.addNamespaceDeclaration(xsi);
         root.setNamespace(xmlns);
-        Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
-        root.setAttribute(attSchema);
+
+        addNamespaceDeclaration(root);
         for (Process p : processList) {
             Document doc = createDocument(p, false);
             Element processRoot = doc.getRootElement();
@@ -160,10 +157,7 @@ public class ExportXmlLog {
 
         // namespace declaration
         if (addNamespace) {
-            Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            processElement.addNamespaceDeclaration(xsi);
-            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
-            processElement.setAttribute(attSchema);
+            addNamespaceDeclaration(processElement);
         }
 
         // process information
@@ -172,6 +166,13 @@ public class ExportXmlLog {
         processElement.setContent(processElements);
 
         return new Document(processElement);
+    }
+
+    private void addNamespaceDeclaration(Element element) {
+        Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        element.addNamespaceDeclaration(xsi);
+        Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd", xsi);
+        element.setAttribute(attSchema);
     }
 
     private List<Element> getProcessInformation(Namespace xmlns, Process process) {
