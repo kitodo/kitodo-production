@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,6 +48,7 @@ import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -710,14 +712,43 @@ public class ProzesskopieForm implements Serializable {
         processRdfConfiguration();
 
         try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(this.prozessKopie)) {
-            JSONObject xmlJSONObj = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
-            String jsonString = xmlJSONObj.toString(4);
-        } catch (IOException e) {
+            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
+            this.prozessKopie.setMetaXml(iterateOverJsonObject(xmlJSONObject));
+            ServiceManager.getProcessService().saveToIndex(this.prozessKopie, true);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setErrorMessage(e.getMessage(), logger, e);
         }
 
         return processListPath;
     }
+
+    private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {
+        Iterator<String> keys = xmlJSONObject.keys();
+
+        Map<String, Object> json = new HashMap<>();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Object value = xmlJSONObject.get(key);
+            if (value instanceof String) {
+                json.put(key, value);
+            } else if (value instanceof JSONObject) {
+                JSONObject jsonObject = (JSONObject) value;
+                Map<String, Object> map = iterateOverJsonObject(jsonObject);
+                json.put(key, map);
+            } else if (value instanceof JSONArray) {
+                JSONArray jsonArray = (JSONArray) value;
+                List<Map<String, Object>> arrayMap = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i ++) {
+                    Map<String, Object> map = iterateOverJsonObject((JSONObject) jsonArray.getJSONObject(i));
+                    arrayMap.add(map);
+                }
+                json.put(key, arrayMap);
+            }
+        }
+        return json;
+    }
+
 
     /**
      * If there is an RDF configuration (for example, from the OPAC import, or freshly created), then supplement these.
