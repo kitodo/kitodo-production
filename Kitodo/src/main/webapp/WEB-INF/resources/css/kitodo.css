@@ -1217,6 +1217,11 @@ Column content
     background: #f3f3f3;
 }
 
+#imagePreviewForm\:tifFoldersLabel {
+    color: var(--default-bright);
+    line-height: var(--input-height);
+}
+
 #imagePreviewForm\:imageControlPanel button {
     margin-right: 0;
 }

@@ -53,7 +53,7 @@
             </p:panelGrid>
 
             <p:panel rendered="#{not MetadataProcessor.imageListExistent}">
-                <p:outputLabel for="tifFolders" value="#{msgs.currentFolder}" style="vertical-align: top"/>
+                <p:outputLabel for="tifFolders" id="tifFoldersLabel" value="#{msgs.currentFolder}"/>
                 <p:selectOneMenu id="tifFolders" value="#{MetadataProcessor.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
                     <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
                     <f:selectItems value="#{MetadataProcessor.allTifFolders}"/>
