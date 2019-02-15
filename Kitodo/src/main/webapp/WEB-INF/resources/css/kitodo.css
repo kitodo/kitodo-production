@@ -977,6 +977,22 @@ Metadata Editor
     border-top: solid 3px grey;
 }
 
+form#metadata,
+form#metadata textarea,
+form#metadata div label,
+#commentsBox\:comments tr,
+#metadata\:metadataTable_data td,
+#metadata\:metadataTable_data textarea {
+    background-color: var(--transblue);
+}
+
+#metadata\:personTable_data button.secondary,
+#metadata\:metadataTable_data button.secondary {
+    float: right;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
 .collapsibleWrapper {
     display: inline-block;
     height: 100%;

@@ -24,7 +24,7 @@
 
                 <p:dataTable id="commentsGrid" value="#{MetadataProcessor.wikiField}" var="item"
                              rendered="#{!empty MetadataProcessor.wikiField}">
-                    <p:column style="width: 100%" rendered="#{item.contains('Red K')}">
+                    <p:column style="width: 100%;" rendered="#{item.contains('Red K')}">
                         <p:outputLabel value="#{msgs.correctionK}" style="color:red;font-weight:bold;"/>
                         <h:outputText value="#{fn:replace(item,'Red K','')}"
                                       escape="false"
@@ -35,13 +35,13 @@
                         </p:commandButton>
                     </p:column>
 
-                    <p:column style="width: 100%" rendered="#{item.contains('Orange K')}">
+                    <p:column style="width: 100%;" rendered="#{item.contains('Orange K')}">
                         <p:outputLabel value="#{msgs.correctionK}" style="color:orange;font-weight:bold;"/>
                         <h:outputText value="#{fn:replace(item,'Orange K','')}"
                                       escape="false"
                                       style="width:100%;"/>
                     </p:column>
-                    <p:column style="width: 100%"
+                    <p:column style="width: 100%;"
                               rendered="#{!(item.contains('Red K')) and !(item.contains('Orange K'))}">
                         <h:outputText value="#{item}"
                                       escape="false"
@@ -49,9 +49,11 @@
                     </p:column>
                 </p:dataTable>
                 <p:column>
-                    <p:commandButton id="newButton" value="#{msgs.newElement}"
+                    <p:commandButton id="newButton"
                                      action="#{MetadataProcessor.setShowNewComment(true)}"
-                                     icon="fa fa-plus-circle fa-lg"
+                                     icon="fa fa-plus fa-lg"
+                                     styleClass="secondary"
+                                     title="#{msgs.newElement}"
                                      iconPos="right" immediate="true"
                                      update="commentsBox"/>
                 </p:column>
@@ -59,20 +61,20 @@
             <p:panelGrid id="newComments" columns="1"
                          rendered="#{(not MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
 
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.correctionMessage}"
                                    rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"/>
                     <p:selectBooleanCheckbox id="korrekturMeldung" value="#{MetadataProcessor.correctionComment}"
                                              rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"
-                                             immediate="true" style="width: 100%">
+                                             immediate="true" style="width: 100%;">
                         <p:ajax event="change" update="commentsBox"/>
                     </p:selectBooleanCheckbox>
                 </p:column>
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.remark}"/>
                     <p:inputTextarea id="addToWikiField" value="#{MetadataProcessor.addToWikiField}" style="width:100%;"/>
                 </p:column>
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
                                      icon="fa fa-times fa-lg" iconPos="right" update="commentsBox"
                                      styleClass="secondary-button" immediate="true">
@@ -88,13 +90,13 @@
 
             </p:panelGrid>
             <p:panelGrid columns="1" rendered="#{(MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.remark}"/>
                     <p:inputTextarea style="width:100%;" value="#{MetadataProcessor.problem.message}">
                         <p:ajax event="change"/>
                     </p:inputTextarea>
                 </p:column>
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.backToTask}"/>
                     <p:selectOneMenu style="width: 100%" value="#{MetadataProcessor.problem.id}">
                         <f:selectItems value="#{MetadataProcessor.previousStepsForProblemReporting}"
@@ -103,7 +105,7 @@
                         <p:ajax event="change"/>
                     </p:selectOneMenu>
                 </p:column>
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
                                      icon="fa fa-times fa-lg" iconPos="right" update="commentsBox" immediate="true"
                                      styleClass="secondary-button">
