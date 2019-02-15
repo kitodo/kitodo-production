@@ -27,12 +27,12 @@
             <bpmn2:outgoing>SequenceFlow_0g2nbgo</bpmn2:outgoing>
         </bpmn2:parallelGateway>
         <bpmn2:sequenceFlow id="SequenceFlow_1f396uv" sourceRef="Task2" targetRef="ParallelGateway2_in"/>
-        <bpmn2:task id="Task7" name="Task7" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=1">
+        <bpmn2:task id="Task7" name="Task7" template:permittedUserRole="1" template:kitodoConditionType="XPath" template:kitodoConditionValue="type=1">
             <bpmn2:incoming>SequenceFlow_0f366nz</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_10ic0ev</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_0f366nz" name="type=1" sourceRef="ParallelGateway2_in" targetRef="Task7"/>
-        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
+        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:kitodoConditionType="XPath" template:kitodoConditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_0g2nbgo</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1osx7de</bpmn2:outgoing>
         </bpmn2:task>
@@ -47,12 +47,12 @@
             <bpmn2:outgoing>SequenceFlow_13yaev1</bpmn2:outgoing>
             <bpmn2:outgoing>SequenceFlow_114kacr</bpmn2:outgoing>
         </bpmn2:parallelGateway>
-        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
+        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1" template:kitodoConditionType="XPath" template:kitodoConditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_13yaev1</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1j37a00</bpmn2:outgoing>
         </bpmn2:task>
         <bpmn2:sequenceFlow id="SequenceFlow_13yaev1" name="type=1" sourceRef="ParallelGateway_in" targetRef="Task4"/>
-        <bpmn2:task id="Task5" name="Task5" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
+        <bpmn2:task id="Task5" name="Task5" template:permittedUserRole="1" template:kitodoConditionType="XPath" template:kitodoConditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_114kacr</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_08opkq7</bpmn2:outgoing>
         </bpmn2:task>
@@ -64,7 +64,7 @@
             <bpmn2:outgoing>SequenceFlow_0parww7</bpmn2:outgoing>
         </bpmn2:parallelGateway>
         <bpmn2:sequenceFlow id="SequenceFlow_08opkq7" sourceRef="Task5" targetRef="ParallelGateway_out"/>
-        <bpmn2:task id="Task6" name="Task6" template:permittedUserRole="1" template:conditionType="XPath" template:conditionValue="type=2">
+        <bpmn2:task id="Task6" name="Task6" template:permittedUserRole="1" template:kitodoConditionType="XPath" template:kitodoConditionValue="type=2">
             <bpmn2:incoming>SequenceFlow_0parww7</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0mx9f13</bpmn2:outgoing>
         </bpmn2:task>
