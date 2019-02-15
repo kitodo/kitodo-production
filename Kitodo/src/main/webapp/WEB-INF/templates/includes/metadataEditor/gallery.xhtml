@@ -127,7 +127,7 @@
                             <div id="thumbnailWrapper">
                                 <ui:repeat value="#{MetadataProcessor.images}" var="image">
                                     <div>
-                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{MetadataProcessor.isAccessGranted(image)}">
+                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" oncomplete="checkScrollPosition()" rendered="#{MetadataProcessor.isAccessGranted(image)}">
                                             <!-- outputText is needed to remove whitespace produced by correct code indent -->
                                             <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
                                             <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>

@@ -26,16 +26,27 @@ var scrollDown = function () {
 
 function checkScrollPosition() {
     var scrollableContent = $('#thumbnailStripeScrollableContent');
-    if (scrollableContent.scrollTop() <= 0) {
+    if (atTop(scrollableContent) && atBottom(scrollableContent)) {
+        disableUpButton();
+        disableDownButton();
+    } else if (atTop(scrollableContent)) {
         disableUpButton();
         enableDownButton();
-    } else if (scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight ) {
+    } else if (atBottom(scrollableContent)) {
         disableDownButton();
         enableUpButton();
     } else {
         enableUpButton();
         enableDownButton();
     }
+}
+
+function atTop(scrollableContent) {
+    return scrollableContent.scrollTop() <= 0
+}
+
+function atBottom(scrollableContent) {
+    return scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight;
 }
 
 function disableUpButton() {
