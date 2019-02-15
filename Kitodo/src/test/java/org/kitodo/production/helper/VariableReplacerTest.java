@@ -46,20 +46,20 @@ public class VariableReplacerTest {
         VariableReplacer variableReplacer = new VariableReplacer(prepareProcess());
 
         String replaced = variableReplacer.replace("-processpath (processpath) -hardcoded test");
-        String expected = "-processpath somePath -hardcoded test";
+        String expected = "-processpath 2 -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
 
     private Process prepareProcess() {
         Process process = new Process();
-        process.setId(1);
+        process.setId(2);
         process.setTitle("Replacement");
         Ruleset ruleset = new Ruleset();
         ruleset.setId(1);
         ruleset.setFile("ruleset_test.xml");
         process.setRuleset(ruleset);
-        process.setProcessBaseUri(URI.create("somePath"));
+        process.setProcessBaseUri(URI.create("2"));
 
         return process;
     }

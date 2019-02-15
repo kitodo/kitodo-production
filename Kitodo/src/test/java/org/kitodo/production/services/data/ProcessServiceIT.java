@@ -422,9 +422,9 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetMetadataFilePath() throws Exception {
-        Process process = processService.getById(1);
+        Process process = processService.getById(2);
         URI directory = fileService.getMetadataFilePath(process);
-        boolean condition = directory.getRawPath().contains("1/meta.xml");
+        boolean condition = directory.getRawPath().contains("2/meta.xml");
         assertTrue("Metadata file path doesn't match to given file path!", condition);
     }
 

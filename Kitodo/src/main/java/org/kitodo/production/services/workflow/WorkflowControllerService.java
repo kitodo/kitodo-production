@@ -664,9 +664,7 @@ public class WorkflowControllerService {
     }
 
     private boolean runXPathCondition(Process process, String xpath) throws IOException {
-        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-
-        try (InputStream fileInputStream = ServiceManager.getFileService().read(metadataFilePath)) {
+        try (InputStream fileInputStream = ServiceManager.getFileService().readMetadataFile(process)) {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setNamespaceAware(true);
             DocumentBuilder builder = builderFactory.newDocumentBuilder();

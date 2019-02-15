@@ -47,6 +47,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.production.file.BackupFileRotation;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -234,6 +235,17 @@ public class FileService {
     public InputStream read(URI uri, LockResult access) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.read(uri, access);
+    }
+
+    /**
+     * Read metadata file (meta.xml).
+     * 
+     * @param process
+     *            for which file should be read
+     * @return InputStream with metadata file
+     */
+    public InputStream readMetadataFile(Process process) throws IOException {
+        return read(getMetadataFilePath(process));
     }
 
     /**
@@ -570,8 +582,12 @@ public class FileService {
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+    public URI getMetadataFilePath(Process process) throws IOException {
+        URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+        if (!fileExist(metadataFilePath)) {
+            throw new IOException(Helper.getTranslation("metadataFileNotFound", Collections.singletonList(metadataFilePath.getPath())));
+        }
+        return metadataFilePath;
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
