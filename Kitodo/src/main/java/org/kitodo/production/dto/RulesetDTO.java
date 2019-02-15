@@ -18,7 +18,6 @@ public class RulesetDTO extends BaseDTO {
 
     private String file;
     private String title;
-    private String fileContent;
     private Boolean orderMetadataByRuleset = false;
     private Boolean active = true;
     private ClientDTO client;
@@ -59,25 +58,6 @@ public class RulesetDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get file content.
-     * 
-     * @return file content as String
-     */
-    public String getFileContent() {
-        return fileContent;
-    }
-
-    /**
-     * Set file content.
-     * 
-     * @param fileContent
-     *            as String
-     */
-    public void setFileContent(String fileContent) {
-        this.fileContent = fileContent;
     }
 
     /**

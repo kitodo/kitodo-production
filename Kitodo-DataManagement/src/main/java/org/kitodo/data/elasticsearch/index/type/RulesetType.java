@@ -31,7 +31,6 @@ public class RulesetType extends BaseType<Ruleset> {
         jsonObject.put(RulesetTypeField.TITLE.getKey(), preventNull(ruleset.getTitle()));
         jsonObject.put(RulesetTypeField.FILE.getKey(), preventNull(ruleset.getFile()));
         jsonObject.put(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
-        jsonObject.put(RulesetTypeField.FILE_CONTENT.getKey(), "");
         jsonObject.put(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
         jsonObject.put(RulesetTypeField.CLIENT_ID.getKey(), getId(ruleset.getClient()));
         jsonObject.put(RulesetTypeField.CLIENT_NAME.getKey(), clientName);

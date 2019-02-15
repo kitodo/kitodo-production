@@ -17,7 +17,6 @@ public enum RulesetTypeField implements TypeInterface {
     TITLE("title"),
     FILE("file"),
     ORDER_METADATA_BY_RULESET("orderMetadataByRuleset"),
-    FILE_CONTENT("fileContent"),
     ACTIVE("active"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name");

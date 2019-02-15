@@ -60,8 +60,6 @@ public class RulesetTypeTest {
             RulesetTypeField.FILE.getStringValue(actual));
         assertFalse("Key orderMetadataByRuleset doesn't match to given value!",
             RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(actual));
-        assertEquals("Key fileContent doesn't match to given value!", "",
-            RulesetTypeField.FILE_CONTENT.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", RulesetTypeField.ACTIVE.getBooleanValue(actual));
     }
 
@@ -72,7 +70,7 @@ public class RulesetTypeTest {
 
         Map<String, Object> actual = rulesetType.createDocument(ruleset);
 
-        assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 6, actual.keySet().size());
     }
 
     @Test
