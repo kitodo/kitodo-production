@@ -15,14 +15,116 @@
         template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
->
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="contentHeader">
         <h3 id="headerText">
-            <h:outputText value="(#{msgs.searchResultFor} #{SearchResultForm.searchQuery})"/>
+            <h:outputText value="#{msgs.searchResultFor} (#{SearchResultForm.testQuery})"/>
         </h3>
     </ui:define>
+    <ui:define name="pageTabView">
+        <h:form id="searchResultForm">
+        <p:dataTable id="searchResultTable" var="process" value="#{SearchResultForm.resultList}"
+                     paginator="true"
+                     rows="#{LoginForm.loggedUser.tableSize}"
+                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     paginatorPosition="bottom">
+            <p:column id="titleColumn"
+                      headerText="#{msgs.processTitle}"
+                      filterBy="#{process.title}"
+                      rendered="#{ProcessForm.showColumn('process.title')}">
+                <h:outputText value="#{process.title}"/>
+            </p:column>
+            <p:column id="progressColumn"
+                      styleClass="progressColumn"
+                      headerText="#{msgs.status}"
+                      rendered="#{ProcessForm.showColumn('process.state')}">
+                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
+            </p:column>
+            <p:column headerText="#{msgs.project}"
+                      rendered="#{ProcessForm.showColumn('process.project')}">
+                <h:outputText value="#{process.project.title}"/>
+            </p:column>
+            <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
+                <h:link id="viewProcess" outcome="processEdit" title="#{msgs.processView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
+                    <i class="fa fa-eye fa-lg"/>
+                    <f:param name="referer" value="processes"/>
+                    <f:param name="id" value="#{process.id}"/>
+                </h:link>
 
+                <h:link id="editProcess" outcome="processEdit" title="#{msgs.processEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:param name="referer" value="processes"/>
+                    <f:param name="id" value="#{process.id}"/>
+                </h:link>
+
+                <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
+                               rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
+                    <h:outputText><i class="fa fa-file-o"/></h:outputText>
+                    <f:param name="ProzesseID" value="#{process.id}"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
+                    <f:param name="stayOnCurrentPage" value="processList"/>
+                    <f:setPropertyActionListener value="processes" target="#{MetadataProcessor.referringView}"/>
+                    <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
+                    <f:actionListener binding="#{MetadataProcessor.setShowNewComment(false)}"/>
+                </h:commandLink>
+
+                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                    <!-- TODO: add separate message in case it already exists and alert -->
+                </p:commandLink>
+
+                <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}"
+                               title="#{msgs.deleteLinkHomeDirectory}">
+                    <h:outputText><i class="fa fa-upload"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+
+                <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
+                <p:commandLink id="exportLogXml" action="#{ProcessForm.createXML}" title="#{msgs.createXML}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                </p:commandLink>
+
+                <p:commandLink id="downloadDocket" action="#{ProcessForm.downloadDocket}" title="#{msgs.docketPrint}"
+                               ajax="false">
+                    <h:outputText><i class="fa fa-print"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                </p:commandLink>
+
+                <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                </h:commandLink>
+
+                <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}">
+                    <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                </h:commandLink>
+
+                <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                </h:commandLink>
+
+                <p:commandLink id="deleteProcess" action="#{ProcessForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteProcess()}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </p:column>
+        </p:dataTable>
+        </h:form>
+    </ui:define>
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>

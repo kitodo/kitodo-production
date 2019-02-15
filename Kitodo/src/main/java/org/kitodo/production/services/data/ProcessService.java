@@ -511,6 +511,20 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return findByQuery(getQueryProjectId(id), related);
     }
 
+    /**
+     * Find processes by title
+     * @param title the title
+     * @return a list of processes
+     * @throws DataException
+     */
+    public List<ProcessDTO> findByTitle(String title) throws DataException {
+        return convertJSONObjectsToDTOs(findByTitle(title,true),true);
+    }
+
+    private QueryBuilder getQueryProcessTitle(String title) {
+        return createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true);
+    }
+
     private QueryBuilder getQueryProjectId(Integer id) {
         return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), id, true);
     }
