@@ -1,0 +1,223 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<!-- KATHRINS HEADER
+        -->
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <div class="wrapper">
+        <h:outputScript library="js" name="collapse.js" target="body"/>
+
+        <section id="portal-logo">
+            <h:outputLink value="desktop.jsf">
+                <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" width="160" id="kitodo-logo"/>
+            </h:outputLink>
+            <h:outputLink value="desktop.jsf">
+                <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
+            </h:outputLink>
+        </section>
+
+        <section id="portal-search">
+            <h:form id="search-form" action="">
+                <p:inputText id="search-field" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.searchPlaceholder}"/>
+                <!--<p:inputText id="search-field-short" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.search}"/>-->
+                <p:commandButton type="submit" action="#{SearchResultForm.search()}"><i class="fa fa-search"/></p:commandButton>
+            </h:form>
+        </section>
+
+        <section id="portal-nav">
+            <nav id="header-nav" role="navigation">
+                <ul id="menu">
+                    <!--<li>-->
+                        <!-- List: my tasks -->
+                        <!--<c:set var="tasks" value="#{CurrentTaskForm.tasksInProgress}"/>
+                        <a href="#"><i class="fa fa-bell-o fa-lg"/>
+                            <h:panelGroup rendered="#{tasks.size() gt 0}"
+                                          styleClass="batch-count bc-alert">#{tasks.size()}</h:panelGroup>
+                        </a>
+                        <ul>
+                            <li><h3>#{msgs.tasksCurrent}</h3></li>
+                            <ui:repeat value="#{tasks}" var="task" size="#{tasks.size() gt 3 ? 3 : tasks.size()}">
+                                <li><div><span class="nav-item-col">#{task.title}</span><span
+                                    class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i
+                                    class="fa fa-check-square-o fa-lg nc-info"/></span></div></li>
+                            </ui:repeat>
+                            <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{tasks.size()})"/></li>
+                        </ul>
+                    </li>-->
+                    <li>
+                        <!-- Dashboard menu -->
+                        <a href="#" id="dashboard-menu"><i class="fa fa-th fa-lg"/></a>
+                        <ul>
+                            <li id="dashboard-menu-header">
+                                <h3>#{msgs.dashboard}</h3>
+                            </li>
+
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewTaskPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.tasks}" id="linkTasks" outcome="tasks">
+                                        <i class="fa fa-bell fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes">
+                                        <i class="fa fa-hourglass-3 fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProjectPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects">
+                                        <i class="fa fa-folder-open fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewUserPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.user}" id="linkUsers" outcome="users">
+                                        <i class="fa fa-user fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewSystemPage()}">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.system}" id="linkSystem" outcome="system">
+                                        <i class="fa fa-wrench fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="true">
+                                <li class="nav-pic-text">
+                                    <h:link value="#{msgs.help}" id="linkHelp" outcome="help">
+                                        <i class="fa fa-life-ring fa-lg"/>
+                                    </h:link>
+                                </li>
+                            </h:panelGroup>
+                        </ul>
+                    </li>
+                    <li>
+                        <!-- User menu -->
+                        <a href="#" id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></a>
+                        <h:form id="logout-form">
+                            <ul id="nav-user">
+                                <li>
+                                    <h3>#{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}</h3>
+                                </li>
+
+                                <li>
+                                    <div id="sessionClient">
+                                        #{msgs.client}: <b>#{SessionClientController.currentSessionClientName}</b>
+                                        <span style="float:right;">
+                                            <p:outputPanel rendered="#{SessionClientController.shouldUserChangeSessionClient()}">
+                                                <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList');"/>
+                                            </p:outputPanel>
+                                        </span>
+                                    </div>
+                                </li>
+                                <div id="clientList" style="display: none">
+                                    <p:outputPanel deferred="true" deferredMode="visible">
+                                        <p:repeat value="#{SessionClientController.availableClientsOfCurrentUser}" var="client">
+                                            <li class="toggle-list">
+                                                <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
+                                            </li>
+                                        </p:repeat>
+                                    </p:outputPanel>
+                                </div>
+                                <li>
+                                    <h:link value="#{msgs.userData}" outcome="userEdit">
+                                        <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
+                                    </h:link>
+                                </li>
+                                <li>
+                                    <table>
+                                        <tr>
+                                            <td width="100px">
+                                                <h:outputText value="#{msgs.languages}"/>
+                                            </td>
+                                            <ui:repeat value="#{LanguageForm.supportedLocales}" var="entry">
+                                                <td class="languageButtonCell #{LanguageForm.language eq entry['id'] ? 'selected' : ''}">
+                                                    <h:commandButton action="#{LanguageForm.setLanguage(entry['id'])}"
+                                                                     image="#{request.contextPath}/#{entry['flag']}"
+                                                                     styleClass="languageButton"/>
+                                                </td>
+                                            </ui:repeat>
+                                        </tr>
+                                    </table>
+                                </li>
+                                <li class="color-orange"><h:outputLink value="#{request.contextPath}/logout"
+                                                  id="logout">#{msgs.logout}</h:outputLink></li>
+                            </ul>
+                        </h:form>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+        <p:dialog header="#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}"
+                  class="client-select-dialog"
+                  id="clientSelectDialog"
+                  widgetVar="selectClientDialog"
+                  modal="true"
+                  width="500px"
+                  appendTo="@(body)"
+                  resizable="false"
+                  closable="false">
+            <h:form id="select-session-client-form">
+                <div class="select-client-note">#{msgs.clientSelectNote }</div>
+                <div class="select-client-selector">
+                    <p>#{msgs.clientSelect }</p>
+                    <p>
+                        <p:selectOneMenu id="client"
+                                     converter="#{clientConverter}"
+                                     value="#{SessionClientController.selectedClient}"
+                                     autoWidth="false">
+                            <f:selectItems value="#{SessionClientController.availableClientsOfCurrentUser}" var="client" itemValue="#{client}"
+                                           itemLabel="#{client.name}"/>
+                        </p:selectOneMenu>
+                    </p>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:button href="/logout"
+                                          id="cancelSessionClientSelectionButton"
+                                          type="button"
+                                          value="#{msgs.cancel}"
+                                          icon="fa fa-close"
+                                          iconPos="right"/>
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:commandButton id="setSessionClientButton"
+                                                 action="#{SessionClientController.setSelectedClientAsSessionClient}"
+                                                 onstart="PF('selectClientDialog').hide(); PF('loadingDialog').show();"
+                                                 oncomplete="PF('loadingDialog').hide();"
+                                                 disabled="#{not SessionClientController.areClientsAvailableForUser()}"
+                                                 update="@all"
+                                                 value="#{msgs.select}"
+                                                 icon="fa fa-check"
+                                                 iconPos="right"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </div>
+            </h:form>
+        </p:dialog>
+    </div>
+</ui:composition>
