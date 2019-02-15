@@ -13,7 +13,6 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
@@ -25,15 +24,13 @@ public class RulesetType extends BaseType<Ruleset> {
 
     @Override
     Map<String, Object> getJsonObject(Ruleset ruleset) {
-        String clientName = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getName() : "";
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(RulesetTypeField.TITLE.getKey(), preventNull(ruleset.getTitle()));
         jsonObject.put(RulesetTypeField.FILE.getKey(), preventNull(ruleset.getFile()));
         jsonObject.put(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
         jsonObject.put(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
         jsonObject.put(RulesetTypeField.CLIENT_ID.getKey(), getId(ruleset.getClient()));
-        jsonObject.put(RulesetTypeField.CLIENT_NAME.getKey(), clientName);
+        jsonObject.put(RulesetTypeField.CLIENT_NAME.getKey(), getTitle(ruleset.getClient()));
         return jsonObject;
     }
 }

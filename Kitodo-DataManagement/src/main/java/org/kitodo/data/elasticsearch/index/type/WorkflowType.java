@@ -13,7 +13,6 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
@@ -22,15 +21,13 @@ public class WorkflowType extends BaseType<Workflow> {
 
     @Override
     Map<String, Object> getJsonObject(Workflow workflow) {
-        String clientName = Objects.nonNull(workflow.getClient()) ? workflow.getClient().getName() : "";
-
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(WorkflowTypeField.TITLE.getKey(), preventNull(workflow.getTitle()));
         jsonObject.put(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
         jsonObject.put(WorkflowTypeField.READY.getKey(), workflow.isReady());
         jsonObject.put(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
         jsonObject.put(WorkflowTypeField.CLIENT_ID.getKey(), getId(workflow.getClient()));
-        jsonObject.put(WorkflowTypeField.CLIENT_NAME.getKey(), clientName);
+        jsonObject.put(WorkflowTypeField.CLIENT_NAME.getKey(), getTitle(workflow.getClient()));
         return jsonObject;
     }
 }

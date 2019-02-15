@@ -24,12 +24,14 @@ import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
@@ -103,8 +105,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             String type = batch.getType() != null ? batch.getType().toString() : "";
             jsonObject.put(BatchTypeField.TYPE.getKey(), type);
         } else if (property instanceof BaseTemplateBean) {
-            jsonObject.put(ProcessTypeField.TITLE.getKey(),
-                    preventNull(((BaseTemplateBean) property).getTitle()));
+            jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
         } else if (property instanceof Project) {
             Project project = (Project) property;
             jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
@@ -118,8 +119,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             jsonObject.put(UserTypeField.NAME.getKey(), preventNull(user.getName()));
             jsonObject.put(UserTypeField.SURNAME.getKey(), preventNull(user.getSurname()));
         } else if (property instanceof Role) {
-            jsonObject.put(RoleTypeField.TITLE.getKey(),
-                    preventNull(((Role) property).getTitle()));
+            jsonObject.put(RoleTypeField.TITLE.getKey(), preventNull(((Role) property).getTitle()));
         } else if (property instanceof Task) {
             jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
         } else if (property instanceof Filter) {
@@ -159,5 +159,18 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             return baseBean.getId();
         }
         return 0;
+    }
+
+    String getTitle(BaseBean baseBean) {
+        if (baseBean instanceof BaseTemplateBean) {
+            return preventNull(((BaseTemplateBean) baseBean).getTitle());
+        } else if (baseBean instanceof Project) {
+            return preventNull(((Project) baseBean).getTitle());
+        } else if (baseBean instanceof Workflow) {
+            return preventNull(((Workflow) baseBean).getTitle());
+        } else if (baseBean instanceof Client) {
+            return preventNull(((Client) baseBean).getName());
+        }
+        return "";
     }
 }
