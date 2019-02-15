@@ -1196,9 +1196,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process) throws IOException {
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
-        if (!checkForMetadataFile(process)) {
-            throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
-        }
 
         // check the format of the metadata - METS, XStream or RDF
         String type = MetadataHelper.getMetaFileType(metadataFileUri);
@@ -1259,10 +1256,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 throw new UnsupportedOperationException("Dead code pending removal");
         }
         return fileFormat;
-    }
-
-    private boolean checkForMetadataFile(Process process) {
-        return fileService.fileExist(fileService.getMetadataFilePath(process));
     }
 
     /**
