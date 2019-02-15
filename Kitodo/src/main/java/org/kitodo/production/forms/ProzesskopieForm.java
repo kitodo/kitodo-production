@@ -16,8 +16,10 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +37,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +47,8 @@ import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
@@ -703,6 +708,13 @@ public class ProzesskopieForm implements Serializable {
         }
 
         processRdfConfiguration();
+
+        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(this.prozessKopie)) {
+            JSONObject xmlJSONObj = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
+            String jsonString = xmlJSONObj.toString(4);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
+        }
 
         return processListPath;
     }
