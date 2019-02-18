@@ -423,29 +423,31 @@ body.first-visit #portal-header {
 Breadcrumb menu
 ----------------------------------------------------------------------*/
 
-#breadcrumbMenu {
+.breadcrumb-menu {
     padding: 0;
 }
 
-#breadcrumbMenu li:first-child a.ui-menuitem-link {
+.breadcrumb-menu li:first-child a.ui-menuitem-link {
     background-image: none;
 }
 
-#breadcrumbMenu li:first-child a.ui-menuitem-link span:hover {
+.breadcrumb-menu li:first-child a.ui-menuitem-link span:hover {
     color: var(--default-dark);
     background-color: white;
+    transition: color .5s, background-color .5s;
 }
 
-#breadcrumbMenu li:first-child a.ui-menuitem-link span:after {
+.breadcrumb-menu li:first-child a.ui-menuitem-link span:after {
     content: '\f015';
     font-family: 'FontAwesome';
     text-indent: 0;
     position: absolute;
     left: 0;
     width: 100%;
+    transition: color .5s, background-color .5s;
 }
 
-#breadcrumbMenu a.ui-menuitem-link {
+.breadcrumb-menu a.ui-menuitem-link {
     background-color: #064f80;
     border-radius: 3px;
     width: 36px;
@@ -455,24 +457,25 @@ Breadcrumb menu
     text-align: center;
 }
 
-#breadcrumbMenu li[role=menuitem] {
+.breadcrumb-menu li[role=menuitem] {
     overflow: visible;
 }
 
-#breadcrumbMenu li:not(:first-child) a.ui-menuitem-link {
+.breadcrumb-menu li:not(:first-child) a.ui-menuitem-link {
+    margin-top: 0;
     color: white;
     background-color: #064f80;
     width: 36px;
     transition: color .5s, background-color .5s, width .5s;
 }
 
-#breadcrumbMenu li:not(:first-child) a.ui-menuitem-link:hover {
+.breadcrumb-menu li:not(:first-child):hover a.ui-menuitem-link {
     color: var(--default-dark);
     background-color: white;
     width: unset;
 }
 
-#breadcrumbMenu a.ui-menuitem-link {
+.breadcrumb-menu a.ui-menuitem-link {
     margin-top: 0;
     color: white;
     text-decoration: none;
@@ -480,30 +483,30 @@ Breadcrumb menu
     transition: color .5s, background-color .5s;
 }
 
-#breadcrumbMenu a.ui-menuitem-link:first-child:hover {
+.breadcrumb-menu a.ui-menuitem-link:first-child:hover {
     color: var(--default-dark);
     background-color: white;
 }
 
-#breadcrumbMenu span.ui-menuitem-text {
+.breadcrumb-menu span.ui-menuitem-text {
     height: 100%;
     padding-left: 8px;
     text-overflow: ellipsis;
 }
 
-#breadcrumbMenu span.ui-menuitem-text:hover {
+.breadcrumb-menu span.ui-menuitem-text:hover {
     padding-right: 8px;
 }
 
-#breadcrumbMenu li.ui-breadcrumb-chevron {
+.breadcrumb-menu li.ui-breadcrumb-chevron {
     display: none;
 }
 
-#breadcrumbMenu ul li[role=menuitem]:not(:first-child) {
+.breadcrumb-menu ul li[role=menuitem]:not(:first-child) {
     margin-left: var(--default-half-size);
 }
 
-#breadcrumbMenu ul li[role=menuitem]:not(:first-child)::before {
+.breadcrumb-menu ul li[role=menuitem]:not(:first-child)::after {
     content: " ";
     background-color: #064f80;
     transform: rotate(-45deg);
@@ -518,8 +521,13 @@ Breadcrumb menu
     height: 12px;
     width: 12px;
     z-index: 1;
+    transition: background-color .5s;
 }
 
+.breadcrumb-menu li[role=menuitem]:not(:first-child):hover::after {
+    background-color: white;
+    transition: background-color .5s;
+}
 
 /*----------------------------------------------------------------------
 Main

@@ -13,7 +13,6 @@
 
 <ui:composition
         template="/WEB-INF/templates/baseListView.xhtml"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
@@ -27,8 +26,9 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
-        <li><a href="">#{msgs.taskDetails}</a></li>
+        <p:menuitem value="#{msgs.startPage}" url="desktop.jsf"/>
+        <p:menuitem  value="#{msgs.taskDetails}"/>
     </ui:define>
+
 </ui:composition>
 

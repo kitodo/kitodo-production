@@ -47,7 +47,7 @@
             <h:outputText value="#{msgs.workflowView} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
-                         action="#{WorkflowForm.saveAndRedirect}" 
+                         action="#{WorkflowForm.saveAndRedirect}"
                          widgetVar="save"
                          value="#{msgs.save}"
                          rendered="#{isEditMode || isCreateMode || isDuplicateMode}"
@@ -84,15 +84,12 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
-        <li>
-            <a href="">
-                <h:outputText value="#{msgs.editWorkflow}" rendered="#{isEditMode}"/>
-                <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
-                <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
-                <h:outputText value="#{msgs.workflowView}" rendered="#{isViewMode}"/>
-            </a>
-        </li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
+        <p:menuitem value="#{msgs.editWorkflow}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
+        <p:menuitem value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
+        <p:menuitem value="#{msgs.workflowView}" rendered="#{isViewMode}"/>
     </ui:define>
+
 </ui:composition>

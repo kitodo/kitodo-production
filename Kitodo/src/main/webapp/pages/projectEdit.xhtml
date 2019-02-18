@@ -83,25 +83,17 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
-        <li>
-            <a href="">
-                <ui:fragment rendered="#{not empty ProjectForm.project.title}">
-                    #{msgs.projectEdit}
-                </ui:fragment>
-                <ui:fragment rendered="#{empty ProjectForm.project.folders}">
-                    #{msgs.newProject}
-                </ui:fragment>
-                <ui:fragment
-                        rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}">
-                    #{msgs.duplicateProject}
-                </ui:fragment>
-            </a>
-        </li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
+        <p:menuitem value="#{msgs.projectEdit}" rendered="#{not empty ProjectForm.project.title}"/>
+        <p:menuitem value="#{msgs.newProject}" rendered="#{empty ProjectForm.project.folders}"/>
+        <p:menuitem value="#{msgs.duplicateProject}"
+                    rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
     </ui:define>
+
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMetsPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/projectEdit/templateAddPopup.xhtml"/>
     </ui:define>
+
 </ui:composition>

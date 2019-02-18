@@ -31,7 +31,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><a href="">#{msgs.help}</a></li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.help}"/>
     </ui:define>
+
 </ui:composition>

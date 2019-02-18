@@ -1,0 +1,36 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui">
+
+    <section id="portal-logo">
+        <h:outputLink value="desktop.jsf">
+            <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" height="36" id="kitodo-logo"/>
+        </h:outputLink>
+        <h:outputLink value="desktop.jsf">
+            <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
+        </h:outputLink>
+    </section>
+
+    <section id="portal-search">
+        <h:form id="search-form" action="">
+            <p:inputText id="search-field" a:placeholder="#{msgs.search}"/>
+            <p:inputText id="search-field-short" a:placeholder="#{msgs.search}"/>
+            <p:commandButton type="submit" icon="fa fa-search"/>
+        </h:form>
+    </section>
+
+</ui:composition>

@@ -35,9 +35,22 @@
             </h:panelGroup>
             <div class="flex-container">
                 <header class="flex-item" role="banner" id="portal-header">
-                    <ui:insert name="header">
-                        <ui:include src="/WEB-INF/templates/includes/header.xhtml" />
-                    </ui:insert>
+                    <div class="wrapper">
+                        <h:outputScript library="js" name="collapse.js" target="body"/>
+                        <ui:insert name="search">
+                            <ui:include src="/WEB-INF/templates/includes/header/search.xhtml" />
+                        </ui:insert>
+                        <section id="breadcrumbs">
+                            <h:form id="breadcrumbForm">
+                                <p:breadCrumb id="breadcrumbMenu" styleClass="breadcrumb-menu">
+                                    <ui:insert name="breadcrumbs"/>
+                                </p:breadCrumb>
+                            </h:form>
+                        </section>
+                        <ui:insert name="navigation">
+                            <ui:include src="/WEB-INF/templates/includes/header/navigation.xhtml" />
+                        </ui:insert>
+                    </div>
                 </header>
                 <main class="flex-item" role="main">
                     <ui:insert name="content">
