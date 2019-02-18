@@ -58,8 +58,8 @@ public class KitodoTask {
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
-        this.conditionType = task.getAttributeValueNs(NAMESPACE, "conditionType");
-        this.conditionValue = task.getAttributeValueNs(NAMESPACE, "conditionValue");
+        this.conditionType = task.getAttributeValueNs(NAMESPACE, "kitodoConditionType");
+        this.conditionValue = task.getAttributeValueNs(NAMESPACE, "kitodoConditionValue");
         this.userRoles = task.getAttributeValueNs(NAMESPACE, "permittedUserRole");
     }
 

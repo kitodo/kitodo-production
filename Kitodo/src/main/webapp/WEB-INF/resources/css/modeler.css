@@ -72,7 +72,7 @@
   top: 0;
   bottom: 0;
   right: 0;
-  width: 260px;
+  width: 300px;
   z-index: 10;
   border-left: 1px solid #ccc;
   overflow: auto;
@@ -875,6 +875,12 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
+}
+/* line 79, styles/modeler_custom.less */
+.bpp-textfield input,
+.bpp-properties-panel [contenteditable] {
+  padding-right: 20px !important;
+  width: calc(100% - 28px) !important;
 }
 
 @font-face {

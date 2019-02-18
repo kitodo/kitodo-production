@@ -37,7 +37,7 @@
         </bpmn2:parallelGateway>
         <bpmn2:sequenceFlow id="SequenceFlow_1ly8wvr" name="${type==2}" sourceRef="ParallelGateway_in"
                             targetRef="Task3"/>
-        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1, 2" template:conditionType="Script" template:conditionValue="src/test/resources/scripts/working_script.sh">
+        <bpmn2:task id="Task4" name="Task4" template:permittedUserRole="1, 2" template:kitodoConditionType="Script" template:kitodoConditionValue="src/test/resources/scripts/working_script.sh">
             <bpmn2:incoming>SequenceFlow_0r2wyjn</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1wv3bob</bpmn2:outgoing>
         </bpmn2:task>
@@ -62,11 +62,11 @@
             <bpmn2:incoming>SequenceFlow_1k2yq4g</bpmn2:incoming>
         </bpmn2:endEvent>
         <bpmn2:sequenceFlow id="SequenceFlow_1k2yq4g" sourceRef="Task5" targetRef="EndEvent_1b8lei6"/>
-        <bpmn2:scriptTask id="Task2" name="ScriptTask" template:permittedUserRole="1" template:conditionType="Script" template:conditionValue="src/test/resources/scripts/working_script.sh">
+        <bpmn2:scriptTask id="Task2" name="ScriptTask" template:permittedUserRole="1" template:kitodoConditionType="Script" template:kitodoConditionValue="src/test/resources/scripts/working_script.sh">
             <bpmn2:incoming>SequenceFlow_0wjq1nt</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_0ngyjvz</bpmn2:outgoing>
         </bpmn2:scriptTask>
-        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:conditionType="Script" template:conditionValue="src/test/resources/scripts/not_working_script.sh">
+        <bpmn2:task id="Task3" name="Task3" template:permittedUserRole="1" template:kitodoConditionType="Script" template:kitodoConditionValue="src/test/resources/scripts/not_working_script.sh">
             <bpmn2:incoming>SequenceFlow_1ly8wvr</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_1uklv3e</bpmn2:outgoing>
         </bpmn2:task>
