@@ -193,18 +193,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public void save(Process process) throws DataException {
-        super.save(process);
-
+    public void saveToIndex(Process process, boolean forceRefresh)
+            throws CustomResponseException, DataException, IOException {
         try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
             JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
             process.setMetaXml(iterateOverJsonObject(xmlJSONObject));
-            ServiceManager.getProcessService().saveToIndex(process, true);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
         } catch (IOException e) {
-            logger.info("Metadata file not found...");
+            logger.info(e.getMessage(), e);
         }
+
+        super.saveToIndex(process, forceRefresh);
     }
 
     /**
