@@ -111,8 +111,6 @@
                             <h:outputText><img class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
                             <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
                         </p:commandLink>
-                        <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
-                        <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
                     </ui:repeat>
                 </div>
             </ui:fragment>
@@ -133,8 +131,6 @@
                                             <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
                                         </p:commandLink>
                                     </div>
-                                    <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
-                                    <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
                                 </ui:repeat>
                             </div>
                         </div>
