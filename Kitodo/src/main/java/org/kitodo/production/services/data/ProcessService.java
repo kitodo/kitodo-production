@@ -23,10 +23,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -64,6 +66,9 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.flow.helper.SearchResultGeneration;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.XML;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -187,6 +192,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<Process> getAllForSelectedClient() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void save(Process process) throws DataException {
+        super.save(process);
+
+        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
+            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
+            process.setMetaXml(iterateOverJsonObject(xmlJSONObject));
+            ServiceManager.getProcessService().saveToIndex(process, true);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        } catch (IOException e) {
+            logger.info("Metadata file not found...");
+        }
     }
 
     /**
@@ -2260,6 +2280,32 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         return propertiesForDocket;
+    }
+
+    private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {
+        Iterator<String> keys = xmlJSONObject.keys();
+
+        Map<String, Object> json = new HashMap<>();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Object value = xmlJSONObject.get(key);
+            if (value instanceof String) {
+                json.put(key, value);
+            } else if (value instanceof JSONObject) {
+                JSONObject jsonObject = (JSONObject) value;
+                Map<String, Object> map = iterateOverJsonObject(jsonObject);
+                json.put(key, map);
+            } else if (value instanceof JSONArray) {
+                JSONArray jsonArray = (JSONArray) value;
+                List<Map<String, Object>> arrayMap = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i ++) {
+                    Map<String, Object> map = iterateOverJsonObject(jsonArray.getJSONObject(i));
+                    arrayMap.add(map);
+                }
+                json.put(key, arrayMap);
+            }
+        }
+        return json;
     }
 
     /**

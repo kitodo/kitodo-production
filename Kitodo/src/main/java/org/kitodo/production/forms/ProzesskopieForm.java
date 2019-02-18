@@ -531,7 +531,6 @@ public class ProzesskopieForm implements Serializable {
         return docStruct;
     }
 
-
     /**
      * Auswahl des Prozesses auswerten.
      */
@@ -701,59 +700,29 @@ public class ProzesskopieForm implements Serializable {
             return null;
         }
 
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
-        if (Objects.isNull(this.rdf)) {
-            createNewFileformat();
-        }
-
         processRdfConfiguration();
 
-        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(this.prozessKopie)) {
-            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
-            this.prozessKopie.setMetaXml(iterateOverJsonObject(xmlJSONObject));
-            ServiceManager.getProcessService().saveToIndex(this.prozessKopie, true);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            Helper.setErrorMessage(e.getMessage(), logger, e);
+        try {
+            ServiceManager.getProcessService().save(this.prozessKopie);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                e);
+            return null;
         }
 
         return processListPath;
     }
 
-    private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {
-        Iterator<String> keys = xmlJSONObject.keys();
-
-        Map<String, Object> json = new HashMap<>();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            Object value = xmlJSONObject.get(key);
-            if (value instanceof String) {
-                json.put(key, value);
-            } else if (value instanceof JSONObject) {
-                JSONObject jsonObject = (JSONObject) value;
-                Map<String, Object> map = iterateOverJsonObject(jsonObject);
-                json.put(key, map);
-            } else if (value instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) value;
-                List<Map<String, Object>> arrayMap = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i ++) {
-                    Map<String, Object> map = iterateOverJsonObject((JSONObject) jsonArray.getJSONObject(i));
-                    arrayMap.add(map);
-                }
-                json.put(key, arrayMap);
-            }
-        }
-        return json;
-    }
-
-
     /**
-     * If there is an RDF configuration (for example, from the OPAC import, or freshly created), then supplement these.
+     * If there is an RDF configuration (for example, from the OPAC import, or
+     * freshly created), then supplement these.
      */
     private void processRdfConfiguration() {
+        // create RDF config if there is none
+        if (Objects.isNull(this.rdf)) {
+            createNewFileformat();
+        }
+
         try {
             if (Objects.nonNull(this.rdf)) {
                 insertLogicalDocStruct();
@@ -818,8 +787,7 @@ public class ProzesskopieForm implements Serializable {
             LegacyDocStructHelperInterface tempChild) {
 
         if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-            LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
-                    .getPreferences(this.prozessKopie.getRuleset());
+            LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
             LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(prefs, field.getMetadata());
             LegacyMetadataHelper metadata = LegacyLogicalDocStructHelper.getMetadata(tempStruct, mdt);
             if (Objects.nonNull(metadata)) {
@@ -955,7 +923,8 @@ public class ProzesskopieForm implements Serializable {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
             Map<String, LegacyMetadataHelper> availableMetadata = higherLevelMetadata.containsKey(availableKey)
-                    ? higherLevelMetadata.get(availableKey) : new HashMap<>();
+                    ? higherLevelMetadata.get(availableKey)
+                    : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
                 availableMetadata.put(availableValue, available);
             }
@@ -1181,7 +1150,8 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
+    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct,
+            LegacyDocStructHelperInterface newDocStruct) {
         if (Objects.nonNull(oldDocStruct.getAllMetadata())) {
             for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 newDocStruct.addMetadata(md);
@@ -1607,8 +1577,8 @@ public class ProzesskopieForm implements Serializable {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && Objects.nonNull(additionalField.getValue())) {
-                        tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(additionalField.getTitle(),
-                            additionalField.getValue()));
+                        tifHeaderImageDescriptionBuilder.append(
+                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
 
                 }
@@ -1755,8 +1725,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getPageSize() retrieves the desired number of hits on one
-     * page of the hit list from the configuration.
+     * The function getPageSize() retrieves the desired number of hits on one page
+     * of the hit list from the configuration.
      *
      * @return desired number of hits on one page of the hit list from the
      *         configuration
