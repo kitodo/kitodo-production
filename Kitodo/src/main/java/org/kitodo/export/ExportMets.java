@@ -65,7 +65,7 @@ public class ExportMets {
          * Read Document
          */
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
 
         if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {

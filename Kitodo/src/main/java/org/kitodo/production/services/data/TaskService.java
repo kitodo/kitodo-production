@@ -452,17 +452,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get normalized title of task.
-     *
-     * @param title
-     *            as String
-     * @return normalized title
-     */
-    public String getNormalizedTitle(String title) {
-        return title.replace(" ", "_");
-    }
-
-    /**
      * Get project(s). If the task belongs to a template, the projects are in
      * the template. If the task belongs to a process, the project is in the
      * process.

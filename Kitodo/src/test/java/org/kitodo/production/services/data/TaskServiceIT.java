@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -217,8 +218,8 @@ public class TaskServiceIT {
     @Test
     public void shouldGetNormalizedTitle() throws Exception {
         Task task = taskService.getById(12);
-        String expected = "Processed_and_Some";
-        String actual = taskService.getNormalizedTitle(task.getTitle());
+        String expected = "Processed__and__Some";
+        String actual = Helper.getNormalizedTitle(task.getTitle());
         assertEquals("Normalized title of task doesn't match given plain text!", expected, actual);
     }
 

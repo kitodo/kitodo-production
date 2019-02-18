@@ -137,7 +137,7 @@ public class ExportDms extends ExportMets {
             throws IOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        this.atsPpnBand = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        this.atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
 
         LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(process, newFile);
         if (Objects.isNull(gdzfile)) {
@@ -175,7 +175,7 @@ public class ExportDms extends ExportMets {
             // if necessary, create process folder
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI userHomeProcess = fileService.createResource(userHome,
-                    File.separator + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()));
+                    File.separator + Helper.getNormalizedTitle(process.getTitle()));
                 destination = userHomeProcess;
                 boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getProject(),
                     process.getTitle());
@@ -254,7 +254,7 @@ public class ExportDms extends ExportMets {
 
     private boolean createProcessFolder(URI userHomeProcess, URI userHome, Project project, String processTitle)
             throws IOException {
-        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(processTitle);
+        String normalizedTitle = Helper.getNormalizedTitle(processTitle);
 
         // delete old import folder
         if (!fileService.delete(userHomeProcess)) {
@@ -396,7 +396,7 @@ public class ExportDms extends ExportMets {
             // delete success folder again
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/"
-                        + ServiceManager.getProcessService().getNormalizedTitle(processTitle));
+                        + Helper.getNormalizedTitle(processTitle));
                 fileService.delete(successFolder);
             }
         }
@@ -611,7 +611,7 @@ public class ExportDms extends ExportMets {
      */
     private void directoryDownload(Process process, URI destination) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
+        String normalizedTitle = Helper.getNormalizedTitle(process.getTitle());
 
         for (String processDir : processDirs) {
             URI srcDir = ServiceManager.getProcessService().getProcessDataDirectory(process)

@@ -769,7 +769,7 @@ public class FileService {
             resourceName = "";
         }
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
-                ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()), processSubType, resourceName);
+                Helper.getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 
     /**

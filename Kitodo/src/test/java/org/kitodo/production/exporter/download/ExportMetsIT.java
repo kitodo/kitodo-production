@@ -32,6 +32,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.export.ExportMets;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -101,7 +102,7 @@ public class ExportMetsIT {
 
         exportMets.startExport(process, exportUri);
         List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS) + userDirectory
-                + "/" + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
+                + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_mets.xml"));
         Assert.assertTrue("Export of metadata 'singleDigCollection' was wrong",
             strings.toString().contains("<ns3:metadata name=\"singleDigCollection\">test collection</ns3:metadata>"));
         Assert.assertTrue("Export of metadata 'TitleDocMain' was wrong",

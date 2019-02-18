@@ -13,11 +13,10 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -31,8 +30,6 @@ import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProcessesPage extends Page<ProcessesPage> {
-
-    private ProcessService processService = ServiceManager.getProcessService();
 
     private static final String PROCESSES_TAB_VIEW = "processesTabView";
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
@@ -226,7 +223,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isFileDownloaded.matches(
-                    new File(Browser.DOWNLOAD_DIR + processService.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
+                    new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
     }
 
     public void downloadLog() {
@@ -236,7 +233,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> isFileDownloaded.matches(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
-                        + "kowal/" + processService.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
+                        + "kowal/" + Helper.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
     }
 
     public void editMetadata() throws IllegalAccessException, InstantiationException {
