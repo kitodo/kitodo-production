@@ -31,12 +31,6 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.filename}"
-                  sortBy="#{item.fileName.keyword}"
-                  rendered="#{ProjectForm.showColumn('workflow.filename')}">
-            <h:outputText value="#{item.fileName}"/>
-        </p:column>
-
         <p:column headerText="#{msgs.active}"
                   sortBy="#{item.active}"
                   rendered="#{ProjectForm.showColumn('workflow.active')}">

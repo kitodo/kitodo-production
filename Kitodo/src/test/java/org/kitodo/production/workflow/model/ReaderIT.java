@@ -29,7 +29,6 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.exceptions.WorkflowException;
-import org.kitodo.production.workflow.model.beans.Diagram;
 import org.kitodo.production.workflow.model.beans.TaskInfo;
 
 public class ReaderIT {
@@ -59,14 +58,6 @@ public class ReaderIT {
 
         boolean result = Objects.nonNull(reader.getModelInstance());
         assertTrue("Process definition was not loaded!", result);
-    }
-
-    @Test
-    public void shouldGetWorkflow() throws Exception {
-        Reader reader = new Reader("extended-test");
-
-        Diagram workflow = reader.getWorkflow();
-        assertEquals("Process definition - workflow was read incorrectly!", "say-hello", workflow.getTitle());
     }
 
     @Test

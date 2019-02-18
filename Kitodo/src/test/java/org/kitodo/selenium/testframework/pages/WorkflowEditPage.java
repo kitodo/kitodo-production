@@ -38,7 +38,7 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     }
 
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {
-        fileInput.sendKeys(workflow.getFileName());
+        fileInput.sendKeys(workflow.getTitle());
         return this;
     }
 

@@ -23,7 +23,6 @@ public class WorkflowType extends BaseType<Workflow> {
     Map<String, Object> getJsonObject(Workflow workflow) {
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(WorkflowTypeField.TITLE.getKey(), preventNull(workflow.getTitle()));
-        jsonObject.put(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
         jsonObject.put(WorkflowTypeField.READY.getKey(), workflow.isReady());
         jsonObject.put(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
         jsonObject.put(WorkflowTypeField.CLIENT_ID.getKey(), getId(workflow.getClient()));

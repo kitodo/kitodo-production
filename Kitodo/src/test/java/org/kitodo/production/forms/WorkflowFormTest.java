@@ -50,7 +50,7 @@ public class WorkflowFormTest {
     public void shouldReadXMLDiagram() {
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(null);
-        modelerForm.setWorkflow(new Workflow("test", "test"));
+        modelerForm.setWorkflow(new Workflow("test"));
         modelerForm.readXMLDiagram();
 
         assertNotNull("Diagram XML was not read!", modelerForm.getXmlDiagram());
@@ -93,7 +93,7 @@ public class WorkflowFormTest {
 
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(xmlDiagram);
-        modelerForm.setWorkflow(new Workflow(fileName, fileName));
+        modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
 
         assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
@@ -176,7 +176,7 @@ public class WorkflowFormTest {
 
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setSvgDiagram(svgDiagram);
-        modelerForm.setWorkflow(new Workflow("test", fileName));
+        modelerForm.setWorkflow(new Workflow(fileName));
         modelerForm.saveFile(svgDiagramURI, svgDiagram);
 
         assertEquals("Diagram SVG was not saved!", svgDiagram, modelerForm.getSvgDiagram());

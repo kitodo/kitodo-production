@@ -239,7 +239,7 @@ public class ProcessForm extends TemplateBaseForm {
     public InputStream getTasksDiagram() {
         Workflow workflow = this.process.getTemplate().getWorkflow();
         if (Objects.nonNull(workflow)) {
-            return ServiceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
+            return ServiceManager.getTemplateService().getTasksDiagram(workflow.getTitle());
         }
         return ServiceManager.getTemplateService().getTasksDiagram("");
     }

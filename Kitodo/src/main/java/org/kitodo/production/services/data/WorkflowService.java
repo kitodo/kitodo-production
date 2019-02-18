@@ -120,27 +120,12 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     public Workflow duplicateWorkflow(Workflow baseWorkflow) {
         Workflow duplicatedWorkflow = new Workflow();
 
-        // Workflow _title_ should explicitly _not_ be duplicated!
-        duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_" + Helper.generateRandomString(3));
+        duplicatedWorkflow.setTitle(baseWorkflow.getTitle() + "_" + Helper.generateRandomString(3));
         duplicatedWorkflow.setActive(baseWorkflow.isActive());
         duplicatedWorkflow.setReady(false);
         duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
         return duplicatedWorkflow;
-    }
-
-    /**
-     * Get workflows for given title and file name.
-     * 
-     * @param title
-     *            as String
-     * @param file
-     *            as String
-     * @return list of Workflow objects, desired is that only 1 or 0 workflows are
-     *         returned
-     */
-    public List<Workflow> getWorkflowsForTitleAndFile(String title, String file) {
-        return dao.getByTitleAndFile(title, file);
     }
 
     /**

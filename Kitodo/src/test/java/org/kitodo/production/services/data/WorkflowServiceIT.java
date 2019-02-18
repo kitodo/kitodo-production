@@ -44,7 +44,7 @@ public class WorkflowServiceIT {
     @Test
     public void shouldGetWorkflow() throws Exception {
         Workflow workflow = workflowService.getById(1);
-        boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFileName().equals("test");
+        boolean condition = workflow.getTitle().equals("test");
         assertTrue("Workflow was not found in database!", condition);
     }
 
@@ -52,12 +52,6 @@ public class WorkflowServiceIT {
     public void shouldGetAllWorkflows() throws Exception {
         List<Workflow> workflows = workflowService.getAll();
         assertEquals("Workflows were not found in database!", 3, workflows.size());
-    }
-
-    @Test
-    public void shouldGetWorkflowsForTitleAndFile() {
-        List<Workflow> workflows = workflowService.getWorkflowsForTitleAndFile("say-hello", "test");
-        assertEquals("Workflows were not found in database!", 1, workflows.size());
     }
 
     @Test
