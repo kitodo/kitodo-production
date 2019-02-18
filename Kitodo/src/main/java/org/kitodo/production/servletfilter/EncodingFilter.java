@@ -12,6 +12,7 @@
 package org.kitodo.production.servletfilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import javax.servlet.Filter;
@@ -39,7 +40,7 @@ public class EncodingFilter implements Filter {
     public void init(FilterConfig filterConfig) {
         encoding = filterConfig.getInitParameter("requestEncoding");
         if (Objects.isNull(encoding)) {
-            encoding = "UTF-8";
+            encoding = StandardCharsets.UTF_8.name();
         }
     }
 

@@ -198,7 +198,7 @@ public class WebDav implements Serializable {
         String processLinkName = Helper.getNormalizedTitle(process.getTitle()) + "__[" + process.getId() + "]";
         String encodedProcessLinkName;
         try {
-            encodedProcessLinkName = URLEncoder.encode(processLinkName, "UTF-8");
+            encodedProcessLinkName = URLEncoder.encode(processLinkName, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             return "";
