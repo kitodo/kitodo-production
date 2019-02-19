@@ -119,20 +119,6 @@ public enum ParameterCore implements ParameterInterface {
      */
 
     /**
-     * Boolean, defaults to {@code false}.
-     */
-    CREATE_ORIG_FOLDER_IF_NOT_EXISTS(new Parameter<>("createOrigFolderIfNotExists", false)),
-
-    /*
-     * Parameters.java has been sorted to corresponding to kitodo_config.properties,
-     * including the section headers as you see. However there is an entry
-     * createSourceFolder in kitodo_config.properties, but there is no constant for
-     * it here. This comment is to explain where the constant is if someone compares
-     * the two files in the future:
-     */
-    CREATE_SOURCE_FOLDER(new Parameter<UndefinedParameter>("createSourceFolder")),
-
-    /**
      * Prefix of image directory name created on process creation.
      */
     DIRECTORY_PREFIX(new Parameter<>("DIRECTORY_PREFIX", "orig")),

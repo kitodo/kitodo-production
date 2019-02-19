@@ -667,7 +667,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Anlegen des Prozesses und save der Metadaten.
+     * Create the process and save the meta-data.
      */
     public String createNewProcess() {
         if (!isContentValid(true)) {
@@ -684,19 +684,16 @@ public class ProzesskopieForm implements Serializable {
             return null;
         }
 
-        String baseProcessDirectory = ServiceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
-                .toString();
-        boolean successful = false;
         try {
-            successful = ServiceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
-        } catch (IOException e) {
+            URI processBaseUri = ServiceManager.getFileService().createProcessLocation(prozessKopie);
+            prozessKopie.setProcessBaseUri(processBaseUri);
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        if (!successful) {
-            String message = "Metadata directory: " + baseProcessDirectory + " in path: "
-                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
-            logger.error(message);
-            Helper.setErrorMessage(message);
+            try {
+                ServiceManager.getProcessService().remove(prozessKopie);
+            } catch (Exception ex) {
+                logger.catching(ex);
+            }
             return null;
         }
 
@@ -738,8 +735,6 @@ public class ProzesskopieForm implements Serializable {
                 insertImagePath();
             }
 
-            // Create configured directories
-            ServiceManager.getProcessService().createProcessDirs(this.prozessKopie);
             ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
             startTaskScriptThreads();

@@ -141,8 +141,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String LOCKED = "locked";
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
-    private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
-            .getBooleanParameter(ParameterCore.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
@@ -865,10 +863,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
-        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
-            fileService.createDirectory(result, tifDirectory.getRawPath());
-        }
-
         return tifDirectory;
     }
 
@@ -933,10 +927,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
-            if (CREATE_ORIG_FOLDER_IF_NOT_EXISTS && Objects.nonNull(process.getSortHelperStatus())
-                    && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createDirectory(result, origDirectory.getRawPath());
-            }
             return origDirectory;
         } else {
             return getImagesTifDirectory(useFallBack, process.getId(), process.getTitle(), process.getProcessBaseUri());
@@ -1630,19 +1620,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public void addToWikiField(User user, String message, Process process) {
         String text = message + " (" + user.getSurname() + ")";
         addToWikiField("user", text, process);
-    }
-
-    /**
-     * The method createProcessDirs() starts creation of directories configured by
-     * parameter processDirs within kitodo_config.properties
-     */
-    public void createProcessDirs(Process process) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-
-        for (String processDir : processDirs) {
-            fileService.createDirectory(this.getProcessDataDirectory(process),
-                processDir.replace(PROCESS_TITLE, getNormalizedTitle(process.getTitle())));
-        }
     }
 
     /**
