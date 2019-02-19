@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -458,7 +459,7 @@ public class ExportXmlLog {
             docTrans = doc;
         }
         Format format = Format.getPrettyFormat();
-        format.setEncoding("UTF-8");
+        format.setEncoding(StandardCharsets.UTF_8.name());
         XMLOutputter xmlOut = new XMLOutputter(format);
 
         xmlOut.output(docTrans, out);

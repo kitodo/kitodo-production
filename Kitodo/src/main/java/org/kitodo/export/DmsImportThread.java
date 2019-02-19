@@ -24,6 +24,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
 public class DmsImportThread extends Thread {
@@ -62,8 +63,7 @@ public class DmsImportThread extends Thread {
         this.fileSuccess = new File(project.getDmsImportSuccessPath(), ats + ".xml");
         if (project.isDmsImportCreateProcessFolder()) {
             this.fileSuccess = new File(project.getDmsImportSuccessPath(),
-                    ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()) + File.separator + ats
-                            + ".xml");
+                    Helper.getNormalizedTitle(process.getTitle()) + File.separator + ats + ".xml");
         }
 
         this.folderImages = new File(project.getDmsImportImagesPath(), ats + "_tif");

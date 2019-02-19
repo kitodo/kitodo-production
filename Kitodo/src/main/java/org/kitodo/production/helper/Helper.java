@@ -483,6 +483,17 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
+     * Get title without white spaces.
+     *
+     * @param title
+     *            of object
+     * @return title with '__' instead of ' '
+     */
+    public static String getNormalizedTitle(String title) {
+        return title.replace(" ", "__");
+    }
+
+    /**
      * Generate random string.
      * 
      * @param length

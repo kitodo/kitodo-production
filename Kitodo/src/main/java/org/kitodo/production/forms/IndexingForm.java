@@ -16,6 +16,7 @@ import static java.lang.Math.toIntExact;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -445,7 +446,7 @@ public class IndexingForm {
     private static String readMapping() {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
-            String mapping = IOUtils.toString(inputStream, "UTF-8");
+            String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
                 JsonObject jsonObject = jsonReader.readObject();
                 return jsonObject.toString();

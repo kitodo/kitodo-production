@@ -267,7 +267,7 @@ public class SRUClient {
         InputStream in = getClass().getResourceAsStream("/" + fileName);
         if (in != null) {
             IOUtils.copy(in, out);
-            testingResponseString = out.toString("UTF-8");
+            testingResponseString = out.toString(StandardCharsets.UTF_8.name());
             in.close();
         }
     }
@@ -349,7 +349,7 @@ public class SRUClient {
      */
     private String encode(String value) {
         try {
-            return URLEncoder.encode(value, "UTF-8");
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException ex) {
             logger.error("Error UTF-8 encoding value '{}'", value, ex);
             return "";

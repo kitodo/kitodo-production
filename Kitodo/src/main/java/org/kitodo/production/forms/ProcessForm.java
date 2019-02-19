@@ -930,8 +930,7 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             ExportXmlLog xmlExport = new ExportXmlLog();
             String directory = new File(ServiceManager.getUserService().getHomeDirectory(getUser())).getPath();
-            String destination = directory + "/"
-                    + ServiceManager.getProcessService().getNormalizedTitle(this.process.getTitle()) + "_log.xml";
+            String destination = directory + "/" + Helper.getNormalizedTitle(this.process.getTitle()) + "_log.xml";
             xmlExport.startExport(this.process, destination);
         } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);

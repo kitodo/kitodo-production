@@ -764,17 +764,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get title without white spaces.
-     *
-     * @param title
-     *            of process
-     * @return title with '__' instead of ' '
-     */
-    public String getNormalizedTitle(String title) {
-        return title.replace(" ", "__");
-    }
-
-    /**
      * Returns the batches of the desired type for a process.
      *
      * @param type
@@ -860,7 +849,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             null);
 
         if (Objects.isNull(tifDirectory)) {
-            tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
+            tifDirectory = URI.create(result.getRawPath() + Helper.getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
         return tifDirectory;
@@ -924,7 +913,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             if (Objects.isNull(origDirectory)) {
                 origDirectory = URI.create(result.toString() + DIRECTORY_PREFIX + "_"
-                        + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
+                        + Helper.getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
             return origDirectory;
@@ -1361,7 +1350,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             DocketInterface module = initialiseDocketModule();
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
-            writeToOutputStream(facesContext, file, getNormalizedTitle(process.getTitle()) + ".pdf");
+            writeToOutputStream(facesContext, file, Helper.getNormalizedTitle(process.getTitle()) + ".pdf");
             Files.deleteIfExists(file.toPath());
         }
     }
@@ -1703,7 +1692,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = getNormalizedTitle(process.getTitle());
+        String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
 
         // read document
         LegacyMetsModsDigitalDocumentHelper gdzfile = readDocument(preferences, process);
@@ -1727,7 +1716,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // if necessary, create an operation folder
         if (project.isDmsImportCreateProcessFolder()) {
-            targetDirectory = userHome.resolve(File.separator + getNormalizedTitle(process.getTitle()));
+            targetDirectory = userHome.resolve(File.separator + Helper.getNormalizedTitle(process.getTitle()));
             boolean created = createOperationDirectory(userHome, process);
             if (!created) {
                 return false;
@@ -1772,7 +1761,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
                 File successFile = new File(
-                        project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
+                        project.getDmsImportSuccessPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
         }
@@ -1817,7 +1806,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
         // remove old success folder
         File successFile = new File(
-                project.getDmsImportSuccessPath() + File.separator + getNormalizedTitle(process.getTitle()));
+                project.getDmsImportSuccessPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(successFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
@@ -1825,7 +1814,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
         // remove old error folder
         File errorFile = new File(
-                project.getDmsImportErrorPath() + File.separator + getNormalizedTitle(process.getTitle()));
+                project.getDmsImportErrorPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(errorFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
@@ -1833,7 +1822,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         if (!fileService.fileExist(userHome)) {
-            fileService.createDirectory(userHome, File.separator + getNormalizedTitle(process.getTitle()));
+            fileService.createDirectory(userHome, File.separator + Helper.getNormalizedTitle(process.getTitle()));
         }
         return true;
     }
@@ -2187,7 +2176,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = getNormalizedTitle(myProcess.getTitle());
+        String normalizedTitle = Helper.getNormalizedTitle(myProcess.getTitle());
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
