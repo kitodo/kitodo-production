@@ -22,7 +22,7 @@
 
             <h:panelGroup rendered="#{!empty MetadataProcessor.metaPersonList}">
                 <p:dataTable id="personTable" value="#{MetadataProcessor.metaPersonList}" var="person"
-                             style="margin-bottom:30px">
+                             style="margin-bottom:30px;">
                     <f:facet name="header">
                         #{msgs.persons}
                     </f:facet>
@@ -30,7 +30,7 @@
                     <p:column>
                         <p:panelGrid>
                             <p:outputLabel for="role" value="#{msgs.role}:"/>
-                            <p:selectOneMenu id="role" value="#{person.rolle}" style="width: calc(100% - 32px)">
+                            <p:selectOneMenu id="role" value="#{person.rolle}" style="width: calc(100% - 32px);">
                                 <f:selectItems value="#{person.addableRollen}"/>
                                 <f:ajax event="mouseup"/>
                             </p:selectOneMenu>
@@ -57,15 +57,15 @@
 
                     </p:column>
 
-                    <p:column style="width:64px;text-align: center; padding: 8px 0" id="actionButtons">
-                        <p:commandButton update="metadata:personTable"
-                                         icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
-                                         title="#{msgs.personsDataCopy}" action="#{MetadataProcessor.copyPerson}">
+                    <p:column style="width:64px;text-align: center; padding: 8px 0;" id="actionButtons">
+                        <p:commandButton update="metadata" id="deletePersonBtn" icon="fa fa-trash" immediate="true"
+                                         styleClass="secondary" title="#{msgs.personsDataDelete}"
+                                         action="#{MetadataProcessor.deletePerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
                         </p:commandButton>
-
-                        <p:commandButton update="metadata" id="deletePersonBtn" icon="fa fa-trash" immediate="true"
-                                         title="#{msgs.personsDataDelete}" action="#{MetadataProcessor.deletePerson}">
+                        <p:commandButton update="metadata:personTable" styleClass="secondary"
+                                         icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
+                                         title="#{msgs.personsDataCopy}" action="#{MetadataProcessor.copyPerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
                         </p:commandButton>
                     </p:column>
@@ -75,7 +75,8 @@
                                  update="dialogAddPersonForm:selectTempPersonRoll, dialogAddPersonForm:addPersonRecord"
                                  title="#{msgs.docstructTypeAendern}"
                                  action="#{MetadataProcessor.addPerson}"
-                                 style="margin-bottom: 40px"
+                                 style="margin-bottom: 40px;"
+                                 styleClass="secondary"
                                  onclick="PF('dialogAddPerson').show();">
                 </p:commandButton>
             </h:panelGroup>
@@ -86,45 +87,48 @@
                          value="#{MetadataProcessor.myMetadaten}"
                          var="item">
 
-                <p:column style="width: 100%">
+                <p:column style="width: 100%;">
                     <p:outputLabel value="#{item.typ}"/>
                     <p:inputTextarea value="#{item.value}" rows="2" style="width:100%;">
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
                     <p:commandButton update="metadata:metadataTable"
-                                     icon="fa fa-clipboard"
-                                     immediate="true"
-                                     tabindex="-1"
-                                     title="#{msgs.metadataCopy}"
-                                     action="#{MetadataProcessor.copy}">
-                        <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
-                    </p:commandButton>
-
-                    <p:commandButton update="metadata:metadataTable"
                                      icon="fa fa-trash"
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataDelete}"
+                                     styleClass="secondary"
                                      action="#{MetadataProcessor.delete}">
+                        <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
+                    </p:commandButton>
+                    <p:commandButton update="metadata:metadataTable"
+                                     icon="fa fa-clipboard"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     title="#{msgs.metadataCopy}"
+                                     styleClass="secondary"
+                                     action="#{MetadataProcessor.copy}">
                         <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
 
-            <div style="margin-top:30px">
+            <div style="margin-top:30px;">
                 <h:outputText value="#{msgs.neueMetadatenHinzufuegen}:"/>
             </div>
 
-            <p:panelGrid style="width:100%;margin-top:10px" styleClass="ui-noborder">
+            <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
                 <p:row>
                     <p:selectOneMenu id="metadataTypeSelection" value="#{MetadataProcessor.tempTyp}">
                         <f:selectItems value="#{MetadataProcessor.addableMetadataTypes}"/>
                     </p:selectOneMenu>
                 </p:row>
                 <p:row>
-                    <p:inputTextarea value="#{MetadataProcessor.metadata.value}" rows="2" style="width:83%;"/>
+                    <p:inputTextarea value="#{MetadataProcessor.metadata.value}" rows="2"
+                                     style="width:83%; margin-top: 8px;"/>
                     <p:commandButton update="metadata:metadataTable" icon="fa fa-plus"
-                                     style="vertical-align: top; margin-left: 10px"
+                                     styleClass="secondary"
+                                     style="vertical-align: top; margin-left: 10px;"
                                      title="#{msgs.neueMetadatenHinzufuegen}" action="#{MetadataProcessor.save}">
                     </p:commandButton>
                 </p:row>

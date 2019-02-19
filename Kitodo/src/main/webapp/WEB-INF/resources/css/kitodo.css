@@ -559,6 +559,7 @@ section#content-section {
 .content-header {
     height: 36px;
     padding: 1.0em 16px;
+    position: relative;
 }
 
 .content-header .ui-panel-content {
@@ -947,7 +948,14 @@ Metadata Editor
 
 #metadataEditorHeader {
     padding: 1em 16px;
-    margin-bottom: 1em;
+}
+
+#metadataEditorHeader h3 {
+    width: calc(100% - 450px);
+    display: inline-block;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 #metadataEditorHeader .ui-panel,
@@ -955,12 +963,34 @@ Metadata Editor
     padding: 0;
 }
 
+#metadataEditorHeader .button-wrapper {
+    position: absolute;
+    right: 0;
+    vertical-align: top;
+    white-space: nowrap;
+    float: right;
+}
+
 #metadataEditorWrapper {
     height: 700px;
-    margin-left: 16px;
-    margin-right: 16px;
-    width: calc(100% - 32px);
     white-space: nowrap;
+    border-top: solid 3px grey;
+}
+
+form#metadata,
+form#metadata textarea,
+form#metadata div label,
+#commentsBox\:comments tr,
+#metadata\:metadataTable_data td,
+#metadata\:metadataTable_data textarea {
+    background-color: var(--transblue);
+}
+
+#metadata\:personTable_data button.secondary,
+#metadata\:metadataTable_data button.secondary {
+    float: right;
+    margin-top: 8px;
+    margin-left: 8px;
 }
 
 .collapsibleWrapper {
@@ -969,41 +999,60 @@ Metadata Editor
     box-sizing: border-box;
     vertical-align: top;
     position: relative;
-    padding: 10px 0 0 0;
     background: #d8d8d8;
     overflow: visible !important;
     white-space: initial;
 }
 
-.collapsibleWrapper > button {
+.collapsibleWrapper > .columnExpandButton {
+    background: transparent;
+    border: none;
+    color: grey;
+    height: 36px;
     position: absolute;
-    top: -10px;
-    left: 8px;
-    background: #0071bc;
-    color: #fff;
-    border: solid 1px #fff;
+    right: 16px;
 }
 
-.collapsibleWrapper > button:disabled {
-    background: #d8d8d8;
+.collapsibleWrapper.collapsed > .columnExpandButton {
+    right: 0;
+    top: 0;
+    width: 42px;
 }
 
-.collapsibleWrapper.collapsed .columnExpandButton {
-    transform: scaleX(-1);
+.collapsibleWrapper .columnExpandButton .fa-expand {
+    display: none;
+}
+
+.collapsibleWrapper .columnExpandButton .fa-compress {
+    display: inline-block;
+}
+
+.collapsibleWrapper.collapsed .columnExpandButton .fa-expand {
+    display: inline-block;
+}
+
+.collapsibleWrapper.collapsed .columnExpandButton .fa-compress {
+    display: none;
 }
 
 .collapsibleWrapper .columnHeadingWrapper {
-    height: 40px;
-    line-height: 40px;
-    padding: 0 8px;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px;
     font-weight: bold;
 }
 
 .collapsibleWrapper .columnHeadingWrapper button {
-    float: right;
     background: none;
     border: none;
-    height: 40px;
+    height: 36px;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: var(--primary);
+}
+
+.collapsibleWrapper .columnHeadingWrapper button:disabled {
+    color: var(--disabled-dark);
 }
 
 .collapsibleWrapper.collapsed .columnHeadingWrapper button {
@@ -1017,7 +1066,7 @@ Metadata Editor
 .collapsibleWrapper.collapsed .columnHeading {
     position: absolute;
     transform: rotate(90deg);
-    top: -10px;
+    top: 16px;
     left: 0px;
     width: 200px;
     height: 42px;
@@ -1042,11 +1091,45 @@ Metadata Editor
     padding: 0;
 }
 
+#metadataEditorContainer {
+    margin: auto 16px;
+    padding: 0;
+}
+
+#metadataEditorContainer > .ui-widget-content {
+    padding: 0;
+}
+
 #metadataEditorWrapper .resizer {
     display: inline-block;
     height: 100%;
-    width: 5px;
+    width: 3px;
+    border: solid grey;
+    border-width: 0 1px;
+    box-sizing: border-box;
     cursor: ew-resize;
+    position: relative;
+}
+
+#metadataEditorWrapper .resizer::before {
+    content: '\f0d9';
+    color: grey;
+    font-family: FontAwesome;
+    font-size: 22px;
+    position: absolute;
+    right: 3px;
+    top: 8px;
+}
+
+#metadataEditorWrapper .resizer::after {
+    content: '\f0da';
+    color: grey;
+    font-family: FontAwesome;
+    font-size: 22px;
+    position: absolute;
+    left: 3px;
+    top: 8px;
+    z-index: 1;
 }
 
 #metadataEditorWrapper .resizer.disabled {
@@ -1070,6 +1153,10 @@ Metadata Editor
 #metadataPanel,
 #commentPanel,
 #galleryPanel {
+    overflow: hidden;
+}
+
+#metadataPanel {
     overflow-y: scroll;
 }
 
@@ -1100,7 +1187,7 @@ Column content
 
 #structureTreeForm\:structurePanel {
     overflow-y: scroll;
-    height: 50%;
+    height: calc(100% - 140px);
     box-sizing: border-box;
 }
 
@@ -1112,12 +1199,8 @@ Column content
     overflow-x: hidden;
 }
 
-#structureTreeForm\:actionButtons .ui-panelgrid-cell {
-    padding: 2px;
-}
-
-#structureTreeForm\:actionButtons .ui-button {
-    width: 100%;
+#structureTreeForm button.secondary {
+    margin: 4px;
 }
 
 .pagination-active {
@@ -1129,11 +1212,7 @@ Column content
 }
 
 .structureElementDataList {
-    min-height: 75px;
-    border: 1px solid black;
-    border-radius: 10px;
     padding: 5px;
-    margin-bottom: 15px;
 }
 
 #metadata input {
@@ -1156,6 +1235,60 @@ Column content
     background: #f3f3f3;
 }
 
+#imagePreviewForm\:tifFoldersLabel {
+    color: var(--default-bright);
+    line-height: var(--input-height);
+}
+
+#imagePreviewForm\:imageControlPanel button {
+    margin-right: 0;
+}
+
+#map .ol-overlaycontainer-stopevent {
+    left: 16px;
+    position: absolute;
+    top: 16px;
+}
+
+#map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control {
+    background: transparent;
+    left: 0;
+    padding: 0;
+    top: 0;
+}
+
+#map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control > button {
+    border-radius: 3px;
+    height: 36px;
+    margin: 0 0 16px 0;
+    width: 36px;
+}
+
+#map .ol-unselectable.ol-control > button:hover {
+    cursor: pointer;
+}
+
+#map .ol-control {
+    background: transparent;
+    padding: 0;
+    position: static;
+}
+
+#map .ol-control:hover {
+    background: transparent;
+}
+
+#map .ol-control button {
+    border-radius: 3px;
+    height: 36px;
+    margin: 0 0 16px 0;
+    width: 36px;
+}
+
+#map .ol-rotate.ol-hidden, #map .ol-attribution {
+    display: none;
+}
+
 .rotate-right {
     top: 65px !important;
     left: .5em;
@@ -1168,6 +1301,10 @@ Column content
     right: auto !important;
 }
 
+#map div.ol-control button {
+    background-color: var(--primary);
+}
+
 .thumbnailWrapper {
     margin-left: 5px;
 }
@@ -1177,22 +1314,101 @@ Column content
     height: 100%;
 }
 
-#thumbnailStripe > div {
+#thumbnailStripe {
+    display: inline-block;
+    float: right;
+    height: 100%;
+    border-left: 1px solid var(--primary);
+    overflow: hidden;
+    width: 100px;
+}
+
+#thumbnailStripeScrollableContent {
+    box-sizing: content-box;
+    height: calc(100% - 136px);
+    overflow-y: scroll;
+    padding-right: 50px;
+    width: 100%;
+}
+
+#thumbnailWrapper {
+    width: 100px;
+    text-align: center;
+    overflow: visible;
+}
+
+#thumbnailWrapper > div {
     text-align: center;
 }
 
-#thumbnailStripe a {
+#thumbnailStripeScrollableContent a {
     display: inline-block;
+}
+
+#imagePreviewForm\:scroll-up, #imagePreviewForm\:scroll-down {
+    display: block;
+    margin: 16px auto;
+}
+
+#imagePreviewForm\:scroll-up *, #imagePreviewForm\:scroll-down * {
+    pointer-events: none;
 }
 
 .thumbnail {
     height: 60px;
     border: 1px solid black;
-    margin: 3px;
 }
 
 .thumbnail.active {
-    border: 2px solid red;
+    border: 2px solid var(--callto);
+}
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.thumbnail-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .2s ease;
+    background-color: var(--secondary);
+    color: white;
+    font-size: smaller;
+    text-align: center;
+}
+
+.thumbnail-container:hover .thumbnail-overlay {
+    opacity: .7;
+}
+
+#imagePreviewForm {
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(var(--carbonblue), var(--dark));
+}
+
+#imagePreviewForm\:structuredPages .ui-panel .ui-panel-content {
+    padding: 0;
+}
+
+#imagePreviewForm div.ui-panel.ui-corner-all,
+#imagePreviewForm .ui-widget-content {
+    background: transparent;
+}
+
+#imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
+    display: block;
+    background-color: var(--dark);
+    color: white;
+    padding: 5px;
+    border-top: 3px solid var(--primary);
 }
 
 #imagePreviewForm\:structuredPages ul {
@@ -1203,8 +1419,14 @@ Column content
     display: inline-block;
 }
 
-#imagePreviewForm\:structuredPages ul li span.ui-panel-title {
-    margin: 0;
+#imagePreviewForm\:structuredPagesField {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 0;
+}
+
+#imagePreviewForm\:structuredPages .ui-widget-content {
+    color: var(--default-bright);
 }
 
 /*----------------------------------------------------------------------

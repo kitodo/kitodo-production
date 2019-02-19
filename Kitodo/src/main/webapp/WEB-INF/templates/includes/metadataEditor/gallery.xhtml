@@ -22,11 +22,12 @@
             <span id="imageData" data-image="#{request.contextPath}#{MetadataProcessor.currentImage}"/>
             <p:panelGrid id="imageControlPanel" columns="3"
                          rendered="#{MetadataProcessor.imageListExistent}"
-                         style="right: 17px; top: 9px; position: absolute;">
+                         style="right: 47px; top: 0; position: absolute;">
                 <p:column>
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
+                                     oncomplete="destruct()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -35,6 +36,7 @@
                     <p:commandButton id="gridViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
+                                     oncomplete="destruct()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'grid' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="grid" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -43,6 +45,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
+                                     oncomplete="initialize()"
                                      styleClass="#{MetadataProcessor.viewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{MetadataProcessor.viewMode}"/>
                     </p:commandButton>
@@ -50,7 +53,7 @@
             </p:panelGrid>
 
             <p:panel rendered="#{not MetadataProcessor.imageListExistent}">
-                <p:outputLabel for="tifFolders" value="#{msgs.currentFolder}" style="vertical-align: top"/>
+                <p:outputLabel for="tifFolders" id="tifFoldersLabel" value="#{msgs.currentFolder}"/>
                 <p:selectOneMenu id="tifFolders" value="#{MetadataProcessor.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
                     <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
                     <f:selectItems value="#{MetadataProcessor.allTifFolders}"/>
@@ -77,9 +80,14 @@
                                     value="#{MetadataProcessor.getPageReferencesToDocStruct(structureElement)}"
                                     binding="#{structuredThumbnail}">
                             <ui:param name="filePath" value="#{MetadataProcessor.getPageImageFilePath(page)}"/>
-                            <p:panel id="structuredPagePanel" header="#{msgs.image} #{MetadataProcessor.getPhysicalPageNumber(page)} , #{msgs.page} #{MetadataProcessor.getLogicalPageNumber(page)}" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
+                            <p:panel id="structuredPagePanel" rendered="#{MetadataProcessor.isAccessGranted(filePath)}">
                                 <p:commandLink update="structureTreeForm, imagePreviewForm">
-                                    <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                    <div class="thumbnail-container">
+                                        <img src="#{request.contextPath}#{MetadataProcessor.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                        <div class="thumbnail-overlay">
+                                            #{msgs.image} #{MetadataProcessor.getPhysicalPageNumber(page)}, #{msgs.page} #{MetadataProcessor.getLogicalPageNumber(page)}
+                                        </div>
+                                    </div>
                                     <f:setPropertyActionListener value="#{filePath}" target="#{MetadataProcessor.currentImage}"/>
                                     <f:setPropertyActionListener value="#{page}" target="#{MetadataProcessor.myStrukturelement}"/>
                                 </p:commandLink>
@@ -103,8 +111,6 @@
                             <h:outputText><img class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
                             <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
                         </p:commandLink>
-                        <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
-                        <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
                     </ui:repeat>
                 </div>
             </ui:fragment>
@@ -113,23 +119,27 @@
             <ui:fragment rendered="#{MetadataProcessor.viewMode eq 'preview' and MetadataProcessor.imageListExistent}">
                 <!-- OpenLayers Kitodo custom controls -->
                 <div id="olWrapper" style="overflow-x: auto; height: 100%">
-                    <div id="thumbnailStripe" style="width: 100px; display: inline-block; float: right">
-                        <ui:repeat value="#{MetadataProcessor.images}" var="image">
-                            <div>
-                                <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{MetadataProcessor.isAccessGranted(image)}">
-                                    <!-- outputText is needed to remove whitespace produced by correct code indent -->
-                                    <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
-                                    <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
-                                </p:commandLink>
+                    <div id="thumbnailStripe">
+                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
+                        <div id="thumbnailStripeScrollableContent">
+                            <div id="thumbnailWrapper">
+                                <ui:repeat value="#{MetadataProcessor.images}" var="image">
+                                    <div>
+                                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" oncomplete="checkScrollPosition()" rendered="#{MetadataProcessor.isAccessGranted(image)}">
+                                            <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                                            <h:outputText><img style="display: inline;" class="thumbnail #{MetadataProcessor.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{MetadataProcessor.getThumbnail(image)}"/></h:outputText>
+                                            <f:setPropertyActionListener value="#{image}" target="#{MetadataProcessor.currentImage}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </ui:repeat>
                             </div>
-                            <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
-                            <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
-                        </ui:repeat>
+                        </div>
+                        <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
                     </div>
                     <ui:fragment rendered="#{MetadataProcessor.isAccessGranted(MetadataProcessor.currentImage)}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
                         <h:outputScript name="js/ol_custom.js"/>
-                        <div id="map" class="map" style="width: calc(100% - 100px); height: 100%; display: inline-block; float: left"/>
+                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left"/>
                     </ui:fragment>
                 </div>
             </ui:fragment>

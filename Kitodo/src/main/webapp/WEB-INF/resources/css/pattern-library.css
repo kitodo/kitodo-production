@@ -23,6 +23,8 @@
     --alert: #f94a15;
     --error-border: #b94a48;
     --error-background: #f2dede;
+    --carbonblue: #1e3946;
+    --transblue: #f2fbff;
 
     --progress-closed: #42ba37;
     --progress-inwork: #c3d300;
@@ -444,6 +446,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background-color: var(--lightgray);
 }
 
+.ui-tree {
+    width: 100%;
+}
+
 .ui-datatable thead th,
 .ui-datatable tbody td,
 .ui-datatable tfoot td,
@@ -472,28 +478,16 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background: var(--lightgray);
 }
 
-#imagePreviewForm\:imageControlPanel {
-    margin-bottom: 10px;
-}
-
-#imagePreviewForm\:imageControlPanel tr {
-    background-color: #d8d8d8;
-}
-
 #imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
     padding: 0;
 }
 
-#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell:nth-child(2) {
-    border-left: 3px solid #0071bc;
-}
-
 #imagePreviewForm\:imageControlPanel button {
-    background-color: #d8d8d8;
+    background-color: transparent;
 }
 
 #imagePreviewForm\:imageControlPanel button.active .fa {
-    color: white;
+    color: var(--callto);
 }
 
 #imagePreviewForm\:imageControlPanel button.inactive .fa {
