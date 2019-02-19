@@ -957,6 +957,248 @@
             </key>
         </key>
 
+        <key id="originInfo">
+            <label>Origination information</label>
+            <label lang="de">Herkunftsangaben</label>
+
+            <key id="place">
+                <label>Place of publication</label>
+                <label lang="de">Ortsangaben</label>
+
+                <key id="placeTerm">
+                    <label>Place</label>
+                    <label lang="de">Erscheinungsort</label>
+
+                    <key id="type">
+                        <label>Type</label>
+                        <label lang="de">Typ</label>
+
+                        <option value="text">
+                            <label>A place in a textual form</label>
+                            <label lang="de">Textliche Beschreibung des Ortes</label>
+                        </option>
+                        <option value="code">
+                            <label>A place in a coded form</label>
+                            <label lang="de">Code, der für den Ort steht</label>
+                        </option>
+                    </key>
+
+                    <key id="authority">
+                        <label>Controlled list from which the value is taken</label>
+                        <label lang="de">Quelle für die verwendeten Codes</label>
+                    </key>
+
+                    <key id="authorityURI">
+                        <label>URI of the controlled vocabulary</label>
+                        <label lang="de">URI der Normdatei</label>
+                        <codomain type="anyURI"/>
+                    </key>
+
+                    <key id="valueURI">
+                        <label>URI identifying the value from a controlled vocabulary</label>
+                        <label lang="de">URI des Ortes</label>
+                        <codomain type="anyURI"/>
+                    </key>
+                </key>
+            </key>
+
+            <key id="publisher">
+                <label>Publisher</label>
+                <label lang="de">Herausgeber</label>
+            </key>
+
+            <key id="dateIssued">
+                <label>Date published</label>
+                <label lang="de">Erscheinungsdatum</label>
+            </key>
+
+            <key id="dateCreated">
+                <label>Date of creation</label>
+                <label lang="de">Entstehungszeit</label>
+
+                <key id="encoding">
+                    <label>Encoding</label>
+                    <label lang="de">Kodierung</label>
+                    <option value="iso8601"/>
+                </key>
+
+                <key id="point">
+                    <label>Point in time</label>
+                    <label lang="de">Zeitpunkt</label>
+                    <option value="start">
+                        <label>Beginning</label>
+                        <label lang="de">Beginn</label>
+                    </option>
+                    <option value="end">
+                        <label>End</label>
+                        <label lang="de">Ende</label>
+                    </option>
+                </key>
+
+                <key id="keyDate">
+                    <label>Key date</label>
+                    <label lang="de">Schlüsseldatum</label>
+                    <codomain type="boolean"/>
+                    <option value="yes">
+                        <label>Use for search and sorting</label>
+                        <label lang="de">Für die Suche und Sortierung verwenden</label>
+                    </option>
+                </key>
+
+                <key id="qualifier">
+                    <label>Not exactly determinable</label>
+                    <label lang="de">Nicht genau bestimmbar</label>
+                    <option value="approximate">
+                        <label>approximately</label>
+                        <label lang="de">ungefähr</label>
+                    </option>
+                    <option value="inferred">
+                        <label>inferred</label>
+                        <label lang="de">abgeleitet</label>
+                    </option>
+                    <option value="questionable">
+                        <label>questionable</label>
+                        <label lang="de">fraglich</label>
+                    </option>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                    <codomain type="date"/>
+                </key>
+            </key>
+
+            <key id="dateCaptured">
+                <label>Date the resource was digitized</label>
+                <label lang="de">Digitalisierungsdatum</label>
+            </key>
+
+            <key id="dateCreated">
+                <label>Date of creation</label>
+                <label lang="de">Entstehungszeit</label>
+
+                <key id="encoding">
+                    <label>Encoding</label>
+                    <label lang="de">Kodierung</label>
+                    <option value="iso8601"/>
+                </key>
+
+                <key id="point">
+                    <label>Point in time</label>
+                    <label lang="de">Zeitpunkt</label>
+                    <option value="start">
+                        <label>Beginning</label>
+                        <label lang="de">Beginn</label>
+                    </option>
+                    <option value="end">
+                        <label>End</label>
+                        <label lang="de">Ende</label>
+                    </option>
+                </key>
+
+                <key id="keyDate">
+                    <label>Key date</label>
+                    <label lang="de">Schlüsseldatum</label>
+                    <codomain type="boolean"/>
+                    <option value="yes">
+                        <label>Use for search and sorting</label>
+                        <label lang="de">Für die Suche und Sortierung verwenden</label>
+                    </option>
+                </key>
+
+                <key id="qualifier">
+                    <label>Not exactly determinable</label>
+                    <label lang="de">Nicht genau bestimmbar</label>
+                    <option value="approximate">
+                        <label>approximately</label>
+                        <label lang="de">ungefähr</label>
+                    </option>
+                    <option value="inferred">
+                        <label>inferred</label>
+                        <label lang="de">abgeleitet</label>
+                    </option>
+                    <option value="questionable">
+                        <label>questionable</label>
+                        <label lang="de">fraglich</label>
+                    </option>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                    <codomain type="date"/>
+                </key>
+            </key>
+
+            <key id="dateOther">
+                <label>Date that does not fall into another category</label>
+                <label lang="de">Sonstige Datumsangaben</label>
+            </key>
+
+            <key id="dateCreated">
+                <label>Date of creation</label>
+                <label lang="de">Entstehungszeit</label>
+
+                <key id="encoding">
+                    <label>Encoding</label>
+                    <label lang="de">Kodierung</label>
+                    <option value="iso8601"/>
+                </key>
+
+                <key id="point">
+                    <label>Point in time</label>
+                    <label lang="de">Zeitpunkt</label>
+                    <option value="start">
+                        <label>Beginning</label>
+                        <label lang="de">Beginn</label>
+                    </option>
+                    <option value="end">
+                        <label>End</label>
+                        <label lang="de">Ende</label>
+                    </option>
+                </key>
+
+                <key id="keyDate">
+                    <label>Key date</label>
+                    <label lang="de">Schlüsseldatum</label>
+                    <codomain type="boolean"/>
+                    <option value="yes">
+                        <label>Use for search and sorting</label>
+                        <label lang="de">Für die Suche und Sortierung verwenden</label>
+                    </option>
+                </key>
+
+                <key id="qualifier">
+                    <label>Not exactly determinable</label>
+                    <label lang="de">Nicht genau bestimmbar</label>
+                    <option value="approximate">
+                        <label>approximately</label>
+                        <label lang="de">ungefähr</label>
+                    </option>
+                    <option value="inferred">
+                        <label>inferred</label>
+                        <label lang="de">abgeleitet</label>
+                    </option>
+                    <option value="questionable">
+                        <label>questionable</label>
+                        <label lang="de">fraglich</label>
+                    </option>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                    <codomain type="date"/>
+                </key>
+            </key>
+
+            <key id="edition">
+                <label>Version information</label>
+                <label lang="de">Ausgabe</label>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -1051,6 +1293,46 @@
             <permit key="authority" maxOccurs="1"/>
             <permit key="authorityURI" maxOccurs="1"/>
             <permit key="valueURI" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="originInfo">
+            <permit key="place">
+                <permit key="placeTerm" minOccurs="1">
+                    <permit key="type" maxOccurs="1"/>
+                    <permit key="authority" maxOccurs="1"/>
+                    <permit key="authorityURI" maxOccurs="1"/>
+                    <permit key="valueURI" maxOccurs="1"/>
+                </permit>
+            </permit>
+            <permit key="dateIssued">
+                <permit key="encoding" maxOccurs="1"/>
+                <permit key="point" maxOccurs="1"/>
+                <permit key="keyDate" maxOccurs="1"/>
+                <permit key="qualifier" maxOccurs="1"/>
+                <permit key="value" maxOccurs="1"/>
+            </permit>
+            <permit key="dateCreated">
+                <permit key="encoding" maxOccurs="1"/>
+                <permit key="point" maxOccurs="1"/>
+                <permit key="keyDate" maxOccurs="1"/>
+                <permit key="qualifier" maxOccurs="1"/>
+                <permit key="value" maxOccurs="1"/>
+            </permit>
+            <permit key="dateCaptured">
+                <permit key="encoding" maxOccurs="1"/>
+                <permit key="point" maxOccurs="1"/>
+                <permit key="keyDate" maxOccurs="1"/>
+                <permit key="qualifier" maxOccurs="1"/>
+                <permit key="value" maxOccurs="1"/>
+            </permit>
+            <permit key="dateOther">
+                <permit key="encoding" maxOccurs="1"/>
+                <permit key="point" maxOccurs="1"/>
+                <permit key="keyDate" maxOccurs="1"/>
+                <permit key="qualifier" maxOccurs="1"/>
+                <permit key="value" maxOccurs="1"/>
+            </permit>
+            <permit key="edition" maxOccurs="1"/>
         </restriction>
 
     </correlation>
