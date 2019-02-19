@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -112,6 +113,9 @@ public class Process extends BaseTemplateBean {
 
     @Transient
     private long blockedSeconds;
+
+    @Transient
+    private Map<String, Object> metaXml;
 
     /**
      * Constructor.
@@ -431,6 +435,24 @@ public class Process extends BaseTemplateBean {
      */
     public void setBlockedSeconds(long blockedSeconds) {
         this.blockedSeconds = blockedSeconds;
+    }
+
+    /**
+     * Get metaXml.
+     *
+     * @return value of metaXml
+     */
+    public Map<String, Object> getMetaXml() {
+        return metaXml;
+    }
+
+    /**
+     * Set metaXml.
+     *
+     * @param metaXml as Map
+     */
+    public void setMetaXml(Map<String, Object> metaXml) {
+        this.metaXml = metaXml;
     }
 
     /**

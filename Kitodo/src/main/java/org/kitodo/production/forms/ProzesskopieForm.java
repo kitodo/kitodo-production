@@ -16,13 +16,16 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +38,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +48,9 @@ import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
@@ -62,6 +69,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
@@ -523,7 +531,6 @@ public class ProzesskopieForm implements Serializable {
         return docStruct;
     }
 
-
     /**
      * Auswahl des Prozesses auswerten.
      */
@@ -672,9 +679,8 @@ public class ProzesskopieForm implements Serializable {
         try {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
             ServiceManager.getProcessService().save(this.prozessKopie);
-            ServiceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("process") }, logger, e);
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular()}, logger, e);
             return null;
         }
 
@@ -694,18 +700,29 @@ public class ProzesskopieForm implements Serializable {
             return null;
         }
 
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
+        processRdfConfiguration();
+
+        try {
+            ServiceManager.getProcessService().save(this.prozessKopie);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                e);
+            return null;
+        }
+
+        return processListPath;
+    }
+
+    /**
+     * If there is an RDF configuration (for example, from the OPAC import, or
+     * freshly created), then supplement these.
+     */
+    private void processRdfConfiguration() {
+        // create RDF config if there is none
         if (Objects.isNull(this.rdf)) {
             createNewFileformat();
         }
 
-        /*
-         * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
-         * oder frisch angelegt), dann diese ergänzen
-         */
         try {
             if (Objects.nonNull(this.rdf)) {
                 insertLogicalDocStruct();
@@ -726,11 +743,9 @@ public class ProzesskopieForm implements Serializable {
             ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
             startTaskScriptThreads();
-
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return processListPath;
     }
 
     private void processAdditionalField(AdditionalField field) {
@@ -772,8 +787,7 @@ public class ProzesskopieForm implements Serializable {
             LegacyDocStructHelperInterface tempChild) {
 
         if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-            LegacyPrefsHelper prefs = ServiceManager.getRulesetService()
-                    .getPreferences(this.prozessKopie.getRuleset());
+            LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
             LegacyMetadataTypeHelper mdt = LegacyPrefsHelper.getMetadataType(prefs, field.getMetadata());
             LegacyMetadataHelper metadata = LegacyLogicalDocStructHelper.getMetadata(tempStruct, mdt);
             if (Objects.nonNull(metadata)) {
@@ -909,7 +923,8 @@ public class ProzesskopieForm implements Serializable {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
             Map<String, LegacyMetadataHelper> availableMetadata = higherLevelMetadata.containsKey(availableKey)
-                    ? higherLevelMetadata.get(availableKey) : new HashMap<>();
+                    ? higherLevelMetadata.get(availableKey)
+                    : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
                 availableMetadata.put(availableValue, available);
             }
@@ -1135,7 +1150,8 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct, LegacyDocStructHelperInterface newDocStruct) {
+    private void copyMetadata(LegacyDocStructHelperInterface oldDocStruct,
+            LegacyDocStructHelperInterface newDocStruct) {
         if (Objects.nonNull(oldDocStruct.getAllMetadata())) {
             for (LegacyMetadataHelper md : oldDocStruct.getAllMetadata()) {
                 newDocStruct.addMetadata(md);
@@ -1561,8 +1577,8 @@ public class ProzesskopieForm implements Serializable {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && Objects.nonNull(additionalField.getValue())) {
-                        tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(additionalField.getTitle(),
-                            additionalField.getValue()));
+                        tifHeaderImageDescriptionBuilder.append(
+                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
 
                 }
@@ -1709,8 +1725,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getPageSize() retrieves the desired number of hits on one
-     * page of the hit list from the configuration.
+     * The function getPageSize() retrieves the desired number of hits on one page
+     * of the hit list from the configuration.
      *
      * @return desired number of hits on one page of the hit list from the
      *         configuration

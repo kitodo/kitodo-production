@@ -343,6 +343,10 @@
                         }
                     }
                 },
+                "meta.xml": {
+                    "dynamic": "false",
+                    "type": "object"
+                },
                 "project": {
                     "properties": {
                         "id": {
