@@ -1199,6 +1199,100 @@
             </key>
         </key>
 
+        <key id="language">
+            <label>Language information</label>
+            <label lang="de">Sprachangaben</label>
+
+            <key id="languageTerm">
+                <label>Language</label>
+                <label lang="de">Sprache</label>
+
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+
+                    <option value="text">
+                        <label>A language in a textual form</label>
+                        <label lang="de">Textliche Beschreibung der Sprache</label>
+                    </option>
+                    <option value="code">
+                        <label>A language in a coded form</label>
+                        <label lang="de">Code, der für die Sprache steht</label>
+                    </option>
+                </key>
+
+                <key id="authority">
+                    <label>Controlled list from which the value is taken</label>
+                    <label lang="de">Quelle für die verwendeten Codes</label>
+                    <option value="iso639-2b">
+                        <label>ISO 639-2b</label>
+                    </option>
+                </key>
+
+                <key id="authorityURI">
+                    <label>URI of the controlled vocabulary</label>
+                    <label lang="de">URI der Normdatei</label>
+                    <codomain type="anyURI"/>
+                    <option value="http://id.loc.gov/vocabulary/iso639-2/"/>
+                </key>
+
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI der Sprache</label>
+                    <codomain namespace="http://id.loc.gov/vocabulary/iso639-2/"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="scriptTerm">
+                <label>Language</label>
+                <label lang="de">Sprache</label>
+
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+
+                    <option value="text">
+                        <label>A language in a textual form</label>
+                        <label lang="de">Textliche Beschreibung der Sprache</label>
+                    </option>
+                    <option value="code">
+                        <label>A language in a coded form</label>
+                        <label lang="de">Code, der für die Sprache steht</label>
+                    </option>
+                </key>
+
+                <key id="authority">
+                    <label>Controlled list from which the value is taken</label>
+                    <label lang="de">Quelle für die verwendeten Codes</label>
+                    <option value="iso15924">
+                        <label>Code for the representation of names of scripts</label>
+                    </option>
+                </key>
+
+                <key id="authorityURI">
+                    <label>URI of the controlled vocabulary</label>
+                    <label lang="de">URI der Normdatei</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI der Sprache</label>
+                    <codomain name="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -1333,6 +1427,15 @@
                 <permit key="value" maxOccurs="1"/>
             </permit>
             <permit key="edition" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="language">
+            <permit key="languageTerm" minOccurs="1">
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="scriptTerm">
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
         </restriction>
 
     </correlation>
