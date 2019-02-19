@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
+    <!--
+        'declaration' tag:
+            Declares the object classes of the divisions and keys.
+
+            - possible member tags, in order as mentioned:
+                    division            (repeatable, min. quantity: 1)
+                    key                 (optional, repeatable)
+
+        'correlation' tag:
+            Declares correlations between divisions and keys.
+
+            - possible member tag:
+                    restriction         (optional, repeatable)
+         
+        'editing' tag:
+            Describes how the program should behave when editing the data.
+
+            - possible member tags, in order as mentioned:
+                    compose             (optional, repeatable)
+                    setting             (optional, repeatable)
+                    acquisitionStage    (optional, repeatable)
+    -->
+    <declaration>
+        <!--
+            'division' tag:
+                Declares a subclass of mets:div.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        subdivisionByDate   (optional, not repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'subdivisionByDate' tag:
+                Determines how this division is broken down by date.
+                
+                - optional attribute 'yearBegin':
+                        Annual first day of the operating year, if the annual
+                        accounts do not coincide with the turn of the year.
+                        Format: Two hyphens, the month as a two-digit number,
+                                one hyphen, the day as a two-digit number.
+
+                - required member tag:
+                        division            (repeatable, min. quantity: 1)
+
+            'division' tag, as child of 'subdivisionByDate':
+                Declares a subclass of mets:div for temporal breakdown.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+
+                - required attribute 'dates':
+                        meta-data key containing the date value
+
+                - required attribute 'scheme':
+                        Formatting pattern for the date value. Either
+                        "yyyy/yyyy" to indicate a double year in conjunction
+                        with the attribute yearBegin, otherwise any formatting
+                        that is understood by Java’s date formatter.
+        -->
+
+        <!-- TODO: add divisions here -->
+
+        <!--
+            'key' tag:
+                Declare a subclass of kitodo:metadata or kitodo:metadataGroup.
+
+                - required attribute 'id':
+                        Internal name of the key. This should be a xsd:NMTOKEN
+                        (that is, do not include spaces).
+     
+                - optional attribute 'domain':
+                        location where to store entries with that key in the
+                        METS file. Defaults to 'description'. Possible values:
+
+                        description         saves the entry in the associated
+                                            dmdSec
+                        digitalProvenance   saves the entry in the associated
+                                            amdSec in the element digiprovMD
+                        rights              saves the entry in the associated
+                                            amdSec in the element rightsMD
+                        source              saves the entry in the associated
+                                            amdSec in the element sourceMD
+                        technical           saves the entry in the associated
+                                            amdSec in the element techMD
+                        mets:div            saves the entry in element div of
+                                            the METS structure
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        codomain            (optional, not repeatable)
+                        option              (optional, repeatable)
+                        pattern             (optional, not repeatable)
+                        preset              (optional, repeatable)
+                        key                 (optional, repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'codomain' tag:
+                Defines the codomain (value space) of the data type.
+                
+                - optional attribute 'type':
+                        Sets the XML Schema Datatype of which this key is a
+                        subclass (cf. https://www.w3.org/TR/xmlschema-2/ ).
+                        Defaults to 'string'. Possible values:
+
+                        anyURI              represents a Uniform Resource
+                                            Identifier Reference (URI)
+                        boolean             the mathematical concept of
+                                            binary-valued logic (*)
+                        date                a top-open interval of exactly one
+                                            day in length on the timeline,
+                                            beginning on the beginning moment
+                                            of the day 
+                        integer             the standard mathematical concept
+                                            of the integer numbers
+                        string              character strings
+                  (*) see also the explanation at the boolean example below
+
+                - optional attribute 'namespace':
+                        Specifies that the value is a URI and must be in the
+                        specified namespace.
+
+            'option' tag:
+                Specifies that the data type is an enumerated type and defines
+                the possible values of the enumeration type.
+
+                - required attribute 'value':
+                        A possible value of the enumeration type. This is a
+                        xsd:string (that is, it may include spaces).
+     
+                - optional member tag:
+                        label               Sets a human readable label for the
+                                            option. Labels for options are
+                                            optional. If absent, the value is
+                                            also used as a label. The label can
+                                            be repeated for multilingualism.
+
+            'pattern' tag:
+                Sets a regular expression to which the string representation of
+                the values must correspond.
+
+                - text content:
+                        the regular expression to which the string
+                        representation must correspond
+
+            'key' tag:
+                If present, declares the containing element to be a subclass of
+                kitodo:metadataGroup (otherwise the element is a subclass of
+                kitodo:metatadata). For attributes and member tags, the
+                definition given above applies, with the exception of the
+                domain, which can only be set on the very outer key tag and is
+                inherited by all sub-keys. A key that groups other keys should
+                not contain any other elements than key and preset. Keys can be
+                nested repeatedly.
+
+            'preset' tag:
+                Sets the pre-filled value when creating a new entry using this
+                key. A repetition of the element is only appropriate if it is
+                an enumerated type and its use allows multiple selections.
+
+                - optional attribute 'key':
+                        With grouped keys, the sub-key to which this preset
+                        should apply.
+
+                - optional member tag:
+                        preset              With multiple-grouped keys, the key
+                                            is set to a sub-key.
+
+                - text content:
+                        the value
+        -->
+
+        <!-- the digital collections -->
+        <key id="singleDigCollection">
+            <label>Digital collection</label>
+            <label lang="de">Digitale Kollektion</label>
+            <option value="eins">
+                <label>Collection 1</label>
+            </option>
+            <option value="zwei">
+                <label>Collection 2</label>
+            </option>
+            <option value="drei">
+                <label>Collection 3</label>
+            </option>
+            <preset>eins</preset>
+        </key>
+ 
+        <!-- Keys to edit METS’s @LABEL and @ORDERLABEL attributes: -->
+
+        <key id="LABEL" domain="mets:div">
+            <label>logical page number</label>
+            <label lang="de">logische Seitenzahl (gedruckte Zeitenzahl)</label>
+        </key>
+        <key id="ORDERLABEL" domain="mets:div">
+            <label>physical page number</label>
+            <label lang="de">physische Seitenzahl (Imagenummer)</label>
+        </key>
+
+        <!-- TODO: add keys here here -->
+
+    </declaration>
+
+    <correlation>
+        <!--
+            'restriction' tag:
+                Defines restrictions within grouped keys or in the interaction
+                of divisions and keys.
+
+                - attribute 'division':
+                        Name of the division for which restrictions are to be
+                        set.
+
+                - attribute 'key':
+                        Name of the grouped key for which restrictions are to
+                        be set. 
+
+                Exactly one of the two attributes key or division must be
+                specified (either ... or).
+
+                - optional attribute 'unspecified':
+                        what should apply to divisions, keys and options that
+                        are not mentioned within the rule. Defaults to
+                        'unrestricted'. Possible values:
+
+                        unrestricted        there are no further restrictions
+
+                        forbidden           the item is not allowed
+
+                - required member tag:
+                        permit              (repeatable, min. quantity: 1)
+
+            'permit' tag:
+                Defines what is allowed.
+
+                - attribute 'division':
+                        name of the allowed division
+
+                - attribute 'key':
+                        name of the allowed key
+
+                - attribute 'value':
+                        allowed value of an enumeration type
+
+                Exactly one of the three attributes division, key or value must
+                be specified (either ... or).
+
+                - optional attribute 'minOccurs':
+                        a minimum number of this item is required
+
+                - optional attribute 'maxOccurs':
+                        a maximum number of this item is required
+
+                - optional attribute 'unspecified':
+                        What should apply to divisions, keys, and options below
+                        this key that are not mentioned within the permit tag
+                        (for grouped keys). Defaults to 'unrestricted'. Possible
+                        values as above.
+
+                - optional member tag:      
+                        permit              (optional, repeatable)
+        -->
+
+        <!-- TODO: add restrictions here here -->
+
+    </correlation>
+    <editing>
+        <!--
+            'setting' tag:
+                Sets display preferences for meta-data keys.
+
+                - required attribute 'key':
+                        meta-data key whose display properties you want to 
+                        configure
+
+                - optional attribute 'alwaysShowing':
+                        If true, a form field for this meta-data key is always 
+                        displayed by default. By default, no empty form fields
+                        are displayed, but must first be selected from a list
+                        and added to the display. Defaults to false.
+
+                - optional attribute 'editable':
+                        If false, this meta-data key is displayed if a value
+                        has been entered, but the value cannot be changed,
+                        deleted, and no other entry can be created using this
+                        key. Defaults to true.
+                        This setting is intended to write-protect individual
+                        keys. If the entire document is to be displayed as
+                        immutable, the meta-data editor should be started in
+                        read-only mode instead.
+
+                - optional attribute 'excluded':
+                        If true, this metadata key will not be displayed,
+                        even if a value has been entered for it. This implies
+                        that no entry can be created with this key. Defaults
+                        to false.
+
+                - optional attribute 'multiline':
+                        If true, a multi-line input field is displayed for this
+                        meta-data key. For enumerated types, a multi-line
+                        selection list is displayed, otherwise a multi-line
+                        text field.
+
+                - optional member tag:
+                        setting             (optional, repeatable)
+                                            To define settings on sub-keys of
+                                            grouped keys.
+
+                At least one of the optional attributes should be assigned or
+                at least one child setting tag should be present.
+
+            'acquisitionStage' tag:
+                Defines settings for the editor that only apply at a certain
+                stage of the acquisition process.
+
+                - required attribute 'name':
+                        acquisition stage name (configured in step)
+
+                - required member tag:
+                        setting             (repeatable, min. quantity: 1)
+
+                The settings for the acquisition level are merged with the
+                general settings. The specific settings of the acquisition
+                level apply before the general settings, otherwise the default
+                value applies.
+        -->
+    </editing>
+</ruleset>
