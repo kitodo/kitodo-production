@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<namespace about="http://id.loc.gov/vocabulary/relators/">
+    <option value="http://id.loc.gov/vocabulary/relators/abr">
+        <label>Abridger</label>
+        <label lang="de">Kürzende/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/acp">
+        <label>Art copyist</label>
+        <label lang="de">Plagiarist/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/act">
+        <label>Actor</label>
+        <label lang="de">Schauspieler/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/adi">
+        <label>Art director</label>
+        <label lang="de">Artdirector/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/adp">
+        <label>Adapter</label>
+        <label lang="de">Bearbeiter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aft">
+        <label>Author of afterword, colophon, etc.</label>
+        <label lang="de">Verfasser/in eines Nachworts</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/anl">
+        <label>Analyst</label>
+        <label lang="de">Analyst/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/anm">
+        <label>Animator</label>
+        <label lang="de">Trickfilmzeichner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ann">
+        <label>Annotator</label>
+        <label lang="de">Verfasser/in von Marginalien</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ant">
+        <label>Bibliographic antecedent</label>
+        <label lang="de">Bibliographische/r Vorgänger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ape">
+        <label>Appellee</label>
+        <label lang="de">Berufungsbeklagte/r, Revisionsbeklagte/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/apl">
+        <label>Appellant</label>
+        <label lang="de">Berufungskläger/in, Revisionskläger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/app">
+        <label>Applicant</label>
+        <label lang="de">Bewerber/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aqt">
+        <label>Author in quotations or text abstracts</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/arc">
+        <label>Architect</label>
+        <label lang="de">Architekt/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ard">
+        <label>Artistic director</label>
+        <label lang="de">Künstlerische/r Leiter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/arr">
+        <label>Arranger</label>
+        <label lang="de">Arrangeur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/art">
+        <label>Artist</label>
+        <label lang="de">Künstler/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/asg">
+        <label>Assignee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/asn">
+        <label>Associated name</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ato">
+        <label>Autographer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/att">
+        <label>Attributed name</label>
+        <label lang="de">Zugeschriebener Name</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/auc">
+        <label>Auctioneer</label>
+        <label lang="de">Auktionator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aud">
+        <label>Author of dialog</label>
+        <label lang="de">Dialogautor/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aui">
+        <label>Author of introduction, etc.</label>
+        <label lang="de">Verfasser/in eines Geleitwortes</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aus">
+        <label>Screenwriter</label>
+        <label lang="de">Drehbuchautor/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/aut">
+        <label>Author</label>
+        <label lang="de">Verfasser/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bdd">
+        <label>Binding designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bjd">
+        <label>Bookjacket designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bkd">
+        <label>Book designer</label>
+        <label lang="de">Buchgestalter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bkp">
+        <label>Book producer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/blw">
+        <label>Blurb writer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bnd">
+        <label>Binder</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bpd">
+        <label>Bookplate designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/brd">
+        <label>Broadcaster</label>
+        <label lang="de">Sender</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/brl">
+        <label>Braille embosser</label>
+        <label lang="de">Brailleschriftpräger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/bsl">
+        <label>Bookseller</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cas">
+        <label>Caster</label>
+        <label lang="de">Formgießer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ccp">
+        <label>Conceptor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/chr">
+        <label>Choreographer</label>
+        <label lang="de">Choreograf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cli">
+        <label>Client</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cll">
+        <label>Calligrapher</label>
+        <label lang="de">Kalligraf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/clr">
+        <label>Colorist</label>
+        <label lang="de">Colorist/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/clt">
+        <label>Collotyper</label>
+        <label lang="de">Lichtdrucker/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cmm">
+        <label>Commentator</label>
+        <label lang="de">Kommentator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cmp">
+        <label>Composer</label>
+        <label lang="de">Komponist/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cmt">
+        <label>Compositor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cnd">
+        <label>Conductor</label>
+        <label lang="de">Dirigent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cng">
+        <label>Cinematographer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cns">
+        <label>Censor</label>
+        <label lang="de">Zensor/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/coe">
+        <label>Contestant-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/col">
+        <label>Collector</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/com">
+        <label>Compiler</label>
+        <label lang="de">Zusammenstellende/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/con">
+        <label>Conservator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cor">
+        <label>Collection registrar</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cos">
+        <label>Contestant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cot">
+        <label>Contestant-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cou">
+        <label>Court governed</label>
+        <label lang="de">Durch Verfahrensvorschriften geregeltes Gericht</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cov">
+        <label>Cover designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cpc">
+        <label>Copyright claimant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cpe">
+        <label>Complainant-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cph">
+        <label>Copyright holder</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cpl">
+        <label>Complainant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cpt">
+        <label>Complainant-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cre">
+        <label>Creator</label>
+        <label lang="de">Geistige/r Schöpfer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/crp">
+        <label>Correspondent</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/crr">
+        <label>Corrector</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/crt">
+        <label>Court reporter</label>
+        <label lang="de">Gerichtsstenograf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/csl">
+        <label>Consultant</label>
+        <label lang="de">Berater/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/csp">
+        <label>Consultant to a project</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cst">
+        <label>Costume designer</label>
+        <label lang="de">Kostümbildner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ctb">
+        <label>Contributor</label>
+        <label lang="de">Mitwirkende/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cte">
+        <label>Contestee-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ctg">
+        <label>Cartographer</label>
+        <label lang="de">Kartograf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ctr">
+        <label>Contractor</label>
+        <label lang="de">Vertragspartner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cts">
+        <label>Contestee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ctt">
+        <label>Contestee-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cur">
+        <label>Curator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/cwt">
+        <label>Commentator for written text</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dbp">
+        <label>Distribution place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dfd">
+        <label>Defendant</label>
+        <label lang="de">Angeklagte/r, Beklagte/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dfe">
+        <label>Defendant-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dft">
+        <label>Defendant-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dgg">
+        <label>Degree granting institution</label>
+        <label lang="de">Grad-verleihende Institution</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dgs">
+        <label>Degree supervisor</label>
+        <label lang="de">Akademische/r Betreuer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dis">
+        <label>Dissertant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dln">
+        <label>Delineator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dnc">
+        <label>Dancer</label>
+        <label lang="de">Tänzer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dnr">
+        <label>Donor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dpc">
+        <label>Depicted</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dpt">
+        <label>Depositor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/drm">
+        <label>Draftsman</label>
+        <label lang="de">Technische/r Zeichner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/drt">
+        <label>Director</label>
+        <label lang="de">Regisseur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dsr">
+        <label>Designer</label>
+        <label lang="de">Designer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dst">
+        <label>Distributor</label>
+        <label lang="de">Vertrieb</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dtc">
+        <label>Data contributor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dte">
+        <label>Dedicatee</label>
+        <label lang="de">Widmungsempfänger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dtm">
+        <label>Data manager</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dto">
+        <label>Dedicator</label>
+        <label lang="de">Widmende/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/dub">
+        <label>Dubious author</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/edc">
+        <label>Editor of compilation</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/edm">
+        <label>Editor of moving image work</label>
+        <label lang="de">Cutter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/edt">
+        <label>Editor</label>
+        <label lang="de">Herausgeber/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/egr">
+        <label>Engraver</label>
+        <label lang="de">Stecher/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/elg">
+        <label>Electrician</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/elt">
+        <label>Electrotyper</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/eng">
+        <label>Engineer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/enj">
+        <label>Enacting jurisdiction</label>
+        <label lang="de">Normerlassende Gebietskörperschaft</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/etr">
+        <label>Etcher</label>
+        <label lang="de">Radierer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/evp">
+        <label>Event place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/exp">
+        <label>Expert</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fac">
+        <label>Facsimilist</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fds">
+        <label>Film distributor</label>
+        <label lang="de">Filmvertrieb</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fld">
+        <label>Field director</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/flm">
+        <label>Film editor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fmd">
+        <label>Film director</label>
+        <label lang="de">Filmregisseur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fmk">
+        <label>Filmmaker</label>
+        <label lang="de">Filmemacher/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fmo">
+        <label>Former owner</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fmp">
+        <label>Film producer</label>
+        <label lang="de">Filmproduzent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fnd">
+        <label>Funder</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/fpy">
+        <label>First party</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/frg">
+        <label>Forger</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/gis">
+        <label>Geographic information specialist</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/his">
+        <label>Host institution</label>
+        <label lang="de">Gastgebende Institution</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/hnr">
+        <label>Honoree</label>
+        <label lang="de">Gefeierte/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/hst">
+        <label>Host</label>
+        <label lang="de">Gastgeber/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ill">
+        <label>Illustrator</label>
+        <label lang="de">Illustrator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ilu">
+        <label>Illuminator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ins">
+        <label>Inscriber</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/inv">
+        <label>Inventor</label>
+        <label lang="de">Erfinder/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/isb">
+        <label>Issuing body</label>
+        <label lang="de">Herausgebendes Organ</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/itr">
+        <label>Instrumentalist</label>
+        <label lang="de">Instrumentalmusiker/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ive">
+        <label>Interviewee</label>
+        <label lang="de">Interviewte/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ivr">
+        <label>Interviewer</label>
+        <label lang="de">Interviewer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/jud">
+        <label>Judge</label>
+        <label lang="de">Richter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/jug">
+        <label>Jurisdiction governed</label>
+        <label lang="de">Geregelte Gebietskörperschaft</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lbr">
+        <label>Laboratory</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lbt">
+        <label>Librettist</label>
+        <label lang="de">Librettist/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ldr">
+        <label>Laboratory director</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/led">
+        <label>Lead</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lee">
+        <label>Libelee-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lel">
+        <label>Libelee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/len">
+        <label>Lender</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/let">
+        <label>Libelee-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lgd">
+        <label>Lighting designer</label>
+        <label lang="de">Lichtgestalter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lie">
+        <label>Libelant-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lil">
+        <label>Libelant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lit">
+        <label>Libelant-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lsa">
+        <label>Landscape architect</label>
+        <label lang="de">Landschaftsarchitekt/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lse">
+        <label>Licensee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lso">
+        <label>Licensor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ltg">
+        <label>Lithographer</label>
+        <label lang="de">Lithograf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/lyr">
+        <label>Lyricist</label>
+        <label lang="de">Textdichter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mcp">
+        <label>Music copyist</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mdc">
+        <label>Metadata contact</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/med">
+        <label>Medium</label>
+        <label lang="de">Medium</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mfp">
+        <label>Manufacture place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mfr">
+        <label>Manufacturer</label>
+        <label lang="de">Hersteller/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mod">
+        <label>Moderator</label>
+        <label lang="de">Moderator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mon">
+        <label>Monitor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mrb">
+        <label>Marbler</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mrk">
+        <label>Markup editor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/msd">
+        <label>Musical director</label>
+        <label lang="de">Musikalische/r Leiter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mte">
+        <label>Metal-engraver</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mtk">
+        <label>Minute taker</label>
+        <label lang="de">Protokollant/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/mus">
+        <label>Musician</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/nrt">
+        <label>Narrator</label>
+        <label lang="de">Erzähler/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/opn">
+        <label>Opponent</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/org">
+        <label>Originator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/orm">
+        <label>Organizer</label>
+        <label lang="de">Veranstalter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/osp">
+        <label>Onscreen presenter</label>
+        <label lang="de">On-Screen-Präsentator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/oth">
+        <label>Other</label>
+        <label lang="de">Sonstige Person, Familie und Körperschaft</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/own">
+        <label>Owner</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pan">
+        <label>Panelist</label>
+        <label lang="de">Diskussionsteilnehmer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pat">
+        <label>Patron</label>
+        <label lang="de">Auftraggeber/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pbd">
+        <label>Publishing director</label>
+        <label lang="de">Chefredakteur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pbl">
+        <label>Publisher</label>
+        <label lang="de">Verlag</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pdr">
+        <label>Project director</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pfr">
+        <label>Proofreader</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pht">
+        <label>Photographer</label>
+        <label lang="de">Fotograf/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/plt">
+        <label>Platemaker</label>
+        <label lang="de">Druckformhersteller/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pma">
+        <label>Permitting agency</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pmn">
+        <label>Production manager</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pop">
+        <label>Printer of plates</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ppm">
+        <label>Papermaker</label>
+        <label lang="de">Papiermacher/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ppt">
+        <label>Puppeteer</label>
+        <label lang="de">Puppenspieler/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pra">
+        <label>Praeses</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prc">
+        <label>Process contact</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prd">
+        <label>Production personnel</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pre">
+        <label>Presenter</label>
+        <label lang="de">Präsentator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prf">
+        <label>Performer</label>
+        <label lang="de">Ausführende/r</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prg">
+        <label>Programmer</label>
+        <label lang="de">Programmierer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prm">
+        <label>Printmaker</label>
+        <label lang="de">Druckgrafiker/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prn">
+        <label>Production company</label>
+        <label lang="de">Produktionsfirma</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pro">
+        <label>Producer</label>
+        <label lang="de">Produzent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prp">
+        <label>Production place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prs">
+        <label>Production designer</label>
+        <label lang="de">Szenenbildner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prt">
+        <label>Printer</label>
+        <label lang="de">Drucker/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/prv">
+        <label>Provider</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pta">
+        <label>Patent applicant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pte">
+        <label>Plaintiff-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ptf">
+        <label>Plaintiff</label>
+        <label lang="de">Zivilkläger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pth">
+        <label>Patent holder</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ptt">
+        <label>Plaintiff-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/pup">
+        <label>Publication place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rbr">
+        <label>Rubricator</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rcd">
+        <label>Recordist</label>
+        <label lang="de">Tonmeister/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rce">
+        <label>Recording engineer</label>
+        <label lang="de">Aufnahmetechniker/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rcp">
+        <label>Addressee</label>
+        <label lang="de">Adressat/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rdd">
+        <label>Radio director</label>
+        <label lang="de">Hörfunkregisseur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/red">
+        <label>Redaktor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ren">
+        <label>Renderer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/res">
+        <label>Researcher</label>
+        <label lang="de">Forscher/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rev">
+        <label>Reviewer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rpc">
+        <label>Radio producer</label>
+        <label lang="de">Hörfunkproduzent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rps">
+        <label>Repository</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rpt">
+        <label>Reporter</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rpy">
+        <label>Responsible party</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rse">
+        <label>Respondent-appellee</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rsg">
+        <label>Restager</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rsp">
+        <label>Respondent</label>
+        <label lang="de">Respondent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rsr">
+        <label>Restorationist</label>
+        <label lang="de">Restaurator/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rst">
+        <label>Respondent-appellant</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rth">
+        <label>Research team head</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/rtm">
+        <label>Research team member</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sad">
+        <label>Scientific advisor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sce">
+        <label>Scenarist</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/scl">
+        <label>Sculptor</label>
+        <label lang="de">Bildhauer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/scr">
+        <label>Scribe</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sds">
+        <label>Sound designer</label>
+        <label lang="de">Tongestalter/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sec">
+        <label>Secretary</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sgd">
+        <label>Stage director</label>
+        <label lang="de">Bühnenregisseur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sgn">
+        <label>Signer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sht">
+        <label>Supporting host</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sll">
+        <label>Seller</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/sng">
+        <label>Singer</label>
+        <label lang="de">Sänger/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/spk">
+        <label>Speaker</label>
+        <label lang="de">Redner/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/spn">
+        <label>Sponsor</label>
+        <label lang="de">Sponsor/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/spy">
+        <label>Second party</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/srv">
+        <label>Surveyor</label>
+        <label lang="de">Landvermesser/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/std">
+        <label>Set designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/stg">
+        <label>Setting</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/stl">
+        <label>Storyteller</label>
+        <label lang="de">Geschichtenerzähler/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/stm">
+        <label>Stage manager</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/stn">
+        <label>Standards body</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/str">
+        <label>Stereotyper</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tcd">
+        <label>Technical director</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tch">
+        <label>Teacher</label>
+        <label lang="de">Lehrer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/ths">
+        <label>Thesis advisor</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tld">
+        <label>Television director</label>
+        <label lang="de">Fernsehregisseur/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tlp">
+        <label>Television producer</label>
+        <label lang="de">Fernsehproduzent/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/trc">
+        <label>Transcriber</label>
+        <label lang="de">Transkribierer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/trl">
+        <label>Translator</label>
+        <label lang="de">Übersetzer/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tyd">
+        <label>Type designer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/tyg">
+        <label>Typographer</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/uvp">
+        <label>University place</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/vac">
+        <label>Voice actor</label>
+        <label lang="de">Synchronsprecher/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/vdg">
+        <label>Videographer</label>
+        <label lang="de">Kameramann/Kamerafrau</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wac">
+        <label>Writer of added commentary</label>
+        <label lang="de">Kommentarverfasser/in</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wal">
+        <label>Writer of added lyrics</label>
+        <label lang="de">Verfasser/in von zusätzlichen Lyrics</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wam">
+        <label>Writer of accompanying material</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wat">
+        <label>Writer of added text</label>
+        <label lang="de">Verfasser/in von Zusatztexten</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wdc">
+        <label>Woodcutter</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wde">
+        <label>Wood engraver</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/win">
+        <label>Writer of introduction</label>
+        <label lang="de">Verfasser/in einer Einleitung</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wit">
+        <label>Witness</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wpr">
+        <label>Writer of preface</label>
+        <label lang="de">Verfasser/in eines Vorworts</label>
+    </option>
+    <option value="http://id.loc.gov/vocabulary/relators/wst">
+        <label>Writer of supplementary textual content</label>
+        <label lang="de">Verfasser/in von ergänzendem Text</label>
+    </option>
+</namespace>

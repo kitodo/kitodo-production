@@ -727,6 +727,207 @@
             </key>
         </key>
 
+        <key id="name">
+            <label>Name</label>
+            
+            <key id="type">
+                <label>Type</label>
+                <label lang="de">Typ</label>
+
+                <option value="personal">
+                    <label>Person</label>
+                </option>
+                <option value="corporate">
+                    <label>Organization</label>
+                    <label lang="de">Organisation</label>
+                </option>
+            </key>
+
+            <key id="authority">
+                <label>Controlled vocabulary</label>
+                <label lang="de">Normdatei</label>
+
+                <option value="abne">
+                    <label>Autoridades de la Biblioteca Nacional de España</label>
+                </option>
+                <option value="banqa">
+                    <label>Fichier d'autorité local de Bibliothèque et Archives nationales du Québec</label>
+                </option>
+                <option value="bibalex">
+                    <label>Bibliotheca Alexandrina name and subject authority file</label>
+                </option>
+                <option value="cantic">
+                    <label>Catàleg d'autoritats de noms i títols de Catalunya</label>
+                </option>
+                <option value="cerlt">
+                    <label>CERL thesaurus</label>
+                </option>
+                <option value="conorsi">
+                    <label>CONOR.SI</label>
+                </option>
+                <option value="gkd">
+                    <label>Gemeinsame Körperschaftsdatei</label>
+                </option>
+                <option value="gnd">
+                    <label>Gemeinsame Normdatei</label>
+                </option>
+                <option value="hapi">
+                    <label>HAPI thesaurus and name authority</label>
+                </option>
+                <option value="hkcan">
+                    <label>Hong Kong Chinese Authority File</label>
+                </option>
+                <option value="lacnaf">
+                    <label>Library and Archives Canada name authority file</label>
+                </option>
+                <option value="naf">
+                    <label>NACO authority file</label>
+                </option>
+                <option value="nalnaf">
+                    <label>National Agricultural Library name authority file</label>
+                </option>
+                <option value="nliaf">
+                    <label>National Library of Israel Authority File</label>
+                </option>
+                <option value="nlmnaf">
+                    <label>National Library of Medicine name authority file</label>
+                </option>
+                <option value="nta">
+                    <label>Nederlandse Thesaurus van Auteursnamen</label>
+                </option>
+                <option value="nznb">
+                    <label>New Zealand national bibliography</label>
+                </option>
+                <option value="sanb">
+                    <label>South African national bibliography authority file</label>
+                </option>
+                <option value="viaf">
+                    <label>Virtual International Authority File</label>
+                </option>
+                <option value="ulan">
+                    <label>Union list of artist names</label>
+                </option>
+                <option value="unbisn">
+                    <label>UNBIS name authority list</label>
+                </option>
+            </key>
+
+            <key id="authorityURI">
+                <label>URI of the controlled vocabulary</label>
+                <label lang="de">URI der Normdatei</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="valueURI">
+                <label>URI identifying the value from a controlled vocabulary</label>
+                <label lang="de">URI des Namens</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="namePart">
+                <label>The name itself</label>
+                <label lang="de">Namensbestandteil</label>
+
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+
+                    <option value="family">
+                        <label>Surname</label>
+                        <label lang="de">Familienname</label>
+                    </option>
+                    <option value="given">
+                        <label>Forename</label>
+                        <label lang="de">Vorname</label>
+                    </option>
+                    <option value="date">
+                        <label>Dates</label>
+                        <label lang="de">Lebensdaten</label>
+                    </option>
+                    <option value="termsOfAddress">
+                        <label>Titles and enumeration</label>
+                        <label lang="de">Titel, Ordnungshilfen und Homonymzusätze</label>
+                    </option>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="displayForm">
+                <label lang="de">personal name in direct order</label>
+                <label lang="de">Anzeigeform</label>
+            </key>
+
+            <key id="role">
+                <label>Role</label>
+                <label lang="de">Rolle</label>
+                
+                <key id="roleTerm">
+                    <key id="type">
+                        <label>Type</label>
+                        <label lang="de">Typ</label>
+
+                        <option value="text">
+                            <label>A role in a textual form</label>
+                            <label lang="de">Textliche Beschreibung der Rolle</label>
+                        </option>
+                        <option value="code">
+                            <label>A role in a coded form</label>
+                            <label lang="de">Code, der für die Rolle steht</label>
+                        </option>
+                    </key>
+
+                    <key id="authority">
+                        <label>Controlled list from which the value is taken</label>
+                        <label lang="de">Quelle für die verwendeten Codes</label>
+                        <option value="marcrelator">
+                            <label>MARC Code and Term List for Relators</label>
+                        </option>
+                    </key>
+
+                    <key id="authorityURI">
+                        <label>URI of the controlled vocabulary</label>
+                        <label lang="de">URI der Normdatei</label>
+                        <codomain type="anyURI"/>
+                        <option value="http://id.loc.gov/vocabulary/relators"/>
+                    </key>
+
+                    <key id="valueURI">
+                        <label>URI identifying the value from a controlled vocabulary</label>
+                        <label lang="de">URI der Rolle</label>
+                        <codomain namespace="http://id.loc.gov/vocabulary/relators/"/>
+                    </key>
+                </key>
+            </key>
+
+            <preset>
+                <preset key="type">personal</preset>
+                <preset key="authority">gnd</preset>
+                <preset key="authorityURI">http://d-nb.info/gnd/</preset>
+                <preset key="valueURI">http://d-nb.info/gnd/</preset>
+                <preset key="namePart">
+                    <preset key="type">family</preset>
+                    <preset key="value"/>
+                </preset>
+                <preset key="namePart">
+                    <preset key="type">given</preset>
+                    <preset key="value"/>
+                </preset>
+                <preset key="displayForm"/>
+                <preset key="role">
+                    <preset key="roleTerm">
+                        <preset key="type">code</preset>
+                        <preset key="authority">marcrelator</preset>
+                        <preset key="authorityURI">http://id.loc.gov/vocabulary/relators</preset>
+                        <preset key="valueURI">http://id.loc.gov/vocabulary/relators/aut</preset>
+                    </preset>
+                </preset>
+            </preset>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -797,6 +998,24 @@
             <permit key="valueURI" maxOccurs="1"/>
             <permit key="title" minOccurs="1" maxOccurs="1"/>
             <permit key="nonSort" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="name">
+            <permit key="type" minOccurs="1" maxOccurs="1"/>
+            <permit key="authorityURI" maxOccurs="1"/>
+            <permit key="valueURI" maxOccurs="1"/>
+            <permit key="namePart" minOccurs="1">
+                <permit key="type" maxOccurs="1"/>
+            </permit>
+            <permit key="displayForm" maxOccurs="1"/>
+            <permit key="role" minOccurs="1">
+                <permit key="roleTerm" minOccurs="1">
+                    <permit key="type" maxOccurs="1"/>
+                    <permit key="authority" maxOccurs="1"/>
+                    <permit key="authorityURI" maxOccurs="1"/>
+                    <permit key="valueURI" maxOccurs="1"/>
+                </permit>
+            </permit>
         </restriction>
 
     </correlation>
