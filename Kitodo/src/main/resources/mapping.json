@@ -343,9 +343,48 @@
                         }
                     }
                 },
-                "meta.xml": {
+                "metadata": {
                     "dynamic": "false",
-                    "type": "object"
+                    "type": "nested",
+                    "properties": {
+                        "ID": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "mdWrap": {
+                            "type": "nested",
+                            "properties": {
+                                "kitodo.metadata": {
+                                    "type": "nested",
+                                    "properties": {
+                                        "name": {
+                                            "type": "text",
+                                            "fields": {
+                                                "keyword": {
+                                                    "type": "keyword",
+                                                    "ignore_above": 256
+                                                }
+                                            }
+                                        },
+                                        "content": {
+                                            "type": "text",
+                                            "fields": {
+                                                "keyword": {
+                                                    "type": "keyword",
+                                                    "ignore_above": 256
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
                 "project": {
                     "properties": {
