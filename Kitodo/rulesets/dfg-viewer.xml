@@ -928,6 +928,35 @@
             </preset>
         </key>
 
+        <key id="genre">
+            <label>Style, form, or content</label>
+            <label lang="de">Gattung</label>
+            
+            <key id="authority">
+                <label>Controlled list from which the value is taken</label>
+                <label lang="de">Quelle für die verwendeten Codes</label>
+
+                <option value="aad">
+                    <label>Gattungsbegriffe der Arbeitsgemeinschaft Alter Drucke</label>
+                </option>
+                <option value="marcgt">
+                    <label>MARC Genre Term List</label>
+                </option>
+            </key>
+
+            <key id="authorityURI">
+                <label>URI of the controlled vocabulary</label>
+                <label lang="de">URI der Normdatei</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="valueURI">
+                <label>URI identifying the value from a controlled vocabulary</label>
+                <label lang="de">URI der Rolle</label>
+                <codomain type="anyURI"/>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -1016,6 +1045,12 @@
                     <permit key="valueURI" maxOccurs="1"/>
                 </permit>
             </permit>
+        </restriction>
+
+        <restriction key="genre">
+            <permit key="authority" maxOccurs="1"/>
+            <permit key="authorityURI" maxOccurs="1"/>
+            <permit key="valueURI" maxOccurs="1"/>
         </restriction>
 
     </correlation>
