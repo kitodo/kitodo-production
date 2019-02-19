@@ -13,22 +13,24 @@ package org.kitodo.production.forms;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("SearchResultForm")
-@RequestScoped
+@SessionScoped
 public class SearchResultForm extends BaseForm {
 
     private String searchQuery;
-    private String testQuery = "";
+    private List<ProcessDTO> filteredList = new ArrayList<>();
     private List<ProcessDTO> resultList;
 
     private String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
@@ -37,6 +39,8 @@ public class SearchResultForm extends BaseForm {
         if(searchQuery.equalsIgnoreCase("all")){
             try {
                 resultList = ServiceManager.getProcessService().findAll();
+                filteredList.clear();
+                filteredList.addAll(resultList);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorOnSearch", searchQuery);
                 return this.stayOnCurrentPage;
@@ -45,6 +49,8 @@ public class SearchResultForm extends BaseForm {
         else {
             try {
                 resultList = ServiceManager.getProcessService().findByTitle(searchQuery);
+                filteredList.clear();
+                filteredList.addAll(resultList);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorOnSearch", searchQuery);
                 return this.stayOnCurrentPage;
@@ -54,12 +60,67 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * Gets the result list.
-     * @return the result list
+     * Filters the searchResults by project.
+     * @param projectDTO The project to be filtered by
+     * @return a filtered list
      */
-    public List<ProcessDTO> getResultList() {
-        System.out.println("getting The result list: " + resultList.get(0).getTitle());
-        return resultList;
+    public String filterListByProject(ProjectDTO projectDTO){
+        filteredList.clear();
+        filteredList.addAll(resultList);
+            for(ProcessDTO result : new ArrayList<>(resultList)){
+                if(!result.getProject().getId().equals(projectDTO.getId())){
+                    filteredList.remove(result);
+                }
+            }
+        return this.stayOnCurrentPage;
+    }
+
+    /**
+     * Get all Projects assigned to the search results
+     * @return A list of Projects for filter list
+     */
+    public List<ProjectDTO> getProjectsForFiltering(){
+        ArrayList<ProjectDTO> projectsForFiltering = new ArrayList<>();
+        for(ProcessDTO process : resultList){
+                projectsForFiltering.add(process.getProject());
+        }
+        projectsForFiltering = removeDuplicatesFromProjects(projectsForFiltering);
+        return projectsForFiltering;
+    }
+
+    private ArrayList<ProjectDTO> removeDuplicatesFromProjects(ArrayList<ProjectDTO> projectsForFiltering) {
+        ArrayList<ProjectDTO> projectsForFilteringCopy = new ArrayList<>();
+        boolean contains = false;
+        for(ProjectDTO project : projectsForFiltering){
+            for (ProjectDTO projectDTO : projectsForFilteringCopy){
+                if(project.getId().equals(projectDTO.getId())){
+                    contains = true;
+                    break;
+                }
+            }
+            if(!contains){
+                projectsForFilteringCopy.add(project);
+            }
+            contains = false;
+        }
+        return projectsForFilteringCopy;
+    }
+
+
+    /**
+     * Gets the filtered list.
+     * @return a list of ProcessDTO
+     */
+    public List<ProcessDTO> getFilteredList() {
+        return filteredList;
+    }
+
+    /**
+     * Sets the filtered list.
+     * @param filteredList a list of ProcessDTO
+     */
+    public void setFilteredList(List<ProcessDTO> filteredList) {
+        this.filteredList = filteredList;
     }
 
     /**
@@ -76,12 +137,5 @@ public class SearchResultForm extends BaseForm {
      */
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
-        if(testQuery.isEmpty()){
-            testQuery = searchQuery;
-        }
-    }
-
-    public String getTestQuery() {
-        return testQuery;
     }
 }
