@@ -13,9 +13,10 @@ package org.kitodo.dataformat.access;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
@@ -23,6 +24,7 @@ import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
 public class FileXmlElementAccess {
 
@@ -54,16 +56,26 @@ public class FileXmlElementAccess {
     FileXmlElementAccess(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess) {
         this();
         mediaUnit.setDivId(div.getID());
-        Map<MediaVariant, URI> mediaFiles = div.getFptr().parallelStream().map(Fptr::getFILEID)
-                .filter(FileType.class::isInstance)
-                .map(FileType.class::cast)
-                .collect(Collectors.toMap(
-                    file -> useXmlAttributeAccess.get(mets.getFileSec().getFileGrp().parallelStream()
-                            .filter(fileGrp -> fileGrp.getFile().contains(file)).findFirst()
-                            .orElseThrow(() -> new IllegalArgumentException(
-                                    "Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>"))
-                            .getUSE()),
-                    file -> mediaUnit.storeFileId(new FLocatXmlElementAccess(file)).getUri()));
+        Map<MediaVariant, URI> mediaFiles = new HashMap<>();
+        for (Fptr fptr : div.getFptr()) {
+            Object fileId = fptr.getFILEID();
+            if (fileId instanceof FileType) {
+                FileType file = (FileType) fileId;
+                MediaVariant mediaVariant = null;
+                for (FileGrp fileGrp : mets.getFileSec().getFileGrp()) {
+                    if (fileGrp.getFile().contains(file)) {
+                        mediaVariant = useXmlAttributeAccess.get(fileGrp.getUSE());
+                        break;
+                    }
+                }
+                if (Objects.isNull(mediaVariant)) {
+                    throw new IllegalArgumentException("Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>");
+                }
+                FLocatXmlElementAccess fLocatXmlElementAccess = new FLocatXmlElementAccess(file);
+                mediaUnit.storeFileId(fLocatXmlElementAccess);
+                mediaFiles.put(mediaVariant, fLocatXmlElementAccess.getUri());
+            }
+        }
         mediaUnit.getMediaFiles().putAll(mediaFiles);
         mediaUnit.setOrder(div.getORDER().intValue());
         mediaUnit.setOrderlabel(div.getORDERLABEL());
