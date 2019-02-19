@@ -115,7 +115,7 @@ public class Process extends BaseTemplateBean {
     private long blockedSeconds;
 
     @Transient
-    private Map<String, Object> metaXml;
+    private List<Map<String, Object>> metadata;
 
     /**
      * Constructor.
@@ -438,21 +438,21 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Get metaXml.
+     * Get metadata.
      *
-     * @return value of metaXml
+     * @return value of metadata
      */
-    public Map<String, Object> getMetaXml() {
-        return metaXml;
+    public List<Map<String, Object>> getMetadata() {
+        return metadata;
     }
 
     /**
-     * Set metaXml.
+     * Set metadata.
      *
-     * @param metaXml as Map
+     * @param metadata as Map
      */
-    public void setMetaXml(Map<String, Object> metaXml) {
-        this.metaXml = metaXml;
+    public void setMetadata(List<Map<String, Object>> metadata) {
+        this.metadata = metadata;
     }
 
     /**
