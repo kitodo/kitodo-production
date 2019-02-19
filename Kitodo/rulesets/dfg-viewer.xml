@@ -89,7 +89,442 @@
                         that is understood by Java’s date formatter.
         -->
 
-        <!-- TODO: add divisions here -->
+        <!-- Divisions as per https://dfg-viewer.de/en/structural-data-set/ -->
+
+        <division id="section">
+            <label>Section</label>
+            <label lang="de">Abschnitt</label>
+        </division>
+
+        <division id="file">
+            <label>File</label>
+            <label lang="de">Akte</label>
+        </division>
+
+        <division id="album">
+            <label>Album</label>
+            <label lang="de">Album</label>
+        </division>
+
+        <division id="register">
+            <label>Register</label>
+            <label lang="de">Amtsbuch</label>
+        </division>
+
+        <division id="annotation">
+            <label>Annotation</label>
+            <label lang="de">Annotation</label>
+        </division>
+
+        <division id="address">
+            <label>Address</label>
+            <label lang="de">Anrede</label>
+        </division>
+
+        <division id="article">
+            <label>Article</label>
+            <label lang="de">Artikel</label>
+        </division>
+
+        <division id="atlas">
+            <label>Atlas</label>
+            <label lang="de">Atlas</label>
+        </division>
+
+        <division id="issue">
+            <label>Issue</label>
+            <label lang="de">Ausgabe (auch: Heft)</label>
+        </division>
+
+        <division id="bachelor_thesis">
+            <label>Bachelor Thesis</label>
+            <label lang="de">Bachelorarbeit</label>
+        </division>
+
+        <division id="volume">
+            <label>Volume</label>
+            <label lang="de">Band</label>
+        </division>
+
+        <division id="contained_work">
+            <label>Contained Work</label>
+            <label lang="de">Beigefügtes oder Enthaltenes Werk</label>
+        </division>
+
+        <division id="additional">
+            <label>Additional</label>
+            <label lang="de">Beilage</label>
+        </division>
+
+        <division id="report">
+            <label>Report</label>
+            <label lang="de">Bericht</label>
+        </division>
+
+        <division id="official_notification">
+            <label>Official Notification</label>
+            <label lang="de">Bescheid</label>
+        </division>
+
+        <division id="provenance">
+            <label>Provenance</label>
+            <label lang="de">Besitznachweis</label>
+        </division>
+
+        <division id="image">
+            <label>Image</label>
+            <label lang="de">Bild</label>
+        </division>
+
+        <division id="collation">
+            <label>Collation</label>
+            <label lang="de">Bogensignatur</label>
+        </division>
+
+        <division id="ornament">
+            <label>Ornament</label>
+            <label lang="de">Buchschmuck</label>
+        </division>
+
+        <division id="letter">
+            <label>Letter</label>
+            <label lang="de">Brief</label>
+        </division>
+
+        <division id="cover">
+            <label>Cover</label>
+            <label lang="de">Deckel</label>
+        </division>
+
+        <division id="cover_front">
+            <label>Front Cover</label>
+            <label lang="de">Vorderdeckel</label>
+        </division>
+
+        <division id="cover_back">
+            <label>Back Cover</label>
+            <label lang="de">Rückdeckel</label>
+        </division>
+
+        <division id="diploma_thesis">
+            <label>Diploma Thesis</label>
+            <label lang="de">Diplomarbeit</label>
+        </division>
+
+        <division id="doctoral_thesis">
+            <label>Doctoral Thesis</label>
+            <label lang="de">Dissertation</label>
+        </division>
+
+        <division id="document">
+            <label>Document</label>
+            <label lang="de">Dokument</label>
+        </division>
+
+        <division id="printers_mark">
+            <label>Printers Mark</label>
+            <label lang="de">Druckermarke</label>
+        </division>
+
+        <division id="printed_archives">
+            <label>Printed Archives</label>
+            <label lang="de">Druckerzeugnis (Archivale)</label>
+        </division>
+
+        <division id="binding">
+            <label>Binding</label>
+            <label lang="de">Einband</label>
+        </division>
+
+        <division id="entry">
+            <label>Entry</label>
+            <label lang="de">Eintrag</label>
+        </division>
+
+        <division id="corrigenda">
+            <label>Corrigenda</label>
+            <label lang="de">Errata</label>
+        </division>
+
+        <division id="bookplate">
+            <label>Bookplate</label>
+            <label lang="de">Exlibris</label>
+        </division>
+
+        <division id="fascicle">
+            <label>Fascicle</label>
+            <label lang="de">Faszikel</label>
+        </division>
+
+        <division id="leaflet">
+            <label>Leaflet</label>
+            <label lang="de">Flugblatt</label>
+        </division>
+
+        <division id="research_paper">
+            <label>Research paper</label>
+            <label lang="de">Forschungsarbeit</label>
+        </division>
+
+        <division id="photograph">
+            <label>Photograph</label>
+            <label lang="de">Fotografie</label>
+        </division>
+
+        <division id="fragment">
+            <label>Fragment</label>
+            <label lang="de">Fragment</label>
+        </division>
+
+        <division id="land_register">
+            <label>Land register</label>
+            <label lang="de">Grundbuch</label>
+        </division>
+
+        <division id="ground_plan">
+            <label>Ground plan</label>
+            <label lang="de">Grundriss</label>
+        </division>
+
+        <division id="habilitation_thesis">
+            <label>Habilitation thesis</label>
+            <label lang="de">Habilitation</label>
+        </division>
+
+        <division id="manuscript">
+            <label>Manuscript</label>
+            <label lang="de">Handschrift</label>
+        </division>
+
+        <division id="illustration">
+            <label>Illustration</label>
+            <label lang="de">Illustration</label>
+        </division>
+
+        <division id="imprint">
+            <label>Imprint</label>
+            <label lang="de">Impressum</label>
+        </division>
+
+        <division id="contents">
+            <label>Table of contents</label>
+            <label lang="de">Inhaltsverzeichnis</label>
+        </division>
+
+        <division id="initial_decoration">
+            <label>Initial decoration</label>
+            <label lang="de">Initialschmuck</label>
+        </division>
+
+        <division id="year">
+            <label>Year</label>
+            <label lang="de">Jahr</label>
+        </division>
+
+        <division id="chapter">
+            <label>Chapter</label>
+            <label lang="de">Kapitel</label>
+        </division>
+
+        <division id="map">
+            <label>Map</label>
+            <label lang="de">Karte</label>
+        </division>
+
+        <division id="cartulary">
+            <label>Cartulary</label>
+            <label lang="de">Kartular</label>
+        </division>
+
+        <division id="colophon">
+            <label>Colophon</label>
+            <label lang="de">Kolophon</label>
+        </division>
+
+        <division id="engraved_titlepage">
+            <label>Engraved titlepage</label>
+            <label lang="de">Kupfertitel</label>
+        </division>
+
+        <division id="magister_thesis">
+            <label>Magister thesis</label>
+            <label lang="de">Magisterarbeit</label>
+        </division>
+
+        <division id="folder">
+            <label>Folder</label>
+            <label lang="de">Mappe</label>
+        </division>
+
+        <division id="master_thesis">
+            <label>Master thesis</label>
+            <label lang="de">Masterarbeit</label>
+        </division>
+
+        <division id="multivolume_work">
+            <label>Multivolume work</label>
+            <label lang="de">Mehrbändiges Werk</label>
+        </division>
+
+        <division id="month">
+            <label>Month</label>
+            <label lang="de">Monat</label>
+        </division>
+
+        <division id="monograph">
+            <label>Monograph</label>
+            <label lang="de">Monographie</label>
+        </division>
+
+        <division id="musical_notation">
+            <label>Musical notation</label>
+            <label lang="de">Musiknotation</label>
+        </division>
+
+        <division id="periodical">
+            <label>Periodical</label>
+            <label lang="de">Periodica</label>
+        </division>
+
+        <division id="poster">
+            <label>Poster</label>
+            <label lang="de">Plakat</label>
+        </division>
+
+        <division id="plan">
+            <label>Plan</label>
+            <label lang="de">Plan</label>
+        </division>
+
+        <division id="privileges">
+            <label>Privileges</label>
+            <label lang="de">Privilegien</label>
+        </division>
+
+        <division id="index">
+            <label>Index</label>
+            <label lang="de">Register</label>
+        </division>
+
+        <division id="spine">
+            <label>Spine</label>
+            <label lang="de">Rücken</label>
+        </division>
+
+        <division id="scheme">
+            <label>Scheme</label>
+            <label lang="de">Schema</label>
+        </division>
+
+        <division id="edge">
+            <label>Edge</label>
+            <label lang="de">Schnitt</label>
+        </division>
+
+        <division id="seal">
+            <label>Seal</label>
+            <label lang="de">Siegel</label>
+        </division>
+
+        <division id="paste_down">
+            <label>Paste down</label>
+            <label lang="de">Spiegel</label>
+        </division>
+
+        <division id="stamp">
+            <label>Stamp</label>
+            <label lang="de">Stempel</label>
+        </division>
+
+        <division id="study">
+            <label>Study</label>
+            <label lang="de">Studie</label>
+        </division>
+
+        <division id="table">
+            <label>Table</label>
+            <label lang="de">Tabelle</label>
+        </division>
+
+        <division id="day">
+            <label>Day</label>
+            <label lang="de">Tag</label>
+        </division>
+
+        <division id="proceeding">
+            <label>Proceeding</label>
+            <label lang="de">Tagungsband</label>
+        </division>
+
+        <division id="text">
+            <label>Text</label>
+            <label lang="de">Text</label>
+        </division>
+
+        <division id="title_page">
+            <label>Title page</label>
+            <label lang="de">Titelblatt</label>
+        </division>
+
+        <division id="act">
+            <label>Act</label>
+            <label lang="de">Urkunde</label>
+        </division>
+
+        <division id="judgement">
+            <label>Judgement</label>
+            <label lang="de">Urteil</label>
+        </division>
+
+        <division id="verse">
+            <label>Verse</label>
+            <label lang="de">Verse</label>
+        </division>
+
+        <division id="note">
+            <label>Note</label>
+            <label lang="de">Vermerk</label>
+        </division>
+
+        <division id="preprint">
+            <label>Preprint</label>
+            <label lang="de">Vorabdruck</label>
+        </division>
+
+        <division id="dossier">
+            <label>Dossier</label>
+            <label lang="de">Vorgang</label>
+        </division>
+
+        <division id="lecture">
+            <label>Lecture</label>
+            <label lang="de">Vorlesung</label>
+        </division>
+
+        <division id="endsheet">
+            <label>Endsheet</label>
+            <label lang="de">Vorsatz</label>
+        </division>
+
+        <division id="paper">
+            <label>Paper</label>
+            <label lang="de">Vortrag</label>
+        </division>
+
+        <division id="preface">
+            <label>Preface</label>
+            <label lang="de">Vorwort</label>
+        </division>
+
+        <division id="dedication">
+            <label>Dedication</label>
+            <label lang="de">Widmung</label>
+        </division>
+
+        <division id="newspaper">
+            <label>Newspaper</label>
+            <label lang="de">Zeitung</label>
+        </division>
 
         <!--
             'key' tag:
