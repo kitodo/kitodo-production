@@ -2587,6 +2587,15 @@ public class MetadataProcessor {
                 list.remove(list.get(0));
                 comments = list.toArray(new String[0]);
             }
+            for (int i = 0; i < comments.length; i++) {
+                String[] parts = comments[i].split(":");
+                if (parts.length < 2) {
+                    continue;
+                }
+                String author = "<i>" + parts[0] + "</i>";
+                String comment = String.join(":", (String[]) Arrays.copyOfRange(parts, 1, parts.length));
+                comments[i] = author + ": " + comment;
+            }
             return comments;
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;

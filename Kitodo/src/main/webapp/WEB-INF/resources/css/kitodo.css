@@ -1089,6 +1089,28 @@ form#metadata div label,
     background-color: var(--trans-blue);
 }
 
+#commentsBox\:comments > tbody > tr.ui-widget-content:first-child > td.ui-panelgrid-cell {
+    padding: 0;
+}
+
+#commentsBox\:commentsGrid_head {
+    display: none;
+}
+
+#newCommentDialog .ui-dialog-content {
+    padding: 32px 16px;
+}
+
+#newCommentDialog .ui-dialog-titlebar {
+    display: none;
+}
+
+.new-comment-box {
+    width: 100%;
+    background-color: var(--trans-blue);
+    margin-bottom: 32px;
+}
+
 #metadata\:personTable_data button.secondary,
 #metadata\:metadataTable_data button.secondary {
     float: right;

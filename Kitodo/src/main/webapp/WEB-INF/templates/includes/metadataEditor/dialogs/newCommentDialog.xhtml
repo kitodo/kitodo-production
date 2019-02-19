@@ -1,0 +1,47 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <p:dialog id="newCommentDialog"
+                  resizable="false"
+                  modal="true"
+                  widgetVar="newCommentDialog">
+            <h:form id="newCommentForm">
+                <h3>#{msgs.commentWrite}</h3>
+                <br/>
+                <p:outputLabel value="Text"
+                               for="newCommentTextArea"/>
+                <p:inputTextarea id="newCommentTextArea"
+                                 styleClass="new-comment-box"/>
+                <span class="button-wrapper">
+                    <p:commandButton value="#{msgs.save}"
+                                     action="#{MetadataProcessor.setShowNewComment(true)}"
+                                     update="commentsBox"
+                                     styleClass="primary dialog"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"/>
+                    <p:commandButton styleClass="secondary dialog"
+                                     value="#{msgs.cancel}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('newCommentDialog').hide()"/>
+                </span>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</ui:composition>
