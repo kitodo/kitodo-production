@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -152,7 +153,11 @@ public class ImportService {
 
     private Document transformXmlByXslt(String xmlString, File stylesheetFile) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (ParserConfigurationException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
         factory.setNamespaceAware(true);
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
