@@ -661,18 +661,73 @@
             <preset>eins</preset>
         </key>
  
-        <!-- Keys to edit METS’s @LABEL and @ORDERLABEL attributes: -->
+        <!-- Keys as per https://dfg-viewer.de/fileadmin/groups/dfgviewer/MODS-Anwendungsprofil_2.3.1.pdf -->
 
-        <key id="LABEL" domain="mets:div">
-            <label>logical page number</label>
-            <label lang="de">logische Seitenzahl (gedruckte Zeitenzahl)</label>
-        </key>
-        <key id="ORDERLABEL" domain="mets:div">
-            <label>physical page number</label>
-            <label lang="de">physische Seitenzahl (Imagenummer)</label>
+        <key id="titleInfo">
+            <label>Title information</label>
+            <label lang="de">Titelangaben</label>
+
+            <key id="type">
+                <label>Type</label>
+                <label lang="de">Typ</label>
+
+                <option value="abbreviated">
+                    <label>Title as abbreviated</label>
+                    <label lang="de">Abgekürzter Titel</label>
+                </option>
+                <option value="translated">
+                    <label>Translation or transcription</label>
+                    <label lang="de">Paralleltitel oder übersetzter Titel</label>
+                </option>
+                <option value="alternative">
+                    <label>Varying form of the title</label>
+                    <label lang="de">Abweichende Titelform</label>
+                </option>
+                <option value="uniform">
+                    <label>Uniform title </label>
+                    <label lang="de">Normtitel</label>
+                </option>
+            </key>
+
+            <key id="authorityURI">
+                <label>URI of the controlled vocabulary</label>
+                <label lang="de">URI der Normdatei</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="valueURI">
+                <label>URI identifying the value from a controlled vocabulary</label>
+                <label lang="de">URI des Sachtitels</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="title">
+                <label>Chief title</label>
+                <label lang="de">Haupttitel</label>
+            </key>
+
+            <key id="nonSort">
+                <label>Nonfiling text</label>
+                <label lang="de">Nicht-Sortiervorsätze</label>
+            </key>
+
+            <key id="subTitle">
+                <label>Nonfiling text</label>
+                <label lang="de">Untertitel</label>
+            </key>
+
+            <key id="partName">
+                <label>Section or division</label>
+                <label lang="de">Unterreihe/Untergliederung</label>
+            </key>
+
+            <key id="partNumber">
+                <label>Enumeration-type designation</label>
+                <label lang="de">Zählung</label>
+            </key>
         </key>
 
-        <!-- TODO: add keys here here -->
+        <!-- TODO: add more keys here here -->
 
     </declaration>
 
@@ -736,7 +791,13 @@
                         permit              (optional, repeatable)
         -->
 
-        <!-- TODO: add restrictions here here -->
+        <restriction key="titleInfo">
+            <permit key="type" maxOccurs="1"/>
+            <permit key="authorityURI" maxOccurs="1"/>
+            <permit key="valueURI" maxOccurs="1"/>
+            <permit key="title" minOccurs="1" maxOccurs="1"/>
+            <permit key="nonSort" maxOccurs="1"/>
+        </restriction>
 
     </correlation>
     <editing>
@@ -799,5 +860,10 @@
                 level apply before the general settings, otherwise the default
                 value applies.
         -->
+
+        <setting key="titleInfo">
+            <setting key="title" alwaysShowing="true"/>
+        </setting>
+
     </editing>
 </ruleset>
