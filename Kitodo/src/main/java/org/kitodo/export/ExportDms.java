@@ -76,19 +76,19 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            object
-     * @param inZielVerzeichnis
+     * @param destination
      *            String
      */
     @Override
-    public boolean startExport(Process process, URI inZielVerzeichnis) {
+    public boolean startExport(Process process, URI destination) {
         if (process.getProject().isUseDmsImport()
                 && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
-            TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
+            TaskManager.addTask(new ExportDmsTask(this, process, destination));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return true;
         } else {
-            return startExport(process, inZielVerzeichnis, (ExportDmsTask) null);
+            return startExport(process, destination, (ExportDmsTask) null);
         }
     }
 
@@ -100,16 +100,16 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            process to export
-     * @param inZielVerzeichnis
+     * @param destination
      *            work directory of the user who triggered the export
      * @param exportDmsTask
      *            ExportDmsTask object to submit progress updates and errors
      * @return false if an error condition was caught, true otherwise
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) {
+    public boolean startExport(Process process, URI destination, ExportDmsTask exportDmsTask) {
         this.exportDmsTask = exportDmsTask;
         try {
-            return startExport(process, inZielVerzeichnis,
+            return startExport(process, destination,
                 ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (IOException | RuntimeException e) {
             if (Objects.nonNull(exportDmsTask)) {
@@ -127,13 +127,13 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            object
-     * @param inZielVerzeichnis
+     * @param destination
      *            String
      * @param newFile
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, LegacyMetsModsDigitalDocumentHelper newFile)
+    public boolean startExport(Process process, URI destination, LegacyMetsModsDigitalDocumentHelper newFile)
             throws IOException {
 
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -157,25 +157,26 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
-        return prepareAndDownloadSaveLocation(process, inZielVerzeichnis, gdzfile);
+        return prepareAndDownloadSaveLocation(process, destination, gdzfile);
     }
 
-    private boolean prepareAndDownloadSaveLocation(Process process, URI inZielVerzeichnis,
+    private boolean prepareAndDownloadSaveLocation(Process process, URI destinationDirectory,
             LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException {
-        // TODO: why create again zielVerzeichnis if it is already given as an
+        // TODO: why create again destinationDirectory if it is already given as
+        // an
         // input??
-        URI zielVerzeichnis;
+        URI destination;
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
             // TODO: I have got here value usr/local/kitodo/hotfolder
-            zielVerzeichnis = new File(process.getProject().getDmsImportImagesPath()).toURI();
-            userHome = zielVerzeichnis;
+            destination = new File(process.getProject().getDmsImportImagesPath()).toURI();
+            userHome = destination;
 
             // if necessary, create process folder
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI userHomeProcess = fileService.createResource(userHome,
                     File.separator + ServiceManager.getProcessService().getNormalizedTitle(process.getTitle()));
-                zielVerzeichnis = userHomeProcess;
+                destination = userHomeProcess;
                 boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getProject(),
                     process.getTitle());
                 if (!createProcessFolderResult) {
@@ -183,27 +184,28 @@ public class ExportDms extends ExportMets {
                 }
             }
         } else {
-            zielVerzeichnis = URI.create(inZielVerzeichnis + atsPpnBand + "/");
+            destination = URI.create(destinationDirectory + atsPpnBand + "/");
             // if the home exists, first delete and then create again
-            userHome = zielVerzeichnis;
+            userHome = destination;
             if (!fileService.delete(userHome)) {
                 Helper.setErrorMessage(
                     Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
                 return false;
             }
-            prepareUserDirectory(zielVerzeichnis);
+            prepareUserDirectory(destination);
         }
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(1);
         }
 
-        return exportImagesAndMetsToDestinationUri(process, gdzfile, zielVerzeichnis, userHome);
+        return exportImagesAndMetsToDestinationUri(process, gdzfile, destination, userHome);
     }
 
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
-            URI zielVerzeichnis, URI userHome) throws IOException {
-        boolean downloadImages = downloadImages(process, userHome, zielVerzeichnis);
+            URI destination, URI userHome) throws IOException {
+
+        boolean downloadImages = downloadImages(process, userHome, destination);
         if (!downloadImages) {
             return false;
         }
@@ -595,18 +597,18 @@ public class ExportDms extends ExportMets {
      *
      * @param process
      *            object
-     * @param zielVerzeichnis
+     * @param destination
      *            the destination directory
      *
      */
-    private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
+    private void directoryDownload(Process process, URI destination) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
         String normalizedTitle = ServiceManager.getProcessService().getNormalizedTitle(process.getTitle());
 
         for (String processDir : processDirs) {
             URI srcDir = ServiceManager.getProcessService().getProcessDataDirectory(process)
                     .resolve(processDir.replace("(processtitle)", normalizedTitle));
-            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", normalizedTitle));
+            URI dstDir = destination.resolve(processDir.replace("(processtitle)", normalizedTitle));
 
             if (fileService.isDirectory(srcDir)) {
                 fileService.copyDirectory(srcDir, dstDir);
