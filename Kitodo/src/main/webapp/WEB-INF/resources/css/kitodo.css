@@ -21,7 +21,7 @@ body {
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
-    background: url("#{resource['/images/background-top.svg']}") no-repeat #f3f3f3 center top fixed;
+    background: url("#{resource['/images/background-top.svg']}") no-repeat var(--light-gray) center top fixed;
     background-size: auto 300px;
     }
 
@@ -140,18 +140,18 @@ body.first-visit #portal-header {
 }
 
 #portal-search form {
-    background: #064f80;
+    background: var(--focused-blue);
     border-radius: 3px;
     display: table;
     white-space: nowrap;
     }
 
 #portal-search form:hover {
-    background: linear-gradient(#064f80, #043759);
-    background: -moz-linear-gradient(#064f80, #043759);
-    background: -webkit-linear-gradient(#064f80, #043759);
-    background: -ms-linear-gradient(#064f80, #043759);
-    background: -o-linear-gradient(#064f80, #043759);
+    background: linear-gradient(var(--focused-blue), #043759);
+    background: -moz-linear-gradient(var(--focused-blue), #043759);
+    background: -webkit-linear-gradient(var(--focused-blue), #043759);
+    background: -ms-linear-gradient(var(--focused-blue), #043759);
+    background: -o-linear-gradient(var(--focused-blue), #043759);
     -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
     -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
     box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
@@ -191,11 +191,11 @@ body.first-visit #portal-header {
     }
 
 #portal-search button:hover {
-    background: linear-gradient(#42ba37, #064f80);
-    background: -moz-linear-gradient(#42ba37, #064f80);
-    background: -webkit-linear-gradient(#42ba37, #064f80);
-    background: -ms-linear-gradient(#42ba37, #064f80);
-    background: -o-linear-gradient(#42ba37, #064f80);
+    background: linear-gradient(var(--green), var(--focused-blue));
+    background: -moz-linear-gradient(var(--green), var(--focused-blue));
+    background: -webkit-linear-gradient(var(--green), var(--focused-blue));
+    background: -ms-linear-gradient(var(--green), var(--focused-blue));
+    background: -o-linear-gradient(var(--green), var(--focused-blue));
     border-radius: 3px;
     }
 
@@ -213,7 +213,7 @@ body.first-visit #portal-header {
 
 #header-nav > ul > li {
     list-style: none;
-    color: #fff;
+    color: var(--pure-white);
     display: inline-block;
     line-height: 1;
     position: relative;
@@ -235,7 +235,7 @@ body.first-visit #portal-header {
     }
 
 #header-nav li.disabled:hover > a {
-    color: #fff;
+    color: var(--pure-white);
 }
 
 #header-nav li ul {
@@ -261,7 +261,7 @@ body.first-visit #portal-header {
     }
 
 #header-nav li ul li {
-    background-color: #f3f3f3;
+    background-color: var(--light-gray);
     }
 
 #header-nav li ul li a, #header-nav li ul li div {
@@ -269,7 +269,7 @@ body.first-visit #portal-header {
     color: #1b2b36;
     text-decoration: none !important;
     display: block;
-    border-top: 1px solid #d8d8d8;
+    border-top: 1px solid var(--cloudy-gray);
     }
 
 #header-nav li ul li a i {
@@ -278,7 +278,7 @@ body.first-visit #portal-header {
 
 #header-nav li ul li:hover a {
     background-color: #1b2b36 !important;
-    color: #fff;
+    color: var(--pure-white);
     border-color: #1b2b36 !important;
     }
 
@@ -298,15 +298,15 @@ body.first-visit #portal-header {
     font-size: 12px;
     line-height: 22px;
     border-radius: 11px;
-    color: #fff !important;
+    color: var(--pure-white) !important;
     }
 
 #header-nav .bc-alert {
-    background-color: #f94a15;
+    background-color: var(--orange);
     }
 
 #header-nav .bc-info {
-    background-color: #42ba37;
+    background-color: var(--green);
     }
 
 #header-nav h3 {
@@ -319,17 +319,17 @@ body.first-visit #portal-header {
     }
 
 #header-nav li ul li:last-child a {
-    background-color: #d8d8d8;
+    background-color: var(--cloudy-gray);
     }
 
 #header-nav #nav-user li.color-orange a {
-    background-color: #f94a15;
-    border-color: #f94a15;
-    color: #fff;
+    background-color: var(--orange);
+    border-color: var(--orange);
+    color: var(--pure-white);
     }
 
 #header-nav #nav-user li.toggle-list {
-    background-color: #d8d8d8;
+    background-color: var(--cloudy-gray);
 }
 
 #header-nav #nav-user li.toggle-list a.ui-commandlink {
@@ -360,11 +360,11 @@ body.first-visit #portal-header {
     }
 
 #header-nav .nav-item-col .nc-info {
-    color: #42ba37;
+    color: var(--green);
     }
 
 #header-nav .nav-item-col .nc-alert {
-    color: #f94a15;
+    color: var(--orange);
     }
 
 #header-nav li ul li.nav-pic-text a,
@@ -379,7 +379,7 @@ body.first-visit #portal-header {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    background: #f3f3f3;
+    background: var(--light-gray);
     }
 
 #header-nav li ul li.nav-pic-text i {
@@ -406,11 +406,11 @@ body.first-visit #portal-header {
 }
 
 #header-nav .languageButtonCell.selected {
-    background-color: var(--disabled-light);
+    background-color: var(--cloudy-gray);
 }
 
 #header-nav .languageButtonCell:hover {
-    background-color: var(--disabled-dark);
+    background-color: var(--medium-gray);
 }
 
 #header-nav .languageButton {
@@ -432,8 +432,8 @@ Breadcrumb menu
 }
 
 .breadcrumb-menu li:first-child a.ui-menuitem-link span:hover {
-    color: var(--default-dark);
-    background-color: white;
+    color: var(--carbon-blue);
+    background-color: var(--pure-white);
     transition: color .5s, background-color .5s;
 }
 
@@ -448,7 +448,7 @@ Breadcrumb menu
 }
 
 .breadcrumb-menu a.ui-menuitem-link {
-    background-color: #064f80;
+    background-color: var(--focused-blue);
     border-radius: 3px;
     width: 36px;
     height: 36px;
@@ -463,29 +463,29 @@ Breadcrumb menu
 
 .breadcrumb-menu li:not(:first-child) a.ui-menuitem-link {
     margin-top: 0;
-    color: white;
-    background-color: #064f80;
+    color: var(--pure-white);
+    background-color: var(--focused-blue);
     width: 36px;
     transition: color .5s, background-color .5s, width .5s;
 }
 
 .breadcrumb-menu li:not(:first-child):hover a.ui-menuitem-link {
-    color: var(--default-dark);
-    background-color: white;
+    color: var(--carbon-blue);
+    background-color: var(--pure-white);
     width: unset;
 }
 
 .breadcrumb-menu a.ui-menuitem-link {
     margin-top: 0;
-    color: white;
+    color: var(--pure-white);
     text-decoration: none;
     font-size: small;
     transition: color .5s, background-color .5s;
 }
 
 .breadcrumb-menu a.ui-menuitem-link:first-child:hover {
-    color: var(--default-dark);
-    background-color: white;
+    color: var(--carbon-blue);
+    background-color: var(--pure-white);
 }
 
 .breadcrumb-menu span.ui-menuitem-text {
@@ -508,12 +508,12 @@ Breadcrumb menu
 
 .breadcrumb-menu ul li[role=menuitem]:not(:first-child)::after {
     content: " ";
-    background-color: #064f80;
+    background-color: var(--focused-blue);
     transform: rotate(-45deg);
     background-image: none;
     border-width: 3px 0 0 3px;
     border-style: solid;
-    border-color: var(--primary);
+    border-color: var(--blue);
     top: 11px;
     left: -10px;
     display: inline-block;
@@ -525,7 +525,7 @@ Breadcrumb menu
 }
 
 .breadcrumb-menu li[role=menuitem]:not(:first-child):hover::after {
-    background-color: white;
+    background-color: var(--pure-white);
     transition: background-color .5s;
 }
 
@@ -548,7 +548,7 @@ body.first-visit main {
     }
 
 section#content-section {
-    background: #fff;
+    background: var(--pure-white);
     height: 500px;
 }
 
@@ -603,8 +603,8 @@ section#content-section {
 }
 
 #desktopGrid .ui-datatable-scrollable-header-box {
-    border-top: 3px solid #999;
-    background: #d8d8d8;
+    border-top: 3px solid var(--medium-gray);
+    background: var(--cloudy-gray);
 }
 
 #listWrapper, section#content-section {
@@ -717,7 +717,7 @@ section#content-section {
 #filterMenu .ui-overlaypanel > div {
     padding: 0;
     width: 250px;
-    background: #f3f3f3;
+    background: var(--light-gray);
     border-radius: 3px;
 }
 
@@ -730,7 +730,7 @@ section#content-section {
 
 #filterMenu .ui-overlaypanel li {
     list-style: none;
-    border-top: solid 1px #d8d8d8;
+    border-top: solid 1px var(--cloudy-gray);
 }
 
 #filterMenu .ui-overlaypanel li:hover {
@@ -741,7 +741,7 @@ section#content-section {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
-    color: #0071bc;
+    color: var(--blue);
 }
 
 #filterMenu .ui-overlaypanel li > a:first-child {
@@ -779,11 +779,11 @@ section#content-section {
 }
 
 .ui-tabs-panel thead {
-    border-top: 3px solid #999;
+    border-top: 3px solid var(--medium-gray);
 }
 
 .mets-file-groups .ui-datatable table {
-    border-top: solid 1px #d8d8d8;
+    border-top: solid 1px var(--cloudy-gray);
 }
 
 .mets-file-groups .ui-datatable.ui-widget tr th,
@@ -845,7 +845,7 @@ main i.fa {
 }
 
 #login-section {
-    background: #fff;
+    background: var(--pure-white);
     border-radius: 3px;
     padding: 32px 32px 0 32px;
     -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
@@ -861,19 +861,19 @@ main i.fa {
 }
 
 #login-section input[id=username], #login-section input[type=password] {
-    border: 1px solid #0071bc;
+    border: 1px solid var(--blue);
     border-radius: 3px;
     padding: 9px 10px;
     line-height: 0px;
     font-size: 16px;
-    color: #0071bc;
+    color: var(--blue);
     display: block;
     width: 100%;
 }
 
 #login-section input[type=text]:hover {
-    border: 1px solid #005182;
-    color: #005182;
+    border: 1px solid var(--focused-blue);
+    color: var(--focused-blue);
 }
 
 #login-section div {
@@ -881,10 +881,10 @@ main i.fa {
 }
 
 #login-section button {
-    background: #0071bc;
+    background: var(--blue);
     border-radius: 3px;
-    border: 1px solid #0071bc;
-    color: #fff;
+    border: 1px solid var(--blue);
+    color: var(--pure-white);
     padding: 8px 10px;
 }
 
@@ -900,8 +900,8 @@ main i.fa {
 }
 
 #login-section button:hover {
-    background: #005182;
-    border: 1px solid #005182;
+    background: var(--focused-blue);
+    border: 1px solid var(--focused-blue);
     cursor: pointer;
 }
 
@@ -912,10 +912,10 @@ main i.fa {
 }
 
 .login-note {
-    background: #999;
+    background: var(--medium-gray);
     margin: 32px -32px 0 -32px;
     padding: 32px;
-    color: #d8d8d8;
+    color: var(--cloudy-gray);
     hyphens: auto;
     line-height: 22px;
     border-radius: 0 0 3px 3px;
@@ -932,15 +932,15 @@ main i.fa {
 }
 
 .select-client-note {
-    background: #F94A15;
+    background: var(--orange);
     padding: 16px 32px 16px 32px;
-    color: #ffffff;
+    color: var(--pure-white);
     hyphens: auto;
     line-height: 22px;
 }
 
 .client-select-dialog {
-    background: #f3f3f3;
+    background: var(--light-gray);
 }
 
 .client-select-dialog > .ui-dialog-titlebar > .ui-dialog-title {
@@ -1047,7 +1047,7 @@ form#metadata div label,
 #commentsBox\:comments tr,
 #metadata\:metadataTable_data td,
 #metadata\:metadataTable_data textarea {
-    background-color: var(--transblue);
+    background-color: var(--trans-blue);
 }
 
 #metadata\:personTable_data button.secondary,
@@ -1063,7 +1063,7 @@ form#metadata div label,
     box-sizing: border-box;
     vertical-align: top;
     position: relative;
-    background: #d8d8d8;
+    background: var(--cloudy-gray);
     overflow: visible !important;
     white-space: initial;
 }
@@ -1112,11 +1112,11 @@ form#metadata div label,
     height: 36px;
     padding-top: 0;
     padding-bottom: 0;
-    color: var(--primary);
+    color: var(--blue);
 }
 
 .collapsibleWrapper .columnHeadingWrapper button:disabled {
-    color: var(--disabled-dark);
+    color: var(--medium-gray);
 }
 
 .collapsibleWrapper.collapsed .columnHeadingWrapper button {
@@ -1292,15 +1292,15 @@ Column content
 }
 
 #metadata .ui-datatable-even {
-    background: #fff;
+    background: var(--pure-white);
 }
 
 #metadata .ui-datatable-odd {
-    background: #f3f3f3;
+    background: var(--light-gray);
 }
 
 #imagePreviewForm\:tifFoldersLabel {
-    color: var(--default-bright);
+    color: var(--pure-white);
     line-height: var(--input-height);
 }
 
@@ -1366,7 +1366,7 @@ Column content
 }
 
 #map div.ol-control button {
-    background-color: var(--primary);
+    background-color: var(--blue);
 }
 
 .thumbnailWrapper {
@@ -1382,7 +1382,7 @@ Column content
     display: inline-block;
     float: right;
     height: 100%;
-    border-left: 1px solid var(--primary);
+    border-left: 1px solid var(--blue);
     overflow: hidden;
     width: 100px;
 }
@@ -1424,7 +1424,7 @@ Column content
 }
 
 .thumbnail.active {
-    border: 2px solid var(--callto);
+    border: 2px solid var(--green);
 }
 
 .thumbnail-container {
@@ -1442,7 +1442,7 @@ Column content
     width: 100%;
     opacity: 0;
     transition: .2s ease;
-    background-color: var(--secondary);
+    background-color: var(--light-blue);
     color: white;
     font-size: smaller;
     text-align: center;
@@ -1455,7 +1455,7 @@ Column content
 #imagePreviewForm {
     height: 100%;
     overflow: hidden;
-    background: linear-gradient(var(--carbonblue), var(--dark));
+    background: linear-gradient(var(--carbon-blue), var(--focused-blue));
 }
 
 #imagePreviewForm\:structuredPages .ui-panel .ui-panel-content {
@@ -1469,10 +1469,10 @@ Column content
 
 #imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
     display: block;
-    background-color: var(--dark);
+    background-color: var(--focused-blue);
     color: white;
     padding: 5px;
-    border-top: 3px solid var(--primary);
+    border-top: 3px solid var(--blue);
 }
 
 #imagePreviewForm\:structuredPages ul {
@@ -1490,7 +1490,7 @@ Column content
 }
 
 #imagePreviewForm\:structuredPages .ui-widget-content {
-    color: var(--default-bright);
+    color: var(--pure-white);
 }
 
 /*----------------------------------------------------------------------
@@ -1508,7 +1508,7 @@ footer {
 
 #footer-content {
     width: 100%;
-    /*background: #f94a15;*/
+    /*background: var(--orange);*/
     padding: 64px 0px 16px 0px;
     display: block;
     text-align: center;
@@ -1516,11 +1516,11 @@ footer {
     }
 
 #footer-content p {
-    color: #f94a15;
+    color: var(--orange);
     }
 
 #footer-content p span {
-    color: #999;
+    color: var(--medium-gray);
     }
 
 #footer-meta-menu {
@@ -1533,8 +1533,8 @@ footer {
 
 #footer-meta-menu li a,
 #footer-meta-menu li input {
-    background: #999;
-    color: #fff;
+    background: var(--medium-gray);
+    color: var(--pure-white);
     text-decoration: none;
     padding: 2px 5px;
     border-radius: 3px;
@@ -1544,7 +1544,7 @@ footer {
 
 #footer-meta-menu li a:hover,
 #footer-meta-menu li input:hover{
-    background: #005182;
+    background: var(--focused-blue);
     }
 
 /* Primefaces theme */
@@ -1570,7 +1570,7 @@ footer {
 }
 
 .ui-datatable thead th.ui-state-default {
-    background: #d8d8d8;
+    background: var(--cloudy-gray);
 }
 
 .ui-datatable tbody tr:last-child td {
@@ -1584,7 +1584,7 @@ footer {
 
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a  {
-    color: #0071bc;
+    color: var(--blue);
     margin-right: 10px;
 }
 
@@ -1624,7 +1624,7 @@ footer {
     display: inline;
     font: normal normal normal x-large/1 FontAwesome !important;
     text-rendering: auto;
-    color: #0071bc;
+    color: var(--blue);
     background: none !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -1645,13 +1645,13 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
-    color: #999;
-    border-top: 3px solid #999;
+    color: var(--medium-gray);
+    border-top: 3px solid var(--medium-gray);
 }
 
 .ui-tabs .ui-tabs-panel {
     padding: 3px 0 0 0;
-    background: #fff;
+    background: var(--pure-white);
 }
 
 .ui-panelgrid-cell > div {
@@ -1674,8 +1674,8 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger {
-    background: #fff;
-    color: #0071bc;
+    background: var(--pure-white);
+    color: var(--blue);
     border-left: none !important;
 }
 
@@ -1695,9 +1695,9 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list {
-    background: #f3f3f3;
+    background: var(--light-gray);
     padding: 0;
-    color: #0071bc;
+    color: var(--blue);
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item {
@@ -1706,15 +1706,15 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item.ui-state-highlight {
-    background: #0071bc;
+    background: var(--blue);
 }
 
 .checkbox-checked {
-    color: #42ba37;
+    color: var(--green);
 }
 
 .checkbox-unchecked {
-    color: #f94a15;
+    color: var(--orange);
 }
 
 .checkbox-checked, .checkbox-unchecked {
@@ -1722,7 +1722,7 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ot-folder-use {
-    border-top: 3px solid #999;
+    border-top: 3px solid var(--medium-gray);
     font-weight: bold;
     padding: .75em 1.5em;
 }
