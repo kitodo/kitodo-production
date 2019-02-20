@@ -150,90 +150,80 @@ public class MetadataHelper {
      */
     // FIXME: alphanumerisch
     public String getImageNumber(LegacyDocStructHelperInterface inStrukturelement, int inPageNumber) {
-        String rueckgabe = "";
+        String result = "";
 
         if (inStrukturelement == null) {
             return "";
         }
         List<LegacyReferenceHelper> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
-            references.sort((firstObject, secondObject) -> {
-                Integer firstPage = 0;
-                Integer secondPage = 0;
-                final LegacyMetadataTypeHelper mdt = MetadataHelper.this.prefs
-                        .getMetadataTypeByName("physPageNumber");
-                List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
-                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final LegacyMetadataHelper page = listMetadata.get(0);
-                    firstPage = Integer.parseInt(page.getValue());
-                }
-                listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
-                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
-                    final LegacyMetadataHelper page = listMetadata.get(0);
-                    secondPage = Integer.parseInt(page.getValue());
-                }
-                return firstPage.compareTo(secondPage);
-            });
-
-            LegacyMetadataTypeHelper mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends LegacyMetadataHelper> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
-            if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
-            }
-            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                LegacyMetadataHelper meineSeite = listSeiten.get(0);
-                rueckgabe += meineSeite.getValue();
-            }
-            mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
-            listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
-            if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
-            }
-            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
-                LegacyMetadataHelper meineSeite = listSeiten.get(0);
-                rueckgabe += ":" + meineSeite.getValue();
+            references.sort(new ReferencesSortHelper(prefs));
+            result = getMetadataPageNumber("physPageNumber", inPageNumber, references);
+            String pageNumber = getMetadataPageNumber("logicalPageNumber", inPageNumber, references);
+            if (!pageNumber.isEmpty()) {
+                result += ":" + pageNumber;
             }
         }
-        return rueckgabe;
+        return result;
+    }
+
+    private String getMetadataPageNumber(String metadataType, int inPageNumber,
+            List<LegacyReferenceHelper> references) {
+        LegacyMetadataTypeHelper metadataTypeHelper = this.prefs.getMetadataTypeByName(metadataType);
+        List<? extends LegacyMetadataHelper> pages = references.get(0).getTarget()
+                .getAllMetadataByType(metadataTypeHelper);
+        if (inPageNumber == PAGENUMBER_LAST) {
+            pages = references.get(references.size() - 1).getTarget().getAllMetadataByType(metadataTypeHelper);
+        }
+        if (Objects.nonNull(pages) && !pages.isEmpty()) {
+            LegacyMetadataHelper meineSeite = pages.get(0);
+            return meineSeite.getValue();
+        }
+        return "";
     }
 
     /**
-     * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
-     * DefaultDisplay-Metadaten ergänzen.
+     * Determine all meta-data of the transferred DocStruct and complete the
+     * missing DefaultDisplay meta-data.
      */
-    public List<? extends LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
+    public List<LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
             String inLanguage, boolean inIsPerson, Process inProzess) {
-        List<LegacyMetadataTypeHelper> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
-        /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
+
+        supplementDefaultMetadata(inStruct, inStruct.getDisplayMetadataTypes());
+
+        /*
+         * if you do not want to sort by ruleset, sort alphabetically here
+         */
+        if (!inProzess.getRuleset().isOrderMetadataByRuleset()) {
+            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
+            if (metadata != null) {
+                metadata.sort(new MetadataComparator(inLanguage));
+            }
+        }
+
+        return getAllVisibleMetadataHack(inStruct);
+    }
+
+    /**
+     * If default metadata exist, supplement it if necessary.
+     */
+    private void supplementDefaultMetadata(LegacyDocStructHelperInterface inStruct,
+            List<LegacyMetadataTypeHelper> displayMetadataTypes) {
         if (displayMetadataTypes != null) {
             for (LegacyMetadataTypeHelper mdt : displayMetadataTypes) {
-                // check, if mdt is already in the allMDs Metadata list, if not
-                // - add it
+                /*
+                 * check, if mdt is already in the allMDs Metadata list, if not
+                 * - add it
+                 */
                 if (!(inStruct.getAllMetadataByType(mdt) != null && !inStruct.getAllMetadataByType(mdt).isEmpty())) {
                     if (mdt.isPerson()) {
                         throw new UnsupportedOperationException("Dead code pending removal");
                     } else {
                         LegacyMetadataHelper md = new LegacyMetadataHelper(mdt);
-                        inStruct.addMetadata(md); // add this new metadata
-                        // element
+                        inStruct.addMetadata(md);
                     }
                 }
             }
-        }
-
-        /*
-         * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch
-         * sortieren
-         */
-        if (inIsPerson) {
-            throw new UnsupportedOperationException("Dead code pending removal");
-        } else {
-            List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
-            if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                metadata.sort(new MetadataComparator(inLanguage));
-            }
-            return getAllVisibleMetadataHack(inStruct);
-
         }
     }
 

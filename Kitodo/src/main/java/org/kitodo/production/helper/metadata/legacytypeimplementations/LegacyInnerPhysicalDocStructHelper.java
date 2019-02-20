@@ -14,7 +14,6 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -44,11 +43,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Deprecated
     public final MediaVariant local = new MediaVariant();
 
-    {
-        local.setUse("LOCAL");
-        local.setMimeType("image/tiff");
-    }
-
     /**
      * The media unit accessed via this soldering class.
      */
@@ -62,20 +56,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Deprecated
     public LegacyInnerPhysicalDocStructHelper(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
-    }
-
-    @Override
-    @Deprecated
-    public void addChild(LegacyDocStructHelperInterface child) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public void addChild(Integer index, LegacyDocStructHelperInterface child) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -96,48 +76,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
         }
     }
 
-    @Deprecated
-    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface copy(boolean copyMetaData, Boolean recursive) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface createChild(String docStructType,
-            LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            LegacyPrefsHelper prefs) {
-
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public void deleteUnusedPersonsAndMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
@@ -146,32 +84,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
          * logical and physical structure elements, it must come back empty.
          */
         return Collections.emptyList();
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType,
-            String metaDataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyContentFileHelper> getAllContentFiles() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyReferenceHelper> getAllFromReferences() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -186,7 +98,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
 
     @Override
     @Deprecated
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+    public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         if (metadataType == LegacyMetadataTypeHelper.SPECIAL_TYPE_ORDER) {
             return Objects.nonNull(mediaUnit)
                     ? Arrays.asList(
@@ -197,8 +109,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
                     ? Arrays.asList(new LegacyMetadataHelper(this, metadataType, mediaUnit.getOrderlabel()))
                     : Collections.emptyList();
         } else {
-            // TODO remove
-            throw andLog(new UnsupportedOperationException("Not yet implemented"));
+            throw new UnsupportedOperationException("Not yet implemented");
         }
     }
 
@@ -210,39 +121,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
          * logical and physical structure elements, it must come back empty.
          */
         return Collections.emptyList();
-    }
-
-    @Override
-    @Deprecated
-    public Collection<LegacyReferenceHelper> getAllToReferences() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public Object getAllVisibleMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public String getAnchorClass() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface getChild(String type, String identifierField, String identifier) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -260,26 +138,6 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
 
     MediaUnit getMediaUnit() {
         return mediaUnit;
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public LegacyDocStructHelperInterface getParent() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public List<LegacyMetadataTypeHelper> getPossibleMetadataTypes() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -303,84 +161,5 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
                 stackTrace[0].getMethodName());
         }
         return getDocStructType();
-    }
-
-    @Deprecated
-    public boolean isDocStructTypeAllowedAsChild(LegacyLogicalDocStructTypeHelper type) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public void removeChild(LegacyDocStructHelperInterface docStruct) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public void removeContentFile(LegacyContentFileHelper contentFile) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public void removeMetadata(LegacyMetadataHelper metaDatum) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
-    public void removeReferenceTo(LegacyDocStructHelperInterface target) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-
-    }
-
-    @Deprecated
-    public void setImageName(String imageName) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * This method generates a comprehensible log message in case something was
-     * overlooked and one of the unimplemented methods should ever be called in
-     * operation. The name was chosen deliberately short in order to keep the
-     * calling code clear. This method must be implemented in every class
-     * because it uses the logger tailored to the class.
-     * 
-     * @param exception
-     *            created {@code UnsupportedOperationException}
-     * @return the exception
-     */
-    private static RuntimeException andLog(UnsupportedOperationException exception) {
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        StringBuilder buffer = new StringBuilder(255);
-        buffer.append(stackTrace[1].getClassName());
-        buffer.append('.');
-        buffer.append(stackTrace[1].getMethodName());
-        buffer.append("()");
-        if (stackTrace[1].getLineNumber() > -1) {
-            buffer.append(" line ");
-            buffer.append(stackTrace[1].getLineNumber());
-        }
-        buffer.append(" unexpectedly called unimplemented ");
-        buffer.append(stackTrace[0].getMethodName());
-        buffer.append("()");
-        if (exception.getMessage() != null) {
-            buffer.append(": ");
-            buffer.append(exception.getMessage());
-        }
-        logger.error(buffer.toString());
-        return exception;
     }
 }

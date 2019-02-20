@@ -103,13 +103,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     @Deprecated
-    public void addContentFile(LegacyContentFileHelper contentFile) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
         Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
@@ -145,12 +138,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
-    @Deprecated
-    public LegacyDocStructHelperInterface addMetadata(String metadataType, String value) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     @Deprecated
     public LegacyReferenceHelper addReferenceTo(LegacyDocStructHelperInterface docStruct, String type) {
@@ -159,21 +146,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         view.setMediaUnit(target.getMediaUnit());
         structure.getViews().add(view);
         return new LegacyReferenceHelper(target);
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface copy(boolean copyMetaData, Boolean recursive) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface createChild(String docStructType,
-            LegacyMetsModsDigitalDocumentHelper digitalDocument,
-            LegacyPrefsHelper prefs) {
-
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -231,32 +203,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     @Deprecated
-    public List<LegacyDocStructHelperInterface> getAllChildrenByTypeAndMetadataType(String docStructType,
-            String metaDataType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyContentFileHelper> getAllContentFiles() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyReferenceHelper> getAllFromReferences() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public List<LegacyMetadataHelper> getAllIdentifierMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Override
-    @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
@@ -279,7 +225,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
 
     @Override
     @Deprecated
-    public List<? extends LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
+    public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
         Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
@@ -341,23 +287,11 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         }
     }
 
-    @Deprecated
-    public Object getAllVisibleMetadata() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     @Deprecated
     public String getAnchorClass() {
         // The replacement of the UGH library has no concept of anchor classes.
         return null;
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface getChild(String type, String identifierField, String identifier) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -375,13 +309,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             }
         }
         return result;
-    }
-
-    @Override
-    @Deprecated
-    public String getImageName() {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     /**
@@ -407,12 +334,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             }
         }
         return null;
-    }
-
-    @Deprecated
-    public LegacyDocStructHelperInterface getNextChild(LegacyDocStructHelperInterface predecessor) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
     @Override
@@ -467,12 +388,6 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         structure.getChildren().remove(legacyLogicalDocStructHelperChild.structure);
     }
 
-    @Deprecated
-    public void removeContentFile(LegacyContentFileHelper contentFile) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
     @Override
     @Deprecated
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
@@ -499,50 +414,5 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
                 viewIterator.remove();
             }
         }
-    }
-
-    @Deprecated
-    public void setImageName(String imageName) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    @Deprecated
-    public void setType(LegacyLogicalDocStructTypeHelper docStructType) {
-        //TODO remove
-        throw andLog(new UnsupportedOperationException("Not yet implemented"));
-    }
-
-    /**
-     * This method generates a comprehensible log message in case something was
-     * overlooked and one of the unimplemented methods should ever be called in
-     * operation. The name was chosen deliberately short in order to keep the
-     * calling code clear. This method must be implemented in every class
-     * because it uses the logger tailored to the class.
-     * 
-     * @param exception
-     *            created {@code UnsupportedOperationException}
-     * @return the exception
-     */
-    private static RuntimeException andLog(UnsupportedOperationException exception) {
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        StringBuilder buffer = new StringBuilder(255);
-        buffer.append(stackTrace[1].getClassName());
-        buffer.append('.');
-        buffer.append(stackTrace[1].getMethodName());
-        buffer.append("()");
-        if (stackTrace[1].getLineNumber() > -1) {
-            buffer.append(" line ");
-            buffer.append(stackTrace[1].getLineNumber());
-        }
-        buffer.append(" unexpectedly called unimplemented ");
-        buffer.append(stackTrace[0].getMethodName());
-        buffer.append("()");
-        if (exception.getMessage() != null) {
-            buffer.append(": ");
-            buffer.append(exception.getMessage());
-        }
-        logger.error(buffer.toString());
-        return exception;
     }
 }

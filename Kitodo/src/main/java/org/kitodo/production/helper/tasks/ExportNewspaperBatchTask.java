@@ -46,6 +46,7 @@ import org.kitodo.production.services.ServiceManager;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
+
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
     /**
@@ -510,8 +511,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * Returns the index of the child to insert between its siblings depending
      * on its rank. A return value of {@code null} will indicate that no
      * position could be determined which will cause
-     * {@link LegacyDocStructHelperInterface#addChild(Integer, LegacyDocStructHelperInterface)} to
-     * simply append the new child at the end.
+     * {@link LegacyDocStructHelperInterface#addChild(Integer, LegacyDocStructHelperInterface)}
+     * to simply append the new child at the end.
      *
      * @param siblings
      *            brothers and sisters of the child to add
@@ -521,7 +522,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            rank of the child to insert
      * @return the index position to insert the child
      */
-    private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType, Integer rank) {
+    private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType,
+            Integer rank) {
         int result = 0;
 
         if (Objects.isNull(siblings) || Objects.isNull(rank)) {
@@ -531,29 +533,30 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         boolean rankTooSmall = false;
         for (LegacyDocStructHelperInterface aforeborn : siblings) {
             List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
-            if (allMetadata != null) {
-                for (LegacyMetadataHelper metadataElement : allMetadata) {
-                    if (metadataElement.getMetadataType().getName().equals(metadataType)) {
-                        try {
-                            if (Integer.parseInt(metadataElement.getValue()) < rank) {
-                                result++;
-                                rankTooSmall = true;
-                                break;
-                            } else {
-                                return result;
-                            }
-                        } catch (NumberFormatException e) {
-                            String typeName = Objects.nonNull(aforeborn.getDocStructType())
-                                    && Objects.nonNull(aforeborn.getDocStructType().getName())
-                                            ? aforeborn.getDocStructType().getName()
-                                            : "cross-reference";
-                            logger.warn(
-                                "Cannot determine position to place {} correctly because the sorting criterion "
-                                        + "of one of its siblings is \"{}\", but must be numeric.",
-                                typeName, metadataElement.getValue());
-                        }
-                    }
+            if (allMetadata == null) {
+                return null;
+            }
+            for (LegacyMetadataHelper metadataElement : allMetadata) {
+                if (!metadataElement.getMetadataType().getName().equals(metadataType)) {
+                    continue;
                 }
+                int parseInt;
+                try {
+                    parseInt = Integer.parseInt(metadataElement.getValue());
+                } catch (NumberFormatException e) {
+                    String typeName = Objects.nonNull(aforeborn.getDocStructType())
+                            && Objects.nonNull(aforeborn.getDocStructType().getName())
+                                    ? aforeborn.getDocStructType().getName()
+                                    : "cross-reference";
+                    logger.warn(Helper.getTranslation("cannotDeterminePosition"), typeName, metadataElement.getValue());
+                    continue;
+                }
+                if (parseInt >= rank) {
+                    return result;
+                }
+                result++;
+                rankTooSmall = true;
+                break;
             }
             if (!rankTooSmall) {
                 return null;
