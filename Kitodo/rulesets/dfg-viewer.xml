@@ -729,7 +729,7 @@
 
         <key id="name">
             <label>Name</label>
-            
+
             <key id="type">
                 <label>Type</label>
                 <label lang="de">Typ</label>
@@ -1334,6 +1334,1446 @@
             <label lang="de">Kommentar</label>
         </key>
 
+        <key id="subject">
+            <label>Topic</label>
+            <label lang="de">Schlagwort</label>
+
+            <key id="authority">
+                <label>Controlled list from which the value is taken</label>
+                <label lang="de">Quelle für die verwendeten Codes</label>
+                <option value="aass">
+                    <label>"Asian American Studies Library subject headings" in A Guide for establishing Asian American core collections</label>
+                </option>
+                <option value="aat">
+                    <label>Art &amp; architecture thesaurus</label>
+                </option>
+                <option value="abne">
+                    <label>Autoridades de la Biblioteca Nacional de España</label>
+                </option>
+                <option value="aedoml">
+                    <label>Listado de encabezamientos de materia de música</label>
+                </option>
+                <option value="afo">
+                    <label>AFO - Viikin kampuskirjaston ontologia</label>
+                </option>
+                <option value="afset">
+                    <label>American Folklore Society ethnographic thesaurus External Link</label>
+                </option>
+                <option value="agrifors">
+                    <label>AGRIFOREST-sanasto</label>
+                </option>
+                <option value="agrovoc">
+                    <label>AGROVOC multilingual agricultural thesaurus</label>
+                </option>
+                <option value="agrovocf">
+                    <label>AGROVOC thésaurus agricole multilingue</label>
+                </option>
+                <option value="agrovocs">
+                    <label>AGROVOC tesauro agrícola multilingée</label>
+                </option>
+                <option value="aiatsisl">
+                    <label>AIATSIS language thesaurus</label>
+                </option>
+                <option value="aiatsisp">
+                    <label>AIATSIS place thesaurus</label>
+                </option>
+                <option value="aiatsiss">
+                    <label>AIATSIS subject thesaurus</label>
+                </option>
+                <option value="aktp">
+                    <label>Alphavētikos Katalogos Thematikōn Perigrapheōn</label>
+                </option>
+                <option value="albt">
+                    <label>Arbetslivsbibliotekets tesaurus</label>
+                </option>
+                <option value="allars">
+                    <label>Allärs: allmän tesaurus pä svenska</label>
+                </option>
+                <option value="apaist">
+                    <label>APAIS thesaurus: a list of subject terms used in the Australian Public Affairs Information Service</label>
+                </option>
+                <option value="armarc">
+                    <label>Lista ARMARC de encabezamientos de materia para bibliotecas mayores</label>
+                </option>
+                <option value="asft">
+                    <label>Aquatic sciences and fisheries thesaurus</label>
+                </option>
+                <option value="ashlnl">
+                    <label>Arabic subject headings of the Lebanese National Library</label>
+                </option>
+                <option value="asrcrfcd">
+                    <label>Australian standard research classification: research fields, courses and disciplines</label>
+                </option>
+                <option value="asrcseo">
+                    <label>Australian standard research classification: socio-economic objective</label>
+                </option>
+                <option value="asrctoa">
+                    <label>Australian standard research classification: type of activity</label>
+                </option>
+                <option value="asth">
+                    <label>Astronomy thesaurus</label>
+                </option>
+                <option value="ated">
+                    <label>Australian thesaurus of education descriptors</label>
+                </option>
+                <option value="atg">
+                    <label>Agricultural thesaurus and glossary (Beltsville, MD: National Agricultural Library) External Link </label>
+                </option>
+                <option value="atla">
+                    <label>Religion indexes: thesaurus</label>
+                </option>
+                <option value="aucsh">
+                    <label>Qâ'imat ru'ûs mawdû'ât al-fahras al-'Arabîyah al-mowahad = Arabic Union Catalog Subject Headings</label>
+                </option>
+                <option value="bare">
+                    <label>BIBSYS authority register</label>
+                </option>
+                <option value="barn">
+                    <label>Svenska ämnesord för barn</label>
+                </option>
+                <option value="bella">
+                    <label>Bella: specialtesaurus för skönlitteratur</label>
+                </option>
+                <option value="bet">
+                    <label>British education thesaurus</label>
+                </option>
+                <option value="bhammf">
+                    <label>BHA, Bibliographie d'histoire de l'art, mots-matière/français</label>
+                </option>
+                <option value="bhashe">
+                    <label>BHA, Bibliography of the history of art, subject headings/English</label>
+                </option>
+                <option value="bhb">
+                    <label>Bibliography of the Hebrew book</label>
+                </option>
+                <option value="bib1814">
+                    <label>1814-bibliografi: emneord for 1814-bibliografi (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="bibalex">
+                    <label>Bibliotheca Alexandrina name and subject authority file</label>
+                </option>
+                <option value="biccbmc">
+                    <label>BIC Children's Books Marketing Classifications</label>
+                </option>
+                <option value="bicssc">
+                    <label>BIC standard subject categories</label>
+                </option>
+                <option value="bidex">
+                    <label>Bilindex: a bilingual Spanish-English subject heading list</label>
+                </option>
+                <option value="bisacmt">
+                    <label>BISAC Merchandising Themes External Link</label>
+                </option>
+                <option value="bisacrt">
+                    <label>BISAC Regional Themes External Link</label>
+                </option>
+                <option value="bisacsh">
+                    <label>BISAC Subject Headings External Link</label>
+                </option>
+                <option value="bjornson">
+                    <label>Bjornson: emneord for Bjornsonbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="blcpss">
+                    <label>COMPASS subject authority system</label>
+                </option>
+                <option value="blmlsh">
+                    <label>British Library - Map library subject headings</label>
+                </option>
+                <option value="blnpn">
+                    <label>British Library newspaper place names</label>
+                </option>
+                <option value="bokbas">
+                    <label>Bokbasen External Link</label>
+                </option>
+                <option value="bt">
+                    <label>Bioethics thesaurus</label>
+                </option>
+                <option value="btr">
+                    <label>Brinkman onderwerp thesaurus</label>
+                </option>
+                <option value="cabt">
+                    <label>CAB thesaurus</label>
+                </option>
+                <option value="cash">
+                    <label>Canadian subject headings</label>
+                </option>
+                <option value="cck">
+                    <label>Centrale catalogus kaarten</label>
+                </option>
+                <option value="ccsa">
+                    <label>Catalogue collectif suisse des affiches</label>
+                </option>
+                <option value="cct">
+                    <label>Zhong guo fen lei zhu ti ci biao (di er ban) = Chinese Classified Thesaurus (Beijing: Guo jia tu shu guan "Zhongguo tu shu guan fen lei fa" bian wei hui) </label>
+                </option>
+                <option value="ccte">
+                    <label>Carto-Canadiana thesaurus - English</label>
+                </option>
+                <option value="cctf">
+                    <label>Carto-Canadiana thésaurus - Français</label>
+                </option>
+                <option value="cdcng">
+                    <label>Catalogage des documents cartographiques: forme et structure des vedettes noms géographiques - NF Z 44-081</label>
+                </option>
+                <option value="ceeus">
+                    <label>Counties and equivalent entities of the United States its possessions, and associated areas</label>
+                </option>
+                <option value="chirosh">
+                    <label>Chiropractic subject headings External Link</label>
+                </option>
+                <option value="cht">
+                    <label>Chicano thesaurus for indexing Chicano materials in Chicano periodical index</label>
+                </option>
+                <option value="ciesiniv">
+                    <label>CIESIN indexing vocabulary</label>
+                </option>
+                <option value="cilla">
+                    <label>Cilla: specialtesaurus för musik</label>
+                </option>
+                <option value="collett">
+                    <label>Collett-bibliografi: litteratur av og om Camilla Collett (Oslo: Nasjonalbiblioteket) External Link [deprecated]</label>
+                </option>
+                <option value="conorsi">
+                    <label>CONOR.SI</label>
+                </option>
+                <option value="csahssa">
+                    <label>"Controlled vocabulary" in Health and safety science abstracts</label>
+                </option>
+                <option value="csalsct">
+                    <label>CSA life sciences collection thesaurus</label>
+                </option>
+                <option value="csapa">
+                    <label>"Controlled vocabulary" in Pollution abstracts</label>
+                </option>
+                <option value="csh">
+                    <label>Kapsner, Oliver Leonard. Catholic subject headings</label>
+                </option>
+                <option value="csht">
+                    <label>Chinese subject headings</label>
+                </option>
+                <option value="cstud">
+                    <label>Classificatieschema's Bibliotheek TU Delft</label>
+                </option>
+                <option value="czenas">
+                    <label>Soubor vĕcných autorit Národní knihovny ČR = CZENAS thesaurus: a list of subject terms used in the National Library of the Czech Republic</label>
+                </option>
+                <option value="czmesh">
+                    <label>Czech MeSH External Link</label>
+                </option>
+                <option value="dbcsh">
+                    <label>DBC Subject Headings</label>
+                </option>
+                <option value="dbn">
+                    <label>Deskryptory Biblioteki Narodowej = National Library of Poland Descriptors</label>
+                </option>
+                <option value="dcs">
+                    <label>Descritores em Ciências da Saúde = Descriptores en Ciencias de la Salud = Health Sciences Descriptors</label>
+                </option>
+                <option value="ddcri">
+                    <label>Dewey Decimal Classification Relative Index</label>
+                </option>
+                <option value="ddcrit">
+                    <label>DDC retrieval and indexing terminology; posting terms with hierarchy and KWOC</label>
+                </option>
+                <option value="ddcut">
+                    <label>Dewey Decimal Classification user terms</label>
+                </option>
+                <option value="dhb-jdg">
+                    <label>Deutsche Historische Bibliografie - Jahresberichte für deutsche Geschichte - Schlagwörter</label>
+                </option>
+                <option value="dicgenam">
+                    <label>Callegari, Horacio. Diccionario de gentilicios americanos</label>
+                </option>
+                <option value="dicgenes">
+                    <label>Torre Aparicio, Tomás de la. Diccionario de gentilicios: toponimicos españoles</label>
+                </option>
+                <option value="dicgentop">
+                    <label>Dicionário de gentílicos e topónimos</label>
+                </option>
+                <option value="dissao">
+                    <label>"Dissertation abstracts online" in Search tools: the guide to UNI/Data Courier Online</label>
+                </option>
+                <option value="dit">
+                    <label>Defense intelligence thesaurus</label>
+                </option>
+                <option value="dltlt">
+                    <label>Cuddon, J. A. A dictionary of literary terms and literary theory</label>
+                </option>
+                <option value="dltt">
+                    <label>Quinn, E. A dictionary of literary and thematic terms</label>
+                </option>
+                <option value="drama">
+                    <label>Drama: specialtesaurus för teater och dans</label>
+                </option>
+                <option value="dtict">
+                    <label>Defense Technical Information Center thesaurus</label>
+                </option>
+                <option value="dugfr">
+                    <label>Dugas, Jean-Yves. Dictionnaire universel des gentilés en français</label>
+                </option>
+                <option value="ebfem">
+                    <label>Encabezamientos bilingües de la Fundación Educativa Ana G. Mendez</label>
+                </option>
+                <option value="eclas">
+                    <label>ECLAS thesaurus</label>
+                </option>
+                <option value="eet">
+                    <label>European education thesaurus External Link</label>
+                </option>
+                <option value="eflch">
+                    <label>E4Libraries Category Headings External Link</label>
+                </option>
+                <option value="eks">
+                    <label>Eduskunnan kirjaston asiasanasto</label>
+                </option>
+                <option value="embiaecid">
+                    <label>Encabezamientos de materia de la Biblioteca Islámica de la Biblioteca AECID (Madrid: AECID) </label>
+                </option>
+                <option value="embne">
+                    <label>Encabezamientos de materia de la Biblioteca Nacional de España</label>
+                </option>
+                <option value="embucm">
+                    <label>Encabezamientos de materia, normativa para su redacción</label>
+                </option>
+                <option value="emnmus">
+                    <label>Emneord for musikkdokument i EDB-kataloger</label>
+                </option>
+                <option value="ept">
+                    <label>Evropski pedagoški tezaver = European education thesaurus</label>
+                </option>
+                <option value="erfemn">
+                    <label>Erfaringskompetanses emneord</label>
+                </option>
+                <option value="ericd">
+                    <label>Thesaurus of ERIC descriptors</label>
+                </option>
+                <option value="est">
+                    <label>International energy: subject thesaurus</label>
+                </option>
+                <option value="etuesh">
+                    <label>TOBB ETU English Subject Headings = TOBB ETÜ İngilizce Konu Başlıkları</label>
+                </option>
+                <option value="etuturkob">
+                    <label>TOBB ETU Turkish Subject Headings = TOBB ETÜ Türkçe Konu Başlıkları</label>
+                </option>
+                <option value="eum">
+                    <label>Eesti uldine märksonastik External Link</label>
+                </option>
+                <option value="eurovocen">
+                    <label>Eurovoc thesaurus</label>
+                </option>
+                <option value="eurovoces">
+                    <label>Eurovoc thesaurus</label>
+                </option>
+                <option value="eurovocfr">
+                    <label>Eurovoc thesaurus</label>
+                </option>
+                <option value="eurovocsl">
+                    <label>Eurovoc thesaurus (Slovenian) External Link </label>
+                </option>
+                <option value="fast">
+                    <label>Faceted application of subject terminology</label>
+                </option>
+                <option value="fes">
+                    <label>Thesaurus der Bibliothek der FES / FES</label>
+                </option>
+                <option value="finmesh">
+                    <label>FinMeSH External Link</label>
+                </option>
+                <option value="fire">
+                    <label>FireTalk, IFSI thesaurus</label>
+                </option>
+                <option value="fmesh">
+                    <label>Liste systématique et liste permutée des descripteurs français MeSH</label>
+                </option>
+                <option value="fnhl">
+                    <label>First Nations House of Learning Subject Headings</label>
+                </option>
+                <option value="francis">
+                    <label>Base de donneés FRANCIS: plan de classement = FRANCIS database classification scheme</label>
+                </option>
+                <option value="fssh">
+                    <label>FamilySearch subject headings</label>
+                </option>
+                <option value="galestne">
+                    <label>Gale Group subject thesaurus and named entity vocabulary</label>
+                </option>
+                <option value="gccst">
+                    <label>Government of Canada core subject thesaurus (Gatineau [Quebec]: Library and Archives Canada) External Link </label>
+                </option>
+                <option value="gcipmedia">
+                    <label>GAMECIP - computer game media formats (GAMECIP (Game Metadata and Citation Project)) External Link </label>
+                </option>
+                <option value="gcipplatform">
+                    <label>GAMECIP - computer game platforms (GAMECIP (Game Metadata and Citation Project)) External Link </label>
+                </option>
+                <option value="gem">
+                    <label>GEM controlled vocabularies</label>
+                </option>
+                <option value="gemet">
+                    <label>GEMET thesaurus</label>
+                </option>
+                <option value="geonet">
+                    <label>NGA GEOnet names server</label>
+                </option>
+                <option value="georeft">
+                    <label>GeoRef thesaurus</label>
+                </option>
+                <option value="gnd">
+                    <label>Gemeinsame Normdatei</label>
+                </option>
+                <option value="gnis">
+                    <label>Geographic Names Information System</label>
+                </option>
+                <option value="gst">
+                    <label>Gay studies thesaurus: a controlled vocabulary for indexing and accessing materials of relevance to gay culture, history, politics and psychology</label>
+                </option>
+                <option value="gtt">
+                    <label>GOO-trefwoorden thesaurus</label>
+                </option>
+                <option value="habibe">
+                    <label>Habitants.be - Nom des habitants de Belgique</label>
+                </option>
+                <option value="habich">
+                    <label>Habitants.ch - Nom des habitants de Suisse</label>
+                </option>
+                <option value="habifr">
+                    <label>Habitants.fr</label>
+                </option>
+                <option value="habiit">
+                    <label>Habitants.it - Nomi di abitanti d'Italia</label>
+                </option>
+                <option value="hamsun">
+                    <label>Hamsun: emneord for Hamsunbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="hapi">
+                    <label>HAPI thesaurus and name authority, 1970-2000</label>
+                </option>
+                <option value="helecon">
+                    <label>Asiasanasto HELECON-tietikantoihin</label>
+                </option>
+                <option value="henn">
+                    <label>Hennepin County Library cumulative authority list</label>
+                </option>
+                <option value="hkcan">
+                    <label>Hong Kong Chinese authority file</label>
+                </option>
+                <option value="hlasstg">
+                    <label>HLAS subject term glossary</label>
+                </option>
+                <option value="hoidokki">
+                    <label>Hoitotieteellinen asiasanasto</label>
+                </option>
+                <option value="hrvmesh">
+                    <label>Croatian MeSH / Hrvatski MeSH</label>
+                </option>
+                <option value="hrvmr">
+                    <label>Hrvatski mjesni rječnik</label>
+                </option>
+                <option value="huc">
+                    <label>U.S. Geological Survey water-supply paper 2294: hydrologic basins unit codes</label>
+                </option>
+                <option value="humord">
+                    <label>HUMORD</label>
+                </option>
+                <option value="ibsen">
+                    <label>Ibsen: emneord for den internasjonale Ibsen-bibliografien</label>
+                </option>
+                <option value="ica">
+                    <label>Index of Christian art</label>
+                </option>
+                <option value="icpsr">
+                    <label>ICPSR controlled vocabulary system</label>
+                </option>
+                <option value="idas">
+                    <label>ID-Archivschlüssel [Informationsdienst zur Verbreitung unterbliebener Nachrichten]</label>
+                </option>
+                <option value="idsbb">
+                    <label>Thesaurus IDS Basel Bern</label>
+                </option>
+                <option value="idszbz">
+                    <label>Thesaurus IDS Nebis Zentralbibliothek Zürich</label>
+                </option>
+                <option value="idszbzes">
+                    <label>Thesaurus IDS Nebis Bibliothek Englisches Seminar der Universität Zürich</label>
+                </option>
+                <option value="idszbzna">
+                    <label>Thesaurus IDS Nebis Zentralbibliothek Zürich, Nordamerika-Bibliothek</label>
+                </option>
+                <option value="idszbzzg">
+                    <label>Thesaurus IDS Nebis Zentralbibliothek Zürich, Graphische Sammlung</label>
+                </option>
+                <option value="idszbzzh">
+                    <label>Thesaurus IDS Nebis Zentralbibliothek Zürich, Handschriftenabteilung</label>
+                </option>
+                <option value="idszbzzk">
+                    <label>Thesaurus IDS Nebis Zentralbibliothek Zürich, Kartensammlung</label>
+                </option>
+                <option value="iescs">
+                    <label>International energy subject categories and scope</label>
+                </option>
+                <option value="iest">
+                    <label>International energy: subject thesaurus</label>
+                </option>
+                <option value="ilpt">
+                    <label>Index to legal periodicals: thesaurus</label>
+                </option>
+                <option value="inist">
+                    <label>INIS: thesaurus</label>
+                </option>
+                <option value="inspect">
+                    <label>INSPEC thesaurus</label>
+                </option>
+                <option value="ipat">
+                    <label>IPA thesaurus and frequency list</label>
+                </option>
+                <option value="ipsp">
+                    <label>Defense intelligence production schedule.</label>
+                </option>
+                <option value="iptcnc">
+                    <label>IPTC NewsCodes (International Press Telecommunications Council)External Link</label>
+                </option>
+                <option value="isis">
+                    <label>"Classification scheme" in Isis</label>
+                </option>
+                <option value="itglit">
+                    <label>International thesaurus of gay and lesbian index terms</label>
+                </option>
+                <option value="itrt">
+                    <label>International thesaurus of refugee terminology</label>
+                </option>
+                <option value="jhpb">
+                    <label>Język haseł przedmiotowych Biblioteki Narodowej = National Library of Poland subject headings</label>
+                </option>
+                <option value="-"> jhpk
+                    <label>Język haseł przedmiotowych KABA = KABA subject headings</label>
+                </option>
+                <option value="jlabsh">
+                    <label>Kihon kenmei hyômokuhyô = [Japan Library Association] Basic subject headings</label>
+                </option>
+                <option value="juho">
+                    <label>JUHO - Julkishallinnon ontologia</label>
+                </option>
+                <option value="jupo">
+                    <label>JUPO - Julkisen hallinnon palveluontologia</label>
+                </option>
+                <option value="jurivoc">
+                    <label>JURIVOC</label>
+                </option>
+                <option value="kaa">
+                    <label>Kasvatusalan asiasanasto</label>
+                </option>
+                <option value="kaba">
+                    <label>Język haseł przedmiotowych KABA = KABA subject headings</label>
+                </option>
+                <option value="kao">
+                    <label>KVINNSAM ämnesordsregister = KVINNSAM subject headings</label>
+                </option>
+                <option value="kassu">
+                    <label>Kassu - Kasvien suomenkieliset nimet</label>
+                </option>
+                <option value="kauno">
+                    <label>KAUNO - Kaunokki-ontologin</label>
+                </option>
+                <option value="kaunokki">
+                    <label>Kaunokki: kaunokirjallisuuden asiasanasto</label>
+                </option>
+                <option value="kdm">
+                    <label>Khung dê muc hê thông thông tin khoa hoc và ky thuât quôc gia</label>
+                </option>
+                <option value="khib">
+                    <label>Emneord, KHiB Biblioteket</label>
+                </option>
+                <option value="kito">
+                    <label>KITO - Kirjallisuudentutkimuksen ontologia</label>
+                </option>
+                <option value="kitu">
+                    <label>Kirjallisuudentutkimuksen asiasanasto</label>
+                </option>
+                <option value="kkts">
+                    <label>Katalogos Kathierōmenōn Typōn Syllogikou Katalogou Demosion Vivliothekon</label>
+                </option>
+                <option value="koko">
+                    <label>KOKO-ontologia</label>
+                </option>
+                <option value="kssbar">
+                    <label>Klassifikationssystem for svenska bibliotek. Ämnesordregister. Alfabetisk del</label>
+                </option>
+                <option value="kta">
+                    <label>Kielitieteen asiasanasto</label>
+                </option>
+                <option value="kto">
+                    <label>KTO - Kielitieteen ontologia</label>
+                </option>
+                <option value="ktpt">
+                    <label>Kirjasto- ja tietopalvelualan tesaurus</label>
+                </option>
+                <option value="ktta">
+                    <label>Käsi - ja taideteollisuuden asiasanasto</label>
+                </option>
+                <option value="kubikat">
+                    <label>kubikat External Link</label>
+                </option>
+                <option value="kula">
+                    <label>Kulttuurien tutkimuksen asiasanasto</label>
+                </option>
+                <option value="kulo">
+                    <label>KULO - Kulttuurien tutkimuksen ontologia</label>
+                </option>
+                <option value="kupu">
+                    <label>He puna kupu / Maori Wordnet</label>
+                </option>
+                <option value="labloc">
+                    <label>Dickson, Paul. Labels for Locals</label>
+                </option>
+                <option value="lacnaf">
+                    <label>Library and Archives Canada name authority file</label>
+                </option>
+                <option value="lapponica">
+                    <label>Lapponica (Helsinki: Kansalliskirjasto) External Link </label>
+                </option>
+                <option value="larpcal">
+                    <label>Lista de assuntos referente ao programa de cadastramento automatizado de livros da USP</label>
+                </option>
+                <option value="lcac">
+                    <label>Library of Congress Annotated Children's Cataloging Program subject headings</label>
+                </option>
+                <option value="lcdgt">
+                    <label>Library of Congress demographic group term and code List</label>
+                </option>
+                <option value="lcsh">
+                    <label>Library of Congress subject headings</label>
+                </option>
+                <option value="lcshac">
+                    <label>Children's subject headings in Library of Congress subject headings: supplementary vocabularies</label>
+                </option>
+                <option value="lcstt">
+                    <label>List of Chinese subject terms</label>
+                </option>
+                <option value="lctgm">
+                    <label>Thesaurus for graphic materials: TGM I, Subject terms External Link</label>
+                </option>
+                <option value="lemac">
+                    <label>Llista d'encapçalaments de matèria en català</label>
+                </option>
+                <option value="lemb">
+                    <label>Lista de encabezamientos de materia para bibliotecas</label>
+                </option>
+                <option value="liito">
+                    <label>LIITO - Liiketoimintaontologia</label>
+                </option>
+                <option value="liv">
+                    <label>Legislative indexing vocabulary</label>
+                </option>
+                <option value="lnmmbr">
+                    <label>Lietuvos nacionalines Martyno Mazvydo bibliotekos rubrikynas</label>
+                </option>
+                <option value="local">
+                    <label>Locally assigned term</label>
+                </option>
+                <option value="ltcsh">
+                    <label>Land Tenure Center Library list of subject headings</label>
+                </option>
+                <option value="lua">
+                    <label>Liikunnan ja urheilun asiasanasto</label>
+                </option>
+                <option value="maaq">
+                    <label>Madâkhil al-asmâ' al-'arabîyah al-qadîmah</label>
+                </option>
+                <option value="maotao">
+                    <label>MAO/TAO - Ontologi för museibranschen och Konstindustriella ontologin</label>
+                </option>
+                <option value="mar">
+                    <label>Merenkulun asiasanasto = MariTerm</label>
+                </option>
+                <option value="masa">
+                    <label>Museoalan asiasanasto</label>
+                </option>
+                <option value="mech">
+                    <label>Iskanje po zbirki MECH External Link</label>
+                </option>
+                <option value="mero">
+                    <label>MERO - Merenkulkualan ontologia</label>
+                </option>
+                <option value="mesh">
+                    <label>Medical subject headings (Bethesda, MD: National Library of Medicine) External Link </label>
+                </option>
+                <option value="mipfesd">
+                    <label>Macrothesaurus for information processing in the field of economic and social development</label>
+                </option>
+                <option value="mmm">
+                    <label>"Subject key" in Marxism and the mass media</label>
+                </option>
+                <option value="mpirdes">
+                    <label>Macrothesaurus para el procesamiento de la información relativa al desarrollo económico y social</label>
+                </option>
+                <option value="msc">
+                    <label>Mathematical subject classification</label>
+                </option>
+                <option value="msh">
+                    <label>Trimboli, T., and Martyn S. Marianist subject headings [PDF: 138 KB] External Link</label>
+                </option>
+                <option value="mtirdes">
+                    <label>Macrothésaurus pour le traitement de l'information relative au développement économique et social</label>
+                </option>
+                <option value="mts">
+                    <label>Metatietosanasto</label>
+                </option>
+                <option value="musa">
+                    <label>Musiikin asiasanasto: erikoissanasto</label>
+                </option>
+                <option value="muso">
+                    <label>MUSO - Ontologi för musik</label>
+                </option>
+                <option value="muzeukc">
+                    <label>MuzeMusic UK classical music classification</label>
+                </option>
+                <option value="muzeukn">
+                    <label>MuzeMusic UK non-classical music classification</label>
+                </option>
+                <option value="muzvukci">
+                    <label>MuzeVideo UK contributor index</label>
+                </option>
+                <option value="naf">
+                    <label>NACO authority file Washington, DC: Library of Congress</label>
+                </option>
+                <option value="nal">
+                    <label>National Agricultural Library subject headings</label>
+                </option>
+                <option value="nalnaf">
+                    <label>National Agricultural Library name authority file</label>
+                </option>
+                <option value="nasat">
+                    <label>NASA thesaurus</label>
+                </option>
+                <option value="nbdbt">
+                    <label>NBD Biblion Trefwoordenthesaurus</label>
+                </option>
+                <option value="nbiemnfag">
+                    <label>NBIs emneordsliste for faglitteratur</label>
+                </option>
+                <option value="ncjt">
+                    <label>National criminal justice thesaurus</label>
+                </option>
+                <option value="ndlsh">
+                    <label>Koktsu Kokkai Toshokan kenmei hyômokuhyô = National Diet Library list of subject headings</label>
+                </option>
+                <option value="netc">
+                    <label>National Emergency Training Center thesaurus</label>
+                </option>
+                <option value="nicem">
+                    <label>NICEM subject headings and classification system</label>
+                </option>
+                <option value="nimacsc">
+                    <label>NIMA cartographic subject categories</label>
+                </option>
+                <option value="nlgaf">
+                    <label>Archeio Kathierōmenōn Epikephalidōn</label>
+                </option>
+                <option value="nlgkk">
+                    <label>Katalogos kathierōmenōn onomatōn physikōn prosōpōn</label>
+                </option>
+                <option value="nlgsh">
+                    <label>Katalogos Hellēnikōn thematikōn epikephalidōn</label>
+                </option>
+                <option value="nlksh">
+                    <label>National Library of Korea subject headings</label>
+                </option>
+                <option value="nlmnaf">
+                    <label>National Library of Medicine name authority file</label>
+                </option>
+                <option value="no-ubo-mr">
+                    <label>Menneskerettighets-tesaurus</label>
+                </option>
+                <option value="noraf">
+                    <label>Norwegian authority file</label>
+                </option>
+                <option value="noram">
+                    <label>Noram: emneord for Norsk-amerikansk samling (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="norbok">
+                    <label>Norbok: emneord i Norsk bokfortegnelse</label>
+                </option>
+                <option value="normesh">
+                    <label>Norwegian MeSH</label>
+                </option>
+                <option value="norvok">
+                    <label>Nasjonalbibliotekets emne- og sjangervokabular</label>
+                </option>
+                <option value="noubojur">
+                    <label>Thesaurus of law</label>
+                </option>
+                <option value="noubomn">
+                    <label>University of Oslo Library thesaurus of science</label>
+                </option>
+                <option value="nsbncf">
+                    <label>Nuovo Soggettario</label>
+                </option>
+                <option value="nskps">
+                    <label>Priručnik za izradu predmetnog kataloga u Nacionalnoj i sveučilišnoj knjičnici u Zagrebu</label>
+                </option>
+                <option value="ntcpsc">
+                    <label>"National Translations Center primary subject classification" in National Translations Center primary subject classification and secondary descriptors</label>
+                </option>
+                <option value="ntcsd">
+                    <label>"National Translations Center secondary descriptors" in National Translation Center primary subject classification and secondary descriptor</label>
+                </option>
+                <option value="ntids">
+                    <label>Norske tidsskrifter 1700-1820: emneord (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="ntissc">
+                    <label>NTIS subject categories</label>
+                </option>
+                <option value="nzggn">
+                    <label>New Zealand gazetteer of official geographic names</label>
+                </option>
+                <option value="nznb">
+                    <label>New Zealand national bibliographiy</label>
+                </option>
+                <option value="odlt">
+                    <label>Baldick, C. The Oxford dictionary of literary terms</label>
+                </option>
+                <option value="ogst">
+                    <label>Oregon GILS subject tree</label>
+                </option>
+                <option value="opms">
+                    <label>Opetusministeriön asiasanasto</label>
+                </option>
+                <option value="ordnok">
+                    <label>Ordnokkelen: tesaurus for kulturminnevern (Directorate for Cultural Heritage) External Link	</label>
+                </option>
+                <option value="pascal">
+                    <label>Base de donneés PASCAL: plan de classement = PASCAL database classification scheme</label>
+                </option>
+                <option value="pepp">
+                    <label>The Princeton encyclopedia of poetry and poetics</label>
+                </option>
+                <option value="peri">
+                    <label>Perinnetieteiden asiasanasto</label>
+                </option>
+                <option value="periodo">
+                    <label>PeriodO: a gazetteer of period definitions for linking and visualizing data External Link	</label>
+                </option>
+                <option value="-pha">
+                    <label>Puolostushallinnon asiasanasto (Helsinki: Kirjastopalvelu) [obsolete; do not use]</label>
+                </option>
+                <option value="pkk">
+                    <label>Predmetnik za katoliške knjižnice</label>
+                </option>
+                <option value="pleiades">
+                    <label>Pleiades: a gazetteer of past places External Link</label>
+                </option>
+                <option value="pmbok">
+                    <label>Guide to the project management body of knowledge</label>
+                </option>
+                <option value="pmcsg">
+                    <label>Combined standards glossary</label>
+                </option>
+                <option value="pmont">
+                    <label>Powerhouse Museum object name thesaurus External Link</label>
+                </option>
+                <option value="pmt">
+                    <label>Project management terminology. Newtown Square, PA: Project Management Institute</label>
+                </option>
+                <option value="poliscit">
+                    <label>Political science thesaurus II</label>
+                </option>
+                <option value="popinte">
+                    <label>POPIN thesaurus: population multilingual thesaurus</label>
+                </option>
+                <option value="ppluk">
+                    <label>Peoplefrom.co.uk - Demonyms of the United Kingdom</label>
+                </option>
+                <option value="precis">
+                    <label>PRECIS: a manual of concept analysis and subject indexing</label>
+                </option>
+                <option value="prnpdi">
+                    <label>Le petit Robert des noms propres: dictionnaire illustré</label>
+                </option>
+                <option value="prvt">
+                    <label>Patent- och registreringsverkets tesaurus</label>
+                </option>
+                <option value="psychit">
+                    <label>Thesaurus of psychological index terms.</label>
+                </option>
+                <option value="puho">
+                    <label>PUHO - Puolustushallinnon ontologia</label>
+                </option>
+                <option value="qlsp">
+                    <label>Queens Library Spanish language subject headings</label>
+                </option>
+                <option value="qrma">
+                    <label>Qâ'imat ru'ûs al-mawdûât al-'Arabîyah = List of Arabic subject headings</label>
+                </option>
+                <option value="qrmak">
+                    <label>Qâ'imat ru'ûs al-mawdû'ât al-'Arabîyah al-qiyâsîyah al-maktabât wa-marâkaz al-ma'lûmât wa-qawâid al-bayânât</label>
+                </option>
+                <option value="qtglit">
+                    <label>A queer thesaurus : an international thesaurus of gay and lesbian index terms</label>
+                </option>
+                <option value="quiding">
+                    <label>Quiding, Nils Herman. Svenskt allmänt författningsregister för tiden från år 1522 till och med år 1862</label>
+                </option>
+                <option value="ram">
+                    <label>RAMEAU: répertoire d'authorité de matières encyclopédique unifié</label>
+                </option>
+                <option value="rasuqam">
+                    <label>Répertoire d'autorités-sujet de l'UQAM</label>
+                </option>
+                <option value="renib">
+                    <label>Renib [base de datos de autoridad]</label>
+                </option>
+                <option value="reo">
+                    <label>Māori Subject Headings thesaurus -- Ngā Ūpoko Tukutuku External Link</label>
+                </option>
+                <option value="rero">
+                    <label>Indexation matires RERO</label>
+                </option>
+                <option value="rerovoc">
+                    <label>Indexation matiéres RERO autoritès</label>
+                </option>
+                <option value="rma">
+                    <label>Ru'us al-mawdu'at al-'Arabiyah</label>
+                </option>
+                <option value="rpe">
+                    <label>Rubrikator po ekonomike = Rubricator on economics</label>
+                </option>
+                <option value="rswk">
+                    <label>Regeln für den Schlagwortkatalog</label>
+                </option>
+                <option value="rswkaf">
+                    <label>Alternativform zum Hauptschlagwort</label>
+                </option>
+                <option value="rugeo">
+                    <label>Natsional'nyi normativnyi fail geograficheskikh nazvanii Rossiiskoi Federatsii</label>
+                </option>
+                <option value="rurkp">
+                    <label>Predmetnye rubriki Rossiiskoi knizhnoi palaty</label>
+                </option>
+                <option value="rvm">
+                    <label>Répertoire de vedettes-matière</label>
+                </option>
+                <option value="rvmgd">
+                    <label>Thésaurus des descripteurs de groupes démographiques de l'Université Laval Québec: Université Laval)</label>
+                </option>
+                <option value="samisk">
+                    <label>Sámi bibliografia</label>
+                </option>
+                <option value="sanb">
+                    <label>South African national bibliography authority file</label>
+                </option>
+                <option value="sao">
+                    <label>Svenska ämnesord</label>
+                </option>
+                <option value="sbiao">
+                    <label>Svenska barnboksinstitutets ämnesordslista</label>
+                </option>
+                <option value="sbt">
+                    <label>Soggettario sistema Bibliotecario Ticinese</label>
+                </option>
+                <option value="scbi">
+                    <label>Soggettario per i cataloghi delle biblioteche italiane</label>
+                </option>
+                <option value="scgdst">
+                    <label>Subject categorization guide for defense science and technology</label>
+                </option>
+                <option value="scisshl">
+                    <label>SCIS subject headings</label>
+                </option>
+                <option value="scot">
+                    <label>Schools Online Thesaurus</label>
+                </option>
+                <option value="sears">
+                    <label>Sears list of subject headings</label>
+                </option>
+                <option value="sfit">
+                    <label>Svenska filminstitutets tesaurus</label>
+                </option>
+                <option value="sgc">
+                    <label>Splolšni geslovnik COBISS.SI = COBISS.SI General List of subject headings</label>
+                </option>
+                <option value="sgce">
+                    <label>Splošni geslovnik COBISS.SI = COBISS.SI General List of subject headings</label>
+                </option>
+                <option value="shbe">
+                    <label>Subject headings in business and economics</label>
+                </option>
+                <option value="she">
+                    <label>SHE: subject headings for engineering</label>
+                </option>
+                <option value="shsples">
+                    <label>Subject headings for school and public libraries = Encabezamientos de materia para bibliotecas escolares y públicas</label>
+                </option>
+                <option value="sigle">
+                    <label>SIGLE [System for information on grey literature in Europe] manual, Part 2, Subject category list</label>
+                </option>
+                <option value="sipri">
+                    <label>SIPRI library thesaurus</label>
+                </option>
+                <option value="sk">
+                    <label>"Zhong guo gu ji shan ban shu zong mu" fen lei biao [Si ku]</label>
+                </option>
+                <option value="skon">
+                    <label>Att indexera skönlitteratur: Ämnesordslista, vuxenlitteratur</label>
+                </option>
+                <option value="slem">
+                    <label>Sears: lista de encabezamientos de materia</label>
+                </option>
+                <option value="smda">
+                    <label>Smithsonian National Air and Space Museum directory of airplanes</label>
+                </option>
+                <option value="snt">
+                    <label>Sexual nomenclature: a thesaurus</label>
+                </option>
+                <option value="socio">
+                    <label>Sociological abstracts thesaurus</label>
+                </option>
+                <option value="solstad">
+                    <label>Solstad: emneord for Solstadbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                </option>
+                <option value="sosa">
+                    <label>Sociaalialan asiasanasto</label>
+                </option>
+                <option value="spines">
+                    <label>Tesauro SPINES: un vocabulario controlado y estructurado para el tratamiento de información sobre ciencia y tecnología para el desarrollo</label>
+                </option>
+                <option value="ssg">
+                    <label>Splošni slovenski geslovnik External Link</label>
+                </option>
+                <option value="stcv">
+                    <label>Short Title Catalogus Vlaanderen = Short title catalogue Flanders External Link</label>
+                </option>
+                <option value="sthus">
+                    <label>Subject taxonomy of the history of U.S. foreign relations</label>
+                </option>
+                <option value="stw">
+                    <label>Standard-Thesaurus Wirtschaft = STW thesaurus for economics</label>
+                </option>
+                <option value="swd">
+                    <label>Schlagwortnormdatei</label>
+                </option>
+                <option value="swemesh">
+                    <label>Svenska MeSH = Swedish MeSH</label>
+                </option>
+                <option value="taika">
+                    <label>Taideteollisuuden asiasanasto</label>
+                </option>
+                <option value="tasmas">
+                    <label>Tesaurus de asuntos sociales del Ministerio de Asuntos Sociales de España</label>
+                </option>
+                <option value="taxhs">
+                    <label>A taxonomy or human services: a conceptual framework with standardized terminology and definitions for the field</label>
+                </option>
+                <option value="tbjvp">
+                    <label>Tesauro de la Biblioteca Dr. Jorge Villalobos Padilla, S.J. (Guadalajara: ITESO Universidad Jesuita de Guadalajara) External Link </label>
+                </option>
+                <option value="tekord">
+                    <label>TEK-ord : UBiTs emneordliste for arkitektur, realfag, og teknolog</label>
+                </option>
+                <option value="tero">
+                    <label>TERO - Terveyden ja hyvinvoinnin ontologia</label>
+                </option>
+                <option value="tesa">
+                    <label>Tesauro agrícola</label>
+                </option>
+                <option value="tesbhaecid">
+                    <label>Tesauro de la Biblioteca Hispánica de la Biblioteca AECID (Madrid: AECID) </label>
+                </option>
+                <option value="test">
+                    <label>Thesaurus of engineering and scientific terms</label>
+                </option>
+                <option value="tgn">
+                    <label>Getty thesaurus of geographic names</label>
+                </option>
+                <option value="tha">
+                    <label>Barcala de Moyano, Graciela G., Cristina Voena. Tesauro de Historia Argentina</label>
+                </option>
+                <option value="thesoz">
+                    <label>Thesaurus for the social sciences</label>
+                </option>
+                <option value="thia">
+                    <label>Th.I.A. - Thesaurus italiano infanzia e adolescenza = Th.I.A. - Italian thesaurus on childhood and adolescence</label>
+                </option>
+                <option value="tho">
+                    <label>Thesauros Hellēnikōn Oron</label>
+                </option>
+                <option value="thub">
+                    <label>Thesaurus de la Universitat de Barcelona</label>
+                </option>
+                <option value="tips">
+                    <label>Tesauro ISOC de psicología</label>
+                </option>
+                <option value="tisa">
+                    <label>Villagrá Rubio, Angel. Tesauro ISOC de sociología autores</label>
+                </option>
+                <option value="tlka">
+                    <label>Investigació, Procés Tècnicn kirjaston asiasanasto</label>
+                </option>
+                <option value="tlsh">
+                    <label>Subject heading authority list</label>
+                </option>
+                <option value="trfarn">
+                    <label>Lokale trefwoorden De Bibliotheek Arnhem</label>
+                </option>
+                <option value="trfbmb">
+                    <label>Lokale trefwoorden Bibliotheek Midden-Brabant</label>
+                </option>
+                <option value="trfdh">
+                    <label>Lokale trefwoorden OB Den Haag</label>
+                </option>
+                <option value="trfgr">
+                    <label>Lokale trefwoorden Biblionet Groningen</label>
+                </option>
+                <option value="trfoba">
+                    <label>Lokale trefwoorden OBA</label>
+                </option>
+                <option value="trfzb">
+                    <label>Lokale trefwoorden Zeeuwse Bibliotheken</label>
+                </option>
+                <option value="trt">
+                    <label>Transportation resource thesaurus</label>
+                </option>
+                <option value="trtsa">
+                    <label>Teatterin ja tanssin asiasanasto</label>
+                </option>
+                <option value="tsht">
+                    <label>Thesaurus of subject headings for television</label>
+                </option>
+                <option value="tsr">
+                    <label>TSR-ontologia</label>
+                </option>
+                <option value="ttka">
+                    <label>Teologisen tiedekunnan kirjaston asiasanasto</label>
+                </option>
+                <option value="ttll">
+                    <label>Roggau, Zunilda. Tell. Tesauro de lengua y literatura</label>
+                </option>
+                <option value="tucua">
+                    <label>Thesaurus for use in college and university archives</label>
+                </option>
+                <option value="udc">
+                    <label>Universal decimal classification (London: British Standards Institute)	</label>
+                </option>
+                <option value="ukslc">
+                    <label>UK standard library categories</label>
+                </option>
+                <option value="ulan">
+                    <label>Union list of artist names</label>
+                </option>
+                <option value="umitrist">
+                    <label>University of Michigan Transportation Research Institute structured thesaurus</label>
+                </option>
+                <option value="unbisn">
+                    <label>UNBIS name authority list</label>
+                </option>
+                <option value="unbist">
+                    <label>UNBIS thesaurus</label>
+                </option>
+                <option value="unescot">
+                    <label>UNESCO thesaurus = Thésaurus de l'UNESCO = Tesauro de la UNESCO</label>
+                </option>
+                <option value="unicefirc">
+                    <label>International Children's Rights Thesaurus</label>
+                </option>
+                <option value="usaidt">
+                    <label>USAID thesaurus: keywords used to index documents included in the USAID Development Experience System.</label>
+                </option>
+                <option value="valo">
+                    <label>VALO - Fotografiska ontologin</label>
+                </option>
+                <option value="vcaadu">
+                    <label>Vocabulario controlado de arquitectura, arte, diseño y urbanismo</label>
+                </option>
+                <option value="vffyl">
+                    <label>Vocabulario de la Biblioteca Central de la FFyL</label>
+                </option>
+                <option value="vmj">
+                    <label>Vedettes-matière jeunesse</label>
+                </option>
+                <option value="waqaf">
+                    <label>Maknas Uloom Al Waqaf</label>
+                </option>
+                <option value="watrest">
+                    <label>Thesaurus of water resources terms: a collection of water resources and related terms for use in indexing technical information</label>
+                </option>
+                <option value="wgst">
+                    <label>Washington GILS Subject Tree</label>
+                </option>
+                <option value="wot">
+                    <label>A Women's thesaurus</label>
+                </option>
+                <option value="wpicsh">
+                    <label>WPIC Library thesaurus of subject headings</label>
+                </option>
+                <option value="ysa">
+                    <label>Yleinen suomalainen asiasanasto</label>
+                </option>
+                <option value="yso">
+                    <label>YSO - Yleinen suomalainen ontologia (Helsinki: Kansalliskirjasto) External Link </label>
+                </option>
+            </key>
+
+            <key id="authorityURI">
+                <label>URI of the controlled vocabulary</label>
+                <label lang="de">URI der Normdatei</label>
+                <codomain type="anyURI"/>
+            </key>
+
+            <key id="topic">
+                <label>Subject term</label>
+                <label lang="de">Sachschlagwort</label>
+                
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Schlagwortes</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="geographic">
+                <label>Geographic subject term</label>
+                <label lang="de">Ortsbezug</label>
+                
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Schlagwortes</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="temporal">
+                <label>Chronological subject term</label>
+                <label lang="de">Zeitbezug</label>
+                
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Schlagwortes</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="titleInfo">
+                <label>Title used as a subject</label>
+                <label lang="de">Werkbezug</label>
+                
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Schlagwortes</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="nameTitleGroup">
+                    <label>Link between a name and a uniform title</label>
+                    <label lang="de">Rezensiertes Werk</label>
+                    <pattern>[0-9A-Z_][0-9A-Z_a-z]*</pattern>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="name">
+                <label>Name used as a subject</label>
+                <label lang="de">Personenbezug</label>
+                
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+    
+                    <option value="personal">
+                        <label>Person</label>
+                    </option>
+                    <option value="corporate">
+                        <label>Organization</label>
+                        <label lang="de">Organisation</label>
+                    </option>
+                </key>
+    
+                <key id="authority">
+                    <label>Controlled vocabulary</label>
+                    <label lang="de">Normdatei</label>
+    
+                    <option value="abne">
+                        <label>Autoridades de la Biblioteca Nacional de España</label>
+                    </option>
+                    <option value="banqa">
+                        <label>Fichier d'autorité local de Bibliothèque et Archives nationales du Québec</label>
+                    </option>
+                    <option value="bibalex">
+                        <label>Bibliotheca Alexandrina name and subject authority file</label>
+                    </option>
+                    <option value="cantic">
+                        <label>Catàleg d'autoritats de noms i títols de Catalunya</label>
+                    </option>
+                    <option value="cerlt">
+                        <label>CERL thesaurus</label>
+                    </option>
+                    <option value="conorsi">
+                        <label>CONOR.SI</label>
+                    </option>
+                    <option value="gkd">
+                        <label>Gemeinsame Körperschaftsdatei</label>
+                    </option>
+                    <option value="gnd">
+                        <label>Gemeinsame Normdatei</label>
+                    </option>
+                    <option value="hapi">
+                        <label>HAPI thesaurus and name authority</label>
+                    </option>
+                    <option value="hkcan">
+                        <label>Hong Kong Chinese Authority File</label>
+                    </option>
+                    <option value="lacnaf">
+                        <label>Library and Archives Canada name authority file</label>
+                    </option>
+                    <option value="naf">
+                        <label>NACO authority file</label>
+                    </option>
+                    <option value="nalnaf">
+                        <label>National Agricultural Library name authority file</label>
+                    </option>
+                    <option value="nliaf">
+                        <label>National Library of Israel Authority File</label>
+                    </option>
+                    <option value="nlmnaf">
+                        <label>National Library of Medicine name authority file</label>
+                    </option>
+                    <option value="nta">
+                        <label>Nederlandse Thesaurus van Auteursnamen</label>
+                    </option>
+                    <option value="nznb">
+                        <label>New Zealand national bibliography</label>
+                    </option>
+                    <option value="sanb">
+                        <label>South African national bibliography authority file</label>
+                    </option>
+                    <option value="viaf">
+                        <label>Virtual International Authority File</label>
+                    </option>
+                    <option value="ulan">
+                        <label>Union list of artist names</label>
+                    </option>
+                    <option value="unbisn">
+                        <label>UNBIS name authority list</label>
+                    </option>
+                </key>
+    
+                <key id="authorityURI">
+                    <label>URI of the controlled vocabulary</label>
+                    <label lang="de">URI der Normdatei</label>
+                    <codomain type="anyURI"/>
+                </key>
+    
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Namens</label>
+                    <codomain type="anyURI"/>
+                </key>
+    
+                <key id="namePart">
+                    <label>The name itself</label>
+                    <label lang="de">Namensbestandteil</label>
+    
+                    <key id="type">
+                        <label>Type</label>
+                        <label lang="de">Typ</label>
+    
+                        <option value="family">
+                            <label>Surname</label>
+                            <label lang="de">Familienname</label>
+                        </option>
+                        <option value="given">
+                            <label>Forename</label>
+                            <label lang="de">Vorname</label>
+                        </option>
+                        <option value="date">
+                            <label>Dates</label>
+                            <label lang="de">Lebensdaten</label>
+                        </option>
+                        <option value="termsOfAddress">
+                            <label>Titles and enumeration</label>
+                            <label lang="de">Titel, Ordnungshilfen und Homonymzusätze</label>
+                        </option>
+                    </key>
+    
+                    <key id="value">
+                        <label>Value</label>
+                        <label lang="de">Wert</label>
+                    </key>
+                </key>
+    
+                <key id="displayForm">
+                    <label lang="de">personal name in direct order</label>
+                    <label lang="de">Anzeigeform</label>
+                </key>
+    
+                <key id="role">
+                    <label>Role</label>
+                    <label lang="de">Rolle</label>
+                    
+                    <key id="roleTerm">
+                        <key id="type">
+                            <label>Type</label>
+                            <label lang="de">Typ</label>
+    
+                            <option value="text">
+                                <label>A role in a textual form</label>
+                                <label lang="de">Textliche Beschreibung der Rolle</label>
+                            </option>
+                            <option value="code">
+                                <label>A role in a coded form</label>
+                                <label lang="de">Code, der für die Rolle steht</label>
+                            </option>
+                        </key>
+    
+                        <key id="authority">
+                            <label>Controlled list from which the value is taken</label>
+                            <label lang="de">Quelle für die verwendeten Codes</label>
+                            <option value="marcrelator">
+                                <label>MARC Code and Term List for Relators</label>
+                            </option>
+                        </key>
+    
+                        <key id="authorityURI">
+                            <label>URI of the controlled vocabulary</label>
+                            <label lang="de">URI der Normdatei</label>
+                            <codomain type="anyURI"/>
+                            <option value="http://id.loc.gov/vocabulary/relators"/>
+                        </key>
+    
+                        <key id="valueURI">
+                            <label>URI identifying the value from a controlled vocabulary</label>
+                            <label lang="de">URI der Rolle</label>
+                            <codomain namespace="http://id.loc.gov/vocabulary/relators/"/>
+                        </key>
+                    </key>
+                </key>
+
+                <key id="nameTitleGroup">
+                    <label>Link between a name and a uniform title</label>
+                    <label lang="de">Rezensiertes Werk</label>
+                    <pattern>[0-9A-Z_][0-9A-Z_a-z]*</pattern>
+                </key>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -1481,6 +2921,50 @@
 
         <restriction key="phyiscalDescription">
             <permit key="digitalOrigin" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="subject">
+            <permit key="authority" maxOccurs="1"/>
+            <permit key="authorityURI" maxOccurs="1"/>
+            <permit key="topic">
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="topic">
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="geographic">
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="temporal">
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="titleInfo">
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="nameTitleGroup" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="name">
+                <permit key="type" minOccurs="1" maxOccurs="1"/>
+                <permit key="authorityURI" maxOccurs="1"/>
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="namePart" minOccurs="1">
+                    <permit key="type" maxOccurs="1"/>
+                </permit>
+                <permit key="displayForm" maxOccurs="1"/>
+                <permit key="role" minOccurs="1">
+                    <permit key="roleTerm" minOccurs="1">
+                        <permit key="type" maxOccurs="1"/>
+                        <permit key="authority" maxOccurs="1"/>
+                        <permit key="authorityURI" maxOccurs="1"/>
+                        <permit key="valueURI" maxOccurs="1"/>
+                    </permit>
+                </permit>
+                <permit key="nameTitleGroup" maxOccurs="1"/>
+            </permit>
         </restriction>
 
     </correlation>
