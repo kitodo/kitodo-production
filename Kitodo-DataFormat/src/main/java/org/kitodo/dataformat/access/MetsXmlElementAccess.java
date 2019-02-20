@@ -15,12 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -123,14 +121,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                             UseXmlAttributeAccess::getMediaVariant))
                 : new HashMap<>();
         Optional<StructMapType> optionalPhysicalStructMap = getStructMapsStreamByType(mets, "PHYSICAL").findFirst();
-        List<DivType> physicalDivs = optionalPhysicalStructMap.isPresent()
-                ? optionalPhysicalStructMap.get().getDiv().getDiv()
-                : Collections.emptyList();
-        Map<String, FileXmlElementAccess> divIDsToMediaUnits = new HashMap<>((int) Math.ceil(physicalDivs.size() / 0.75));
-        for (DivType div : physicalDivs) {
+        Map<String, FileXmlElementAccess> divIDsToMediaUnits = new HashMap<>();
+        if (optionalPhysicalStructMap.isPresent()) {
+            DivType div = optionalPhysicalStructMap.get().getDiv();
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(div, mets, useXmlAttributeAccess);
-            workpiece.getMediaUnits().add(fileXmlElementAccess.getMediaUnit());
+            MediaUnit mediaUnit = fileXmlElementAccess.getMediaUnit();
+            workpiece.setMediaUnit(mediaUnit);
             divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
+            readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, mediaUnit, divIDsToMediaUnits);
         }
         if (mets.getStructLink() == null) {
             mets.setStructLink(new StructLink());
@@ -146,6 +144,18 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         workpiece.setStructure(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
                 .iterator().next());
+    }
+
+    private void readMeadiaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
+            MediaUnit mediaUnit, Map<String, FileXmlElementAccess> divIDsToMediaUnits) {
+
+        for (DivType child : div.getDiv()) {
+            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(child, mets, useXmlAttributeAccess);
+            MediaUnit childMediaUnit = fileXmlElementAccess.getMediaUnit();
+            mediaUnit.getChildren().add(childMediaUnit);
+            divIDsToMediaUnits.put(child.getID(), fileXmlElementAccess);
+            readMeadiaUnitsTreeRecursive(child, mets, useXmlAttributeAccess, childMediaUnit, divIDsToMediaUnits);
+        }
     }
 
     private MetsXmlElementAccess(Workpiece workpiece) {
