@@ -414,7 +414,7 @@ public interface LegacyDocStructHelperInterface {
      *            created {@code UnsupportedOperationException}
      * @return the exception
      */
-    static RuntimeException andLog(UnsupportedOperationException exception) {
+    static UnsupportedOperationException andLog(UnsupportedOperationException exception) {
         StackTraceElement[] stackTrace = exception.getStackTrace();
         StringBuilder buffer = new StringBuilder(255);
         buffer.append(stackTrace[1].getClassName());
