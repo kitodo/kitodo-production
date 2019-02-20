@@ -23,6 +23,14 @@ import org.kitodo.api.Metadata;
 
 public class MediaUnit {
     /**
+     * The subordinate media units of this media unit, which form the media unit
+     * tree. The order of the substructures is subordinate media units by the
+     * order of the {@code <div>} elements in the
+     * {@code <structMap TYPE="PHYSICAL">} in the METS file.
+     */
+    private List<MediaUnit> children = new LinkedList<>();
+
+    /**
      * Each media unit can be available in different variants, for each of which
      * a media file is available. This is in this map.
      */
@@ -50,20 +58,12 @@ public class MediaUnit {
     private String orderlabel;
 
     /**
-     * The subordinate media units of this media unit, which form the media unit
-     * tree. The order of the substructures is subordinate media units by the
-     * order of the {@code <div>} elements in the
-     * {@code <structMap TYPE="PHYSICAL">} in the METS file.
-     */
-    private List<MediaUnit> subordinateUnits = new LinkedList<>();
-
-    /**
      * Returns the subordinate media units associated with this media unit.
      * 
      * @return the subordinate media units
      */
     public List<MediaUnit> getChildren() {
-        return subordinateUnits;
+        return children;
     }
 
     /**
