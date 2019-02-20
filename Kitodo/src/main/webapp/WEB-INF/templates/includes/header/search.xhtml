@@ -27,9 +27,9 @@
 
     <section id="portal-search">
         <h:form id="search-form" action="">
-            <p:inputText id="search-field" a:placeholder="#{msgs.search}"/>
-            <p:inputText id="search-field-short" a:placeholder="#{msgs.search}"/>
-            <p:commandButton type="submit" icon="fa fa-search"/>
+            <p:inputText id="search-field" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.search}"/>
+            <!--<p:inputText id="search-field-short" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.search}"/>-->
+            <p:commandButton type="submit" action="#{SearchResultForm.search()}" icon="fa fa-search"/>
         </h:form>
     </section>
 

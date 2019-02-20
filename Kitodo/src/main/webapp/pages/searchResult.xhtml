@@ -46,14 +46,20 @@
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
         </p:dataTable>
-            <p:dataList value="#{SearchResultForm.projectsForFiltering}" var="project" type="ordered">
+            <h3 >
+                <h:outputText value="#{msgs.filter}"/>
+            </h3>
+            <h5 >
+                <h:outputText value="#{msgs.project}"/>
+            </h5>
+            <p:dataList value="#{SearchResultForm.projectsForFiltering}" var="project" type="definition">
                 <p:commandLink id="ajax"  update="searchResultForm" action="#{SearchResultForm.filterListByProject(project)}">#{project.title}</p:commandLink>
             </p:dataList>
         </h:form>
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><a href="">#{msgs.searchResult}</a></li>
+        <p:menuitem value="#{msgs.startPage}" url="desktop.jsf"/>
+        <p:menuitem  value="#{msgs.searchResult}"/>
     </ui:define>
 </ui:composition>
