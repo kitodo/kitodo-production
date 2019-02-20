@@ -151,7 +151,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             structLink = new StructLink();
         }
         Map<String, Set<FileXmlElementAccess>> mediaUnitsMap = new HashMap<>();
-        for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
+        for (Object smLinkOrSmLinkGrp : structLink.getSmLinkOrSmLinkGrp()) {
             if (smLinkOrSmLinkGrp instanceof SmLink) {
                 SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
                 mediaUnitsMap.computeIfAbsent(smLink.getFrom(), any -> new HashSet<>());
