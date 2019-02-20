@@ -45,19 +45,44 @@
             <mapping>Oj</mapping>
         </type>
     </doctypes>
-    <catalogue title="GBV">
-        <config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund"
-                iktlist="IKTLIST-GBV.xml" port="80" ucnf="UCNF=NFC"/>
-    </catalogue>
+
     <catalogue title="ZDB">
         <config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)"
                 iktlist="IKTLIST-ZDB.xml" port="80"/>
     </catalogue>
+
+    <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
+        <interfaceType>sru</interfaceType>
+        <returnFormat>xml</returnFormat>
+        <metadataFormat>MODS</metadataFormat>
+        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <config>
+            <param name="host" value="sru.gbv.de" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/gvk" />
+        </config>
+        <identifierParameter value="pica.ppn" />
+        <urlParameters>
+            <param name="version" value="1.2" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="mods" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="Titel" value="pica.tit"/>
+            <searchField label="Author" value="pica.per"/>
+            <searchField label="ISSN" value="pica.iss"/>
+            <searchField label="ISBN" value="pica.isb"/>
+            <searchField label="Erscheinungsort" value="pica.plc"/>
+            <searchField label="Erscheinungsjahr" value="pica.jah"/>
+            <searchField label="Volltext" value="pica.txt"/>
+        </searchFields>
+    </catalogue>
+
     <catalogue title="Kalliope" description="Kalliope Verbundkatalog">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>
         <metadataFormat>MODS</metadataFormat>
-        <mappingFile>kalliope2kitodo.xsl</mappingFile>
+        <mappingFile>mods2kitodo.xsl</mappingFile>
         <config>
             <param name="host" value="kalliope-verbund.info" />
             <param name="scheme" value="http" />
