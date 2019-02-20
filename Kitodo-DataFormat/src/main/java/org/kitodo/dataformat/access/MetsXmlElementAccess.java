@@ -308,17 +308,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
         Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits = new HashMap<>();
         Map<Pair<UseXmlAttributeAccess, URI>, String> fileIds = new HashMap<>();
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            for (Entry<MediaVariant, URI> variantEntry : mediaUnit.getMediaFiles().entrySet()) {
-                UseXmlAttributeAccess use = new UseXmlAttributeAccess(variantEntry.getKey());
-                useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
-                URI uri = variantEntry.getValue();
-                useToMediaUnits.get(use).add(uri);
-                if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
-                    fileIds.put(Pair.of(use, uri), ((MediaUnitMetsReferrerStorage) mediaUnit).getFileId(uri));
-                }
-            }
-        }
+        generateFileSecRecursive(workpiece.getMediaUnit(), useToMediaUnits, fileIds);
 
         for (Entry<UseXmlAttributeAccess, Set<URI>> fileGrpData : useToMediaUnits.entrySet()) {
             FileGrp fileGrp = new FileGrp();
@@ -335,6 +325,23 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             fileSec.getFileGrp().add(fileGrp);
         }
         return fileSec;
+    }
+
+    private void generateFileSecRecursive(MediaUnit mediaUnit, Map<UseXmlAttributeAccess, Set<URI>> useToMediaUnits,
+            Map<Pair<UseXmlAttributeAccess, URI>, String> fileIds) {
+
+        for (Entry<MediaVariant, URI> variantEntry : mediaUnit.getMediaFiles().entrySet()) {
+            UseXmlAttributeAccess use = new UseXmlAttributeAccess(variantEntry.getKey());
+            useToMediaUnits.computeIfAbsent(use, any -> new HashSet<>());
+            URI uri = variantEntry.getValue();
+            useToMediaUnits.get(use).add(uri);
+            if (mediaUnit instanceof MediaUnitMetsReferrerStorage) {
+                fileIds.put(Pair.of(use, uri), ((MediaUnitMetsReferrerStorage) mediaUnit).getFileId(uri));
+            }
+        }
+        for (MediaUnit child : mediaUnit.getChildren()) {
+            generateFileSecRecursive(child, useToMediaUnits, fileIds);
+        }
     }
 
     /**
@@ -355,12 +362,18 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             Map<URI, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
-        DivType boundBook = new DivType();
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            boundBook.getDiv().add(new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
-        }
-        physical.setDiv(boundBook);
+        physical.setDiv(
+            generatePhysicalStructMapRecursive(workpiece.getMediaUnit(), mediaFilesToIDFiles, mediaUnitIDs));
         return physical;
+    }
+
+    private DivType generatePhysicalStructMapRecursive(MediaUnit mediaUnit, Map<URI, FileType> mediaFilesToIDFiles,
+            Map<MediaUnit, String> mediaUnitIDs) {
+        DivType div = new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs);
+        for (MediaUnit child : mediaUnit.getChildren()) {
+            div.getDiv().add(new FileXmlElementAccess(child).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
+        }
+        return div;
     }
 
     /**
