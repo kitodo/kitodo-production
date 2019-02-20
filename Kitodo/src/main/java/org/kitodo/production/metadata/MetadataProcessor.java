@@ -1676,11 +1676,10 @@ public class MetadataProcessor {
      */
     public Iterable<TreeNode> getTrees() {
         List<TreeNode> result = new ArrayList<>();
-        LegacyMetsModsDigitalDocumentHelper legacyMetsModsDigitalDocumentHelper = digitalDocument;
-        for (LinkedStructure linkedStructure : legacyMetsModsDigitalDocumentHelper.getWorkpiece().getUplinks()) {
+        for (LinkedStructure linkedStructure : digitalDocument.getWorkpiece().getUplinks()) {
             DefaultTreeNode elder = new DefaultTreeNode("Invisble container node", null);
-            TreeNode node = new DefaultTreeNode(
-                    legacyMetsModsDigitalDocumentHelper.createRootLegacyLogicalDocStructHelper(linkedStructure), elder);
+            TreeNode node = new DefaultTreeNode(digitalDocument.createRootLegacyLogicalDocStructHelper(linkedStructure),
+                    elder);
             node.setSelected(selectedTreeNode != null && selectedTreeNode.equals(node));
             result.add(setExpandingAll(elder, true));
         }
