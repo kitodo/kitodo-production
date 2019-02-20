@@ -932,41 +932,45 @@ public class ProzesskopieForm implements Serializable {
         for (Entry<String, Map<String, LegacyMetadataHelper>> availableHigherMetadata : higherLevelMetadata
                 .entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
-            boolean addable = false;
-            List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
-            if (Objects.isNull(addableTypesNotNull)) {
-                addableTypesNotNull = Collections.emptyList();
-            }
-            for (LegacyMetadataTypeHelper addableMetadata : addableTypesNotNull) {
-                if (addableMetadata.getName().equals(enrichable)) {
-                    addable = true;
-                    break;
-                }
-            }
-            if (!addable) {
+            if (!isAddable(enricher, enrichable)) {
                 continue;
             }
-
-            boolean metadataEqualsParent = false;
 
             for (Entry<String, LegacyMetadataHelper> higherElement : availableHigherMetadata.getValue().entrySet()) {
                 List<LegacyMetadataHelper> amNotNull = enricher.getAllMetadata();
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
                 }
+                boolean breakMiddle = false;
                 for (LegacyMetadataHelper existentMetadata : amNotNull) {
                     if (existentMetadata.getMetadataType().getName().equals(enrichable)
                             && existentMetadata.getValue().equals(higherElement.getKey())) {
-                        metadataEqualsParent = true;
+                        breakMiddle = true;
                         break;
                     }
                 }
-                if (!metadataEqualsParent) {
+                if (breakMiddle) {
+                    break;
+                } else {
                     enricher.addMetadata(higherElement.getValue());
                 }
-
             }
         }
+    }
+
+    private boolean isAddable(LegacyDocStructHelperInterface enricher, String enrichable) {
+        boolean addable = false;
+        List<LegacyMetadataTypeHelper> addableTypesNotNull = enricher.getAddableMetadataTypes();
+        if (Objects.isNull(addableTypesNotNull)) {
+            addableTypesNotNull = Collections.emptyList();
+        }
+        for (LegacyMetadataTypeHelper addableMetadata : addableTypesNotNull) {
+            if (addableMetadata.getName().equals(enrichable)) {
+                addable = true;
+                break;
+            }
+        }
+        return addable;
     }
 
     private void startTaskScriptThreads() {
