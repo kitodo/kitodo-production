@@ -571,8 +571,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of process
      * @return list of JSON objects with processes for specific process id
      */
-    List<Map<String, Object>> findByProjectTitle(String title) throws DataException {
-        return findDocuments(getQueryProjectTitle(title));
+    public List<ProcessDTO> findByProjectTitle(String title) throws DataException {
+        return convertJSONObjectsToDTOs(findDocuments(getQueryProjectTitle(title)),true);
     }
 
     /**

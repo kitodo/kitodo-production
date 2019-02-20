@@ -49,6 +49,7 @@ public class SearchResultForm extends BaseForm {
         else {
             try {
                 resultList = ServiceManager.getProcessService().findByTitle(searchQuery);
+                resultList.addAll(ServiceManager.getProcessService().findByProjectTitle(searchQuery));
                 filteredList.clear();
                 filteredList.addAll(resultList);
             } catch (DataException e) {
