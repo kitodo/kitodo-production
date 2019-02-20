@@ -1324,6 +1324,11 @@
             </key>
         </key>
 
+        <key id="abstract">
+            <label>Summary</label>
+            <label lang="de">Zusammenfassung</label>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
