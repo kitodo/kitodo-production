@@ -1293,6 +1293,37 @@
             </key>
         </key>
 
+        <key id="physicalDescription">
+            <label>Physical attributes</label>
+            <label lang="de">Physische Eigenschaften</label>
+
+            <key id="extent">
+                <label>Number and material</label>
+                <label lang="de">Umfang</label>
+            </key>
+            
+            <key id="digitalOrigin">
+                <label>Digitization method</label>
+                <label lang="de">Ursprung</label>
+                <option value="born digital">
+                    <label>Digitally created</label>
+                    <label lang="de">Originärelektronisches Dokument</label>
+                </option>
+                <option value="reformatted digital">
+                    <label>Digitization of the original</label>
+                    <label lang="de">Physische Vorlage</label>
+                </option>
+                <option value="digitized microfilm">
+                    <label>Digitizing a microform</label>
+                    <label lang="de">Mirkoform</label>
+                </option>
+                <option value="digitized other analog">
+                    <label>Digitizing an intermediate form</label>
+                    <label lang="de">Andere Form analoger Vorlage</label>
+                </option>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -1436,6 +1467,10 @@
             <permit key="scriptTerm">
                 <permit key="value" minOccurs="1" maxOccurs="1"/>
             </permit>
+        </restriction>
+
+        <restriction key="phyiscalDescription">
+            <permit key="digitalOrigin" maxOccurs="1"/>
         </restriction>
 
     </correlation>
