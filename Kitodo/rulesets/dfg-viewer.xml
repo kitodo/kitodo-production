@@ -794,18 +794,22 @@
                 <option value="unbisn">
                     <label>UNBIS name authority list</label>
                 </option>
+
+                <preset>gnd</preset>
             </key>
 
             <key id="authorityURI">
                 <label>URI of the controlled vocabulary</label>
                 <label lang="de">URI der Normdatei</label>
                 <codomain type="anyURI"/>
+                <preset>http://d-nb.info/gnd/</preset>
             </key>
 
             <key id="valueURI">
                 <label>URI identifying the value from a controlled vocabulary</label>
                 <label lang="de">URI des Namens</label>
                 <codomain type="anyURI"/>
+                <preset>http://d-nb.info/gnd/</preset>
             </key>
 
             <key id="namePart">
@@ -832,6 +836,8 @@
                         <label>Titles and enumeration</label>
                         <label lang="de">Titel, Ordnungshilfen und Homonymzusätze</label>
                     </option>
+
+                    <preset>family</preset>
                 </key>
 
                 <key id="value">
@@ -850,6 +856,9 @@
                 <label lang="de">Rolle</label>
                 
                 <key id="roleTerm">
+                    <label>Form of the role</label>
+                    <label lang="de">Form der Rolle</label>
+
                     <key id="type">
                         <label>Type</label>
                         <label lang="de">Typ</label>
@@ -862,6 +871,8 @@
                             <label>A role in a coded form</label>
                             <label lang="de">Code, der für die Rolle steht</label>
                         </option>
+
+                        <preset>code</preset>
                     </key>
 
                     <key id="authority">
@@ -870,6 +881,7 @@
                         <option value="marcrelator">
                             <label>MARC Code and Term List for Relators</label>
                         </option>
+                        <preset>marcrelator</preset>
                     </key>
 
                     <key id="authorityURI">
@@ -877,39 +889,17 @@
                         <label lang="de">URI der Normdatei</label>
                         <codomain type="anyURI"/>
                         <option value="http://id.loc.gov/vocabulary/relators"/>
+                        <preset>http://id.loc.gov/vocabulary/relators</preset>
                     </key>
 
                     <key id="valueURI">
                         <label>URI identifying the value from a controlled vocabulary</label>
                         <label lang="de">URI der Rolle</label>
                         <codomain namespace="http://id.loc.gov/vocabulary/relators/"/>
+                        <preset>http://id.loc.gov/vocabulary/relators/aut</preset>
                     </key>
                 </key>
             </key>
-
-            <preset>
-                <preset key="type">personal</preset>
-                <preset key="authority">gnd</preset>
-                <preset key="authorityURI">http://d-nb.info/gnd/</preset>
-                <preset key="valueURI">http://d-nb.info/gnd/</preset>
-                <preset key="namePart">
-                    <preset key="type">family</preset>
-                    <preset key="value"/>
-                </preset>
-                <preset key="namePart">
-                    <preset key="type">given</preset>
-                    <preset key="value"/>
-                </preset>
-                <preset key="displayForm"/>
-                <preset key="role">
-                    <preset key="roleTerm">
-                        <preset key="type">code</preset>
-                        <preset key="authority">marcrelator</preset>
-                        <preset key="authorityURI">http://id.loc.gov/vocabulary/relators</preset>
-                        <preset key="valueURI">http://id.loc.gov/vocabulary/relators/aut</preset>
-                    </preset>
-                </preset>
-            </preset>
         </key>
 
         <key id="genre">
@@ -1267,7 +1257,7 @@
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI der Sprache</label>
-                    <codomain name="anyURI"/>
+                    <codomain type="anyURI"/>
                 </key>
 
                 <key id="value">
@@ -1326,7 +1316,7 @@
                 <label>Controlled list from which the value is taken</label>
                 <label lang="de">Quelle für die verwendeten Codes</label>
                 <option value="aass">
-                    <label>"Asian American Studies Library subject headings" in A Guide for establishing Asian American core collections</label>
+                    <label>Asian American Studies Library subject headings</label>
                 </option>
                 <option value="aat">
                     <label>Art &amp; architecture thesaurus</label>
@@ -1341,7 +1331,7 @@
                     <label>AFO - Viikin kampuskirjaston ontologia</label>
                 </option>
                 <option value="afset">
-                    <label>American Folklore Society ethnographic thesaurus External Link</label>
+                    <label>American Folklore Society ethnographic thesaurus</label>
                 </option>
                 <option value="agrifors">
                     <label>AGRIFOREST-sanasto</label>
@@ -1374,7 +1364,7 @@
                     <label>Allärs: allmän tesaurus pä svenska</label>
                 </option>
                 <option value="apaist">
-                    <label>APAIS thesaurus: a list of subject terms used in the Australian Public Affairs Information Service</label>
+                    <label>APAIS thesaurus</label>
                 </option>
                 <option value="armarc">
                     <label>Lista ARMARC de encabezamientos de materia para bibliotecas mayores</label>
@@ -1401,13 +1391,13 @@
                     <label>Australian thesaurus of education descriptors</label>
                 </option>
                 <option value="atg">
-                    <label>Agricultural thesaurus and glossary (Beltsville, MD: National Agricultural Library) External Link </label>
+                    <label>Agricultural thesaurus and glossary</label>
                 </option>
                 <option value="atla">
                     <label>Religion indexes: thesaurus</label>
                 </option>
                 <option value="aucsh">
-                    <label>Qâ'imat ru'ûs mawdû'ât al-fahras al-'Arabîyah al-mowahad = Arabic Union Catalog Subject Headings</label>
+                    <label>Arabic Union Catalog Subject Headings</label>
                 </option>
                 <option value="bare">
                     <label>BIBSYS authority register</label>
@@ -1422,16 +1412,16 @@
                     <label>British education thesaurus</label>
                 </option>
                 <option value="bhammf">
-                    <label>BHA, Bibliographie d'histoire de l'art, mots-matière/français</label>
+                    <label>Bibliographie d'histoire de l'art, mots-matière</label>
                 </option>
                 <option value="bhashe">
-                    <label>BHA, Bibliography of the history of art, subject headings/English</label>
+                    <label>Bibliography of the history of art, subject headings</label>
                 </option>
                 <option value="bhb">
                     <label>Bibliography of the Hebrew book</label>
                 </option>
                 <option value="bib1814">
-                    <label>1814-bibliografi: emneord for 1814-bibliografi (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>1814-bibliografi: emneord for 1814-bibliografi</label>
                 </option>
                 <option value="bibalex">
                     <label>Bibliotheca Alexandrina name and subject authority file</label>
@@ -1446,16 +1436,16 @@
                     <label>Bilindex: a bilingual Spanish-English subject heading list</label>
                 </option>
                 <option value="bisacmt">
-                    <label>BISAC Merchandising Themes External Link</label>
+                    <label>BISAC Merchandising Themes</label>
                 </option>
                 <option value="bisacrt">
-                    <label>BISAC Regional Themes External Link</label>
+                    <label>BISAC Regional Themes</label>
                 </option>
                 <option value="bisacsh">
-                    <label>BISAC Subject Headings External Link</label>
+                    <label>BISAC Subject Headings</label>
                 </option>
                 <option value="bjornson">
-                    <label>Bjornson: emneord for Bjornsonbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>Bjornson: emneord for Bjornsonbibliografien</label>
                 </option>
                 <option value="blcpss">
                     <label>COMPASS subject authority system</label>
@@ -1467,7 +1457,7 @@
                     <label>British Library newspaper place names</label>
                 </option>
                 <option value="bokbas">
-                    <label>Bokbasen External Link</label>
+                    <label>Bokbasen</label>
                 </option>
                 <option value="bt">
                     <label>Bioethics thesaurus</label>
@@ -1488,7 +1478,7 @@
                     <label>Catalogue collectif suisse des affiches</label>
                 </option>
                 <option value="cct">
-                    <label>Zhong guo fen lei zhu ti ci biao (di er ban) = Chinese Classified Thesaurus (Beijing: Guo jia tu shu guan "Zhongguo tu shu guan fen lei fa" bian wei hui) </label>
+                    <label>Chinese Classified Thesaurus</label>
                 </option>
                 <option value="ccte">
                     <label>Carto-Canadiana thesaurus - English</label>
@@ -1497,16 +1487,16 @@
                     <label>Carto-Canadiana thésaurus - Français</label>
                 </option>
                 <option value="cdcng">
-                    <label>Catalogage des documents cartographiques: forme et structure des vedettes noms géographiques - NF Z 44-081</label>
+                    <label>Catalogage des documents cartographiques</label>
                 </option>
                 <option value="ceeus">
-                    <label>Counties and equivalent entities of the United States its possessions, and associated areas</label>
+                    <label>Counties and equivalent entities of the United States</label>
                 </option>
                 <option value="chirosh">
-                    <label>Chiropractic subject headings External Link</label>
+                    <label>Chiropractic subject headings</label>
                 </option>
                 <option value="cht">
-                    <label>Chicano thesaurus for indexing Chicano materials in Chicano periodical index</label>
+                    <label>Chicano thesaurus for indexing Chicano materials</label>
                 </option>
                 <option value="ciesiniv">
                     <label>CIESIN indexing vocabulary</label>
@@ -1515,13 +1505,13 @@
                     <label>Cilla: specialtesaurus för musik</label>
                 </option>
                 <option value="collett">
-                    <label>Collett-bibliografi: litteratur av og om Camilla Collett (Oslo: Nasjonalbiblioteket) External Link [deprecated]</label>
+                    <label>Collett-bibliografi: litteratur av og om Camilla Collett</label>
                 </option>
                 <option value="conorsi">
                     <label>CONOR.SI</label>
                 </option>
                 <option value="csahssa">
-                    <label>"Controlled vocabulary" in Health and safety science abstracts</label>
+                    <label>Controlled vocabulary in Health and safety science abstracts</label>
                 </option>
                 <option value="csalsct">
                     <label>CSA life sciences collection thesaurus</label>
@@ -1539,49 +1529,52 @@
                     <label>Classificatieschema's Bibliotheek TU Delft</label>
                 </option>
                 <option value="czenas">
-                    <label>Soubor vĕcných autorit Národní knihovny ČR = CZENAS thesaurus: a list of subject terms used in the National Library of the Czech Republic</label>
+                    <label>CZENAS thesaurus</label>
                 </option>
                 <option value="czmesh">
-                    <label>Czech MeSH External Link</label>
+                    <label>Czech MeSH</label>
                 </option>
                 <option value="dbcsh">
                     <label>DBC Subject Headings</label>
                 </option>
                 <option value="dbn">
-                    <label>Deskryptory Biblioteki Narodowej = National Library of Poland Descriptors</label>
+                    <label>National Library of Poland Descriptors</label>
+                    <label lang="pl">Deskryptory Biblioteki Narodowej</label>
                 </option>
                 <option value="dcs">
-                    <label>Descritores em Ciências da Saúde = Descriptores en Ciencias de la Salud = Health Sciences Descriptors</label>
+                    <label>Health Sciences Descriptors</label>
+                    <label lang="es">Descriptores en Ciencias de la Salud</label>
+                    <label lang="pt">Descritores em Ciências da Saúde</label>
                 </option>
                 <option value="ddcri">
                     <label>Dewey Decimal Classification Relative Index</label>
                 </option>
                 <option value="ddcrit">
-                    <label>DDC retrieval and indexing terminology; posting terms with hierarchy and KWOC</label>
+                    <label>DDC retrieval and indexing terminology</label>
                 </option>
                 <option value="ddcut">
                     <label>Dewey Decimal Classification user terms</label>
                 </option>
                 <option value="dhb-jdg">
-                    <label>Deutsche Historische Bibliografie - Jahresberichte für deutsche Geschichte - Schlagwörter</label>
+                    <label>Deutsche Historische Bibliografie</label>
                 </option>
                 <option value="dicgenam">
                     <label>Callegari, Horacio. Diccionario de gentilicios americanos</label>
                 </option>
                 <option value="dicgenes">
-                    <label>Torre Aparicio, Tomás de la. Diccionario de gentilicios: toponimicos españoles</label>
+                    <label>Torre Aparicio, Tomás de la. Diccionario de gentilicios</label>
                 </option>
                 <option value="dicgentop">
                     <label>Dicionário de gentílicos e topónimos</label>
                 </option>
                 <option value="dissao">
-                    <label>"Dissertation abstracts online" in Search tools: the guide to UNI/Data Courier Online</label>
+                    <label>Dissertation abstracts online in Search tools</label>
                 </option>
                 <option value="dit">
                     <label>Defense intelligence thesaurus</label>
                 </option>
                 <option value="dltlt">
-                    <label>Cuddon, J. A. A dictionary of literary terms and literary theory</label>
+                    <label>Dictionary of literary terms and literary theory</label>
                 </option>
                 <option value="dltt">
                     <label>Quinn, E. A dictionary of literary and thematic terms</label>
@@ -1593,25 +1586,25 @@
                     <label>Defense Technical Information Center thesaurus</label>
                 </option>
                 <option value="dugfr">
-                    <label>Dugas, Jean-Yves. Dictionnaire universel des gentilés en français</label>
+                    <label>Dictionnaire universel des gentilés en français</label>
                 </option>
                 <option value="ebfem">
-                    <label>Encabezamientos bilingües de la Fundación Educativa Ana G. Mendez</label>
+                    <label>Encabezamientos bilingües de la Fundación Educativa</label>
                 </option>
                 <option value="eclas">
                     <label>ECLAS thesaurus</label>
                 </option>
                 <option value="eet">
-                    <label>European education thesaurus External Link</label>
+                    <label>European education thesaurus</label>
                 </option>
                 <option value="eflch">
-                    <label>E4Libraries Category Headings External Link</label>
+                    <label>E4Libraries Category Headings</label>
                 </option>
                 <option value="eks">
                     <label>Eduskunnan kirjaston asiasanasto</label>
                 </option>
                 <option value="embiaecid">
-                    <label>Encabezamientos de materia de la Biblioteca Islámica de la Biblioteca AECID (Madrid: AECID) </label>
+                    <label>Encabezamientos de materia de la Biblioteca Islámica de la Biblioteca</label>
                 </option>
                 <option value="embne">
                     <label>Encabezamientos de materia de la Biblioteca Nacional de España</label>
@@ -1623,7 +1616,8 @@
                     <label>Emneord for musikkdokument i EDB-kataloger</label>
                 </option>
                 <option value="ept">
-                    <label>Evropski pedagoški tezaver = European education thesaurus</label>
+                    <label>European education thesaurus</label>
+                    <label lang="si">Evropski pedagoški tezaver</label>
                 </option>
                 <option value="erfemn">
                     <label>Erfaringskompetanses emneord</label>
@@ -1635,13 +1629,15 @@
                     <label>International energy: subject thesaurus</label>
                 </option>
                 <option value="etuesh">
-                    <label>TOBB ETU English Subject Headings = TOBB ETÜ İngilizce Konu Başlıkları</label>
+                    <label>TOBB ETU English Subject Headings</label>
+                    <label lang="tr">TOBB ETÜ İngilizce Konu Başlıkları</label>
                 </option>
                 <option value="etuturkob">
-                    <label>TOBB ETU Turkish Subject Headings = TOBB ETÜ Türkçe Konu Başlıkları</label>
+                    <label>TOBB ETU Turkish Subject Headings</label>
+                    <label lang="tr">TOBB ETÜ Türkçe Konu Başlıkları</label>
                 </option>
                 <option value="eum">
-                    <label>Eesti uldine märksonastik External Link</label>
+                    <label>Eesti uldine märksonastik</label>
                 </option>
                 <option value="eurovocen">
                     <label>Eurovoc thesaurus</label>
@@ -1653,7 +1649,7 @@
                     <label>Eurovoc thesaurus</label>
                 </option>
                 <option value="eurovocsl">
-                    <label>Eurovoc thesaurus (Slovenian) External Link </label>
+                    <label>Eurovoc thesaurus (Slovenian) </label>
                 </option>
                 <option value="fast">
                     <label>Faceted application of subject terminology</label>
@@ -1662,7 +1658,7 @@
                     <label>Thesaurus der Bibliothek der FES / FES</label>
                 </option>
                 <option value="finmesh">
-                    <label>FinMeSH External Link</label>
+                    <label>FinMeSH</label>
                 </option>
                 <option value="fire">
                     <label>FireTalk, IFSI thesaurus</label>
@@ -1674,7 +1670,8 @@
                     <label>First Nations House of Learning Subject Headings</label>
                 </option>
                 <option value="francis">
-                    <label>Base de donneés FRANCIS: plan de classement = FRANCIS database classification scheme</label>
+                    <label>FRANCIS database classification scheme</label>
+                    <label lang="fr">Base de donneés FRANCIS: plan de classement</label>
                 </option>
                 <option value="fssh">
                     <label>FamilySearch subject headings</label>
@@ -1683,13 +1680,13 @@
                     <label>Gale Group subject thesaurus and named entity vocabulary</label>
                 </option>
                 <option value="gccst">
-                    <label>Government of Canada core subject thesaurus (Gatineau [Quebec]: Library and Archives Canada) External Link </label>
+                    <label>Government of Canada core subject thesaurus</label>
                 </option>
                 <option value="gcipmedia">
-                    <label>GAMECIP - computer game media formats (GAMECIP (Game Metadata and Citation Project)) External Link </label>
+                    <label>GAMECIP - computer game media formats</label>
                 </option>
                 <option value="gcipplatform">
-                    <label>GAMECIP - computer game platforms (GAMECIP (Game Metadata and Citation Project)) External Link </label>
+                    <label>GAMECIP - computer game platforms</label>
                 </option>
                 <option value="gem">
                     <label>GEM controlled vocabularies</label>
@@ -1710,7 +1707,7 @@
                     <label>Geographic Names Information System</label>
                 </option>
                 <option value="gst">
-                    <label>Gay studies thesaurus: a controlled vocabulary for indexing and accessing materials of relevance to gay culture, history, politics and psychology</label>
+                    <label>Gay studies thesaurus</label>
                 </option>
                 <option value="gtt">
                     <label>GOO-trefwoorden thesaurus</label>
@@ -1728,7 +1725,7 @@
                     <label>Habitants.it - Nomi di abitanti d'Italia</label>
                 </option>
                 <option value="hamsun">
-                    <label>Hamsun: emneord for Hamsunbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>Hamsun: emneord for Hamsunbibliografien</label>
                 </option>
                 <option value="hapi">
                     <label>HAPI thesaurus and name authority, 1970-2000</label>
@@ -1755,7 +1752,7 @@
                     <label>Hrvatski mjesni rječnik</label>
                 </option>
                 <option value="huc">
-                    <label>U.S. Geological Survey water-supply paper 2294: hydrologic basins unit codes</label>
+                    <label>U.S. Geological Survey water-supply hydrologic basins unit codes</label>
                 </option>
                 <option value="humord">
                     <label>HUMORD</label>
@@ -1770,7 +1767,7 @@
                     <label>ICPSR controlled vocabulary system</label>
                 </option>
                 <option value="idas">
-                    <label>ID-Archivschlüssel [Informationsdienst zur Verbreitung unterbliebener Nachrichten]</label>
+                    <label>Informationsdienst zur Verbreitung unterbliebener Nachrichten Archivschlüssel</label>
                 </option>
                 <option value="idsbb">
                     <label>Thesaurus IDS Basel Bern</label>
@@ -1815,7 +1812,7 @@
                     <label>Defense intelligence production schedule.</label>
                 </option>
                 <option value="iptcnc">
-                    <label>IPTC NewsCodes (International Press Telecommunications Council)External Link</label>
+                    <label>IPTC NewsCodes (International Press Telecommunications Council)</label>
                 </option>
                 <option value="isis">
                     <label>"Classification scheme" in Isis</label>
@@ -1827,13 +1824,15 @@
                     <label>International thesaurus of refugee terminology</label>
                 </option>
                 <option value="jhpb">
-                    <label>Język haseł przedmiotowych Biblioteki Narodowej = National Library of Poland subject headings</label>
+                    <label>National Library of Poland subject headings</label>
+                    <label lang="pl">Język haseł przedmiotowych Biblioteki Narodowej</label>
                 </option>
-                <option value="-"> jhpk
+                <option value="jhpk">
                     <label>Język haseł przedmiotowych KABA = KABA subject headings</label>
                 </option>
                 <option value="jlabsh">
-                    <label>Kihon kenmei hyômokuhyô = [Japan Library Association] Basic subject headings</label>
+                    <label>Japan Library Association Basic subject headings</label>
+                    <label lang="jp">Kihon kenmei hyômokuhyô</label>
                 </option>
                 <option value="juho">
                     <label>JUHO - Julkishallinnon ontologia</label>
@@ -1881,7 +1880,7 @@
                     <label>KOKO-ontologia</label>
                 </option>
                 <option value="kssbar">
-                    <label>Klassifikationssystem for svenska bibliotek. Ämnesordregister. Alfabetisk del</label>
+                    <label>Klassifikationssystem for svenska bibliotek Ämnesordregister</label>
                 </option>
                 <option value="kta">
                     <label>Kielitieteen asiasanasto</label>
@@ -1896,7 +1895,7 @@
                     <label>Käsi - ja taideteollisuuden asiasanasto</label>
                 </option>
                 <option value="kubikat">
-                    <label>kubikat External Link</label>
+                    <label>kubikat</label>
                 </option>
                 <option value="kula">
                     <label>Kulttuurien tutkimuksen asiasanasto</label>
@@ -1914,7 +1913,7 @@
                     <label>Library and Archives Canada name authority file</label>
                 </option>
                 <option value="lapponica">
-                    <label>Lapponica (Helsinki: Kansalliskirjasto) External Link </label>
+                    <label>Lapponica </label>
                 </option>
                 <option value="larpcal">
                     <label>Lista de assuntos referente ao programa de cadastramento automatizado de livros da USP</label>
@@ -1929,13 +1928,13 @@
                     <label>Library of Congress subject headings</label>
                 </option>
                 <option value="lcshac">
-                    <label>Children's subject headings in Library of Congress subject headings: supplementary vocabularies</label>
+                    <label>Children's subject headings in Library of Congress subject headings</label>
                 </option>
                 <option value="lcstt">
                     <label>List of Chinese subject terms</label>
                 </option>
                 <option value="lctgm">
-                    <label>Thesaurus for graphic materials: TGM I, Subject terms External Link</label>
+                    <label>Thesaurus for graphic materials: TGM I, Subject terms</label>
                 </option>
                 <option value="lemac">
                     <label>Llista d'encapçalaments de matèria en català</label>
@@ -1974,13 +1973,13 @@
                     <label>Museoalan asiasanasto</label>
                 </option>
                 <option value="mech">
-                    <label>Iskanje po zbirki MECH External Link</label>
+                    <label>Iskanje po zbirki MECH</label>
                 </option>
                 <option value="mero">
                     <label>MERO - Merenkulkualan ontologia</label>
                 </option>
                 <option value="mesh">
-                    <label>Medical subject headings (Bethesda, MD: National Library of Medicine) External Link </label>
+                    <label>Medical subject headings</label>
                 </option>
                 <option value="mipfesd">
                     <label>Macrothesaurus for information processing in the field of economic and social development</label>
@@ -1995,7 +1994,7 @@
                     <label>Mathematical subject classification</label>
                 </option>
                 <option value="msh">
-                    <label>Trimboli, T., and Martyn S. Marianist subject headings [PDF: 138 KB] External Link</label>
+                    <label>Trimboli, T., and Martyn S. Marianist subject headings</label>
                 </option>
                 <option value="mtirdes">
                     <label>Macrothésaurus pour le traitement de l'information relative au développement économique et social</label>
@@ -2040,7 +2039,8 @@
                     <label>National criminal justice thesaurus</label>
                 </option>
                 <option value="ndlsh">
-                    <label>Koktsu Kokkai Toshokan kenmei hyômokuhyô = National Diet Library list of subject headings</label>
+                    <label>National Diet Library list of subject headings</label>
+                    <label lang="jp">Koktsu Kokkai Toshokan kenmei hyômokuhyô</label>
                 </option>
                 <option value="netc">
                     <label>National Emergency Training Center thesaurus</label>
@@ -2073,7 +2073,7 @@
                     <label>Norwegian authority file</label>
                 </option>
                 <option value="noram">
-                    <label>Noram: emneord for Norsk-amerikansk samling (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>Noram: emneord for Norsk-amerikansk samling</label>
                 </option>
                 <option value="norbok">
                     <label>Norbok: emneord i Norsk bokfortegnelse</label>
@@ -2097,13 +2097,13 @@
                     <label>Priručnik za izradu predmetnog kataloga u Nacionalnoj i sveučilišnoj knjičnici u Zagrebu</label>
                 </option>
                 <option value="ntcpsc">
-                    <label>"National Translations Center primary subject classification" in National Translations Center primary subject classification and secondary descriptors</label>
+                    <label>National Translations Center primary subject classification</label>
                 </option>
                 <option value="ntcsd">
-                    <label>"National Translations Center secondary descriptors" in National Translation Center primary subject classification and secondary descriptor</label>
+                    <label>National Translations Center secondary descriptors</label>
                 </option>
                 <option value="ntids">
-                    <label>Norske tidsskrifter 1700-1820: emneord (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>Norske tidsskrifter 1700-1820: emneord</label>
                 </option>
                 <option value="ntissc">
                     <label>NTIS subject categories</label>
@@ -2124,10 +2124,11 @@
                     <label>Opetusministeriön asiasanasto</label>
                 </option>
                 <option value="ordnok">
-                    <label>Ordnokkelen: tesaurus for kulturminnevern (Directorate for Cultural Heritage) External Link	</label>
+                    <label>Ordnokkelen: tesaurus for kulturminnevern</label>
                 </option>
                 <option value="pascal">
-                    <label>Base de donneés PASCAL: plan de classement = PASCAL database classification scheme</label>
+                    <label>PASCAL database classification scheme</label>
+                    <label lang="fr">Base de donneés PASCAL: plan de classement</label>
                 </option>
                 <option value="pepp">
                     <label>The Princeton encyclopedia of poetry and poetics</label>
@@ -2136,16 +2137,13 @@
                     <label>Perinnetieteiden asiasanasto</label>
                 </option>
                 <option value="periodo">
-                    <label>PeriodO: a gazetteer of period definitions for linking and visualizing data External Link	</label>
-                </option>
-                <option value="-pha">
-                    <label>Puolostushallinnon asiasanasto (Helsinki: Kirjastopalvelu) [obsolete; do not use]</label>
+                    <label>PeriodO: a gazetteer of period definitions for linking and visualizing data</label>
                 </option>
                 <option value="pkk">
                     <label>Predmetnik za katoliške knjižnice</label>
                 </option>
                 <option value="pleiades">
-                    <label>Pleiades: a gazetteer of past places External Link</label>
+                    <label>Pleiades: a gazetteer of past places</label>
                 </option>
                 <option value="pmbok">
                     <label>Guide to the project management body of knowledge</label>
@@ -2154,10 +2152,10 @@
                     <label>Combined standards glossary</label>
                 </option>
                 <option value="pmont">
-                    <label>Powerhouse Museum object name thesaurus External Link</label>
+                    <label>Powerhouse Museum object name thesaurus</label>
                 </option>
                 <option value="pmt">
-                    <label>Project management terminology. Newtown Square, PA: Project Management Institute</label>
+                    <label>Project management terminology</label>
                 </option>
                 <option value="poliscit">
                     <label>Political science thesaurus II</label>
@@ -2187,16 +2185,17 @@
                     <label>Queens Library Spanish language subject headings</label>
                 </option>
                 <option value="qrma">
-                    <label>Qâ'imat ru'ûs al-mawdûât al-'Arabîyah = List of Arabic subject headings</label>
+                    <label>List of Arabic subject headings</label>
+                    <label lang="ar">Qâ'imat ru'ûs al-mawdûât al-'Arabîyah</label>
                 </option>
                 <option value="qrmak">
                     <label>Qâ'imat ru'ûs al-mawdû'ât al-'Arabîyah al-qiyâsîyah al-maktabât wa-marâkaz al-ma'lûmât wa-qawâid al-bayânât</label>
                 </option>
                 <option value="qtglit">
-                    <label>A queer thesaurus : an international thesaurus of gay and lesbian index terms</label>
+                    <label>A queer thesaurus</label>
                 </option>
                 <option value="quiding">
-                    <label>Quiding, Nils Herman. Svenskt allmänt författningsregister för tiden från år 1522 till och med år 1862</label>
+                    <label>Svenskt allmänt författningsregister för tiden från år 1522 till och med år 1862</label>
                 </option>
                 <option value="ram">
                     <label>RAMEAU: répertoire d'authorité de matières encyclopédique unifié</label>
@@ -2208,7 +2207,7 @@
                     <label>Renib [base de datos de autoridad]</label>
                 </option>
                 <option value="reo">
-                    <label>Māori Subject Headings thesaurus -- Ngā Ūpoko Tukutuku External Link</label>
+                    <label>Māori Subject Headings thesaurus − Ngā Ūpoko Tukutuku</label>
                 </option>
                 <option value="rero">
                     <label>Indexation matires RERO</label>
@@ -2238,7 +2237,7 @@
                     <label>Répertoire de vedettes-matière</label>
                 </option>
                 <option value="rvmgd">
-                    <label>Thésaurus des descripteurs de groupes démographiques de l'Université Laval Québec: Université Laval)</label>
+                    <label>Thésaurus des descripteurs de groupes démographiques de l'Université Laval Québec</label>
                 </option>
                 <option value="samisk">
                     <label>Sámi bibliografia</label>
@@ -2274,10 +2273,12 @@
                     <label>Svenska filminstitutets tesaurus</label>
                 </option>
                 <option value="sgc">
-                    <label>Splolšni geslovnik COBISS.SI = COBISS.SI General List of subject headings</label>
+                    <label>COBISS.SI General List of subject headings</label>
+                    <label lang="sl">Splolšni geslovnik COBISS.SI</label>
                 </option>
                 <option value="sgce">
-                    <label>Splošni geslovnik COBISS.SI = COBISS.SI General List of subject headings</label>
+                    <label>COBISS.SI General List of subject headings</label>
+                    <label lang="sl">Splošni geslovnik COBISS.SI</label>
                 </option>
                 <option value="shbe">
                     <label>Subject headings in business and economics</label>
@@ -2286,10 +2287,11 @@
                     <label>SHE: subject headings for engineering</label>
                 </option>
                 <option value="shsples">
-                    <label>Subject headings for school and public libraries = Encabezamientos de materia para bibliotecas escolares y públicas</label>
+                    <label>Subject headings for school and public libraries</label>
+                    <label lang="es">Encabezamientos de materia para bibliotecas escolares y públicas</label>
                 </option>
                 <option value="sigle">
-                    <label>SIGLE [System for information on grey literature in Europe] manual, Part 2, Subject category list</label>
+                    <label>System for information on grey literature in Europe SIGLE</label>
                 </option>
                 <option value="sipri">
                     <label>SIPRI library thesaurus</label>
@@ -2313,19 +2315,19 @@
                     <label>Sociological abstracts thesaurus</label>
                 </option>
                 <option value="solstad">
-                    <label>Solstad: emneord for Solstadbibliografien (Oslo: National Library of Norway) External Link [deprecated]</label>
+                    <label>Solstad: emneord for Solstadbibliografien</label>
                 </option>
                 <option value="sosa">
                     <label>Sociaalialan asiasanasto</label>
                 </option>
                 <option value="spines">
-                    <label>Tesauro SPINES: un vocabulario controlado y estructurado para el tratamiento de información sobre ciencia y tecnología para el desarrollo</label>
+                    <label>Tesauro SPINES</label>
                 </option>
                 <option value="ssg">
-                    <label>Splošni slovenski geslovnik External Link</label>
+                    <label>Splošni slovenski geslovnik</label>
                 </option>
                 <option value="stcv">
-                    <label>Short Title Catalogus Vlaanderen = Short title catalogue Flanders External Link</label>
+                    <label>Short Title Catalogus Vlaanderen</label>
                 </option>
                 <option value="sthus">
                     <label>Subject taxonomy of the history of U.S. foreign relations</label>
@@ -2346,10 +2348,10 @@
                     <label>Tesaurus de asuntos sociales del Ministerio de Asuntos Sociales de España</label>
                 </option>
                 <option value="taxhs">
-                    <label>A taxonomy or human services: a conceptual framework with standardized terminology and definitions for the field</label>
+                    <label>A taxonomy or human services</label>
                 </option>
                 <option value="tbjvp">
-                    <label>Tesauro de la Biblioteca Dr. Jorge Villalobos Padilla, S.J. (Guadalajara: ITESO Universidad Jesuita de Guadalajara) External Link </label>
+                    <label>Tesauro de la Biblioteca Dr. Jorge Villalobos Padilla, S.J.</label>
                 </option>
                 <option value="tekord">
                     <label>TEK-ord : UBiTs emneordliste for arkitektur, realfag, og teknolog</label>
@@ -2361,7 +2363,7 @@
                     <label>Tesauro agrícola</label>
                 </option>
                 <option value="tesbhaecid">
-                    <label>Tesauro de la Biblioteca Hispánica de la Biblioteca AECID (Madrid: AECID) </label>
+                    <label>Tesauro de la Biblioteca Hispánica de la Biblioteca AECID</label>
                 </option>
                 <option value="test">
                     <label>Thesaurus of engineering and scientific terms</label>
@@ -2376,7 +2378,8 @@
                     <label>Thesaurus for the social sciences</label>
                 </option>
                 <option value="thia">
-                    <label>Th.I.A. - Thesaurus italiano infanzia e adolescenza = Th.I.A. - Italian thesaurus on childhood and adolescence</label>
+                    <label>Th.I.A. - Italian thesaurus on childhood and adolescence</label>
+                    <label lang="it">Th.I.A. - Thesaurus italiano infanzia e adolescenza</label>
                 </option>
                 <option value="tho">
                     <label>Thesauros Hellēnikōn Oron</label>
@@ -2436,7 +2439,7 @@
                     <label>Thesaurus for use in college and university archives</label>
                 </option>
                 <option value="udc">
-                    <label>Universal decimal classification (London: British Standards Institute)	</label>
+                    <label>Universal decimal classification</label>
                 </option>
                 <option value="ukslc">
                     <label>UK standard library categories</label>
@@ -2445,7 +2448,7 @@
                     <label>Union list of artist names</label>
                 </option>
                 <option value="umitrist">
-                    <label>University of Michigan Transportation Research Institute structured thesaurus</label>
+                    <label>University of Michigan Transportation Research Institute</label>
                 </option>
                 <option value="unbisn">
                     <label>UNBIS name authority list</label>
@@ -2454,13 +2457,15 @@
                     <label>UNBIS thesaurus</label>
                 </option>
                 <option value="unescot">
-                    <label>UNESCO thesaurus = Thésaurus de l'UNESCO = Tesauro de la UNESCO</label>
+                    <label>UNESCO thesaurus</label>
+                    <label lang="fr">Thésaurus de l'UNESCO</label>
+                    <label lang="es">Tesauro de la UNESCO</label>
                 </option>
                 <option value="unicefirc">
                     <label>International Children's Rights Thesaurus</label>
                 </option>
                 <option value="usaidt">
-                    <label>USAID thesaurus: keywords used to index documents included in the USAID Development Experience System.</label>
+                    <label>USAID thesaurus</label>
                 </option>
                 <option value="valo">
                     <label>VALO - Fotografiska ontologin</label>
@@ -2478,7 +2483,7 @@
                     <label>Maknas Uloom Al Waqaf</label>
                 </option>
                 <option value="watrest">
-                    <label>Thesaurus of water resources terms: a collection of water resources and related terms for use in indexing technical information</label>
+                    <label>Thesaurus of water resources terms</label>
                 </option>
                 <option value="wgst">
                     <label>Washington GILS Subject Tree</label>
@@ -2493,7 +2498,7 @@
                     <label>Yleinen suomalainen asiasanasto</label>
                 </option>
                 <option value="yso">
-                    <label>YSO - Yleinen suomalainen ontologia (Helsinki: Kansalliskirjasto) External Link </label>
+                    <label>YSO - Yleinen suomalainen ontologia</label>
                 </option>
             </key>
 
@@ -2564,7 +2569,7 @@
                 <key id="nameTitleGroup">
                     <label>Link between a name and a uniform title</label>
                     <label lang="de">Rezensiertes Werk</label>
-                    <pattern>[0-9A-Z_][0-9A-Z_a-z]*</pattern>
+                    <pattern>[A-Z_a-z][0-9A-Z_a-z]*</pattern>
                 </key>
 
                 <key id="value">
@@ -2713,6 +2718,9 @@
                     <label lang="de">Rolle</label>
                     
                     <key id="roleTerm">
+                        <label>Form of the role</label>
+                        <label lang="de">Form der Rolle</label>
+
                         <key id="type">
                             <label>Type</label>
                             <label lang="de">Typ</label>
@@ -2753,12 +2761,15 @@
                 <key id="nameTitleGroup">
                     <label>Link between a name and a uniform title</label>
                     <label lang="de">Rezensiertes Werk</label>
-                    <pattern>[0-9A-Z_][0-9A-Z_a-z]*</pattern>
+                    <pattern>[A-Z_a-z][0-9A-Z_a-z]*</pattern>
                 </key>
             </key>
         </key>
 
         <key id="classification">
+            <label>Subject area</label>
+            <label lang="de">Klassifikation</label>
+
             <key id="authority">
                 <label>Controlled list from which the value is taken</label>
                 <label lang="de">Quelle für die verwendeten Codes</label>
@@ -2788,10 +2799,11 @@
                     <label>Arizona documents: KWOC manual</label>
                 </option>
                 <option value="bar">
-                    <label>Barnard, Cyril C. A classification for medical and veterinary libraries</label>
+                    <label>Classification for medical and veterinary libraries</label>
                 </option>
                 <option value="bcl">
-                    <label>Nederlandse Basisclassificatie = Dutch Basic Classification Codes</label>
+                    <label>Dutch Basic Classification Codes</label>
+                    <label lang="nl">Nederlandse Basisclassificatie</label>
                 </option>
                 <option value="bcmc">
                     <label>Coates, E.J. The British catalogue of music classification</label>
@@ -2809,10 +2821,10 @@
                     <label>British Library Inside service subject classification</label>
                 </option>
                 <option value="blsrissc">
-                    <label>British Library - Science reference information service subject classification</label>
+                    <label>British Library - Science reference information service</label>
                 </option>
                 <option value="cacodoc">
-                    <label>CODOC [Canadian federal and provincial government documents classification scheme]</label>
+                    <label>Canadian federal and provincial government documents</label>
                 </option>
                 <option value="cadocs">
                     <label>California state agency classification scheme</label>
@@ -2830,16 +2842,17 @@
                     <label>Classification de l'histoire de France</label>
                 </option>
                 <option value="clc">
-                    <label>Zhongguo tu shu guan fen lei fa = Chinese library classification</label>
+                    <label>Chinese library classification</label>
+                    <label lang="zh">Zhongguo tu shu guan fen lei fa</label>
                 </option>
                 <option value="clutscny">
                     <label>Classification of the Library of Union Theological Seminary in the City of New York</label>
                 </option>
                 <option value="codocs">
-                    <label>Colorado State Publications Depository and Distribution Center. Classification schedule</label>
+                    <label>Colorado State Publications Depository and Distribution Center</label>
                 </option>
                 <option value="cslj">
-                    <label>Elazar, David H. &amp; Elazar, Daniel J. A classification system for libraries of Judaica</label>
+                    <label>A classification system for libraries of Judaica</label>
                 </option>
                 <option value="cstud">
                     <label>Classificatieschema's Bibliotheek TU Delft</label>
@@ -2851,7 +2864,7 @@
                     <label>Dewey decimal classification and relative index</label>
                 </option>
                 <option value="dhb-jdgklass">
-                    <label>Deutsche Historische Bibliografie - Jahresberichte für deutsche Geschichte - Klassifikation</label>
+                    <label>Deutsche Historische Bibliografie</label>
                 </option>
                 <option value="dk5s">
                     <label>DK5 Systematik</label>
@@ -2863,40 +2876,41 @@
                     <label>Egede-instituttets klassifikasjonsystem</label>
                 </option>
                 <option value="ekl">
-                    <label>Eduskunnan kirjaston luokitus = Library of Parliament Classification</label>
+                    <label>Library of Parliament Classification</label>
+                    <label lang="fi">Eduskunnan kirjaston luokitus</label>
                 </option>
                 <option value="farl">
                     <label>Frick Art Reference Library book classification system</label>
                 </option>
                 <option value="farma">
-                    <label>Oversigt over systematisk catalog (København: Danmarks farmaceutiski bibliotek</label>
+                    <label>Oversigt over systematisk catalog</label>
                 </option>
                 <option value="fcps">
-                    <label>Class FC: a classification for Canadian history, Class PS8000: a classification for Canadian literature</label>
+                    <label>Classification for Canadian history and literature</label>
                 </option>
                 <option value="fiaf">
-                    <label>Moulds, Michael. Classification scheme for literature on film and television</label>
+                    <label>Classification scheme for literature on film and television</label>
                 </option>
                 <option value="fid">
-                    <label>Fachinformationsdienste für die Wissenschaft (FID)External Link</label>
+                    <label>Fachinformationsdienste für die Wissenschaft (FID)</label>
                 </option>
                 <option value="finagri">
                     <label>Finagri-luokitus</label>
                 </option>
                 <option value="flarch">
-                    <label>Florida State Archives arrangement and description procedures manual</label>
+                    <label>Florida State Archives arrangement and description procedures</label>
                 </option>
                 <option value="fldocs">
-                    <label>A Keyword-in-context to Florida public documents in the Florida Atlantic University Library</label>
+                    <label>A Keyword-in-context to Florida public documents</label>
                 </option>
                 <option value="frtav">
-                    <label>Referentiel du format INTERMAC Bibliographique: Audiovisuel - Matière generale</label>
+                    <label>Referentiel du format INTERMAC Bibliographique audiovisuel</label>
                 </option>
                 <option value="gadocs">
-                    <label>Official publications of the State of Georgia: list of classes with index by name of agency and subject/keyword</label>
+                    <label>Official publications of the State of Georgia</label>
                 </option>
                 <option value="gfdc">
-                    <label>Global forest decimal classification (GFDC) (Vienna: IUFRO) External Link </label>
+                    <label>Global forest decimal classification (GFDC)</label>
                 </option>
                 <option value="geothes">
                     <label>GEOTHES Geographical Classification Scheme</label>
@@ -2932,10 +2946,11 @@
                     <label>Klassifikation für Allgemeinbibliotheken</label>
                 </option>
                 <option value="kfmod">
-                    <label>KF classification, modified for use in Canadian law libraries</label>
+                    <label>KF classification for use in Canadian law libraries</label>
                 </option>
                 <option value="kktb">
-                    <label>Kokuritsu kokkai toshokan bunruihyo = National Diet Library classification</label>
+                    <label>National Diet Library classification</label>
+                    <label lang="jp">Kokuritsu kokkai toshokan bunruihyo</label>
                 </option>
                 <option value="knt">
                     <label>Klassifikasjonsnøkkel til norsk topografi</label>
@@ -2947,7 +2962,8 @@
                     <label>Klassifikationssystem for svenska bibliotek</label>
                 </option>
                 <option value="kuvacs">
-                    <label>Kuvataideakatemian kirjaston luokitusjärjestelmä = Finnish Academy of Fine Arts Library Classification</label>
+                    <label>Finnish Academy of Fine Arts Library Classification</label>
+                    <label lang="fi">Kuvataideakatemian kirjaston luokitusjärjestelmä</label>
                 </option>
                 <option value="laclaw">
                     <label>Los Angeles County Law Library, class K-Law</label>
@@ -2977,13 +2993,13 @@
                     <label>Manual of map library classification and cataloguing</label>
                 </option>
                 <option value="modocs">
-                    <label>Missouri state documents classification: post-reorganization agency codes and form divisions</label>
+                    <label>Missouri state documents agency and form division codes</label>
                 </option>
                 <option value="moys">
-                    <label>Moys, Elizabeth M. Moys classification and thesaurus for legal materials</label>
+                    <label>Moys classification and thesaurus for legal materials</label>
                 </option>
                 <option value="mpilcs">
-                    <label>MPI Luxembourg Classification System (Max Planck Institute Luxembourg) [PDF]</label>
+                    <label>MPI Luxembourg Classification System</label>
                 </option>
                 <option value="mpkkl">
                     <label>Maanpuolustuskorkeakoulun kirjaston luokitusjärjestelmä</label>
@@ -2992,7 +3008,7 @@
                     <label>Mathematical subject classification</label>
                 </option>
                 <option value="msdocs">
-                    <label>Mississippi state government publications. Vol. 1, July 1975/June 1980</label>
+                    <label>Mississippi state government publications</label>
                 </option>
                 <option value="mu">
                     <label>Clasificación Musical de la Bibliografía Nacional de España</label>
@@ -3004,22 +3020,22 @@
                     <label>NASA scope and subject category guide</label>
                 </option>
                 <option value="nbdocs">
-                    <label>Guide to Nebraska state agencies: state publications classification and ordering directory</label>
+                    <label>Nebraska state agencies publications classification and ordering directory</label>
                 </option>
                 <option value="ncdocs">
-                    <label>Classification scheme for North Carolina state publications: as applied to the documents collection of the N.C. Dept. of Cultural Resources</label>
+                    <label>Classification scheme for North Carolina state publications</label>
                 </option>
                 <option value="ncsclt">
                     <label>New classification scheme for Chinese libraries</label>
                 </option>
                 <option value="nhcp">
-                    <label>NH classification for photography (Ottowa, ON: Art Libraries Society of North America) [PDF]</label>
+                    <label>NH classification for photography</label>
                 </option>
                 <option value="nicem">
                     <label>NICEM subject headings and classification system</label>
                 </option>
                 <option value="niv">
-                    <label>Norsk inndeling av vitenskapsdisipliner (Norway: Universitets- og høgskolerådet) [PDF] External Link </label>
+                    <label>Norsk inndeling av vitenskapsdisipliner</label>
                 </option>
                 <option value="njb">
                     <label>Nihon jisshin bunruihō = Nippon decimal classification</label>
@@ -3028,7 +3044,7 @@
                     <label>National Library of Medicine classification</label>
                 </option>
                 <option value="nmdocs">
-                    <label>The New Mexico state documents classification system (Santa Fe: New Mexico State Library) External Link </label>
+                    <label>The New Mexico state documents classification system</label>
                 </option>
                 <option value="no-ujur-cmr">
                     <label>Menneskerettighets-klassifikasjon</label>
@@ -3046,7 +3062,8 @@
                     <label>Geofysikk oppstillingssystem</label>
                 </option>
                 <option value="noterlyd">
-                    <label>Klassifikasjonssystem for noter og lydopptak = Music classification system</label>
+                    <label>Music classification system</label>
+                    <label lang="no">Klassifikasjonssystem for noter og lydopptak</label>
                 </option>
                 <option value="nvdocs">
                     <label>Nevada state documents</label>
@@ -3061,7 +3078,7 @@
                     <label>Ohio documents classification scheme</label>
                 </option>
                 <option value="okdocs">
-                    <label>Oklahoma state documents classification and list of Oklahoma state agencies from statehood to the present</label>
+                    <label>Oklahoma state documents and agencies classification</label>
                 </option>
                 <option value="oosk">
                     <label>Oversikt over systematisk katalog</label>
@@ -3148,19 +3165,20 @@
                     <label>SfB: Systematik für Bibliotheken</label>
                 </option>
                 <option value="siblcs">
-                    <label>Sibelius-Akatemian kirjaston luokitusjärjestelmä = Sibelius Academy Library classification system Two versions (Finnish and English, arranged in two sections).</label>
+                    <label>Sibelius Academy Library classification system</label>
+                    <label lang="fi">Sibelius-Akatemian kirjaston luokitusjärjestelmä</label>
                 </option>
                 <option value="siso">
-                    <label>Schema voor de Indeling van de Systematische Catalogus in Openbare Bibliotheken (Zoetermeer: NBD Biblion) External Link </label>
+                    <label>Schema voor de Indeling van de Systematische Catalogus in Openbare Bibliotheken</label>
                 </option>
                 <option value="skb">
                     <label>Sachbuch-Systematik für Katholische öffentliche Büchereien</label>
                 </option>
                 <option value="smm">
-                    <label>Systematik des Musikschrifttums u.d. Musikalien fr ffentl. Musikbibliotheken SMM (Bergen: Universitetetsbiblioteket i Bergen</label>
+                    <label>Systematik des Musikschrifttums und der Musikalien</label>
                 </option>
                 <option value="ssd">
-                    <label>Systematik: Stadtbücherei Duisburg: Buchaufstellung und Ordnung des systematischen Kataloges</label>
+                    <label>Systematik der Stadtbücherei Duisburg</label>
                 </option>
                 <option value="ssgn">
                     <label>Sondersammelgebiets-Nummer</label>
@@ -3178,10 +3196,11 @@
                     <label>Superintendent of Documents classification system</label>
                 </option>
                 <option value="swank">
-                    <label>Swank, Raynard Coe. A classification for state, county, and municipal documents</label>
+                    <label>Classification for state, county, and municipal documents</label>
                 </option>
                 <option value="taikclas">
-                    <label>Taideteollisen korkeakoulun kirjaston luokitus = University of Art and Design Helsinki Library Classification</label>
+                    <label>University of Art and Design Helsinki Library Classification</label>
+                    <label lang="fi">Taideteollisen korkeakoulun kirjaston luokitus</label>
                 </option>
                 <option value="taykl">
                     <label>Tampereen yliopiston kirjaston luokitus: Systemaattinen osa &amp; Aakkosellinen osa</label>
@@ -3190,7 +3209,7 @@
                     <label>Teatterikorkeakoulun kirjaston luokitusopas</label>
                 </option>
                 <option value="txdocs">
-                    <label>Texas state documents classification &amp; almost compleat list of Texas state agencies from statehood to the present</label>
+                    <label>Texas state documents classification &amp; almost compleat list of Texas state agencies</label>
                 </option>
                 <option value="tykoma">
                     <label>Turun yliopiston kirjaston vanha luokitus</label>
@@ -3202,13 +3221,14 @@
                     <label>Universal decimal classification</label>
                 </option>
                 <option value="uef">
-                    <label>Itä-Suomen yliopiston kokoelmaluokitus = Collection classification of The University of Eastern Finland</label>
+                    <label>Collection classification of The University of Eastern Finland</label>
+                    <label lang="fi">Itä-Suomen yliopiston kokoelmaluokitus</label>
                 </option>
                 <option value="undocs">
                     <label>United Nations document series symbols: 1946-77 cumulative</label>
                 </option>
                 <option value="upsylon">
-                    <label>UPSYLON: classification systématique de la Bibliothèque de la Faculté de psychologie et des sciences de l'éducation de l'Université catholique de Louvain</label>
+                    <label>UPSYLON: classification de la Bibliothèque de la Faculté de psychologie et des sciences</label>
                 </option>
                 <option value="usgslcs">
                     <label>U.S. Geological Survey library classification</label>
@@ -3229,19 +3249,20 @@
                     <label>VEERA-luokitus = VEERA-классификация</label>
                 </option>
                 <option value="vsiso">
-                    <label>Vlaamse SISO [schema voor de indeling van de systematische catalogus in openbare bibliotheken]</label>
+                    <label>Vlaamse SISO</label>
                 </option>
                 <option value="wadocs">
-                    <label>Washington State Library state documents collection: State documents call number</label>
+                    <label>Washington State Library state documents collection call numbers</label>
                 </option>
                 <option value="widocs">
-                    <label>Organizing Wisconsin public documents: cataloging and classification of documents at the State Historical Society Library</label>
+                    <label>Wisconsin classification of documents</label>
                 </option>
                 <option value="wydocs">
                     <label>WyDocs: the Wyoming state documents classification system</label>
                 </option>
                 <option value="ykl">
-                    <label>Yleisten kirjastojen luokitusjärjestelmä = Finnish public libraries classification system [former code: fplcs]</label>
+                    <label>Finnish public libraries classification system</label>
+                    <label lang="fi">Yleisten kirjastojen luokitusjärjestelmä</label>
                 </option>
                 <option value="z">
                     <label>Other</label>
@@ -3410,6 +3431,539 @@
                     <label>Rules used</label>
                     <label lang="de">Erschließungsstandard</label>
                 </key>
+            </key>
+        </key>
+
+        <key id="identifier">
+            <label>Identifier</label>
+            <label lang="de">Identifikation</label>
+
+            <key id="type">
+                <label>Type</label>
+                <label lang="de">Typ</label>
+
+                <option value="agorha">
+                    <label>AGORHA (Accès Global et Organisé aux Ressources en Histoire de l'Art)</label>
+                </option>
+                <option value="agrovoc">
+                    <label>AGROVOC multilingual agricultural thesaurus</label>
+                </option>
+                <option value="allmovie">
+                    <label>AllMovie</label>
+                </option>
+                <option value="allmusic">
+                    <label>AllMusic</label>
+                </option>
+                <option value="allocine">
+                    <label>AlloCiné</label>
+                </option>
+                <option value="amnbo">
+                    <label>American National Biography Online</label>
+                </option>
+                <option value="ansi">
+                    <label>ANSI/NISO standard number</label>
+                </option>
+                <option value="artsy">
+                    <label>Artsy</label>
+                </option>
+                <option value="artukart">
+                    <label>Art UK Artists</label>
+                </option>
+                <option value="artukaw">
+                    <label>Art UK Artworks</label>
+                </option>
+                <option value="atg">
+                    <label>Agricultural Thesaurus and Glossary</label>
+                </option>
+                <option value="balat">
+                    <label>BALaT (Belgian Art Links and Tools) People &amp; Institutions</label>
+                </option>
+                <option value="bbcth">
+                    <label>BBC Things</label>
+                </option>
+                <option value="bdusc">
+                    <label>Biographical Directory of the United States Congress</label>
+                </option>
+                <option value="belvku">
+                    <label>Belvedere Künstler</label>
+                </option>
+                <option value="belvwrk">
+                    <label>Belvedere Werke</label>
+                </option>
+                <option value="benezit">
+                    <label>Benezit Dictionary of Artists</label>
+                </option>
+                <option value="bfi">
+                    <label>BFI - British Film Institute</label>
+                </option>
+                <option value="bigenc">
+                    <label>Большая российская энциклопедия</label>
+                </option>
+                <option value="bnfcg">
+                    <label>BnF catalogue général</label>
+                </option>
+                <option value="bpn">
+                    <label>Biography portal of the Netherlands</label>
+                    <label lang="nl">Biografisch Portaal van Nederland</label>
+                </option>
+                <option value="cabt">
+                    <label>CABI Thesaurus</label>
+                </option>
+                <option value="cana">
+                    <label>Canadiana Authorities</label>
+                </option>
+                <option value="cantic">
+                    <label>CANTIC</label>
+                </option>
+                <option value="cbwpid">
+                    <label>Collective Biographies of Women Persons ID</label>
+                </option>
+                <option value="cerl">
+                    <label>CERL Thesaurus</label>
+                </option>
+                <option value="cgndb">
+                    <label>Canadian Geographical Names Database</label>
+                </option>
+                <option value="clara">
+                    <label>Clara: Database of Women Artists</label>
+                </option>
+                <option value="cnbksy">
+                    <label>Quan Guo Bao Kan Suo Yin</label>
+                </option>
+                <option value="csfdcz">
+                    <label>Cesko-Slovenská filmová databáze</label>
+                </option>
+                <option value="danacode">
+                    <label>Danacode</label>
+                </option>
+                <option value="datoses">
+                    <label>datos.bne.es</label>
+                </option>
+                <option value="discogs">
+                    <label>Discogs</label>
+                </option>
+                <option value="dkfilm">
+                    <label>Det Danske Filminstitut Filmdatabasen</label>
+                </option>
+                <option value="doi">
+                    <label>Digital object identifier</label>
+                </option>
+                <option value="dpb">
+                    <label>Dictionnaire des peintres belges</label>
+                </option>
+                <option value="ean">
+                    <label>International Article Number</label>
+                </option>
+                <option value="eidr">
+                    <label>EIDR: Entertainment Identifier Registry</label>
+                </option>
+                <option value="emlo">
+                    <label>Early Modern Letters Online</label>
+                </option>
+                <option value="fast">
+                    <label>FAST - Faceted Application of Subject Terminology</label>
+                </option>
+                <option value="fidecp">
+                    <label>Fide Chess Profile</label>
+                </option>
+                <option value="filmaff">
+                    <label>Film Affinity</label>
+                </option>
+                <option value="filmport">
+                    <label>filmportal.de</label>
+                </option>
+                <option value="findagr">
+                    <label>Find a Grave</label>
+                </option>
+                <option value="fisa">
+                    <label>FIS Athlete</label>
+                </option>
+                <option value="freebase">
+                    <label>Freebase</label>
+                </option>
+                <option value="gacsch">
+                    <label>Global Agricultural Concept Scheme</label>
+                </option>
+                <option value="gec">
+                    <label>Gran enciclopèdia catalana</label>
+                </option>
+                <option value="geogndb">
+                    <label>Geographic Names Database</label>
+                </option>
+                <option value="geonames">
+                    <label>GeoNames</label>
+                </option>
+                <option value="gettyart">
+                    <label>J. Paul Getty Museum Artists</label>
+                </option>
+                <option value="gettyobj">
+                    <label>J. Paul Getty Museum Objects</label>
+                </option>
+                <option value="gettytgn">
+                    <label>Getty Thesaurus of Geographic Names Online</label>
+                </option>
+                <option value="gettyulan">
+                    <label>Union List of Artist Names Online</label>
+                </option>
+                <option value="gnd">
+                    <label>Gemeinsame Normdatei</label>
+                </option>
+                <option value="gnis">
+                    <label>Geographic Names Information System</label>
+                </option>
+                <option value="goodra">
+                    <label>Goodreads Author ID</label>
+                </option>
+                <option value="gtaa">
+                    <label>Gemeenschappelijke Thesaurus Audiovisuele Archieven</label>
+                </option>
+                <option value="gtin-14">
+                    <label>Global Trade Identification Number 14</label>
+                </option>
+                <option value="hdl">
+                    <label>Handle</label>
+                </option>
+                <option value="iaafa">
+                    <label>IAAF Athletes</label>
+                </option>
+                <option value="ibdb">
+                    <label>IBDB - Internet Broadway Database</label>
+                </option>
+                <option value="idref">
+                    <label>IdRef: le référentiel des autorités Sudoc</label>
+                </option>
+                <option value="imdb">
+                    <label>IMDb - Internet Movie Database</label>
+                </option>
+                <option value="isan">
+                    <label>International standard audiovisual number</label>
+                </option>
+                <option value="isbn">
+                    <label>International standard book number</label>
+                </option>
+                <option value="isbn-a">
+                    <label>International Standard Book Number</label>
+                </option>
+                <option value="isbnre">
+                    <label>ISBN (International Standard Book Number) registrant element</label>
+                </option>
+                <option value="isbnsbn">
+                    <label>Identificativo SBN</label>
+                </option>
+                <option value="ismn">
+                    <label>International standard music number</label>
+                </option>
+                <option value="isni">
+                    <label>International standard name identifier</label>
+                </option>
+                <option value="iso">
+                    <label>ISO standard number</label>
+                </option>
+                <option value="isfdbau">
+                    <label>ISFDB author directory</label>
+                </option>
+                <option value="isfdbaw">
+                    <label>ISFDB award directory</label>
+                </option>
+                <option value="isfdbma">
+                    <label>ISFDB magazine directory</label>
+                </option>
+                <option value="isfdbpu">
+                    <label>ISFDB publisher directory</label>
+                </option>
+                <option value="isil">
+                    <label>ISIL</label>
+                </option>
+                <option value="isrc">
+                    <label>International standard recording code</label>
+                </option>
+                <option value="issn">
+                    <label>International standard serial number</label>
+                </option>
+                <option value="issn-l">
+                    <label>Linking International standard serial number</label>
+                </option>
+                <option value="issue-number">
+                    <label>Sound recording issue number</label>
+                </option>
+                <option value="istc">
+                    <label>International standard text code</label>
+                </option>
+                <option value="iswc">
+                    <label>International standard musical work code</label>
+                </option>
+                <option value="itar">
+                    <label>ITAR</label>
+                </option>
+                <option value="kda">
+                    <label>Kunstindeks Danmark Artist</label>
+                </option>
+                <option value="kdw">
+                    <label>Kunstindeks Danmark Work</label>
+                </option>
+                <option value="kinopo">
+                    <label>КиноПоиск = KinoPoisk</label>
+                </option>
+                <option value="lattes">
+                    <label>Currículo Lattes</label>
+                </option>
+                <option value="lccn">
+                    <label>Library of Congress control number</label>
+                </option>
+                <option value="lcmd">
+                    <label>Library of Congress Manuscript Division field of history codes</label>
+                </option>
+                <option value="lei">
+                    <label>Legal entity identifier</label>
+                </option>
+                <option value="libaus">
+                    <label>Libraries Australia</label>
+                </option>
+                <option value="local">
+                    <label>Locally defined identifier</label>
+                </option>
+                <option value="matrix-number">
+                    <label>Sound recording matrix number</label>
+                </option>
+                <option value="mesh">
+                    <label>Medical Subject Headings</label>
+                </option>
+                <option value="mocofo">
+                    <label>Musée d'Orsay Catalogue des oeuvres fiche oeuvre</label>
+                </option>
+                <option value="moma">
+                    <label>Museum of Modern Art</label>
+                </option>
+                <option value="morana">
+                    <label>Musée d'Orsay Répertoire des artistes notice artiste</label>
+                </option>
+                <option value="moviemetf">
+                    <label>MovieMeter Films</label>
+                </option>
+                <option value="moviemetr">
+                    <label>MovieMeter Regisseurs</label>
+                </option>
+                <option value="munzing">
+                    <label>Munzinger</label>
+                </option>
+                <option value="muscl">
+                    <label>Music Sales Classical</label>
+                </option>
+                <option value="music-plate">
+                    <label>Publisher's music plate number</label>
+                </option>
+                <option value="music-publisher">
+                    <label>Publisher-assigned music number</label>
+                </option>
+                <option value="musicb">
+                    <label>MusicBrainz</label>
+                </option>
+                <option value="nacat">
+                    <label>National Archives Catalog</label>
+                </option>
+                <option value="natgazfid">
+                    <label>U.S. National Gazetteer Feature Name Identifier</label>
+                </option>
+                <option value="nga">
+                    <label>National Gallery of Art</label>
+                </option>
+                <option value="ngva">
+                    <label>National Gallery of Victoria Artist</label>
+                </option>
+                <option value="ngvw">
+                    <label>National Gallery of Victoria Work</label>
+                </option>
+                <option value="nipo">
+                    <label>NIPO</label>
+                </option>
+                <option value="nndb">
+                    <label>NNDB</label>
+                </option>
+                <option value="npg">
+                    <label>National Portrait Gallery</label>
+                </option>
+                <option value="odnb">
+                    <label>Oxford Dictionary of National Biography</label>
+                </option>
+                <option value="ofdb">
+                    <label>OFDb: Online-Filmdatenbank</label>
+                </option>
+                <option value="onix">
+                    <label>ONIX</label>
+                </option>
+                <option value="opensm">
+                    <label>OpenStreetMap</label>
+                </option>
+                <option value="orcid">
+                    <label>Open Researcher and Contributor Identifier</label>
+                </option>
+                <option value="oxforddnb">
+                    <label>Oxford Biography Index</label>
+                </option>
+                <option value="permid">
+                    <label>PermID</label>
+                </option>
+                <option value="picnypl">
+                    <label>PIC - Photographers' Identities Catalog</label>
+                </option>
+                <option value="pnta">
+                    <label>Personen uit de Nederlandse Thesaurus van Auteursnamen</label>
+                </option>
+                <option value="porthu">
+                    <label>PORT.hu</label>
+                </option>
+                <option value="prabook">
+                    <label>Prabook</label>
+                </option>
+                <option value="rbmsbt">
+                    <label>RBMS Controlled Vocabularies: Binding Terms</label>
+                </option>
+                <option value="rbmsgt">
+                    <label>RBMS Controlled Vocabularies: Genre Terms</label>
+                </option>
+                <option value="rbmspe">
+                    <label>RBMS Controlled Vocabularies: Provenance Evidence Terms</label>
+                </option>
+                <option value="rbmsppe">
+                    <label>RBMS Controlled Vocabularies: Printing and Publishing Terms</label>
+                </option>
+                <option value="rbmspt">
+                    <label>RBMS Controlled Vocabularies: Paper Terms</label>
+                </option>
+                <option value="rbmsrd">
+                    <label>RBMS Controlled Vocabularies: Relationship Designators</label>
+                </option>
+                <option value="rbmste">
+                    <label>RBMS Controlled Vocabularies: Type Evidence</label>
+                </option>
+                <option value="rid">
+                    <label>ResearcherID</label>
+                </option>
+                <option value="rkda">
+                    <label>RKDartists&amp;</label>
+                </option>
+                <option value="saam">
+                    <label>Smithsonian American Art Museum</label>
+                </option>
+                <option value="scholaru">
+                    <label>Scholar Universe</label>
+                </option>
+                <option value="scope">
+                    <label>Scope</label>
+                </option>
+                <option value="scopus">
+                    <label>Scopus Author Identifier</label>
+                </option>
+                <option value="sici">
+                    <label>Serial Item and Contribution Identifier</label>
+                </option>
+                <option value="snac">
+                    <label>Social Networks and Archival Context</label>
+                </option>
+                <option value="spotify">
+                    <label>Spotify</label>
+                </option>
+                <option value="sprfbsb">
+                    <label>Sports Reference: Baseball</label>
+                </option>
+                <option value="sprfbsk">
+                    <label>Sports Reference: Basketball</label>
+                </option>
+                <option value="sprfcbb">
+                    <label>Sports Reference: College Basketball</label>
+                </option>
+                <option value="sprfcfb">
+                    <label>Sports Reference: College Football</label>
+                </option>
+                <option value="sprfhoc">
+                    <label>Sports Reference: Hockey</label>
+                </option>
+                <option value="sprfoly">
+                    <label>Sports Reference: Olympic Sports</label>
+                </option>
+                <option value="sprfpfb">
+                    <label>Sports Reference: Pro Football</label>
+                </option>
+                <option value="stock-number">
+                    <label>Publisher, distributor, or vendor stock number</label>
+                </option>
+                <option value="strn">
+                    <label>Standard Technical Report Number</label>
+                </option>
+                <option value="stw">
+                    <label>Standard-Thesaurus Wirtschaft = STW thesaurus for economics</label>
+                </option>
+                <option value="svfilm">
+                    <label>Svensk Filmdatabas</label>
+                </option>
+                <option value="tatearid">
+                    <label>Tate Artist Identifier</label>
+                </option>
+                <option value="theatr">
+                    <label>Theatricalia</label>
+                </option>
+                <option value="trove">
+                    <label>Trove</label>
+                </option>
+                <option value="unescot">
+                    <label>UNESCO thesaurus</label>
+                    <label lang="fr">Thésaurus de l'UNESCO</label>
+                    <label lang="es">Tesauro de la UNESCO</label>
+                </option>
+                <option value="upc">
+                    <label>Universal Product Code</label>
+                </option>
+                <option value="uri">
+                    <label>Uniform Resource Identifier</label>
+                </option>
+                <option value="urn">
+                    <label>Uniform Resource Name</label>
+                </option>
+                <option value="vd16">
+                    <label>Verzeichnis der Drucke des 16. Jahrhunderts</label>
+                </option>
+                <option value="vd17">
+                    <label>Verzeichnis der Drucke des 17. Jahrhunderts</label>
+                </option>
+                <option value="vd18">
+                    <label>Verzeichnis der Drucke des 18. Jahrhunderts</label>
+                </option>
+                <option value="vgmdb">
+                    <label>VGMdb artists </label>
+                </option>
+                <option value="viaf">
+                    <label>Virtual International Authority File number</label>
+                </option>
+                <option value="videorecording-identifier">
+                    <label>Publisher-assigned videorecording number</label>
+                </option>
+                <option value="wikidata">
+                    <label>Wikidata</label>
+                </option>
+                <option value="wndla">
+                    <label>Web NDL Authorities</label>
+                </option>
+                <option value="ysopai">
+                    <label>YSO-paikat</label>
+                </option>
+                <option value="xgamea">
+                    <label>X Games Athletes</label>
+                </option>
+            </key>
+
+            <key id="invalid">
+                <label>Invalid</label>
+                <label lang="de">Ungültig</label>
+                <codomain type="boolean"/>
+                <option value="yes">
+                    <label>Syntactically wrong or outdated</label>
+                    <label lang="de">Formal falsch oder inzwischen ungültig</label>
+                </option>
+            </key>
+
+            <key id="value">
+                <label>Value</label>
+                <label lang="de">Wert</label>
             </key>
         </key>
 
@@ -3607,10 +4161,10 @@
         </restriction>
 
         <restriction key="classification">
-            <key id="authority" maxOccurs="1"/>
-            <key id="authorityURI" maxOccurs="1"/>
-            <key id="valueURI" maxOccurs="1"/>
-            <key id="value" minOccurs="1" maxOccurs="1"/>
+            <permit key="authority" maxOccurs="1"/>
+            <permit key="authorityURI" maxOccurs="1"/>
+            <permit key="valueURI" maxOccurs="1"/>
+            <permit key="value" minOccurs="1" maxOccurs="1"/>
         </restriction>
 
         <restriction key="relatedItem">
@@ -3634,6 +4188,12 @@
                 </permit>
                 <permit key="descriptionStandard" maxOccurs="1"/>
             </permit>
+        </restriction>
+
+        <restriction key="identifier">
+            <permit key="type" minOccurs="1" maxOccurs="1"/>
+            <permit key="invalid" maxOccurs="1"/>
+            <permit key="value" minOccurs="1" maxOccurs="1"/>
         </restriction>
 
     </correlation>
