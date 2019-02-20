@@ -13,19 +13,24 @@ package org.kitodo.dataformat.access;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
 public class FileXmlElementAccess {
@@ -116,10 +121,12 @@ public class FileXmlElementAccess {
      * @param mediaUnitIDs
      *            map with the assigned identifier for each media unit to form
      *            the link pairs of the struct link section
+     * @param mets
+     *            the METS structure in which the meta-data is added
      * @return a new {@code <div>} element for this media unit
      */
     DivType toDiv(Map<URI, FileType> mediaFilesToIDFiles,
-            Map<MediaUnit, String> mediaUnitIDs) {
+            Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
 
         DivType div = new DivType();
         String divId = mediaUnit.getDivId();
@@ -133,6 +140,21 @@ public class FileXmlElementAccess {
             Fptr fptr = new Fptr();
             fptr.setFILEID(mediaFilesToIDFiles.get(use.getValue()));
             div.getFptr().add(fptr);
+        }
+        Optional<MdSecType> optionalDmdSec = DivXmlElementAccess.createMdSec(mediaUnit.getMetadata(), MdSec.DMD_SEC);
+        String metsReferrerId = UUID.randomUUID().toString();
+        if (optionalDmdSec.isPresent()) {
+            MdSecType dmdSec = optionalDmdSec.get();
+            String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
+            dmdSec.setID(UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)).toString());
+            mets.getDmdSec().add(dmdSec);
+            div.getDMDID().add(dmdSec);
+        }
+        Optional<AmdSecType> optionalAmdSec = DivXmlElementAccess.createAmdSec(mediaUnit.getMetadata(), metsReferrerId,
+            div);
+        if (optionalAmdSec.isPresent()) {
+            AmdSecType admSec = optionalAmdSec.get();
+            mets.getAmdSec().add(admSec);
         }
         return div;
     }

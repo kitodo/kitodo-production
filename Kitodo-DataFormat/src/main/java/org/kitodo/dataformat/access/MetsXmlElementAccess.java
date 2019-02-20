@@ -44,6 +44,7 @@ import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr;
@@ -236,7 +237,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         mets.setFileSec(generateFileSec(mediaFilesToIDFiles));
 
         Map<MediaUnit, String> mediaUnitIDs = new HashMap<>();
-        mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, mediaUnitIDs));
+        mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, mediaUnitIDs, mets));
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
@@ -356,22 +357,24 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            In this map, the function returns the assigned identifier for
      *            each media unit so that the link pairs of the struct link
      *            section can be formed later.
+     * @param mets
+     *            the METS structure in which the meta-data is added
      * @return the physical struct map
      */
     private StructMapType generatePhysicalStructMap(
-            Map<URI, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs) {
+            Map<URI, FileType> mediaFilesToIDFiles, Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
         StructMapType physical = new StructMapType();
         physical.setTYPE("PHYSICAL");
         physical.setDiv(
-            generatePhysicalStructMapRecursive(workpiece.getMediaUnit(), mediaFilesToIDFiles, mediaUnitIDs));
+            generatePhysicalStructMapRecursive(workpiece.getMediaUnit(), mediaFilesToIDFiles, mediaUnitIDs, mets));
         return physical;
     }
 
     private DivType generatePhysicalStructMapRecursive(MediaUnit mediaUnit, Map<URI, FileType> mediaFilesToIDFiles,
-            Map<MediaUnit, String> mediaUnitIDs) {
-        DivType div = new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs);
+            Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
+        DivType div = new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs, mets);
         for (MediaUnit child : mediaUnit.getChildren()) {
-            div.getDiv().add(new FileXmlElementAccess(child).toDiv(mediaFilesToIDFiles, mediaUnitIDs));
+            div.getDiv().add(new FileXmlElementAccess(child).toDiv(mediaFilesToIDFiles, mediaUnitIDs, mets));
         }
         return div;
     }
