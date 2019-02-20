@@ -147,6 +147,15 @@ public class LanguageForm implements Serializable {
     }
 
     /**
+     * Get the name of the current language.
+     * @return the name of the language as String
+     */
+    public String getCurrentLanguageTranslated() {
+        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        return locale.getDisplayLanguage(locale);
+    }
+
+    /**
      * The procedure switchLanguage is used to alter the application’s interface
      * language.
      *

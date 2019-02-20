@@ -262,23 +262,24 @@ body.first-visit #portal-header {
 
 #header-nav li ul li {
     background-color: var(--light-gray);
+    display: block;
     }
 
-#header-nav li ul li a, #header-nav li ul li div {
-    padding: 12px 15px;
+#header-nav li ul li a,
+#header-nav li ul li div {
     color: var(--carbon-blue);
     text-decoration: none !important;
     display: block;
-    border-top: 1px solid var(--cloudy-gray);
-    }
+    line-height: 36px;
+}
 
 #header-nav li ul li a i {
     color: inherit;
 }
 
-#header-nav li ul li:hover a {
+#header-nav #dashboard-menu + ul li:hover a {
     background-color: var(--carbon-blue) !important;
-    color: var(--pure-white);
+    color: #fff;
     border-color: var(--carbon-blue) !important;
     }
 
@@ -318,11 +319,54 @@ body.first-visit #portal-header {
     font-weight: 400;
     }
 
-#header-nav #nav-user li.color-orange a {
+#header-nav #nav-user h3 {
+    padding: 32px 0 10px 0;
+}
+
+#nav-user li {
+    border-bottom: solid 1px var(--cloudy-gray);
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+#nav-user label {
+    line-height: 36px;
+}
+
+#nav-user li label {
+    float: left;
+}
+
+#nav-user #language i,
+#nav-user #sessionClient i {
+    color: var(--blue);
+    font-weight: bold;
+}
+
+#nav-user li.logout {
     background-color: var(--orange);
-    border-color: var(--orange);
+    border: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+#nav-user li.logout a {
+    border: solid 1px var(--pure-white);
+    border-radius: 3px;
     color: var(--pure-white);
-    }
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 10px;
+}
+
+#nav-user li.logout a:hover {
+    background: var(--focused-orange);
+}
+
+#nav-user li.logout a i {
+    margin-left: 10px;
+}
 
 #header-nav #nav-user li.toggle-list {
     background-color: var(--cloudy-gray);
@@ -1823,11 +1867,6 @@ min 700px
     #header-nav h3 {
         font-size: 22px;
         padding: 30px;
-        }
-
-    #header-nav li ul li a, #header-nav li ul li div,
-    #header-nav li ul li table {
-       padding: 12px 30px;
         }
 
     #header-nav li ul li.nav-pic-text a,
