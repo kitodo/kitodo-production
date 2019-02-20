@@ -367,9 +367,4 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }).collect(Collectors.toList()));
         return structLink;
     }
-
-    @Override
-    public String toString() {
-        return id + ", " + structure;
-    }
 }

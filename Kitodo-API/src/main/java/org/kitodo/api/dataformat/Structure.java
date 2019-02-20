@@ -173,4 +173,9 @@ public class Structure {
     public Collection<View> getViews() {
         return views;
     }
+
+    @Override
+    public String toString() {
+        return type + " \"" + label + "\"";
+    }
 }

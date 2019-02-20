@@ -173,11 +173,6 @@ public class DivXmlElementAccess extends Structure {
                             .collect(Collectors.toList()));
     }
 
-    @Override
-    public String toString() {
-        return type + " \"" + label + "\"";
-    }
-
     /**
      * Creates a METS {@code <div>} element from this structure.
      * 
