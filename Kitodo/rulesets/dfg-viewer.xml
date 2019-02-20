@@ -1329,6 +1329,11 @@
             <label lang="de">Zusammenfassung</label>
         </key>
 
+        <key id="note">
+            <label>General information</label>
+            <label lang="de">Kommentar</label>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
