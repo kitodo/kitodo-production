@@ -3266,6 +3266,153 @@
             </key>
         </key>
 
+        <key id="relatedItem">
+            <label>Related resource</label>
+            <label lang="de">Beziehungsangaben</label>
+
+            <key id="type">
+                <label>Type</label>
+                <label lang="de">Typ</label>
+
+                <option value="host">
+                    <label>Host or parent resource</label>
+                    <label lang="de">Übergeordnete Einheit</label>
+                </option>
+                <option value="preceding">
+                    <label>Predecessor to the resource</label>
+                    <label lang="de">Frühere Veröffentlichung</label>
+                </option>
+                <option value="succeeding">
+                    <label>Successor to the resource</label>
+                    <label lang="de">Spätere Veröffentlichung</label>
+                </option>
+                <option value="series">
+                    <label>Series in which the resource is issued</label>
+                    <label lang="de">Schriftenreihe</label>
+                </option>
+                <option value="original">
+                    <label>Original form of the resource</label>
+                    <label lang="de">Ursprung eines Derivats</label>
+                </option>
+            </key>
+
+            <key id="titleInfo">
+                <label>Title information</label>
+                <label lang="de">Titelangaben</label>
+
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+    
+                    <option value="abbreviated">
+                        <label>Title as abbreviated</label>
+                        <label lang="de">Abgekürzter Titel</label>
+                    </option>
+                    <option value="translated">
+                        <label>Translation or transcription</label>
+                        <label lang="de">Paralleltitel oder übersetzter Titel</label>
+                    </option>
+                    <option value="alternative">
+                        <label>Varying form of the title</label>
+                        <label lang="de">Abweichende Titelform</label>
+                    </option>
+                    <option value="uniform">
+                        <label>Uniform title </label>
+                        <label lang="de">Normtitel</label>
+                    </option>
+                </key>
+    
+                <key id="authorityURI">
+                    <label>URI of the controlled vocabulary</label>
+                    <label lang="de">URI der Normdatei</label>
+                    <codomain type="anyURI"/>
+                </key>
+    
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI des Sachtitels</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="part">
+                <label>Physical part</label>
+                <label lang="de">Zählung</label>
+
+                <key id="detail">
+                    <label>Numbering</label>
+
+                    <key id="type">
+                        <label>Type</label>
+                        <label lang="de">Typ</label>
+        
+                        <option value="volume">
+                            <label lang="de">Band</label>
+                        </option>
+                        <option value="issue">
+                            <label lang="de">Heft</label>
+                        </option>
+                        <option value="chapter">
+                            <label lang="de">Kapitel</label>
+                        </option>
+                        <option value="collection">
+                            <label lang="de">Bestand</label>
+                        </option>
+                        <option value="class">
+                            <label lang="de">Gliederungsebene</label>
+                        </option>
+                        <option value="series">
+                            <label lang="de">Serie</label>
+                        </option>
+                        <option value="file">
+                            <label lang="de">Ebene</label>
+                        </option>
+                    </key>
+
+                    <key id="number">
+                        <label>Actual number</label>
+                    </key>
+                </key>
+            </key>
+
+            <key id="recordInfo">
+                <label>Information about the metadata record</label>
+                <label lang="de">Ressource</label>
+                
+                <key id="recordIdentifier">
+                    <label>System control number</label>
+                    <label lang="de">Identifier</label>
+                    
+                    <key id="source">
+                        <label>Organization</label>
+                        <label lang="de">Organisation</label>
+                        
+                        <option value="marcorg">
+                            <label>MARC Code List for Organizations</label>
+                        </option>
+                        <option value="oclcorg">
+                            <label>OCLC Participating Institutions</label>
+                        </option>
+                    </key>
+
+                    <key id="value">
+                        <label>Value</label>
+                        <label lang="de">Wert</label>
+                    </key>
+                </key>
+
+                <key id="descriptionStandard">
+                    <label>Rules used</label>
+                    <label lang="de">Erschließungsstandard</label>
+                </key>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -3464,6 +3611,29 @@
             <key id="authorityURI" maxOccurs="1"/>
             <key id="valueURI" maxOccurs="1"/>
             <key id="value" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="relatedItem">
+            <permit key="type" maxOccurs="1"/>
+            <permit key="titleInfo">
+                <permit key="type" maxOccurs="1"/>
+                <permit key="authorityURI" maxOccurs="1"/>
+                <permit key="valueURI" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="part" maxOccurs="1">
+                <permit key="detail" minOccurs="1">
+                    <permit key="type" maxOccurs="1"/>
+                    <permit key="number" minOccurs="1" maxOccurs="1"/>
+                </permit>
+            </permit>
+            <permit key="recordInfo">
+            <permit key="recordIdentifier" minOccurs="1" maxOccurs="1">
+                    <permit key="source" maxOccurs="1"/>
+                    <permit key="value" minOccurs="1" maxOccurs="1"/>
+                </permit>
+                <permit key="descriptionStandard" maxOccurs="1"/>
+            </permit>
         </restriction>
 
     </correlation>
