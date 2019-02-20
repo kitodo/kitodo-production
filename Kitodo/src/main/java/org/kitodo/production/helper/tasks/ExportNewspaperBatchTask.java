@@ -47,8 +47,6 @@ import org.kitodo.production.services.ServiceManager;
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
 
-    private static final String CANNOT_DETERMINE_POSITION = "Cannot determine position to place {} correctly because the "
-            + "sorting criterion of one of its siblings is \"{}\", but must be numeric.";
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
     /**
@@ -550,7 +548,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                             && Objects.nonNull(aforeborn.getDocStructType().getName())
                                     ? aforeborn.getDocStructType().getName()
                                     : "cross-reference";
-                    logger.warn(CANNOT_DETERMINE_POSITION, typeName, metadataElement.getValue());
+                    logger.warn(Helper.getTranslation("cannotDeterminePosition"), typeName, metadataElement.getValue());
                     continue;
                 }
                 if (parseInt >= rank) {
