@@ -84,8 +84,9 @@ public class FileXmlElementAccess {
             }
         }
         mediaUnit.getMediaFiles().putAll(mediaFiles);
-        if (Objects.nonNull(div.getORDER())) {
-            mediaUnit.setOrder(div.getORDER().intValue());
+        BigInteger order = div.getORDER();
+        if (Objects.nonNull(order)) {
+            mediaUnit.setOrder(order.intValue());
         }
         mediaUnit.setOrderlabel(div.getORDERLABEL());
         for (Object mdSec : div.getDMDID()) {
