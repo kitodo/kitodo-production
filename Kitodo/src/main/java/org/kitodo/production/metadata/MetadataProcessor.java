@@ -59,6 +59,8 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -1664,6 +1666,29 @@ public class MetadataProcessor {
     }
 
     /**
+     * Returns the list of trees for the document structure. In order to display
+     * superordinate structures above the root node of the actual structure tree
+     * and that the whole looks the same, a list of trees is generated. Each
+     * tree has only one node for a higher-level structure. The last list entry
+     * is always the actual structure tree for the document.
+     *
+     * @return the list of trees
+     */
+    public Iterable<TreeNode> getTrees() {
+        List<TreeNode> result = new ArrayList<>();
+        LegacyMetsModsDigitalDocumentHelper legacyMetsModsDigitalDocumentHelper = digitalDocument;
+        for (LinkedStructure linkedStructure : legacyMetsModsDigitalDocumentHelper.getWorkpiece().getUplinks()) {
+            DefaultTreeNode elder = new DefaultTreeNode("Invisble container node", null);
+            TreeNode node = new DefaultTreeNode(
+                    legacyMetsModsDigitalDocumentHelper.createRootLegacyLogicalDocStructHelper(linkedStructure), elder);
+            node.setSelected(selectedTreeNode != null && selectedTreeNode.equals(node));
+            result.add(setExpandingAll(elder, true));
+        }
+        result.add(getTreeNodes());
+        return result;
+    }
+
+    /**
      * Gets logicalTopstruct of digital document as full expanded TreeNode
      * structure.
      *
@@ -1672,7 +1697,7 @@ public class MetadataProcessor {
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
         Structure structure = this.gdzfile.getWorkpiece().getStructure();
-        List<Structure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
+        List<ExistingOrLinkedStructure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
         TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getStructure(), root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
@@ -1691,22 +1716,25 @@ public class MetadataProcessor {
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertStructureToPrimeFacesTreeNode(List<Structure> elements, TreeNode parentTreeNode) {
+    private TreeNode convertStructureToPrimeFacesTreeNode(List<ExistingOrLinkedStructure> elements,
+            TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
-        for (Structure element : elements) {
+        for (ExistingOrLinkedStructure element : elements) {
 
             treeNode = new DefaultTreeNode(element, parentTreeNode);
             if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element)) {
                 treeNode.setSelected(true);
             }
-            List<Structure> children = element.getChildren();
-            Collection<View> pages = element.getViews();
-            if (Objects.nonNull(children)) {
-                convertStructureToPrimeFacesTreeNode(children, treeNode);
-            }
-            if (Objects.nonNull(pages)) {
-                convertViewToPrimeFacesTreeNode(pages, treeNode);
+            if (element instanceof Structure) {
+                List<ExistingOrLinkedStructure> children = ((Structure) element).getChildren();
+                Collection<View> pages = ((Structure) element).getViews();
+                if (Objects.nonNull(children)) {
+                    convertStructureToPrimeFacesTreeNode(children, treeNode);
+                }
+                if (Objects.nonNull(pages)) {
+                    convertViewToPrimeFacesTreeNode(pages, treeNode);
+                }
             }
         }
         return treeNode;
@@ -2243,7 +2271,7 @@ public class MetadataProcessor {
             try (Stream<Path> imagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
                 logger.info("Creating thumbnails from {} to {}", fullsizePath, thumbnailPath);
                 Thumbnails.of(
-                    (File[]) imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
+                    imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
                             .filter(path -> path.toString().endsWith(".png")).map(Path::toFile).toArray(File[]::new))
                         .size(60, 100).outputFormat("png")
                         .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
@@ -2637,7 +2665,7 @@ public class MetadataProcessor {
                     continue;
                 }
                 String author = "<i>" + parts[0] + "</i>";
-                String comment = String.join(":", (String[]) Arrays.copyOfRange(parts, 1, parts.length));
+                String comment = String.join(":", Arrays.copyOfRange(parts, 1, parts.length));
                 comments[i] = author + ":" + comment;
             }
             return comments;
