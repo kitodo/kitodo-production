@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
@@ -170,10 +171,15 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
-            return new LegacyLogicalDocStructHelper(new Structure(), null, ruleset, priorityList);
+            return createRootLegacyLogicalDocStructHelper(new Structure());
         } else {
             return new LegacyInnerPhysicalDocStructHelper();
         }
+    }
+
+    public LegacyLogicalDocStructHelper createRootLegacyLogicalDocStructHelper(
+            ExistingOrLinkedStructure existingOrLinkedStructure) {
+        return new LegacyLogicalDocStructHelper(existingOrLinkedStructure, null, ruleset, priorityList);
     }
 
     /**
