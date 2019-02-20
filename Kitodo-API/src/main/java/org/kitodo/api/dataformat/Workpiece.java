@@ -123,6 +123,16 @@ public class Workpiece {
     }
 
     /**
+     * Sets the media unit of the workpiece.
+     * 
+     * @param mediaUnit
+     *            media unit to set
+     */
+    public void setMediaUnit(MediaUnit mediaUnit) {
+        this.mediaUnit = mediaUnit;
+    }
+
+    /**
      * Sets the structure of the workpiece.
      * 
      * @param structure
