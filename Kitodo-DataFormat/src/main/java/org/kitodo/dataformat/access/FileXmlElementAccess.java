@@ -18,11 +18,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
+import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
@@ -80,8 +82,13 @@ public class FileXmlElementAccess {
         if (Objects.nonNull(div.getORDER())) {
             mediaUnit.setOrder(div.getORDER().intValue());
         }
-        if (Objects.nonNull(div.getORDERLABEL())) {
-            mediaUnit.setOrderlabel(div.getORDERLABEL());
+        mediaUnit.setOrderlabel(div.getORDERLABEL());
+        for (Object mdSec : div.getDMDID()) {
+            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
+        }
+        for (Object mdSec : div.getADMID()) {
+            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSec,
+                DivXmlElementAccess.amdSecTypeOf(mets, (MdSecType) mdSec)));
         }
     }
 
@@ -118,7 +125,9 @@ public class FileXmlElementAccess {
         String divId = mediaUnit.getDivId();
         div.setID(divId);
         mediaUnitIDs.put(mediaUnit, divId);
-        div.setORDER(BigInteger.valueOf(mediaUnit.getOrder()));
+        if (mediaUnit.getOrder() > 0) {
+            div.setORDER(BigInteger.valueOf(mediaUnit.getOrder()));
+        }
         div.setORDERLABEL(mediaUnit.getOrderlabel());
         for (Entry<MediaVariant, URI> use : mediaUnit.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();

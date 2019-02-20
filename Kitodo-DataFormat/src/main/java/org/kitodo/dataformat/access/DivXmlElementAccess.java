@@ -100,10 +100,10 @@ public class DivXmlElementAccess extends Structure {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSec : div.getDMDID()) {
-            readMetadata((MdSecType) mdSec, MdSec.DMD_SEC);
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
         }
         for (Object mdSec : div.getADMID()) {
-            readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec));
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec)));
         }
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
@@ -137,7 +137,7 @@ public class DivXmlElementAccess extends Structure {
      *            determined
      * @return the type of administrative meta-data section
      */
-    private final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
+    static final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
         for (AmdSecType amdSec : mets.getAmdSec()) {
             if (amdSec.getSourceMD().contains(mdSec)) {
                 return MdSec.SOURCE_MD;
@@ -159,8 +159,9 @@ public class DivXmlElementAccess extends Structure {
      *            meta-data section to be read
      * @param mdSecType
      *            type of meta-data section
+     * @return
      */
-    private final void readMetadata(MdSecType mdSec, MdSec mdSecType) {
+    static final Collection<Metadata> readMetadata(MdSecType mdSec, MdSec mdSecType) {
         Collection<Metadata> metadata = new HashSet<>();
         for (Object object : mdSec.getMdWrap().getXmlData().getAny()) {
             if (object instanceof JAXBElement) {
@@ -177,7 +178,7 @@ public class DivXmlElementAccess extends Structure {
                 }
             }
         }
-        super.getMetadata().addAll(metadata);
+        return metadata;
     }
 
     /**
