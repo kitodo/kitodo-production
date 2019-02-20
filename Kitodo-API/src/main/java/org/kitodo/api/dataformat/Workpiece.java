@@ -13,7 +13,6 @@ package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,11 +36,10 @@ public class Workpiece {
     private String id;
 
     /**
-     * The media units that belong to this workpiece. The order of this
-     * collection is meaningful, but only describes the order in which the media
-     * units are displayed on the workstation of the compiler.
+     * The media unit that belongs to this workpiece. The media unit can have
+     * children, such as a bound book that can have pages.
      */
-    private List<MediaUnit> mediaUnits = new LinkedList<>();
+    private MediaUnit mediaUnit = new MediaUnit();
 
     /**
      * The logical structure.
@@ -96,12 +94,23 @@ public class Workpiece {
     }
 
     /**
-     * Returns the media units of this workpiece.
+     * Returns the media unit of this workpiece.
      * 
      * @return the media units
      */
+    public MediaUnit getMediaUnit() {
+        return mediaUnit;
+    }
+
+    /**
+     * Returns the media units of this workpiece.
+     * 
+     * @return the media units
+     * @deprecated Use {@code getMediaUnit().getChildren()}.
+     */
+    @Deprecated
     public List<MediaUnit> getMediaUnits() {
-        return mediaUnits;
+        return mediaUnit.getChildren();
     }
 
     /**
