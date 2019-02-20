@@ -86,7 +86,8 @@
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
         <p:menuitem value="#{msgs.projectEdit}" rendered="#{not empty ProjectForm.project.title}"/>
-        <p:menuitem value="#{msgs.newProject}" rendered="#{empty ProjectForm.project.folders}"/>
+        <p:menuitem value="#{msgs.newProject}"
+                    rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}"/>
         <p:menuitem value="#{msgs.duplicateProject}"
                     rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
     </ui:define>
