@@ -59,8 +59,9 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
-        <li><a href="">#{msgs.batchProperties}</a></li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.processes}" url="processes.jsf"/>
+        <p:menuitem value="#{msgs.batchProperties}"/>
     </ui:define>
+
 </ui:composition>

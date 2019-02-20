@@ -61,9 +61,10 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.template}" outcome="projects"/></li>
-        <li><h:link value="#{msgs.editTemplate}" outcome="templateEdit?id=#{TemplateForm.template.id}"/></li>
-        <li><a href="">#{msgs.taskDetails}</a></li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.template}" url="projects.jsf"/>
+        <p:menuitem value="#{msgs.editTemplate}" url="templateEdit.jsf?id=#{TemplateForm.template.id}"/>
+        <p:menuitem value="#{msgs.taskDetails}"/>
     </ui:define>
+
 </ui:composition>

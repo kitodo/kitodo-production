@@ -89,13 +89,10 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
-        <li>
-            <a href="">
-                <h:outputText value="#{msgs.rulesetEdit}" rendered="#{RulesetForm.ruleset.id ne null}"/>
-                <h:outputText value="#{msgs.createNewRuleset}" rendered="#{RulesetForm.ruleset.id eq null}"/>
-            </a>
-        </li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
+        <p:menuitem value="#{msgs.rulesetEdit}" rendered="#{RulesetForm.ruleset.id ne null}"/>
+        <p:menuitem value="#{msgs.createNewRuleset}" rendered="#{RulesetForm.ruleset.id eq null}"/>
     </ui:define>
+
 </ui:composition>

@@ -77,20 +77,11 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.users}" outcome="users"/></li>
-        <li>
-            <a href="">
-                <ui:fragment rendered="#{isEditMode}">
-                    #{msgs.roleEdit}
-                </ui:fragment>
-                <ui:fragment rendered="#{isCreateMode}">
-                    #{msgs.newRole}
-                </ui:fragment>
-                <ui:fragment rendered="#{isViewMode}">
-                    #{msgs.roleView}
-                </ui:fragment>
-            </a>
-        </li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.users}" url="users.jsf"/>
+        <p:menuitem value="#{msgs.roleEdit}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.newRole}" rendered="#{isCreateMode}"/>
+        <p:menuitem value="#{msgs.roleView}" rendered="#{isViewMode}"/>
     </ui:define>
+
 </ui:composition>

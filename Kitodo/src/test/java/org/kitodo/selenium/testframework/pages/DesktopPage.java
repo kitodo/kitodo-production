@@ -44,11 +44,11 @@ public class DesktopPage extends Page<DesktopPage> {
     private WebElement statisticsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(xpath = "//a[@href='/kitodo/pages/desktop.jsf']")
+    @FindBy(xpath = "//a[@href='desktop.jsf']")
     private WebElement desktopLink;
 
     public DesktopPage() {
-        super("pages/desktop.jsf");
+        super("desktop.jsf");
     }
 
     @Override

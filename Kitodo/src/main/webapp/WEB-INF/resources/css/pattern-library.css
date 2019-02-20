@@ -36,6 +36,9 @@
     --task-open: #f4ffa1;
     --task-blocked: #f94a15;
 
+    --default-double-size: 32px;
+    --default-full-size: 16px;
+    --default-half-size: 8px;
     --input-height: 36px;
     --input-padding: 10px;
     --input-padding-none: 0;

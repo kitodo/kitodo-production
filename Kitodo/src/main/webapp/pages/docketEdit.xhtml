@@ -84,17 +84,10 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
-        <li>
-            <a href="">
-                <ui:fragment rendered="#{not empty DocketForm.myDocket.title}">
-                    #{msgs.editDocket}
-                </ui:fragment>
-                <ui:fragment rendered="#{empty DocketForm.myDocket.title}">
-                    #{msgs.newDocket}
-                </ui:fragment>
-            </a>
-        </li>
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
+        <p:menuitem value="#{msgs.editDocket}" rendered="#{not empty DocketForm.myDocket.title}"/>
+        <p:menuitem value="#{msgs.newDocket}" rendered="#{empty DocketForm.myDocket.title}"/>
     </ui:define>
+
 </ui:composition>
