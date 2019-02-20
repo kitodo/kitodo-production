@@ -513,8 +513,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * Returns the index of the child to insert between its siblings depending
      * on its rank. A return value of {@code null} will indicate that no
      * position could be determined which will cause
-     * {@link LegacyDocStructHelperInterface#addChild(Integer, LegacyDocStructHelperInterface)} to
-     * simply append the new child at the end.
+     * {@link LegacyDocStructHelperInterface#addChild(Integer, LegacyDocStructHelperInterface)}
+     * to simply append the new child at the end.
      *
      * @param siblings
      *            brothers and sisters of the child to add
@@ -524,7 +524,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            rank of the child to insert
      * @return the index position to insert the child
      */
-    private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType, Integer rank) {
+    private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType,
+            Integer rank) {
         int result = 0;
 
         if (Objects.isNull(siblings) || Objects.isNull(rank)) {
@@ -564,14 +565,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             }
         }
         return result;
-    }
-
-    private static int[] _f(List<LegacyMetadataHelper> allMetadata) {
-        if (allMetadata == null) {
-            return new int[0];
-        }
-        // TODO Auto-generated method stub
-        return null;
     }
 
     /**
