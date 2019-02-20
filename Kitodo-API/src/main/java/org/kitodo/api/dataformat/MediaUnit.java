@@ -12,8 +12,14 @@
 package org.kitodo.api.dataformat;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.kitodo.api.Metadata;
 
 public class MediaUnit {
     /**
@@ -21,6 +27,12 @@ public class MediaUnit {
      * a media file is available. This is in this map.
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
+
+    /**
+     * The meta-data for this media unit. This media unit can be described with
+     * any meta-data.
+     */
+    private Collection<Metadata> metadata = new HashSet<>();
 
     /**
      * Sequence number of the media unit. The playback order of the media units
@@ -38,6 +50,23 @@ public class MediaUnit {
     private String orderlabel;
 
     /**
+     * The subordinate media units of this media unit, which form the media unit
+     * tree. The order of the substructures is subordinate media units by the
+     * order of the {@code <div>} elements in the
+     * {@code <structMap TYPE="PHYSICAL">} in the METS file.
+     */
+    private List<MediaUnit> subordinateUnits = new LinkedList<>();
+
+    /**
+     * Returns the subordinate media units associated with this media unit.
+     * 
+     * @return the subordinate media units
+     */
+    public List<MediaUnit> getChildren() {
+        return subordinateUnits;
+    }
+
+    /**
      * Returns the map of available media variants with the corresponding media
      * file URIs.
      * 
@@ -45,6 +74,15 @@ public class MediaUnit {
      */
     public Map<MediaVariant, URI> getMediaFiles() {
         return mediaFiles;
+    }
+
+    /**
+     * Returns the meta-data on this structure.
+     * 
+     * @return the meta-data
+     */
+    public Collection<Metadata> getMetadata() {
+        return metadata;
     }
 
     /**
