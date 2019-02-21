@@ -24,13 +24,13 @@ class DeclarationElement {
     /**
      * The declared divisions.
      */
-    @XmlElement(name = "division", required = true)
+    @XmlElement(name = "division", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
     private List<Division> divisions = new LinkedList<>();
 
     /**
      * The declared keys.
      */
-    @XmlElement(name = "key")
+    @XmlElement(name = "key", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Key> keys = new LinkedList<>();
 
     /**

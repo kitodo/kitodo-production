@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -11,7 +11,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<namespace about="http://test.example/testValidationByCodomainNamespace">
+<namespace xmlns="http://names.kitodo.org/ruleset/v2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../main/resources/ruleset.xsd"
+           about="http://test.example/testValidationByCodomainNamespace">
     <option value="http://test.example/testValidationByCodomainNamespace#val1"/>
     <option value="http://test.example/testValidationByCodomainNamespace#val2"/>
     <option value="http://test.example/testValidationByCodomainNamespace#val3"/>

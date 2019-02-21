@@ -30,7 +30,7 @@ class SubdivisionByDateElement {
     /**
      * Divisions to structure the temporal course.
      */
-    @XmlElement(name = "division", required = true)
+    @XmlElement(name = "division", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
     private List<Division> divisions;
 
     List<Division> getDivisions() {
