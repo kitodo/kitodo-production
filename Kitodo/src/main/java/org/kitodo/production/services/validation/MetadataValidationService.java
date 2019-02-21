@@ -42,9 +42,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.data.RulesetService;
-import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -102,11 +99,7 @@ public class MetadataValidationService {
      */
     private static final String MESSAGE_VALUE_TOO_RARE = "metadataNotEnoughElements";
 
-    private final ProcessService processService = ServiceManager.getProcessService();
-    private final RulesetService rulesetService = ServiceManager.getRulesetService();
-    private final UserService userService = ServiceManager.getUserService();
-
-    private MetadataValidationInterface metadataValidation;
+    private final MetadataValidationInterface metadataValidation;
 
     public MetadataValidationService() {
         metadataValidation = getValidationModule();
@@ -134,10 +127,10 @@ public class MetadataValidationService {
      */
     @Deprecated
     public boolean validate(Process process) {
-        LegacyPrefsHelper prefs = rulesetService.getPreferences(process.getRuleset());
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
-            gdzfile = processService.readMetadataFile(process);
+            gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
@@ -217,7 +210,7 @@ public class MetadataValidationService {
                 messages.add(Helper.getTranslation(MESSAGE_IDENTIFIER_INVALID, Arrays.asList(workpieceId)));
                 error = true;
             }
-            List<ProcessDTO> processDTOs = processService.findAll().parallelStream()
+            List<ProcessDTO> processDTOs = ServiceManager.getProcessService().findAll().parallelStream()
                     .filter(processDTO -> workpieceId.equals(String.valueOf(processDTO.getId())))
                     .collect(Collectors.toList());
             if (processDTOs.size() > 1) {
@@ -238,7 +231,7 @@ public class MetadataValidationService {
      * @return the meta-data language
      */
     private List<LanguageRange> getMetadataLanguage() {
-        User user = userService.getAuthenticatedUser();
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
         String metadataLanguage = user != null ? user.getMetadataLanguage()
                 : Helper.getRequestParameter("Accept-Language");
         return LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");
