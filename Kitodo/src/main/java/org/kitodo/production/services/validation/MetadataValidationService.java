@@ -28,9 +28,10 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
+import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -45,6 +46,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.data.UserService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class MetadataValidationService {
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
@@ -104,6 +106,23 @@ public class MetadataValidationService {
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
     private final UserService userService = ServiceManager.getUserService();
 
+    private MetadataValidationInterface metadataValidation;
+
+    public MetadataValidationService() {
+        metadataValidation = getValidationModule();
+    }
+
+    /**
+     * Loads the module for long-term archival validation.
+     * 
+     * @return the loaded module
+     */
+    private MetadataValidationInterface getValidationModule() {
+        KitodoServiceLoader<MetadataValidationInterface> loader = new KitodoServiceLoader<>(
+                MetadataValidationInterface.class);
+        return loader.loadModule();
+    }
+
     /**
      * Validate.
      *
@@ -149,7 +168,7 @@ public class MetadataValidationService {
     }
 
     public ValidationResult validate(URI metsFileUri, URI rulesetFileUri) {
-        return ServiceManager.getMetadataValidationService().validate(metsFileUri, FileService.getCurrentLockingUser(),
+        return metadataValidation.validate(metsFileUri, FileService.getCurrentLockingUser(),
             rulesetFileUri, getMetadataLanguage(), getTranslations());
     }
 
@@ -164,12 +183,12 @@ public class MetadataValidationService {
      * @throws DataException
      *             if an error occurs while reading from the search engine
      */
-    private ValidationResult validate(MetsXmlElementAccessInterface workpiece, RulesetManagementInterface ruleset)
+    private ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
             throws DataException {
 
         Collection<ValidationResult> results = new ArrayList<>();
         results.add(checkTheIdentifier(workpiece));
-        results.add(ServiceManager.getMetadataValidationService().validate(workpiece, ruleset, getMetadataLanguage(),
+        results.add(metadataValidation.validate(workpiece, ruleset, getMetadataLanguage(),
             getTranslations()));
         return merge(results);
     }
@@ -183,7 +202,7 @@ public class MetadataValidationService {
      * @throws DataException
      *             if an error occurs while reading from the search engine
      */
-    private ValidationResult checkTheIdentifier(MetsXmlElementAccessInterface workpiece) throws DataException {
+    private ValidationResult checkTheIdentifier(Workpiece workpiece) throws DataException {
         boolean error = false;
         boolean warning = false;
         Collection<String> messages = new HashSet<>();

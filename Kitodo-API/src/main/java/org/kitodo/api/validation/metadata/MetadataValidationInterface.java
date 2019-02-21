@@ -17,7 +17,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
@@ -71,6 +71,6 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *            {@code metadataStructureWithoutMedia}.
      * @return A validation result.
      */
-    ValidationResult validate(MetsXmlElementAccessInterface workpiece, RulesetManagementInterface ruleset,
+    ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset,
             List<LanguageRange> metadataLanguage, Map<String, String> translations);
 }

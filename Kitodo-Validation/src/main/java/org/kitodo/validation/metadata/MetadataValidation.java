@@ -36,18 +36,19 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.mets.AreaXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.DivXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.FileXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataGroupXmlElementAccessInterface;
-import org.kitodo.api.dataformat.mets.MetadataXmlElementAccessInterface;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.LockResult;
@@ -99,14 +100,14 @@ public class MetadataValidation implements MetadataValidationInterface {
     public ValidationResult validate(URI metsFileUri, String lockingUser, URI rulesetFileUri,
             List<LanguageRange> metadataLanguage, Map<String, String> translations) {
         try {
-            MetsXmlElementAccessInterface workpiece = createMetsXmlElementAccess();
             FileManagementInterface fileManagement = getFileManagement();
             Map<URI, LockingMode> requests = new HashMap<>(2);
             requests.put(metsFileUri, LockingMode.IMMUTABLE_READ);
+            Workpiece workpiece;
             try (LockResult lockResult = fileManagement.tryLock(lockingUser, requests)) {
                 if (lockResult.isSuccessful()) {
                     try (InputStream in = fileManagement.read(metsFileUri, lockResult)) {
-                        workpiece.read(in);
+                        workpiece = createMetsXmlElementAccess().read(in);
                     }
                 } else {
                     throw new IOException(createLockErrorMessage(metsFileUri, lockResult));
@@ -122,7 +123,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     }
 
     @Override
-    public ValidationResult validate(MetsXmlElementAccessInterface workpiece, RulesetManagementInterface ruleset,
+    public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset,
             List<LanguageRange> metadataLanguage, Map<String, String> translations) {
 
         Collection<ValidationResult> results = new ArrayList<>();
@@ -130,17 +131,17 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (DivXmlElementAccessInterface structure : treeStream(workpiece.getStructMap(),
-            DivXmlElementAccessInterface::getChildren).collect(Collectors.toList())) {
+        for (Structure structure : treeStream(workpiece.getStructure(), Structure::getChildren)
+                .collect(Collectors.toList())) {
             StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(), null,
                 metadataLanguage);
             results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
                 structure.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType)),
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
                 divisionView, structure.toString().concat(": "), translations));
             results.add(checkForDetailsInTheMetadataRecursive(
                 structure.getMetadata().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType)),
+                        .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
                 divisionView, structure.toString().concat(": "), translations));
         }
 
@@ -156,14 +157,14 @@ public class MetadataValidation implements MetadataValidationInterface {
      *            workpiece to be examined
      * @return the validation result
      */
-    private static ValidationResult checkForStructuresWithoutMedia(MetsXmlElementAccessInterface workpiece,
+    private static ValidationResult checkForStructuresWithoutMedia(Workpiece workpiece,
             Map<String, String> translations) {
         boolean error = false;
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructMap(),
-            DivXmlElementAccessInterface::getChildren).filter(structure -> structure.getAreas().isEmpty())
+        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructure(), Structure::getChildren)
+                .filter(structure -> structure.getViews().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
         if (!structuresWithoutMedia.isEmpty()) {
@@ -171,9 +172,9 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (treeStream(workpiece.getStructMap(), DivXmlElementAccessInterface::getChildren)
-                .flatMap(structure -> structure.getAreas().stream()).map(AreaXmlElementAccessInterface::getFile)
-                .filter(workpiece.getFileGrp()::contains).findAny().isPresent()) {
+        if (treeStream(workpiece.getStructure(), Structure::getChildren)
+                .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
+                .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -189,18 +190,18 @@ public class MetadataValidation implements MetadataValidationInterface {
      *            workpiece to be examined
      * @return the validation result
      */
-    private static ValidationResult checkForUnlinkedMedia(MetsXmlElementAccessInterface workpiece,
+    private static ValidationResult checkForUnlinkedMedia(Workpiece workpiece,
             Map<String, String> translations) {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        KeySetView<FileXmlElementAccessInterface, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
-        unassignedMediaUnits.addAll(workpiece.getFileGrp());
-        treeStream(workpiece.getStructMap(), DivXmlElementAccessInterface::getChildren)
-                .flatMap(structure -> structure.getAreas().stream()).map(AreaXmlElementAccessInterface::getFile)
+        KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
+        unassignedMediaUnits.addAll(workpiece.getMediaUnits());
+        treeStream(workpiece.getStructure(), Structure::getChildren).flatMap(structure -> structure.getViews().stream())
+                .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {
-            for (FileXmlElementAccessInterface mediaUnit : unassignedMediaUnits) {
+            for (MediaUnit mediaUnit : unassignedMediaUnits) {
                 messages.add(translations.get(MESSAGE_MEDIA_UNASSIGNED) + ' ' + mediaUnit);
             }
             warning = true;
@@ -223,12 +224,12 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return the validation result
      */
     private static ValidationResult checkForMandatoryQuantitiesOfTheMetadataRecursive(
-            Map<MetadataAccessInterface, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
+            Map<Metadata, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        for (Entry<MetadataViewInterface, Collection<MetadataAccessInterface>> metadataViewWithValues : squash(
+        for (Entry<MetadataViewInterface, Collection<Metadata>> metadataViewWithValues : squash(
             containingMetadataView.getSortedVisibleMetadata(containedMetadata, Collections.emptyList())).entrySet()) {
 
             MetadataViewInterface metadataView = metadataViewWithValues.getKey();
@@ -251,11 +252,11 @@ public class MetadataValidation implements MetadataValidationInterface {
             }
 
             if (metadataView instanceof ComplexMetadataViewInterface) {
-                for (MetadataAccessInterface metadata : metadataViewWithValues.getValue()) {
-                    if (metadata instanceof MetadataGroupXmlElementAccessInterface) {
+                for (Metadata metadata : metadataViewWithValues.getValue()) {
+                    if (metadata instanceof MetadataGroup) {
                         ValidationResult validationResult = checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                            ((MetadataGroupXmlElementAccessInterface) metadata).getMetadata().parallelStream()
-                                    .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType)),
+                            ((MetadataGroup) metadata).getGroup().parallelStream()
+                                    .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
                             (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                             translations);
                         if (validationResult.getState().equals(State.WARNING)) {
@@ -289,31 +290,31 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return the validation result
      */
     private static ValidationResult checkForDetailsInTheMetadataRecursive(
-            Map<MetadataAccessInterface, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
+            Map<Metadata, String> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
         boolean error = false;
         Collection<String> messages = new HashSet<>();
 
         Collection<String> result = new ArrayList<>();
-        List<MetadataViewWithValuesInterface<MetadataAccessInterface>> metadataViewsWithValues = containingMetadataView
+        List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues = containingMetadataView
                 .getSortedVisibleMetadata(containedMetadata, Collections.emptyList());
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> metadataViewWithValues : metadataViewsWithValues) {
+        for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
             MetadataViewInterface metadataView = metadataViewWithValues.getMetadata()
                     .orElseThrow(IllegalStateException::new);
-            for (MetadataAccessInterface metadata : metadataViewWithValues.getValues()) {
-                if (metadata instanceof MetadataXmlElementAccessInterface
+            for (Metadata metadata : metadataViewWithValues.getValues()) {
+                if (metadata instanceof MetadataEntry
                         && metadataView instanceof SimpleMetadataViewInterface) {
-                    String value = ((MetadataXmlElementAccessInterface) metadata).getValue();
+                    String value = ((MetadataEntry) metadata).getValue();
                     if (!((SimpleMetadataViewInterface) metadataView).isValid(value)) {
                         result.add(MessageFormat.format(translations.get(MESSAGE_VALUE_INVALID),
                             Arrays.asList(value, location + metadataView.getLabel())));
                         error = true;
                     }
-                } else if (metadata instanceof MetadataGroupXmlElementAccessInterface
+                } else if (metadata instanceof MetadataGroup
                         && metadataView instanceof ComplexMetadataViewInterface) {
                     ValidationResult validationResult = checkForDetailsInTheMetadataRecursive(
-                        ((MetadataGroupXmlElementAccessInterface) metadata).getMetadata().parallelStream()
-                                .collect(Collectors.toMap(Function.identity(), MetadataAccessInterface::getType)),
+                        ((MetadataGroup) metadata).getGroup().parallelStream()
+                                .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                         translations);
                     if (validationResult.getState().equals(State.ERROR)) {
@@ -369,10 +370,10 @@ public class MetadataValidation implements MetadataValidationInterface {
      *            list of meta-data view objects, each with their value
      * @return merged lines of identical type
      */
-    private static Map<MetadataViewInterface, Collection<MetadataAccessInterface>> squash(
-            List<MetadataViewWithValuesInterface<MetadataAccessInterface>> metadataViewsWithValues) {
-        Map<MetadataViewInterface, Collection<MetadataAccessInterface>> squashed = new HashMap<>();
-        for (MetadataViewWithValuesInterface<MetadataAccessInterface> metadataViewWithValues : metadataViewsWithValues) {
+    private static Map<MetadataViewInterface, Collection<Metadata>> squash(
+            List<MetadataViewWithValuesInterface<Metadata>> metadataViewsWithValues) {
+        Map<MetadataViewInterface, Collection<Metadata>> squashed = new HashMap<>();
+        for (MetadataViewWithValuesInterface<Metadata> metadataViewWithValues : metadataViewsWithValues) {
             Optional<MetadataViewInterface> optionalMetadataView = metadataViewWithValues.getMetadata();
             if (!optionalMetadataView.isPresent()) {
                 continue;
