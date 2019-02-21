@@ -4030,6 +4030,35 @@
             </key>
         </key>
 
+            <key id="part">
+                <label>Physical part</label>
+                <label lang="de">Zählung</label>
+
+                <key id="order">
+                    <label>XXXX</label>
+                    <label lang="de">Zahl</label>
+                    <codomain type="integer"/>
+                </key>
+
+                <key id="detail">
+                    <label>Numbering</label>
+
+                    <key id="type">
+                        <label>Type</label>
+                        <label lang="de">Typ</label>
+        
+                        <option value="volume"/>
+                        <option value="issue"/>
+                        <option value="chapter"/>
+                        <option value="album"/>
+                    </key>
+
+                    <key id="number">
+                        <label>Actual number</label>
+                    </key>
+                </key>
+            </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -4266,6 +4295,14 @@
                 <permit key="value" minOccurs="1" maxOccurs="1"/>
             </permit>
             <permit key="shelfLocator" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="part">
+            <permit key="order" minOccurs="1" maxOccurs="1"/>
+            <permit key="detail" minOccurs="1">
+                <permit key="type" maxOccurs="1"/>
+                <permit key="number" minOccurs="1" maxOccurs="1"/>
+            </permit>
         </restriction>
 
     </correlation>
