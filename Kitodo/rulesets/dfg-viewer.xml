@@ -4025,42 +4025,72 @@
             </key>
 
             <key id="shelfLocator">
-                <label>XXXX</label>
+                <label>Shelfmark</label>
                 <label lang="de">Signatur</label>
             </key>
         </key>
 
-            <key id="part">
-                <label>Physical part</label>
-                <label lang="de">Zählung</label>
+        <key id="part">
+            <label>Physical part</label>
+            <label lang="de">Zählung</label>
 
-                <key id="order">
-                    <label>XXXX</label>
-                    <label lang="de">Zahl</label>
-                    <codomain type="integer"/>
+            <key id="order">
+                <label>Sequence of parts</label>
+                <label lang="de">Positive Zahl</label>
+                <codomain type="integer"/>
+                <pattern>0*?[1-9][0-9]*</pattern>
+            </key>
+
+            <key id="detail">
+                <label>Numbering</label>
+
+                <key id="type">
+                    <label>Type</label>
+                    <label lang="de">Typ</label>
+    
+                    <option value="volume"/>
+                    <option value="issue"/>
+                    <option value="chapter"/>
+                    <option value="album"/>
                 </key>
 
-                <key id="detail">
-                    <label>Numbering</label>
+                <key id="number">
+                    <label>Actual number</label>
+                </key>
+            </key>
+        </key>
 
-                    <key id="type">
-                        <label>Type</label>
-                        <label lang="de">Typ</label>
-        
-                        <option value="volume"/>
-                        <option value="issue"/>
-                        <option value="chapter"/>
-                        <option value="album"/>
-                    </key>
+        <key id="recordInfo">
+            <label>Information about the metadata record</label>
+            <label lang="de">Ressource</label>
+            
+            <key id="recordIdentifier">
+                <label>System control number</label>
+                <label lang="de">Identifier</label>
+                
+                <key id="source">
+                    <label>Organization</label>
+                    <label lang="de">Organisation</label>
+                    
+                    <option value="marcorg">
+                        <label>MARC Code List for Organizations</label>
+                    </option>
+                    <option value="oclcorg">
+                        <label>OCLC Participating Institutions</label>
+                    </option>
+                </key>
 
-                    <key id="number">
-                        <label>Actual number</label>
-                    </key>
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
                 </key>
             </key>
 
-        <!-- TODO: add more keys here here -->
-
+            <key id="descriptionStandard">
+                <label>Rules used</label>
+                <label lang="de">Erschließungsstandard</label>
+            </key>
+        </key>
     </declaration>
 
     <correlation>
@@ -4274,7 +4304,7 @@
                 </permit>
             </permit>
             <permit key="recordInfo">
-            <permit key="recordIdentifier" minOccurs="1" maxOccurs="1">
+                <permit key="recordIdentifier" minOccurs="1" maxOccurs="1">
                     <permit key="source" maxOccurs="1"/>
                     <permit key="value" minOccurs="1" maxOccurs="1"/>
                 </permit>
@@ -4303,6 +4333,14 @@
                 <permit key="type" maxOccurs="1"/>
                 <permit key="number" minOccurs="1" maxOccurs="1"/>
             </permit>
+        </restriction>
+
+        <restriction key="recordInfo">
+            <permit key="recordIdentifier" minOccurs="1" maxOccurs="1">
+                <permit key="source" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="descriptionStandard" maxOccurs="1"/>
         </restriction>
 
     </correlation>
