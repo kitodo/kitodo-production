@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<!-- An example how the perhaps simplest variant of a rule set might look like.
+     It has only the declaration section. With this rule set, only books
+     can be described. For each book author, year, title, publisher and place
+     of publication can be recorded.
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
+    <declaration>
+        <division id="book">
+            <label>Book</label>
+            <label lang="de">Buch</label>
+            <label lang="fr">Livre</label>
+        </division>
+        <key id="publicationYear">
+            <label>Publication year</label>
+            <codomain type="integer"/>
+        </key>
+        <key id="language">
+            <label>Language</label>
+            <codomain namespace="http://id.loc.gov/vocabulary/iso639-2/"/>
+        </key>
+        <key id="titleDocMain">
+            <label>Main title</label>
+        </key>
+        <key id="publisherName">
+            <label>Publisher</label>
+        </key>
+        <key id="placeOfPublication">
+            <label>Place of publication</label>
+        </key>
+    </declaration>
+</ruleset>
