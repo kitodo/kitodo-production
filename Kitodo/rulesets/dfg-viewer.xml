@@ -3967,6 +3967,69 @@
             </key>
         </key>
 
+        <key id="location">
+            <label>Resource holder</label>
+            <label lang="de">Aufbewahrungsort</label>
+
+            <key id="physicalLocation">
+                <label>Institution or repository</label>
+                <label lang="de">Physischer Ort</label>
+                
+                <key id="authorityURI">
+                    <label>URI of the controlled vocabulary</label>
+                    <label lang="de">URI der Normdatei</label>
+                    <codomain type="anyURI"/>
+                </key>
+    
+                <key id="valueURI">
+                    <label>URI identifying the value from a controlled vocabulary</label>
+                    <label lang="de">URI der Organisation</label>
+                    <codomain type="anyURI"/>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                </key>
+            </key>
+
+            <key id="url">
+                <label>URL</label>
+                <label lang="de">Virtueller Ort</label>
+
+                <key id="access">
+                    <label>Type of resource</label>
+                    <label lang="de">Ressourcentypus</label>
+
+                    <option value="preview">
+                        <label>A thumbnail or snippet</label>
+                        <label lang="de">Eine Vorschau</label>
+                    </option>
+                    <option value="raw object">
+                        <label>Link to the object</label>
+                        <label lang="de">Das beschriebene Objekt</label>
+                    </option>
+                    <option value="object in context">
+                        <label>Link to the object in its environment</label>
+                        <label lang="de">Objekt in einem Kontext</label>
+                    </option>
+                </key>
+
+                <key id="value">
+                    <label>Value</label>
+                    <label lang="de">Wert</label>
+                    <codomain type="anyURI"/>
+                    <pattern>https?://</pattern>
+                    <preset>https://</preset>
+                </key>
+            </key>
+
+            <key id="shelfLocator">
+                <label>XXXX</label>
+                <label lang="de">Signatur</label>
+            </key>
+        </key>
+
         <!-- TODO: add more keys here here -->
 
     </declaration>
@@ -4194,6 +4257,15 @@
             <permit key="type" minOccurs="1" maxOccurs="1"/>
             <permit key="invalid" maxOccurs="1"/>
             <permit key="value" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+
+        <restriction key="location">
+            <permit key="physicalLocation" maxOccurs="1"/>
+            <permit key="url">
+                <permit key="access" maxOccurs="1"/>
+                <permit key="value" minOccurs="1" maxOccurs="1"/>
+            </permit>
+            <permit key="shelfLocator" maxOccurs="1"/>
         </restriction>
 
     </correlation>
