@@ -11,7 +11,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<namespace about="http://id.loc.gov/vocabulary/iso639-2/">
+<namespace xmlns="http://names.kitodo.org/ruleset/v2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../Kitodo-DataEditor/src/main/resources/ruleset.xsd"
+           about="http://id.loc.gov/vocabulary/iso639-2/">
     <option value="http://id.loc.gov/vocabulary/iso639-2/aar">
         <label>Afar</label>
         <label lang="fr">afar</label>

@@ -89,6 +89,15 @@
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:element name="namespace">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="option" minOccurs="0" maxOccurs="unbounded" type="ruleset:Option"/>
+            </xs:sequence>
+            <xs:attribute type="xs:anyURI" name="about"/>
+        </xs:complexType>
+    </xs:element>
+
     <xs:complexType name="Option">
         <xs:sequence>
             <xs:element name="label" minOccurs="0" maxOccurs="unbounded" type="ruleset:Label"/>
