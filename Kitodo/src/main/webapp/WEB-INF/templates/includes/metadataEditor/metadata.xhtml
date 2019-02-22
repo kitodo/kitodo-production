@@ -17,6 +17,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToEditProcess()}"/>
     <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
 

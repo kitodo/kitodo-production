@@ -55,7 +55,7 @@ public class SecurityAccessService {
 
     /**
      * Gets Authentication object of current threads security context.
-     * 
+     *
      * @return authentication object
      */
     private Authentication getCurrentAuthentication() {
@@ -79,7 +79,7 @@ public class SecurityAccessService {
 
     /**
      * Checks if there is currently an authenticated user.
-     * 
+     *
      * @return true if there is currently an authenticated user
      */
     public boolean isAuthenticated() {
@@ -727,5 +727,59 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToConfigureColumns() {
         return hasAuthorityGlobalOrForClient("configureColumns");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process metadata.
+     *
+     * @return true if the current user has the authority to edit the process metadata
+     */
+    public boolean hasAuthorityToEditProcessMetaData() {
+        return hasAuthorityForClient("editProcessMetaData");
+    }
+
+    /**
+     * Check if the current user has the authority to view the process metadata.
+     *
+     * @return true if the current user has the authority to view the process metadata
+     */
+    public boolean hasAuthorityToViewProcessMetaData() {
+        return hasAuthorityForClient("viewProcessMetaData");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process structure data.
+     *
+     * @return true if the current user has the authority to edit the process structure data
+     */
+    public boolean hasAuthorityToEditProcessStructureData() {
+        return hasAuthorityForClient("editProcessStructureData");
+    }
+
+    /**
+     * Check if the current user has the authority to view the process structure data.
+     *
+     * @return true if the current user has the authority to view the process structure data
+     */
+    public boolean hasAuthorityToViewProcessStructureData() {
+        return hasAuthorityForClient("viewProcessStructureData");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process images.
+     *
+     * @return true if the current user has the authority to edit the process images
+     */
+    public boolean hasAuthorityToEditProcessImages() {
+        return hasAuthorityForClient("editProcessImages");
+    }
+
+    /**
+     * Check if the current user has the authority to view the process images.
+     *
+     * @return true if the current user has the authority to view the process images
+     */
+    public boolean hasAuthorityToViewProcessImages() {
+        return hasAuthorityForClient("viewProcessImages");
     }
 }

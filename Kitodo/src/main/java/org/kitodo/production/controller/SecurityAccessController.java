@@ -446,7 +446,7 @@ public class SecurityAccessController {
     /**
      * Check if current user has authority to view process page. It returns true if
      * user has at least one of below given authorities.
-     * 
+     *
      * @return true if user has authority 'viewAllProcesses' or 'viewAllBatches' for
      *         client
      */
@@ -457,7 +457,7 @@ public class SecurityAccessController {
     /**
      * Check if current user has authority to view project page. It returns true if
      * user has at least one of below given authorities.
-     * 
+     *
      * @return true if user has authority 'viewAllProjects' or 'viewAllTemplates' or
      *         'viewAllWorkflows' or 'viewAllDockets' or 'viewAllRulestes' for
      *         client
@@ -649,5 +649,59 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToConfigureColumns() {
         return securityAccessService.hasAuthorityToConfigureColumns();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process metadata.
+     *
+     * @return true if the current user has the authority to edit the process metadata
+     */
+    public boolean hasAuthorityToEditProcessMetaData() {
+        return securityAccessService.hasAuthorityToEditProcessMetaData();
+    }
+
+    /**
+     * Check if the current user has the authority to view the process metadata.
+     *
+     * @return true if the current user has the authority to view the process metadata
+     */
+    public boolean hasAuthorityToViewProcessMetaData() {
+        return securityAccessService.hasAuthorityToViewProcessMetaData();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process structure data.
+     *
+     * @return true if the current user has the authority to edit the process structure data
+     */
+    public boolean hasAuthorityToEditProcessStructureData() {
+        return securityAccessService.hasAuthorityToEditProcessStructureData();
+    }
+
+    /**
+     * Check if the current user has the authority to view the process structure data.
+     *
+     * @return true if the current user has the authority to view the process structure data
+     */
+    public boolean hasAuthorityToViewProcesStructureData() {
+        return securityAccessService.hasAuthorityToViewProcessStructureData();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the process images.
+     *
+     * @return true if the current user has the authority to edit the process images
+     */
+    public boolean hasAuthorityToEditProcessImages() {
+        return securityAccessService.hasAuthorityToEditProcessImages();
+    }
+
+    /**
+     * Check if the current user has the authority to view the process images.
+     *
+     * @return true if the current user has the authority to view the process images
+     */
+    public boolean hasAuthorityToViewProcesImages() {
+        return securityAccessService.hasAuthorityToViewProcessImages();
     }
 }
