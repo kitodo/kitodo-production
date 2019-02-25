@@ -44,7 +44,7 @@ public class FileXmlElementAccess {
     /**
      * Constructor for developing a media unit from a METS {@code <div>}
      * element.
-     * 
+     *
      * @param div
      *            METS {@code <div>} element to be evaluated
      * @param mets
@@ -77,8 +77,12 @@ public class FileXmlElementAccess {
             }
         }
         mediaUnit.getMediaFiles().putAll(mediaFiles);
-        mediaUnit.setOrder(div.getORDER().intValue());
-        mediaUnit.setOrderlabel(div.getORDERLABEL());
+        if (Objects.nonNull(div.getORDER())) {
+            mediaUnit.setOrder(div.getORDER().intValue());
+        }
+        if (Objects.nonNull(div.getORDERLABEL())) {
+            mediaUnit.setOrderlabel(div.getORDERLABEL());
+        }
     }
 
     FileXmlElementAccess(MediaUnit mediaUnit) {
@@ -98,7 +102,7 @@ public class FileXmlElementAccess {
 
     /**
      * Creates a new METS {@code <div>} element for this media unit.
-     * 
+     *
      * @param mediaFilesToIDFiles
      *            map containing the corresponding XML file element for each
      *            media unit, necessary for linking
