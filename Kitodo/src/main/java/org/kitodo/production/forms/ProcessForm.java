@@ -304,7 +304,6 @@ public class ProcessForm extends TemplateBaseForm {
             List<Process> pro = new ArrayList<>();
             pro.add(this.process);
             gs.deleteTiffHeaderFile(pro);
-            gs.updateImagePath(pro);
         }
         return true;
     }
