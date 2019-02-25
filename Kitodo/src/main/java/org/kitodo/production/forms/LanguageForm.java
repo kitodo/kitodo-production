@@ -13,7 +13,6 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -212,17 +211,6 @@ public class LanguageForm implements Serializable {
                 throw new IllegalArgumentException("Locale code is not valid");
             }
         }
-    }
-
-    /**
-     * The function getGroupingSeparator() returns the character used for
-     * thousands separator for the current locale as read-only property
-     * "groupingSeparator".
-     *
-     * @return the character used for thousands separator
-     */
-    public char getGroupingSeparator() {
-        return DecimalFormatSymbols.getInstance(getLocale()).getGroupingSeparator();
     }
 
     /**

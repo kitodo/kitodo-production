@@ -215,11 +215,9 @@ public class WorkflowForm extends BaseForm {
 
     private void saveWorkflow() {
         // TODO: Erik needs to make field inivisible in the editor
-        String decodedXMLDiagramName = decodeXMLDiagramName(this.workflow.getTitle());
         try {
-            Reader reader = new Reader(decodedXMLDiagramName);
             ServiceManager.getWorkflowService().save(this.workflow);
-        } catch (DataException | IOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
