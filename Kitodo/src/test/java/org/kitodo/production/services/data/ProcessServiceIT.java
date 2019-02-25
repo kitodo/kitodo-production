@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -146,6 +147,18 @@ public class ProcessServiceIT {
     public void shouldFindByTitle() {
         await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
             processService.findByTitle("First process", true).size()));
+    }
+
+    @Test
+    public void shouldFindByMetadata() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size()));
+    }
+
+    @Test
+    public void shouldNotFindByMetadata() {
+        await().untilAsserted(() -> assertEquals("Process was found in index!", 0,
+                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size()));
     }
 
     @Test

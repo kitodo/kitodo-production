@@ -11,6 +11,9 @@
 
 package org.kitodo.production.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
@@ -51,6 +54,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.search.join.ScoreMode;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -205,7 +209,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 if (dmdSec instanceof List) {
                     metadata = (List<Map<String, Object>>) dmdSec;
                 } else if (dmdSec instanceof Map) {
-                    metadata.add((Map<String, Object>)dmdSec);
+                    metadata.add((Map<String, Object>) dmdSec);
                 }
                 process.setMetadata(metadata);
             }
@@ -234,8 +238,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
-        return findByQuery(createUserProcessesQuery(filters),
-            getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        return findByQuery(createUserProcessesQuery(filters), getSortBuilder(sortField, sortOrder), first, pageSize,
+            false);
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
@@ -330,8 +334,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove properties if process is removed, add properties if process is
-     * marked as indexed.
+     * Remove properties if process is removed, add properties if process is marked
+     * as indexed.
      *
      * @param process
      *            object
@@ -473,6 +477,27 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     List<Map<String, Object>> findForCurrentSessionClient() throws DataException {
         return findDocuments(
             getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
+    }
+
+    /**
+     * Find processes by metadata.
+     * 
+     * @param metadata
+     *             key is metadata tag and value is metadata content
+     * @return list of ProcessDTO objects with processes for specific metadata tag
+     */
+    public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
+        String key = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        for (Map.Entry<String, String> entry : metadata.entrySet()) {
+            BoolQueryBuilder pairQuery = new BoolQueryBuilder();
+            pairQuery.must(matchQuery(key + ".name", entry.getKey()));
+            pairQuery.must(matchQuery(key + ".content", entry.getValue()));
+            query.must(pairQuery);
+        }
+
+        return findByQuery(nestedQuery(key, query, ScoreMode.Total), true);
     }
 
     /**
@@ -858,7 +883,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             null);
 
         if (Objects.isNull(tifDirectory)) {
-            tifDirectory = URI.create(result.getRawPath() + Helper.getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
+            tifDirectory = URI
+                    .create(result.getRawPath() + Helper.getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
         return tifDirectory;
@@ -1696,8 +1722,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                File successFile = new File(
-                        project.getDmsImportSuccessPath() + File.separator + Helper.getNormalizedTitle(process.getTitle()));
+                File successFile = new File(project.getDmsImportSuccessPath() + File.separator
+                        + Helper.getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
         }
@@ -1953,7 +1979,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         if (Objects.isNull(topElement.getAllToReferences("logical_physical"))
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
-            if (Objects.nonNull(dd.getPhysicalDocStruct()) && Objects.nonNull(dd.getPhysicalDocStruct().getAllChildren())) {
+            if (Objects.nonNull(dd.getPhysicalDocStruct())
+                    && Objects.nonNull(dd.getPhysicalDocStruct().getAllChildren())) {
                 Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
@@ -2057,7 +2084,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;
     }
-
 
     /**
      * Set showClosedProcesses.
@@ -2200,7 +2226,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             } else if (value instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) value;
                 List<Map<String, Object>> arrayMap = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i ++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     Map<String, Object> map = iterateOverJsonObject(jsonArray.getJSONObject(i));
                     arrayMap.add(map);
                 }
