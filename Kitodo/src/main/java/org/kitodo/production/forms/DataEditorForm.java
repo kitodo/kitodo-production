@@ -11,13 +11,20 @@
 
 package org.kitodo.production.forms;
 
+import java.io.File;
+import java.io.Serializable;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStructInterface;
-import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -28,7 +35,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
-import org.kitodo.production.metadata.MetaPerson;
+import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.metadata.MetadataImpl;
 import org.kitodo.production.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
@@ -37,18 +44,6 @@ import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.TreeNode;
-
-import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
-import javax.inject.Named;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Named("DataEditorForm")
 @ViewScoped
@@ -92,8 +87,8 @@ public class DataEditorForm implements Serializable {
     private String[] selectedPagesOfSelectedLogicalTreeNode;
 
     // metadata
-    private List<MetaPerson> metaPersonList;
-    private MetaPerson selectedPerson;
+    private List<Void> metaPersonList;
+    private Void selectedPerson;
     private String newPersonFirstName;
     private String newPersonLastName;
     private String newPersonRecord;
@@ -280,7 +275,7 @@ public class DataEditorForm implements Serializable {
     public void addNewImagesAndPaginate() {
         try {
             // TODO implement
-        } catch (IOException | PreferencesException | URISyntaxException e) {
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -302,7 +297,7 @@ public class DataEditorForm implements Serializable {
     public void applyPaginationReadFromImages() {
         try {
             // TODO implement
-        } catch (IOException e) {
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -338,11 +333,8 @@ public class DataEditorForm implements Serializable {
     public void savePerson() {
         try {
             // TODO implement
-            // use this.newPersonFirstName, this.newPersonLastName, this.newPersonRecord and this.newPersonRole to create a new Person
-        } catch (IncompletePersonObjectException e) {
-            Helper.setErrorMessage("Incomplete data for person.", logger, e);
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage("Person is for this structure not allowed.", logger, e);
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -379,9 +371,8 @@ public class DataEditorForm implements Serializable {
     public void copyMetadata() {
         try {
             // TODO implement
-            // copy current metadata in this.selectedMetadata
-        } catch (MetadataTypeNotAllowedException e) {
-            Helper.setErrorMessage("Could not copy metadata (MetadataTypeNotAllowedException)", logger, e);
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -540,7 +531,7 @@ public class DataEditorForm implements Serializable {
      * 
      * @return List of logical elements
      */
-    public List<DocStructInterface> getLogicalElementList() {
+    public List<LegacyDocStructHelperInterface> getLogicalElementList() {
         // TODO implement
         // get list of all logical structure elements
         return new ArrayList<>();
@@ -552,31 +543,39 @@ public class DataEditorForm implements Serializable {
      * @param logicalElement // TODO add param description
      * @return List of all allocated pages
      */
-    public List<DocStructInterface> getLogicalElementPageList(DocStructInterface logicalElement) {
+    public List<LegacyDocStructHelperInterface> getLogicalElementPageList(
+            LegacyDocStructHelperInterface logicalElement) {
         // TODO implement
         // get list of all pages allocated to the logicalElement
         return new ArrayList<>();
     }
 
     /**
-     * Get file path to png image for passed DocStructInterface 'page' representing a single scanned image.
+     * Get file path to png image for passed LegacyDocStructHelperInterface
+     * 'page' representing a single scanned image.
      * 
-     * @param page DocStructInterface for which the corresponding png image file path is returned
+     * @param page
+     *            LegacyDocStructHelperInterface for which the corresponding png
+     *            image file path is returned
      * @return File path to the png image
      */
-    public String getPageImageFilePath(DocStructInterface page) {
+    public String getPageImageFilePath(LegacyDocStructHelperInterface page) {
         // TODO implement
-        // like getPageImageFilePath(DocStructInterface pageDocStruct) in MetadataProcessor:2560?
+        // like getPageImageFilePath(LegacyDocStructHelperInterface
+        // pageDocStruct) in MetadataProcessor:2560?
         return "";
     }
 
     /**
-     * Get the physical page number for the passed DocStructInterface 'page'.
+     * Get the physical page number for the passed
+     * LegacyDocStructHelperInterface 'page'.
      * 
-     * @param page DocStructInterface which physical page number is returned
+     * @param page
+     *            LegacyDocStructHelperInterface which physical page number is
+     *            returned
      * @return physical page number
      */
-    public int getPhysicalPageNumber(DocStructInterface page) {
+    public int getPhysicalPageNumber(LegacyDocStructHelperInterface page) {
         // TODO implement
         return 0;
     }
@@ -587,12 +586,10 @@ public class DataEditorForm implements Serializable {
      * @param docStruct The DocStruct object
      * @return The logical page number
      */
-    public String getLogicalPageNumber(DocStructInterface docStruct) {
+    public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
         // TODO implement
         return "";
     }
-
-
 
     /**
      * Get the path to the thumbnail for the with the passed image path.
@@ -1139,16 +1136,16 @@ public class DataEditorForm implements Serializable {
      *
      * @return value of metaPersonList
      */
-    public List<MetaPerson> getMetaPersonList() {
+    public List<Void> getMetaPersonList() {
         return metaPersonList;
     }
 
     /**
      * Set metaPersonList.
      *
-     * @param metaPersonList as java.util.List<org.kitodo.production.metadata.MetaPerson>
+     * @param metaPersonList as java.util.List<org.kitodo.production.metadata.Void>
      */
-    public void setMetaPersonList(List<MetaPerson> metaPersonList) {
+    public void setMetaPersonList(List<Void> metaPersonList) {
         this.metaPersonList = metaPersonList;
     }
 
@@ -1157,16 +1154,16 @@ public class DataEditorForm implements Serializable {
      *
      * @return value of selectedPerson
      */
-    public MetaPerson getSelectedPerson() {
+    public Void getSelectedPerson() {
         return selectedPerson;
     }
 
     /**
      * Set selectedPerson.
      *
-     * @param selectedPerson as org.kitodo.production.metadata.MetaPerson
+     * @param selectedPerson as org.kitodo.production.metadata.Void
      */
-    public void setSelectedPerson(MetaPerson selectedPerson) {
+    public void setSelectedPerson(Void selectedPerson) {
         this.selectedPerson = selectedPerson;
     }
 
