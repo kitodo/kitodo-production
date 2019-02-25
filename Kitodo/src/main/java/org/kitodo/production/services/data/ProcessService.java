@@ -211,7 +211,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 process.setMetadata(metadata);
             }
         } catch (NullPointerException | IOException e) {
-            logger.error(e.getMessage(), e);
+            logger.info("File was not found: " + e.getMessage(), e);
         }
 
         super.saveToIndex(process, forceRefresh);
