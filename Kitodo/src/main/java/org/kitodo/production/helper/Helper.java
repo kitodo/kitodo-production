@@ -263,9 +263,9 @@ public class Helper implements Observer, Serializable {
      */
     private static void setMessage(String control, String message, String description, boolean onlyInfo) {
         // Never forget: Strings are immutable
-        message = message.replaceAll("<", "&lt;");
+        message = Objects.toString(message).replaceAll("<", "&lt;");
         message = message.replaceAll(">", "&gt;");
-        description = description.replaceAll("<", "&lt;");
+        description = Objects.toString(description).replaceAll("<", "&lt;");
         description = description.replaceAll(">", "&gt;");
 
         String msg = getTranslation(message);

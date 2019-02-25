@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
@@ -49,6 +50,11 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class DataEditorForm implements Serializable {
 
+    /**
+     * Indicates to JSF to navigate to the web page containing the meta-data
+     * editor.
+     */
+    private static final String PAGE_METADATA_EDITOR = "/pages/metadataEditor?faces-redirect=true";
     private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
@@ -111,6 +117,11 @@ public class DataEditorForm implements Serializable {
     private String selectedImage;
     private URI selectedTifDirectory;
 
+    /**
+     * ID of the process to open. The ID must be set previous to calling
+     * {@link #open()} by using a {@code setPropertyActionListener}.
+     */
+    private int processId;
 
     /**
      * Public constructor.
@@ -121,7 +132,28 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
+     * This method must be called to start the meta-data editor. When this
+     * method is executed, the meta-data editor is not yet open in the browser,
+     * but the previous page is still displayed. Three variables are expected to
+     * have been set in advance using property action listeners: ‘process’,
+     * ‘user’, and ‘referringView’.
+     *
+     * @return which page JSF should navigate to
+     */
+    public String open(int processId) {
+        try {
+            this.process = ServiceManager.getProcessService().getById(processId);
+            // TODO implement
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return referringView;
+        }
+        return PAGE_METADATA_EDITOR;
+    }
+
+    /**
      * Save the structure and metadata.
+     * 
      * @return navigation target
      */
     public String save() {
@@ -358,7 +390,7 @@ public class DataEditorForm implements Serializable {
 
         if (this.selectedMetadata == null) {
             getAddableMetadataTypes();
-            if (!this.newMetadataList.isEmpty()) {
+            if (Objects.nonNull(this.newMetadataList) && !this.newMetadataList.isEmpty()) {
                 this.selectedMetadata = this.newMetadataList.get(0);
             }
         }
@@ -400,17 +432,21 @@ public class DataEditorForm implements Serializable {
     }
 
     public String[] getCommentList() {
-        refreshProcess(this.process);
-        String wiki = this.process.getWikiField();
-        if (!wiki.isEmpty()) {
-            wiki = wiki.replace("</p>", "");
-            String[] comments = wiki.split("<p>");
-            if (comments[0].isEmpty()) {
-                List<String> list = new ArrayList<>(Arrays.asList(comments));
-                list.remove(list.get(0));
-                comments = list.toArray(new String[list.size()]);
+        try {
+            refreshProcess(this.process);
+            String wiki = this.process.getWikiField();
+            if (!wiki.isEmpty()) {
+                wiki = wiki.replace("</p>", "");
+                String[] comments = wiki.split("<p>");
+                if (comments[0].isEmpty()) {
+                    List<String> list = new ArrayList<>(Arrays.asList(comments));
+                    list.remove(list.get(0));
+                    comments = list.toArray(new String[list.size()]);
+                }
+                return comments;
             }
-            return comments;
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
@@ -673,12 +709,15 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Set process.
+     * Sets the ID of the process whose meta-data file is to be edited. This
+     * method must be called using a {@code setPropertyActionListener} before
+     * the meta-data editor is opened.
      *
-     * @param process as org.kitodo.data.database.beans.Process
+     * @param process
+     *            whose meta-data file is to be edited
      */
-    public void setProcess(Process process) {
-        this.process = process;
+    public void setProcessId(int processId) {
+        this.processId = processId;
     }
 
     /**
@@ -691,9 +730,12 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Set user.
+     * Sets the user running the editor. This method must be called using a
+     * {@code setPropertyActionListener} before the meta-data editor is opened
+     * to set the user.
      *
-     * @param user as org.kitodo.data.database.beans.User
+     * @param user
+     *            user object
      */
     public void setUser(User user) {
         this.user = user;
@@ -709,9 +751,13 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Set referringView.
+     * Sets the referring view. This method must be called using a
+     * {@code setPropertyActionListener} before the meta-data editor is opened
+     * to set the JSF view the user shall return to when he or she closes the
+     * editor, or when opening fails.
      *
-     * @param referringView as java.lang.String
+     * @param referringView
+     *            view to return to
      */
     public void setReferringView(String referringView) {
         this.referringView = referringView;
