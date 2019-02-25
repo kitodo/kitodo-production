@@ -26,7 +26,6 @@ public class UserGenerator {
         user.setSurname("Surname" + suffix);
         user.setLogin("UserLogin" + suffix);
         user.setLocation("MockLocation");
-        user.setMetadataLanguage("de");
 
         return user;
     }
