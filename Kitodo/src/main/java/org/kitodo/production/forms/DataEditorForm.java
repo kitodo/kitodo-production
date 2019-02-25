@@ -13,7 +13,6 @@ package org.kitodo.production.forms;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -112,10 +111,7 @@ public class DataEditorForm implements Serializable {
 
     // gallery
     private int pageIndex;
-    private int numberOfPngImages;
-    private int numberOfTifImages;
     private String selectedImage;
-    private URI selectedTifDirectory;
 
     /**
      * ID of the process to open. The ID must be set previous to calling
@@ -173,13 +169,6 @@ public class DataEditorForm implements Serializable {
     public void validate() {
         // TODO implement: validate metadata here
         Helper.setMessage("Validation result");
-    }
-
-    /**
-     * Generate PNG preview images.
-     */
-    public void generatePngs() {
-        // TODO implement: generate PNGs
     }
 
     /**
@@ -530,36 +519,6 @@ public class DataEditorForm implements Serializable {
     public List<String> getImageList() {
         // TODO implement
         return new ArrayList<>();
-    }
-
-    /**
-     * Determines whether the list of images exists and contains at least one image path.
-     * 
-     * @return List of images
-     */
-    public boolean getImageListExistent() {
-        // TODO implement
-        // call method like getImages() (MetadataProcessor:2593) to get List of image paths for PNGs
-        // return !getImages().isEmpty();
-        return false;
-    }
-
-    /**
-     * Get list of TIF directories available for this process.
-     * 
-     * @return List of URIs
-     */
-    public List<URI> getTifDirectoryList() {
-        // TODO implement
-        // get list of all available tif directories for this process
-        return new ArrayList<>();
-    }
-
-    /**
-     * TODO add javaDoc.
-     */
-    public void updateImageDirectory() {
-        // TODO implement
     }
 
     /**
@@ -1448,42 +1407,6 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get numberOfPngImages.
-     *
-     * @return value of numberOfPngImages
-     */
-    public int getNumberOfPngImages() {
-        return numberOfPngImages;
-    }
-
-    /**
-     * Set numberOfPngImages.
-     *
-     * @param numberOfPngImages as int
-     */
-    public void setNumberOfPngImages(int numberOfPngImages) {
-        this.numberOfPngImages = numberOfPngImages;
-    }
-
-    /**
-     * Get numberOfTifImages.
-     *
-     * @return value of numberOfTifImages
-     */
-    public int getNumberOfTifImages() {
-        return numberOfTifImages;
-    }
-
-    /**
-     * Set numberOfTifImages.
-     *
-     * @param numberOfTifImages as int
-     */
-    public void setNumberOfTifImages(int numberOfTifImages) {
-        this.numberOfTifImages = numberOfTifImages;
-    }
-
-    /**
      * Get selectedImage.
      *
      * @return value of selectedImage
@@ -1500,23 +1423,4 @@ public class DataEditorForm implements Serializable {
     public void setSelectedImage(String selectedImage) {
         this.selectedImage = selectedImage;
     }
-
-    /**
-     * Get selectedTifDirectory.
-     *
-     * @return value of selectedTifDirectory
-     */
-    public URI getSelectedTifDirectory() {
-        return selectedTifDirectory;
-    }
-
-    /**
-     * Set selectedTifDirectory.
-     *
-     * @param selectedTifDirectory as java.net.URI
-     */
-    public void setSelectedTifDirectory(URI selectedTifDirectory) {
-        this.selectedTifDirectory = selectedTifDirectory;
-    }
-
 }
