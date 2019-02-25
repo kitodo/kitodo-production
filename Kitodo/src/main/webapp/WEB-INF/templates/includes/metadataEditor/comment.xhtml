@@ -18,6 +18,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
     <p:panel id="commentWrapperPanel" styleClass="wrapperPanel">
         <h:form id="commentsBox">
             <p:panelGrid id="comments" columns="1" rendered="#{not MetadataProcessor.showNewComment}">
@@ -29,8 +30,11 @@
                         <h:outputText value="#{fn:replace(item,'Red K','')}"
                                       escape="false"
                                       style="width:100%;"/>
-                        <p:commandButton icon="fa fa-check" update="commentsBox"
-                                         title="test" styleClass="right" immediate="true"
+                        <p:commandButton icon="fa fa-check"
+                                         update="commentsBox"
+                                         title="test"
+                                         styleClass="right"
+                                         immediate="true"
                                          action="#{MetadataProcessor.solveProblem(item)}">
                         </p:commandButton>
                     </p:column>
@@ -52,9 +56,11 @@
                     <p:commandButton id="newButton"
                                      action="#{MetadataProcessor.setShowNewComment(true)}"
                                      icon="fa fa-plus fa-lg"
-                                     styleClass="secondary"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      title="#{msgs.newElement}"
-                                     iconPos="right" immediate="true"
+                                     iconPos="right"
+                                     immediate="true"
                                      update="commentsBox"/>
                 </p:column>
             </p:panelGrid>
@@ -64,8 +70,10 @@
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.correctionMessage}"
                                    rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"/>
-                    <p:selectBooleanCheckbox id="korrekturMeldung" value="#{MetadataProcessor.correctionComment}"
+                    <p:selectBooleanCheckbox id="korrekturMeldung"
+                                             value="#{MetadataProcessor.correctionComment}"
                                              rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"
+                                             disabled="#{readOnly}"
                                              immediate="true" style="width: 100%;">
                         <p:ajax event="change" update="commentsBox"/>
                     </p:selectBooleanCheckbox>
@@ -75,31 +83,45 @@
                     <p:inputTextarea id="addToWikiField" value="#{MetadataProcessor.addToWikiField}" style="width:100%;"/>
                 </p:column>
                 <p:column style="width: 100%;">
-                    <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
-                                     icon="fa fa-times fa-lg" iconPos="right" update="commentsBox"
-                                     styleClass="secondary-button" immediate="true">
+                    <p:commandButton value="#{msgs.cancel}"
+                                     action="#{MetadataProcessor.setShowNewComment(false)}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
+                                     update="commentsBox"
+                                     immediate="true">
                         <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
                     </p:commandButton>
                     <p:commandButton id="saveNewComment"
                                      action="#{MetadataProcessor.addToWikiField()}"
                                      value="#{msgs.save}"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      update="commentsBox"
                                      icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right" styleClass="primary-button"/>
+                                     iconPos="right"/>
                 </p:column>
 
             </p:panelGrid>
             <p:panelGrid columns="1" rendered="#{(MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.remark}"/>
-                    <p:inputTextarea style="width:100%;" value="#{MetadataProcessor.problem.message}">
+                    <p:inputTextarea style="width:100%;"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
+                                     value="#{MetadataProcessor.problem.message}">
                         <p:ajax event="change"/>
                     </p:inputTextarea>
                 </p:column>
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.backToTask}"/>
-                    <p:selectOneMenu style="width: 100%" value="#{MetadataProcessor.problem.id}">
-                        <f:selectItems value="#{MetadataProcessor.previousStepsForProblemReporting}"
+                    <p:selectOneMenu
+                            style="width: 100%;"
+                            disabled="#{readOnly}"
+                            value="#{MetadataProcessor.problem.id}">
+                        <f:selectItems
+                                value="#{MetadataProcessor.previousStepsForProblemReporting}"
                                 var="step1" itemLabel="#{step1.titleWithUserName}"
                                 itemValue="#{step1.id}"/>
                         <p:ajax event="change"/>
@@ -108,7 +130,8 @@
                 <p:column style="width: 100%;">
                     <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
                                      icon="fa fa-times fa-lg" iconPos="right" update="commentsBox" immediate="true"
-                                     styleClass="secondary-button">
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}">
                         <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
                     </p:commandButton>
                     <p:commandButton id="sendProblem"
@@ -116,6 +139,7 @@
                                      action="#{MetadataProcessor.reportProblem()}"
                                      title="#{msgs.correctionMessageSend}"
                                      immediate="true"
+                                     disabled="#{readOnly}"
                                      update="commentsBox"/>
 
                 </p:column>

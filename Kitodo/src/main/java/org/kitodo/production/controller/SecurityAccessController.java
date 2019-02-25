@@ -704,4 +704,21 @@ public class SecurityAccessController {
     public boolean hasAuthorityToViewProcesImages() {
         return securityAccessService.hasAuthorityToViewProcessImages();
     }
+
+    /**
+     * Check if the current user has the authority to open the metadata editor.
+     * Access to the metadata editor is granted if the user has the authority to view or edit data in any part of the
+     * editor.
+     *
+     * @return true if the current user has the authority to view or edit any part of the data in the metadata editor
+     */
+    public boolean hasAuthorityToOpenMetadataEditor() {
+        return securityAccessService.hasAuthorityToViewProcessMetaData()
+                || securityAccessService.hasAuthorityToEditProcessMetaData()
+                || securityAccessService.hasAuthorityToViewProcessStructureData()
+                || securityAccessService.hasAuthorityToEditProcessStructureData()
+                || securityAccessService.hasAuthorityToViewProcessImages()
+                || securityAccessService.hasAuthorityToEditProcessImages();
+
+    }
 }

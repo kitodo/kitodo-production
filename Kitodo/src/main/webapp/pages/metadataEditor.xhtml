@@ -19,6 +19,10 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
 
+        <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcesStructureData()}"/>
+        <ui:param name="viewMetadata" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData()}"/>
+        <ui:param name="viewImages" value="#{SecurityAccessController.hasAuthorityToViewProcesImages()}"/>
+
         <p:panel id="metadataEditorContainer" style="margin: auto 16px; padding: 0;">
 
             <!-- JavaScript -->
@@ -39,13 +43,19 @@
                 <div id="metadataEditorWrapper">
 
                     <!-- First Column -->
-                    <h:panelGroup class="collapsibleWrapper" id="firstColumnWrapper" a:data-min-width="200">
-                        <button type="button"
-                                onclick="toggleFirstColumn()"
-                                class="columnExpandButton">
-                            <i class="fa fa-expand fa-lg"/>
-                            <i class="fa fa-compress fa-lg"/>
-                        </button>
+                    <!-- TODO: use view-access data attribute to hide column! -->
+                    <h:panelGroup class="collapsibleWrapper"
+                                  id="firstColumnWrapper"
+                                  a:data-view-access="#{viewStructure}"
+                                  a:data-min-width="200">
+                        <ui:fragment rendered="#{viewStructure}">
+                            <button type="button"
+                                    onclick="toggleFirstColumn()"
+                                    class="columnExpandButton">
+                                <i class="fa fa-expand fa-lg"/>
+                                <i class="fa fa-compress fa-lg"/>
+                            </button>
+                        </ui:fragment>
                         <div class="columnHeadingWrapper">
                             <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
                         </div>
@@ -65,13 +75,19 @@
                     <h:panelGroup class="resizer" id="firstResizer"/>
 
                     <!-- Second Column -->
-                    <h:panelGroup class="collapsibleWrapper" id="secondColumnWrapper" a:data-min-width="200">
-                        <button type="button"
-                                onclick="toggleSecondColumn()"
-                                class="columnExpandButton">
-                            <i class="fa fa-expand fa-lg"/>
-                            <i class="fa fa-compress fa-lg"/>
-                        </button>
+                    <!-- TODO: use view-access data attribute to hide column! -->
+                    <h:panelGroup class="collapsibleWrapper"
+                                  id="secondColumnWrapper"
+                                  a:data-view-access="#{viewMetadata}"
+                                  a:data-min-width="200">
+                        <ui:fragment rendered="#{viewMetadata}">
+                            <button type="button"
+                                    onclick="toggleSecondColumn()"
+                                    class="columnExpandButton">
+                                <i class="fa fa-expand fa-lg"/>
+                                <i class="fa fa-compress fa-lg"/>
+                            </button>
+                        </ui:fragment>
 
                         <div class="columnHeadingWrapper">
                             <button id="firstSectionToggler" onclick="toggleFirstSection()">
@@ -103,13 +119,19 @@
                     <h:panelGroup class="resizer" id="secondResizer"/>
 
                     <!-- Third Column -->
-                    <h:panelGroup class="collapsibleWrapper" id="thirdColumnWrapper" a:data-min-width="400">
-                        <button type="button"
-                                onclick="toggleThirdColumn()"
-                                class="columnExpandButton">
-                            <i class="fa fa-expand fa-lg"/>
-                            <i class="fa fa-compress fa-lg"/>
-                        </button>
+                    <!-- TODO: use view-access data attribute to hide column! -->
+                    <h:panelGroup class="collapsibleWrapper"
+                                  id="thirdColumnWrapper"
+                                  a:data-view-access="#{viewImages}"
+                                  a:data-min-width="400">
+                        <ui:fragment rendered="#{viewImages}">
+                            <button type="button"
+                                    onclick="toggleThirdColumn()"
+                                    class="columnExpandButton">
+                                <i class="fa fa-expand fa-lg"/>
+                                <i class="fa fa-compress fa-lg"/>
+                            </button>
+                        </ui:fragment>
 
                         <div class="columnHeadingWrapper">
                             <h:panelGroup id="galleryHeadingWrapper">

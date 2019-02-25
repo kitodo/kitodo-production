@@ -17,10 +17,9 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToEditProcess()}"/>
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
     <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
-
             <h:panelGroup rendered="#{!empty MetadataProcessor.metaPersonList}">
                 <p:dataTable id="personTable" value="#{MetadataProcessor.metaPersonList}" var="person"
                              style="margin-bottom:30px;">
@@ -31,13 +30,18 @@
                     <p:column>
                         <p:panelGrid>
                             <p:outputLabel for="role" value="#{msgs.role}:"/>
-                            <p:selectOneMenu id="role" value="#{person.rolle}" style="width: calc(100% - 32px);">
+                            <p:selectOneMenu id="role"
+                                             value="#{person.rolle}"
+                                             disabled="#{readOnly}"
+                                             style="width: calc(100% - 32px);">
                                 <f:selectItems value="#{person.addableRollen}"/>
                                 <f:ajax event="mouseup"/>
                             </p:selectOneMenu>
 
                             <p:outputLabel for="record" value="#{msgs.normDataRecord}:"/>
                             <p:inputText value="#{person.record}"
+                                         styleClass="#{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly}"
                                          class="input"
                                          id="record">
                                 <p:ajax event="blur"/>
@@ -45,12 +49,16 @@
 
                             <p:outputLabel value="#{msgs.firstName}:"/>
                             <p:inputText value="#{person.vorname}"
+                                         styleClass="#{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly}"
                                          id="firstname">
                                 <p:ajax event="blur"/>
                             </p:inputText>
 
                             <p:outputLabel value="#{msgs.surname}:"/>
                             <p:inputText value="#{person.nachname}"
+                                         styleClass="#{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly}"
                                          id="lastname">
                                 <p:ajax event="blur"/>
                             </p:inputText>
@@ -59,14 +67,24 @@
                     </p:column>
 
                     <p:column style="width:64px;text-align: center; padding: 8px 0;" id="actionButtons">
-                        <p:commandButton update="metadata" id="deletePersonBtn" icon="fa fa-trash" immediate="true"
-                                         styleClass="secondary" title="#{msgs.personsDataDelete}"
+                        <p:commandButton update="metadata"
+                                         id="deletePersonBtn"
+                                         icon="fa fa-trash"
+                                         immediate="true"
+                                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly}"
+                                         title="#{msgs.personsDataDelete}"
                                          action="#{MetadataProcessor.deletePerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
                         </p:commandButton>
-                        <p:commandButton update="metadata:personTable" styleClass="secondary"
-                                         icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
-                                         title="#{msgs.personsDataCopy}" action="#{MetadataProcessor.copyPerson}">
+                        <p:commandButton update="metadata:personTable"
+                                         id="copyPersonBtn"
+                                         icon="fa fa-clipboard"
+                                         immediate="true"
+                                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                         disabled="#{readOnly}"
+                                         title="#{msgs.personsDataCopy}"
+                                         action="#{MetadataProcessor.copyPerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{MetadataProcessor.curPerson}"/>
                         </p:commandButton>
                     </p:column>
@@ -77,7 +95,8 @@
                                  title="#{msgs.docstructTypeAendern}"
                                  action="#{MetadataProcessor.addPerson}"
                                  style="margin-bottom: 40px;"
-                                 styleClass="secondary"
+                                 styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                 disabled="#{readOnly}"
                                  onclick="PF('dialogAddPerson').show();">
                 </p:commandButton>
             </h:panelGroup>
@@ -90,7 +109,11 @@
 
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{item.typ}"/>
-                    <p:inputTextarea value="#{item.value}" rows="2" style="width:100%;">
+                    <p:inputTextarea value="#{item.value}"
+                                     rows="2"
+                                     disabled="#{readOnly}"
+                                     styleClass="#{readOnly ? 'disabled' : ''}"
+                                     style="width:100%;">
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
                     <p:commandButton update="metadata:metadataTable"
@@ -98,7 +121,8 @@
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataDelete}"
-                                     styleClass="secondary"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      action="#{MetadataProcessor.delete}">
                         <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
                     </p:commandButton>
@@ -107,7 +131,8 @@
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataCopy}"
-                                     styleClass="secondary"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      action="#{MetadataProcessor.copy}">
                         <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
                     </p:commandButton>
@@ -120,15 +145,22 @@
 
             <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
                 <p:row>
-                    <p:selectOneMenu id="metadataTypeSelection" value="#{MetadataProcessor.tempTyp}">
+                    <p:selectOneMenu id="metadataTypeSelection"
+                                     disabled="#{readOnly}"
+                                     value="#{MetadataProcessor.tempTyp}">
                         <f:selectItems value="#{MetadataProcessor.addableMetadataTypes}"/>
                     </p:selectOneMenu>
                 </p:row>
                 <p:row>
-                    <p:inputTextarea value="#{MetadataProcessor.metadata.value}" rows="2"
+                    <p:inputTextarea value="#{MetadataProcessor.metadata.value}"
+                                     rows="2"
+                                     styleClass="#{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      style="width:83%; margin-top: 8px;"/>
-                    <p:commandButton update="metadata:metadataTable" icon="fa fa-plus"
-                                     styleClass="secondary"
+                    <p:commandButton update="metadata:metadataTable"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
                                      style="vertical-align: top; margin-left: 10px;"
                                      title="#{msgs.neueMetadatenHinzufuegen}" action="#{MetadataProcessor.save}">
                     </p:commandButton>
@@ -136,8 +168,11 @@
             </p:panelGrid>
         </h:form>
 
-        <p:dialog id="dialogAddPersonId" header="#{msgs.neuePersonAnlegen}" resizable="false"
-                  widgetVar="dialogAddPerson" modal="true"
+        <p:dialog id="dialogAddPersonId"
+                  header="#{msgs.neuePersonAnlegen}"
+                  resizable="false"
+                  widgetVar="dialogAddPerson"
+                  modal="true"
                   appendTo="@(body)">
             <h:form id="dialogAddPersonForm">
 
