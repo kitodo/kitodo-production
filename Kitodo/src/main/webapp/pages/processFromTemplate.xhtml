@@ -43,6 +43,9 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="processFromTemplateTabView" activeIndex="#{ProzesskopieForm.activeTabId}">
+            <p:tab id="importTab" title="#{msgs.queryOPAC}">
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processImport.xhtml" />
+            </p:tab>
             <p:tab id="processDataTab" title="#{msgs.processData}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processDataEdit.xhtml" />
             </p:tab>
@@ -51,9 +54,6 @@
             </p:tab>
             <p:tab id="searchTab" title="#{msgs.search}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processSearchEdit.xhtml" />
-            </p:tab>
-            <p:tab id="importTab" title="#{msgs.queryOPAC}">
-                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processImport.xhtml" />
             </p:tab>
         </p:tabView>
     </ui:define>
