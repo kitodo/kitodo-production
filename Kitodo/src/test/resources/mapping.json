@@ -135,7 +135,7 @@
                 },
                 "endDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "fileFormatDmsExport": {
@@ -245,7 +245,7 @@
                 },
                 "startDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "title": {
@@ -328,7 +328,7 @@
                 },
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "docket": {
@@ -343,9 +343,9 @@
                         }
                     }
                 },
-                "metadata": {
+                "meta": {
                     "dynamic": "false",
-                    "type": "nested",
+                    "type": "object",
                     "properties": {
                         "ID": {
                             "type": "text",
@@ -357,26 +357,54 @@
                             }
                         },
                         "mdWrap": {
-                            "type": "nested",
+                            "type": "object",
                             "properties": {
-                                "kitodo.metadata": {
-                                    "type": "nested",
+                                "MDTYPE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "xmlData": {
+                                    "type": "object",
                                     "properties": {
-                                        "name": {
-                                            "type": "text",
-                                            "fields": {
-                                                "keyword": {
-                                                    "type": "keyword",
-                                                    "ignore_above": 256
-                                                }
-                                            }
-                                        },
-                                        "content": {
-                                            "type": "text",
-                                            "fields": {
-                                                "keyword": {
-                                                    "type": "keyword",
-                                                    "ignore_above": 256
+                                        "kitodo": {
+                                            "type": "object",
+                                            "properties": {
+                                                "kitodo": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                },
+                                                "metadata": {
+                                                    "type": "nested",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "text",
+                                                            "fields": {
+                                                                "keyword": {
+                                                                    "type": "keyword",
+                                                                    "ignore_above": 256
+                                                                }
+                                                            }
+                                                        },
+                                                        "content": {
+                                                            "type": "text",
+                                                            "fields": {
+                                                                "keyword": {
+                                                                    "type": "keyword",
+                                                                    "ignore_above": 256
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -538,7 +566,7 @@
             "properties": {
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "docket": {
@@ -694,17 +722,17 @@
                 },
                 "processingTime": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "processingBegin": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "processingEnd": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "processingUser": {
@@ -784,7 +812,7 @@
             "properties": {
                 "creationDate": {
                     "type": "date",
-                    "format":"yyyy-MM-dd HH:mm:ss",
+                    "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
                 "processes": {
