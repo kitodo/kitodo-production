@@ -12,19 +12,29 @@
 package org.kitodo.production.forms;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale.LanguageRange;
 import java.util.Objects;
 
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.filemanagement.LockResult;
+import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -58,8 +68,44 @@ public class DataEditorForm implements Serializable {
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
+    /**
+     * All file system locks that the user is currently holding.
+     */
+    private LockResult lock;
+
+    /**
+     * The path to the main file, to save it later.
+     */
+    private URI mainFileUri;
+
+    /**
+     * The language preference list of the editing user for displaying the
+     * meta-data labels. We cache this because it’s used thousands of times and
+     * otherwise the access would always go through the search engine, which
+     * would delay page creation.
+     */
+    private List<LanguageRange> priorityList;
+
+    /**
+     * Process whose workpiece is under edit.
+     */
     private Process process;
+
+    /**
+     * The ruleset that the file is based on.
+     */
+    private RulesetManagementInterface ruleset;
+
+    /**
+     * User sitting in front of the editor.
+     */
     private User user;
+
+    /**
+     * The file content.
+     */
+    private Workpiece workpiece;
+
     private String referringView = "desktop";
     private String galleryViewMode = "list";
     private boolean showPagination = false;
@@ -139,12 +185,55 @@ public class DataEditorForm implements Serializable {
     public String open(int processId) {
         try {
             this.process = ServiceManager.getProcessService().getById(processId);
-            // TODO implement
+            ruleset = openRulesetFile(process.getTemplate().getRuleset().getFile());
+            if (!openMetsFile("meta.xml")) {
+                return referringView;
+            }
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
         return PAGE_METADATA_EDITOR;
+    }
+
+    /**
+     * Opens the METS file.
+     *
+     * @param fileName
+     *            file name to open
+     * @return whether successful. False, if the file cannot be locked.
+     * @throws URISyntaxException
+     *             if the file URI cannot be built (due to invalid characters in
+     *             the directory path)
+     * @throws IOException
+     *             if filesystem I/O fails
+     */
+    private boolean openMetsFile(String fileName) throws URISyntaxException, IOException {
+        URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
+        String workDirectoryPath = workPathUri.getPath();
+        mainFileUri = new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
+                workPathUri.getPort(), workDirectoryPath.endsWith("/") ? workDirectoryPath.concat(fileName)
+                        : workDirectoryPath + '/' + fileName,
+                workPathUri.getQuery(), null);
+
+        lock = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
+        if (!lock.isSuccessful()) {
+            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", lock.getConflicts().get(mainFileUri)));
+            return lock.isSuccessful();
+        }
+
+        try (InputStream in = ServiceManager.getFileService().read(mainFileUri, lock)) {
+            workpiece = ServiceManager.getMetsService().load(in);
+        }
+        return true;
+    }
+
+    private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
+        String metadataLanguage = user.getMetadataLanguage();
+        priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        ruleset.load(new File(FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName)));
+        return ruleset;
     }
 
     /**
@@ -1422,5 +1511,21 @@ public class DataEditorForm implements Serializable {
      */
     public void setSelectedImage(String selectedImage) {
         this.selectedImage = selectedImage;
+    }
+
+    /**
+     * Ensures that all locks are released when the user leaves the meta-data
+     * editor in an unusual way.
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        if (lock != null) {
+            try {
+                lock.close();
+            } catch (Throwable any) {
+                /* make sure finalize() can run through */
+            }
+        }
+        super.finalize();
     }
 }
