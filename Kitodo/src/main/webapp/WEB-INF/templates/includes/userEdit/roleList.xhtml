@@ -22,6 +22,9 @@
         <p:column headerText="#{msgs.role}">
             <h:outputText value="#{item.title}"/>
         </p:column>
+        <p:column headerText="#{msgs.client}">
+            <h:outputText value="#{item.client.name}"/>
+        </p:column>
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteFromRole"
                            rendered="#{isEditMode || isCreateMode}"
