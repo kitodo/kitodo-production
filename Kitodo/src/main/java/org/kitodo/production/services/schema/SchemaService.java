@@ -40,7 +40,6 @@ import org.kitodo.production.services.dataformat.MetsService;
 public class SchemaService {
 
     private static final MetsService METS_SERVICE = ServiceManager.getMetsService();
-    private static final MediaVariant LOCAL = new LegacyInnerPhysicalDocStructHelper().local;
 
     /**
      * Temporal method for separate file conversion from ExportMets class
@@ -99,7 +98,8 @@ public class SchemaService {
         List<Folder> folders = process.getProject().getFolders();
         Subfolder useLocalSubfolder = getUseLocalSubfolder(process);
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            String canonical = useLocalSubfolder.getCanonical(mediaUnit.getMediaFiles().get(LOCAL));
+            String canonical = useLocalSubfolder
+                    .getCanonical(mediaUnit.getMediaFiles().get(LegacyInnerPhysicalDocStructHelper.LOCAL));
             removeFLocatsForUnwantedUses(process, folders, mediaUnit, canonical);
             addMissingUses(process, folders, mediaUnit, canonical);
         }
