@@ -13,13 +13,11 @@
 -->
 
 <xsl:stylesheet version="2.0"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xmlns:goobi="http://meta.goobi.org/v1.5.1/"
                 xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:srw="http://www.loc.gov/zing/srw/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
+                xmlns:kitodo="http://meta.kitodo.org/v1/"
 >
     <xsl:output method="xml" indent="yes" encoding="utf-8"/>
     <xsl:strip-space elements="*"/>
@@ -29,13 +27,9 @@
         <xsl:for-each select="srw:record/srw:recordData">
             <mets:mdWrap MDTYPE="MODS">
                 <mets:xmlData>
-                    <mods:mods>
-                        <mods:extension>
-                            <goobi:goobi>
-                                <xsl:apply-templates select="@*|node()"/>
-                            </goobi:goobi>
-                        </mods:extension>
-                    </mods:mods>
+                    <kitodo:kitodo>
+                        <xsl:apply-templates select="@*|node()"/>
+                    </kitodo:kitodo>
                 </mets:xmlData>
             </mets:mdWrap>
         </xsl:for-each>
@@ -43,7 +37,7 @@
 
     <!-- ### TitleDocMain ### -->
     <xsl:template match="mods:mods/mods:titleInfo/mods:title">
-        <goobi:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### Author, slub_Recipient ### -->
@@ -54,59 +48,48 @@
         <xsl:variable name="first_name" select="substring-after(normalize-space(), ',')" />
         <xsl:choose>
             <xsl:when test="$role='author'">
-                <goobi:metadata name="Author" type="person">
-                    <goobi:lastName><xsl:value-of select="$last_name" /></goobi:lastName>
-                    <goobi:firstName><xsl:value-of select="$first_name" /></goobi:firstName>
-                    <goobi:displayName><xsl:value-of select="$last_name" />,<xsl:value-of select="$first_name" /></goobi:displayName>
+                <kitodo:metadataGroup name="person">
+                    <kitodo:metadata name="role">aut</kitodo:metadata>
+                    <kitodo:metadata name="lastName"><xsl:value-of select="$last_name" /></kitodo:metadata >
+                    <kitodo:metadata name="firstName"><xsl:value-of select="$first_name" /></kitodo:metadata>
+                    <kitodo:metadata name="displayName"><xsl:value-of select="$last_name" />,<xsl:value-of select="$first_name" /></kitodo:metadata>
                     <xsl:if test="$uri and contains($uri, 'gnd')">
-                        <goobi:identifier><xsl:value-of select="$uri" /></goobi:identifier>
-                        <goobi:identifierType>GND</goobi:identifierType>
+                        <kitodo:metadata name="authorityValue"><xsl:value-of select="$uri" /></kitodo:metadata >
                     </xsl:if>
-                </goobi:metadata>
-            </xsl:when>
-            <xsl:when test="$role='addressee'">
-                <goobi:metadata name="slub_Recipient" type="person">
-                    <goobi:lastName><xsl:value-of select="$last_name" /></goobi:lastName>
-                    <goobi:firstName><xsl:value-of select="$first_name" /></goobi:firstName>
-                    <goobi:displayName><xsl:value-of select="$last_name" />,<xsl:value-of select="$first_name" /></goobi:displayName>
-                    <xsl:if test="$uri and contains($uri, 'gnd')">
-                        <goobi:identifier><xsl:value-of select="$uri" /></goobi:identifier>
-                        <goobi:identifierType>GND</goobi:identifierType>
-                    </xsl:if>
-                </goobi:metadata>
+                </kitodo:metadataGroup>
             </xsl:when>
         </xsl:choose>
     </xsl:template>
 
     <!-- ### PlaceOfPublication ### -->
     <xsl:template match="mods:mods/mods:originInfo/mods:place/mods:placeTerm[@type='text']">
-        <goobi:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### PublicationYear ### -->
     <xsl:template match="mods:mods/mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
-        <goobi:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### ShelfMarkSource ### -->
     <xsl:template match="mods:mods/mods:location/mods:shelfLocator">
-        <goobi:metadata name="shelfmarksource"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="shelfmarksource"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### FormatSourcePrint ### -->
     <xsl:template match="mods:mods/mods:physicalDescription/mods:extent">
-        <goobi:metadata name="FormatSourcePrint"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="FormatSourcePrint"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### CatalogIDDigital ### -->
     <xsl:template match="mods:mods/mods:recordInfo/mods:recordIdentifier">
-        <goobi:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <kitodo:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
     <!-- ### slub_link, slub_linktext ### -->
     <xsl:template match="mods:mods/mods:location/mods:url">
-        <goobi:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></goobi:metadata>
-        <goobi:metadata name="slub_linktext">Katalognachweis</goobi:metadata>
+        <kitodo:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
+        <kitodo:metadata name="slub_linktext">Katalognachweis</kitodo:metadata>
     </xsl:template>
 
     <!-- pass-through rule -->

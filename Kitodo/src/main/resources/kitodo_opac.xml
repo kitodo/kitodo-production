@@ -46,11 +46,6 @@
         </type>
     </doctypes>
 
-    <catalogue title="ZDB">
-        <config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)"
-                iktlist="IKTLIST-ZDB.xml" port="80"/>
-    </catalogue>
-
     <catalogue title="GBV" description="Gemeinsamer Bibliotheksverbund">
         <interfaceType>sru</interfaceType>
         <returnFormat>xml</returnFormat>

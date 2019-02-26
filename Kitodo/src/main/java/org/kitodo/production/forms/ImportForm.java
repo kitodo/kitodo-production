@@ -28,6 +28,7 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 @Named("ImportForm")
@@ -39,6 +40,7 @@ public class ImportForm implements Serializable {
     private String selectedField;
     private String searchTerm;
     private SearchResult searchResult;
+    private static final String KITODO_NAMESPACE = "http://meta.kitodo.org/v1/";
 
     /**
      * Getter for selectedCatalog.
@@ -183,7 +185,6 @@ public class ImportForm implements Serializable {
 
     /**
      * Get the full record with the given ID from the catalog.
-     *
      */
     public void getSelectedRecord() {
         String recordId = Helper.getRequestParameter("ID");
@@ -191,24 +192,41 @@ public class ImportForm implements Serializable {
 
         List<AdditionalField> actualFields = this.prozesskopieForm.getAdditionalFields();
         Element root = record.getDocumentElement();
-        NodeList metadataNodes = root.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "metadata");
-        StringBuilder authors = new StringBuilder();
-        for (int i = 0; i < metadataNodes.getLength(); i++) {
-            Element metadataNode = (Element) metadataNodes.item(i);
-            if (metadataNode.getAttribute("type").equals("person")) {
-                authors.append(metadataNode.getElementsByTagNameNS("http://meta.goobi.org/v1.5.1/", "displayName").item(0).getTextContent()).append(" ");
-            }
-            for (AdditionalField actualField : actualFields) {
-                if (Objects.nonNull(actualField.getMetadata())) {
-                    if (actualField.getMetadata().equalsIgnoreCase(metadataNode.getAttribute("name"))) {
-                        actualField.setValue(metadataNode.getTextContent());
-                    } else if (actualField.getMetadata().equals("ListOfCreators")) {
-                        actualField.setValue(authors.toString());
+        NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
+
+        // TODO: iterating over multiple kitodo nodes will overwrite existing 'additionalField' values from the last kitodo node!
+        for (int i = 0; i < kitodoNodes.getLength(); i++) {
+            Node kitodoNode = kitodoNodes.item(i);
+            actualFields = insertFieldValues(actualFields, kitodoNode.getChildNodes());
+        }
+
+        this.prozesskopieForm.setAdditionalFields(actualFields);
+
+        Ajax.update("editForm");
+        this.prozesskopieForm.setActiveTabId(1);
+    }
+
+    private List<AdditionalField> insertFieldValues(List<AdditionalField> additionalFields, NodeList nodes) {
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getLocalName().equals("metadataGroup")) {
+                additionalFields = insertFieldValues(additionalFields, node.getChildNodes());
+            } else if (node.getLocalName().equals("metadata")) {
+                Element element = (Element) node;
+                for (AdditionalField additionalField : additionalFields) {
+                    if (Objects.nonNull(additionalField.getMetadata())
+                            && additionalField.getMetadata().equals(element.getAttribute("name"))) {
+                        // Append author to list of existing authors
+                        if (additionalField.getMetadata().equals("ListOfCreators")) {
+                            additionalField.setValue(Objects.isNull(additionalField.getValue()) ? element.getTextContent() : additionalField.getValue() + ", " + element.getTextContent());
+                        } else {
+                            additionalField.setValue(element.getTextContent());
+                        }
                     }
                 }
             }
         }
-        Ajax.update("editForm");
-        this.prozesskopieForm.setActiveTabId(1);
+        return additionalFields;
     }
 }

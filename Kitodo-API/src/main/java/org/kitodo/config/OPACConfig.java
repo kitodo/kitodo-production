@@ -72,6 +72,16 @@ public class OPACConfig {
     }
 
     /**
+     * Load the "identifierParameter" of the catalog used to retrieve specific
+     * individual records from that catalog.
+     * @param catalogName String identifying the catalog by its title
+     * @return HierarchicalConfiguration for catalog's "identifierParameter"
+     */
+    public static String getIdentifierParameter(String catalogName) {
+        return getCatalog(catalogName).getString("identifierParameter[@value]");
+    }
+
+    /**
      * Retrieve the list of catalogs' titles from config file.
      * @return List of Strings containing all catalog titles.
      */
