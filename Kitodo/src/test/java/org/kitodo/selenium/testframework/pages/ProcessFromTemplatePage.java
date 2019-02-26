@@ -88,15 +88,14 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     public String createProcess() throws Exception {
-        guessImagesInput.sendKeys("299");
-
-        switchToTabByIndex(1);
+        switchToTabByIndex(2);
         titleInput.sendKeys("TestProcess");
         titleSortInput.sendKeys("TestProcess");
         ppnAnalogInput.sendKeys("12345");
         ppnDigitalInput.sendKeys("12345");
 
-        switchToTabByIndex(0);
+        switchToTabByIndex(1);
+        guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
@@ -106,9 +105,6 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     public String createProcessFromCatalog() throws Exception {
-        guessImagesInput.sendKeys("299");
-
-        switchToTabByIndex(3);
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_2")));
 
@@ -123,7 +119,8 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         titleSortInput.sendKeys("Test");
         ppnAnalogInput.sendKeys("12345");
 
-        switchToTabByIndex(0);
+        switchToTabByIndex(1);
+        guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isInputValueNotEmpty.matches(processTitleInput));
@@ -132,12 +129,12 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         return generatedTitle;
     }
 
-    public ProcessFromTemplatePage switchToTabByIndex(int index) throws Exception {
-        return switchToTabByIndex(index, processFromTemplateTabView);
-    }
-
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
+    }
+
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, processFromTemplateTabView);
     }
 }
