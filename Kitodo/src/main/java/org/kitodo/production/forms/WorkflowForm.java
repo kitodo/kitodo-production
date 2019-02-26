@@ -76,6 +76,10 @@ public class WorkflowForm extends BaseForm {
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
     }
 
+    public Workflow.Status[] getStatuses() {
+        return Workflow.Status.values();
+    }
+
     /**
      * Read XML for file chosen out of the select list.
      */

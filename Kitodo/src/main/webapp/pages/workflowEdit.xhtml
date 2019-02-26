@@ -28,7 +28,7 @@
     <ui:param name="isDuplicateMode"
               value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
     <ui:param name="isEditMode"
-              value="#{WorkflowForm.workflow.id ne null and not WorkflowForm.workflow.ready and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
+              value="#{WorkflowForm.workflow.id ne null and WorkflowForm.workflow.status eq 'DRAFT' and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
 
