@@ -119,11 +119,6 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     protected boolean division;
 
     /**
-     * The universal rule.
-     */
-    protected UniversalRule universalRule;
-
-    /**
      * The ruleset.
      */
     protected Ruleset ruleset;
@@ -153,9 +148,8 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
     private NestedKeyView(Ruleset ruleset, U universalKey, UniversalRule universalRule,
             Settings settings, List<LanguageRange> priorityList) {
 
-        super(universalKey, priorityList);
+        super(universalKey, universalRule, priorityList);
         this.ruleset = ruleset;
-        this.universalRule = universalRule;
         this.settings = settings;
         this.division = false;
     }
@@ -183,10 +177,9 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
      */
     protected NestedKeyView(Ruleset ruleset, U universalDivision, UniversalRule universalRule,
             Settings settings, List<LanguageRange> priorityList, boolean division) {
-        super(universalDivision, priorityList);
+        super(universalDivision, universalRule, priorityList);
 
         this.ruleset = ruleset;
-        this.universalRule = universalRule;
         this.settings = settings;
         this.division = division;
     }

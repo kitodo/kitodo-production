@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FilenameUtils;
 
 import org.kitodo.api.Metadata;
 
@@ -121,6 +125,17 @@ public class MediaUnit {
      */
     public void setOrderlabel(String orderlabel) {
         this.orderlabel = orderlabel;
+    }
+
+    @Override
+    public String toString() {
+        String fileName = "No file (";
+        if (!mediaFiles.isEmpty()) {
+            URI uri = mediaFiles.entrySet().iterator().next().getValue();
+            fileName = FilenameUtils.getBaseName(uri.getPath()).concat(".* (");
+        }
+        return mediaFiles.entrySet().stream().map(Entry::getKey).map(MediaVariant::getUse)
+                .collect(Collectors.joining(", ", fileName, ")"));
     }
 
     @Override

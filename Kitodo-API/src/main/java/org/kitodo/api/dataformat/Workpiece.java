@@ -143,6 +143,11 @@ public class Workpiece {
     }
 
     @Override
+    public String toString() {
+        return id + ", " + structure;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

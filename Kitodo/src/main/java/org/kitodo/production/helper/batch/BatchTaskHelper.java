@@ -455,7 +455,6 @@ public class BatchTaskHelper extends BatchHelper {
     private boolean invalidMetadataExists(Task task) {
         if (task.isTypeMetadata()
                 && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
-            ServiceManager.getMetadataValidationService().setAutoSave(true);
             return !ServiceManager.getMetadataValidationService().validate(task.getProcess());
         }
         return false;
