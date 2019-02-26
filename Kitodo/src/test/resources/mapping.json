@@ -874,11 +874,15 @@
                     },
                     "fielddata": true
                 },
-                "ready": {
-                    "type": "boolean"
-                },
-                "active": {
-                    "type": "boolean"
+                "status": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    },
+                    "fielddata": true
                 },
                 "client": {
                     "properties": {
