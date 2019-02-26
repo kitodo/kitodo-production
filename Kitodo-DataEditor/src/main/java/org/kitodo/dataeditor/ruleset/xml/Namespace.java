@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * format was stalled when it was already three-quarters finished. There, this
  * would not have been necessary.
  */
-@XmlRootElement(name = "namespace")
+@XmlRootElement(name = "namespace", namespace = "http://names.kitodo.org/ruleset/v2")
 public class Namespace {
     /**
      * Identifier URI of the namespace.
@@ -43,13 +43,13 @@ public class Namespace {
      * The labels for the namespace. (The label is not currently in use, but
      * could be used to display the namespace in the ruleset editor.)
      */
-    @XmlElement(name = "label")
+    @XmlElement(name = "label", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Label> labels = new LinkedList<>();
 
     /**
      * The members of the namespace.
      */
-    @XmlElement(name = "option")
+    @XmlElement(name = "option", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Option> options = new LinkedList<>();
 
     public Collection<Option> getOptions() {

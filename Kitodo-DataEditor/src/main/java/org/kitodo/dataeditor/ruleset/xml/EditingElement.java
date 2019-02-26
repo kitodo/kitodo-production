@@ -25,13 +25,13 @@ class EditingElement {
     /**
      * The editor settings.
      */
-    @XmlElement(name = "setting")
+    @XmlElement(name = "setting", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Setting> settings = new LinkedList<>();
 
     /**
      * The acquisition stages.
      */
-    @XmlElement(name = "acquisitionStage")
+    @XmlElement(name = "acquisitionStage", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<AcquisitionStage> acquisitionStages = new LinkedList<>();
 
     /**

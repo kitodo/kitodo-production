@@ -52,14 +52,14 @@ public class Division {
      * Human-readable identifiers for the type. There can be several, depending
      * on the language.
      */
-    @XmlElement(name = "label", required = true)
+    @XmlElement(name = "label", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
     private List<Label> labels = new LinkedList<>();
 
     /**
      * In this element, if there is, it is stored that the division of this
      * division is done by divisions, which map a calendar date.
      */
-    @XmlElement
+    @XmlElement(namespace = "http://names.kitodo.org/ruleset/v2")
     private SubdivisionByDateElement subdivisionByDate;
 
     /**

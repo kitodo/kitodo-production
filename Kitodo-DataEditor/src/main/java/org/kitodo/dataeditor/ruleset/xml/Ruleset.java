@@ -34,7 +34,7 @@ import org.kitodo.dataeditor.ruleset.UniversalRule;
  * heart of Production. It consists of three sections: declaration, correlation
  * and editing.
  */
-@XmlRootElement(name = "ruleset")
+@XmlRootElement(name = "ruleset", namespace = "http://names.kitodo.org/ruleset/v2")
 public class Ruleset {
 
     /**
@@ -47,21 +47,21 @@ public class Ruleset {
     /**
      * The declaration section defines divisions and keys.
      */
-    @XmlElement(name = "declaration")
+    @XmlElement(name = "declaration", namespace = "http://names.kitodo.org/ruleset/v2")
     private DeclarationElement declaration = new DeclarationElement();
 
     /**
      * The correlation section defines relationships between divisions and keys.
      */
-    @XmlElementWrapper(name = "correlation")
-    @XmlElement(name = "restriction")
+    @XmlElementWrapper(name = "correlation", namespace = "http://names.kitodo.org/ruleset/v2")
+    @XmlElement(name = "restriction", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Rule> restrictions = new LinkedList<>();
 
     /**
      * In the editing section settings for the editor concerning keys are
      * defined.
      */
-    @XmlElement(name = "editing")
+    @XmlElement(name = "editing", namespace = "http://names.kitodo.org/ruleset/v2")
     private EditingElement editing;
 
     /**

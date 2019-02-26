@@ -45,37 +45,37 @@ public class Key {
     /**
      * The labels of the key in different languages.
      */
-    @XmlElement(name = "label", required = true)
+    @XmlElement(name = "label", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
     private List<Label> labels = new LinkedList<>();
 
     /**
      * The codomain of the key.
      */
-    @XmlElement
+    @XmlElement(namespace = "http://names.kitodo.org/ruleset/v2")
     private CodomainElement codomain;
 
     /**
      * The options of select lists.
      */
-    @XmlElement(name = "option")
+    @XmlElement(name = "option", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Option> options = new LinkedList<>();
 
     /**
      * A pattern.
      */
-    @XmlElement
+    @XmlElement(namespace = "http://names.kitodo.org/ruleset/v2")
     private String pattern;
 
     /**
      * Preset values.
      */
-    @XmlElement(name = "preset")
+    @XmlElement(name = "preset", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<String> presets = new LinkedList<>();
 
     /**
      * The keys in the key, for nesting keys.
      */
-    @XmlElement(name = "key")
+    @XmlElement(name = "key", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Key> keys = new LinkedList<>();
 
     /**

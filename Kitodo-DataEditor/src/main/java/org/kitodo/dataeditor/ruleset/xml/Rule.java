@@ -68,7 +68,7 @@ public class Rule {
     /**
      * List of permit rules. Recursion is possible.
      */
-    @XmlElement(name = "permit")
+    @XmlElement(name = "permit", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Rule> permits = new LinkedList<>();
 
     /**

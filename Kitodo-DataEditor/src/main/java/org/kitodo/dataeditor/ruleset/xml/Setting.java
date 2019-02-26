@@ -76,7 +76,7 @@ public class Setting {
     /**
      * The settings for sub-keys.
      */
-    @XmlElement(name = "setting")
+    @XmlElement(name = "setting", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Setting> settings = new LinkedList<>();
 
     /**

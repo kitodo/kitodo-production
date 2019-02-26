@@ -30,7 +30,7 @@ public class Option {
     /**
      * Optional labels.
      */
-    @XmlElement(name = "label")
+    @XmlElement(name = "label", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Label> labels = new LinkedList<>();
 
     /**

@@ -30,7 +30,7 @@ public class AcquisitionStage {
     /**
      * The settings valid on this stage.
      */
-    @XmlElement(name = "setting", required = true)
+    @XmlElement(name = "setting", namespace = "http://names.kitodo.org/ruleset/v2", required = true)
     private List<Setting> settings = new LinkedList<>();
 
     /**
