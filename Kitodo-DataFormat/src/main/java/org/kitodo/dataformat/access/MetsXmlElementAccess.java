@@ -374,7 +374,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             Map<MediaUnit, String> mediaUnitIDs, MetsType mets) {
         DivType div = new FileXmlElementAccess(mediaUnit).toDiv(mediaFilesToIDFiles, mediaUnitIDs, mets);
         for (MediaUnit child : mediaUnit.getChildren()) {
-            div.getDiv().add(new FileXmlElementAccess(child).toDiv(mediaFilesToIDFiles, mediaUnitIDs, mets));
+            div.getDiv().add(generatePhysicalStructMapRecursive(child, mediaFilesToIDFiles, mediaUnitIDs, mets));
         }
         return div;
     }
