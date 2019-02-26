@@ -97,6 +97,17 @@ public class MetsXmlElementAccessIT {
 
         List<MediaUnit> pages = new ArrayList<>();
 
+        // add partial orders
+        for (int i = 1; i <= 4; i++) {
+            MediaUnit partialOrder = new MediaUnit();
+            MetadataEntry numImages = new MetadataEntry();
+            numImages.setKey("numImages");
+            numImages.setDomain(MdSec.TECH_MD);
+            numImages.setValue("100");
+            partialOrder.getMetadata().add(numImages);
+            workpiece.getMediaUnits().add(partialOrder);
+        }
+
         // add files
         MediaVariant local = new MediaVariant();
         local.setUse("LOCAL");
@@ -185,10 +196,12 @@ public class MetsXmlElementAccessIT {
         max.setUse("MAX");
         max.setMimeType("image/jpeg");
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            String tiffFile = mediaUnit.getMediaFiles().get(local).toString();
-            String jpgFile = tiffFile.replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
-            URI path = new URI(jpgFile);
-            mediaUnit.getMediaFiles().put(max, path);
+            URI tiffFile = mediaUnit.getMediaFiles().get(local);
+            if (tiffFile != null) {
+                String jpgFile = tiffFile.toString().replaceFirst("^.*?(\\d+)\\.tif$", "images/max/$1.jpg");
+                URI path = new URI(jpgFile);
+                mediaUnit.getMediaFiles().put(max, path);
+            }
         }
 
         // leave a note
@@ -208,8 +221,15 @@ public class MetsXmlElementAccessIT {
         Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
 
         assertEquals(1, reread.getEditHistory().size());
-        assertEquals(4, reread.getMediaUnits().size());
-        for (MediaUnit mediaUnit : reread.getMediaUnits()) {
+        List<MediaUnit> mediaUnits = reread.getMediaUnits();
+        assertEquals(8, mediaUnits.size());
+        for (int i = 0; i <= 3; i++) {
+            MediaUnit mediaUnit = mediaUnits.get(i);
+            assertEquals(0, mediaUnit.getMediaFiles().size());
+            assertEquals(1, mediaUnit.getMetadata().size());
+        }
+        for (int i = 4; i <= 7; i++) {
+            MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
         Structure structureRoot = reread.getStructure();
