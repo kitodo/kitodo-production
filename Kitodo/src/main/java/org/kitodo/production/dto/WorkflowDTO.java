@@ -14,9 +14,7 @@ package org.kitodo.production.dto;
 public class WorkflowDTO extends BaseDTO {
 
     private String title;
-    private String fileName;
-    private boolean ready;
-    private boolean active;
+    private String status;
 
     /**
      * Get title.
@@ -38,59 +36,21 @@ public class WorkflowDTO extends BaseDTO {
     }
 
     /**
-     * Get file name.
+     * Get status.
      *
-     * @return value of fileName
+     * @return value of status
      */
-    public String getFileName() {
-        return fileName;
+    public String getStatus() {
+        return status.toLowerCase();
     }
 
     /**
-     * Set file name.
+     * Set status.
      *
-     * @param fileName
+     * @param status
      *            as String
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     * Get ready.
-     *
-     * @return value of ready
-     */
-    public boolean isReady() {
-        return ready;
-    }
-
-    /**
-     * Set ready.
-     *
-     * @param ready
-     *            as boolean
-     */
-    public void setReady(boolean ready) {
-        this.ready = ready;
-    }
-
-    /**
-     * Get active.
-     *
-     * @return value of active
-     */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-     * Set active.
-     *
-     * @param active
-     *            as boolean
-     */
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

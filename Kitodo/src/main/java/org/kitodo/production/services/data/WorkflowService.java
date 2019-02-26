@@ -97,9 +97,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
         workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
-        workflowDTO.setFileName(WorkflowTypeField.FILE_NAME.getStringValue(jsonObject));
-        workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(jsonObject));
-        workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(jsonObject));
+        workflowDTO.setStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
         return workflowDTO;
     }
 
@@ -121,15 +119,14 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         Workflow duplicatedWorkflow = new Workflow();
 
         duplicatedWorkflow.setTitle(baseWorkflow.getTitle() + "_" + Helper.generateRandomString(3));
-        duplicatedWorkflow.setActive(baseWorkflow.isActive());
-        duplicatedWorkflow.setReady(false);
+        duplicatedWorkflow.setStatus(Workflow.Status.DRAFT);
         duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
         return duplicatedWorkflow;
     }
 
     /**
-     * Get available workflows - available means that workflow is active, ready and
+     * Get available workflows - available means that workflow has status active and is
      * assigned to selected session client.
      *
      * @return list of available Workflow objects
