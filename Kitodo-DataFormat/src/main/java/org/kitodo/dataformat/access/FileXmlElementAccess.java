@@ -104,6 +104,7 @@ public class FileXmlElementAccess {
         } else {
             this.mediaUnit = new MediaUnitMetsReferrerStorage();
             this.mediaUnit.getMediaFiles().putAll(mediaUnit.getMediaFiles());
+            this.mediaUnit.getMetadata().addAll(mediaUnit.getMetadata());
             this.mediaUnit.setOrder(mediaUnit.getOrder());
             this.mediaUnit.setOrderlabel(mediaUnit.getOrderlabel());
         }
