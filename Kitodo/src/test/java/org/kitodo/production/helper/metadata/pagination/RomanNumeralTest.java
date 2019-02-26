@@ -9,11 +9,12 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataeditor.pagination;
+package org.kitodo.production.helper.metadata.pagination;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.kitodo.production.helper.metadata.pagination.RomanNumeral;
 
 public class RomanNumeralTest {
 

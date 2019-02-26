@@ -25,14 +25,22 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.config.ConfigCore;
@@ -45,8 +53,10 @@ import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.StringComparator;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -856,6 +866,180 @@ public class FileService {
      */
     public URI getUsersDirectory() {
         return ConfigCore.getUriParameter(ParameterCore.DIR_USERS);
+    }
+
+    /**
+     * Searches for new media and adds them to the media list of the workpiece,
+     * if any are found.
+     *
+     * @param process
+     *            Process in which folders should be searched for media
+     * @param workpiece
+     *            Workpiece to which the media are to be added
+     */
+    public void searchForMedia(Process process, Workpiece workpiece) {
+        List<Folder> folders = process.getProject().getFolders();
+        int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
+        Map<String, Subfolder> subfolders = new HashMap<>(mapCapacity);
+        for (Folder folder : folders) {
+            subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
+        }
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(new StringComparator());
+        for (Subfolder subfolder : subfolders.values()) {
+            for (Entry<String, URI> element : subfolder.listContents().entrySet()) {
+                mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
+                mediaToAdd.get(element.getKey()).put(subfolder, element.getValue());
+            }
+        }
+        List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
+            process.getProcessBaseUri());
+        for (String canonical : canonicals) {
+            mediaToAdd.remove(canonical);
+        }
+        addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
+        renumberMediaUnits(workpiece);
+        if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
+            repaginateMediaUnits(workpiece);
+        }
+    }
+
+    /**
+     * Parses the canonical part of the filename from the URIs of the media
+     * units. Because we need to do this to be able to parse correctly, old
+     * absolute URIs are converted to relative URIs.
+     */
+    private List<String> getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(Workpiece workpiece,
+            Map<String, Subfolder> subfolders, URI processBaseUri) {
+
+        List<String> canonicals = new LinkedList<>();
+        String baseUriString = processBaseUri.toString();
+        if (!baseUriString.endsWith("/")) {
+            baseUriString = baseUriString.concat("/");
+        }
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            String unitCanonical = "";
+            for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
+                Subfolder subfolder = subfolders.get(entry.getKey().getUse());
+                if (Objects.isNull(subfolder)) {
+                    logger.warn("Missing subfolder for USE {}", entry.getKey().getUse());
+                    continue;
+                }
+                URI mediaFile = entry.getValue();
+                String fileUriString = mediaFile.toString();
+                if (fileUriString.startsWith(baseUriString)) {
+                    mediaFile = URI.create(fileUriString.substring(baseUriString.length()));
+                    mediaUnit.getMediaFiles().put(entry.getKey(), mediaFile);
+                }
+                String fileCanonical = subfolder.getCanonical(mediaFile);
+                if (unitCanonical.equals("")) {
+                    unitCanonical = fileCanonical;
+                } else if (unitCanonical.equals(fileCanonical)) {
+                    continue;
+                } else {
+                    throw new IllegalArgumentException("Ambiguous canonical file name part in the same media unit: \""
+                            + unitCanonical + "\" and \"" + fileCanonical + "\"!");
+                }
+            }
+            if (unitCanonical.equals("")) {
+                throw new IllegalArgumentException("Missing canonical file name part in media unit " + mediaUnit);
+            }
+            canonicals.add(unitCanonical);
+        }
+        return canonicals;
+    }
+
+    /**
+     * Adds the new media to the workpiece. The media are sorted in according to
+     * the canonical part of the file name.
+     */
+    private void addNewMediaToWorkpiece(List<String> canonicals, Map<String, Map<Subfolder, URI>> mediaToAdd,
+            Workpiece workpiece) {
+
+        for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
+            int insertionPoint = 0;
+            for (String canonical : canonicals) {
+                if (new StringComparator().compare(entry.getKey(), canonical) > 0) {
+                    insertionPoint++;
+                } else {
+                    break;
+                }
+            }
+            workpiece.getMediaUnits().add(insertionPoint, createMediaUnit(entry.getValue()));
+            canonicals.add(insertionPoint, entry.getKey());
+        }
+    }
+
+    /**
+     * Creates a new media device with the given uses and URIs.
+     */
+    private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
+        MediaUnit result = new MediaUnit();
+        for (Entry<Subfolder, URI> entry : data.entrySet()) {
+            Folder folder = entry.getKey().getFolder();
+            MediaVariant mediaVariant = new MediaVariant();
+            mediaVariant.setUse(folder.getFileGroup());
+            mediaVariant.setMimeType(folder.getMimeType());
+            result.getMediaFiles().put(mediaVariant, entry.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Renumbers the order of the media units.
+     */
+    private void renumberMediaUnits(Workpiece workpiece) {
+        int mininum = 1;
+        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+            if (mediaUnit.getOrder() > mininum) {
+                mininum = mediaUnit.getOrder() + 1;
+            } else {
+                mediaUnit.setOrder(mininum);
+                mininum++;
+            }
+        }
+    }
+
+    /**
+     * Adds a count to media that do not yet have a count. But only at the end,
+     * or if none of the media has been counted yet at all. New media found in
+     * intermediate places are marked uncounted.
+     */
+    private void repaginateMediaUnits(Workpiece workpiece) {
+        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        int first = 0;
+        String value;
+        switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
+            case "arabic":
+                value = "1";
+                break;
+            case "roman":
+                value = "I";
+                break;
+            default:
+                value = " - ";
+        }
+        for (int i = mediaUnits.size() - 1; i >= 0; i--) {
+            MediaUnit mediaUnit = mediaUnits.get(i);
+            String orderlabel = mediaUnit.getOrderlabel();
+            if (orderlabel == null) {
+                continue;
+            }
+            first = i + 1;
+            value = orderlabel;
+            break;
+        }
+        Paginator paginator = new Paginator(value);
+        if (first > 0) {
+            paginator.next();
+        }
+        for (int i = first; i <= mediaUnits.size(); i++) {
+            mediaUnits.get(i).setOrderlabel(paginator.next());
+        }
+        for (MediaUnit mediaUnit : mediaUnits) {
+            if (Objects.isNull(mediaUnit.getOrderlabel())) {
+                mediaUnit.setOrderlabel(" - ");
+            }
+        }
     }
 
     public void writeMetadataAsTemplateFile(LegacyMetsModsDigitalDocumentHelper inFile, Process process)

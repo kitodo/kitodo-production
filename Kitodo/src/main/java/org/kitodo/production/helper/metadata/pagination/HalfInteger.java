@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataeditor.pagination;
+package org.kitodo.production.helper.metadata.pagination;
 
 public class HalfInteger extends Number {
     private final boolean halfAboveValue;

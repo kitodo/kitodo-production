@@ -225,6 +225,7 @@ public class DataEditorForm implements Serializable {
         try (InputStream in = ServiceManager.getFileService().read(mainFileUri, lock)) {
             workpiece = ServiceManager.getMetsService().load(in);
         }
+        ServiceManager.getFileService().searchForMedia(process, workpiece);
         return true;
     }
 

@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.dataeditor.enums.FileLocationType;
 import org.kitodo.dataeditor.enums.PositionOfNewDiv;
-import org.kitodo.dataeditor.pagination.Paginator;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -446,20 +445,6 @@ public class MetsKitodoWrapperTest {
 
         Assert.assertEquals("Removing of smLinks was not successful", 0,
             metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv).size());
-    }
-
-    @Test
-    public void shouldPaginateDivs()
-            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-
-        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv();
-
-        Paginator paginator = new Paginator("III");
-        paginator.writeToOrderLabelsOfDiyTypes(physicalDivs);
-
-        DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(9);
-        Assert.assertEquals("", "XII", divType.getORDERLABEL());
     }
 
     @Test
