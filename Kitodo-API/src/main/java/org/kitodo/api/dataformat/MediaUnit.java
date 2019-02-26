@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.kitodo.api.Metadata;
 
 public class MediaUnit {
