@@ -536,7 +536,7 @@ public class FileService {
                 throw new UnsupportedOperationException("Dead code pending removal");
         }
         // createBackupFile();
-        URI metadataFileUri = getMetadataFilePath(process);
+        URI metadataFileUri = getMetadataFilePath(process, false);
         String temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
@@ -592,8 +592,21 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) throws IOException {
+        return getMetadataFilePath(process, true);
+    }
+
+    /**
+     * Gets the URI of the metadata.xml of a given process.
+     *
+     * @param process
+     *            the process to get the metadata.xml for.
+     * @param mustExist
+     *            whether the file must exist
+     * @return The URI to the metadata.xml
+     */
+    public URI getMetadataFilePath(Process process, boolean mustExist) throws IOException {
         URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
-        if (!fileExist(metadataFilePath)) {
+        if (mustExist && !fileExist(metadataFilePath)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound", Collections.singletonList(metadataFilePath.getPath())));
         }
         return metadataFilePath;
