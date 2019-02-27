@@ -499,7 +499,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      */
     public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
         JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
-        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryptionEnum();
+        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {

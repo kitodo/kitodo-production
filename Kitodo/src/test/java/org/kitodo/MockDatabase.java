@@ -480,7 +480,7 @@ public class MockDatabase {
         ldapServer.setManagerLogin("LdapManager");
         ldapServer.setManagerPassword("LdapManagerPasswort");
         ldapServer.setUrl("LdapUrl");
-        ldapServer.setPasswordEncryptionEnum(PasswordEncryption.SHA);
+        ldapServer.setPasswordEncryption(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
         ServiceManager.getLdapServerService().saveToDatabase(ldapServer);

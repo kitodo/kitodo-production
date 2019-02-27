@@ -17,10 +17,12 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.converter.PasswordEncryptionConverter;
 import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 
@@ -55,7 +57,8 @@ public class LdapServer extends BaseBean {
     private boolean readOnly = false;
 
     @Column(name = "passwordEncryption")
-    private Integer passwordEncryption;
+    @Convert(converter = PasswordEncryptionConverter.class)
+    private PasswordEncryption passwordEncryption = PasswordEncryption.MD5;
 
     @Column(name = "rootCertificate")
     private String rootCertificate;
@@ -226,31 +229,12 @@ public class LdapServer extends BaseBean {
     }
 
     /**
-     * Gets passwordEncryption.
-     *
-     * @return The passwordEncryption.
-     */
-    public Integer getPasswordEncryption() {
-        return passwordEncryption;
-    }
-
-    /**
-     * Sets passwordEncryption.
-     *
-     * @param passwordEncryption
-     *            The passwordEncryption.
-     */
-    public void setPasswordEncryption(Integer passwordEncryption) {
-        this.passwordEncryption = passwordEncryption;
-    }
-
-    /**
      * Get password encryption as {@link PasswordEncryption}.
      *
      * @return The passwordEncryption.
      */
-    public PasswordEncryption getPasswordEncryptionEnum() {
-        return PasswordEncryption.getEncryptionFromValue(passwordEncryption);
+    public PasswordEncryption getPasswordEncryption() {
+        return this.passwordEncryption;
     }
 
     /**
@@ -259,8 +243,8 @@ public class LdapServer extends BaseBean {
      * @param passwordEncryptionEnum
      *            The passwordEncryptionEnum.
      */
-    public void setPasswordEncryptionEnum(PasswordEncryption passwordEncryptionEnum) {
-        this.passwordEncryption = passwordEncryptionEnum.getValue();
+    public void setPasswordEncryption(PasswordEncryption passwordEncryptionEnum) {
+        this.passwordEncryption = passwordEncryptionEnum;
     }
 
     /**

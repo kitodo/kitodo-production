@@ -41,6 +41,6 @@ public class LdapServerServiceIT {
         assertEquals("LpadServer title is not matching", "FirstLdapServer", ldapServer.getTitle());
         assertFalse("LpadServer useSsl is not matching", ldapServer.isUseSsl());
         assertEquals("LdapServer password encoding is not matching", "SHA",
-            ldapServer.getPasswordEncryptionEnum().getTitle());
+            ldapServer.getPasswordEncryption().getTitle());
     }
 }

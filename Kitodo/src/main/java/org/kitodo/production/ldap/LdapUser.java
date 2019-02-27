@@ -150,7 +150,7 @@ public class LdapUser implements DirContext {
              * Encryption of password und Base64-Enconding
              */
 
-            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryptionEnum().getTitle();
+            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryption().getTitle();
 
             MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
