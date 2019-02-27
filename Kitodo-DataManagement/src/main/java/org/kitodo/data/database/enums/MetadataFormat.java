@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.helper.enums;
+package org.kitodo.data.database.enums;
 
 public enum MetadataFormat {
 

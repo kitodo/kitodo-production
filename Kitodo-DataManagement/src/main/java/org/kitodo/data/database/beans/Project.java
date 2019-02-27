@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @XmlAccessorType(XmlAccessType.NONE)

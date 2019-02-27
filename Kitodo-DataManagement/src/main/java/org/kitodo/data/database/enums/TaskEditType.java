@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.helper.enums;
+package org.kitodo.data.database.enums;
 
 /**
  * Enum for edit type of task steps each one has an integer value, and a title.

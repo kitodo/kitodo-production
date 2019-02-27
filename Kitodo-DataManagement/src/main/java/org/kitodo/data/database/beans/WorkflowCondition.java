@@ -19,7 +19,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.WorkflowConditionType;
+import org.kitodo.data.database.enums.WorkflowConditionType;
 
 @Entity
 @Table(name = "workflowCondition")

@@ -28,7 +28,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.BatchType;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 /**

@@ -26,7 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.WorkflowStatus;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity

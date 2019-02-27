@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.PropertyType;
+import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.persistence.PropertyDAO;
 
 @Entity

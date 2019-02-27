@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 
 import org.apache.commons.lang.SystemUtils;
@@ -20,7 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -28,10 +32,6 @@ import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.production.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 public class WorkingST extends BaseTestSelenium {
 

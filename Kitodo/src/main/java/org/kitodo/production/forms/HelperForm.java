@@ -22,7 +22,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.production.version.KitodoVersion;
 
 /**

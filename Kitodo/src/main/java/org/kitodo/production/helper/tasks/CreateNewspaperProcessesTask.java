@@ -24,7 +24,7 @@ import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.helper.enums.BatchType;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.production.forms.ProzesskopieForm;

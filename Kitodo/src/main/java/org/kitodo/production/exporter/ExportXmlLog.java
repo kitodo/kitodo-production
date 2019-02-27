@@ -45,7 +45,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
 /**

@@ -26,7 +26,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;

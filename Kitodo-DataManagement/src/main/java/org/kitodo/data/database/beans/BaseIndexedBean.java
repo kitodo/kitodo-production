@@ -16,7 +16,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
-import org.kitodo.data.database.helper.enums.IndexAction;
+import org.kitodo.data.database.enums.IndexAction;
 
 /**
  * Base bean class.

@@ -23,8 +23,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -137,7 +137,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batches
      * @return list of JSON objects with batches of exact type
      */
-    public List<Map<String, Object>> findByTitleAndType(String title, org.kitodo.data.database.helper.enums.BatchType type) throws DataException {
+    public List<Map<String, Object>> findByTitleAndType(String title, org.kitodo.data.database.enums.BatchType type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.must(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
@@ -153,7 +153,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batch
      * @return search result
      */
-    public List<Map<String, Object>> findByTitleOrType(String title, org.kitodo.data.database.helper.enums.BatchType type) throws DataException {
+    public List<Map<String, Object>> findByTitleOrType(String title, org.kitodo.data.database.enums.BatchType type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.should(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));

@@ -28,7 +28,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.BatchType;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.production.services.ServiceManager;
 
 /**
