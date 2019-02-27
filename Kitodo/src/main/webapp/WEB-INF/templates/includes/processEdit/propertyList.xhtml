@@ -21,8 +21,8 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.value}">
-            <h:outputText value="#{item.value}" rendered="#{item.type.name ne 'link'}"/>
-            <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.type.name eq 'link'}"/>
+            <h:outputText value="#{item.value}" rendered="#{item.dataType.name ne 'link'}"/>
+            <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.dataType.name eq 'link'}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <p:commandLink id="editProperty" title="#{msgs.edit}"

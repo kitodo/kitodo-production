@@ -569,7 +569,7 @@ public class CopyProcess extends ProzesskopieForm {
         newProperty.setTitle(property.getTitle());
         newProperty.setValue(property.getValue());
         newProperty.setChoice(property.getChoice());
-        newProperty.setType(property.getType());
+        newProperty.setDataType(property.getDataType());
         return newProperty;
     }
 

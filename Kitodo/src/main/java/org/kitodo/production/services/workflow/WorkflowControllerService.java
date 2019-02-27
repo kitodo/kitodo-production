@@ -530,7 +530,7 @@ public class WorkflowControllerService {
                 + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: "
                 + currentTask.getId().toString() + " CorrectionTask: " + correctionTask.getId().toString() + ") "
                 + this.problem.getMessage());
-        processProperty.setType(PropertyType.MESSAGE_ERROR);
+        processProperty.setDataType(PropertyType.MESSAGE_ERROR);
         return processProperty;
     }
 
@@ -539,7 +539,7 @@ public class WorkflowControllerService {
         property.setValue("[" + Helper.getDateAsFormattedString(new Date()) + ", "
                 + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] "
                 + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
-        property.setType(PropertyType.MESSAGE_IMPORTANT);
+        property.setDataType(PropertyType.MESSAGE_IMPORTANT);
         return property;
     }
 

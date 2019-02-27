@@ -579,7 +579,7 @@ public class MockDatabase {
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
-        firstProcessProperty.setType(PropertyType.STRING);
+        firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
@@ -590,7 +590,7 @@ public class MockDatabase {
         secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
-        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
@@ -601,7 +601,7 @@ public class MockDatabase {
         thirdProcessProperty.setTitle("Korrektur notwendig");
         thirdProcessProperty.setValue("fix it");
         thirdProcessProperty.setObligatory(false);
-        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
@@ -613,7 +613,7 @@ public class MockDatabase {
         fourthProcessProperty.setTitle("Korrektur notwendig");
         fourthProcessProperty.setValue("improved ids");
         fourthProcessProperty.setObligatory(false);
-        fourthProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        fourthProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         fourthProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         fourthProcessProperty.setCreationDate(localDate.toDate());
@@ -637,7 +637,7 @@ public class MockDatabase {
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
-        firstProcessProperty.setType(PropertyType.STRING);
+        firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
@@ -648,7 +648,7 @@ public class MockDatabase {
         secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
-        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
@@ -659,7 +659,7 @@ public class MockDatabase {
         thirdProcessProperty.setTitle("Korrektur notwendig");
         thirdProcessProperty.setValue("fix it");
         thirdProcessProperty.setObligatory(false);
-        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
@@ -998,7 +998,7 @@ public class MockDatabase {
         firstTemplateProperty.setTitle("firstTemplate title");
         firstTemplateProperty.setValue("first value");
         firstTemplateProperty.setObligatory(true);
-        firstTemplateProperty.setType(PropertyType.STRING);
+        firstTemplateProperty.setDataType(PropertyType.STRING);
         firstTemplateProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
@@ -1009,7 +1009,7 @@ public class MockDatabase {
         secondTemplateProperty.setTitle("template");
         secondTemplateProperty.setValue("second");
         secondTemplateProperty.setObligatory(false);
-        secondTemplateProperty.setType(PropertyType.STRING);
+        secondTemplateProperty.setDataType(PropertyType.STRING);
         secondTemplateProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
@@ -1188,7 +1188,7 @@ public class MockDatabase {
         firstWorkpieceProperty.setTitle("FirstWorkpiece Property");
         firstWorkpieceProperty.setValue("first value");
         firstWorkpieceProperty.setObligatory(true);
-        firstWorkpieceProperty.setType(PropertyType.STRING);
+        firstWorkpieceProperty.setDataType(PropertyType.STRING);
         firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
@@ -1199,7 +1199,7 @@ public class MockDatabase {
         secondWorkpieceProperty.setTitle("workpiece");
         secondWorkpieceProperty.setValue("second");
         secondWorkpieceProperty.setObligatory(false);
-        secondWorkpieceProperty.setType(PropertyType.STRING);
+        secondWorkpieceProperty.setDataType(PropertyType.STRING);
         secondWorkpieceProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());

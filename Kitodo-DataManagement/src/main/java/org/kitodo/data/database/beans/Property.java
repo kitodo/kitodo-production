@@ -18,10 +18,12 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.converter.PropertyTypeConverter;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.persistence.PropertyDAO;
 
@@ -40,7 +42,8 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     private Boolean obligatory;
 
     @Column(name = "dataType")
-    private Integer dataType;
+    @Convert(converter = PropertyTypeConverter.class)
+    private PropertyType dataType;
 
     @Column(name = "choice")
     private String choice;
@@ -62,7 +65,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      */
     public Property() {
         this.obligatory = false;
-        this.dataType = PropertyType.STRING.getId();
+        this.dataType = PropertyType.STRING;
         this.creationDate = new Date();
     }
 
@@ -165,38 +168,15 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     /**
-     * Getter for data type set to private for hibernate, for use in program use
-     * getType instead.
-     *
-     * @return data type as integer
-     */
-    @SuppressWarnings("unused")
-    private Integer getDataType() {
-        return this.dataType;
-    }
-
-    /**
-     * Set data type to defined integer. only for internal use through
-     * hibernate, for changing data type use setType instead.
-     *
-     * @param dataType
-     *            as Integer
-     */
-    @SuppressWarnings("unused")
-    private void setDataType(Integer dataType) {
-        this.dataType = dataType;
-    }
-
-    /**
      * Get data type as {@link PropertyType}.
      *
      * @return current data type
      */
-    public PropertyType getType() {
+    public PropertyType getDataType() {
         if (this.dataType == null) {
-            this.dataType = PropertyType.STRING.getId();
+            this.dataType = PropertyType.STRING;
         }
-        return PropertyType.getById(this.dataType);
+        return this.dataType;
     }
 
     /**
@@ -205,8 +185,8 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * @param inputType
      *            as {@link PropertyType}
      */
-    public void setType(PropertyType inputType) {
-        this.dataType = inputType.getId();
+    public void setDataType(PropertyType inputType) {
+        this.dataType = inputType;
     }
 
     /**
