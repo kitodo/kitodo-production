@@ -69,7 +69,9 @@
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
-                <h:commandLink id="readXML" action="#{DataEditorForm.open(process.id)}" title="#{msgs.metadataEdit}"
+                <h:commandLink id="readXML"
+                               action="#{DataEditorForm.open(process.id, 'processesList')}"
+                               title="#{msgs.metadataEdit}"
                                actionListener="#{CommentForm.setProcessId(process.id)}"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>

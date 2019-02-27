@@ -72,7 +72,7 @@
                             <p:panel id="structuredPagePanel" rendered="#{DataEditorForm.getImageAccessible(filePath)}">
                                 <p:commandLink update="structureTreeForm, imagePreviewForm">
                                     <div class="thumbnail-container">
-                                        <img src="#{request.contextPath}#{DataEditorForm.getThumbnail(filePath)}" class="thumbnail #{MetadataProcessor.currentImage eq filePath ? 'active' : ''}"/>
+                                        <img src="#{request.contextPath}#{DataEditorForm.getThumbnail(filePath)}" class="thumbnail #{DataEditorForm.currentImage eq filePath ? 'active' : ''}"/>
                                         <div class="thumbnail-overlay">
                                             #{msgs.image} #{DataEditorForm.getPhysicalPageNumber(page)}, #{msgs.page} #{DataEditorForm.getLogicalPageNumber(page)}
                                         </div>

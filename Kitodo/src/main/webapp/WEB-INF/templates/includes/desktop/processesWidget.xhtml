@@ -43,12 +43,11 @@
                     <f:param name="id" value="#{process.id}"/>
                     <f:param name="referer" value="desktop"/>
                 </h:link>
-                <h:commandLink id="readXML" action="#{DataEditorForm.open(process.id)}"
-                               title="#{msgs.metadataEdit}"
+                <h:commandLink id="readXML"
+                               action="#{DataEditorForm.open(process.id, 'desktop')}"
                                actionListener="#{CommentForm.setProcessId(process.id)}"
+                               title="#{msgs.metadataEdit}"
                                rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
-                    <f:setPropertyActionListener value="#{LoginForm.loggedUser}" target="#{DataEditorForm.user}"/>
-                    <f:setPropertyActionListener value="desktop" target="#{DataEditorForm.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                 </h:commandLink>
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"

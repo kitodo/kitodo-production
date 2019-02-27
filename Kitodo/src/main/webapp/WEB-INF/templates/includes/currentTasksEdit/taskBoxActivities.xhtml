@@ -85,12 +85,8 @@
 
                     <!-- Metadaten-button -->
                     <h:commandLink id="readXml" rendered="#{task.typeMetadata and process.blockedUser == null}"
-                                   action="#{DataEditorForm.open(process.id)}" title="#{msgs.metadataEdit}">
+                                   action="#{DataEditorForm.open(process.id, 'currentTasksEdit.jsf?id='.concat(task.id))}" title="#{msgs.metadataEdit}">
                         <h:outputText><i class="fa fa-file-o"/> #{msgs.metadataEdit}</h:outputText>
-                        <f:setPropertyActionListener value="#{LoginForm.loggedUser}"
-                                                     target="#{DataEditorForm.user}"/>
-                        <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}"
-                                                     target="#{DataEditorForm.referringView}"/>
                     </h:commandLink>
 
                     <!-- Re-generate all images action link -->

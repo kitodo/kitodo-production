@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
@@ -713,7 +714,7 @@ public class FileService {
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
         URI processBaseUri = process.getProcessBaseUri();
-        if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
+        if (/* Objects.isNull(processBaseUri) && */ Objects.nonNull(process.getId())) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
         }
         return process.getProcessBaseUri();
@@ -878,6 +879,7 @@ public class FileService {
      *            Workpiece to which the media are to be added
      */
     public void searchForMedia(Process process, Workpiece workpiece) {
+        final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
         int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
         Map<String, Subfolder> subfolders = new HashMap<>(mapCapacity);
@@ -893,6 +895,7 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
+        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getMediaUnits(), canonicals);
         for (String canonical : canonicals) {
             mediaToAdd.remove(canonical);
         }
@@ -900,6 +903,9 @@ public class FileService {
         renumberMediaUnits(workpiece);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginateMediaUnits(workpiece);
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
     }
 
@@ -949,6 +955,23 @@ public class FileService {
     }
 
     /**
+     * Adds new media variants found to existing media units.
+     */
+    private void addNewURIsToExistingMediaUnits(Map<String, Map<Subfolder, URI>> mediaToAdd, List<MediaUnit> mediaUnits,
+            List<String> canonicals) {
+
+        for (int i = 0; i < canonicals.size(); i++) {
+            String canonical = canonicals.get(i);
+            MediaUnit mediaUnit = mediaUnits.get(i);
+            if (mediaToAdd.containsKey(canonical)) {
+                for (Entry<Subfolder, URI> entry : mediaToAdd.get(canonical).entrySet()) {
+                    mediaUnit.getMediaFiles().put(createMediaVariant(entry.getKey().getFolder()), entry.getValue());
+                }
+            }
+        }
+    }
+
+    /**
      * Adds the new media to the workpiece. The media are sorted in according to
      * the canonical part of the file name.
      */
@@ -970,18 +993,26 @@ public class FileService {
     }
 
     /**
-     * Creates a new media device with the given uses and URIs.
+     * Creates a new media unit with the given uses and URIs.
      */
     private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
         MediaUnit result = new MediaUnit();
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
-            MediaVariant mediaVariant = new MediaVariant();
-            mediaVariant.setUse(folder.getFileGroup());
-            mediaVariant.setMimeType(folder.getMimeType());
+            MediaVariant mediaVariant = createMediaVariant(folder);
             result.getMediaFiles().put(mediaVariant, entry.getValue());
         }
         return result;
+    }
+
+    /**
+     * Creates a new media variant for the given use.
+     */
+    private MediaVariant createMediaVariant(Folder folder) {
+        MediaVariant mediaVariant = new MediaVariant();
+        mediaVariant.setUse(folder.getFileGroup());
+        mediaVariant.setMimeType(folder.getMimeType());
+        return mediaVariant;
     }
 
     /**

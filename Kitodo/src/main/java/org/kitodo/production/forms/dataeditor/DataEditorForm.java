@@ -22,8 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
@@ -59,8 +60,9 @@ import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
-@ViewScoped
+@SessionScoped
 public class DataEditorForm implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Indicates to JSF to navigate to the web page containing the meta-data
@@ -70,6 +72,12 @@ public class DataEditorForm implements Serializable {
     private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
+
+    /**
+     * A filter on the rule set depending on the workflow step. So far this is
+     * not configurable anywhere and is therefore on “edit”.
+     */
+    private String acquisitionStage = "edit";
 
     /**
      * All file system locks that the user is currently holding.
@@ -172,8 +180,6 @@ public class DataEditorForm implements Serializable {
      * Public constructor.
      */
     public DataEditorForm() {
-        // TODO implement
-        this.process = new Process();
     }
 
     /**
@@ -185,13 +191,22 @@ public class DataEditorForm implements Serializable {
      *
      * @return which page JSF should navigate to
      */
-    public String open(int processId) {
+    public String open(int id, String referringView) {
         try {
-            this.process = ServiceManager.getProcessService().getById(processId);
+            // int id =
+            // Integer.parseInt(Helper.getRequestParameter("processId"));
+            // int userId =
+            // Integer.valueOf(Helper.getRequestParameter("userId"));
+            this.referringView = referringView;
+            Helper.getRequestParameter("referringView");
+            this.process = ServiceManager.getProcessService().getById(id);
+            this.user = ServiceManager.getUserService().getCurrentUser();
+
             ruleset = openRulesetFile(process.getTemplate().getRuleset().getFile());
             if (!openMetsFile("meta.xml")) {
                 return referringView;
             }
+            populatePanels();
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
@@ -212,6 +227,7 @@ public class DataEditorForm implements Serializable {
      *             if filesystem I/O fails
      */
     private boolean openMetsFile(String fileName) throws URISyntaxException, IOException {
+        final long begin = System.nanoTime();
         URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
         String workDirectoryPath = workPathUri.getPath();
         mainFileUri = new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
@@ -228,16 +244,31 @@ public class DataEditorForm implements Serializable {
         try (InputStream in = ServiceManager.getFileService().read(mainFileUri, lock)) {
             workpiece = ServiceManager.getMetsService().load(in);
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Reading METS took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
         ServiceManager.getFileService().searchForMedia(process, workpiece);
         return true;
     }
 
     private RulesetManagementInterface openRulesetFile(String fileName) throws IOException {
+        final long begin = System.nanoTime();
         String metadataLanguage = user.getMetadataLanguage();
         priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File(FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName)));
+        if (logger.isTraceEnabled()) {
+            logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
         return ruleset;
+    }
+
+    private void populatePanels() {
+        final long begin = System.nanoTime();
+        // TODO
+        if (logger.isTraceEnabled()) {
+            logger.trace("Populating panels took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+        }
     }
 
     /**
@@ -262,6 +293,36 @@ public class DataEditorForm implements Serializable {
     public void validate() {
         // TODO implement: validate metadata here
         Helper.setMessage("Validation result");
+    }
+
+    /**
+     * Returns the acquisition stage, so that the individual panels can access
+     * it.
+     *
+     * @return the acquisition stage
+     */
+    String getAcquisitionStage() {
+        return acquisitionStage;
+    }
+
+    /**
+     * Returns the language preference list of the editing user, so that the
+     * individual panels can access it.
+     *
+     * @return the language preference list
+     */
+
+    List<LanguageRange> getPriorityList() {
+        return priorityList;
+    }
+
+    /**
+     * Returns the rule set, so that the individual panels can access it.
+     *
+     * @return the rule set
+     */
+    RulesetManagementInterface getRuleset() {
+        return ruleset;
     }
 
     /**
@@ -485,7 +546,8 @@ public class DataEditorForm implements Serializable {
      * @return String object
      */
     public String getMetadataImplValue() {
-        return getMetadata().getValue();
+        MetadataImpl metadataImpl = getMetadata();
+        return metadataImpl != null ? metadataImpl.getValue() : "";
     }
 
     /**
@@ -783,8 +845,8 @@ public class DataEditorForm implements Serializable {
      * method must be called using a {@code setPropertyActionListener} before
      * the meta-data editor is opened.
      *
-     * @param process
-     *            whose meta-data file is to be edited
+     * @param processId
+     *            ID of the process whose meta-data file is to be edited
      */
     public void setProcessId(int processId) {
         this.processId = processId;
