@@ -24,7 +24,7 @@ import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.LinkingMode;
+import org.kitodo.data.database.helper.enums.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;

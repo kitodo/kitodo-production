@@ -16,7 +16,6 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -39,6 +38,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.BatchType;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -217,7 +217,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetBatchesByType() throws Exception {
         Process process = processService.getById(1);
-        List<Batch> batches = processService.getBatchesByType(process, LOGISTIC);
+        List<Batch> batches = processService.getBatchesByType(process, BatchType.LOGISTIC);
         assertEquals("Table size is incorrect!", 1, batches.size());
     }
 

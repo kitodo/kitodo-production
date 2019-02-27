@@ -42,6 +42,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.WorkflowStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
@@ -76,8 +77,8 @@ public class WorkflowForm extends BaseForm {
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
     }
 
-    public Workflow.Status[] getStatuses() {
-        return Workflow.Status.values();
+    public WorkflowStatus[] getStatuses() {
+        return WorkflowStatus.values();
     }
 
     /**

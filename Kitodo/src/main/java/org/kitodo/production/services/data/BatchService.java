@@ -137,7 +137,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batches
      * @return list of JSON objects with batches of exact type
      */
-    public List<Map<String, Object>> findByTitleAndType(String title, Batch.Type type) throws DataException {
+    public List<Map<String, Object>> findByTitleAndType(String title, org.kitodo.data.database.helper.enums.BatchType type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.must(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
@@ -153,7 +153,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batch
      * @return search result
      */
-    public List<Map<String, Object>> findByTitleOrType(String title, Batch.Type type) throws DataException {
+    public List<Map<String, Object>> findByTitleOrType(String title, org.kitodo.data.database.helper.enums.BatchType type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
         query.should(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));

@@ -29,9 +29,9 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.export.ExportDms;
@@ -384,9 +384,9 @@ public class BatchForm extends BaseForm {
         } else {
             Batch batch;
             if (Objects.nonNull(batchTitle) && !batchTitle.trim().isEmpty()) {
-                batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
+                batch = new Batch(batchTitle.trim(), BatchType.LOGISTIC, selectedProcesses);
             } else {
-                batch = new Batch(Type.LOGISTIC, selectedProcesses);
+                batch = new Batch(BatchType.LOGISTIC, selectedProcesses);
             }
 
             ServiceManager.getBatchService().save(batch);
@@ -476,21 +476,21 @@ public class BatchForm extends BaseForm {
      * Sets the type of all currently selected batches to LOGISTIC.
      */
     public void setLogistic() {
-        setType(Type.LOGISTIC);
+        setType(BatchType.LOGISTIC);
     }
 
     /**
      * Sets the type of all currently selected batches to NEWSPAPER.
      */
     public void setNewspaper() {
-        setType(Type.NEWSPAPER);
+        setType(BatchType.NEWSPAPER);
     }
 
     /**
      * Sets the type of all currently selected batches to SERIAL.
      */
     public void setSerial() {
-        setType(Type.SERIAL);
+        setType(BatchType.SERIAL);
     }
 
     /**
@@ -500,7 +500,7 @@ public class BatchForm extends BaseForm {
      * @param type
      *            type to set
      */
-    private void setType(Type type) {
+    private void setType(BatchType type) {
         try {
             for (Batch batch : currentBatches) {
                 if (selectedBatches.contains(batch)) {

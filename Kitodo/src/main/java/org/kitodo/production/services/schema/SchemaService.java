@@ -23,7 +23,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.LinkingMode;
+import org.kitodo.data.database.helper.enums.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.VariableReplacer;

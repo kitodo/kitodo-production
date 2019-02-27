@@ -77,16 +77,16 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.BatchType;
 import org.kitodo.data.database.helper.enums.IndexAction;
+import org.kitodo.data.database.helper.enums.LinkingMode;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
@@ -781,7 +781,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of batches to return
      * @return all batches of the desired type
      */
-    public List<Batch> getBatchesByType(Process process, Type type) {
+    public List<Batch> getBatchesByType(Process process, BatchType type) {
         List<Batch> batches = process.getBatches();
         if (Objects.nonNull(type)) {
             List<Batch> result = new ArrayList<>(batches);

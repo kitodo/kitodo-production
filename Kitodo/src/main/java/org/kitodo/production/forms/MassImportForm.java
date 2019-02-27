@@ -48,11 +48,11 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DigitalCollection;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -302,7 +302,7 @@ public class MassImportForm extends BaseForm {
             List<String> arguments = new ArrayList<>();
             arguments.add(FilenameUtils.getBaseName(importFile.getAbsolutePath()));
             arguments.add(DateTimeFormat.shortDateTime().print(new DateTime()));
-            return new Batch(Helper.getTranslation("importedBatchLabel", arguments), Type.LOGISTIC);
+            return new Batch(Helper.getTranslation("importedBatchLabel", arguments), BatchType.LOGISTIC);
         } else {
             return new Batch();
         }
