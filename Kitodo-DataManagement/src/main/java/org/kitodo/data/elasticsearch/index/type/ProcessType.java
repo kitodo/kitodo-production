@@ -51,7 +51,7 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
         jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));
         jsonObject.put(ProcessTypeField.WORKPIECES.getKey(), addObjectRelation(process.getWorkpieces()));
-        jsonObject.put(ProcessTypeField.META_XML.getKey(), process.getMetaXml());
+        jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());
         return jsonObject;
     }
 }

@@ -193,18 +193,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public void save(Process process) throws DataException {
-        super.save(process);
-
+    @SuppressWarnings("unchecked")
+    public void saveToIndex(Process process, boolean forceRefresh)
+            throws CustomResponseException, DataException, IOException {
         try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
             JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
-            process.setMetaXml(iterateOverJsonObject(xmlJSONObject));
-            ServiceManager.getProcessService().saveToIndex(process, true);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        } catch (IOException e) {
-            logger.info("Metadata file not found...");
+            Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
+            if (json.keySet().contains("mets")) {
+                Map<String, Object> mets = (Map<String, Object>) json.get("mets");
+                Object dmdSec = mets.get("dmdSec");
+                List<Map<String, Object>> metadata = new ArrayList<>();
+                if (dmdSec instanceof List) {
+                    metadata = (List<Map<String, Object>>) dmdSec;
+                } else if (dmdSec instanceof Map) {
+                    metadata.add((Map<String, Object>)dmdSec);
+                }
+                process.setMetadata(metadata);
+            }
+        } catch (NullPointerException | IOException e) {
+            logger.info("File was not found: " + e.getMessage(), e);
         }
+
+        super.saveToIndex(process, forceRefresh);
     }
 
     /**
@@ -2256,11 +2266,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String key = keys.next();
             Object value = xmlJSONObject.get(key);
             if (value instanceof String) {
-                json.put(key, value);
+                json.put(prepareKey(key), value);
             } else if (value instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) value;
                 Map<String, Object> map = iterateOverJsonObject(jsonObject);
-                json.put(key, map);
+                json.put(prepareKey(key), map);
             } else if (value instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) value;
                 List<Map<String, Object>> arrayMap = new ArrayList<>();
@@ -2268,10 +2278,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     Map<String, Object> map = iterateOverJsonObject(jsonArray.getJSONObject(i));
                     arrayMap.add(map);
                 }
-                json.put(key, arrayMap);
+                json.put(prepareKey(key), arrayMap);
             }
         }
         return json;
+    }
+
+    private String prepareKey(String key) {
+        if (key.contains(":")) {
+            return key.substring(key.indexOf(':') + 1);
+        }
+        return key;
     }
 
     /**
