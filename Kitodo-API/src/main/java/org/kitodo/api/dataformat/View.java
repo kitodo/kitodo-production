@@ -41,4 +41,34 @@ public class View {
     public void setMediaUnit(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mediaUnit == null) ? 0 : mediaUnit.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        View other = (View) obj;
+        if (mediaUnit == null) {
+            if (other.mediaUnit != null) {
+                return false;
+            }
+        } else if (!mediaUnit.equals(other.mediaUnit)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -55,8 +55,6 @@ import org.kitodo.production.metadata.pagination.enums.Type;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.Problem;
 import org.primefaces.event.DragDropEvent;
-import org.primefaces.event.NodeSelectEvent;
-import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
@@ -106,6 +104,11 @@ public class DataEditorForm implements Serializable {
      * The ruleset that the file is based on.
      */
     private RulesetManagementInterface ruleset;
+
+    /**
+     * Backing bean for the structure panel.
+     */
+    private final StructurePanel structurePanel;
 
     /**
      * User sitting in front of the editor.
@@ -180,6 +183,7 @@ public class DataEditorForm implements Serializable {
      * Public constructor.
      */
     public DataEditorForm() {
+        this.structurePanel = new StructurePanel(this);
     }
 
     /**
@@ -193,10 +197,9 @@ public class DataEditorForm implements Serializable {
      */
     public String open(int id, String referringView) {
         try {
-            // int id =
-            // Integer.parseInt(Helper.getRequestParameter("processId"));
-            // int userId =
-            // Integer.valueOf(Helper.getRequestParameter("userId"));
+            if (Objects.nonNull(lock)) {
+                lock.close();
+            }
             this.referringView = referringView;
             Helper.getRequestParameter("referringView");
             this.process = ServiceManager.getProcessService().getById(id);
@@ -265,7 +268,7 @@ public class DataEditorForm implements Serializable {
 
     private void populatePanels() {
         final long begin = System.nanoTime();
-        // TODO
+        structurePanel.show(workpiece);
         if (logger.isTraceEnabled()) {
             logger.trace("Populating panels took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
@@ -323,6 +326,10 @@ public class DataEditorForm implements Serializable {
      */
     RulesetManagementInterface getRuleset() {
         return ruleset;
+    }
+
+    public StructurePanel getStructurePanel() {
+        return structurePanel;
     }
 
     /**
@@ -424,24 +431,6 @@ public class DataEditorForm implements Serializable {
     public void removePagesFromLogicalTreeNode() {
         // TODO implement
         // remove pages in this.selectedPagesForAssignment from this.selectedLogicalTreeNode
-    }
-
-    /**
-     * TODO add javaDoc.
-     * 
-     * @param event TreeDragDropEvent triggered by logical node being dropped
-     */
-    public void onLogicalNodeDragDrop(TreeDragDropEvent event) {
-        // TODO implement
-    }
-
-    /**
-     * TODO add javaDoc.
-     * 
-     * @param event NodeSelectEvent triggered by logical node being selected
-     */
-    public void onLogicalNodeSelect(NodeSelectEvent event) {
-        // TODO implement
     }
 
     /**
