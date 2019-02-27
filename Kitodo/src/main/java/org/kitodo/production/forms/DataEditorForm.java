@@ -48,6 +48,9 @@ import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.metadata.MetadataImpl;
 import org.kitodo.production.metadata.pagination.Paginator;
+import org.kitodo.production.metadata.pagination.enums.Mode;
+import org.kitodo.production.metadata.pagination.enums.Scope;
+import org.kitodo.production.metadata.pagination.enums.Type;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.Problem;
 import org.primefaces.event.DragDropEvent;
@@ -477,6 +480,15 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
+     * Get metadata value.
+     *
+     * @return String object
+     */
+    public String getMetadataImplValue() {
+        return getMetadata().getValue();
+    }
+
+    /**
      * Copy the metadata.
      */
     public void copyMetadata() {
@@ -753,8 +765,17 @@ public class DataEditorForm implements Serializable {
      *
      * @return value of process
      */
-    public Process getProcess() {
+    Process getProcess() {
         return process;
+    }
+
+    /**
+     * Get process title.
+     *
+     * @return value of process title
+     */
+    public String getProcessTitle() {
+        return process.getTitle();
     }
 
     /**
@@ -954,6 +975,90 @@ public class DataEditorForm implements Serializable {
      */
     public void setNumberOfImagesToAdd(int numberOfImagesToAdd) {
         this.numberOfImagesToAdd = numberOfImagesToAdd;
+    }
+
+    /**
+     * Get pagination mode.
+     *
+     * @return value of pagination mode
+     */
+    public Mode getPaginationMode() {
+        return paginator.getPaginationMode();
+    }
+
+    /**
+     * Set paginationMode.
+     *
+     * @param paginationMode
+     *            as org.kitodo.production.metadata.pagination.enums.Mode
+     */
+    public void setPaginationMode(Mode paginationMode) {
+        paginator.setPaginationMode(paginationMode);
+    }
+
+    /**
+     * Get pagination modes.
+     *
+     * @return value of pagination modes
+     */
+    public Mode[] getPaginationModes() {
+        return paginator.getPaginationModes();
+    }
+
+    /**
+     * Get pagination scope.
+     *
+     * @return value of pagination scope
+     */
+    public Scope getPaginationScope() {
+        return paginator.getPaginationScope();
+    }
+
+    /**
+     * Set paginationScope.
+     *
+     * @param paginationMode
+     *            as org.kitodo.production.metadata.pagination.enums.Scope
+     */
+    public void setPaginationScope(Scope paginationScope) {
+        paginator.setPaginationScope(paginationScope);
+    }
+
+    /**
+     * Get pagination scopes.
+     *
+     * @return value of pagination scopes
+     */
+    public Scope[] getPaginationScopes() {
+        return paginator.getPaginationScopes();
+    }
+
+    /**
+     * Get pagination type.
+     *
+     * @return value of pagination type
+     */
+    public Type getPaginationType() {
+        return paginator.getPaginationType();
+    }
+
+    /**
+     * Set paginationType.
+     *
+     * @param paginationType
+     *            as org.kitodo.production.metadata.pagination.enums.Type
+     */
+    public void setPaginationType(Type paginationType) {
+        paginator.setPaginationType(paginationType);
+    }
+
+    /**
+     * Get pagination types.
+     *
+     * @return value of pagination types
+     */
+    public Type[] getPaginationTypes() {
+        return paginator.getPaginationTypes();
     }
 
     /**
@@ -1461,21 +1566,21 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get problem.
+     * Get problem ID.
      *
-     * @return value of problem
+     * @return value of problem ID
      */
-    public Problem getProblem() {
-        return problem;
+    public Integer getProblemId() {
+        return problem.getId();
     }
 
     /**
-     * Set problem.
+     * Get problem message.
      *
-     * @param problem as org.kitodo.production.workflow.Problem
+     * @return value of problem message
      */
-    public void setProblem(Problem problem) {
-        this.problem = problem;
+    public String getProblemMessage() {
+        return problem.getMessage();
     }
 
     /**
