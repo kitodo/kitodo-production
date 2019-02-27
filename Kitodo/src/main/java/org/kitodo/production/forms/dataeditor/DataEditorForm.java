@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.dataeditor;
 
 import java.io.File;
 import java.io.IOException;
