@@ -279,7 +279,7 @@ public class ExportXmlLog {
             stepElement.addContent(stepTitle);
 
             Element state = new Element("processingstatus", xmlns);
-            state.setText(ServiceManager.getTaskService().getProcessingStatusAsString(task));
+            state.setText(String.valueOf(task.getProcessingStatus().getValue()));
             stepElement.addContent(state);
 
             Element begin = new Element("time", xmlns);

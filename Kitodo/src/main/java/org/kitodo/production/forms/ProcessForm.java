@@ -1260,6 +1260,15 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
+     * Get task statuses for select list.
+     *
+     * @return list of task statuses as SelectItem objects
+     */
+    public List<SelectItem> getTaskStatuses() {
+        return SelectItemList.getTaskStatuses();
+    }
+
+    /**
      * Method being used as viewAction for process edit form. If the given
      * parameter 'id' is '0', the form for creating a new process will be
      * displayed.
