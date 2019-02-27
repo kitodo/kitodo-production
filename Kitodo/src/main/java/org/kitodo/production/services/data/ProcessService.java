@@ -1025,8 +1025,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Task getCurrentTask(Process process) {
         for (Task task : process.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.OPEN
-                    || task.getProcessingStatusEnum() == TaskStatus.INWORK) {
+            if (task.getProcessingStatus() == TaskStatus.OPEN
+                    || task.getProcessingStatus() == TaskStatus.INWORK) {
                 return task;
             }
         }
@@ -1138,7 +1138,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         if (Objects.nonNull(tasksBean)) {
             for (Task task : tasksBean) {
-                taskStatuses.add(task.getProcessingStatusEnum());
+                taskStatuses.add(task.getProcessingStatus());
             }
         } else {
             for (TaskDTO task : tasksDTO) {
@@ -1292,7 +1292,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public boolean isImageFolderInUse(Process process) {
         for (Task task : process.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
+            if (task.getProcessingStatus() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
                 return true;
             }
         }
@@ -1321,7 +1321,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public User getImageFolderInUseUser(Process process) {
         for (Task task : process.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
+            if (task.getProcessingStatus() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
                 return task.getProcessingUser();
             }
         }

@@ -298,7 +298,7 @@ public class ExportXmlLog {
                 stepElement.addContent(user);
             }
             Element editType = new Element("edittype", xmlns);
-            editType.setText(task.getEditTypeEnum().getTitle());
+            editType.setText(task.getEditType().getTitle());
             stepElement.addContent(editType);
 
             stepElements.add(stepElement);
@@ -545,7 +545,7 @@ public class ExportXmlLog {
      * @return boolean
      */
     private boolean isNonOpenStateAndHasRegularUser(Task task) {
-        return (!TaskStatus.OPEN.equals(task.getProcessingStatusEnum())) && (Objects.nonNull(task.getProcessingUser()))
+        return (!TaskStatus.OPEN.equals(task.getProcessingStatus())) && (Objects.nonNull(task.getProcessingUser()))
                 && (task.getProcessingUser().getId() != 0)
                 && (Objects.nonNull(ServiceManager.getUserService().getFullName(task.getProcessingUser())));
     }

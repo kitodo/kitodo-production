@@ -367,11 +367,11 @@ public class BatchTaskHelper extends BatchHelper {
     public String openBatchTasksByUser() {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
-            task.setProcessingStatusEnum(TaskStatus.OPEN);
+            task.setProcessingStatus(TaskStatus.OPEN);
             if (ServiceManager.getWorkflowControllerService().isCorrectionTask(task)) {
                 task.setProcessingBegin(null);
             }
-            task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+            task.setEditType(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
             User user = ServiceManager.getUserService().getAuthenticatedUser();
             ServiceManager.getTaskService().replaceProcessingUser(task, user);
@@ -398,7 +398,7 @@ public class BatchTaskHelper extends BatchHelper {
 
                 if (valid) {
                     this.myDav.uploadFromHome(task.getProcess());
-                    task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                    task.setEditType(TaskEditType.MANUAL_MULTI);
                     ServiceManager.getWorkflowControllerService().close(task);
                 }
             } catch (DataException | IOException e) {

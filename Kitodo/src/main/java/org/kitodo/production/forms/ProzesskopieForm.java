@@ -867,9 +867,9 @@ public class ProzesskopieForm implements Serializable {
         for (Task task : process.getTasks()) {
             // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
-            task.setEditTypeEnum(TaskEditType.AUTOMATIC);
+            task.setEditType(TaskEditType.AUTOMATIC);
             // only if its done, set edit start and end date
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+            if (task.getProcessingStatus() == TaskStatus.DONE) {
                 task.setProcessingBegin(process.getCreationDate());
                 // this concerns steps, which are set as done right on creation
                 // bearbeitungsbeginn is set to creation timestamp of process
@@ -972,7 +972,7 @@ public class ProzesskopieForm implements Serializable {
 
         List<Task> tasks = this.prozessKopie.getTasks();
         for (Task task : tasks) {
-            if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+            if (task.getProcessingStatus() == TaskStatus.OPEN && task.isTypeAutomatic()) {
                 TaskScriptThread thread = new TaskScriptThread(task);
                 thread.start();
             }

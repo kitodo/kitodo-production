@@ -72,8 +72,8 @@ public class TaskTypeTest {
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
-        firstTask.setProcessingStatusEnum(TaskStatus.DONE);
-        firstTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        firstTask.setProcessingStatus(TaskStatus.DONE);
+        firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
         LocalDate localDate = new LocalDate(2017, 2, 17);
         firstTask.setProcessingTime(localDate.toDate());
         localDate = new LocalDate(2017, 2, 1);
@@ -94,7 +94,7 @@ public class TaskTypeTest {
         secondTask.setTitle("Rendering");
         secondTask.setPriority(2);
         secondTask.setOrdering(2);
-        secondTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        secondTask.setProcessingStatus(TaskStatus.INWORK);
         localDate = new LocalDate(2017, 2, 17);
         secondTask.setProcessingTime(localDate.toDate());
         localDate = new LocalDate(2017, 2, 10);
@@ -106,7 +106,7 @@ public class TaskTypeTest {
         Task thirdTask = new Task();
         thirdTask.setId(3);
         thirdTask.setTitle("Incomplete");
-        thirdTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        thirdTask.setProcessingStatus(TaskStatus.OPEN);
         tasks.add(thirdTask);
 
         return tasks;

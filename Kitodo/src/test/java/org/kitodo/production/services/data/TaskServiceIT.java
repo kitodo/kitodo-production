@@ -158,7 +158,7 @@ public class TaskServiceIT {
     public void shouldRemoveTask() throws Exception {
         Task task = new Task();
         task.setTitle("To Remove");
-        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        task.setProcessingStatus(TaskStatus.OPEN);
         taskService.save(task);
         Task foundTask = taskService.getById(14);
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
@@ -169,7 +169,7 @@ public class TaskServiceIT {
 
         task = new Task();
         task.setTitle("To remove");
-        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        task.setProcessingStatus(TaskStatus.OPEN);
         taskService.save(task);
         foundTask = taskService.getById(15);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());

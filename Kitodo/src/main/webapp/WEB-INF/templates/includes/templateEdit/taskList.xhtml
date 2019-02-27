@@ -64,8 +64,8 @@
                     <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editTypeEnum ne null}"/>
-                    <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editType ne null}"/>
+                    <h:outputText value="#{item.editType.title}" rendered="#{item.editType ne null}"/>
 
                     <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
                     <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>

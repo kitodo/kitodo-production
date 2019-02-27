@@ -144,10 +144,10 @@ public class WorkflowControllerService {
      *            to change status up
      */
     public void setTaskStatusUp(Task task) throws DataException, IOException {
-        if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
+        if (task.getProcessingStatus() != TaskStatus.DONE) {
             setProcessingStatusUp(task);
-            task.setEditTypeEnum(TaskEditType.ADMIN);
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+            task.setEditType(TaskEditType.ADMIN);
+            if (task.getProcessingStatus() == TaskStatus.DONE) {
                 close(task);
             } else {
                 task.setProcessingTime(new Date());
@@ -163,7 +163,7 @@ public class WorkflowControllerService {
      *            to change status down
      */
     public void setTaskStatusDown(Task task) {
-        task.setEditTypeEnum(TaskEditType.ADMIN);
+        task.setEditType(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
         taskService.replaceProcessingUser(task, getCurrentUser());
         setProcessingStatusDown(task);
@@ -195,7 +195,7 @@ public class WorkflowControllerService {
 
         for (Task task : tasks) {
             // TODO: check if this behaviour is correct
-            if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
+            if (process.getTasks().get(0) != task && task.getProcessingStatus() != TaskStatus.LOCKED) {
                 setTaskStatusDown(task);
                 taskService.save(task);
                 break;
@@ -238,7 +238,7 @@ public class WorkflowControllerService {
         // if the result of the verification is ok, then continue, otherwise it
         // is not reached
         this.webDav.uploadFromHome(task.getProcess());
-        task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        task.setEditType(TaskEditType.MANUAL_SINGLE);
         close(task);
     }
 
@@ -249,7 +249,7 @@ public class WorkflowControllerService {
      *            as Task object
      */
     public void close(Task task) throws DataException, IOException {
-        task.setProcessingStatus(3);
+        task.setProcessingStatus(TaskStatus.DONE);
         task.setProcessingTime(new Date());
         User user = null;
         if (!task.isTypeAutomatic()) {
@@ -278,8 +278,8 @@ public class WorkflowControllerService {
             if (!this.flagWait) {
                 this.flagWait = true;
 
-                task.setProcessingStatusEnum(TaskStatus.INWORK);
-                task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+                task.setProcessingStatus(TaskStatus.INWORK);
+                task.setEditType(TaskEditType.MANUAL_SINGLE);
                 task.setProcessingTime(new Date());
                 taskService.replaceProcessingUser(task, getCurrentUser());
                 if (Objects.isNull(task.getProcessingBegin())) {
@@ -292,7 +292,7 @@ public class WorkflowControllerService {
 
                 if (!concurrentTasks.isEmpty()) {
                     for (Task concurrentTask : concurrentTasks) {
-                        concurrentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+                        concurrentTask.setProcessingStatus(TaskStatus.LOCKED);
                         taskService.save(concurrentTask);
                     }
                 }
@@ -323,13 +323,13 @@ public class WorkflowControllerService {
      */
     public void unassignTaskFromUser(Task task) throws DataException {
         this.webDav.uploadFromHome(task.getProcess());
-        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        task.setProcessingStatus(TaskStatus.OPEN);
         taskService.replaceProcessingUser(task, null);
         // if we have a correction task here then never remove startdate
         if (isCorrectionTask(task)) {
             task.setProcessingBegin(null);
         }
-        task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        task.setEditType(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
 
         taskService.save(task);
@@ -370,15 +370,15 @@ public class WorkflowControllerService {
     public void reportProblem(Task currentTask) throws DAOException, DataException {
         this.webDav.uploadFromHome(getCurrentUser(), currentTask.getProcess());
         Date date = new Date();
-        currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingStatus(TaskStatus.LOCKED);
+        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
         Task correctionTask = taskService.getById(getProblem().getId());
-        correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        correctionTask.setProcessingStatus(TaskStatus.OPEN);
         setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
 
@@ -404,9 +404,9 @@ public class WorkflowControllerService {
     public void solveProblem(Task currentTask) throws DAOException, DataException {
         Date date = new Date();
         this.webDav.uploadFromHome(currentTask.getProcess());
-        currentTask.setProcessingStatusEnum(TaskStatus.DONE);
+        currentTask.setProcessingStatus(TaskStatus.DONE);
         currentTask.setProcessingEnd(date);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());
         taskService.save(currentTask);
@@ -439,8 +439,9 @@ public class WorkflowControllerService {
      *            object
      */
     private void setProcessingStatusUp(Task task) {
-        if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            task.setProcessingStatus(task.getProcessingStatus() + 1);
+        if (task.getProcessingStatus() != TaskStatus.DONE) {
+            TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(task.getProcessingStatus().getValue() + 1);
+            task.setProcessingStatus(newTaskStatus);
         }
     }
 
@@ -451,8 +452,9 @@ public class WorkflowControllerService {
      *            object
      */
     private void setProcessingStatusDown(Task task) {
-        if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-            task.setProcessingStatus(task.getProcessingStatus() - 1);
+        if (task.getProcessingStatus() != TaskStatus.LOCKED) {
+            TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(task.getProcessingStatus().getValue() - 1);
+            task.setProcessingStatus(newTaskStatus);
         }
     }
 
@@ -494,7 +496,7 @@ public class WorkflowControllerService {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
-            taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
+            taskInBetween.setProcessingStatus(TaskStatus.LOCKED);
             setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             taskService.save(taskInBetween);
@@ -506,7 +508,7 @@ public class WorkflowControllerService {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(currentTask.getOrdering(),
             correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
-            taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
+            taskInBetween.setProcessingStatus(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
             taskService.save(taskInBetween);
@@ -514,7 +516,7 @@ public class WorkflowControllerService {
     }
 
     private void openTaskForProcessing(Task correctionTask) throws DataException {
-        correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        correctionTask.setProcessingStatus(TaskStatus.OPEN);
         setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
@@ -565,7 +567,7 @@ public class WorkflowControllerService {
 
         List<Task> allConcurrentTasks = new ArrayList<>();
         for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() < 2
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus().getValue() < 2
                     && !tempTask.getId().equals(task.getId())) {
                 if (blocksOtherTasks) {
                     if (tempTask.isConcurrent()) {
@@ -581,7 +583,7 @@ public class WorkflowControllerService {
 
     private boolean isAnotherTaskInWorkWhichBlocksOtherTasks(List<Task> tasks, Task task) {
         for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() == 2
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() == TaskStatus.INWORK
                     && !tempTask.getId().equals(task.getId()) && !tempTask.isConcurrent()) {
                 return true;
             }
@@ -609,7 +611,7 @@ public class WorkflowControllerService {
                 ordering = higherTask.getOrdering();
             }
 
-            if (ordering == higherTask.getOrdering() && higherTask.getProcessingStatus() < 2) {
+            if (ordering == higherTask.getOrdering() && higherTask.getProcessingStatus().getValue() < 2) {
                 activateTask(higherTask);
                 matched = true;
             }
@@ -622,19 +624,19 @@ public class WorkflowControllerService {
     private void activateTask(Task task) throws DataException, IOException {
         if (isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
             // activate the task if it is not fully automatic
-            task.setProcessingStatus(1);
+            task.setProcessingStatus(TaskStatus.OPEN);
             task.setProcessingTime(new Date());
-            task.setEditType(4);
+            task.setEditType(TaskEditType.AUTOMATIC);
 
             verifyTask(task);
 
             taskService.save(task);
         } else {
             // close task as it is not going to be executed
-            task.setProcessingStatus(3);
+            task.setProcessingStatus(TaskStatus.DONE);
             task.setProcessingTime(new Date());
             task.setProcessingEnd(new Date());
-            task.setEditType(4);
+            task.setEditType(TaskEditType.AUTOMATIC);
 
             taskService.save(task);
 

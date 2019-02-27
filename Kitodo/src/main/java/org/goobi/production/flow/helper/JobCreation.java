@@ -27,6 +27,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
@@ -122,7 +123,7 @@ public class JobCreation {
             moveFiles(metsfile, basepath, process);
             List<Task> tasks = ServiceManager.getProcessService().getById(process.getId()).getTasks();
             for (Task task : tasks) {
-                if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+                if (task.getProcessingStatus() == TaskStatus.OPEN && task.isTypeAutomatic()) {
                     Thread thread = new TaskScriptThread(task);
                     thread.start();
                 }

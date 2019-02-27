@@ -34,12 +34,12 @@
         <p:column headerText="#{msgs.status}" id="taskStatus">
             <p:panel id="statusColumn" styleClass="statusColumn">
                 <h:panelGroup class="task-status"
-                              title="#{ProcessForm.getTaskStatusTitle(item.processingStatusEnum.title)}"
+                              title="#{ProcessForm.getTaskStatusTitle(item.processingStatus.title)}"
                               style="background-color:
-                                #{item.processingStatusEnum.title == 'statusDone' ? 'var(--green)' : ''}
-                                #{item.processingStatusEnum.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
-                                #{item.processingStatusEnum.title == 'statusOpen' ? 'var(--light-orange)' : ''}
-                                #{item.processingStatusEnum.title == 'statusLocked' ? 'var(--orange)' : ''};"
+                                #{item.processingStatus.title == 'statusDone' ? 'var(--green)' : ''}
+                                #{item.processingStatus.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
+                                #{item.processingStatus.title == 'statusOpen' ? 'var(--light-orange)' : ''}
+                                #{item.processingStatus.title == 'statusLocked' ? 'var(--orange)' : ''};"
                 />
                 <p:panel rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">
                     <!-- Set workflow state to previous step -->
@@ -112,8 +112,8 @@
                     <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editTypeEnum ne null}"/>
-                    <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editType ne null}"/>
+                    <h:outputText value="#{item.editType.title}" rendered="#{item.editType ne null}"/>
 
                     <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
                     <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>

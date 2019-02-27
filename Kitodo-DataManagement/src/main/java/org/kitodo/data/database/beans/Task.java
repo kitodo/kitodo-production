@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -27,6 +28,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.kitodo.data.database.converter.TaskEditTypeConverter;
+import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -46,7 +49,8 @@ public class Task extends BaseIndexedBean {
     private Integer ordering;
 
     @Column(name = "processingStatus")
-    private Integer processingStatus;
+    @Convert(converter = TaskStatusConverter.class)
+    private TaskStatus processingStatus = TaskStatus.LOCKED;
 
     @Column(name = "processingTime")
     private Date processingTime;
@@ -58,7 +62,8 @@ public class Task extends BaseIndexedBean {
     private Date processingEnd;
 
     @Column(name = "editType")
-    private Integer editType;
+    @Convert(converter = TaskEditTypeConverter.class)
+    private TaskEditType editType = TaskEditType.UNNOWKN;
 
     @Column(name = "homeDirectory")
     private short homeDirectory;
@@ -225,34 +230,12 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Getter for editType set to private for hibernate, for use in program use
-     * getEditTypeEnum instead.
-     *
-     * @return editType as integer
-     */
-    @SuppressWarnings("unused")
-    private Integer getEditType() {
-        return this.editType;
-    }
-
-    /**
-     * Set editType to defined integer. only for internal use through hibernate,
-     * for changing editType use setEditTypeEnum instead.
-     *
-     * @param editType
-     *            as Integer
-     */
-    public void setEditType(Integer editType) {
-        this.editType = editType;
-    }
-
-    /**
      * Get editType as {@link TaskEditType}.
      *
      * @return current edit type
      */
-    public TaskEditType getEditTypeEnum() {
-        return TaskEditType.getTypeFromValue(this.editType);
+    public TaskEditType getEditType() {
+        return this.editType;
     }
 
     /**
@@ -261,30 +244,8 @@ public class Task extends BaseIndexedBean {
      * @param inputType
      *            as {@link TaskEditType}
      */
-    public void setEditTypeEnum(TaskEditType inputType) {
-        this.editType = inputType.getValue();
-    }
-
-    /**
-     * Getter for processing status (set to private for hibernate), for use in
-     * program use getProcessingStatusEnum instead.
-     *
-     * @return processingStatus as integer
-     */
-    public Integer getProcessingStatus() {
-        return this.processingStatus;
-    }
-
-    /**
-     * Set processing status to defined integer. only for internal use through
-     * hibernate, for changing processing status use setProcessingStatusEnum
-     * instead.
-     *
-     * @param processingStatus
-     *            as Integer
-     */
-    public void setProcessingStatus(Integer processingStatus) {
-        this.processingStatus = processingStatus;
+    public void setEditType(TaskEditType inputType) {
+        this.editType = inputType;
     }
 
     /**
@@ -293,8 +254,8 @@ public class Task extends BaseIndexedBean {
      * @param inputStatus
      *            as {@link TaskStatus}
      */
-    public void setProcessingStatusEnum(TaskStatus inputStatus) {
-        this.processingStatus = inputStatus.getValue();
+    public void setProcessingStatus(TaskStatus inputStatus) {
+        this.processingStatus = inputStatus;
     }
 
     /**
@@ -302,8 +263,8 @@ public class Task extends BaseIndexedBean {
      *
      * @return current processing status
      */
-    public TaskStatus getProcessingStatusEnum() {
-        return TaskStatus.getStatusFromValue(this.processingStatus);
+    public TaskStatus getProcessingStatus() {
+        return this.processingStatus;
     }
 
     public Date getProcessingTime() {
@@ -645,12 +606,13 @@ public class Task extends BaseIndexedBean {
         return result;
     }
 
+    // TODO: replace it with normal get/set
     public String getProcessingStatusAsString() {
         return String.valueOf(this.processingStatus);
     }
 
     public void setProcessingStatusAsString(String inputProcessingStatus) {
-        this.processingStatus = Integer.parseInt(inputProcessingStatus);
+        this.processingStatus = TaskStatus.getStatusFromValue(Integer.parseInt(inputProcessingStatus));
     }
 
     @Override
