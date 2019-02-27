@@ -41,18 +41,23 @@ body {
     color: var(--carbon-blue);
 }
 
-a {
+a,
+.ui-widget-content a {
     color: var(--blue);
 }
 
-a:hover {
+a:hover,
+.ui-widget-content a:hover {
     color: var(--focused-blue);
     text-decoration: underline;
 }
 
 a i,
 a:link i,
-a:visited i {
+a:visited i,
+.ui-widget-content a i,
+.ui-widget-content a:link i,
+.ui-widget-content a:visited i {
     text-shadow: 0 0 0 transparent;
     color: var(--blue);
 }

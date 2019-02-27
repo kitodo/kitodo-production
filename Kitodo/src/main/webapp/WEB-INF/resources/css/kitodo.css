@@ -1299,6 +1299,15 @@ Column content
     background: var(--light-gray);
 }
 
+.correction {
+    color: var(--focused-orange);
+    font-weight: bold;
+}
+
+.solved {
+    color: var(--orange);
+}
+
 #imagePreviewForm\:tifFoldersLabel {
     color: var(--pure-white);
     line-height: var(--input-height);
@@ -1734,6 +1743,22 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 .so-folder-use {
     margin: 0 15px 1.3em 15px;
     width: calc(100% - 64px);
+}
+
+#tasksTabView\:actionForm\:metadataBlocked {
+    color: var(--orange);
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+#tasksTabView\:actionForm\:metadataBlocked table {
+    margin-left: 30px;
+}
+
+#tasksTabView\:actionForm\:timeoutWarning {
+    color: var(--orange);
+    font-weight: bold;
 }
 
 /*----------------------------------------------------------------------
