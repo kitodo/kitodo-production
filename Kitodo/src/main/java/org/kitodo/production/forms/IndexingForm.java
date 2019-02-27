@@ -151,7 +151,7 @@ public class IndexingForm {
 
     /**
      * Get time when indexing has started.
-     * 
+     *
      * @return time when indexing has started as LocalDateTime
      */
     public LocalDateTime getIndexingStartedTime() {
@@ -459,7 +459,7 @@ public class IndexingForm {
 
     /**
      * Check if current mapping is empty.
-     * 
+     *
      * @return true if mapping is empty, otherwise false
      */
     public boolean isMappingEmpty() {
@@ -644,6 +644,7 @@ public class IndexingForm {
         for (ObjectType objectType : objectTypes) {
             updateCount(objectType);
         }
+        countDatabaseObjects();
         Ajax.update("@all");
     }
 
