@@ -50,8 +50,8 @@ textarea {
     }
 
 mark {
-    background-color: #ff0000;
-    color: #000;
+    background-color: var(--orange);
+    color: var(--carbon-blue);
     }
 
 sub, sup {
@@ -173,7 +173,7 @@ body.first-visit #portal-header {
     padding: 9px 15px;
     border: 0 none;
     background: transparent;
-    color: #fff;
+    color: var(--pure-white);
     box-shadow: inherit;
     }
 
@@ -184,7 +184,7 @@ body.first-visit #portal-header {
     text-align: center;
     background: transparent;
     border: 0px none;
-    color: #fff;
+    color: var(--pure-white);
     cursor: pointer;
     font-weight: 600;
     font-size: 17px;
@@ -231,7 +231,7 @@ body.first-visit #portal-header {
 }
 
 #header-nav li:hover a {
-    color: #1b2b36;
+    color: var(--carbon-blue);
     }
 
 #header-nav li.disabled:hover > a {
@@ -243,7 +243,7 @@ body.first-visit #portal-header {
     list-style: none;
     border-radius: 3px;
     text-align: left;
-    color: #1b2b36;
+    color: var(--carbon-blue);
     width: -webkit-calc(100% - 60px);
     width: -moz-calc(100% - 60px);
     width: calc(100% - 60px);
@@ -266,7 +266,7 @@ body.first-visit #portal-header {
 
 #header-nav li ul li a, #header-nav li ul li div {
     padding: 12px 15px;
-    color: #1b2b36;
+    color: var(--carbon-blue);
     text-decoration: none !important;
     display: block;
     border-top: 1px solid var(--cloudy-gray);
@@ -277,9 +277,9 @@ body.first-visit #portal-header {
 }
 
 #header-nav li ul li:hover a {
-    background-color: #1b2b36 !important;
+    background-color: var(--carbon-blue) !important;
     color: var(--pure-white);
-    border-color: #1b2b36 !important;
+    border-color: var(--carbon-blue) !important;
     }
 
 .menu-active {
@@ -333,7 +333,7 @@ body.first-visit #portal-header {
 }
 
 #header-nav #nav-user li.toggle-list a.ui-commandlink {
-    border-top: 1px solid #d3d3d3;
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 #header-nav #nav-user > li > div > span > div {
@@ -580,7 +580,7 @@ section#content-section {
 }
 
 #desktopGrid > .ui-panel > .ui-panel-content {
-    background-color: white !important;
+    background-color: var(--pure-white) !important;
     padding: 0;
     margin: 8px;
     border-radius: 3px;
@@ -734,7 +734,7 @@ section#content-section {
 }
 
 #filterMenu .ui-overlaypanel li:hover {
-    background: #f0faff;
+    background: var(--trans-blue);
 }
 
 #filterMenu .ui-overlaypanel li a {
@@ -766,7 +766,7 @@ section#content-section {
 
 .ui-tabs-panels {
     overflow-y: scroll;
-    background: white;
+    background: var(--pure-white);
 }
 
 .ui-tabs-panels.autoscroll {
@@ -944,7 +944,7 @@ main i.fa {
 }
 
 .client-select-dialog > .ui-dialog-titlebar > .ui-dialog-title {
-    color: #000000;
+    color: var(--carbon-blue);
     font-size: 150%;
     margin-top: 25px;
     line-height: 150%;
@@ -1038,7 +1038,7 @@ Metadata Editor
 #metadataEditorWrapper {
     height: 700px;
     white-space: nowrap;
-    border-top: solid 3px grey;
+    border-top: solid 3px var(--medium-gray);
 }
 
 form#metadata,
@@ -1071,7 +1071,7 @@ form#metadata div label,
 .collapsibleWrapper > .columnExpandButton {
     background: transparent;
     border: none;
-    color: grey;
+    color: var(--medium-gray);
     height: 36px;
     position: absolute;
     right: 16px;
@@ -1168,7 +1168,7 @@ form#metadata div label,
     display: inline-block;
     height: 100%;
     width: 3px;
-    border: solid grey;
+    border: solid var(--medium-gray);
     border-width: 0 1px;
     box-sizing: border-box;
     cursor: ew-resize;
@@ -1187,7 +1187,7 @@ form#metadata div label,
 
 #metadataEditorWrapper .resizer::after {
     content: '\f0da';
-    color: grey;
+    color: var(--medium-gray);
     font-family: FontAwesome;
     font-size: 22px;
     position: absolute;
@@ -1202,7 +1202,7 @@ form#metadata div label,
 
 #metadataEditorWrapper #verticalResizer {
     height: 5px;
-    background: white;
+    background: var(--pure-white);
     cursor: ns-resize;
 }
 
@@ -1420,7 +1420,7 @@ Column content
 
 .thumbnail {
     height: 60px;
-    border: 1px solid black;
+    border: 1px solid var(--carbon-blue);
 }
 
 .thumbnail.active {
@@ -1443,7 +1443,7 @@ Column content
     opacity: 0;
     transition: .2s ease;
     background-color: var(--light-blue);
-    color: white;
+    color: var(--pure-white);
     font-size: smaller;
     text-align: center;
 }
@@ -1470,7 +1470,7 @@ Column content
 #imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
     display: block;
     background-color: var(--focused-blue);
-    color: white;
+    color: var(--pure-white);
     padding: 5px;
     border-top: 3px solid var(--blue);
 }
@@ -1562,7 +1562,7 @@ footer {
 }
 
 .ui-selectmanymenu.ui-widget-content, .ui-selectonelistbox.ui-widget-content {
-    border: 1px solid #004f81 !important;
+    border: 1px solid var(--focused-blue) !important;
 }
 
 .ui-selectmanymenu, .ui-selectonelistbox {

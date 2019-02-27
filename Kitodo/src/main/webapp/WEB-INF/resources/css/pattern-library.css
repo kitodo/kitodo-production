@@ -46,7 +46,7 @@ a {
 }
 
 a:hover {
-    color: #004f81;
+    color: var(--focused-blue);
     text-decoration: underline;
 }
 
@@ -72,7 +72,7 @@ a.disabled i {
 }
 
 label.ui-state-error {
-    background-color: white !important;
+    background-color: var(--pure-white) !important;
 }
 
 input.ui-state-error {
@@ -85,7 +85,7 @@ input.ui-state-error {
 .ui-state-focus,
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
-    background: #f0faff;
+    background: var(--trans-blue);
     border: 0px;
     box-shadow: 0 0 0;
 }
@@ -477,7 +477,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 }
 
 #metadata .ui-datatable-even {
-    background: #fff;
+    background: var(--pure-white);
 }
 
 #metadata .ui-datatable-odd {
@@ -511,7 +511,7 @@ tr.ui-widget-content {
 }
 
 tr.ui-widget-content:not(:first-child) {
-    border-top: 1px solid #e2e2e2 !important;
+    border-top: 1px solid var(--cloudy-gray) !important;
 }
 
 tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
@@ -538,12 +538,12 @@ tbody.ui-widget-content {
 
 .ui-datatable tr.ui-widget-content:hover,
 .ui-treetable tr.ui-widget-content:hover {
-    background: #f0faff;
+    background: var(--trans-blue);
     color: var(--carbon-blue) !important;
 }
 
 .ui-widget-header {
-    background: #999;
+    background: var(--medium-gray);
     color: var(--pure-white);
     border: 0px;
 }
@@ -659,14 +659,14 @@ tr.ui-expanded-row-content tr.ui-widget-header,
 
 tr.ui-expanded-row.row-hover,
 tr.ui-expanded-row-content.row-hover {
-    background: #f0faff !important;
+    background: var(--trans-blue) !important;
     color: var(--carbon-blue) !important;
 }
 
 
 .ui-picklist-caption {
-    border-bottom: 1px solid #000 !important;
-    color: #000;
+    border-bottom: 1px solid var(--carbon-blue) !important;
+    color: var(--carbon-blue);
 }
 
 .ui-picklist-buttons-cell .ui-button {
@@ -715,7 +715,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 }
 
 .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover::after {
-    background: #004f81;
+    background: var(--focused-blue);
 }
 
 .ui-accordion .ui-state-default,
@@ -743,7 +743,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-tabs .ui-tabs-nav,
 .ui-tabmenu .ui-widget-header {
-    border-top: 3px solid #999;
+    border-top: 3px solid var(--medium-gray);
     background: var(--cloudy-gray);
 }
 
@@ -761,18 +761,18 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-tabs-nav .ui-state-default a:link,
 .ui-tabs-nav .ui-state-default a:visited,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
-    color: #999;
+    color: var(--medium-gray);
 }
 
 .ui-tabs-nav .ui-state-default a:hover,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a:hover {
-    color: #004f81;
+    color: var(--focused-blue);
 }
 
 .ui-tabs .ui-tabs-nav li,
 .ui-tabmenu .ui-widget-header .ui-state-default {
     border: 0px;
-    border-top: 3px solid #999;
+    border-top: 3px solid var(--medium-gray);
     background: transparent;
     margin-bottom: -1px;
 }
