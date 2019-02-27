@@ -800,30 +800,41 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 }
 
 .ui-growl-item {
-    background: var(--cloudy-gray);
+    background: var(--green);
     text-shadow: 0 0 0 transparent;
     border-radius: 3px;
+    padding: 16px;
 }
 
 .ui-growl-item-container {
     opacity: 1;
-    color: #1b2b36;
-    border-color: #d8d8d8;
+    color: var(--pure-white);
+    border: none;
     box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
 }
 
-.ui-growl-item > span {
+.ui-growl-item .ui-growl-icon-close[style] {
+    display: none !important;
+}
+
+.ui-growl-item .ui-growl-image {
     background: none;
     text-indent: 0 !important;
     text-rendering: auto;
     widows: inherit;
+    width: auto;
     height: inherit;
     display: inline;
+    float: right;
     font: normal normal normal x-large/1 FontAwesome;
 }
 
-.ui-growl-item > span::before {
+.ui-growl-item .ui-growl-image::before {
     content: "\f05a";
+}
+
+.ui-growl-item .ui-growl-message {
+    float: none;
 }
 
 .ui-grid .ui-grid-row {
