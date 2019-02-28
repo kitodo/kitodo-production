@@ -131,6 +131,14 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
+     * Archive active workflow.
+     */
+    public void archive() {
+        this.workflow.setStatus(WorkflowStatus.ARCHIVED);
+        saveWorkflow();
+    }
+
+    /**
      * Remove workflow if no template is assigned to it.
      */
     public void delete() {

@@ -57,6 +57,15 @@
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
+                    <p:commandLink id="archiveWorkflow" action="#{WorkflowForm.archive}" title="#{msgs.archive}"
+                                   rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'active'}"
+                                   update="projectsTabView:workflowTable">
+                        <h:outputText><i class="fa fa-archive"/></h:outputText>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
+                        <p:confirm header="#{msgs.confirmArchive}" message="#{msgs.confirmDeleteWorkflow}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
                                    rendered="#{SecurityAccessController.hasAuthorityToDeleteWorkflow()}"
                                    update="projectsTabView:workflowTable">
