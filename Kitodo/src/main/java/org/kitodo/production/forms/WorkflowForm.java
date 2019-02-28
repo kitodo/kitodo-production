@@ -47,6 +47,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -77,8 +78,13 @@ public class WorkflowForm extends BaseForm {
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
     }
 
-    public WorkflowStatus[] getStatuses() {
-        return WorkflowStatus.values();
+    /**
+     * Get list of workflow statues for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    public List<SelectItem> getWorkflowStatuses() {
+        return SelectItemList.getWorkflowStatuses();
     }
 
     /**
