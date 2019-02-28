@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
@@ -149,6 +150,9 @@ public class AddingST extends BaseTestSelenium {
         List<String> workflowTitles = projectsPage.getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("testWorkflow");
         assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
+
+        new File("src/test/resources/diagrams/testWorkflow.bpmn20.xml").delete();
+        new File("src/test/resources/diagrams/testWorkflow.svg").delete();
     }
 
     @Test
