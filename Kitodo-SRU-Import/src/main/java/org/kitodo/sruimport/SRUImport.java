@@ -47,13 +47,20 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String NAME_ATTRIBUTE = "[@name]";
     private static final String VALUE_ATTRIBUTE = "[@value]";
     private static final String LABEL_ATTRIBUTE = "[@label]";
+    private static final String HOST_CONFIG = "host";
+    private static final String SCHEME_CONFIG = "scheme";
+    private static final String PATH_CONFIG = "path";
+    private static final String ID_PARAMETER_TAG = "identifierParameter";
+    private static final String PARAM_TAG = "param";
+    private static final String SEARCHFIELD_TAG = "searchField";
 
     private static String protocol;
     private static String host;
     private static String path;
+    private static String idParameter;
     private static LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
     private static HashMap<String, String> searchFieldMapping = new HashMap<>();
-    private static String equalsOperand = "==";
+    private static String equalsOperand = "=";
     private static HttpClient sruClient = HttpClientBuilder.create().build();
 
     /**
@@ -69,7 +76,8 @@ public class SRUImport implements ExternalDataImportInterface {
         LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
         try {
             URI queryURL = createQueryURI(queryParameters);
-            return performQueryToDocument(queryURL.toString() + "&query=ead.id==" + id);
+            return performQueryToDocument(queryURL.toString()
+                    + "&maximumRecords=1&query=" + idParameter + equalsOperand + id);
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
@@ -81,11 +89,10 @@ public class SRUImport implements ExternalDataImportInterface {
         loadOPACConfiguration(catalogId);
         HashMap<String, String> searchFields = new HashMap<>();
         searchFields.put(field, term);
-        return search(catalogId, searchFields);
+        return search(catalogId, searchFields, rows);
     }
 
-
-    private SearchResult search(String catalogId, Map<String, String> searchParameters) {
+    private SearchResult search(String catalogId, Map<String, String> searchParameters, int numberOfRecords) {
         // TODO: check how the fields of hits from SRU interfaces can be configured via CQL (need only title and id!)
         loadOPACConfiguration(catalogId);
         if (searchFieldMapping.keySet().containsAll(searchParameters.keySet())) {
@@ -105,7 +112,10 @@ public class SRUImport implements ExternalDataImportInterface {
                 // results in the "==" between search fields and terms to become URL encoded and a failed query!
                 //queryParameters.put("query", createSearchFieldString(searchFieldMap));
                 URI queryURL = createQueryURI(queryParameters);
-                return performQuery(queryURL.toString() + "&query=" + createSearchFieldString(searchFieldMap));
+                return performQuery(
+                        queryURL.toString()
+                                + "&maximumRecords=" + numberOfRecords
+                                + "&query=" + createSearchFieldString(searchFieldMap));
             } catch (URISyntaxException e) {
                 logger.error(e.getLocalizedMessage());
             }
@@ -165,26 +175,27 @@ public class SRUImport implements ExternalDataImportInterface {
             // XML configuration of OPAC
             HierarchicalConfiguration opacConfig = OPACConfig.getOPACConfiguration(opacName);
 
-            for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt("param")) {
-                if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("scheme")) {
+            for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
+                if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(SCHEME_CONFIG)) {
                     protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("host")) {
+                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(HOST_CONFIG)) {
                     host = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals("path")) {
+                } else if (queryConfigParam.getString(NAME_ATTRIBUTE).equals(PATH_CONFIG)) {
                     path = queryConfigParam.getString(VALUE_ATTRIBUTE);
                 }
             }
 
+            idParameter = OPACConfig.getIdentifierParameter(opacName);
 
             HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
 
-            for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
+            for (HierarchicalConfiguration searchField : searchFields.configurationsAt(SEARCHFIELD_TAG)) {
                 searchFieldMapping.put(searchField.getString(LABEL_ATTRIBUTE), searchField.getString(VALUE_ATTRIBUTE));
             }
 
             HierarchicalConfiguration urlParameters = OPACConfig.getUrlParameters(opacName);
 
-            for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt("param")) {
+            for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt(PARAM_TAG)) {
                 parameters.put(queryParam.getString(NAME_ATTRIBUTE), queryParam.getString(VALUE_ATTRIBUTE));
             }
         } catch (IllegalArgumentException e) {

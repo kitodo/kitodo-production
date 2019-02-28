@@ -110,7 +110,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
         switchToTabByIndex(3);
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_3")));
+        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_2")));
 
         clickElement(fieldSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(fieldSelect.getAttribute("id") + "_1")));
