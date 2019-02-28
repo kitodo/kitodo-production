@@ -476,7 +476,7 @@ public class MetadataProcessor {
         this.gdzfile = ServiceManager.getProcessService().readMetadataFile(this.process);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
-        this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
+        this.metaHelper = new MetadataHelper(this.myPrefs);
         this.imageHelper = new ImageHelper(this.myPrefs, this.digitalDocument);
 
         /*
