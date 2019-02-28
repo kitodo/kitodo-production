@@ -56,7 +56,7 @@
                          rendered="#{ImportForm.selectedCatalog ne null}"
                          value="#{ImportForm.searchTerm}"
                          class="input"
-                         required="true"/>
+                         required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"/>
         </h:panelGroup>
         <h:panelGroup layout="block"
                       id="catalogSearchButton">
