@@ -75,7 +75,7 @@
                 <h:commandLink rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"
                                action="#{ProjectForm.duplicate(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}">
-                    <i class="fa fa-clone fa-lg"/>
+                    <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                 </h:commandLink>
 
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
