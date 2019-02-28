@@ -52,7 +52,7 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     /**
-     * Get available workflows - available means that workflow is active, ready and
+     * Get available workflows - available means that workflow has status active and is
      * assigned to client with given id.
      * 
      * @param clientId
@@ -61,7 +61,7 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
      */
     public List<Workflow> getAvailableWorkflows(int clientId) {
         return getByQuery(
-            "SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.active = 1 AND w.ready = 1",
+            "SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.status = 'ACTIVE'",
             Collections.singletonMap("clientId", clientId));
     }
 }

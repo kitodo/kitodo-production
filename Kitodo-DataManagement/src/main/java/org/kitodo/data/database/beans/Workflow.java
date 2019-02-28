@@ -18,6 +18,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,14 +33,30 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 public class Workflow extends BaseIndexedBean {
     private static final long serialVersionUID = 6831844584235763486L;
 
+    /**
+     * Enum for workflow status. Statuses:
+     *
+     * <dl>
+     * <dt>DRAFT</dt>
+     * <dd>it is possible to edit workflow but not yet use</dd>
+     * <dt>ACTIVE</dt>
+     * <dd>workflow is not editable anymore but can be used</dd>
+     * <dt>ARCHIVED</dt>
+     * <dd>workflow can not be used anymore</dd>
+     * </dl>
+     */
+    public enum Status {
+        DRAFT,
+        ACTIVE,
+        ARCHIVED
+    }
+
     @Column(name = "title")
     private String title;
 
-    @Column(name = "active")
-    private Boolean active = true;
-
-    @Column(name = "ready")
-    private Boolean ready = false;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.DRAFT;
 
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
@@ -83,45 +101,21 @@ public class Workflow extends BaseIndexedBean {
     }
 
     /**
-     * Check if workflow is active.
+     * Get status of the workflow.
      *
-     * @return true or false
+     * @return value of status
      */
-    public boolean isActive() {
-        if (Objects.isNull(this.active)) {
-            this.active = true;
-        }
-        return this.active;
+    public Status getStatus() {
+        return status;
     }
 
     /**
-     * Set workflow as active.
+     * Set status of the workflow.
      *
-     * @param active as boolean
+     * @param status as org.kitodo.data.database.beans.Workflow.Status
      */
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    /**
-     * Check if workflow is ready to use.
-     *
-     * @return true or false
-     */
-    public boolean isReady() {
-        if (Objects.isNull(this.ready)) {
-            this.ready = false;
-        }
-        return this.ready;
-    }
-
-    /**
-     * Set workflow as ready to use.
-     *
-     * @param ready as boolean
-     */
-    public void setReady(boolean ready) {
-        this.ready = ready;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     /**
@@ -182,6 +176,6 @@ public class Workflow extends BaseIndexedBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, active, ready);
+        return Objects.hash(title, status);
     }
 }

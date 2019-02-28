@@ -31,29 +31,23 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.active}"
-                  sortBy="#{item.active}"
-                  rendered="#{ProjectForm.showColumn('workflow.active')}">
-            <h:outputText value="#{item.active}"/>
-        </p:column>
-
-        <p:column headerText="#{msgs.ready}"
-                  sortBy="#{item.ready}"
-                  rendered="#{ProjectForm.showColumn('workflow.ready')}">
-            <h:outputText value="#{item.ready}"/>
+        <p:column headerText="#{msgs.status}"
+                  sortBy="#{item.status}"
+                  rendered="#{ProjectForm.showColumn('workflow.status')}">
+            <h:outputText value="#{msgs[item.status]}"/>
         </p:column>
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form>
                     <h:link id="viewWorkflow" outcome="workflowEdit" title="#{msgs.workflowView}"
-                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow() and item.ready)}">
+                            rendered="#{(SecurityAccessController.hasAuthorityToViewWorkflow() and not SecurityAccessController.hasAuthorityToEditWorkflow()) or (SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'active')}">
                         <i class="fa fa-eye fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
                     <h:link id="editWorkflow" outcome="workflowEdit" title="#{msgs.editWorkflow}"
-                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and not item.ready}">
+                            rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow() and item.status eq 'draft'}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>

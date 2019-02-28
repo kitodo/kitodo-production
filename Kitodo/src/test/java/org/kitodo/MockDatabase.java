@@ -385,8 +385,7 @@ public class MockDatabase {
 
         listColumns.add(new ListColumn("workflow.title"));
         listColumns.add(new ListColumn("workflow.filename"));
-        listColumns.add(new ListColumn("workflow.active"));
-        listColumns.add(new ListColumn("workflow.ready"));
+        listColumns.add(new ListColumn("workflow.status"));
 
         listColumns.add(new ListColumn("docket.title"));
         listColumns.add(new ListColumn("docket.filename"));
@@ -1216,26 +1215,24 @@ public class MockDatabase {
 
     public static void insertWorkflows() throws DAOException, DataException {
         Workflow firstWorkflow = new Workflow("test");
-        firstWorkflow.setActive(true);
-        firstWorkflow.setReady(true);
+        firstWorkflow.setStatus(Workflow.Status.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("test");
-        secondWorkflow.setReady(false);
+        secondWorkflow.setStatus(Workflow.Status.DRAFT);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
 
         Workflow thirdWorkflow = new Workflow("gateway");
-        thirdWorkflow.setReady(false);
+        thirdWorkflow.setStatus(Workflow.Status.DRAFT);
         thirdWorkflow.setClient(ServiceManager.getClientService().getById(2));
         ServiceManager.getWorkflowService().save(thirdWorkflow);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test1");
-        workflow.setActive(true);
-        workflow.setReady(true);
+        workflow.setStatus(Workflow.Status.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(workflow);
 
@@ -1338,8 +1335,7 @@ public class MockDatabase {
 
     private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test5");
-        workflow.setActive(true);
-        workflow.setReady(true);
+        workflow.setStatus(Workflow.Status.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(workflow);
 

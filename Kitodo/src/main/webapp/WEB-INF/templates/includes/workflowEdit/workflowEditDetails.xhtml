@@ -41,14 +41,14 @@
             </div>
         </p:row>
         <p:row>
-            <p:outputLabel for="active" value="#{msgs.active}"/>
-            <p:selectBooleanCheckbox id="active" styleClass="switch input workflow-editor-checkbox"
-                                     value="#{WorkflowForm.workflow.active}" disabled="#{isViewMode}"
-                                     onchange="toggleSave()"/>
-            <p:outputLabel for="ready" value="#{msgs.ready}"/>
-            <p:selectBooleanCheckbox id="ready" styleClass="switch input workflow-editor-checkbox"
-                                     value="#{WorkflowForm.workflow.ready}" disabled="#{isViewMode}"
-                                     onchange="toggleSave()"/>
+            <p:outputLabel for="status" value="#{msgs.status}"/>
+            <p:selectOneMenu id="status" value="#{WorkflowForm.workflow.status}"
+                             required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
+                <f:selectItems value="#{WorkflowForm.statuses}" var="status" itemValue="#{status}"
+                               itemLabel="#{msgs[status.toString().toLowerCase()]}"/>
+                <p:ajax event="change" oncomplete="toggleSave()"/>
+            </p:selectOneMenu>
         </p:row>
     </p:panelGrid>
 
