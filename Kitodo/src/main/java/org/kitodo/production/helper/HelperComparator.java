@@ -17,7 +17,6 @@ import java.util.Objects;
 
 import org.kitodo.production.enums.SortType;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -59,21 +58,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
         String firstName = firstMetadata.getLanguage(language);
         String secondName = secondMetadata.getLanguage(language);
-        if (Objects.isNull(firstName)) {
-            firstName = "";
-        }
-        if (Objects.isNull(secondName)) {
-            secondName = "";
-        }
-        return firstName.compareToIgnoreCase(secondName);
+
+        return compareString(firstName, secondName);
     }
 
     private int compareMetadata(Object firstObject, Object secondObject) {
-        LegacyMetadataHelper firstMetadata = (LegacyMetadataHelper) firstObject;
-        LegacyMetadataHelper secondMetadata = (LegacyMetadataHelper) secondObject;
-
-        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
-
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
@@ -85,6 +74,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 
         String firstName = firstDocStructType.getNameByLanguage(language);
         String secondName = secondDocStructType.getNameByLanguage(language);
+
+        return compareString(firstName, secondName);
+    }
+
+    private int compareString(String firstName, String secondName) {
         if (Objects.isNull(firstName)) {
             firstName = "";
         }

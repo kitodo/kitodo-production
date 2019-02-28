@@ -125,28 +125,16 @@ public class BatchTaskHelper extends BatchHelper {
     }
 
     private void saveStep() throws DataException, DAOException {
-        Process p = ServiceManager.getProcessService().getById(this.currentStep.getProcess().getId());
-        List<Property> props = p.getProperties();
-        for (Property processProperty : props) {
-            if (Objects.isNull(processProperty.getTitle())) {
-                p.getProperties().remove(processProperty);
-            }
-        }
-        ServiceManager.getProcessService().save(p);
+        Process process = ServiceManager.getProcessService().getById(this.currentStep.getProcess().getId());
+        validateProperties(process);
+        ServiceManager.getProcessService().save(process);
     }
 
     /**
      * Error management for single.
      */
     public void reportProblemForSingle() {
-        this.myDav.uploadFromHome(this.currentStep.getProcess());
-        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
-        try {
-            ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
-            saveStep();
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage("correctionReportProblem", logger, e);
-        }
+        reportProblem();
         setProblem(ServiceManager.getWorkflowControllerService().getProblem());
     }
 
@@ -157,16 +145,20 @@ public class BatchTaskHelper extends BatchHelper {
     public void reportProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
-            this.myDav.uploadFromHome(this.currentStep.getProcess());
-            ServiceManager.getWorkflowControllerService().setProblem(getProblem());
-            try {
-                ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
-                saveStep();
-            } catch (DAOException | DataException e) {
-                Helper.setErrorMessage("correctionReportProblem", logger, e);
-            }
+            reportProblem();
         }
         setProblem(ServiceManager.getWorkflowControllerService().getProblem());
+    }
+
+    private void reportProblem() {
+        this.myDav.uploadFromHome(this.currentStep.getProcess());
+        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
+        try {
+            ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
+            saveStep();
+        } catch (DAOException | DataException e) {
+            Helper.setErrorMessage("correctionReportProblem", logger, e);
+        }
     }
 
     /**
@@ -232,21 +224,6 @@ public class BatchTaskHelper extends BatchHelper {
         setSolution(ServiceManager.getWorkflowControllerService().getSolution());
 
         return "";
-    }
-
-    /**
-     * Temporal method to unify reportProblem and solveProblem methods in
-     * WorkflowService.
-     *
-     * @return id of task to set for problem/solution
-     */
-    private Integer getIdForCorrection(String taskTitle) {
-        for (Task task : this.currentStep.getProcess().getTasks()) {
-            if (task.getTitle().equals(taskTitle)) {
-                return task.getId();
-            }
-        }
-        return 0;
     }
 
     /**
