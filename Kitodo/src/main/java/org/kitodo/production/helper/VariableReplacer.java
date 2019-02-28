@@ -107,7 +107,7 @@ public class VariableReplacer {
                 this.process.getTitle(), this.process.getProcessBaseUri()));
             String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
             String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
-            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process));
+            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false));
             String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
             String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
             String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
