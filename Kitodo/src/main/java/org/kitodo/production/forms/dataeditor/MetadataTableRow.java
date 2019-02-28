@@ -46,7 +46,7 @@ abstract class MetadataTableRow {
         this.label = label;
     }
 
-    public void copy() {
+    public void copyClick() {
         try {
             dataEditor.getClipboard().addAll(this.getMetadata());
         } catch (InvalidMetadataValueException e) {
@@ -55,7 +55,7 @@ abstract class MetadataTableRow {
         Helper.setMessage("dataEditor.copy", Integer.toString(dataEditor.getClipboard().size()));
     }
 
-    public void delete() {
+    public void deleteClick() {
         container.remove(this);
     }
 

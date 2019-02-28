@@ -20,11 +20,17 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.production.helper.Helper;
 
 /**
  * A row on the meta-data panel that contains an on/off switch.
@@ -43,9 +49,10 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow {
     /**
      * Creates a new meta-data panel row with an on/off switch.
      * 
-     * @param container
      * @param dataEditor
-     *
+     *            meta-data editor instance
+     * @param container
+     *            containing meta-data group
      * @param settings
      *            configuration settings from the rule set
      * @param data
@@ -115,6 +122,20 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow {
     private boolean isValid() {
         Optional<String> value = settings.convertBoolean(on);
         return !value.isPresent() || settings.isValid(value.get());
+    }
+
+    @Override
+    public void validatorQuery(FacesContext context, UIComponent component, Object value) {
+        if ((value instanceof Boolean) && (Boolean) value) {
+            String stringValue = settings.convertBoolean((Boolean) value).orElseThrow(IllegalStateException::new);
+            if (!settings.isValid(stringValue)) {
+                String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
+                    Arrays.asList(settings.getLabel(), stringValue));
+                FacesMessage facesMessage = new FacesMessage(message, message);
+                facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(facesMessage);
+            }
+        }
     }
 
     /**

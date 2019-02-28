@@ -22,8 +22,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -140,7 +141,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow {
     Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             String value = String.join(" ", selectedItems);
-            if (settings.isValid(value)) {
+            if (!settings.isValid(value)) {
                 throw new InvalidMetadataValueException(label, value);
             }
             return Pair.of(super.getStructureFieldSetter(settings), value);
@@ -150,18 +151,16 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow {
     }
 
     @Override
-    public Validator getValidator() {
-        return (context, component, value) -> {
-            for (String selectedItem : selectedItems) {
-                if (!settings.isValid(selectedItem)) {
-                    String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
-                        Arrays.asList(settings.getLabel(), selectedItem));
-                    FacesMessage facesMessage = new FacesMessage(message, message);
-                    facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    throw new ValidatorException(facesMessage);
-                }
+    public void validatorQuery(FacesContext context, UIComponent component, Object value) {
+        for (String selectedItem : selectedItems) {
+            if (!settings.isValid(selectedItem)) {
+                String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
+                    Arrays.asList(settings.getLabel(), selectedItem));
+                FacesMessage facesMessage = new FacesMessage(message, message);
+                facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(facesMessage);
             }
-        };
+        }
     }
 
     /**

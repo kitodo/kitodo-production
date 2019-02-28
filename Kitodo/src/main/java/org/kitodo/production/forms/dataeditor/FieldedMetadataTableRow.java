@@ -24,6 +24,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -35,6 +37,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Structure;
+import org.kitodo.production.helper.Helper;
 
 /**
  * Represents the meta-data panel in the meta-data editor, or a meta-data group
@@ -133,7 +136,30 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
         this.structure = structure;
         this.metadata = metadata;
         this.metadataView = metadataView;
-        updateMetadataTable();
+        createMetadataTable();
+    }
+
+    private final void createMetadataTable() {
+        Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
+                .getSortedVisibleMetadata(metadataWithKeys, additionallySelectedFields);
+        rows.clear();
+        hiddenMetadata = Collections.emptyList();
+        for (MetadataViewWithValuesInterface<Metadata> rowData : tableData) {
+            Optional<MetadataViewInterface> optionalMetadataView = rowData.getMetadata();
+            Collection<Metadata> values = rowData.getValues();
+            if (optionalMetadataView.isPresent()) {
+                MetadataViewInterface metadataView = optionalMetadataView.get();
+                if (metadataView.isComplex()) {
+                    rows.add(createMetadataGroupPanel((ComplexMetadataViewInterface) metadataView, values));
+                } else {
+                    rows.add(createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values));
+                }
+            } else {
+                hiddenMetadata = values;
+            }
+        }
     }
 
     /**
@@ -164,25 +190,6 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
         return displayMetadata;
     }
 
-    private final MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
-            Collection<Metadata> values) {
-        switch (simpleMetadataView.getInputType()) {
-            case MULTIPLE_SELECTION:
-            case MULTI_LINE_SINGLE_SELECTION:
-            case ONE_LINE_SINGLE_SELECTION:
-                return new SelectMetadataTableRow(dataEditor, this, simpleMetadataView, simpleValues(values));
-            case BOOLEAN:
-                return new BooleanMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
-            case DATE:
-            case INTEGER:
-            case MULTI_LINE_TEXT:
-            case ONE_LINE_TEXT:
-                return new TextMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
-            default:
-                throw new IllegalStateException("complete switch");
-        }
-    }
-
     /**
      * Creates an object to represent a meta-data group. This is done by
      * creating a {@code FieldedMetadataGroup} recursively.
@@ -207,7 +214,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
                     value = metadataGroup.getGroup();
                 } else {
                     throw new IllegalStateException("Got simple meta-data entry with key \"" + metadataView.getId()
-                    + "\" which is declared as substructured key in the rule set.");
+                            + "\" which is declared as substructured key in the rule set.");
                 }
                 break;
             }
@@ -216,6 +223,84 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
         return new FieldedMetadataTableRow(dataEditor, this, complexMetadataView, value);
+    }
+
+    private final MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+            Collection<Metadata> values) {
+        switch (simpleMetadataView.getInputType()) {
+            case MULTIPLE_SELECTION:
+            case MULTI_LINE_SINGLE_SELECTION:
+            case ONE_LINE_SINGLE_SELECTION:
+                return new SelectMetadataTableRow(dataEditor, this, simpleMetadataView, simpleValues(values));
+            case BOOLEAN:
+                return new BooleanMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
+            case DATE:
+            case INTEGER:
+            case MULTI_LINE_TEXT:
+            case ONE_LINE_TEXT:
+                return new TextMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
+            default:
+                throw new IllegalStateException("complete switch");
+        }
+    }
+
+    /**
+     * Returns the collection of simple meta-data entries. Throws an
+     * IllegalStateException if a cannot be casted.
+     *
+     * @param values
+     *            values obtained
+     * @return a collection of simple meta-data entries
+     */
+    @SuppressWarnings({"unchecked", "rawtypes" })
+    private final Collection<MetadataEntry> simpleValues(Collection<Metadata> values) {
+        Optional<Metadata> fault = values.parallelStream().filter(entry -> !(entry instanceof MetadataEntry)).findAny();
+        if (fault.isPresent()) {
+            throw new IllegalStateException("Got complex meta-data entry with key \"" + fault.get().getKey()
+                    + "\" which isn't declared as substructured key in the rule set.");
+        }
+        return (Collection<MetadataEntry>) (Collection) values;
+    }
+
+    /**
+     * Returns the only meta-data entry or null. Throws an IllegalStateException
+     * if the value is ambiguous or cannot be casted.
+     *
+     * @param values
+     *            values obtained
+     * @return the only entry or null
+     */
+    private final MetadataEntry oneSimpleValue(Collection<Metadata> values) {
+        switch (values.size()) {
+            case 0:
+                return null;
+            case 1: {
+                Metadata metadata = values.iterator().next();
+                if (metadata instanceof MetadataEntry) {
+                    return (MetadataEntry) metadata;
+                } else {
+                    throw new IllegalStateException("Got complex meta-data entry with key \"" + metadata.getKey()
+                            + "\" which isn't declared as substructured key in the rule set.");
+                }
+            }
+            default:
+                throw new IllegalStateException("Too many (" + values.size() + ") meta-data of type \""
+                        + values.iterator().next().getKey() + "\" in a single row. Must be 0 or 1 per row.");
+        }
+    }
+
+    void addAdditionallySelectedField(String additionallySelectedField)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        additionallySelectedFields.add(additionallySelectedField);
+        preserve();
+        createMetadataTable();
+    }
+
+    public List<SelectItem> getAddableMetadata() {
+        Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+        return metadataView.getAddableMetadata(metadataWithKeys, additionallySelectedFields).stream()
+                .map(addable -> new SelectItem(addable.getId(), addable.getLabel())).collect(Collectors.toList());
     }
 
     @Override
@@ -260,33 +345,6 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
     }
 
     /**
-     * Returns the only meta-data entry or null. Throws an IllegalStateException
-     * if the value is ambiguous or cannot be casted.
-     *
-     * @param values
-     *            values obtained
-     * @return the only entry or null
-     */
-    private final MetadataEntry oneSimpleValue(Collection<Metadata> values) {
-        switch (values.size()) {
-            case 0:
-                return null;
-            case 1: {
-                Metadata metadata = values.iterator().next();
-                if (metadata instanceof MetadataEntry) {
-                    return (MetadataEntry) metadata;
-                } else {
-                    throw new IllegalStateException("Got complex meta-data entry with key \"" + metadata.getKey()
-                    + "\" which isn't declared as substructured key in the rule set.");
-                }
-            }
-            default:
-                throw new IllegalStateException("Too many (" + values.size() + ") meta-data of type \""
-                        + values.iterator().next().getKey() + "\" in a single row. Must be 0 or 1 per row.");
-        }
-    }
-
-    /**
      * Reads the contents of the meta-data panel and stores the values in the
      * appropriate place. If the line is used to edit a field of the METS
      * structure, this field is set, otherwise the meta-data will be stored in
@@ -324,51 +382,19 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
         }
     }
 
-    /**
-     * Returns the collection of simple meta-data entries. Throws an
-     * IllegalStateException if a cannot be casted.
-     *
-     * @param values
-     *            values obtained
-     * @return a collection of simple meta-data entries
-     */
-    @SuppressWarnings({"unchecked", "rawtypes" })
-    private final Collection<MetadataEntry> simpleValues(Collection<Metadata> values) {
-        Optional<Metadata> fault = values.parallelStream().filter(entry -> !(entry instanceof MetadataEntry)).findAny();
-        if (fault.isPresent()) {
-            throw new IllegalStateException("Got complex meta-data entry with key \"" + fault.get().getKey()
-                + "\" which isn't declared as substructured key in the rule set.");
-        }
-        return (Collection<MetadataEntry>) (Collection) values;
+    void remove(MetadataTableRow rowToDelete) {
+        rows.remove(rowToDelete);
     }
 
-    /**
-     * Rebuilds the meta-data table based on the current data and the rule set.
-     */
-    private final void updateMetadataTable() {
-        Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
-        List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
-                .getSortedVisibleMetadata(metadataWithKeys, additionallySelectedFields);
-        rows.clear();
-        hiddenMetadata = Collections.emptyList();
-        for (MetadataViewWithValuesInterface<Metadata> rowData : tableData) {
-            Optional<MetadataViewInterface> optionalMetadataView = rowData.getMetadata();
-            Collection<Metadata> values = rowData.getValues();
-            if (optionalMetadataView.isPresent()) {
-                MetadataViewInterface metadataView = optionalMetadataView.get();
-                if (metadataView.isComplex()) {
-                    rows.add(createMetadataGroupPanel((ComplexMetadataViewInterface) metadataView, values));
-                } else {
-                    rows.add(createMetadataEntryEdit((SimpleMetadataViewInterface) metadataView, values));
-                }
-            } else {
-                hiddenMetadata = values;
-            }
+    public void pasteClick() {
+        try {
+            Collection<Metadata> clipboard = dataEditor.getClipboard();
+            preserve();
+            metadata.addAll(clipboard);
+            clipboard.clear();
+            createMetadataTable();
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
         }
-    }
-
-    public void remove(MetadataTableRow rowToDelete) {
-        // TODO Auto-generated method stub
     }
 }

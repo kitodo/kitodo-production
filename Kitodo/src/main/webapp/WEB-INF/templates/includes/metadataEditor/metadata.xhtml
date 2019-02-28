@@ -44,8 +44,11 @@
                     <p:outputLabel value="Not yet implemented: inputNumber" rendered="#{item.input eq 'inputNumber'}"/>
                     <p:outputLabel value="Not yet implemented: calendar" rendered="#{item.input eq 'calendar'}"/>
                     <p:outputLabel value="Not yet implemented: dataTable" rendered="#{item.input eq 'dataTable'}"/>
-                    <p:selectManyMenu value="#{item.selectedItems}" rendered="#{item.input eq 'manyMenu'}">
+                    <p:selectManyMenu value="#{item.selectedItems}" readonly="#{not item.editable}"
+                                      validator="#{item.validatorQuery}"
+                                      rendered="#{item.input eq 'manyMenu'}">
                         <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
                     </p:selectManyMenu>
                     <p:outputLabel value="Not yet implemented: selectOneMenu" rendered="#{item.input eq 'oneMenu'}"/>
                     <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
@@ -61,10 +64,11 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{item.delete}"/>
+                                     action="#{item.deleteClick}">
+                    </p:commandButton>
                     <p:commandButton update="metadata:metadataTable"
-                                     id="copyMetadata"
-                                     icon="fa fa-clipboard"
+                                 id="copyMetadata"
+                                 icon="fa fa-clipboard"
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataCopy}"
@@ -72,7 +76,8 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{item.copy}"/>
+                                     action="#{item.copyClick}">
+                    </p:commandButton>
                 </p:column>
             </p:dataTable>
 

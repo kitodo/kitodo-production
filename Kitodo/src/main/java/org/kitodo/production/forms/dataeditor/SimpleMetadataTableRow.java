@@ -12,17 +12,13 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.validator.Validator;
-import javax.faces.validator.ValidatorException;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Structure;
-import org.kitodo.production.helper.Helper;
 
 /**
  * Provides functions that are common to all input elements.
@@ -77,15 +73,5 @@ abstract class SimpleMetadataTableRow extends MetadataTableRow {
      *
      * @return if the value validates
      */
-    public Validator getValidator() {
-        return (context, component, value) -> {
-            if (!settings.isValid(Objects.toString(value))) {
-                String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
-                    Arrays.asList(settings.getLabel(), Objects.toString(value)));
-                FacesMessage facesMessage = new FacesMessage(message, message);
-                facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-                throw new ValidatorException(facesMessage);
-            }
-        };
-    }
+    public abstract void validatorQuery(FacesContext context, UIComponent component, Object value);
 }

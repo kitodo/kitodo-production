@@ -14,12 +14,19 @@ package org.kitodo.production.forms.dataeditor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.production.helper.Helper;
 
 public class TextMetadataTableRow extends SimpleMetadataTableRow {
 
@@ -49,7 +56,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow {
 
     @Override
     Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
-        if (settings.isValid(value)) {
+        if (!settings.isValid(value)) {
             throw new InvalidMetadataValueException(label, value);
         }
         MetadataEntry entry = new MetadataEntry();
@@ -62,7 +69,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow {
     @Override
     Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            if (settings.isValid(value)) {
+            if (!settings.isValid(value)) {
                 throw new InvalidMetadataValueException(label, value);
             }
             return Pair.of(super.getStructureFieldSetter(settings), value);
@@ -77,5 +84,16 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public void validatorQuery(FacesContext context, UIComponent component, Object value) {
+        if (!settings.isValid(Objects.toString(value))) {
+            String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
+                Arrays.asList(settings.getLabel(), Objects.toString(value)));
+            FacesMessage facesMessage = new FacesMessage(message, message);
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
     }
 }

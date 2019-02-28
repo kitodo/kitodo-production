@@ -37,7 +37,7 @@
                         </div>
 
                         <div>
-                            <p:inputTextarea value="#{DataEditorForm.selectedMetadataValue}"
+                            <p:inputTextarea value="#{DataEditorForm.metadataPanel.addMetadataValue}"
                                              rows="2"
                                              style="width:83%; margin-top: 8px;"/>
                         </div>
@@ -46,7 +46,7 @@
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="save"
-                                         action="#{DataEditorForm.addMetadata}"
+                                         action="#{DataEditorForm.metadataPanel.addMetadataEntryClick}"
                                          update="metadata:metadataTable"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.apply}"
