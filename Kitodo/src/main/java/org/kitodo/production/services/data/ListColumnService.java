@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.services.data.base;
+package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +28,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
 public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
