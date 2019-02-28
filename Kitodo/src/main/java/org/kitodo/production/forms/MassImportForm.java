@@ -87,9 +87,9 @@ public class MassImportForm extends BaseForm {
     private List<String> selectedFilenames = new ArrayList<>();
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
     private static final String OPAC_CONFIG = "configurationOPAC";
-    private String massImportPath = MessageFormat.format(REDIRECT_PATH, "massImport");
-    private String massImportTwoPath = MessageFormat.format(REDIRECT_PATH, "massImport2");
-    private String massImportThreePath = MessageFormat.format(REDIRECT_PATH, "massImport3");
+    private final String massImportPath = MessageFormat.format(REDIRECT_PATH, "massImport");
+    private final String massImportTwoPath = MessageFormat.format(REDIRECT_PATH, "massImport2");
+    private final String massImportThreePath = MessageFormat.format(REDIRECT_PATH, "massImport3");
 
     /**
      * Constructor.

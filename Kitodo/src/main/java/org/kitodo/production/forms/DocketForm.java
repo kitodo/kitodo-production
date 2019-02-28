@@ -46,8 +46,8 @@ public class DocketForm extends BaseForm {
     private Docket myDocket = new Docket();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
-    private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
+    private final String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private final String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
 
     @Named("ProjectForm")
     private ProjectForm projectForm;

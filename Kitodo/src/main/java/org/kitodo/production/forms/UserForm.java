@@ -63,8 +63,8 @@ public class UserForm extends BaseForm {
     @Named("LoginForm")
     private LoginForm loginForm;
 
-    private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
+    private final String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
      * Default constructor with inject login form that also sets the LazyDTOModel

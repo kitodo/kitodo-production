@@ -83,9 +83,9 @@ public class CurrentTaskForm extends BaseForm {
     private transient BatchTaskHelper batchHelper;
     private List<Property> properties;
     private Property property;
-    private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
-    private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
+    private final String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
+    private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
+    private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
     /**
      * Constructor.
