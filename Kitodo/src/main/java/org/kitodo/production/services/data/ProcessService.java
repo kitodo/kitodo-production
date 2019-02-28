@@ -715,6 +715,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
         processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
         processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
+        processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
