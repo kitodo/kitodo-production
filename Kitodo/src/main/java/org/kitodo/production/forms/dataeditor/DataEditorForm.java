@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
@@ -32,7 +33,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -173,11 +176,20 @@ public class DataEditorForm implements Serializable {
      */
     private int processId;
 
+    private final MetadataPanel metadataPanel;
+
+    public MetadataPanel getMetadataPanel() {
+        return metadataPanel;
+    }
+
+    private Collection<Metadata> clipboard = new ArrayList<>();
+
     /**
      * Public constructor.
      */
     public DataEditorForm() {
         this.structurePanel = new StructurePanel(this);
+        this.metadataPanel = new MetadataPanel(this);
     }
 
     /**
@@ -263,6 +275,7 @@ public class DataEditorForm implements Serializable {
     private void populatePanels() {
         final long begin = System.nanoTime();
         structurePanel.show(workpiece);
+        metadataPanel.show(structurePanel.getSelectedStructure());
         if (logger.isTraceEnabled()) {
             logger.trace("Populating panels took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
@@ -1523,5 +1536,15 @@ public class DataEditorForm implements Serializable {
             }
         }
         super.finalize();
+    }
+
+    Collection<Metadata> getClipboard() {
+        return clipboard;
+    }
+
+    void switchTheMetadataPanelTo(Structure structure)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        metadataPanel.preserve();
+        metadataPanel.show(structure);
     }
 }

@@ -121,6 +121,12 @@ public class StructurePanel {
         return Pair.of(Arrays.asList(result), viewsShowingOnAChild);
     }
 
+    Structure getSelectedStructure() {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedNode.getData();
+        Object dataObject = structureTreeNode.getDataObject();
+        return dataObject instanceof Structure ? (Structure) dataObject : null;
+    }
+
     private Collection<View> buildStructureTreeRecursively(Structure structure, TreeNode result) {
 
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
@@ -180,8 +186,9 @@ public class StructurePanel {
         this.selectedNode = structureTree.getChildren().get(0);
     }
 
-    public void selectNode(TreeNode treeNode) {
+    void selectNode(TreeNode treeNode) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         this.selectedNode = treeNode;
+        dataEditor.switchTheMetadataPanelTo(getSelectedStructure());
     }
 
     public TreeNode getSelectedNode() {

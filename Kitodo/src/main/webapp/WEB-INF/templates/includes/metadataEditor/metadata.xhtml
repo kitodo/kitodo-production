@@ -22,20 +22,35 @@
     <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
             <p:dataTable id="metadataTable"
+                         rendered="#{!empty DataEditorForm.metadataPanel.rows}"
                          styleClass="no-header"
-                         rendered="#{!empty DataEditorForm.selectedLogicalTreeNodeMetadataList}"
-                         value="#{DataEditorForm.selectedLogicalTreeNodeMetadataList}"
+                         value="#{DataEditorForm.metadataPanel.rows}"
                          var="item">
 
                 <p:column style="width: 100%;">
-                    <p:outputLabel value="#{DataEditorForm.getMetadataTranslation(item.key)}"/>
-                    <p:inputTextarea value="#{item.value}"
-                                     rows="2"
-                                     disabled="#{readOnly}"
-                                     styleClass="#{readOnly ? 'disabled' : ''}"
-                                     style="width:100%;">
+                    <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
+                    <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
+                                   title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
+
+                    <p:inputText value="#{item.value}"
+                                 disabled="#{not item.editable or readOnly}"
+                                 styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
+                                 style="width:100%;"
+                                 validator="#{item.validator}"
+                                 rendered="#{item.input eq 'inputText'}">
                         <p:ajax event="blur"/>
-                    </p:inputTextarea>
+                    </p:inputText>
+                    <p:outputLabel value="Not yet implemented: inputTextarea" rendered="#{item.input eq 'inputTextarea'}"/>
+                    <p:outputLabel value="Not yet implemented: inputNumber" rendered="#{item.input eq 'inputNumber'}"/>
+                    <p:outputLabel value="Not yet implemented: calendar" rendered="#{item.input eq 'calendar'}"/>
+                    <p:outputLabel value="Not yet implemented: dataTable" rendered="#{item.input eq 'dataTable'}"/>
+                    <p:selectManyMenu value="#{item.selectedItems}" rendered="#{item.input eq 'manyMenu'}">
+                        <f:selectItems value="#{item.items}"/>
+                    </p:selectManyMenu>
+                    <p:outputLabel value="Not yet implemented: selectOneMenu" rendered="#{item.input eq 'oneMenu'}"/>
+                    <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
+                    <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
+
                     <p:commandButton update="metadata:metadataTable"
                                      id="deleteMetadata"
                                      icon="fa fa-trash"
@@ -46,9 +61,7 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{DataEditorForm.deleteMetadata}">
-                        <f:setPropertyActionListener value="#{item}" target="#{DataEditorForm.selectedMetadata}"/>
-                    </p:commandButton>
+                                     action="#{item.delete}"/>
                     <p:commandButton update="metadata:metadataTable"
                                      id="copyMetadata"
                                      icon="fa fa-clipboard"
@@ -59,9 +72,7 @@
                                      disabled="#{readOnly}"
                                      onclick="PF('loadingDialog').show();"
                                      oncomplete="PF('loadingDialog').hide();"
-                                     action="#{DataEditorForm.copyMetadata}">
-                        <f:setPropertyActionListener value="#{item}" target="#{DataEditorForm.selectedMetadata}"/>
-                    </p:commandButton>
+                                     action="#{item.copy}"/>
                 </p:column>
             </p:dataTable>
 
