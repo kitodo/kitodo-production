@@ -403,7 +403,7 @@ public class ImageHelper {
         try {
             dir = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(), process.getTitle(),
                 process.getProcessBaseUri());
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */

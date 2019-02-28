@@ -208,19 +208,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Saves document to the index of Elastic Search and update index flag for
-     * indexed object.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public void saveToIndexAndUpdateIndexFlag(T baseIndexedBean, boolean forceRefresh)
-            throws CustomResponseException, DataException, DAOException, IOException {
-        saveToIndex(baseIndexedBean, forceRefresh);
-        updateIndexFlag(baseIndexedBean);
-    }
-
-    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean

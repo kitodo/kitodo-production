@@ -25,7 +25,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -830,8 +829,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            base URI of process object
      * @return tif directory
      */
-    public URI getImagesTifDirectory(boolean useFallBack, Integer processId, String processTitle, URI processBaseURI)
-            throws IOException {
+    public URI getImagesTifDirectory(boolean useFallBack, Integer processId, String processTitle, URI processBaseURI) {
         URI dir = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -873,17 +871,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     Boolean checkIfTifDirectoryExists(Integer processId, String processTitle, String processBaseURI) {
         URI testMe;
-        try {
-            if (Objects.nonNull(processBaseURI)) {
-                testMe = getImagesTifDirectory(true, processId, processTitle, URI.create(processBaseURI));
-            } else {
+        if (Objects.nonNull(processBaseURI)) {
+            testMe = getImagesTifDirectory(true, processId, processTitle, URI.create(processBaseURI));
+        } else {
                 testMe = getImagesTifDirectory(true, processId, processTitle, null);
-            }
-            return fileService.fileExist(testMe) && !fileService.getSubUris(testMe).isEmpty();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            return false;
         }
+        return fileService.fileExist(testMe) && !fileService.getSubUris(testMe).isEmpty();
     }
 
     /**
@@ -1511,41 +1504,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get method from name.
-     *
-     * @param methodName
-     *            string
-     * @param process
-     *            object
-     * @return method from name
-     */
-    public URI getMethodFromName(String methodName, Process process) {
-        java.lang.reflect.Method method;
-        try {
-            method = this.getClass().getMethod(methodName);
-            Object o = method.invoke(this);
-            return (URI) o;
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
-            logger.debug("exception: " + e);
-        }
-        try {
-            URI folder = this.getImagesTifDirectory(false, process.getId(), process.getTitle(),
-                process.getProcessBaseUri());
-            String folderName = fileService.getFileName(folder);
-            folderName = folderName.substring(0, folderName.lastIndexOf('_'));
-            folderName = folderName + "_" + methodName;
-            folder = fileService.renameFile(folder, folderName);
-            if (fileService.fileExist(folder)) {
-                return folder;
-            }
-        } catch (IOException ex) {
-            logger.debug("exception: " + ex);
-        }
-        return null;
-    }
-
-    /**
      * Sets new value for wiki field.
      *
      * @param wikiField
@@ -2163,7 +2121,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI dir;
         try {
             dir = getImagesTifDirectory(true, process.getId(), process.getTitle(), process.getProcessBaseUri());
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new InvalidImagesException(e);
         }
 

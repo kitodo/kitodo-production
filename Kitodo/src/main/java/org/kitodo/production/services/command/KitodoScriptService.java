@@ -38,7 +38,6 @@ public class KitodoScriptService {
     private Map<String, String> parameters;
     private static final Logger logger = LogManager.getLogger(KitodoScriptService.class);
     private final FileService fileService = ServiceManager.getFileService();
-    private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
     private static final String RULESET = "ruleset";
     private static final String SCRIPT = "script";
@@ -95,9 +94,6 @@ public class KitodoScriptService {
                 break;
             case "addShellScriptToStep":
                 addShellScriptToStep(processes);
-                break;
-            case "updateImagePath":
-                updateImagePath(processes);
                 break;
             case "updateContentFiles":
                 updateContentFiles(processes);
@@ -482,22 +478,6 @@ public class KitodoScriptService {
             }
         }
         Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
-    }
-
-    /**
-     * Reset image path in the metadata (possibly delete existing ones first).
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    public void updateImagePath(List<Process> processes) {
-        // TODO remove
-        /*
-         * In the new internal METS format, the path to the image directory is
-         * no longer saved. All image URIs are relative to the process directory
-         * and thus relative to the directory where the METS file resides.
-         * Therefore, there is nothing left to do here.
-         */
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
