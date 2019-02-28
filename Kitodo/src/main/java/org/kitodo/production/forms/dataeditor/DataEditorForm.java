@@ -152,12 +152,6 @@ public class DataEditorForm implements Serializable {
     private String[] selectedPagesOfSelectedLogicalTreeNode;
 
     // metadata
-    private List<Void> metaPersonList;
-    private Void selectedPerson;
-    private String newPersonFirstName;
-    private String newPersonLastName;
-    private String newPersonRecord;
-    private String newPersonRole;
     private List<MetadataImpl> selectedLogicalTreeNodeMetadataList;
     private MetadataImpl selectedMetadata;
     private String selectedNewMetadataType;
@@ -464,53 +458,6 @@ public class DataEditorForm implements Serializable {
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /**
-     * Copy the currently selected person.
-     */
-    public void copyPerson() {
-        // TODO implement
-        // copy person from this.selectedPerson
-    }
-
-    /**
-     * Delete the currently selected person.
-     */
-    public void deletePerson() {
-        // TODO implement
-        // delete the person selected in this.selectedPerson
-    }
-
-    /**
-     * Prepare form to insert a new person.
-     */
-    public void newPerson() {
-        this.newPersonFirstName = "";
-        this.newPersonLastName = "";
-        this.newPersonRecord = ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, "");
-    }
-
-    /**
-     * Save the entered data as a new person.
-     */
-    public void savePerson() {
-        try {
-            // TODO implement
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Get allowed roles.
-     *
-     * @return list of allowed roles as SelectItems
-     */
-    public List<SelectItem> getAddableRoles() {
-        // TODO implement
-        // get list of all roles allowed for this.selectedLogicalTreeNode
-        return new ArrayList<>();
     }
 
     /**
@@ -1380,114 +1327,6 @@ public class DataEditorForm implements Serializable {
      */
     public void setSelectedPagesOfSelectedLogicalTreeNode(String[] selectedPagesOfSelectedLogicalTreeNode) {
         this.selectedPagesOfSelectedLogicalTreeNode = selectedPagesOfSelectedLogicalTreeNode;
-    }
-
-    /**
-     * Get metaPersonList.
-     *
-     * @return value of metaPersonList
-     */
-    public List<Void> getMetaPersonList() {
-        return metaPersonList;
-    }
-
-    /**
-     * Set metaPersonList.
-     *
-     * @param metaPersonList as java.util.List<org.kitodo.production.metadata.Void>
-     */
-    public void setMetaPersonList(List<Void> metaPersonList) {
-        this.metaPersonList = metaPersonList;
-    }
-
-    /**
-     * Get selectedPerson.
-     *
-     * @return value of selectedPerson
-     */
-    public Void getSelectedPerson() {
-        return selectedPerson;
-    }
-
-    /**
-     * Set selectedPerson.
-     *
-     * @param selectedPerson as org.kitodo.production.metadata.Void
-     */
-    public void setSelectedPerson(Void selectedPerson) {
-        this.selectedPerson = selectedPerson;
-    }
-
-    /**
-     * Get newPersonFirstName.
-     *
-     * @return value of newPersonFirstName
-     */
-    public String getNewPersonFirstName() {
-        return newPersonFirstName;
-    }
-
-    /**
-     * Set newPersonFirstName.
-     *
-     * @param newPersonFirstName as java.lang.String
-     */
-    public void setNewPersonFirstName(String newPersonFirstName) {
-        this.newPersonFirstName = newPersonFirstName;
-    }
-
-    /**
-     * Get newPersonLastName.
-     *
-     * @return value of newPersonLastName
-     */
-    public String getNewPersonLastName() {
-        return newPersonLastName;
-    }
-
-    /**
-     * Set newPersonLastName.
-     *
-     * @param newPersonLastName as java.lang.String
-     */
-    public void setNewPersonLastName(String newPersonLastName) {
-        this.newPersonLastName = newPersonLastName;
-    }
-
-    /**
-     * Get newPersonRecord.
-     *
-     * @return value of newPersonRecord
-     */
-    public String getNewPersonRecord() {
-        return newPersonRecord;
-    }
-
-    /**
-     * Set newPersonRecord.
-     *
-     * @param newPersonRecord as java.lang.String
-     */
-    public void setNewPersonRecord(String newPersonRecord) {
-        this.newPersonRecord = newPersonRecord;
-    }
-
-    /**
-     * Get newPersonRole.
-     *
-     * @return value of newPersonRole
-     */
-    public String getNewPersonRole() {
-        return newPersonRole;
-    }
-
-    /**
-     * Set newPersonRole.
-     *
-     * @param newPersonRole as java.lang.String
-     */
-    public void setNewPersonRole(String newPersonRole) {
-        this.newPersonRole = newPersonRole;
     }
 
     /**
