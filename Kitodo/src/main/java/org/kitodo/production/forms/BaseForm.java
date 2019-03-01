@@ -12,6 +12,9 @@
 package org.kitodo.production.forms;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -190,6 +193,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Get list of configurable columns.
+     * 
      * @return list of configurable columns
      */
     public List<SelectItem> getColumns() {
@@ -198,7 +202,9 @@ public class BaseForm implements Serializable {
 
     /**
      * Set list of configurable columns.
-     * @param columns list of columns
+     * 
+     * @param columns
+     *            list of columns
      */
     public void setColumns(List<SelectItem> columns) {
         this.columns = columns;
@@ -206,6 +212,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Get list of selected columns.
+     * 
      * @return list of selected columns
      */
     public List<ListColumn> getSelectedColumns() {
@@ -214,16 +221,20 @@ public class BaseForm implements Serializable {
 
     /**
      * Set list of selected columns.
-     * @param columns list of selected columns
+     * 
+     * @param columns
+     *            list of selected columns
      */
     public void setSelectedColumns(List<ListColumn> columns) {
         this.selectedColumns = columns;
     }
 
     /**
-     * Checks whether the column with the provided name 'columnName' should be
-     * shown be displayed in the corresponding list view or not.
-     * @param columnName name of the column
+     * Checks whether the column with the provided name 'columnName' should be shown
+     * be displayed in the corresponding list view or not.
+     * 
+     * @param columnName
+     *            name of the column
      * @return true, if column should be displayed; false if column should be hidden
      */
     public boolean showColumn(String columnName) {
@@ -244,5 +255,20 @@ public class BaseForm implements Serializable {
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * Get formatted date for beans.
+     *
+     * @param date
+     *            for formatting
+     * @return formatted date or empty string
+     */
+    public String getFormattedDate(Date date) {
+        if (Objects.nonNull(date)) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(date);
+        }
+        return "";
     }
 }

@@ -653,21 +653,6 @@ public class Task extends BaseIndexedBean {
         this.processingStatus = Integer.parseInt(inputProcessingStatus);
     }
 
-    public String getProcessingBeginAsFormattedString() {
-        return this.processingBegin.toString();
-        // return Helper.getDateAsFormattedString(task.getProcessingBegin());
-    }
-
-    public String getProcessingTimeAsFormattedString() {
-        return this.processingTime.toString();
-        // return Helper.getDateAsFormattedString(task.getProcessingTime());
-    }
-
-    public String getProcessingEndAsFormattedString(Task task) {
-        return task.processingEnd.toString();
-        // return Helper.getDateAsFormattedString(task.getProcessingEnd());
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {
