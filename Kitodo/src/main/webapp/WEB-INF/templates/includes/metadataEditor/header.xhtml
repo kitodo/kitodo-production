@@ -38,7 +38,7 @@
                          onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:button value="#{msgs.exit}"
-                  outcome="#{DataEditorForm.referringView}"
+                  action="#{DataEditorForm.close}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   style="margin-left: 16px;"

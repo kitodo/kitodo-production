@@ -1,5 +1,6 @@
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +13,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.production.helper.Helper;
 
-abstract class MetadataTableRow {
+abstract class MetadataTableRow implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Describes the relationship between the domain in the rule set and the
      * mdSec in the METS.
@@ -32,7 +35,7 @@ abstract class MetadataTableRow {
      * The label of this row.
      */
     protected final String label;
-    protected final DataEditorForm dataEditor;
+    protected final MetadataPanel panel;
     private FieldedMetadataTableRow container;
 
     /**
@@ -41,19 +44,20 @@ abstract class MetadataTableRow {
      * @param label
      *            the label of this row
      */
-    MetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container, String label) {
-        this.dataEditor = dataEditor;
+    MetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, String label) {
+        this.panel = panel;
         this.container = container;
         this.label = label;
     }
 
     public void copyClick() {
         try {
-            dataEditor.getClipboard().addAll(this.getMetadata());
+            panel.getClipboard().addAll(this.getMetadata());
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
-        Helper.getTranslation("dataEditor.copy", Arrays.asList(Integer.toString(dataEditor.getClipboard().size())));
+        Helper.getTranslation("dataEditor.copy",
+            Arrays.asList(Integer.toString(panel.getClipboard().size())));
     }
 
     public void deleteClick() {

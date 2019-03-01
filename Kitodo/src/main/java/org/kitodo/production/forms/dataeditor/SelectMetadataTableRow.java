@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,9 @@ import org.kitodo.production.helper.Helper;
 /**
  * The meta-data input is some kind of select input.
  */
-public class SelectMetadataTableRow extends SimpleMetadataTableRow {
+public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Converts the select items map to the select items type required by JSF to
      * display the select lists.
@@ -65,9 +68,9 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow {
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    public SelectMetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container,
+    public SelectMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
-        super(dataEditor, container, settings);
+        super(panel, container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {
             selectedItems.add(entry.getValue());

@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,13 +29,14 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.production.helper.Helper;
 
-public class TextMetadataTableRow extends SimpleMetadataTableRow {
+public class TextMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String value = "";
 
-    public TextMetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container,
+    public TextMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             SimpleMetadataViewInterface settings, MetadataEntry value) {
-        super(dataEditor, container, settings);
+        super(panel, container, settings);
         this.value = value.getValue();
     }
 

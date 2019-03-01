@@ -11,7 +11,9 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +36,8 @@ import org.kitodo.production.workflow.Problem;
 /**
  * Backing bean for the comment panel of the meta-data editor
  */
-public class CommentPanel {
+public class CommentPanel implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(CommentPanel.class);
 
     /**
@@ -79,6 +82,11 @@ public class CommentPanel {
      */
     CommentPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
+    }
+
+    public void clear() {
+        editHistory = Collections.emptyList();
+        commentList.clear();
     }
 
     /**

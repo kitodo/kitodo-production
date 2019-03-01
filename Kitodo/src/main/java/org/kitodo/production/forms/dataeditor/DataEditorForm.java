@@ -14,11 +14,11 @@ package org.kitodo.production.forms.dataeditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
@@ -31,12 +31,13 @@ import javax.inject.Named;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
+import org.kitodo.api.validation.State;
+import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
@@ -74,6 +75,11 @@ public class DataEditorForm implements Serializable {
     private String acquisitionStage = "edit";
 
     /**
+     * Backing bean for the comment panel.
+     */
+    private final CommentPanel commentPanel;
+
+    /**
      * All file system locks that the user is currently holding.
      */
     private LockResult lock;
@@ -82,6 +88,8 @@ public class DataEditorForm implements Serializable {
      * The path to the main file, to save it later.
      */
     private URI mainFileUri;
+
+    private final MetadataPanel metadataPanel;
 
     /**
      * The language preference list of the editing user for displaying the
@@ -96,6 +104,8 @@ public class DataEditorForm implements Serializable {
      */
     private Process process;
 
+    private String referringView = "desktop";
+
     /**
      * The ruleset that the file is based on.
      */
@@ -107,11 +117,6 @@ public class DataEditorForm implements Serializable {
     private final StructurePanel structurePanel;
 
     /**
-     * Backing bean for the comment panel.
-     */
-    private final CommentPanel commentPanel;
-
-    /**
      * User sitting in front of the editor.
      */
     private User user;
@@ -121,7 +126,6 @@ public class DataEditorForm implements Serializable {
      */
     private Workpiece workpiece;
 
-    private String referringView = "desktop";
     private String galleryViewMode = "list";
     private boolean showPagination = false;
     private boolean showNewComment = false;
@@ -165,20 +169,6 @@ public class DataEditorForm implements Serializable {
     // gallery
     private int pageIndex;
     private String selectedImage;
-
-    /**
-     * ID of the process to open. The ID must be set previous to calling
-     * {@link #open()} by using a {@code setPropertyActionListener}.
-     */
-    private int processId;
-
-    private final MetadataPanel metadataPanel;
-
-    public MetadataPanel getMetadataPanel() {
-        return metadataPanel;
-    }
-
-    private Collection<Metadata> clipboard = new ArrayList<>();
 
     /**
      * Public constructor.
@@ -280,8 +270,70 @@ public class DataEditorForm implements Serializable {
         }
     }
 
-    public CommentPanel getCommentPanel() {
-        return commentPanel;
+    /**
+     * Releases the locks and clears all remaining content from the data editor
+     * form.
+     * 
+     * @return the referring view, to return there
+     */
+    public String close() {
+        try {
+            lock.close();
+            lock = null;
+
+            commentPanel.clear();
+            metadataPanel.clear();
+            structurePanel.clear();
+            workpiece = null;
+            mainFileUri = null;
+            ruleset = null;
+            process = null;
+            user = null;
+            return referringView;
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return null;
+        }
+    }
+
+    /**
+     * Ensures that all locks are released when the user leaves the meta-data
+     * editor in an unusual way.
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        if (lock != null) {
+            try {
+                lock.close();
+            } catch (Throwable any) {
+                /* make sure finalize() can run through */
+            }
+        }
+        super.finalize();
+    }
+
+    /**
+     * Validate the structure and metadata.
+     */
+    public void validate() {
+        try {
+            ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece,
+                ruleset);
+            State state = validationResult.getState();
+            if (!State.ERROR.equals(state)) {
+                Helper.setMessage("dataEditor.validation.state.".concat(state.toString().toLowerCase()));
+                for (String message : validationResult.getResultMessages()) {
+                    Helper.setMessage(message);
+                }
+            } else {
+                Helper.setErrorMessage("dataEditor.validation.state.error");
+                for (String message : validationResult.getResultMessages()) {
+                    Helper.setErrorMessage(message);
+                }
+            }
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -291,23 +343,19 @@ public class DataEditorForm implements Serializable {
      */
     public String save() {
         try {
-            // TODO implement: save metadata here
+            metadataPanel.preserve();
+            structurePanel.preserve();
+            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, lock)) {
+                ServiceManager.getMetsService().save(workpiece, out);
+            }
+            close();
             return referringView;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return "";
+            return null;
         }
 
     }
-
-    /**
-     * Validate the structure and metadata.
-     */
-    public void validate() {
-        // TODO implement: validate metadata here
-        Helper.setMessage("Validation result");
-    }
-
     /**
      * Returns the acquisition stage, so that the individual panels can access
      * it.
@@ -316,6 +364,14 @@ public class DataEditorForm implements Serializable {
      */
     String getAcquisitionStage() {
         return acquisitionStage;
+    }
+
+    public CommentPanel getCommentPanel() {
+        return commentPanel;
+    }
+
+    public MetadataPanel getMetadataPanel() {
+        return metadataPanel;
     }
 
     /**
@@ -330,6 +386,24 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
+     * Get process.
+     *
+     * @return value of process
+     */
+    Process getProcess() {
+        return process;
+    }
+
+    /**
+     * Get process title.
+     *
+     * @return value of process title
+     */
+    public String getProcessTitle() {
+        return process.getTitle();
+    }
+
+    /**
      * Returns the rule set, so that the individual panels can access it.
      *
      * @return the rule set
@@ -340,6 +414,16 @@ public class DataEditorForm implements Serializable {
 
     public StructurePanel getStructurePanel() {
         return structurePanel;
+    }
+
+    void setProcess(Process process) {
+        this.process = process;
+    }
+
+    void switchTheMetadataPanelTo(Structure structure)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        metadataPanel.preserve();
+        metadataPanel.show(structure);
     }
 
     /**
@@ -668,24 +752,6 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get process.
-     *
-     * @return value of process
-     */
-    Process getProcess() {
-        return process;
-    }
-
-    /**
-     * Get process title.
-     *
-     * @return value of process title
-     */
-    public String getProcessTitle() {
-        return process.getTitle();
-    }
-
-    /**
      * Sets the ID of the process whose meta-data file is to be edited. This
      * method must be called using a {@code setPropertyActionListener} before
      * the meta-data editor is opened.
@@ -694,7 +760,6 @@ public class DataEditorForm implements Serializable {
      *            ID of the process whose meta-data file is to be edited
      */
     public void setProcessId(int processId) {
-        this.processId = processId;
     }
 
     /**
@@ -1380,35 +1445,5 @@ public class DataEditorForm implements Serializable {
      */
     public void setSelectedImage(String selectedImage) {
         this.selectedImage = selectedImage;
-    }
-
-    /**
-     * Ensures that all locks are released when the user leaves the meta-data
-     * editor in an unusual way.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        if (lock != null) {
-            try {
-                lock.close();
-            } catch (Throwable any) {
-                /* make sure finalize() can run through */
-            }
-        }
-        super.finalize();
-    }
-
-    Collection<Metadata> getClipboard() {
-        return clipboard;
-    }
-
-    void switchTheMetadataPanelTo(Structure structure)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preserve();
-        metadataPanel.show(structure);
-    }
-
-    void setProcess(Process process) {
-        this.process = process;
     }
 }

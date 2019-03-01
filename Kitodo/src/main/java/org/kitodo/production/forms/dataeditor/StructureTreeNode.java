@@ -11,10 +11,13 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
+
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 
-public class StructureTreeNode {
+public class StructureTreeNode implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Object dataObject;
     private final String label;

@@ -11,19 +11,26 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.production.helper.Helper;
 
-public class MetadataPanel {
+public class MetadataPanel implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String addMetadataKeySelectedItem = "";
 
     private String addMetadataValue = "";
+
+    private Collection<Metadata> clipboard = new ArrayList<>();
 
     private final DataEditorForm dataEditor;
 
@@ -93,6 +100,13 @@ public class MetadataPanel {
         }
     }
 
+    public void clear() {
+        metadataTable = FieldedMetadataTableRow.EMPTY;
+        clipboard.clear();
+        addMetadataKeySelectedItem = "";
+        addMetadataValue = "";
+    }
+
     public List<SelectItem> getAddMetadataKeyItems() {
         return metadataTable.getAddableMetadata();
     }
@@ -105,6 +119,10 @@ public class MetadataPanel {
         return addMetadataValue;
     }
 
+    Collection<Metadata> getClipboard() {
+        return clipboard;
+    }
+
     public List<MetadataTableRow> getRows() {
         return metadataTable.getRows();
     }
@@ -115,7 +133,7 @@ public class MetadataPanel {
         } else {
             StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            metadataTable = new FieldedMetadataTableRow(dataEditor, structure, divisionView);
+            metadataTable = new FieldedMetadataTableRow(this, structure, divisionView);
         }
 
     }

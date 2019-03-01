@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,9 +31,26 @@ import org.kitodo.production.helper.Helper;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-public class StructurePanel {
+public class StructurePanel implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private DataEditorForm dataEditor;
+
+    /**
+     * If changing the tree node fails, we need this value to undo the user’s
+     * select action.
+     */
+    private TreeNode previouslySelectedNode;
+
+    private TreeNode selectedNode;
+
+    /**
+     * Whether the media shall be shown separately in a second tree. If false,
+     * the media—if linked—will be merged shown within the structure tree.
+     */
+    private Boolean separateMedia = Boolean.FALSE;
+
+    private Structure structure;
 
     /**
      * The logical structure tree of the edited document.
@@ -57,19 +75,139 @@ public class StructurePanel {
         this.dataEditor = dataEditor;
     }
 
-    /**
-     * Whether the media shall be shown separately in a second tree. If false,
-     * the media—if linked—will be merged shown within the structure tree.
-     */
-    private Boolean separateMedia = Boolean.FALSE;
+    public void clear() {
+        trees.clear();
+        structureTree = null;
+        selectedNode = null;
+        previouslySelectedNode = null;
+        structure = null;
+    }
 
-    private TreeNode selectedNode;
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    Structure getSelectedStructure() {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedNode.getData();
+        Object dataObject = structureTreeNode.getDataObject();
+        return dataObject instanceof Structure ? (Structure) dataObject : null;
+    }
+
+    public List<DefaultTreeNode> getTrees() {
+        return trees;
+    }
 
     /**
-     * If changing the tree node fails, we need this value to undo the user’s
-     * select action.
+     * Updates the live structure of the workpiece with the current members of
+     * the structure tree in their given order. The live structure of the
+     * workpiece which is stored in the root element of the structure tree.
      */
-    private TreeNode previouslySelectedNode;
+    void preserve() {
+        preserveRecursive(structureTree);
+    }
+
+    /**
+     * Updates the live structure of a structure tree node and returns it, to
+     * provide for updating the parent. If the tree node contains children which
+     * aren’t structures, {@code null} is returned to skip them on the level
+     * above.
+     */
+    private static Structure preserveRecursive(TreeNode treeNode) {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        Object dataObject = structureTreeNode.getDataObject();
+        if (!(dataObject instanceof Structure)) {
+            return null;
+        }
+        Structure structure = (Structure) dataObject;
+
+        List<Structure> childrenLive = structure.getChildren();
+        childrenLive.clear();
+        for (TreeNode child : treeNode.getChildren()) {
+            Structure maybeChildStructure = preserveRecursive(child);
+            if (maybeChildStructure != null) {
+                childrenLive.add(maybeChildStructure);
+            }
+        }
+        return structure;
+    }
+
+    public void setSelectedNode(TreeNode selected) {
+        if (Objects.nonNull(selected)) {
+            this.selectedNode = selected;
+        }
+    }
+
+    /**
+     * Loads the tree(s) into the panel and sets the selected element to the
+     * root element of the structure tree.
+     *
+     * @param workpiece
+     *            workpiece to load
+     */
+    void show(Workpiece workpiece) {
+        trees.clear();
+        this.structure = workpiece.getStructure();
+        Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
+        trees.addAll(result.getLeft());
+        if (separateMedia != null) {
+            Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
+                    .map(View::getMediaUnit).collect(Collectors.toSet());
+            DefaultTreeNode mediaTree = buildMediaTree(workpiece.getMediaUnits(), mediaUnitsShowingOnTheStructureTree);
+            if (mediaTree != null) {
+                trees.add(mediaTree);
+            }
+        }
+        this.structureTree = trees.get(result.getLeft().size() - 1);
+        this.selectedNode = structureTree.getChildren().get(0);
+        this.previouslySelectedNode = selectedNode;
+    }
+
+    /**
+     * Creates the structure tree. If hierarchical links exist upwards, they are
+     * displayed above the tree as separate trees.
+     *
+     * @return the structure tree(s) and the collection of views displayed in
+     *         the tree
+     */
+    private Pair<List<DefaultTreeNode>, Collection<View>> buildStructureTree() {
+
+        DefaultTreeNode result = new DefaultTreeNode();
+        result.setExpanded(true);
+        Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, result);
+        return Pair.of(Arrays.asList(result), viewsShowingOnAChild);
+    }
+
+    private Collection<View> buildStructureTreeRecursively(Structure structure, TreeNode result) {
+
+        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+            structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        /*
+         * Creating the tree node by handing over the parent node automatically
+         * appends it to the parent as a child. That’s the logic of the JSF
+         * framework. So you do not have to add the result anywhere.
+         */
+        DefaultTreeNode parent = new DefaultTreeNode(
+                new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure),
+                result);
+        parent.setExpanded(true);
+
+        Set<View> viewsShowingOnAChild = new HashSet<>();
+        for (Structure child : structure.getChildren()) {
+            viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
+        }
+
+        if (Boolean.FALSE.equals(separateMedia)) {
+            String page = Helper.getTranslation("page").concat(" ");
+            for (View view : structure.getViews()) {
+                if (!viewsShowingOnAChild.contains(view)) {
+                    new DefaultTreeNode(new StructureTreeNode(this, page.concat(view.getMediaUnit().getOrderlabel()),
+                            false, false, view), parent).setExpanded(true);
+                    viewsShowingOnAChild.add(view);
+                }
+            }
+        }
+        return viewsShowingOnAChild;
+    }
 
     /**
      * Creates the media tree.
@@ -111,89 +249,6 @@ public class StructurePanel {
         return !isEmpty ? result : null;
     }
 
-    /**
-     * Creates the structure tree. If hierarchical links exist upwards, they are
-     * displayed above the tree as separate trees.
-     *
-     * @param structure
-     *            the structure from which to create the JSF tree
-     * @return the structure tree(s) and the collection of views displayed in
-     *         the tree
-     */
-    private Pair<List<DefaultTreeNode>, Collection<View>> buildStructureTree(Structure structure) {
-
-        DefaultTreeNode result = new DefaultTreeNode();
-        result.setExpanded(true);
-        Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, result);
-        return Pair.of(Arrays.asList(result), viewsShowingOnAChild);
-    }
-
-    Structure getSelectedStructure() {
-        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedNode.getData();
-        Object dataObject = structureTreeNode.getDataObject();
-        return dataObject instanceof Structure ? (Structure) dataObject : null;
-    }
-
-    private Collection<View> buildStructureTreeRecursively(Structure structure, TreeNode result) {
-
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
-            structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        /*
-         * Creating the tree node by handing over the parent node automatically
-         * appends it to the parent as a child. That’s the logic of the JSF
-         * framework. So you do not have to add the result anywhere.
-         */
-        DefaultTreeNode parent = new DefaultTreeNode(
-                new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure),
-                result);
-        parent.setExpanded(true);
-
-        Set<View> viewsShowingOnAChild = new HashSet<>();
-        for (Structure child : structure.getChildren()) {
-            viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
-        }
-
-        if (Boolean.FALSE.equals(separateMedia)) {
-            String page = Helper.getTranslation("page").concat(" ");
-            for (View view : structure.getViews()) {
-                if (!viewsShowingOnAChild.contains(view)) {
-                    new DefaultTreeNode(new StructureTreeNode(this, page.concat(view.getMediaUnit().getOrderlabel()),
-                            false, false, view), parent).setExpanded(true);
-                    viewsShowingOnAChild.add(view);
-                }
-            }
-        }
-        return viewsShowingOnAChild;
-    }
-
-    public List<DefaultTreeNode> getTrees() {
-        return trees;
-    }
-
-    /**
-     * Loads the tree(s) into the panel and sets the selected element to the
-     * root element of the structure tree.
-     *
-     * @param workpiece
-     *            workpiece to load
-     */
-    void show(Workpiece workpiece) {
-        trees.clear();
-        Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree(workpiece.getStructure());
-        trees.addAll(result.getLeft());
-        if (separateMedia != null) {
-            Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
-                    .map(View::getMediaUnit).collect(Collectors.toSet());
-            DefaultTreeNode mediaTree = buildMediaTree(workpiece.getMediaUnits(), mediaUnitsShowingOnTheStructureTree);
-            if (mediaTree != null) {
-                trees.add(mediaTree);
-            }
-        }
-        this.structureTree = trees.get(result.getLeft().size() - 1);
-        this.selectedNode = structureTree.getChildren().get(0);
-        this.previouslySelectedNode = selectedNode;
-    }
-
     void treeElementSelect() {
         /*
          * The newly selected element has already been set in 'selectedNode' by
@@ -205,16 +260,6 @@ public class StructurePanel {
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             selectedNode = previouslySelectedNode;
-        }
-    }
-
-    public TreeNode getSelectedNode() {
-        return selectedNode;
-    }
-
-    public void setSelectedNode(TreeNode selected) {
-        if (Objects.nonNull(selected)) {
-            this.selectedNode = selected;
         }
     }
 }

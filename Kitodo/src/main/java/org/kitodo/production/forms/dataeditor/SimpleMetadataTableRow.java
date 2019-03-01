@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import javax.faces.component.UIComponent;
@@ -23,7 +24,9 @@ import org.kitodo.api.dataformat.Structure;
 /**
  * Provides functions that are common to all input elements.
  */
-abstract class SimpleMetadataTableRow extends MetadataTableRow {
+abstract class SimpleMetadataTableRow extends MetadataTableRow implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Container to store the ruleset settings.
      */
@@ -35,9 +38,9 @@ abstract class SimpleMetadataTableRow extends MetadataTableRow {
      * @param settings
      *            the ruleset settings for this field.
      */
-    protected SimpleMetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container,
+    protected SimpleMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             SimpleMetadataViewInterface settings) {
-        super(dataEditor, container, settings.getLabel());
+        super(panel, container, settings.getLabel());
         this.settings = settings;
     }
 

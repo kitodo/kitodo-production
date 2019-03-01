@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,7 +45,8 @@ import org.kitodo.production.helper.Helper;
  * within that panel. Basically both are the same, with the exception that the
  * label of the meta-data panel is not used.
  */
-public class FieldedMetadataTableRow extends MetadataTableRow {
+public class FieldedMetadataTableRow extends MetadataTableRow implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * An empty meta-data panel showing.
@@ -101,9 +103,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
      * @param divisionView
      *            information about that structure from the rule set
      */
-    FieldedMetadataTableRow(DataEditorForm dataEditor, Structure structure,
+    FieldedMetadataTableRow(MetadataPanel panel, Structure structure,
             StructuralElementViewInterface divisionView) {
-        this(dataEditor, null, structure, divisionView, structure.getMetadata());
+        this(panel, null, structure, divisionView, structure.getMetadata());
     }
 
     /**
@@ -114,9 +116,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
      * @param metadata
      *            data of the group, may be empty but must be modifiable
      */
-    private FieldedMetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container,
+    private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        this(dataEditor, container, null, metadataView, metadata);
+        this(panel, container, null, metadataView, metadata);
     }
 
     /**
@@ -130,9 +132,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
      * @param metadata
      *            meta-data, may be empty but must be modifiable
      */
-    private FieldedMetadataTableRow(DataEditorForm dataEditor, FieldedMetadataTableRow container, Structure structure,
+    private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, Structure structure,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-        super(dataEditor, container, metadataView.getId());
+        super(panel, container, metadataView.getId());
         this.structure = structure;
         this.metadata = metadata;
         this.metadataView = metadataView;
@@ -222,7 +224,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
                 throw new IllegalStateException("Too many (" + values.size() + ") complex meta-data of type \""
                         + metadataView.getId() + "\" in a single row. Must be 0 or 1 per row.");
         }
-        return new FieldedMetadataTableRow(dataEditor, this, complexMetadataView, value);
+        return new FieldedMetadataTableRow(panel, this, complexMetadataView, value);
     }
 
     private final MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
@@ -231,14 +233,14 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
             case ONE_LINE_SINGLE_SELECTION:
-                return new SelectMetadataTableRow(dataEditor, this, simpleMetadataView, simpleValues(values));
+                return new SelectMetadataTableRow(panel, this, simpleMetadataView, simpleValues(values));
             case BOOLEAN:
-                return new BooleanMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
+                return new BooleanMetadataTableRow(panel, this, simpleMetadataView, oneSimpleValue(values));
             case DATE:
             case INTEGER:
             case MULTI_LINE_TEXT:
             case ONE_LINE_TEXT:
-                return new TextMetadataTableRow(dataEditor, this, simpleMetadataView, oneSimpleValue(values));
+                return new TextMetadataTableRow(panel, this, simpleMetadataView, oneSimpleValue(values));
             default:
                 throw new IllegalStateException("complete switch");
         }
@@ -388,7 +390,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow {
 
     public void pasteClick() {
         try {
-            Collection<Metadata> clipboard = dataEditor.getClipboard();
+            Collection<Metadata> clipboard = panel.getClipboard();
             preserve();
             metadata.addAll(clipboard);
             clipboard.clear();
