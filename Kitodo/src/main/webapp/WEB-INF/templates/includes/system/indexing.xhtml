@@ -70,19 +70,6 @@
                                 <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETE_SUCCESS'}"/>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2">
-                                <p:commandButton widgetVar="countDatabaseObjects"
-                                                 id="countDatabaseObjects"
-                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
-                                                 value="#{msgs.countDatabaseObjects}"
-                                                 style="width: 100%;"
-                                                 action="#{indexingForm.countDatabaseObjects()}"
-                                                 disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
-                                                 update="indexingTable"/>
-                            </td>
-                            <td/>
-                        </tr>
                         </tbody>
                     </table>
                     <table id="indexingTable">
