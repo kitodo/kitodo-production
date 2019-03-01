@@ -52,10 +52,10 @@
             <h:panelGroup class="task-status"
                           title="#{item.processingStatusTitle}"
                           style="margin-right:10px; background-color:
-                            #{item.processingStatus.title == 'statusDone' ? 'var(--task-closed)' : ''}
-                            #{item.processingStatus.title == 'statusInProcessing' ? 'var(--task-inwork)' : ''}
-                            #{item.processingStatus.title == 'statusOpen' ? 'var(--task-open)' : ''}
-                            #{item.processingStatus.title == 'statusLocked' ? 'var(--task-blocked)' : ''};"
+                            #{item.processingStatus.title == 'statusDone' ? 'var(--green)' : ''}
+                            #{item.processingStatus.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
+                            #{item.processingStatus.title == 'statusOpen' ? 'var(--light-orange)' : ''}
+                            #{item.processingStatus.title == 'statusLocked' ? 'var(--orange)' : ''};"
             />
             <h:outputText value="!" rendered="#{item.priority == 1}"/>
             <h:outputText value="!!" rendered="#{item.priority == 2}"/>

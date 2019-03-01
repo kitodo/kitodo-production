@@ -21,12 +21,12 @@
             style="
                 background-image: linear-gradient(
                     to right,
-                    var(--progress-closed),
-                    var(--progress-closed) #{process.progressClosed}%,
-                    var(--progress-inwork) #{process.progressClosed}%,
-                    var(--progress-inwork) #{process.progressInProcessing + process.progressClosed}%,
-                    var(--progress-open) #{process.progressInProcessing + process.progressClosed}%,
-                    var(--progress-open) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%,
-                    var(--progress-blocked) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%);"
+                    var(--green),
+                    var(--green) #{process.progressClosed}%,
+                    var(--light-green) #{process.progressClosed}%,
+                    var(--light-green) #{process.progressInProcessing + process.progressClosed}%,
+                    var(--light-orange) #{process.progressInProcessing + process.progressClosed}%,
+                    var(--light-orange) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%,
+                    var(--orange) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%);"
     />
 </ui:composition>

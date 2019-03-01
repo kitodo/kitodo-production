@@ -36,10 +36,10 @@
                 <h:panelGroup class="task-status"
                               title="#{ProcessForm.getTaskStatusTitle(item.processingStatusEnum.title)}"
                               style="background-color:
-                                #{item.processingStatusEnum.title == 'statusDone' ? 'var(--task-closed)' : ''}
-                                #{item.processingStatusEnum.title == 'statusInProcessing' ? 'var(--task-inwork)' : ''}
-                                #{item.processingStatusEnum.title == 'statusOpen' ? 'var(--task-open)' : ''}
-                                #{item.processingStatusEnum.title == 'statusLocked' ? 'var(--task-blocked)' : ''};"
+                                #{item.processingStatusEnum.title == 'statusDone' ? 'var(--green)' : ''}
+                                #{item.processingStatusEnum.title == 'statusInProcessing' ? 'var(--light-green)' : ''}
+                                #{item.processingStatusEnum.title == 'statusOpen' ? 'var(--light-orange)' : ''}
+                                #{item.processingStatusEnum.title == 'statusLocked' ? 'var(--orange)' : ''};"
                 />
                 <p:panel rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">
                     <!-- Set workflow state to previous step -->

@@ -33,11 +33,11 @@
                 <h:panelGrid columns="1">
 
                     <!-- Show Metadata Block -->
-                    <h:panelGroup style="color: red;margin-top:5px;margin-bottom:15px;display:block"
+                    <h:panelGroup id="metadataBlocked"
                                   rendered="#{process.blockedUser != null}">
                         <h:outputText value="#{msgs.blocked}"/>
                         <br/>
-                        <h:panelGrid columns="2" style="color: red;margin-left:30px" cellpadding="3">
+                        <h:panelGrid columns="2" cellpadding="3">
                             <h:outputText value="#{msgs.user}: "/>
                             <h:outputText value="#{process.blockedUser.fullName}"/>
                             <h:outputText value="#{msgs.location}: "/>
@@ -73,7 +73,7 @@
                     <!-- Import DMS-button -->
 
                     <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
-                    <h:outputText style="back-color:blue; color: red; font-weight: bold;"
+                    <h:outputText id="timeoutWarning"
                                   rendered="#{task.typeExportDMS and process.blockedUser == null}"
                                   value="#{msgs.timeoutWarningDMS}"/>
 

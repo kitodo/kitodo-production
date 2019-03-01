@@ -25,7 +25,7 @@
                 <p:dataTable id="commentsGrid" value="#{MetadataProcessor.wikiField}" var="item"
                              rendered="#{!empty MetadataProcessor.wikiField}">
                     <p:column style="width: 100%;" rendered="#{item.contains('Red K')}">
-                        <p:outputLabel value="#{msgs.correctionK}" style="color:red;font-weight:bold;"/>
+                        <p:outputLabel value="#{msgs.correctionK}" styleClass="correction"/>
                         <h:outputText value="#{fn:replace(item,'Red K','')}"
                                       escape="false"
                                       style="width:100%;"/>
@@ -36,7 +36,7 @@
                     </p:column>
 
                     <p:column style="width: 100%;" rendered="#{item.contains('Orange K')}">
-                        <p:outputLabel value="#{msgs.correctionK}" style="color:orange;font-weight:bold;"/>
+                        <p:outputLabel value="#{msgs.correctionK}" styleClass="correction solved"/>
                         <h:outputText value="#{fn:replace(item,'Orange K','')}"
                                       escape="false"
                                       style="width:100%;"/>
