@@ -40,7 +40,6 @@ public class MetadataImpl implements Metadata {
     private int identifier;
     private LegacyPrefsHelper myPrefs;
     private HashMap<String, DisplayCase> myValues = new HashMap<>();
-    private List<SelectItem> items;
     private List<String> selectedItems;
 
     /**
@@ -93,15 +92,15 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public List<SelectItem> getItems() {
-        this.items = new ArrayList<>();
+        List<SelectItem> items = new ArrayList<>();
         this.selectedItems = new ArrayList<>();
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-            this.items.add(new SelectItem(i.getLabel()));
+            items.add(new SelectItem(i.getLabel()));
             if (i.getIsSelected()) {
                 this.selectedItems.add(i.getLabel());
             }
         }
-        return this.items;
+        return items;
     }
 
     @Override
@@ -139,19 +138,23 @@ public class MetadataImpl implements Metadata {
                 }
             }
         } else {
-            StringBuilder valuesBuilder = new StringBuilder();
-            for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                if (i.getIsSelected()) {
-                    valuesBuilder.append(i.getValue());
-                    valuesBuilder.append(";");
-                    this.selectedItems.add(i.getLabel());
-                }
-            }
-            if (valuesBuilder.length() > 0) {
-                setValue(valuesBuilder.toString());
-            }
+            buildValue();
         }
         return this.selectedItems;
+    }
+
+    private void buildValue() {
+        StringBuilder valuesBuilder = new StringBuilder();
+        for (Item item : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+            if (item.getIsSelected()) {
+                valuesBuilder.append(item.getValue());
+                valuesBuilder.append(";");
+                this.selectedItems.add(item.getLabel());
+            }
+        }
+        if (valuesBuilder.length() > 0) {
+            setValue(valuesBuilder.toString());
+        }
     }
 
     private void addItemsToSelectedItems(String value) {
