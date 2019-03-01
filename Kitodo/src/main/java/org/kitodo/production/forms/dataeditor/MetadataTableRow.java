@@ -1,6 +1,7 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 
@@ -52,7 +53,7 @@ abstract class MetadataTableRow {
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
-        Helper.setMessage("dataEditor.copy", Integer.toString(dataEditor.getClipboard().size()));
+        Helper.getTranslation("dataEditor.copy", Arrays.asList(Integer.toString(dataEditor.getClipboard().size())));
     }
 
     public void deleteClick() {

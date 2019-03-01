@@ -25,9 +25,9 @@
                 selectionMode="single" id="docStruct"
                 selection="#{DataEditorForm.structurePanel.selectedNode}"
                 draggable="true" droppable="true" dragdropScope="DocStructTree">
-            <p:ajax event="select" listener="#{element.onSelect}"
+            <p:ajax event="select" listener="#{element.treeElementSelect}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
-            <p:ajax event="dragdrop" listener="#{element.onDragDrop}"
+            <p:ajax event="dragdrop" listener="#{element.treeElementDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
             <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
                 <ui:param name="elementType" value="#{element.label}"/>

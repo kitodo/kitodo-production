@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -30,7 +29,6 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -42,13 +40,9 @@ import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.metadata.MetadataImpl;
 import org.kitodo.production.metadata.pagination.Paginator;
@@ -56,7 +50,6 @@ import org.kitodo.production.metadata.pagination.enums.Mode;
 import org.kitodo.production.metadata.pagination.enums.Scope;
 import org.kitodo.production.metadata.pagination.enums.Type;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.workflow.Problem;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.TreeNode;
 
@@ -114,6 +107,11 @@ public class DataEditorForm implements Serializable {
     private final StructurePanel structurePanel;
 
     /**
+     * Backing bean for the comment panel.
+     */
+    private final CommentPanel commentPanel;
+
+    /**
      * User sitting in front of the editor.
      */
     private User user;
@@ -162,9 +160,7 @@ public class DataEditorForm implements Serializable {
     private List<MetadataImpl> newMetadataList;
 
     // comments
-    private boolean newCommentIsCorrection = false;
     private String newComment;
-    private Problem problem = new Problem();
 
     // gallery
     private int pageIndex;
@@ -190,6 +186,7 @@ public class DataEditorForm implements Serializable {
     public DataEditorForm() {
         this.structurePanel = new StructurePanel(this);
         this.metadataPanel = new MetadataPanel(this);
+        this.commentPanel = new CommentPanel(this);
     }
 
     /**
@@ -215,7 +212,7 @@ public class DataEditorForm implements Serializable {
             if (!openMetsFile("meta.xml")) {
                 return referringView;
             }
-            populatePanels();
+            init();
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
@@ -272,13 +269,19 @@ public class DataEditorForm implements Serializable {
         return ruleset;
     }
 
-    private void populatePanels() {
+    private void init() {
         final long begin = System.nanoTime();
         structurePanel.show(workpiece);
         metadataPanel.show(structurePanel.getSelectedStructure());
+        commentPanel.show(workpiece);
         if (logger.isTraceEnabled()) {
-            logger.trace("Populating panels took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
+            logger.trace("Initializing editor beans took {} ms",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+    }
+
+    public CommentPanel getCommentPanel() {
+        return commentPanel;
     }
 
     /**
@@ -533,97 +536,6 @@ public class DataEditorForm implements Serializable {
         return new ArrayList<>();
     }
 
-    public String[] getCommentList() {
-        try {
-            refreshProcess(this.process);
-            String wiki = this.process.getWikiField();
-            if (!wiki.isEmpty()) {
-                wiki = wiki.replace("</p>", "");
-                String[] comments = wiki.split("<p>");
-                if (comments[0].isEmpty()) {
-                    List<String> list = new ArrayList<>(Arrays.asList(comments));
-                    list.remove(list.get(0));
-                    comments = list.toArray(new String[list.size()]);
-                }
-                return comments;
-            }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return ArrayUtils.EMPTY_STRING_ARRAY;
-    }
-
-    /**
-     * Mark the reported problem solved.
-     */
-    public void solveProblem(String comment) {
-        BatchTaskHelper batchStepHelper = new BatchTaskHelper();
-        batchStepHelper.solveProblemForSingle(ServiceManager.getProcessService().getCurrentTask(this.process));
-        refreshProcess(this.process);
-        String wikiField = this.process.getWikiField();
-        wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
-        ServiceManager.getProcessService().setWikiField(wikiField, this.process);
-        try {
-            ServiceManager.getProcessService().save(this.process);
-        } catch (DataException e) {
-            Helper.setErrorMessage("correctionSolveProblem", logger, e);
-        }
-        refreshProcess(this.process);
-    }
-
-    /**
-     * Get a list of all previous tasks that could be used for correction purposes.
-     * 
-     * @return list of previous tasks
-     */
-    public List<Task> getPreviousStepsForCorrection() {
-        refreshProcess(this.process);
-        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-                ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
-    }
-
-    /**
-     * Get number of previous tasks that could be used for correction purposes.
-     * 
-     * @return number of previous tasks
-     */
-    public int getNumberOfPreviousStepsForCorrection() {
-        return getPreviousStepsForCorrection().size();
-    }
-
-    /**
-     * Save new comment.
-     */
-    public void saveNewComment() {
-        if (this.newComment != null && this.newComment.length() > 0) {
-            String comment = ServiceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.newComment;
-            ServiceManager.getProcessService().addToWikiField(comment, this.process);
-            this.newComment = "";
-            try {
-                ServiceManager.getProcessService().save(process);
-                refreshProcess(process);
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
-            }
-        }
-        showNewComment = false;
-    }
-
-    /**
-     * Save new comment and set process to specified task for correction purposes.
-     */
-    public void saveNewCommentForCorrection() {
-        List<Task> taskList = new ArrayList<>();
-        taskList.add(ServiceManager.getProcessService().getCurrentTask(this.process));
-        BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
-        batchStepHelper.setProblem(this.problem);
-        batchStepHelper.reportProblemForSingle();
-        refreshProcess(this.process);
-        this.showNewComment = false;
-        this.newCommentIsCorrection = false;
-        this.problem = new Problem();
-    }
-
     /**
      * Get the list of image file paths for the current process.
      * 
@@ -744,23 +656,7 @@ public class DataEditorForm implements Serializable {
         return this.user;
     }
 
-    /**
-     * Refresh the process in the session.
-     *
-     * @param process
-     *            Object process to refresh
-     */
-    private void refreshProcess(Process process) {
-        try {
-            if (process.getId() != 0) {
-                ServiceManager.getProcessService().refresh(process);
-                this.process = ServiceManager.getProcessService().getById(process.getId());
-            }
 
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
-        }
-    }
 
     /**
      * Get logger.
@@ -1433,24 +1329,6 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get newCommentIsCorrection.
-     *
-     * @return value of newCommentIsCorrection
-     */
-    public boolean isNewCommentIsCorrection() {
-        return newCommentIsCorrection;
-    }
-
-    /**
-     * Set newCommentIsCorrection.
-     *
-     * @param newCommentIsCorrection as boolean
-     */
-    public void setNewCommentIsCorrection(boolean newCommentIsCorrection) {
-        this.newCommentIsCorrection = newCommentIsCorrection;
-    }
-
-    /**
      * Get newComment.
      *
      * @return value of newComment
@@ -1466,24 +1344,6 @@ public class DataEditorForm implements Serializable {
      */
     public void setNewComment(String newComment) {
         this.newComment = newComment;
-    }
-
-    /**
-     * Get problem ID.
-     *
-     * @return value of problem ID
-     */
-    public Integer getProblemId() {
-        return problem.getId();
-    }
-
-    /**
-     * Get problem message.
-     *
-     * @return value of problem message
-     */
-    public String getProblemMessage() {
-        return problem.getMessage();
     }
 
     /**
@@ -1546,5 +1406,9 @@ public class DataEditorForm implements Serializable {
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preserve();
         metadataPanel.show(structure);
+    }
+
+    void setProcess(Process process) {
+        this.process = process;
     }
 }

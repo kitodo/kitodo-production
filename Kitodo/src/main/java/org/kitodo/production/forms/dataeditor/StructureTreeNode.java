@@ -11,7 +11,6 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import org.kitodo.production.helper.Helper;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 
@@ -54,7 +53,7 @@ public class StructureTreeNode {
      * @param event
      *            TreeDragDropEvent triggered by logical node being dropped
      */
-    public void onDragDrop(TreeDragDropEvent event) {
+    public void treeElementDragDrop(TreeDragDropEvent event) {
 
     }
 
@@ -64,12 +63,8 @@ public class StructureTreeNode {
      * @param event
      *            NodeSelectEvent triggered by logical node being selected
      */
-    public void onSelect(NodeSelectEvent event) {
-        try {
-            structurePanel.selectNode(event.getTreeNode());
-        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
-        }
+    public void treeElementSelect(NodeSelectEvent event) {
+        structurePanel.treeElementSelect();
     }
 
 }

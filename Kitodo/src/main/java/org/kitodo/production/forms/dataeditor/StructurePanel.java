@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,12 @@ public class StructurePanel {
     private Boolean separateMedia = Boolean.FALSE;
 
     private TreeNode selectedNode;
+
+    /**
+     * If changing the tree node fails, we need this value to undo the user’s
+     * select action.
+     */
+    private TreeNode previouslySelectedNode;
 
     /**
      * Creates the media tree.
@@ -184,11 +191,21 @@ public class StructurePanel {
         }
         this.structureTree = trees.get(result.getLeft().size() - 1);
         this.selectedNode = structureTree.getChildren().get(0);
+        this.previouslySelectedNode = selectedNode;
     }
 
-    void selectNode(TreeNode treeNode) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        this.selectedNode = treeNode;
-        dataEditor.switchTheMetadataPanelTo(getSelectedStructure());
+    void treeElementSelect() {
+        /*
+         * The newly selected element has already been set in 'selectedNode' by
+         * JSF at this point.
+         */
+        try {
+            dataEditor.switchTheMetadataPanelTo(getSelectedStructure());
+            previouslySelectedNode = selectedNode;
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+            selectedNode = previouslySelectedNode;
+        }
     }
 
     public TreeNode getSelectedNode() {
@@ -196,6 +213,8 @@ public class StructurePanel {
     }
 
     public void setSelectedNode(TreeNode selected) {
-        this.selectedNode = selected;
+        if (Objects.nonNull(selected)) {
+            this.selectedNode = selected;
+        }
     }
 }
