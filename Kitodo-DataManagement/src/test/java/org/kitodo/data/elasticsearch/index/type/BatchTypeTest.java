@@ -46,7 +46,7 @@ public class BatchTypeTest {
         Batch firstBatch = new Batch();
         firstBatch.setId(1);
         firstBatch.setTitle("Batch1");
-        firstBatch.setType(Batch.Type.LOGISTIC);
+        firstBatch.setType(org.kitodo.data.database.enums.BatchType.LOGISTIC);
         firstBatch.setProcesses(processes);
         batches.add(firstBatch);
 
@@ -58,7 +58,7 @@ public class BatchTypeTest {
         Batch thirdBatch = new Batch();
         thirdBatch.setId(3);
         thirdBatch.setTitle("Batch3");
-        thirdBatch.setType(Batch.Type.LOGISTIC);
+        thirdBatch.setType(org.kitodo.data.database.enums.BatchType.LOGISTIC);
         batches.add(thirdBatch);
 
         return batches;

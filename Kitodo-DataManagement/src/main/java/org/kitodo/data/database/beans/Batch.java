@@ -28,6 +28,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 /**
@@ -42,27 +43,6 @@ public class Batch extends BaseIndexedBean {
     private static final long serialVersionUID = -5187947220333984868L;
 
     /**
-     * Enum for batch type. Type of batch:
-     *
-     * <dl>
-     * <dt>LOGISTIC</dt>
-     * <dd>facilitates the logistics of excavation and processing in the
-     * digitisation centre</dd>
-     * <dt>NEWSPAPER</dt>
-     * <dd>forms the complete edition of a newspaper</dd>
-     * <dt>SERIAL</dt>
-     * <dd>forms the complete edition of a serial publication</dd>
-     * </dl>
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
-     */
-    public enum Type {
-        LOGISTIC,
-        NEWSPAPER,
-        SERIAL
-    }
-
-    /**
      * The field title holds the batch title. Using titles for batches is
      * optional, the field may be null. If so, the id will be shown to the user
      * instead.
@@ -75,7 +55,7 @@ public class Batch extends BaseIndexedBean {
      */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private BatchType type;
 
     /**
      * The field processes holds the processes that belong to the batch.
@@ -99,7 +79,7 @@ public class Batch extends BaseIndexedBean {
      * @param type
      *            of the batch
      */
-    public Batch(Type type) {
+    public Batch(BatchType type) {
         this.processes = new ArrayList<>();
         this.type = type;
     }
@@ -113,7 +93,7 @@ public class Batch extends BaseIndexedBean {
      * @param type
      *            of the batch
      */
-    public Batch(String title, Type type) {
+    public Batch(String title, BatchType type) {
         this.processes = new ArrayList<>();
         this.title = title;
         this.type = type;
@@ -127,7 +107,7 @@ public class Batch extends BaseIndexedBean {
      * @param processes
      *            that go into the batch
      */
-    public Batch(Type type, Collection<? extends Process> processes) {
+    public Batch(BatchType type, Collection<? extends Process> processes) {
         this.processes = new ArrayList<>(processes);
         this.type = type;
     }
@@ -143,7 +123,7 @@ public class Batch extends BaseIndexedBean {
      * @param processes
      *            that go into the batch
      */
-    public Batch(String title, Type type, Collection<? extends Process> processes) {
+    public Batch(String title, BatchType type, Collection<? extends Process> processes) {
         this.title = title;
         this.type = type;
         this.processes = new ArrayList<>(processes);
@@ -175,7 +155,7 @@ public class Batch extends BaseIndexedBean {
      *
      * @return the batch type
      */
-    public Type getType() {
+    public BatchType getType() {
         return type;
     }
 
@@ -186,7 +166,7 @@ public class Batch extends BaseIndexedBean {
      * @param type
      *            for the batch
      */
-    public void setType(Type type) {
+    public void setType(BatchType type) {
         this.type = type;
     }
 

@@ -21,7 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.PasswordEncryption;
+import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 
 @Entity

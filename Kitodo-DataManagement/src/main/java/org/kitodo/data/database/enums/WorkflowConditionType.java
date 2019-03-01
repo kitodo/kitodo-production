@@ -9,14 +9,19 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.helper.enums;
+package org.kitodo.data.database.enums;
 
 /**
- * Enum for determining current state of ElasticSearch index. According to it
- * necessary operation must be performed on ElasticSearch index.
+ * Enum for workflow condition type. Types:
+ *
+ * <dl>
+ * <dt>SCRIPT</dt>
+ * <dd>path to executable script will be used for value</dd>
+ * <dt>XPATH</dt>
+ * <dd>expression to search in the metadata file will be used for value</dd>
+ * </dl>
  */
-public enum IndexAction {
-    INDEX,
-    DELETE,
-    DONE
+public enum WorkflowConditionType {
+    SCRIPT,
+    XPATH
 }

@@ -14,8 +14,8 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
 
 /**
  * Task DTO object.

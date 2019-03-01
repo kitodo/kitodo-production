@@ -41,10 +41,11 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.WorkflowCondition;
+import org.kitodo.data.database.enums.PropertyType;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.PropertyType;
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
@@ -646,11 +647,11 @@ public class WorkflowControllerService {
         if (Objects.isNull(workflowCondition)) {
             return true;
         } else {
-            if (workflowCondition.getType().equals(WorkflowCondition.Type.SCRIPT)) {
+            if (workflowCondition.getType().equals(WorkflowConditionType.SCRIPT)) {
                 return runScriptCondition(workflowCondition.getValue());
             }
 
-            if (workflowCondition.getType().equals(WorkflowCondition.Type.XPATH)) {
+            if (workflowCondition.getType().equals(WorkflowConditionType.XPATH)) {
                 return runXPathCondition(process, workflowCondition.getValue());
             }
             return true;

@@ -19,6 +19,7 @@ import java.util.Objects;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -119,7 +120,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         Workflow duplicatedWorkflow = new Workflow();
 
         duplicatedWorkflow.setTitle(baseWorkflow.getTitle() + "_" + Helper.generateRandomString(3));
-        duplicatedWorkflow.setStatus(Workflow.Status.DRAFT);
+        duplicatedWorkflow.setStatus(WorkflowStatus.DRAFT);
         duplicatedWorkflow.setClient(baseWorkflow.getClient());
 
         return duplicatedWorkflow;

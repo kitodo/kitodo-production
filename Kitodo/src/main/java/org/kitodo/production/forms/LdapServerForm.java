@@ -22,8 +22,8 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.data.database.enums.PasswordEncryption;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 

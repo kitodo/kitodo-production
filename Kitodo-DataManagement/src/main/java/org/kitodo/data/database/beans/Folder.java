@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.forms.FolderGenerator;
 
 /**

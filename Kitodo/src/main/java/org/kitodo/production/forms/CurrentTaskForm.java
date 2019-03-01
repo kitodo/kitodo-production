@@ -31,14 +31,14 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.BatchType;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
@@ -165,7 +165,7 @@ public class CurrentTaskForm extends BaseForm {
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
-            Type.LOGISTIC);
+            BatchType.LOGISTIC);
 
         if (batches.isEmpty()) {
             return takeOverTask();
@@ -238,7 +238,7 @@ public class CurrentTaskForm extends BaseForm {
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = ServiceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
-            Type.LOGISTIC);
+            BatchType.LOGISTIC);
 
         if (batches.isEmpty()) {
             return taskEditPath + "&id=" + getTaskIdForPath();

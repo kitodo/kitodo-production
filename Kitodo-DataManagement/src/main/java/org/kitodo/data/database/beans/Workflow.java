@@ -26,6 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity
@@ -33,30 +34,12 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 public class Workflow extends BaseIndexedBean {
     private static final long serialVersionUID = 6831844584235763486L;
 
-    /**
-     * Enum for workflow status. Statuses:
-     *
-     * <dl>
-     * <dt>DRAFT</dt>
-     * <dd>it is possible to edit workflow but not yet use</dd>
-     * <dt>ACTIVE</dt>
-     * <dd>workflow is not editable anymore but can be used</dd>
-     * <dt>ARCHIVED</dt>
-     * <dd>workflow can not be used anymore</dd>
-     * </dl>
-     */
-    public enum Status {
-        DRAFT,
-        ACTIVE,
-        ARCHIVED
-    }
-
     @Column(name = "title")
     private String title;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Status status = Status.DRAFT;
+    private WorkflowStatus status = WorkflowStatus.DRAFT;
 
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
@@ -105,7 +88,7 @@ public class Workflow extends BaseIndexedBean {
      *
      * @return value of status
      */
-    public Status getStatus() {
+    public WorkflowStatus getStatus() {
         return status;
     }
 
@@ -114,7 +97,7 @@ public class Workflow extends BaseIndexedBean {
      *
      * @param status as org.kitodo.data.database.beans.Workflow.Status
      */
-    public void setStatus(Status status) {
+    public void setStatus(WorkflowStatus status) {
         this.status = status;
     }
 

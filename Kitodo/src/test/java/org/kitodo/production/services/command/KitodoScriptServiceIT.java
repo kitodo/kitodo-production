@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
 public class KitodoScriptServiceIT {

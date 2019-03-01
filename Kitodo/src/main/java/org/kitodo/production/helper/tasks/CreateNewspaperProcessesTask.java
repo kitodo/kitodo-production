@@ -23,8 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.production.forms.ProzesskopieForm;
@@ -72,13 +72,13 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     /**
      * The field fullBatch holds a batch that all issues will be assigned to.
      */
-    private Batch fullBatch = new Batch(Type.NEWSPAPER);
+    private Batch fullBatch = new Batch(BatchType.NEWSPAPER);
 
     /**
      * The field logisticsBatch holds a batch that all issues of the same
      * logistics unit will be assigned to.
      */
-    private Batch logisticsBatch = new Batch(Type.LOGISTIC);
+    private Batch logisticsBatch = new Batch(BatchType.LOGISTIC);
 
     /**
      * The field nextProcessToCreate holds the index of the next process to
@@ -417,7 +417,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         if (ServiceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
             ServiceManager.getBatchService().save(logisticsBatch);
-            logisticsBatch = new Batch(Type.LOGISTIC);
+            logisticsBatch = new Batch(BatchType.LOGISTIC);
         }
         currentBreakMark = null;
         batchLabel = null;

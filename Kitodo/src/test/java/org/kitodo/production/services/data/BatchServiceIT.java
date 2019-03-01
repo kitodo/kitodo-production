@@ -28,6 +28,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -75,7 +76,7 @@ public class BatchServiceIT {
     @Test
     public void shouldGetBatch() throws Exception {
         Batch batch = batchService.getById(1);
-        boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(Batch.Type.LOGISTIC);
+        boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(BatchType.LOGISTIC);
         assertTrue("Batch was not found in database!", condition);
 
         assertEquals("Batch was found but processes were not inserted!", 1, batch.getProcesses().size());
@@ -97,7 +98,7 @@ public class BatchServiceIT {
     public void shouldRemoveBatch() throws Exception {
         Batch batch = new Batch();
         batch.setTitle("To Remove");
-        batch.setType(Batch.Type.SERIAL);
+        batch.setType(BatchType.SERIAL);
         batchService.save(batch);
         Batch foundBatch = batchService.getById(5);
         assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
@@ -108,7 +109,7 @@ public class BatchServiceIT {
 
         batch = new Batch();
         batch.setTitle("To remove");
-        batch.setType(Batch.Type.SERIAL);
+        batch.setType(BatchType.SERIAL);
         batchService.save(batch);
         foundBatch = batchService.getById(6);
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
@@ -146,25 +147,25 @@ public class BatchServiceIT {
     @Test
     public void shouldFindByTitleAndType() {
         await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
-            batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC).size()));
+            batchService.findByTitleAndType("First batch", BatchType.LOGISTIC).size()));
     }
 
     @Test
     public void shouldNotFindByTitleAndType() {
         await().untilAsserted(() -> assertEquals("Batch was found in index!", 0,
-            batchService.findByTitleAndType("Second batch", Batch.Type.SERIAL).size()));
+            batchService.findByTitleAndType("Second batch", BatchType.SERIAL).size()));
     }
 
     @Test
     public void shouldFindManyByTitleOrType() {
         await().untilAsserted(() -> assertEquals("Batches were not found in index!", 2,
-            batchService.findByTitleOrType("First batch", Batch.Type.SERIAL).size()));
+            batchService.findByTitleOrType("First batch", BatchType.SERIAL).size()));
     }
 
     @Test
     public void shouldFindByTitleOrType() {
         await().untilAsserted(() -> assertEquals("More batches were found in index!", 1,
-            batchService.findByTitleOrType("None", Batch.Type.SERIAL).size()));
+            batchService.findByTitleOrType("None", BatchType.SERIAL).size()));
     }
 
     @Test

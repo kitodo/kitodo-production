@@ -27,8 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity

@@ -11,10 +11,6 @@
 
 package org.kitodo;
 
-import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
-import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
-import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +55,6 @@ import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
-import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -70,11 +65,14 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.BatchType;
+import org.kitodo.data.database.enums.LinkingMode;
+import org.kitodo.data.database.enums.PasswordEncryption;
+import org.kitodo.data.database.enums.PropertyType;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.PasswordEncryption;
-import org.kitodo.data.database.helper.enums.PropertyType;
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
@@ -427,24 +425,24 @@ public class MockDatabase {
     private static void insertBatches() throws DAOException, DataException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
-        firstBatch.setType(LOGISTIC);
+        firstBatch.setType(BatchType.LOGISTIC);
         firstBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
         ServiceManager.getBatchService().save(firstBatch);
 
         Batch secondBatch = new Batch();
         secondBatch.setTitle("Second batch");
-        secondBatch.setType(LOGISTIC);
+        secondBatch.setType(BatchType.LOGISTIC);
         ServiceManager.getBatchService().save(secondBatch);
 
         Batch thirdBatch = new Batch();
         thirdBatch.setTitle("Third batch");
-        thirdBatch.setType(NEWSPAPER);
+        thirdBatch.setType(BatchType.NEWSPAPER);
         thirdBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
         thirdBatch.getProcesses().add(ServiceManager.getProcessService().getById(2));
         ServiceManager.getBatchService().save(thirdBatch);
 
         Batch fourthBatch = new Batch();
-        fourthBatch.setType(SERIAL);
+        fourthBatch.setType(BatchType.SERIAL);
         ServiceManager.getBatchService().save(fourthBatch);
     }
 
@@ -1215,24 +1213,24 @@ public class MockDatabase {
 
     public static void insertWorkflows() throws DAOException, DataException {
         Workflow firstWorkflow = new Workflow("test");
-        firstWorkflow.setStatus(Workflow.Status.ACTIVE);
+        firstWorkflow.setStatus(WorkflowStatus.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("test");
-        secondWorkflow.setStatus(Workflow.Status.DRAFT);
+        secondWorkflow.setStatus(WorkflowStatus.DRAFT);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
 
         Workflow thirdWorkflow = new Workflow("gateway");
-        thirdWorkflow.setStatus(Workflow.Status.DRAFT);
+        thirdWorkflow.setStatus(WorkflowStatus.DRAFT);
         thirdWorkflow.setClient(ServiceManager.getClientService().getById(2));
         ServiceManager.getWorkflowService().save(thirdWorkflow);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test1");
-        workflow.setStatus(Workflow.Status.ACTIVE);
+        workflow.setStatus(WorkflowStatus.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(workflow);
 
@@ -1335,7 +1333,7 @@ public class MockDatabase {
 
     private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test5");
-        workflow.setStatus(Workflow.Status.ACTIVE);
+        workflow.setStatus(WorkflowStatus.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(workflow);
 

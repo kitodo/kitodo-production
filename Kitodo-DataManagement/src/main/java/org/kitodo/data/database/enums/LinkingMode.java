@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.beans;
+package org.kitodo.data.database.enums;
 
 /**
  * Different ways how to link the contents of a folder in a METS fileGrp.
