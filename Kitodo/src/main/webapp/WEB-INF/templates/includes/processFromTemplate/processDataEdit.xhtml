@@ -57,13 +57,11 @@
                 <!-- digital collection -->
                 <p:outputLabel for="digitalCollections" rendered="#{ProzesskopieForm.standardFields.collections}"
                                value="#{msgs.digitalCollections}"/>
-                <p:selectManyMenu id="digitalCollections" styleClass="prozessKopieFeldbreite"
-                                     rendered="#{ProzesskopieForm.standardFields.collections}"
-                                     value="#{ProzesskopieForm.digitalCollections}">
-                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
-                                   itemValue="#{step}"/>
-                    <p:ajax event="change"/>
-                </p:selectManyMenu>
+                <p:selectManyCheckbox id="digitalCollections" value="#{ProzesskopieForm.digitalCollections}"
+                                      layout="grid" columns="1" rendered="#{ProzesskopieForm.standardFields.collections}"
+                                      required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}"/>
+                </p:selectManyCheckbox >
             </div>
         </p:row>
 
