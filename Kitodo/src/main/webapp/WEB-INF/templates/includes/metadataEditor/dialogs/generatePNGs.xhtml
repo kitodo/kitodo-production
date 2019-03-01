@@ -1,0 +1,41 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:form>
+        <p:confirmDialog header="#{msgs.generatePNGs}"
+                         message="#{msgs.confirm}"
+                         icon="ui-icon-alert"
+                         showEffect="fade"
+                         hideEffect="fade"
+                         styleClass="confirm-delete"
+                         widgetVar="generatePNGsConfirmDialog">
+            <p:commandButton value="Yes"
+                             styleClass="ui-confirmdialog-yes"
+                             icon="ui-icon-check"
+                             onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
+                             action="#{MetadataProcessor.generatePNGs()}"
+                             immediate="true"/>
+            <p:commandButton value="No"
+                             type="button"
+                             styleClass="ui-confirmdialog-no"
+                             icon="ui-icon-close"
+                             onclick="PF('generatePNGsConfirmDialog').hide()"/>
+        </p:confirmDialog>
+    </h:form>
+
+</ui:composition>
