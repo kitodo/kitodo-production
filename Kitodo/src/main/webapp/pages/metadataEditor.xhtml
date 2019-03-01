@@ -43,11 +43,9 @@
                 <div id="metadataEditorWrapper">
 
                     <!-- First Column -->
-                    <!-- TODO: use view-access data attribute to hide column! -->
-                    <h:panelGroup class="collapsibleWrapper"
+                    <h:panelGroup class="collapsibleWrapper #{viewStructure ? '' : 'collapsed'}"
                                   id="firstColumnWrapper"
-                                  a:data-view-access="#{viewStructure}"
-                                  a:data-min-width="200">
+                                  a:data-min-width="300">
                         <ui:fragment rendered="#{viewStructure}">
                             <button type="button"
                                     onclick="toggleFirstColumn()"
@@ -75,11 +73,9 @@
                     <h:panelGroup class="resizer" id="firstResizer"/>
 
                     <!-- Second Column -->
-                    <!-- TODO: use view-access data attribute to hide column! -->
-                    <h:panelGroup class="collapsibleWrapper"
+                    <h:panelGroup class="collapsibleWrapper #{viewMetadata ? '' : 'collapsed'}"
                                   id="secondColumnWrapper"
-                                  a:data-view-access="#{viewMetadata}"
-                                  a:data-min-width="200">
+                                  a:data-min-width="300">
                         <ui:fragment rendered="#{viewMetadata}">
                             <button type="button"
                                     onclick="toggleSecondColumn()"
@@ -119,10 +115,8 @@
                     <h:panelGroup class="resizer" id="secondResizer"/>
 
                     <!-- Third Column -->
-                    <!-- TODO: use view-access data attribute to hide column! -->
-                    <h:panelGroup class="collapsibleWrapper"
+                    <h:panelGroup class="collapsibleWrapper #{viewImages ? '' : 'collapsed'}"
                                   id="thirdColumnWrapper"
-                                  a:data-view-access="#{viewImages}"
                                   a:data-min-width="400">
                         <ui:fragment rendered="#{viewImages}">
                             <button type="button"

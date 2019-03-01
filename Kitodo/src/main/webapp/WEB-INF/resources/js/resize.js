@@ -138,25 +138,50 @@ function setSizes() {
     getElements();
 
     wrapper.height(window.innerHeight - wrapper.offset().top - $('footer').height());
-    firstColumn.width(firstColumn.data('min-width'));
-    secondColumn.width(secondColumn.data('min-width'));
-    thirdColumn.width(wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+
+    if (firstColumn.hasClass('collapsed')) {
+        firstColumn.width(COLLAPSED_COL_WIDTH);
+        firstColumnWidth = firstColumn.data('min-width');
+    } else if (secondColumn.hasClass('collapsed') && thirdColumn.hasClass('collapsed')) {
+        firstColumn.width(wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH);
+    } else {
+        firstColumn.width(firstColumn.data('min-width'));
+    }
+
+    if (secondColumn.hasClass('collapsed')) {
+        secondColumn.width(COLLAPSED_COL_WIDTH);
+        secondColumnWidth = secondColumn.data('min-width');
+    } else if(firstColumn.hasClass('collapsed') && thirdColumn.hasClass('collapsed')) {
+        secondColumn.width(wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH);
+    } else {
+        secondColumn.width(secondColumn.data('min-width'));
+    }
+
+    if (thirdColumn.hasClass('collapsed')) {
+        thirdColumn.width(COLLAPSED_COL_WIDTH);
+        thirdColumnWidth = thirdColumn.data('min-width');
+        secondColumn.width(wrapper.width() - firstColumn.width() - thirdColumn.width() - 2 * SEPARATOR_WIDTH);
+    } else {
+        thirdColumn.width(wrapper.width() - firstColumn.width() - secondColumn.width() - 2 * SEPARATOR_WIDTH);
+    }
+
     firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
     secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
     thirdColumn[0].dispatchEvent(new Event('resize'));
+    toggleResizers();
+    toggleCollapseButtons();
 }
 
 function toggleResizers() {
     if (collapsedColumns >= 2) {
-        $('.resizer').addClass('disabled');
-    } else if (collapsedColumns > 0) {
-        if (firstColumn.hasClass('collapsed')) {
-            firstResizer.addClass('disabled');
-            secondResizer.removeClass('disabled');
-        } else if (thirdColumn.hasClass('collapsed')) {
-            firstResizer.removeClass('disabled');
-            secondResizer.addClass('disabled');
-        }
+        firstResizer.addClass('disabled');
+        secondResizer.addClass('disabled');
+    } else if (firstColumn.hasClass('collapsed')) {
+        firstResizer.addClass('disabled');
+        secondResizer.removeClass('disabled');
+    } else if (thirdColumn.hasClass('collapsed')) {
+        firstResizer.removeClass('disabled');
+        secondResizer.addClass('disabled');
     } else {
         firstResizer.removeClass('disabled');
         secondResizer.removeClass('disabled');
