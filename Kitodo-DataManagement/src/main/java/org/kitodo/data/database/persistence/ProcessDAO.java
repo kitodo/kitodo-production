@@ -80,16 +80,6 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
-     * Update process object after some changes.
-     *
-     * @param process
-     *            object
-     */
-    public void update(Process process) {
-        updateObject(process);
-    }
-
-    /**
      * Get all active processes.
      *
      * @return list of all active processes as Process objects

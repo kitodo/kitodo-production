@@ -405,12 +405,12 @@ public class User extends BaseBean {
      * <p>
      * To allow recreation of an account with the same login the login is cleaned -
      * otherwise it would be blocked eternally by the login existence test performed
-     * in the BenutzerverwaltungForm.Speichern() function. In addition, all
-     * personally identifiable information is removed from the database as well.
+     * in the UserForm.save() function. In addition, all personally identifiable
+     * information is removed from the database as well.
      * </p>
      */
 
-    public User selfDestruct() {
+    public void selfDestruct() {
         this.deleted = true;
         this.login = null;
         this.active = false;
@@ -419,7 +419,6 @@ public class User extends BaseBean {
         this.location = null;
         this.roles = new ArrayList<>();
         this.projects = new ArrayList<>();
-        return this;
     }
 
     // Here will be methods which should be in UserService but are used by jsp
