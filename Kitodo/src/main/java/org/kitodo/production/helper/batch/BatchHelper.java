@@ -71,14 +71,23 @@ public class BatchHelper {
                 }
             }
             if (!match) {
-                Property property = new Property();
-                property.setTitle(processProperty.getTitle());
-                property.setValue(processProperty.getValue());
-                property.setType(processProperty.getType());
-                property.getProcesses().add(process);
-                process.getProperties().add(property);
+                Property newProperty = new Property();
+                newProperty.setTitle(processProperty.getTitle());
+                newProperty.setValue(processProperty.getValue());
+                newProperty.setType(processProperty.getType());
+                newProperty.getProcesses().add(process);
+                process.getProperties().add(newProperty);
             }
         }
         return process;
+    }
+
+    void validateProperties(Process process) {
+        List<Property> propertyList = process.getProperties();
+        for (Property nextProcessProperty : propertyList) {
+            if (Objects.isNull(nextProcessProperty.getTitle())) {
+                process.getProperties().remove(nextProcessProperty);
+            }
+        }
     }
 }

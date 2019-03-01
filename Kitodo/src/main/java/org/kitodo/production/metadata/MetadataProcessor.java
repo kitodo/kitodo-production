@@ -2405,7 +2405,6 @@ public class MetadataProcessor {
      * @return list of file paths of pages assigned to given DocStructInterface
      *         'docStruct'.
      */
-    @SuppressWarnings("unchecked")
     private List<String> getPagesAssignedToDocStruct(LegacyDocStructHelperInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
         List<LegacyReferenceHelper> pageReferences = docStruct.getAllReferences("to");

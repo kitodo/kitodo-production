@@ -168,12 +168,7 @@ public class BatchProcessHelper extends BatchHelper {
                     process.getProperties().add(this.property);
                 }
 
-                List<Property> propertyList = process.getProperties();
-                for (Property nextProcessProperty : propertyList) {
-                    if (Objects.isNull(nextProcessProperty.getTitle())) {
-                        process.getProperties().remove(nextProcessProperty);
-                    }
-                }
+                validateProperties(process);
             }
         }
     }
