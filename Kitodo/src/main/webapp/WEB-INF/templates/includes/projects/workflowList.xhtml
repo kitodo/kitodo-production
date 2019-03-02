@@ -54,7 +54,7 @@
 
                     <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}">
-                        <i class="fa fa-clone fa-lg"/>
+                        <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}" title="#{msgs.delete}"
