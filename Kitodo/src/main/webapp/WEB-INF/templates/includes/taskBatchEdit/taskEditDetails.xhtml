@@ -105,7 +105,7 @@
                                         </td>
                                         <td>
                                             <h:outputText
-                                                    value="#{CurrentTaskForm.batchHelper.currentStep.processingBeginAsFormattedString}"/>
+                                                    value="#{CurrentTaskForm.getFormattedDate(CurrentTaskForm.batchHelper.currentStep.processingBegin)}"/>
                                         </td>
                                     </tr>
                                 </ui:fragment>
@@ -117,7 +117,7 @@
                                         </td>
                                         <td>
                                             <h:outputText
-                                                    value="#{CurrentTaskForm.batchHelper.currentStep.processingTimeAsFormattedString}"/>
+                                                    value="#{CurrentTaskForm.getFormattedDate(CurrentTaskForm.batchHelper.currentStep.processingTime)}"/>
                                         </td>
                                     </tr>
                                 </ui:fragment>
