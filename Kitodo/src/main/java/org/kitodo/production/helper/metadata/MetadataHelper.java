@@ -35,7 +35,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDoc
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyReferenceHelper;
 import org.kitodo.production.metadata.comparator.MetadataComparator;
@@ -46,11 +45,9 @@ public class MetadataHelper {
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private LegacyPrefsHelper prefs;
-    private LegacyMetsModsDigitalDocumentHelper digitalDocument;
 
-    public MetadataHelper(LegacyPrefsHelper inPrefs, LegacyMetsModsDigitalDocumentHelper inDocument) {
+    public MetadataHelper(LegacyPrefsHelper inPrefs) {
         this.prefs = inPrefs;
-        this.digitalDocument = inDocument;
     }
 
     /**
