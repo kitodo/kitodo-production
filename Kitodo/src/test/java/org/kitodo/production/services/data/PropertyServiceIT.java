@@ -219,20 +219,4 @@ public class PropertyServiceIT {
         await().untilAsserted(() -> assertEquals("Property was found in index!", 0,
             propertyService.findByTitleAndValue("Korrektur notwendig", "second", "workpiece", true).size()));
     }
-
-    @Test
-    public void shouldGetNormalizedTitle() throws Exception {
-        Property processProperty = propertyService.getById(1);
-        String expected = "Process_Property";
-        String actual = propertyService.getNormalizedTitle(processProperty);
-        assertEquals("Normalized title doesn't match to given plain text!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetNormalizedValue() throws Exception {
-        Property processProperty = propertyService.getById(1);
-        String expected = "first_value";
-        String actual = propertyService.getNormalizedValue(processProperty);
-        assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
-    }
 }

@@ -222,28 +222,6 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     /**
-     * Get normalized title.
-     * 
-     * @param property
-     *            object
-     * @return normalized title
-     */
-    public String getNormalizedTitle(Property property) {
-        return property.getTitle().replace(" ", "_").trim();
-    }
-
-    /**
-     * Get normalized value.
-     * 
-     * @param property
-     *            object
-     * @return normalized value
-     */
-    public String getNormalizedValue(Property property) {
-        return property.getValue().replace(" ", "_").trim();
-    }
-
-    /**
      * Transfer property for duplication.
      * 
      * @param property
