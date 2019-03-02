@@ -15,39 +15,37 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <f:view locale="#{LanguageForm.locale}">
-        <h:body>
-            <!-- edit dialog -->
-            <p:dialog widgetVar="addClientDialog"
-                      id="addClientDialog"
-                      header="#{msgs.clientAdd}"
-                      width="700px"
-                      modal="true"
-                      dynamic="true">
-                <h:form id="userClientForm">
-                    <p:dataTable var="client"
-                                 id="selectClientTable"
-                                 value="#{ClientForm.lazyDTOModel}"
-                                 lazy="true"
-                                 paginator="true"
-                                 rows="#{LoginForm.loggedUser.tableSize}"
-                                 paginatorPosition="bottom">
-                        <p:column headerText="#{msgs.clientList}">
-                            <h:outputText value="#{client.name}"/>
-                        </p:column>
-                        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-                            <p:commandLink id="addUserClient"
-                                           action="#{UserForm.addToClient}"
-                                           title="add to client"
-                                           update="editForm:userTabView:clientDatatable"
-                                           oncomplete="toggleSave()">
-                                <i class="fa fa-user-plus fa-lg"/>
-                                <f:param name="ID" value="#{client.id}"/>
-                            </p:commandLink>
-                        </p:column>
-                    </p:dataTable>
-                </h:form>
-            </p:dialog>
-        </h:body>
-    </f:view>
+    <h:body>
+        <!-- edit dialog -->
+        <p:dialog widgetVar="addClientDialog"
+                  id="addClientDialog"
+                  header="#{msgs.clientAdd}"
+                  width="700px"
+                  modal="true"
+                  dynamic="true">
+            <h:form id="userClientForm">
+                <p:dataTable var="client"
+                             id="selectClientTable"
+                             value="#{ClientForm.lazyDTOModel}"
+                             lazy="true"
+                             paginator="true"
+                             rows="#{LoginForm.loggedUser.tableSize}"
+                             paginatorPosition="bottom">
+                    <p:column headerText="#{msgs.clientList}">
+                        <h:outputText value="#{client.name}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                        <p:commandLink id="addUserClient"
+                                       action="#{UserForm.addToClient}"
+                                       title="add to client"
+                                       update="editForm:userTabView:clientDatatable"
+                                       oncomplete="toggleSave()">
+                            <i class="fa fa-user-plus fa-lg"/>
+                            <f:param name="ID" value="#{client.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+    </h:body>
 </ui:composition>
