@@ -250,8 +250,8 @@ public class ProzesskopieForm implements Serializable {
     private String opacKatalog;
     private List<String> workflowConditions = new ArrayList<>();
     private static final String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
-    private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
-    private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
+    private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
+    private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
     protected String docType;
     protected Template template = new Template();

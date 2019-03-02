@@ -22,7 +22,7 @@ import org.kitodo.production.security.DynamicAuthenticationProvider;
 @Named("AuthenticationController")
 @RequestScoped
 public class AuthenticationController {
-    private DynamicAuthenticationProvider dynamicAuthenticationProvider = DynamicAuthenticationProvider.getInstance();
+    private final DynamicAuthenticationProvider dynamicAuthenticationProvider = DynamicAuthenticationProvider.getInstance();
 
     /**
      * Check if ldap authentication is active.

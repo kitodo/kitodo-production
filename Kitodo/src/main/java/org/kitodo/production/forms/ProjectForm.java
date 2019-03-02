@@ -99,8 +99,8 @@ public class ProjectForm extends BaseForm {
 
     private boolean copyTemplates;
 
-    private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
+    private final String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private final String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
     private String projectEditReferer = DEFAULT_LINK;
 

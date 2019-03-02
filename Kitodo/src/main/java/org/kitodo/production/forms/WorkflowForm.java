@@ -66,8 +66,8 @@ public class WorkflowForm extends BaseForm {
     private static final String SVG_EXTENSION = ".svg";
     private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
     private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
-    private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
+    private final String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private final String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
     private Integer roleId;
 
     /**

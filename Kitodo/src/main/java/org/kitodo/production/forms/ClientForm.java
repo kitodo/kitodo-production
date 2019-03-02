@@ -33,8 +33,8 @@ public class ClientForm extends BaseForm {
     private Client client;
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
 
-    private String clientListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String clientEditPath = MessageFormat.format(REDIRECT_PATH, "clientEdit");
+    private final String clientListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private final String clientEditPath = MessageFormat.format(REDIRECT_PATH, "clientEdit");
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this

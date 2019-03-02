@@ -42,8 +42,8 @@ public class RoleForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(RoleForm.class);
     private Role role = new Role();
 
-    private String roleListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
+    private final String roleListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private final String roleEditPath = MessageFormat.format(REDIRECT_PATH, "roleEdit");
 
     /**
      * Default constructor that also sets the LazyDTOModel instance of this bean.

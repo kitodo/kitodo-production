@@ -46,8 +46,8 @@ public class RulesetForm extends BaseForm {
     private Ruleset ruleset;
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
 
-    private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
+    private final String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private final String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
     @Named("ProjectForm")
     private ProjectForm projectForm;

@@ -52,8 +52,8 @@ public class TemplateForm extends TemplateBaseForm {
     private List<Project> assignedProjects = new ArrayList<>();
     private Task task;
     private boolean showInactiveTemplates = false;
-    private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
+    private final String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private final String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
 
     /**
      * Constructor.

@@ -34,8 +34,8 @@ public class LdapServerForm extends BaseForm {
     private static final long serialVersionUID = 2390900243176826176L;
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
     private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
-    private String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
+    private final String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private final String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
 
     private LdapServer ldapServer;
     private PasswordEncryption passwordEncryption;
