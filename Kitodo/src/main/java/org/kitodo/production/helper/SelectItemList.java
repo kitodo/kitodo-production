@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.production.services.ServiceManager;
 
 public class SelectItemList {
@@ -194,6 +195,21 @@ public class SelectItemList {
         for (Workflow workflow : workflows) {
             selectItems.add(new SelectItem(workflow, workflow.getTitle(), null));
         }
+        return selectItems;
+    }
+
+    /**
+     * Get list of workflow statues for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    // TODO: exact text for description is needed
+    public static List<SelectItem> getWorkflowStatuses() {
+        List<SelectItem> selectItems = new ArrayList<>();
+        selectItems.add(new SelectItem(WorkflowStatus.DRAFT, Helper.getTranslation("draft"), null));
+        selectItems.add(new SelectItem(WorkflowStatus.ACTIVE, Helper.getTranslation("active"), null));
+        // TODO: get information if it is possible to change from draft to archived
+        selectItems.add(new SelectItem(WorkflowStatus.ARCHIVED, Helper.getTranslation("archived"), null));
         return selectItems;
     }
 }
