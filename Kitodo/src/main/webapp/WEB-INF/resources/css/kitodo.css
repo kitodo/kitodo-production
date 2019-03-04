@@ -1154,6 +1154,14 @@ form#metadata div label,
     visibility: hidden;
 }
 
+.columnHeadingWrapper .columnHeading {
+    color: var(--disabled-dark);
+}
+
+.collapsibleWrapper > .columnExpandButton + .columnHeadingWrapper .columnHeading {
+    color: black;
+}
+
 .wrapperPanel.ui-panel,
 .wrapperPanel.ui-panel > .ui-panel-content {
     padding: 0;
