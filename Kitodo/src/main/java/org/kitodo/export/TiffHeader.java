@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.services.ServiceManager;
 
 /**
  * Die Klasse TiffHeader dient zur Generierung einer Tiffheaderdatei *.conf
@@ -39,17 +38,15 @@ public class TiffHeader {
      * Eigenschaften des Werkstücks bzw. der Scanvorlage
      */
     public TiffHeader(Process process) {
-        if (ServiceManager.getProcessService().getWorkpiecesSize(process) > 0) {
-            for (Property workpieceProperty : process.getWorkpieces()) {
-                if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
-                    this.tifHeaderDocumentName = workpieceProperty.getValue();
-                }
-                if (workpieceProperty.getTitle().equals("TifHeaderImagedescription")) {
-                    this.tifHeaderImageDescription = workpieceProperty.getValue();
-                }
-                if (workpieceProperty.getTitle().equals("Artist")) {
-                    this.artist = workpieceProperty.getValue();
-                }
+        for (Property workpieceProperty : process.getWorkpieces()) {
+            if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
+                this.tifHeaderDocumentName = workpieceProperty.getValue();
+            }
+            if (workpieceProperty.getTitle().equals("TifHeaderImagedescription")) {
+                this.tifHeaderImageDescription = workpieceProperty.getValue();
+            }
+            if (workpieceProperty.getTitle().equals("Artist")) {
+                this.artist = workpieceProperty.getValue();
             }
         }
     }

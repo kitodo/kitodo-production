@@ -984,39 +984,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get size of properties' list.
-     *
-     * @param process
-     *            object
-     * @return size
-     */
-    public int getPropertiesSize(Process process) {
-        return process.getProperties().size();
-    }
-
-    /**
-     * Get size of workpieces' list.
-     *
-     * @param process
-     *            object
-     * @return size
-     */
-    public int getWorkpiecesSize(Process process) {
-        return process.getWorkpieces().size();
-    }
-
-    /**
-     * Get size of templates' list.
-     *
-     * @param process
-     *            object
-     * @return size
-     */
-    public int getTemplatesSize(Process process) {
-        return process.getTemplates().size();
-    }
-
-    /**
      * Get current task.
      *
      * @param process

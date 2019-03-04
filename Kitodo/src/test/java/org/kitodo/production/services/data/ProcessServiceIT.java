@@ -353,27 +353,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetPropertiesSize() throws Exception {
-        Process process = processService.getById(1);
-        int actual = processService.getPropertiesSize(process);
-        assertEquals("Properties' size is incorrect!", 3, actual);
-    }
-
-    @Test
-    public void shouldGetWorkpiecesSize() throws Exception {
-        Process process = processService.getById(1);
-        int actual = processService.getWorkpiecesSize(process);
-        assertEquals("Workpieces' size is incorrect!", 2, actual);
-    }
-
-    @Test
-    public void shouldGetTemplatesSize() throws Exception {
-        Process process = processService.getById(1);
-        int actual = processService.getTemplatesSize(process);
-        assertEquals("Templates' size is incorrect!", 2, actual);
-    }
-
-    @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
