@@ -14,11 +14,17 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -68,7 +74,7 @@ public class SearchResultForm extends BaseForm {
     public String filterListByProject(ProjectDTO projectDTO){
         filteredList.clear();
         filteredList.addAll(resultList);
-            for(ProcessDTO result : new ArrayList<>(resultList)){
+            for(ProcessDTO result : resultList){
                 if(!result.getProject().getId().equals(projectDTO.getId())){
                     filteredList.remove(result);
                 }
@@ -76,37 +82,63 @@ public class SearchResultForm extends BaseForm {
         return this.stayOnCurrentPage;
     }
 
+
+    /**
+     * Filters the searchResults by task.
+     * @param task The project to be filtered by
+     * @return a filtered list
+     */
+    public String filterListByTask(Task task){
+        filteredList.clear();
+        filteredList.addAll(resultList);
+        for(ProcessDTO result : resultList){
+            try {
+                Process process = ServiceManager.getProcessService().getById(result.getId());
+                Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+                if(Objects.isNull(currentTask) || !currentTask.getTitle().equals(task.getTitle())){
+                    filteredList.remove(result);
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorOnSearch", searchQuery);
+                return this.stayOnCurrentPage;
+            }
+
+        }
+        return this.stayOnCurrentPage;
+    }
+
     /**
      * Get all Projects assigned to the search results
      * @return A list of Projects for filter list
      */
-    public List<ProjectDTO> getProjectsForFiltering(){
-        ArrayList<ProjectDTO> projectsForFiltering = new ArrayList<>();
+    public Collection<ProjectDTO> getProjectsForFiltering(){
+        HashMap<Integer,ProjectDTO> projectsForFiltering = new HashMap<>();
         for(ProcessDTO process : resultList){
-                projectsForFiltering.add(process.getProject());
+                projectsForFiltering.put(process.getId(),process.getProject());
         }
-        projectsForFiltering = removeDuplicatesFromProjects(projectsForFiltering);
-        return projectsForFiltering;
+        return projectsForFiltering.values();
     }
 
-    private ArrayList<ProjectDTO> removeDuplicatesFromProjects(ArrayList<ProjectDTO> projectsForFiltering) {
-        ArrayList<ProjectDTO> projectsForFilteringCopy = new ArrayList<>();
-        boolean contains = false;
-        for(ProjectDTO project : projectsForFiltering){
-            for (ProjectDTO projectDTO : projectsForFilteringCopy){
-                if(project.getId().equals(projectDTO.getId())){
-                    contains = true;
-                    break;
+    /**
+     * Get all current Tasks from to the search results
+     * @return A list of Tasks for filter list
+     */
+    public Collection<Task> getTasksForFiltering(){
+        HashMap<String,Task> tasksForFiltering = new HashMap<>();
+        for(ProcessDTO processDTO : resultList){
+            try {
+                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+                if(Objects.nonNull(currentTask)) {
+                    tasksForFiltering.put(currentTask.getTitle(),currentTask);
                 }
+            } catch (DAOException e) {
+                e.printStackTrace();
             }
-            if(!contains){
-                projectsForFilteringCopy.add(project);
-            }
-            contains = false;
-        }
-        return projectsForFilteringCopy;
-    }
 
+        }
+        return tasksForFiltering.values();
+    }
 
     /**
      * Gets the filtered list.
