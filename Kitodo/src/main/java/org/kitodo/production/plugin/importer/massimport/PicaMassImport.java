@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -695,6 +696,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         try (FileInputStream istream = new FileInputStream(KitodoConfigFile.OPAC_CONFIGURATION.getFile())) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             DocumentBuilder builder = factory.newDocumentBuilder();
 

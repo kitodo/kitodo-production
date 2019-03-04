@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -134,7 +135,9 @@ class GetOpac {
         super();
         this.opacClient = new HttpClient();
         this.cat = opac;
-        this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        this.docBuilder = documentBuilderFactory.newDocumentBuilder();
     }
 
     // MANIPULATION (Manipulation - what the object does)
@@ -443,6 +446,7 @@ class GetOpac {
         OpacResponseHandler ids = new OpacResponseHandler();
         /* Use Java 1.4 methods to create default parser. */
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setNamespaceAware(true);
         parser = factory.newSAXParser().getXMLReader();
 

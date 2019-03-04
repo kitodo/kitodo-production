@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -114,6 +115,7 @@ public class SRUHelper {
 
             // generate an answer document
             DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
             org.w3c.dom.Document answer = docBuilder.newDocument();
             org.w3c.dom.Element collection = answer.createElement("collection");
