@@ -1342,7 +1342,7 @@ public class MetadataProcessor {
 
     /**
      * Set the first and the last page via AJAX request.
-     * 
+     *
      * @param docStruct
      *            the doc structure for which the pages are set
      */
@@ -1376,7 +1376,7 @@ public class MetadataProcessor {
 
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
-     * 
+     *
      * @param docStruct
      *            the doc structure for which the pages are set
      */
@@ -2101,7 +2101,7 @@ public class MetadataProcessor {
 
     /**
      * Return index of currently selected page.
-     * 
+     *
      * @return current page index
      */
     public int getPageIndex() {
@@ -2129,13 +2129,13 @@ public class MetadataProcessor {
 
     /**
      * Gets the logical page number from a paginated docstruct.
-     * 
+     *
      * @param docStruct
      *            The DocStruct opject.
      * @return The logical page number.
      */
     public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
-        for (String page : allPages) {
+        for (String page : Arrays.stream(allPages).filter(Objects::nonNull).collect(Collectors.toList())) {
             int physicalPageNumber = getPhysicalPageNumber(docStruct);
             if (page.startsWith(String.valueOf(physicalPageNumber))) {
                 return getLogicalPageNumberOfPaginatedImage(page);
@@ -2242,7 +2242,7 @@ public class MetadataProcessor {
 
     /**
      * Return the path to the thumbnail for the page with the given path 'image'.
-     * 
+     *
      * @param image
      *            path to image file whose thumbnail is returned
      * @return thumbnail for given image
@@ -2282,7 +2282,7 @@ public class MetadataProcessor {
 
     /**
      * Get number of TIFF images converted to PNG.
-     * 
+     *
      * @return number of converted TIFF images
      */
     public int getNumberOfConvertedImages() {
@@ -2291,7 +2291,7 @@ public class MetadataProcessor {
 
     /**
      * Get number of all images in current TIFF folder.
-     * 
+     *
      * @return number of images in current TIFF folder
      */
     public int getNumberOfImagesInCurrentTifFolder() {
@@ -2300,7 +2300,7 @@ public class MetadataProcessor {
 
     /**
      * Return all structure elements.
-     * 
+     *
      * @return list of all structure elements
      */
     public List<LegacyDocStructHelperInterface> getAllStructureElements() {
@@ -2328,7 +2328,7 @@ public class MetadataProcessor {
 
     /**
      * Event listener for drag drop event.
-     * 
+     *
      * @param dragDropEvent
      *            the event that triggers this listener
      */
@@ -2379,7 +2379,7 @@ public class MetadataProcessor {
     /**
      * Retrieve and return list of all DocStructInferface instances referencing the
      * given DocStructInterfaces 'docStruct'.
-     * 
+     *
      * @param docStruct
      *            the DocStructInterface for which the references are determined
      * @return list of DocStructInterface instances referencing the given
@@ -2399,7 +2399,7 @@ public class MetadataProcessor {
     /**
      * Retrieve and return list of file paths for pages assigned to given
      * DocStructInterface 'docStruct'.
-     * 
+     *
      * @param docStruct
      *            DocStructInterfaces for which page file paths are returned.
      * @return list of file paths of pages assigned to given DocStructInterface
@@ -2431,7 +2431,7 @@ public class MetadataProcessor {
     /**
      * Retrieve file path to png image for given DocStructInterface 'pageDocStruct'
      * representing a single scanned page image.
-     * 
+     *
      * @param pageDocStruct
      *            DocStructInterface for which the corresponding file path to the
      *            png copy is returned.
@@ -2500,7 +2500,7 @@ public class MetadataProcessor {
     /**
      * Retrieve and return physical page number of given DocStructInterface
      * 'pageDocStruct'.
-     * 
+     *
      * @param pageDocStruct
      *            DocStructInterface whose physical page number is returned.
      * @return physical page number of given DocStructInterface pageDocStruct
@@ -2516,7 +2516,7 @@ public class MetadataProcessor {
     /**
      * Checks and returns whether access is granted to the image with the given
      * filepath "imagePath".
-     * 
+     *
      * @param imagePath
      *            the filepath of the image for which access rights are checked
      * @return true if access is granted and false otherwise
