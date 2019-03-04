@@ -496,15 +496,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return result;
     }
 
-    // TODO: replace it
-    public String getProcessingStatusAsString(Task task) {
-        return String.valueOf(task.getProcessingStatus().getValue());
-    }
-
-    public Integer setProcessingStatusAsString(String inputProcessingStatus) {
-        return Integer.parseInt(inputProcessingStatus);
-    }
-
     /**
      * Get script path.
      *

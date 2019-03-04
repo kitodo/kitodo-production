@@ -606,15 +606,6 @@ public class Task extends BaseIndexedBean {
         return result;
     }
 
-    // TODO: replace it with normal get/set
-    public String getProcessingStatusAsString() {
-        return String.valueOf(this.processingStatus);
-    }
-
-    public void setProcessingStatusAsString(String inputProcessingStatus) {
-        this.processingStatus = TaskStatus.getStatusFromValue(Integer.parseInt(inputProcessingStatus));
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {

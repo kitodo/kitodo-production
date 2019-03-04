@@ -409,8 +409,7 @@ public class KitodoScriptService {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(
-                        ServiceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
+                    TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(Integer.valueOf(this.parameters.get(STATUS)));
                     task.setProcessingStatus(newTaskStatus);
                     saveTask(process.getTitle(), task);
                     Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());

@@ -28,6 +28,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 
 public class SelectItemList {
@@ -163,6 +164,20 @@ public class SelectItemList {
         for (Ruleset ruleset : rulesets) {
             selectItems.add(new SelectItem(ruleset, ruleset.getTitle(), null));
         }
+        return selectItems;
+    }
+
+    /**
+     * Get task statuses for select list.
+     *
+     * @return list of task statuses as SelectItem list
+     */
+    public static List<SelectItem> getTaskStatuses() {
+        List<SelectItem> selectItems = new ArrayList<>();
+        selectItems.add(new SelectItem(TaskStatus.LOCKED, Helper.getTranslation("locked"), null));
+        selectItems.add(new SelectItem(TaskStatus.OPEN, Helper.getTranslation("statusOpen"), null));
+        selectItems.add(new SelectItem(TaskStatus.INWORK, Helper.getTranslation("statusInProcessing"), null));
+        selectItems.add(new SelectItem(TaskStatus.DONE, Helper.getTranslation("statusDone"), null));
         return selectItems;
     }
 
