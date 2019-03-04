@@ -74,7 +74,7 @@ public class BatchHelper {
                 Property newProperty = new Property();
                 newProperty.setTitle(processProperty.getTitle());
                 newProperty.setValue(processProperty.getValue());
-                newProperty.setType(processProperty.getType());
+                newProperty.setDataType(processProperty.getDataType());
                 newProperty.getProcesses().add(process);
                 process.getProperties().add(newProperty);
             }

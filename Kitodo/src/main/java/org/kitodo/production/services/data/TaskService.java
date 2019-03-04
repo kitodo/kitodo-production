@@ -496,8 +496,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return result;
     }
 
+    // TODO: replace it
     public String getProcessingStatusAsString(Task task) {
-        return String.valueOf(task.getProcessingStatus().intValue());
+        return String.valueOf(task.getProcessingStatus().getValue());
     }
 
     public Integer setProcessingStatusAsString(String inputProcessingStatus) {
@@ -600,20 +601,20 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
             throws DataException, IOException {
         if (automatic) {
-            task.setEditType(TaskEditType.AUTOMATIC.getValue());
+            task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
-                task.setProcessingStatus(TaskStatus.DONE.getValue());
+                task.setProcessingStatus(TaskStatus.DONE);
                 ServiceManager.getWorkflowControllerService().close(task);
             } else {
-                task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                task.setProcessingStatus(TaskStatus.OPEN);
                 save(task);
             }
         }
     }
 
     private void abortTask(Task task) throws DataException {
-        task.setProcessingStatus(TaskStatus.OPEN.getValue());
-        task.setEditType(TaskEditType.AUTOMATIC.getValue());
+        task.setProcessingStatus(TaskStatus.OPEN);
+        task.setEditType(TaskEditType.AUTOMATIC);
         save(task);
     }
 

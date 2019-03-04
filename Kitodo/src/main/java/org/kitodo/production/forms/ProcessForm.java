@@ -399,7 +399,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.templates = new ArrayList<>();
         }
         Property newProperty = new Property();
-        newProperty.setType(PropertyType.STRING);
+        newProperty.setDataType(PropertyType.STRING);
         this.templates.add(newProperty);
         this.templateProperty = newProperty;
     }
@@ -412,7 +412,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.workpieces = new ArrayList<>();
         }
         Property newProperty = new Property();
-        newProperty.setType(PropertyType.STRING);
+        newProperty.setDataType(PropertyType.STRING);
         this.workpieces.add(newProperty);
         this.workpieceProperty = newProperty;
     }
@@ -1185,7 +1185,7 @@ public class ProcessForm extends TemplateBaseForm {
             this.properties = new ArrayList<>();
         }
         Property newProperty = new Property();
-        newProperty.setType(PropertyType.STRING);
+        newProperty.setDataType(PropertyType.STRING);
         this.properties.add(newProperty);
         this.property = newProperty;
     }

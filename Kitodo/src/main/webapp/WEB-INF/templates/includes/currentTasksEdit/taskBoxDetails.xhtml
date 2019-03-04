@@ -30,7 +30,7 @@
             <h:outputText value="#{msgs.correction}" rendered="#{item.priority==10}"/>
         </p:column>
         <p:column headerText="#{msgs.status}">
-            <h:outputText value="#{item.processingStatusEnum.title}"/>
+            <h:outputText value="#{item.processingStatus.title}"/>
         </p:column>
         <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
             <p:column headerText="#{msgs.processingBegin}:"/>
@@ -42,7 +42,7 @@
         </ui:fragment>
         <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
             <p:column headerText="#{msgs.editType}:"/>
-            <h:outputText value="#{item.editTypeEnum.title}"/>
+            <h:outputText value="#{item.editType.title}"/>
         </ui:fragment>
     </p:dataTable>
 </ui:composition>

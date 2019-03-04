@@ -478,7 +478,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      */
     public List<Task> getTasksInProgress(User user) {
         return user.getProcessingTasks().stream().filter(
-            task -> task.getProcessingStatusEnum().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
+            task -> task.getProcessingStatus().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
                 .collect(Collectors.toList());
     }
 

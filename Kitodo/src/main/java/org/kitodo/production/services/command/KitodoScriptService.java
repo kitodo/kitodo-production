@@ -27,6 +27,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
@@ -408,8 +409,9 @@ public class KitodoScriptService {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    task.setProcessingStatus(
+                    TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(
                         ServiceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
+                    task.setProcessingStatus(newTaskStatus);
                     saveTask(process.getTitle(), task);
                     Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
                     break;

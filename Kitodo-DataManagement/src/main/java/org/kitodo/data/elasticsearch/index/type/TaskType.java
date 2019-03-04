@@ -25,9 +25,8 @@ public class TaskType extends BaseType<Task> {
 
     @Override
     Map<String, Object> getJsonObject(Task task) {
-        int processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
-                : 0;
-        int editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
+        int processingStatus = task.getProcessingStatus() != null ? task.getProcessingStatus().getValue() : 0;
+        int editType = task.getEditType() != null ? task.getEditType().getValue() : 0;
         int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
 
         Map<String, Object> jsonObject = new HashMap<>();

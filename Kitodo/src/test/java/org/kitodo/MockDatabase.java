@@ -480,7 +480,7 @@ public class MockDatabase {
         ldapServer.setManagerLogin("LdapManager");
         ldapServer.setManagerPassword("LdapManagerPasswort");
         ldapServer.setUrl("LdapUrl");
-        ldapServer.setPasswordEncryptionEnum(PasswordEncryption.SHA);
+        ldapServer.setPasswordEncryption(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
         ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
@@ -579,7 +579,7 @@ public class MockDatabase {
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
-        firstProcessProperty.setType(PropertyType.STRING);
+        firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
@@ -590,7 +590,7 @@ public class MockDatabase {
         secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
-        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
@@ -601,7 +601,7 @@ public class MockDatabase {
         thirdProcessProperty.setTitle("Korrektur notwendig");
         thirdProcessProperty.setValue("fix it");
         thirdProcessProperty.setObligatory(false);
-        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
@@ -613,7 +613,7 @@ public class MockDatabase {
         fourthProcessProperty.setTitle("Korrektur notwendig");
         fourthProcessProperty.setValue("improved ids");
         fourthProcessProperty.setObligatory(false);
-        fourthProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        fourthProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         fourthProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         fourthProcessProperty.setCreationDate(localDate.toDate());
@@ -637,7 +637,7 @@ public class MockDatabase {
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
-        firstProcessProperty.setType(PropertyType.STRING);
+        firstProcessProperty.setDataType(PropertyType.STRING);
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
@@ -648,7 +648,7 @@ public class MockDatabase {
         secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
-        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        secondProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
@@ -659,7 +659,7 @@ public class MockDatabase {
         thirdProcessProperty.setTitle("Korrektur notwendig");
         thirdProcessProperty.setValue("fix it");
         thirdProcessProperty.setObligatory(false);
-        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        thirdProcessProperty.setDataType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
@@ -892,11 +892,11 @@ public class MockDatabase {
         Task eleventhTask = new Task();
         eleventhTask.setTitle("Additional");
         eleventhTask.setOrdering(1);
-        eleventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        eleventhTask.setEditType(TaskEditType.MANUAL_SINGLE);
         LocalDate localDate = new LocalDate(2016, 9, 25);
         eleventhTask.setProcessingBegin(localDate.toDate());
         eleventhTask.setProcessingUser(firstUser);
-        eleventhTask.setProcessingStatusEnum(TaskStatus.DONE);
+        eleventhTask.setProcessingStatus(TaskStatus.DONE);
         eleventhTask.setProcess(secondProcess);
         eleventhTask.setScriptName("scriptName");
         eleventhTask.setScriptPath("../type/automatic/script/path");
@@ -909,11 +909,11 @@ public class MockDatabase {
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
         twelfthTask.setOrdering(2);
-        twelfthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        twelfthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 10, 25);
         twelfthTask.setProcessingBegin(localDate.toDate());
         twelfthTask.setProcessingUser(firstUser);
-        twelfthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        twelfthTask.setProcessingStatus(TaskStatus.INWORK);
         twelfthTask.setProcess(secondProcess);
         twelfthTask.getRoles().add(role);
         role.getTasks().add(twelfthTask);
@@ -925,10 +925,10 @@ public class MockDatabase {
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
         thirteenTask.setOrdering(3);
-        thirteenTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        thirteenTask.setEditType(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 10, 25);
         thirteenTask.setProcessingBegin(localDate.toDate());
-        thirteenTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        thirteenTask.setProcessingStatus(TaskStatus.OPEN);
         thirteenTask.setProcess(secondProcess);
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
@@ -942,24 +942,24 @@ public class MockDatabase {
         firstTask.setTitle("Finished");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
-        firstTask.setEditTypeEnum(TaskEditType.ADMIN);
+        firstTask.setEditType(TaskEditType.ADMIN);
         LocalDate localDate = new LocalDate(2016, 8, 20);
         firstTask.setProcessingBegin(localDate.toDate());
         localDate = new LocalDate(2016, 9, 24);
         firstTask.setProcessingTime(localDate.toDate());
         localDate = new LocalDate(2016, 9, 24);
         firstTask.setProcessingEnd(localDate.toDate());
-        firstTask.setProcessingStatusEnum(TaskStatus.DONE);
+        firstTask.setProcessingStatus(TaskStatus.DONE);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
         secondTask.setOrdering(2);
-        secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        secondTask.setEditType(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);
         secondTask.setProcessingBegin(localDate.toDate());
         localDate = new LocalDate(2016, 11, 25);
         secondTask.setProcessingEnd(localDate.toDate());
-        secondTask.setProcessingStatusEnum(TaskStatus.DONE);
+        secondTask.setProcessingStatus(TaskStatus.DONE);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
 
@@ -967,26 +967,26 @@ public class MockDatabase {
         thirdTask.setTitle("Progress");
         thirdTask.setOrdering(3);
         thirdTask.setPriority(10);
-        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        thirdTask.setEditType(TaskEditType.MANUAL_SINGLE);
         thirdTask.setTypeImagesWrite(true);
         localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
-        thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        thirdTask.setProcessingStatus(TaskStatus.INWORK);
 
         Task fourthTask = new Task();
         fourthTask.setTitle("Open");
         fourthTask.setOrdering(4);
         fourthTask.setPriority(10);
-        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fourthTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        fourthTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        fourthTask.setProcessingStatus(TaskStatus.OPEN);
 
         Task fifthTask = new Task();
         fifthTask.setTitle("Locked");
         fifthTask.setOrdering(5);
         fifthTask.setPriority(10);
-        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fifthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         fifthTask.setTypeImagesWrite(true);
-        fifthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+        fifthTask.setProcessingStatus(TaskStatus.LOCKED);
 
         return Arrays.asList(firstTask, secondTask, thirdTask, fourthTask, fifthTask);
     }
@@ -998,7 +998,7 @@ public class MockDatabase {
         firstTemplateProperty.setTitle("firstTemplate title");
         firstTemplateProperty.setValue("first value");
         firstTemplateProperty.setObligatory(true);
-        firstTemplateProperty.setType(PropertyType.STRING);
+        firstTemplateProperty.setDataType(PropertyType.STRING);
         firstTemplateProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
@@ -1009,7 +1009,7 @@ public class MockDatabase {
         secondTemplateProperty.setTitle("template");
         secondTemplateProperty.setValue("second");
         secondTemplateProperty.setObligatory(false);
-        secondTemplateProperty.setType(PropertyType.STRING);
+        secondTemplateProperty.setDataType(PropertyType.STRING);
         secondTemplateProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
@@ -1188,7 +1188,7 @@ public class MockDatabase {
         firstWorkpieceProperty.setTitle("FirstWorkpiece Property");
         firstWorkpieceProperty.setValue("first value");
         firstWorkpieceProperty.setObligatory(true);
-        firstWorkpieceProperty.setType(PropertyType.STRING);
+        firstWorkpieceProperty.setDataType(PropertyType.STRING);
         firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
@@ -1199,7 +1199,7 @@ public class MockDatabase {
         secondWorkpieceProperty.setTitle("workpiece");
         secondWorkpieceProperty.setValue("second");
         secondWorkpieceProperty.setObligatory(false);
-        secondWorkpieceProperty.setType(PropertyType.STRING);
+        secondWorkpieceProperty.setDataType(PropertyType.STRING);
         secondWorkpieceProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
@@ -1252,12 +1252,12 @@ public class MockDatabase {
         firstProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, firstProcess);
-        firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
         firstProcess.getTasks().get(0).setProcessingUser(ServiceManager.getUserService().getById(1));
-        firstProcess.getTasks().get(1).setProcessingStatus(0);
-        firstProcess.getTasks().get(2).setProcessingStatus(0);
-        firstProcess.getTasks().get(3).setProcessingStatus(0);
-        firstProcess.getTasks().get(4).setProcessingStatus(0);
+        firstProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(2).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         firstProcess.setProject(project);
         firstProcess.setDocket(template.getDocket());
@@ -1269,11 +1269,11 @@ public class MockDatabase {
         secondProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, secondProcess);
-        secondProcess.getTasks().get(0).setProcessingStatus(3);
-        secondProcess.getTasks().get(1).setProcessingStatus(2);
-        secondProcess.getTasks().get(2).setProcessingStatus(0);
-        secondProcess.getTasks().get(3).setProcessingStatus(0);
-        secondProcess.getTasks().get(4).setProcessingStatus(0);
+        secondProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
+        secondProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
+        secondProcess.getTasks().get(2).setProcessingStatus(TaskStatus.LOCKED);
+        secondProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
+        secondProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         secondProcess.setProject(project);
         secondProcess.setDocket(template.getDocket());
@@ -1285,11 +1285,11 @@ public class MockDatabase {
         thirdProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, thirdProcess);
-        thirdProcess.getTasks().get(0).setProcessingStatus(3);
-        thirdProcess.getTasks().get(1).setProcessingStatus(2);
-        thirdProcess.getTasks().get(2).setProcessingStatus(2);
-        thirdProcess.getTasks().get(3).setProcessingStatus(0);
-        thirdProcess.getTasks().get(4).setProcessingStatus(0);
+        thirdProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
+        thirdProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
+        thirdProcess.getTasks().get(2).setProcessingStatus(TaskStatus.INWORK);
+        thirdProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
+        thirdProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         thirdProcess.setProject(project);
         thirdProcess.setDocket(template.getDocket());
@@ -1301,13 +1301,13 @@ public class MockDatabase {
         fourthProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, fourthProcess);
-        fourthProcess.getTasks().get(0).setProcessingStatus(3);
-        fourthProcess.getTasks().get(1).setProcessingStatus(2);
-        fourthProcess.getTasks().get(2).setProcessingStatus(2);
+        fourthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
+        fourthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
+        fourthProcess.getTasks().get(2).setProcessingStatus(TaskStatus.INWORK);
         fourthProcess.getTasks().get(2).setConcurrent(true);
-        fourthProcess.getTasks().get(3).setProcessingStatus(0);
+        fourthProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
         fourthProcess.getTasks().get(3).setConcurrent(true);
-        fourthProcess.getTasks().get(4).setProcessingStatus(0);
+        fourthProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         fourthProcess.setProject(project);
         fourthProcess.setDocket(template.getDocket());
@@ -1319,11 +1319,11 @@ public class MockDatabase {
         secondProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, fifthProcess);
-        fifthProcess.getTasks().get(0).setProcessingStatus(3);
-        fifthProcess.getTasks().get(1).setProcessingStatus(3);
-        fifthProcess.getTasks().get(2).setProcessingStatus(3);
-        fifthProcess.getTasks().get(3).setProcessingStatus(2);
-        fifthProcess.getTasks().get(4).setProcessingStatus(0);
+        fifthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
+        fifthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.DONE);
+        fifthProcess.getTasks().get(2).setProcessingStatus(TaskStatus.DONE);
+        fifthProcess.getTasks().get(3).setProcessingStatus(TaskStatus.INWORK);
+        fifthProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         fifthProcess.setProject(project);
         fifthProcess.setDocket(template.getDocket());
@@ -1355,12 +1355,12 @@ public class MockDatabase {
         firstProcess.setTemplate(template);
 
         BeanHelper.copyTasks(template, firstProcess);
-        firstProcess.getTasks().get(0).setProcessingStatus(2);
+        firstProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
         firstProcess.getTasks().get(0).setProcessingUser(ServiceManager.getUserService().getById(1));
-        firstProcess.getTasks().get(1).setProcessingStatus(0);
-        firstProcess.getTasks().get(2).setProcessingStatus(0);
-        firstProcess.getTasks().get(3).setProcessingStatus(0);
-        firstProcess.getTasks().get(4).setProcessingStatus(0);
+        firstProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(2).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
+        firstProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
 
         firstProcess.setProject(project);
         firstProcess.setDocket(template.getDocket());

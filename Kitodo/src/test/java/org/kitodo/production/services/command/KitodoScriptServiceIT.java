@@ -70,7 +70,7 @@ public class KitodoScriptServiceIT {
         kitodoScript.execute(processes, script);
 
         Task task = ServiceManager.getTaskService().getById(8);
-        assertEquals("Processing status was not correctly changed!", TaskStatus.DONE, task.getProcessingStatusEnum());
+        assertEquals("Processing status was not correctly changed!", TaskStatus.DONE, task.getProcessingStatus());
     }
 
     @Test

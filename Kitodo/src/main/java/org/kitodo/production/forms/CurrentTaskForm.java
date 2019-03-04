@@ -131,7 +131,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return page
      */
     public String takeOverTask() {
-        if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
+        if (this.currentTask.getProcessingStatus() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
@@ -197,9 +197,9 @@ public class CurrentTaskForm extends BaseForm {
      *            which is part of the batch
      */
     private void processTask(Task task) {
-        if (task.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
-            task.setProcessingStatusEnum(TaskStatus.INWORK);
-            task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+        if (task.getProcessingStatus().equals(TaskStatus.OPEN)) {
+            task.setProcessingStatus(TaskStatus.INWORK);
+            task.setEditType(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
             User user = getUser();
             ServiceManager.getTaskService().replaceProcessingUser(task, user);
@@ -381,12 +381,12 @@ public class CurrentTaskForm extends BaseForm {
             for (Task task : (List<Task>) lazyDTOModel.getEntities()) {
                 // only when the task is already in edit mode, complete it
                 if (task.getProcess().getId() == Integer.parseInt(id)
-                        && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
+                        && task.getProcessingStatus() == TaskStatus.INWORK) {
                     this.currentTask = task;
                     if (Objects.nonNull(closeTaskByUser())) {
                         checkedList.add(element);
                     }
-                    this.currentTask.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                    this.currentTask.setEditType(TaskEditType.MANUAL_MULTI);
                 }
             }
         }
@@ -430,9 +430,9 @@ public class CurrentTaskForm extends BaseForm {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.TASK.getTranslationSingular(), taskDTO.getId() }, logger, e);
             }
-            if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                task.setProcessingStatusEnum(TaskStatus.INWORK);
-                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+            if (task.getProcessingStatus() == TaskStatus.OPEN) {
+                task.setProcessingStatus(TaskStatus.INWORK);
+                task.setEditType(TaskEditType.MANUAL_MULTI);
                 task.setProcessingTime(new Date());
                 User user = getUser();
                 ServiceManager.getTaskService().replaceProcessingUser(task, user);
@@ -521,7 +521,7 @@ public class CurrentTaskForm extends BaseForm {
             for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
                 try {
                     Task task = ServiceManager.getTaskService().getById(taskDTO.getId());
-                    if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
+                    if (task.getProcessingStatus() == TaskStatus.OPEN) {
                         this.gesamtAnzahlImages += ServiceManager.getFileService()
                                 .getSubUris(
                                     ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))
