@@ -30,6 +30,8 @@ import javax.naming.NamingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
@@ -395,8 +397,11 @@ public class UserForm extends BaseForm {
      */
     public Map<String, String> getMetadataLanguages() {
         Map<String, String> metadataLanguages = new HashMap<>();
-        metadataLanguages.put("English", "en");
-        metadataLanguages.put("Deutsch", "de");
+        String[] availableMetadataLanguages = ConfigCore.getStringArrayParameter(ParameterCore.METADATA_LANGUAGE_LIST);
+        for (String availableLanguage : availableMetadataLanguages) {
+            String[] language = availableLanguage.split("-");
+            metadataLanguages.put(language[0], language[1]);
+        }
         return metadataLanguages;
     }
 

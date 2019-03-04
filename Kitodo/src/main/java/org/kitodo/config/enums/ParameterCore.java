@@ -244,6 +244,8 @@ public enum ParameterCore implements ParameterInterface {
      */
     LANGUAGE_DEFAULT(new Parameter<>("language.default", "de")),
 
+    METADATA_LANGUAGE_LIST(new Parameter<>("metadataLanguage.list", "Deutsch-de")),
+
     /*
      * Data protection
      */
