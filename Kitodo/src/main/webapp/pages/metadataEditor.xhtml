@@ -58,8 +58,6 @@
                                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/pagination.xhtml" />
                                 </p:panel>
                             </h:form>
-                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogAddDocStrucType.xhtml"/>
-                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogEditPages.xhtml"/>
                         </p:panel>
                     </h:panelGroup>
 
@@ -136,35 +134,12 @@
         </p:panel>
 
     </ui:define>
+
     <ui:define name="dialog">
-        <h:form>
-            <p:confirmDialog header="#{msgs.generatePNGs}"
-                             message="#{msgs.confirm}"
-                             icon="ui-icon-alert"
-                             showEffect="fade"
-                             hideEffect="fade"
-                             styleClass="confirm-delete"
-                             widgetVar="generatePNGsConfirmDialog">
-                <p:commandButton value="Yes"
-                                 styleClass="ui-confirmdialog-yes"
-                                 icon="ui-icon-check"
-                                 onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
-                                 action="#{MetadataProcessor.generatePNGs()}"
-                                 immediate="true"/>
-                <p:commandButton value="No"
-                                 type="button"
-                                 styleClass="ui-confirmdialog-no"
-                                 icon="ui-icon-close"
-                                 onclick="PF('generatePNGsConfirmDialog').hide()"/>
-            </p:confirmDialog>
-        </h:form>
-        <p:dialog header="Generating PNGs"
-                  global="true"
-                  modal="true"
-                  id="convertTIFFDialog"
-                  widgetVar="convertTIFFDialog">
-            <h:outputText value="#{MetadataProcessor.numberOfConvertedImages} / #{MetadataProcessor.numberOfImagesInCurrentTifFolder}"/>
-        </p:dialog>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/generatePNGs.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/generatePNGsProgress.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/addDocStrucType.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/editPages.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

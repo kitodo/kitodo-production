@@ -1,0 +1,27 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:dialog header="Generating PNGs"
+              global="true"
+              modal="true"
+              id="convertTIFFDialog"
+              widgetVar="convertTIFFDialog">
+        <h:outputText value="#{MetadataProcessor.numberOfConvertedImages} / #{MetadataProcessor.numberOfImagesInCurrentTifFolder}"/>
+    </p:dialog>
+
+</ui:composition>
