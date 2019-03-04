@@ -73,26 +73,25 @@
                     <h:panelGroup class="resizer" id="firstResizer"/>
 
                     <!-- Second Column -->
-                    <h:panelGroup class="collapsibleWrapper #{viewMetadata ? '' : 'collapsed'}"
+                    <h:panelGroup class="collapsibleWrapper"
                                   id="secondColumnWrapper"
                                   a:data-min-width="300">
-                        <ui:fragment rendered="#{viewMetadata}">
-                            <button type="button"
-                                    onclick="toggleSecondColumn()"
-                                    class="columnExpandButton">
-                                <i class="fa fa-expand fa-lg"/>
-                                <i class="fa fa-compress fa-lg"/>
-                            </button>
-                        </ui:fragment>
-
+                        <button type="button"
+                                onclick="toggleSecondColumn()"
+                                class="columnExpandButton">
+                            <i class="fa fa-expand fa-lg"/>
+                            <i class="fa fa-compress fa-lg"/>
+                        </button>
                         <div class="columnHeadingWrapper">
-                            <button id="firstSectionToggler" onclick="toggleFirstSection()">
-                                <i class="fa fa-chevron-circle-up fa-lg"/>
-                            </button>
+                            <ui:fragment rendered="#{viewMetadata}">
+                                <button id="firstSectionToggler" onclick="toggleFirstSection()">
+                                    <i class="fa fa-chevron-circle-up fa-lg"/>
+                                </button>
+                            </ui:fragment>
                             <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
                         </div>
                         <p:panel id="secondColumnPanel">
-                            <div id="metadataPanel" data-min-height="100">
+                            <div id="metadataPanel" data-min-height="100" class="#{viewMetadata ? '' : 'collapsed'}">
                                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
                             </div>
 
@@ -100,9 +99,11 @@
                             <div id="verticalResizer"></div>
 
                             <div class="columnHeadingWrapper">
-                                <button id="secondSectionToggler" onclick="toggleSecondSection()">
-                                    <i class="fa fa-chevron-circle-up fa-lg"/>
-                                </button>
+                                <ui:fragment rendered="#{viewMetadata}">
+                                    <button id="secondSectionToggler" onclick="toggleSecondSection()">
+                                        <i class="fa fa-chevron-circle-up fa-lg"/>
+                                    </button>
+                                </ui:fragment>
                                 <h:outputText value="#{msgs.comments}"/>
                             </div>
                             <div id="commentPanel" data-min-height="100">

@@ -165,8 +165,17 @@ function setSizes() {
         thirdColumn.width(wrapper.width() - firstColumn.width() - secondColumn.width() - 2 * SEPARATOR_WIDTH);
     }
 
-    firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
-    secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
+    if (firstSection.hasClass('collapsed')) {
+        firstSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2);
+        secondSection.height(secondSection.height() + firstSectionHeight);
+    } else if (secondSection.hasClass('collapsed')) {
+        secondSectionHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
+        firstSection.height(firstSection.height() + secondSectionHeight);
+    } else {
+        firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
+        secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
+    }
+
     thirdColumn[0].dispatchEvent(new Event('resize'));
     toggleResizers();
     toggleCollapseButtons();
