@@ -11,7 +11,14 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
 public class MetadataEditorPage extends Page<MetadataEditorPage> {
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "structureTreeForm")
+    private WebElement structureTreeForm;
 
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
@@ -20,5 +27,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @Override
     public MetadataEditorPage goTo() {
         return null;
+    }
+
+    public boolean isStructureTreeFormVisible() {
+        return structureTreeForm.isDisplayed();
     }
 }

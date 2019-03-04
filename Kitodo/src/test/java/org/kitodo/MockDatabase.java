@@ -1031,6 +1031,7 @@ public class MockDatabase {
         Role projectRoleForFirstClient = ServiceManager.getRoleService().getById(3);
         Role projectRoleForSecondClient = ServiceManager.getRoleService().getById(4);
         Role withoutAuthoritiesRole = ServiceManager.getRoleService().getById(5);
+        Role metadataRole = ServiceManager.getRoleService().getById(6);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1095,6 +1096,15 @@ public class MockDatabase {
         fifthUser.setTableSize(20);
         fifthUser.setLanguage("de");
         ServiceManager.getUserService().saveToDatabase(fifthUser);
+
+        User sixthUser = new User();
+        sixthUser.setName("Very last");
+        sixthUser.setSurname("User");
+        sixthUser.setLogin("verylast");
+        sixthUser.setPassword(passwordEncoder.encrypt("test"));
+        sixthUser.getClients().add(firstClient);
+        sixthUser.getRoles().add(metadataRole);
+        ServiceManager.getUserService().saveToDatabase(sixthUser);
     }
 
     private static void insertRoles() throws DAOException {
@@ -1157,6 +1167,19 @@ public class MockDatabase {
         fifthUserGroup.setTitle("Without authorities");
         fifthUserGroup.setClient(client);
         ServiceManager.getRoleService().saveToDatabase(fifthUserGroup);
+
+        Role sixthRole = new Role();
+        sixthRole.setTitle("With partial metadata editor authorities");
+        sixthRole.setClient(client);
+
+        // insert authorities to view metadata and gallery in metadata editor, but not structure data
+        List<Authority> userMetadataAuthorities = new ArrayList<>();
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllProcesses" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessImages" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        sixthRole.setAuthorities(userMetadataAuthorities);
+
+        ServiceManager.getRoleService().saveToDatabase(sixthRole);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1443,7 +1466,7 @@ public class MockDatabase {
     /**
      * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of
      * removable database objects as values.
-     * 
+     *
      * @return HashMap containing IDs of removable instances of ObjectsTypes
      */
     public static HashMap<String, Integer> getRemovableObjectIDs() {

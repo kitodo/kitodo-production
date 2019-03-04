@@ -93,7 +93,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForUsers() throws Exception {
         Long amount = userService.countDatabaseRows();
-        assertEquals("Users were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Users were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -108,13 +108,13 @@ public class UserServiceIT {
     @Test
     public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
-        assertEquals("Not all users were found in database!", 6, users.size());
+        assertEquals("Not all users were found in database!", 7, users.size());
     }
 
     @Test
     public void shouldGetAllUsersInGivenRange() throws Exception {
         List<User> users = userService.getAll(2, 10);
-        assertEquals("Not all users were found in database!", 4, users.size());
+        assertEquals("Not all users were found in database!", 5, users.size());
     }
 
     @Test
