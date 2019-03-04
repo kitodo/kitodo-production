@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.catalogue.CataloguePlugin;
 import org.goobi.production.plugin.catalogue.Hit;
@@ -527,37 +528,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String templateAuswahlAuswerten() {
-        if (ServiceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
-            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
-                for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
-                        field.setValue(workpieceProperty.getValue());
-                    }
-                    if (workpieceProperty.getTitle().equals("DocType")) {
-                        docType = workpieceProperty.getValue();
-                    }
-                }
-            }
-        }
-
-        if (ServiceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
-            for (Property templateProperty : this.processForChoice.getTemplates()) {
-                for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(templateProperty.getTitle())) {
-                        field.setValue(templateProperty.getValue());
-                    }
-                }
-            }
-        }
-
-        if (ServiceManager.getProcessService().getPropertiesSize(this.processForChoice) > 0) {
-            for (Property processProperty : this.processForChoice.getProperties()) {
-                if (processProperty.getTitle().equals("digitalCollection")) {
-                    digitalCollections.add(processProperty.getValue());
-                }
-            }
-        }
+    public String evaluateTemplateSelection() {
+        readTemplateSelection();
 
         try {
             this.rdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
@@ -565,19 +537,56 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
         }
 
-        removeCollectionsForChildren();
+        removeCollectionsForChildren(this.rdf, this.prozessKopie);
         return null;
+    }
+
+    protected void readTemplateSelection() {
+        readTemplateWorkpieces(this.additionalFields, this.processForChoice);
+        readTemplateTemplates(this.additionalFields, this.processForChoice);
+        readTemplateProperties(this.digitalCollections, this.processForChoice);
+    }
+
+    protected void readTemplateWorkpieces(List<AdditionalField> additionalFields, Process processForChoice) {
+        for (Property workpieceProperty : processForChoice.getWorkpieces()) {
+            for (AdditionalField field : additionalFields) {
+                if (field.getTitle().equals(workpieceProperty.getTitle())) {
+                    field.setValue(workpieceProperty.getValue());
+                }
+                if (workpieceProperty.getTitle().equals("DocType") && !(this instanceof CopyProcess)) {
+                    this.docType = workpieceProperty.getValue();
+                }
+            }
+        }
+    }
+
+    protected void readTemplateTemplates(List<AdditionalField> additionalFields, Process processForChoice) {
+        for (Property templateProperty : processForChoice.getTemplates()) {
+            for (AdditionalField field : additionalFields) {
+                if (field.getTitle().equals(templateProperty.getTitle())) {
+                    field.setValue(templateProperty.getValue());
+                }
+            }
+        }
+    }
+
+    private void readTemplateProperties(List<String> digitalCollections, Process processForChoice) {
+        for (Property processProperty : processForChoice.getProperties()) {
+            if (processProperty.getTitle().equals("digitalCollection")) {
+                digitalCollections.add(processProperty.getValue());
+            }
+        }
     }
 
     /**
      * If there is a first child, the collections are for it.
      */
-    private void removeCollectionsForChildren() {
+    protected void removeCollectionsForChildren(LegacyMetsModsDigitalDocumentHelper rdf, Process processCopy) {
         try {
-            LegacyDocStructHelperInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-            removeCollections(colStruct, this.prozessKopie);
+            LegacyDocStructHelperInterface colStruct = rdf.getDigitalDocument().getLogicalDocStruct();
+            removeCollections(colStruct, processCopy);
             colStruct = colStruct.getAllChildren().get(0);
-            removeCollections(colStruct, this.prozessKopie);
+            removeCollections(colStruct, processCopy);
         } catch (RuntimeException e) {
             logger.debug("das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden", e);
         }

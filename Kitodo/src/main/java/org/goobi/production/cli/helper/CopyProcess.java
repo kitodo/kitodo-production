@@ -213,26 +213,8 @@ public class CopyProcess extends ProzesskopieForm {
      * Auswahl des Prozesses auswerten.
      */
     @Override
-    public String templateAuswahlAuswerten() {
-        if (ServiceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
-            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
-                for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
-                        field.setValue(workpieceProperty.getValue());
-                    }
-                }
-            }
-        }
-
-        if (ServiceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
-            for (Property templateProperty : this.processForChoice.getTemplates()) {
-                for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(templateProperty.getTitle())) {
-                        field.setValue(templateProperty.getValue());
-                    }
-                }
-            }
-        }
+    public String evaluateTemplateSelection() {
+        readTemplateSelection();
 
         try {
             this.myRdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
@@ -240,20 +222,15 @@ public class CopyProcess extends ProzesskopieForm {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
 
-        /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
-        try {
-            LegacyDocStructHelperInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-            removeCollections(colStruct, this.prozessKopie);
-            colStruct = colStruct.getAllChildren().get(0);
-            removeCollections(colStruct, this.prozessKopie);
-        } catch (RuntimeException e) {
-            /*
-             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
-             * werden
-             */
-        }
+        removeCollectionsForChildren(this.myRdf, this.prozessKopie);
 
         return "";
+    }
+
+    @Override
+    protected void readTemplateSelection() {
+        readTemplateWorkpieces(this.additionalFields, this.processForChoice);
+        readTemplateTemplates(this.additionalFields, this.processForChoice);
     }
 
     /**
