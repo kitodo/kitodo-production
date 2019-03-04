@@ -83,6 +83,7 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return json array for given json
      */
+    @SuppressWarnings("unchecked")
     default List<Map<String, Object>> getJsonArray(Map<String, Object> jsonObject) throws DataException {
         try {
             return (List<Map<String, Object>>) jsonObject.get(this.toString());

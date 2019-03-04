@@ -71,7 +71,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private boolean useDmsImport;
 
     @Column(name = "dmsImportTimeOut")
-    private Integer dmsImportTimeOut = 20000;
+    private Integer dmsImportTimeOut;
 
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
@@ -201,7 +201,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
         this.useDmsImport = false;
-        this.dmsImportTimeOut = 0;
+        this.dmsImportTimeOut = 20000;
         this.dmsImportImagesPath = "";
         this.dmsImportRootPath = "";
         this.dmsImportSuccessPath = "";

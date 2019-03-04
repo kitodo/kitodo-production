@@ -19,19 +19,17 @@ package org.kitodo.data.database.enums;
  */
 public enum PropertyType {
 
-    UNKNOWN(0, "unknown", false),
-    MESSAGE_IMPORTANT(3, "messageImportant", false),
-    MESSAGE_ERROR(4, "messageError", false),
-    STRING(5, "String", true);
+    UNKNOWN(0, "unknown"),
+    MESSAGE_IMPORTANT(3, "messageImportant"),
+    MESSAGE_ERROR(4, "messageError"),
+    STRING(5, "String");
 
     private int id;
     private String name;
-    private Boolean showInDisplay;
 
-    PropertyType(int id, String inName, Boolean showInDisplay) {
+    PropertyType(int id, String inName) {
         this.id = id;
         this.name = inName;
-        this.showInDisplay = showInDisplay;
     }
 
     public String getName() {
