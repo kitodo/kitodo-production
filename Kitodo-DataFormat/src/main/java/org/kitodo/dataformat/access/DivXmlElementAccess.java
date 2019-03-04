@@ -155,25 +155,26 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Reads a meta-data section and adds the meta-data to the structure.
      * 
-     * @param mdSec
-     *            meta-data section to be read
      * @param mdSecType
      *            type of meta-data section
+     * @param mdSec
+     *            meta-data section to be read
+     *
      * @return
      */
-    static final Collection<Metadata> readMetadata(MdSecType mdSec, MdSec mdSecType) {
+    static final Collection<Metadata> readMetadata(MdSecType mdSecType, MdSec mdSec) {
         Collection<Metadata> metadata = new HashSet<>();
-        for (Object object : mdSec.getMdWrap().getXmlData().getAny()) {
+        for (Object object : mdSecType.getMdWrap().getXmlData().getAny()) {
             if (object instanceof JAXBElement) {
                 JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
                 Object value = jaxbElement.getValue();
                 if (value instanceof KitodoType) {
                     KitodoType kitodoType = (KitodoType) value;
                     for (MetadataType metadataEntry : kitodoType.getMetadata()) {
-                        metadata.add(new MetadataXmlElementAccess(mdSecType, metadataEntry).getMetadataEntry());
+                        metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
                     }
                     for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
-                        metadata.add(new MetadataGroupXmlElementAccess(mdSecType, metadataGroup).getMetadataGroup());
+                        metadata.add(new MetadataGroupXmlElementAccess(mdSec, metadataGroup).getMetadataGroup());
                     }
                 }
             }
