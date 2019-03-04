@@ -12,6 +12,8 @@
 package org.kitodo.production.security;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.FilterChain;
@@ -58,40 +60,20 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 return;
             }
 
-            if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
-                    && !securityAccessService.hasAuthorityToViewWorkflow()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
+            Map<String, Boolean> requested = new HashMap<>();
+            requested.put("processEdit", securityAccessService.hasAuthorityToViewProcess());
+            requested.put("projectEdit", securityAccessService.hasAuthorityToViewProject());
+            requested.put("templateEdit", securityAccessService.hasAuthorityToViewTemplate());
+            requested.put("workflowEdit", securityAccessService.hasAuthorityToViewWorkflow());
+            requested.put("docketEdit", securityAccessService.hasAuthorityToViewDocket());
+            requested.put("rulesetEdit", securityAccessService.hasAuthorityToViewRuleset());
+            requested.put("roleEdit", securityAccessService.hasAuthorityToViewRole());
+            requested.put("clientEdit", securityAccessService.hasAuthorityToViewClient());
 
-            if (httpServletRequest.getRequestURI().contains("pages/processEdit")
-                    && !securityAccessService.hasAuthorityToViewProcess()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
-                    && !securityAccessService.hasAuthorityToViewProject()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/templateEdit")
-                    && !securityAccessService.hasAuthorityToViewTemplate()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/docketEdit")
-                    && !securityAccessService.hasAuthorityToViewDocket()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/rulesetEdit")
-                    && !securityAccessService.hasAuthorityToViewRuleset()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
+            for (Map.Entry<String, Boolean> entry : requested.entrySet()) {
+                if (isAccessDenied(httpServletRequest, httpServletResponse, entry.getKey(), entry.getValue())) {
+                    return;
+                }
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/userEdit")
@@ -100,23 +82,21 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
-
-            if (httpServletRequest.getRequestURI().contains("pages/roleEdit")
-                    && !securityAccessService.hasAuthorityToViewRole()) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
-
-            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
-                    && !securityAccessService.hasAuthorityGlobalOrForClient("viewClient")) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
-            }
         }
         chain.doFilter(request, response);
     }
 
-    private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {
-        accessDeniedHandler.handle(hreq, hres, new AccessDeniedException("Access is denied"));
+    private boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response, String page,
+            boolean hasAuthority) throws IOException, ServletException {
+        if (request.getRequestURI().contains("pages/" + page) && !hasAuthority) {
+            denyAccess(request, response);
+            return true;
+        }
+        return false;
+    }
+
+    private void denyAccess(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        accessDeniedHandler.handle(request, response, new AccessDeniedException("Access is denied"));
     }
 }
