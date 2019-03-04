@@ -99,11 +99,11 @@ public class DivXmlElementAccess extends Structure {
     DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
         super();
         super.setLabel(div.getLABEL());
-        for (Object mdSec : div.getDMDID()) {
-            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
+        for (Object mdSecType : div.getDMDID()) {
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, MdSec.DMD_SEC));
         }
-        for (Object mdSec : div.getADMID()) {
-            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec)));
+        for (Object mdSecType : div.getADMID()) {
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, amdSecTypeOf(mets, (MdSecType) mdSecType)));
         }
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
