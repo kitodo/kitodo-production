@@ -100,10 +100,10 @@ public class DivXmlElementAccess extends Structure {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSec : div.getDMDID()) {
-            readMetadata((MdSecType) mdSec, MdSec.DMD_SEC);
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
         }
         for (Object mdSec : div.getADMID()) {
-            readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec));
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec)));
         }
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
@@ -137,7 +137,7 @@ public class DivXmlElementAccess extends Structure {
      *            determined
      * @return the type of administrative meta-data section
      */
-    private final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
+    static final MdSec amdSecTypeOf(Mets mets, MdSecType mdSec) {
         for (AmdSecType amdSec : mets.getAmdSec()) {
             if (amdSec.getSourceMD().contains(mdSec)) {
                 return MdSec.SOURCE_MD;
@@ -159,8 +159,9 @@ public class DivXmlElementAccess extends Structure {
      *            meta-data section to be read
      * @param mdSecType
      *            type of meta-data section
+     * @return
      */
-    private final void readMetadata(MdSecType mdSec, MdSec mdSecType) {
+    static final Collection<Metadata> readMetadata(MdSecType mdSec, MdSec mdSecType) {
         Collection<Metadata> metadata = new HashSet<>();
         for (Object object : mdSec.getMdWrap().getXmlData().getAny()) {
             if (object instanceof JAXBElement) {
@@ -177,7 +178,7 @@ public class DivXmlElementAccess extends Structure {
                 }
             }
         }
-        super.getMetadata().addAll(metadata);
+        return metadata;
     }
 
     /**
@@ -202,7 +203,7 @@ public class DivXmlElementAccess extends Structure {
         smLinkData.addAll(super.getViews().parallelStream().map(View::getMediaUnit).map(mediaUnitIDs::get)
                 .map(mediaUnitId -> Pair.of(metsReferrerId, mediaUnitId)).collect(Collectors.toList()));
 
-        Optional<MdSecType> optionalDmdSec = createMdSec(MdSec.DMD_SEC);
+        Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
             String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
@@ -210,7 +211,7 @@ public class DivXmlElementAccess extends Structure {
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
         }
-        Optional<AmdSecType> optionalAmdSec = createAmdSec(div);
+        Optional<AmdSecType> optionalAmdSec = createAmdSec(super.getMetadata(), metsReferrerId, div);
         if (optionalAmdSec.isPresent()) {
             AmdSecType admSec = optionalAmdSec.get();
             mets.getAmdSec().add(admSec);
@@ -230,9 +231,9 @@ public class DivXmlElementAccess extends Structure {
      *            Domain for which a metadata section is to be generated
      * @return a metadata section, if there is data for it
      */
-    private Optional<MdSecType> createMdSec(MdSec domain) {
+    static Optional<MdSecType> createMdSec(Iterable<Metadata> metadata, MdSec domain) {
         KitodoType kitodoType = new KitodoType();
-        for (Metadata entry : super.getMetadata()) {
+        for (Metadata entry : metadata) {
             if (domain.equals(entry.getDomain())) {
                 if (entry instanceof MetadataEntry) {
                     kitodoType.getMetadata().add(new MetadataXmlElementAccess((MetadataEntry) entry).toMetadata());
@@ -264,13 +265,16 @@ public class DivXmlElementAccess extends Structure {
      *            meta-data sections
      * @return an {@code <amdSec>}, if necessary
      */
-    private Optional<AmdSecType> createAmdSec(DivType div) {
+    static Optional<AmdSecType> createAmdSec(Iterable<Metadata> metadata, String metsReferrerId, DivType div) {
         AmdSecType amdSec = new AmdSecType();
-        boolean source = addMdSec(createMdSec(MdSec.SOURCE_MD), MdSec.SOURCE_MD, AmdSecType::getSourceMD, amdSec, div);
-        boolean digiprov = addMdSec(createMdSec(MdSec.DIGIPROV_MD), MdSec.DIGIPROV_MD, AmdSecType::getDigiprovMD,
-            amdSec, div);
-        boolean rights = addMdSec(createMdSec(MdSec.RIGHTS_MD), MdSec.RIGHTS_MD, AmdSecType::getRightsMD, amdSec, div);
-        boolean tech = addMdSec(createMdSec(MdSec.TECH_MD), MdSec.TECH_MD, AmdSecType::getTechMD, amdSec, div);
+        boolean source = addMdSec(createMdSec(metadata, MdSec.SOURCE_MD), metsReferrerId, MdSec.SOURCE_MD,
+            AmdSecType::getSourceMD, amdSec, div);
+        boolean digiprov = addMdSec(createMdSec(metadata, MdSec.DIGIPROV_MD), metsReferrerId, MdSec.DIGIPROV_MD,
+            AmdSecType::getDigiprovMD, amdSec, div);
+        boolean rights = addMdSec(createMdSec(metadata, MdSec.RIGHTS_MD), metsReferrerId, MdSec.RIGHTS_MD,
+            AmdSecType::getRightsMD, amdSec, div);
+        boolean tech = addMdSec(createMdSec(metadata, MdSec.TECH_MD), metsReferrerId, MdSec.TECH_MD,
+            AmdSecType::getTechMD, amdSec, div);
         return source || digiprov || rights || tech ? Optional.of(amdSec) : Optional.empty();
     }
 
@@ -295,7 +299,7 @@ public class DivXmlElementAccess extends Structure {
      * @return whether something has been added to the administrative meta-data
      *         section
      */
-    private boolean addMdSec(Optional<MdSecType> optionalMdSec, MdSec mdSecType,
+    private static boolean addMdSec(Optional<MdSecType> optionalMdSec, String metsReferrerId, MdSec mdSecType,
             Function<AmdSecType, List<MdSecType>> mdSecTypeGetter, AmdSecType amdSec, DivType div) {
 
         if (!optionalMdSec.isPresent()) {
