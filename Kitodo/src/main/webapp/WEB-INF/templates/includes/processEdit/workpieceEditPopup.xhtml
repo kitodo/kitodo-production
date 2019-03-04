@@ -13,25 +13,29 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editWorkpieceDialog"
-              header="#{empty ProcessForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.propertyEdit}"
-              width="700px"
+              width="480px"
               modal="true"
+              resizable="false"
               dynamic="true"
               styleClass="editDialog">
         <h:form id="workpiecePropertyForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
+                    <h3>#{empty ProcessForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.propertyEdit}</h3>
                     <div>
                         <!-- title -->
-                        <p:outputLabel for="workpiecePropertyTitle" value="#{msgs.title}" />
-                        <p:inputText id="workpiecePropertyTitle" value="#{ProcessForm.workpieceProperty.title}"
-                                     placeholder="#{msgs.title}" required="true" styleClass="input editDialog"/>
+                        <p:outputLabel for="workpiecePropertyTitle"
+                                       value="#{msgs.title}" />
+                        <p:inputText id="workpiecePropertyTitle"
+                                     value="#{ProcessForm.workpieceProperty.title}"
+                                     placeholder="#{msgs.title}"
+                                     required="#{not empty param['workpiecePropertyForm:save']}"
+                                     styleClass="input editDialog"/>
                     </div>
                     <div>
                         <!-- value: text -->
@@ -44,8 +48,13 @@
                                      update="editForm"
                                      oncomplete="PF('editWorkpieceDialog').hide();toggleSave()"
                                      value="#{msgs.apply}"
-                                     styleClass="right">
-                    </p:commandButton>
+                                     styleClass="primary right"/>
+                    <p:commandButton id="cancel"
+                                     onclick="PF('editWorkpieceDialog').hide();"
+                                     value="#{msgs.cancel}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary right"/>
                 </p:row>
             </p:panelGrid>
         </h:form>

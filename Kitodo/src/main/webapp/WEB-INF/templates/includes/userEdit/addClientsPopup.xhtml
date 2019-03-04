@@ -19,11 +19,12 @@
         <!-- edit dialog -->
         <p:dialog widgetVar="addClientDialog"
                   id="addClientDialog"
-                  header="#{msgs.clientAdd}"
-                  width="700px"
+                  width="480px"
                   modal="true"
+                  resizable="false"
                   dynamic="true">
             <h:form id="userClientForm">
+                <h3>#{msgs.clientAdd}</h3>
                 <p:dataTable var="client"
                              id="selectClientTable"
                              value="#{ClientForm.lazyDTOModel}"
@@ -45,6 +46,12 @@
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
+                <p:commandButton id="close"
+                                 onclick="PF('addClientDialog').hide();"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right"/>
             </h:form>
         </p:dialog>
     </h:body>

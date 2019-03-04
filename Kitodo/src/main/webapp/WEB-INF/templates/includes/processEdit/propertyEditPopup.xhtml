@@ -13,25 +13,29 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editPropertyDialog"
-              header="#{empty ProcessForm.property.title ? msgs.propertyAdd : msgs.propertyEdit}"
-              width="700px"
+              width="480px"
               modal="true"
+              resizable="false"
               dynamic="true"
               styleClass="editDialog">
         <h:form id="propertyForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
+                    <h3>#{empty ProcessForm.property.title ? msgs.propertyAdd : msgs.propertyEdit}</h3>
                     <div>
                         <!-- title -->
-                        <p:outputLabel for="propertyTitle" value="#{msgs.title}" />
-                        <p:inputText id="propertyTitle" value="#{ProcessForm.property.title}"
-                                     placeholder="#{msgs.title}" required="true" styleClass="input editDialog"/>
+                        <p:outputLabel for="propertyTitle"
+                                       value="#{msgs.title}" />
+                        <p:inputText id="propertyTitle"
+                                     value="#{ProcessForm.property.title}"
+                                     placeholder="#{msgs.title}"
+                                     required="#{not empty param['propertyForm:save']}"
+                                     styleClass="input editDialog"/>
                     </div>
                     <div>
                         <!-- value: text -->
@@ -43,8 +47,15 @@
                                      update="editForm"
                                      oncomplete="PF('editPropertyDialog').hide();toggleSave()"
                                      value="#{msgs.apply}"
-                                     styleClass="right">
-                    </p:commandButton>
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"
+                                     styleClass="primary right"/>
+                    <p:commandButton id="cancel"
+                                     onclick="PF('editPropertyDialog').hide();"
+                                     value="#{msgs.cancel}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary right"/>
                 </p:row>
             </p:panelGrid>
         </h:form>

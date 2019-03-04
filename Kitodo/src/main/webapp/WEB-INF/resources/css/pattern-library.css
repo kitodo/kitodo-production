@@ -695,32 +695,35 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     padding: 8px 10px;
 }
 
-.confirm-delete .ui-dialog-title {
-    color: var(--cloudy-gray);
-    float: none;
+.ui-dialog,
+.ui-dialog .ui-panelgrid-content {
+    background-color: var(--light-gray);
 }
 
-.ui-dialog-titlebar .ui-dialog-titlebar-close {
-    text-decoration: none;
-    padding: var(--input-padding-none);
+.ui-dialog .ui-panelgrid-cell {
+    padding: 0 !important;
 }
 
-.ui-dialog-titlebar .ui-dialog-titlebar-close span {
+.ui-dialog .ui-panelgrid-cell div {
+    margin-bottom: var(--default-full-size);
+}
+
+.ui-dialog-content {
+    padding: var(--default-double-size) !important;
+}
+
+.ui-dialog-titlebar {
     display: none;
 }
 
-.ui-dialog-titlebar .ui-dialog-titlebar-close::after {
-    content: '\f00d';
-    font-family: 'FontAwesome';
-    color: white;
-    padding: 5px var(--input-padding);
-    background: var(--blue);
-    display: block;
-    border-radius: 3px;
+.ui-dialog-content h3 {
+    margin-bottom: var(--default-double-size);
 }
 
-.ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover::after {
-    background: var(--focused-blue);
+.ui-dialog button.primary,
+.ui-dialog button.secondary {
+    margin-left: 20px;
+    margin-top: var(--default-full-size);
 }
 
 .ui-accordion .ui-state-default,
