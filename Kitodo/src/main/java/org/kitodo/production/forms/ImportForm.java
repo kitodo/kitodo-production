@@ -54,7 +54,8 @@ public class ImportForm implements Serializable {
     /**
      * Setter for selectedCatalog.
      *
-     * @param catalog as java.lang.String
+     * @param catalog
+     *            as java.lang.String
      */
     public void setSelectedCatalog(String catalog) {
         this.selectedCatalog = catalog;
@@ -72,7 +73,8 @@ public class ImportForm implements Serializable {
     /**
      * Set searchTerm.
      *
-     * @param searchTerm as java.lang.String
+     * @param searchTerm
+     *            as java.lang.String
      */
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
@@ -90,7 +92,8 @@ public class ImportForm implements Serializable {
     /**
      * Set selectedField.
      *
-     * @param field as java.lang.String
+     * @param field
+     *            as java.lang.String
      */
     public void setSelectedField(String field) {
         this.selectedField = field;
@@ -108,7 +111,8 @@ public class ImportForm implements Serializable {
     /**
      * Set prozesskopieForm.
      *
-     * @param prozesskopieForm as org.kitodo.forms.ProzesskopieForm
+     * @param prozesskopieForm
+     *            as org.kitodo.forms.ProzesskopieForm
      */
     public void setProzesskopieForm(ProzesskopieForm prozesskopieForm) {
         this.prozesskopieForm = prozesskopieForm;
@@ -147,8 +151,8 @@ public class ImportForm implements Serializable {
      */
     public void search() {
         try {
-            this.searchResult = ServiceManager.getImportService().performSearch(
-                    this.selectedField, this.searchTerm, this.selectedCatalog);
+            this.searchResult = ServiceManager.getImportService().performSearch(this.selectedField, this.searchTerm,
+                this.selectedCatalog);
             PrimeFaces.current().executeScript("PF('hitlist').show()");
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
@@ -170,7 +174,8 @@ public class ImportForm implements Serializable {
     }
 
     /**
-     * Get total number of hits for performed query. Returns 0 if searchResult instance is null.
+     * Get total number of hits for performed query. Returns 0 if searchResult
+     * instance is null.
      *
      * @return total number of hits
      */
@@ -194,7 +199,8 @@ public class ImportForm implements Serializable {
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, "kitodo");
 
-        // TODO: iterating over multiple kitodo nodes will overwrite existing 'additionalField' values from the last kitodo node!
+        // TODO: iterating over multiple kitodo nodes will overwrite existing
+        // 'additionalField' values from the last kitodo node!
         for (int i = 0; i < kitodoNodes.getLength(); i++) {
             Node kitodoNode = kitodoNodes.item(i);
             actualFields = insertFieldValues(actualFields, kitodoNode.getChildNodes());
@@ -203,11 +209,10 @@ public class ImportForm implements Serializable {
         this.prozesskopieForm.setAdditionalFields(actualFields);
 
         Ajax.update("editForm");
-        this.prozesskopieForm.setActiveTabId(1);
+        this.prozesskopieForm.setActiveTabId(2);
     }
 
     private List<AdditionalField> insertFieldValues(List<AdditionalField> additionalFields, NodeList nodes) {
-
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getLocalName().equals("metadataGroup")) {
@@ -219,7 +224,9 @@ public class ImportForm implements Serializable {
                             && additionalField.getMetadata().equals(element.getAttribute("name"))) {
                         // Append author to list of existing authors
                         if (additionalField.getMetadata().equals("ListOfCreators")) {
-                            additionalField.setValue(Objects.isNull(additionalField.getValue()) ? element.getTextContent() : additionalField.getValue() + ", " + element.getTextContent());
+                            additionalField
+                                    .setValue(Objects.isNull(additionalField.getValue()) ? element.getTextContent()
+                                            : additionalField.getValue() + ", " + element.getTextContent());
                         } else {
                             additionalField.setValue(element.getTextContent());
                         }
