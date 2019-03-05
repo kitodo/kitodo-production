@@ -1155,11 +1155,11 @@ form#metadata div label,
 }
 
 .columnHeadingWrapper .columnHeading {
-    color: var(--disabled-dark);
+    color: var(--medium-gray);
 }
 
 .collapsibleWrapper > .columnExpandButton + .columnHeadingWrapper .columnHeading {
-    color: black;
+    color: var(--carbon-blue);
 }
 
 .wrapperPanel.ui-panel,
