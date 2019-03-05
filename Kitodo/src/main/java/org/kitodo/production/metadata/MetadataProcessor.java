@@ -2416,8 +2416,7 @@ public class MetadataProcessor {
         if (!allImages.isEmpty()) {
             for (LegacyReferenceHelper pageReferenceInterface : pageReferences) {
                 LegacyDocStructHelperInterface legacyDocStructHelperInterface = pageReferenceInterface.getTarget();
-                List<LegacyMetadataHelper> allMetadata = (List<LegacyMetadataHelper>) legacyDocStructHelperInterface
-                        .getAllMetadataByType(mdt);
+                List<LegacyMetadataHelper> allMetadata = legacyDocStructHelperInterface.getAllMetadataByType(mdt);
                 for (LegacyMetadataHelper legacyMetadataHelper : allMetadata) {
                     assignedPages.add(allImages.get(Integer.parseInt(legacyMetadataHelper.getValue()) - 1));
                 }

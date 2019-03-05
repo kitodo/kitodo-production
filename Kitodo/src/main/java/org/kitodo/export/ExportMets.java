@@ -109,7 +109,7 @@ public class ExportMets {
     protected boolean writeMetsFile(Process process, URI metaFile, LegacyMetsModsDigitalDocumentHelper gdzfile)
             throws IOException {
 
-        Workpiece workpiece = ((LegacyMetsModsDigitalDocumentHelper) gdzfile).getWorkpiece();
+        Workpiece workpiece = gdzfile.getWorkpiece();
         ServiceManager.getSchemaService().tempConvert(workpiece, this, this.myPrefs, process);
         /*
          * We write to the user’s home directory or to the hotfolder here, not

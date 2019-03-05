@@ -372,7 +372,7 @@ class NestedKeyView<U extends UniversalKey> extends AbstractKeyView<U> implement
         if (division) {
             universalRuleForKey.merge(ruleset.getUniversalRestrictionRuleForKey(keyId));
         }
-        return new NestedKeyView<UniversalKey>(ruleset, universal.getUniversalKey(keyId), universalRuleForKey,
+        return new NestedKeyView<>(ruleset, universal.getUniversalKey(keyId), universalRuleForKey,
                 settings.getSettingsForKey(keyId), priorityList);
     }
 
