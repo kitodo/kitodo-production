@@ -63,6 +63,7 @@ public class WorkflowForm extends BaseForm {
     private transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
+    private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private static final String SVG_EXTENSION = ".svg";
     private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
@@ -85,6 +86,24 @@ public class WorkflowForm extends BaseForm {
      */
     public List<SelectItem> getWorkflowStatuses() {
         return SelectItemList.getWorkflowStatuses();
+    }
+
+    /**
+     * Get workflowStatus.
+     *
+     * @return value of workflowStatus
+     */
+    public WorkflowStatus getWorkflowStatus() {
+        return workflowStatus;
+    }
+
+    /**
+     * Set workflowStatus.
+     *
+     * @param workflowStatus as org.kitodo.data.database.enums.WorkflowStatus
+     */
+    public void setWorkflowStatus(WorkflowStatus workflowStatus) {
+        this.workflowStatus = workflowStatus;
     }
 
     /**
@@ -116,6 +135,7 @@ public class WorkflowForm extends BaseForm {
     public String saveAndRedirect() {
         try {
             if (saveFiles()) {
+                this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
                 return workflowListPath;
             } else {
