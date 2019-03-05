@@ -22,37 +22,44 @@
               modal="true"
               resizable="false"
               dynamic="true"
+              showHeader="false"
               styleClass="editDialog">
         <h:form id="templatePropertyForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <h3>#{empty ProcessForm.templateProperty.title ? msgs.addTemplateProperty : msgs.propertyEdit}</h3>
-                    <div>
-                        <p:outputLabel for="templatePropertyTitle"
-                                       value="#{msgs.title}" />
-                        <p:inputText id="templatePropertyTitle"
-                                     value="#{ProcessForm.templateProperty.title}"
-                                     placeholder="#{msgs.title}"
-                                     required="#{not empty param['templatePropertyForm:save']}"
-                                     styleClass="input editDialog"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="templatePropertyValue" value="#{msgs.value}" />
-                        <p:inputText id="templatePropertyValue" value="#{ProcessForm.templateProperty.value}"
-                                     placeholder="#{msgs.value}" styleClass="input editDialog"/>
-                    </div>
-                    <p:commandButton action="#{ProcessForm.saveTemplateProperty}"
-                                     id="save"
-                                     update="editForm"
-                                     oncomplete="PF('editTemplateDialog').hide();toggleSave()"
-                                     value="#{msgs.apply}"
-                                     styleClass="primary right"/>
-                    <p:commandButton id="cancel"
-                                     onclick="PF('editTemplateDialog').hide();"
-                                     value="#{msgs.cancel}"
-                                     icon="fa fa-times fa-lg"
-                                     iconPos="right"
-                                     styleClass="secondary right"/>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <p:outputLabel for="templatePropertyTitle"
+                                           value="#{msgs.title}" />
+                            <p:inputText id="templatePropertyTitle"
+                                         value="#{ProcessForm.templateProperty.title}"
+                                         placeholder="#{msgs.title}"
+                                         required="#{not empty param['templatePropertyForm:save']}"
+                                         styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="templatePropertyValue" value="#{msgs.value}" />
+                            <p:inputText id="templatePropertyValue" value="#{ProcessForm.templateProperty.value}"
+                                         placeholder="#{msgs.value}" styleClass="input editDialog"/>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton action="#{ProcessForm.saveTemplateProperty}"
+                                         id="save"
+                                         update="editForm"
+                                         oncomplete="PF('editTemplateDialog').hide();toggleSave()"
+                                         value="#{msgs.apply}"
+                                         styleClass="primary right"/>
+                        <p:commandButton id="cancel"
+                                         onclick="PF('editTemplateDialog').hide();"
+                                         value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"/>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>

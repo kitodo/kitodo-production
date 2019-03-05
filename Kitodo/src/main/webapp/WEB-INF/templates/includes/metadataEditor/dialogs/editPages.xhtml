@@ -11,66 +11,119 @@
   -->
 
 <ui:composition
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui"
->
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
 
-    <p:dialog id="dialogEditPages" header="#{msgs.pageAllocation}" resizable="false"
+    <p:dialog id="dialogEditPages"
+              modal="true"
+              resizable="false"
+              dynamic="true"
+              width="480px"
+              showHeader="false"
               widgetVar="dialogEditPages">
+        <h3>#{msgs.pageAllocation}</h3>
         <h:form id="dialogEditPagesForm">
 
             <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
-            <h:panelGrid columns="2">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <p:outputLabel for="selectFirstPage"
+                                           value="#{msgs.firstPage}:"/>
+                            <p:selectOneMenu id="selectFirstPage"
+                                             value="#{MetadataProcessor.allPagesSelectionFirstPage}"
+                                             filter="true"
+                                             filterMatchMode="startsWith">
+                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel for="selectLastPage"
+                                           value="#{msgs.lastPage}:"/>
+                            <p:selectOneMenu id="selectLastPage"
+                                             value="#{MetadataProcessor.allPagesSelectionLastPage}"
+                                             filter="true"
+                                             filterMatchMode="startsWith">
+                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </h:panelGroup>
 
-                <h:outputText value="#{msgs.firstPage}:"/>
-                <p:selectOneMenu id="selectFirstPage" value="#{MetadataProcessor.allPagesSelectionFirstPage}" filter="true"
-                                 filterMatchMode="startsWith">
-                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
-                </p:selectOneMenu>
-
-                <h:outputText value="#{msgs.lastPage}:"/>
-                <p:selectOneMenu id="selectLastPage" value="#{MetadataProcessor.allPagesSelectionLastPage}" filter="true"
-                                 filterMatchMode="startsWith">
-                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
-                </p:selectOneMenu>
-
-                <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                 action="#{MetadataProcessor.takePagesFromChildren}"
-                                 update="structureTreeForm,paginationSubSelection"/>
-                <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.pageAssign}"
-                                 action="#{MetadataProcessor.setPageStartAndEnd}"
-                                 update="structureTreeForm,paginationSubSelection"/>
-            </h:panelGrid>
-
-
-            <p:panelGrid columns="3" columnClasses="alignTop45wide,buttonColumn,alignTop45wide">
-                <h:panelGroup>
-                    <h:outputText value="#{msgs.allPages}"/>
-                    <p:selectManyMenu id="paginationSelection" value="#{MetadataProcessor.allPagesSelection}">
-                        <f:selectItems value="#{MetadataProcessor.allPages}"/>
-                    </p:selectManyMenu>
-                </h:panelGroup>
-
-                <h:panelGroup>
-                    <h:panelGrid columns="1">
-                        <p:commandButton id="addPageBtn" action="#{MetadataProcessor.addPages}" icon="fa fa-arrow-right"
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="takePagesFromChildrenBtn"
+                                         value="#{msgs.seitenVonUnterelementenZuweisen}"
+                                         action="#{MetadataProcessor.takePagesFromChildren}"
+                                         styleClass="secondary"
+                                         style="margin-left: var(--default-double-size);"
                                          update="structureTreeForm,paginationSubSelection"/>
-                        <p:commandButton id="removePageBtn" action="#{MetadataProcessor.removePages}"
-                                         icon="fa fa-arrow-left"
+                        <p:commandButton id="setPageStartAndEndBtn"
+                                         value="#{msgs.pageAssign}"
+                                         styleClass="secondary"
+                                         style="margin-left: var(--default-double-size);"
+                                         action="#{MetadataProcessor.setPageStartAndEnd}"
                                          update="structureTreeForm,paginationSubSelection"/>
-                    </h:panelGrid>
-                </h:panelGroup>
+                    </h:panelGroup>
 
-                <h:panelGroup>
-                    <h:outputText value="#{msgs.relatedPages}"/>
-                    <p:selectManyMenu id="paginationSubSelection" value="#{MetadataProcessor.structSeitenAuswahl}">
-                        <f:selectItems value="#{MetadataProcessor.structSeiten}"/>
-                        <p:ajax update="structureTreeForm"/>
-                    </p:selectManyMenu>
-                </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <p:panelGrid columns="3" columnClasses="alignTop45wide,buttonColumn,alignTop45wide">
+                                <h:panelGroup>
+                                    <h:outputText value="#{msgs.allPages}"/>
+                                    <p:selectManyMenu id="paginationSelection"
+                                                      value="#{MetadataProcessor.allPagesSelection}">
+                                        <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                    </p:selectManyMenu>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:panelGrid columns="1">
+                                        <p:commandButton id="addPageBtn"
+                                                         action="#{MetadataProcessor.addPages}"
+                                                         icon="fa fa-arrow-right"
+                                                         update="structureTreeForm,paginationSubSelection"/>
+                                        <p:commandButton id="removePageBtn"
+                                                         action="#{MetadataProcessor.removePages}"
+                                                         icon="fa fa-arrow-left"
+                                                         update="structureTreeForm,paginationSubSelection"/>
+                                    </h:panelGrid>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="#{msgs.relatedPages}"/>
+                                    <p:selectManyMenu id="paginationSubSelection"
+                                                      value="#{MetadataProcessor.structSeitenAuswahl}">
+                                        <f:selectItems value="#{MetadataProcessor.structSeiten}"/>
+                                        <p:ajax update="structureTreeForm"/>
+                                    </p:selectManyMenu>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="ok"
+                                         value="#{msgs.ok}"
+                                         styleClass="primary right"
+                                         onclick="PF('dialogEditPages').hide();"
+                                         icon="fa fa-check fa-lg"
+                                         iconPos="right"/>
+                        <p:commandButton id="cancel"
+                                         value="#{msgs.cancel}"
+                                         styleClass="secondary right"
+                                         onclick="PF('dialogEditPages').hide();"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"/>
+                    </h:panelGroup>
+                </p:row>
+
             </p:panelGrid>
         </h:form>
     </p:dialog>

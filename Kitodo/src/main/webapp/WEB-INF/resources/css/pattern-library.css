@@ -26,7 +26,7 @@
     --orange: #f94a15;
     --trans-blue: #f2fbff;
     --pure-white: #fff;
-    --error-background: #f2dede; /* TODO remove this color? */
+    --error-background: #f2dede;
 
     /* Sizes */
     --default-double-size: 32px;
@@ -577,6 +577,17 @@ tr.ui-widget-content,
     text-align: left;
 }
 
+.ui-paginator-bottom {
+    background-color: var(--cloudy-gray);
+}
+
+/*
+.ui-paginator-bottom a,
+.ui-paginator-bottom span.paginator-pages {
+    float: right;
+}
+*/
+
 .ui-paginator > a::before {
     font-family: FontAwesome;
     font-size: 14px;
@@ -695,35 +706,96 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     padding: 8px 10px;
 }
 
+/*----------------------------------------------------------------------
+Popup dialogs
+----------------------------------------------------------------------*/
+
 .ui-dialog,
-.ui-dialog .ui-panelgrid-content {
+.ui-dialog .ui-panelgrid-content,
+.ui-dialog .ui-panelgrid-cell {
     background-color: var(--light-gray);
 }
 
-.ui-dialog .ui-panelgrid-cell {
-    padding: 0 !important;
+.ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
+    padding: 0;
 }
 
 .ui-dialog .ui-panelgrid-cell div {
     margin-bottom: var(--default-full-size);
 }
 
-.ui-dialog-content {
-    padding: var(--default-double-size) !important;
-}
-
-.ui-dialog-titlebar {
-    display: none;
+.ui-dialog .ui-dialog-content {
+    padding: var(--default-double-size) 0;
 }
 
 .ui-dialog-content h3 {
     margin-bottom: var(--default-double-size);
+    padding: 0 var(--default-double-size);
+}
+
+.ui-dialog div.dialogFieldWrapper {
+    padding-left: var(--default-double-size);
+    padding-right: var(--default-double-size);
+}
+
+.ui-dialog div.dialogButtonWrapper {
+    margin-right: var(--default-double-size);
+}
+
+.ui-dialog .ui-datatable-tablewrapper .actionsColumn {
+    width: unset;
+    text-align: right !important;
+}
+
+.ui-dialog .ui-datatable-tablewrapper th.actionsColumn span {
+    display: inline-block;
 }
 
 .ui-dialog button.primary,
 .ui-dialog button.secondary {
     margin-left: 20px;
     margin-top: var(--default-full-size);
+}
+
+.ui-dialog .ui-datatable-tablewrapper thead tr {
+    border-top: 3px solid var(--medium-gray);
+}
+
+.ui-dialog .ui-datatable-tablewrapper tbody tr[role='row'] {
+    white-space: nowrap;
+}
+
+.ui-dialog .ui-datatable-tablewrapper tr th,
+.ui-dialog .ui-datatable-tablewrapper tr td {
+    padding-left: var(--default-double-size);
+    padding-right: var(--default-double-size);
+}
+
+.ui-dialog .ui-datatable-tablewrapper tbody tr td[role='gridcell'] {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.ui-dialog.confirm-delete.alert .ui-dialog-content {
+    background-color: var(--focused-orange);
+    color: var(--error-background);
+}
+
+.ui-dialog.confirm-delete.alert .ui-dialog-content,
+.ui-dialog.confirm-delete.alert .ui-dialog-buttonpane {
+    padding: var(--default-double-size);
+}
+
+.ui-dialog.confirm-delete.alert .ui-confirm-dialog-severity {
+    display: none;
+}
+
+#loadingDialog {
+    padding: var(--default-half-size);
+}
+
+#loadingDialog .ui-dialog-content {
+    padding: 0;
 }
 
 .ui-accordion .ui-state-default,

@@ -22,6 +22,7 @@
                   width="480px"
                   modal="true"
                   resizable="false"
+                  showHeader="false"
                   dynamic="true">
             <h:form id="userClientForm">
                 <h3>#{msgs.clientAdd}</h3>
@@ -35,23 +36,27 @@
                     <p:column headerText="#{msgs.clientList}">
                         <h:outputText value="#{client.name}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                    <p:column headerText="#{msgs.actions}"
+                              styleClass="actionsColumn">
                         <p:commandLink id="addUserClient"
                                        action="#{UserForm.addToClient}"
                                        title="add to client"
-                                       update="editForm:userTabView:clientDatatable"
+                                       update="editForm:userTabView:clientDatatable userClientForm:selectClientTable"
                                        oncomplete="toggleSave()">
                             <i class="fa fa-user-plus fa-lg"/>
                             <f:param name="ID" value="#{client.id}"/>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <p:commandButton id="close"
-                                 onclick="PF('addClientDialog').hide();"
-                                 value="#{msgs.close}"
-                                 icon="fa fa-times fa-lg"
-                                 iconPos="right"
-                                 styleClass="secondary right"/>
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="close"
+                                     onclick="PF('addClientDialog').hide();"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     styleClass="secondary right"/>
+                </h:panelGroup>
             </h:form>
         </p:dialog>
     </h:body>

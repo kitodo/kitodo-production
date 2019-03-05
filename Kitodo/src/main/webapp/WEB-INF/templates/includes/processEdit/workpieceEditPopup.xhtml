@@ -22,39 +22,46 @@
               modal="true"
               resizable="false"
               dynamic="true"
+              showHeader="false"
               styleClass="editDialog">
         <h:form id="workpiecePropertyForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <h3>#{empty ProcessForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.propertyEdit}</h3>
-                    <div>
-                        <!-- title -->
-                        <p:outputLabel for="workpiecePropertyTitle"
-                                       value="#{msgs.title}" />
-                        <p:inputText id="workpiecePropertyTitle"
-                                     value="#{ProcessForm.workpieceProperty.title}"
-                                     placeholder="#{msgs.title}"
-                                     required="#{not empty param['workpiecePropertyForm:save']}"
-                                     styleClass="input editDialog"/>
-                    </div>
-                    <div>
-                        <!-- value: text -->
-                        <p:outputLabel for="workpiecePropertyValue" value="#{msgs.value}" />
-                        <p:inputText id="workpiecePropertyValue" value="#{ProcessForm.workpieceProperty.value}"
-                                     styleClass="input editDialog"/>
-                    </div>
-                    <p:commandButton action="#{ProcessForm.saveWorkpieceProperty}"
-                                     id="save"
-                                     update="editForm"
-                                     oncomplete="PF('editWorkpieceDialog').hide();toggleSave()"
-                                     value="#{msgs.apply}"
-                                     styleClass="primary right"/>
-                    <p:commandButton id="cancel"
-                                     onclick="PF('editWorkpieceDialog').hide();"
-                                     value="#{msgs.cancel}"
-                                     icon="fa fa-times fa-lg"
-                                     iconPos="right"
-                                     styleClass="secondary right"/>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <!-- title -->
+                            <p:outputLabel for="workpiecePropertyTitle"
+                                           value="#{msgs.title}" />
+                            <p:inputText id="workpiecePropertyTitle"
+                                         value="#{ProcessForm.workpieceProperty.title}"
+                                         placeholder="#{msgs.title}"
+                                         required="#{not empty param['workpiecePropertyForm:save']}"
+                                         styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <!-- value: text -->
+                            <p:outputLabel for="workpiecePropertyValue" value="#{msgs.value}" />
+                            <p:inputText id="workpiecePropertyValue" value="#{ProcessForm.workpieceProperty.value}"
+                                         styleClass="input editDialog"/>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton action="#{ProcessForm.saveWorkpieceProperty}"
+                                         id="save"
+                                         update="editForm"
+                                         oncomplete="PF('editWorkpieceDialog').hide();toggleSave()"
+                                         value="#{msgs.apply}"
+                                         styleClass="primary right"/>
+                        <p:commandButton id="cancel"
+                                         onclick="PF('editWorkpieceDialog').hide();"
+                                         value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"/>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>

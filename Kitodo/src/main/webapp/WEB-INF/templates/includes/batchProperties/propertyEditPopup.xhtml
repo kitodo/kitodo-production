@@ -18,39 +18,64 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editPropertyDialog"
-              header="#{msgs.propertyEdit}"
-              width="700px"
               modal="true"
+              resizable="false"
               dynamic="true"
+              showHeader="false"
               styleClass="editDialog">
         <h:form id="propertyEditForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <div>
-                        <!-- title -->
-                        <p:outputLabel for="propertyTitle" value="#{msgs.title}"/>
-                        <p:inputText id="propertyTitle" value="#{BatchForm.batchHelper.property.title}"
-                                     placeholder="#{msgs.title}" required="true" styleClass="input editDialog"/>
-                    </div>
-                    <div>
-                        <!-- value: text -->
-                        <p:outputLabel for="propertyValue" value="#{msgs.value}"/>
-                        <p:inputText id="propertyValue" value="#{BatchForm.batchHelper.property.value}"
-                                     styleClass="input editDialog"/>
-                    </div>
-                    <p:commandButton value="#{msgs.cancel}" immediate="true" icon="fa fa-times fa-lg" iconPos="right"
-                                     styleClass="secondary" onclick="PF('editPropertyDialog').hide();">
-                    </p:commandButton>
-                    <p:commandButton value="#{msgs.applyToThisProcess}" id="saveCurrentProperty"
-                                     action="#{BatchForm.batchHelper.editPropertyForOneProcess}"
-                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
-                                     oncomplete="PF('editPropertyDialog').hide();">
-                    </p:commandButton>
-                    <p:commandButton value="#{msgs.applyToAllProcesses}" id="saveCurrentPropertyForAll"
-                                     action="#{BatchForm.batchHelper.editPropertyForAllProcesses}"
-                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
-                                     oncomplete="PF('editPropertyDialog').hide();">
-                    </p:commandButton>
+                    <h3>#{msgs.propertyEdit}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <!-- title -->
+                            <p:outputLabel for="propertyTitle"
+                                           value="#{msgs.title}"/>
+                            <p:inputText id="propertyTitle"
+                                         value="#{BatchForm.batchHelper.property.title}"
+                                         placeholder="#{msgs.title}"
+                                         required="true"
+                                         styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <!-- value: text -->
+                            <p:outputLabel for="propertyValue"
+                                           value="#{msgs.value}"/>
+                            <p:inputText id="propertyValue"
+                                         value="#{BatchForm.batchHelper.property.value}"
+                                         styleClass="input editDialog"/>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton value="#{msgs.applyToThisProcess}"
+                                         id="saveCurrentProperty"
+                                         action="#{BatchForm.batchHelper.editPropertyForOneProcess}"
+                                         update="editForm"
+                                         styleClass="primary right"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         iconPos="right"
+                                         oncomplete="PF('editPropertyDialog').hide();">
+                        </p:commandButton>
+                        <p:commandButton value="#{msgs.applyToAllProcesses}"
+                                         id="saveCurrentPropertyForAll"
+                                         action="#{BatchForm.batchHelper.editPropertyForAllProcesses}"
+                                         update="editForm"
+                                         styleClass="primary right"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         iconPos="right"
+                                         oncomplete="PF('editPropertyDialog').hide();">
+                        </p:commandButton>
+                        <p:commandButton value="#{msgs.cancel}"
+                                         immediate="true"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"
+                                         onclick="PF('editPropertyDialog').hide();">
+                        </p:commandButton>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>

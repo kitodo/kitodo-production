@@ -16,12 +16,18 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:dialog header="Generating PNGs"
+    <p:dialog id="convertTIFFDialog"
+              widgetVar="convertTIFFDialog"
+              width="480px"
               global="true"
-              modal="true"
-              id="convertTIFFDialog"
-              widgetVar="convertTIFFDialog">
-        <h:outputText value="#{MetadataProcessor.numberOfConvertedImages} / #{MetadataProcessor.numberOfImagesInCurrentTifFolder}"/>
+              resizable="false"
+              showHeader="false"
+              modal="true">
+        <h3>Generating PNGs</h3>
+        <h:panelGroup layout="block"
+                      styleClass="dialogFieldWrapper">
+            <h:outputText value="#{MetadataProcessor.numberOfConvertedImages} / #{MetadataProcessor.numberOfImagesInCurrentTifFolder}"/>
+        </h:panelGroup>
     </p:dialog>
 
 </ui:composition>

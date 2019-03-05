@@ -21,38 +21,77 @@
         <p:dialog id="imprintDialog"
                   styleClass="legal-dialog"
                   widgetVar="imprintDialog"
-                  header="#{msgs.imprint}"
                   width="640"
                   height="480"
+                  showHeader="false"
+                  resizable="false"
                   modal="true">
-            <h:outputText id="imprintText"
-                          value="#{LegalTexts.imprintText}"
-                          escape="false"
-                          style="padding: 30px;"/>
+            <h:panelGroup layout="block"
+                          styleClass="dialogFieldWrapper">
+                <h:outputText id="imprintText"
+                              value="#{LegalTexts.imprintText}"
+                              escape="false"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="closeImprint"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 styleClass="secondary right"
+                                 onclick="PF('imprintDialog').hide();"/>
+            </h:panelGroup>
         </p:dialog>
         <p:dialog id="dataPrivacyDialog"
                   styleClass="legal-dialog"
                   widgetVar="dataPrivacyDialog"
-                  header="#{msgs.dataPrivacy}"
                   width="640"
                   height="480"
+                  showHeader="false"
+                  resizable="false"
                   modal="true">
-            <h:outputText id="dataPrivacyText"
-                          value="#{LegalTexts.dataPrivacyText}"
-                          escape="false"
-                          style="padding: 30px;"/>
+            <h:panelGroup layout="block"
+                          styleClass="dialogFieldWrapper">
+                <h:outputText id="dataPrivacyText"
+                              value="#{LegalTexts.dataPrivacyText}"
+                              escape="false"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="closeDataPrivacy"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 styleClass="secondary right"
+                                 onclick="PF('dataPrivacyDialog').hide();"/>
+            </h:panelGroup>
         </p:dialog>
         <p:dialog id="termsOfUseDialog"
                   styleClass="legal-dialog"
                   widgetVar="termsOfUseDialog"
-                  header="#{msgs.termsOfUse}"
                   width="640"
                   height="480"
+                  showHeader="false"
+                  resizable="false"
                   modal="true">
-            <h:outputText id="termsOfUseText"
-                          value="#{LegalTexts.termsOfUseText}"
-                          escape="false"
-                          style="padding: 30px;"/>
+            <h:panelGroup layout="block"
+                          styleClass="dialogFieldWrapper">
+                <h:outputText id="termsOfUseText"
+                              value="#{LegalTexts.termsOfUseText}"
+                              escape="false"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="closeTerms"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 immediate="true"
+                                 styleClass="secondary right"
+                                 onclick="PF('termsOfUseDialog').hide();"/>
+            </h:panelGroup>
         </p:dialog>
     </f:view>
 </ui:composition>

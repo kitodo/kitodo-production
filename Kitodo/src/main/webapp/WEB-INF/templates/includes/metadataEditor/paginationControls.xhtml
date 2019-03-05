@@ -1,0 +1,53 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcesStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+
+    <ui:fragment id="actionButtons">
+    <p:commandButton id="newButton" title="#{msgs.newElement}"
+                     onclick="PF('dialogAddDocStrucType').show();"
+                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                     disabled="#{readOnly}"
+                     icon="fa fa-plus fa-sm"
+                     iconPos="right">
+        <p:ajax update="dialogAddDocStrucTypeForm"/>
+    </p:commandButton>
+    <p:commandButton id="linkButton" title="#{msgs.link}"
+                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                     disabled="#{readOnly}"
+                     icon="fa fa-link fa-sm"
+                     onclick="PF('dialogEditPages').show();"
+                     iconPos="right"/>
+    <p:commandButton id="deleteButton" title="#{msgs.delete}"
+                     action="#{MetadataProcessor.deleteNode}"
+                     update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                     disabled="#{readOnly}"
+                     icon="fa fa-trash fa-sm"
+                     iconPos="right"/>
+    <p:commandButton id="pagingButton" value="#{msgs.pagination}"
+                     title="#{msgs.pagination}"
+                     onclick="PF('paginationDialog').show();"
+                     update="structureTreeForm"
+                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                     disabled="#{readOnly}"
+                     icon="fa fa-list-ol fa-sm"
+                     iconPos="right"/>
+    </ui:fragment>
+
+</ui:composition>
