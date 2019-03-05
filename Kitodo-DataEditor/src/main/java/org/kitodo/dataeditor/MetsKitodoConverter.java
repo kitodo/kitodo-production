@@ -13,7 +13,6 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBException;
@@ -48,7 +47,7 @@ public class MetsKitodoConverter {
      * @return The Mets object in mets-kitodo format.
      */
     public static Mets convertToMetsKitodoByXslt(URI xmlFile, URI xsltFile) throws IOException, TransformerException, JAXBException {
-        if (!Files.exists(Paths.get(xsltFile))) {
+        if (!Paths.get(xsltFile).toFile().exists()) {
             logger.error("Path to xslt file for transformation of goobi format metadata files is not valid: "
                 + xmlFile.getPath());
             throw new IOException("Xslt file [" + xsltFile.getPath()
