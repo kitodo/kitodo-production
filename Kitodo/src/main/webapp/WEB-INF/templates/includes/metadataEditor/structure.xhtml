@@ -17,7 +17,10 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
-        <p:tree value="#{MetadataProcessor.treeNodes}" var="element"
+        <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcesStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+        <p:tree value="#{MetadataProcessor.treeNodes}"
+                disabled="#{readOnly}"
+                var="element"
                 selectionMode="single" id="docStruct"
                 selection="#{MetadataProcessor.selectedTreeNode}"
                 draggable="true" droppable="true" dragdropScope="DocStructTree">

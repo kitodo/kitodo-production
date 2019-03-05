@@ -63,7 +63,7 @@
                 </h:link>
 
                 <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityForClient('editProcessMetaData')}">
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() }">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>

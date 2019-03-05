@@ -15,6 +15,11 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+
+    <ui:param name="mayWrite" value="#{
+                                    SecurityAccessController.hasAuthorityToEditProcessMetaData() or
+                                    SecurityAccessController.hasAuthorityToEditProcessImages() or
+                                    SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
     <p:panel styleClass="content-header">
         <h3>
             <h:outputText value="#{MetadataProcessor.process.title} - #{msgs.metadataEdit}"
@@ -40,6 +45,8 @@
                              value="#{msgs.save}"
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
+                             styleClass="#{mayWrite ? '' : 'disabled'}"
+                             disabled="#{not mayWrite}"
                              style="margin-left: 16px;"
                              onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                              update="notifications"/>

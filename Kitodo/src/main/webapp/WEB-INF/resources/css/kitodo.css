@@ -1116,6 +1116,10 @@ form#metadata div label,
     right: 16px;
 }
 
+.collapsibleWrapper > .columnExpandButton:disabled {
+    display: none;
+}
+
 .collapsibleWrapper.collapsed > .columnExpandButton {
     right: 0;
     top: 0;
@@ -1189,6 +1193,14 @@ form#metadata div label,
     visibility: hidden;
 }
 
+.columnHeadingWrapper .columnHeading {
+    color: var(--medium-gray);
+}
+
+.collapsibleWrapper > .columnExpandButton + .columnHeadingWrapper .columnHeading {
+    color: var(--carbon-blue);
+}
+
 .wrapperPanel.ui-panel,
 .wrapperPanel.ui-panel > .ui-panel-content {
     padding: 0;
@@ -1237,6 +1249,11 @@ form#metadata div label,
 
 #metadataEditorWrapper .resizer.disabled {
     pointer-events: none;
+}
+
+#metadataEditorWrapper .resizer.disabled::before,
+#metadataEditorWrapper .resizer.disabled::after {
+    display: none;
 }
 
 #metadataEditorWrapper #verticalResizer {
