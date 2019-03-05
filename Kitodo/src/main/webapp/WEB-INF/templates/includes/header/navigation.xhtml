@@ -86,11 +86,27 @@
                             </li>
 
                             <li>
+                                <div id="language">
+                                    #{msgs.language}: <b>#{LanguageForm.currentLanguageTranslated}</b>
+                                    <span style="float: right;"><i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('languageList', this)"/></span>
+                                </div>
+                            </li>
+                            <div id="languageList" style="display: none;">
+                                <p:outputPanel deferred="true" deferredMode="visible">
+                                    <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
+                                        <li class="toggle-list">
+                                            <p:commandLink value="#{language.displayLanguageTranslated}" action="#{LanguageForm.setLanguage(language['id'])}"/>
+                                        </li>
+                                    </p:repeat>
+                                </p:outputPanel>
+                            </div>
+
+                            <li>
                                 <div id="sessionClient">
                                     #{msgs.client}: <b>#{SessionClientController.currentSessionClientName}</b>
                                     <span style="float:right;">
                                         <p:outputPanel rendered="#{SessionClientController.shouldUserChangeSessionClient()}">
-                                            <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList');"/>
+                                            <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList', this);"/>
                                         </p:outputPanel>
                                     </span>
                                 </div>
@@ -109,24 +125,11 @@
                                     <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
                                 </h:link>
                             </li>
-                            <li>
-                                <table>
-                                    <tr>
-                                        <td width="100px">
-                                            <h:outputText value="#{msgs.languages}"/>
-                                        </td>
-                                        <ui:repeat value="#{LanguageForm.supportedLocales}" var="entry">
-                                            <td class="languageButtonCell #{LanguageForm.language eq entry['id'] ? 'selected' : ''}">
-                                                <h:commandButton action="#{LanguageForm.setLanguage(entry['id'])}"
-                                                                 image="#{request.contextPath}/#{entry['flag']}"
-                                                                 styleClass="languageButton"/>
-                                            </td>
-                                        </ui:repeat>
-                                    </tr>
-                                </table>
+                            <li class="logout">
+                                <h:outputLink value="#{request.contextPath}/logout" id="logout">
+                                    #{msgs.logout}<i class="fa fa-power-off"/>
+                                </h:outputLink>
                             </li>
-                            <li class="color-orange"><h:outputLink value="#{request.contextPath}/logout"
-                                              id="logout">#{msgs.logout}</h:outputLink></li>
                         </ul>
                     </h:form>
                 </li>

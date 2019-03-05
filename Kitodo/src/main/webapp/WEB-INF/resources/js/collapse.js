@@ -9,9 +9,8 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-function toggleCollapsible(elementId) {
-   var $trigger = $(".toggle-trigger");
+function toggleCollapsible(elementId, trigger) {
    var $element =  $("#" + elementId);
    $element.slideToggle(500);
-   $trigger.toggleClass("fa-chevron-down fa-chevron-up");
+   $(trigger).toggleClass("fa-chevron-down fa-chevron-up");
 }
