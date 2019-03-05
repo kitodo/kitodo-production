@@ -14,7 +14,6 @@ package org.kitodo.dataeditor;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBContext;
@@ -65,7 +64,7 @@ class MetsKitodoReader {
      * @return The Mets object in mets-kitodo format.
      */
     static Mets readUriToMets(URI xmlFile) throws JAXBException, IOException {
-        if (Files.exists(Paths.get(xmlFile))) {
+        if (Paths.get(xmlFile).toFile().exists()) {
             JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
             Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
             return (Mets) jaxbUnmarshaller.unmarshal(xmlFile.toURL());
