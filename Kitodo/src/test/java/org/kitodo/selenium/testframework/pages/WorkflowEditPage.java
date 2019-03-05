@@ -28,6 +28,14 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     @FindBy(id = WORKFLOW_TAB_VIEW + ":js-create-diagram")
     private WebElement createDiagram;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = WORKFLOW_TAB_VIEW + ":status")
+    private WebElement workflowStatusInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//div[@id='"+WORKFLOW_TAB_VIEW +":status_panel']/div/ul/li[text()='Aktiv']" )
+    private WebElement activeOption;
+
     @Override
     public WorkflowEditPage goTo() {
         return null;
@@ -39,6 +47,12 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {
         fileInput.sendKeys(workflow.getTitle());
+        return this;
+    }
+
+    public WorkflowEditPage changeWorkflowStatusToActive(){
+        workflowStatusInput.click();
+        activeOption.click();
         return this;
     }
 

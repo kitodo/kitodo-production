@@ -401,6 +401,15 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return this;
 
     }
+
+    /**
+     * Switch to template Tab.
+     */
+    public ProjectsPage goToWorkflowTab() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+        return this;
+
+    }
     /**
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).
@@ -409,5 +418,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, projectsTabView);
+    }
+
+    public String getWorkflowStatusForWorkflow() {
+        List<String> tableDataByColumn = getTableDataByColumn(workflowsTable, 1);
+        return tableDataByColumn.get(0);
     }
 }
