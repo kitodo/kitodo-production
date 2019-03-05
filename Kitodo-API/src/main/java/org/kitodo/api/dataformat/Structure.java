@@ -72,7 +72,7 @@ public class Structure {
      * Creates a new structure.
      */
     public Structure() {
-        views = new SortedList<View>(view -> view.getMediaUnit().getOrder());
+        views = new SortedList<>(view -> view.getMediaUnit().getOrder());
     }
 
     /**

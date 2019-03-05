@@ -191,8 +191,8 @@ class UGHUtils {
             String str;
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
-                    in.close();
-                    return str.split(" ")[0];
+                    inLanguage = str.split(" ")[0];
+                    break;
                 }
             }
         } catch (IOException e) {

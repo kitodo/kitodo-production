@@ -67,12 +67,13 @@ public class KitodoOutputHandler extends HandlerBase {
      *
      * @return {@code null}. The value is not used.
      */
-    private static final String beforeParentConstructor() {
-        Logger.getLogger("edu.harvard.hul.ois.jhove.handler").setLevel(Level.OFF);
-        return null;
+    private static String beforeParentConstructor() {
+        String logger = "edu.harvard.hul.ois.jhove.handler";
+        Logger.getLogger(logger).setLevel(Level.OFF);
+        return logger;
     }
 
-    private final List<String> messages = new ArrayList<String>();
+    private final List<String> messages = new ArrayList<>();
 
     private ValidationResultState state;
 
