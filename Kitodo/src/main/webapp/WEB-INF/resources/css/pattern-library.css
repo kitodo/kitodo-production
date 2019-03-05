@@ -716,6 +716,10 @@ Popup dialogs
     background-color: var(--light-gray);
 }
 
+.ui-dialog-titlebar {
+    display: none;
+}
+
 .ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
     padding: 0;
 }
@@ -779,6 +783,23 @@ Popup dialogs
 .ui-dialog.confirm-delete.alert .ui-dialog-content {
     background-color: var(--focused-orange);
     color: var(--error-background);
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    background-color: var(--light-gray);
+}
+
+.ui-dialog .ui-confirm-dialog-message {
+    font-size: larger;
+}
+
+#deleteConfirmDialog .ui-dialog-content {
+    text-align: center;
+    padding: var(--default-double-size);
+}
+
+#deleteConfirmDialog .ui-confirm-dialog-severity.ui-icon-alert {
+    display: none;
 }
 
 .ui-dialog.confirm-delete.alert .ui-dialog-content,
