@@ -512,13 +512,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find processes by title
-     * @param title the title
+     * Find processes by title.
+     * 
+     * @param title
+     *            the title
      * @return a list of processes
      * @throws DataException
+     *             when there is an error on conversion
      */
     public List<ProcessDTO> findByTitle(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findByTitle(title,true),true);
+        return convertJSONObjectsToDTOs(findByTitle(title, true), true);
+    }
+
+    /**
+     * Find processes by title with wildcard.
+     * 
+     * @param title
+     *            the title
+     * @return a list of processes
+     * @throws DataException when there is an error on conversion
+     */
+    public List<ProcessDTO> findDTOsByTitleWithWildcard(String title) throws DataException {
+        return convertJSONObjectsToDTOs(super.findByTitleWithWildcard(title), true);
     }
 
     private QueryBuilder getQueryProcessTitle(String title) {
@@ -538,6 +553,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectTitle(String title) {
         return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title, true, Operator.AND);
+    }
+
+    /**
+     * Get wildcard query for find process by project title.
+     *
+     * @param title
+     *            as String
+     * @return QueryBuilder object
+     */
+    private QueryBuilder getWildcardQueryProjectTitle(String title) {
+        return createSimpleWildcardQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title);
     }
 
     /**
@@ -569,10 +595,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param title
      *            of process
-     * @return list of JSON objects with processes for specific process id
+     * @return list of JSON objects with processes with given title
      */
     public List<ProcessDTO> findByProjectTitle(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findDocuments(getQueryProjectTitle(title)),true);
+        return convertJSONObjectsToDTOs(findDocuments(getQueryProjectTitle(title)), true);
+    }
+
+    /**
+     * Find processes by title of project with wildcard.
+     *
+     * @param title
+     *            of process
+     * @return list of JSON objects with processes with given title
+     */
+    public List<ProcessDTO> findByProjectTitleWithWildcard(String title) throws DataException {
+        return convertJSONObjectsToDTOs(findDocuments(getWildcardQueryProjectTitle(title)), true);
     }
 
     /**
@@ -914,7 +951,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (Objects.nonNull(processBaseURI)) {
             testMe = getImagesTifDirectory(true, processId, processTitle, URI.create(processBaseURI));
         } else {
-                testMe = getImagesTifDirectory(true, processId, processTitle, null);
+            testMe = getImagesTifDirectory(true, processId, processTitle, null);
         }
         return fileService.fileExist(testMe) && !fileService.getSubUris(testMe).isEmpty();
     }
@@ -1665,7 +1702,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return true or false
      */
 
-    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
+    boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
@@ -1957,7 +1994,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
+    private boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
             boolean writeLocalFilegroup) throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());

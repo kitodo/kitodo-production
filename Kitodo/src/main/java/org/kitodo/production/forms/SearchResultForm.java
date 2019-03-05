@@ -11,7 +11,6 @@
 
 package org.kitodo.production.forms;
 
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +40,13 @@ public class SearchResultForm extends BaseForm {
 
     private String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
 
-    public String search(){
-        if(searchQuery.equalsIgnoreCase("all")){
+    /**
+     * Searches for processes with the entered searchQuery.
+     *
+     * @return The searchResultPage
+     */
+    public String search() {
+        if (searchQuery.equalsIgnoreCase("all")) {
             try {
                 resultList = ServiceManager.getProcessService().findAll();
                 filteredList.clear();
@@ -51,11 +55,10 @@ public class SearchResultForm extends BaseForm {
                 Helper.setErrorMessage("errorOnSearch", searchQuery);
                 return this.stayOnCurrentPage;
             }
-        }
-        else {
+        } else {
             try {
-                resultList = ServiceManager.getProcessService().findByTitle(searchQuery);
-                resultList.addAll(ServiceManager.getProcessService().findByProjectTitle(searchQuery));
+                resultList = ServiceManager.getProcessService().findDTOsByTitleWithWildcard(searchQuery);
+                resultList.addAll(ServiceManager.getProcessService().findByProjectTitleWithWildcard(searchQuery));
                 filteredList.clear();
                 filteredList.addAll(resultList);
             } catch (DataException e) {
@@ -68,34 +71,37 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * Filters the searchResults by project.
-     * @param projectDTO The project to be filtered by
+     *
+     * @param projectDTO
+     *            The project to be filtered by
      * @return a filtered list
      */
-    public String filterListByProject(ProjectDTO projectDTO){
+    public String filterListByProject(ProjectDTO projectDTO) {
         filteredList.clear();
         filteredList.addAll(resultList);
-            for(ProcessDTO result : resultList){
-                if(!result.getProject().getId().equals(projectDTO.getId())){
-                    filteredList.remove(result);
-                }
+        for (ProcessDTO result : resultList) {
+            if (!result.getProject().getId().equals(projectDTO.getId())) {
+                filteredList.remove(result);
             }
+        }
         return this.stayOnCurrentPage;
     }
 
-
     /**
      * Filters the searchResults by task.
-     * @param task The project to be filtered by
+     *
+     * @param task
+     *            The project to be filtered by
      * @return a filtered list
      */
-    public String filterListByTask(Task task){
+    public String filterListByTask(Task task) {
         filteredList.clear();
         filteredList.addAll(resultList);
-        for(ProcessDTO result : resultList){
+        for (ProcessDTO result : resultList) {
             try {
                 Process process = ServiceManager.getProcessService().getById(result.getId());
                 Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-                if(Objects.isNull(currentTask) || !currentTask.getTitle().equals(task.getTitle())){
+                if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(task.getTitle())) {
                     filteredList.remove(result);
                 }
             } catch (DAOException e) {
@@ -108,29 +114,31 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * Get all Projects assigned to the search results
+     * Get all Projects assigned to the search results.
+     *
      * @return A list of Projects for filter list
      */
-    public Collection<ProjectDTO> getProjectsForFiltering(){
-        HashMap<Integer,ProjectDTO> projectsForFiltering = new HashMap<>();
-        for(ProcessDTO process : resultList){
-                projectsForFiltering.put(process.getId(),process.getProject());
+    public Collection<ProjectDTO> getProjectsForFiltering() {
+        HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
+        for (ProcessDTO process : resultList) {
+            projectsForFiltering.put(process.getId(), process.getProject());
         }
         return projectsForFiltering.values();
     }
 
     /**
-     * Get all current Tasks from to the search results
+     * Get all current Tasks from to the search results.
+     *
      * @return A list of Tasks for filter list
      */
-    public Collection<Task> getTasksForFiltering(){
-        HashMap<String,Task> tasksForFiltering = new HashMap<>();
-        for(ProcessDTO processDTO : resultList){
+    public Collection<Task> getTasksForFiltering() {
+        HashMap<String, Task> tasksForFiltering = new HashMap<>();
+        for (ProcessDTO processDTO : resultList) {
             try {
                 Process process = ServiceManager.getProcessService().getById(processDTO.getId());
                 Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-                if(Objects.nonNull(currentTask)) {
-                    tasksForFiltering.put(currentTask.getTitle(),currentTask);
+                if (Objects.nonNull(currentTask)) {
+                    tasksForFiltering.put(currentTask.getTitle(), currentTask);
                 }
             } catch (DAOException e) {
                 e.printStackTrace();
@@ -142,6 +150,7 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * Gets the filtered list.
+     *
      * @return a list of ProcessDTO
      */
     public List<ProcessDTO> getFilteredList() {
@@ -150,7 +159,9 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * Sets the filtered list.
-     * @param filteredList a list of ProcessDTO
+     *
+     * @param filteredList
+     *            a list of ProcessDTO
      */
     public void setFilteredList(List<ProcessDTO> filteredList) {
         this.filteredList = filteredList;
@@ -158,6 +169,7 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * Gets the search query.
+     *
      * @return the search query
      */
     public String getSearchQuery() {
@@ -165,8 +177,10 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * sets the searchQuery
-     * @param searchQuery the query to search for
+     * sets the searchQuery.
+     *
+     * @param searchQuery
+     *            the query to search for
      */
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
