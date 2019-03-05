@@ -89,12 +89,12 @@ public class FileXmlElementAccess {
             mediaUnit.setOrder(order.intValue());
         }
         mediaUnit.setOrderlabel(div.getORDERLABEL());
-        for (Object mdSec : div.getDMDID()) {
-            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
+        for (Object mdSecType : div.getDMDID()) {
+            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSecType, MdSec.DMD_SEC));
         }
-        for (Object mdSec : div.getADMID()) {
-            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSec,
-                DivXmlElementAccess.amdSecTypeOf(mets, (MdSecType) mdSec)));
+        for (Object mdSecType : div.getADMID()) {
+            mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSecType,
+                DivXmlElementAccess.amdSecTypeOf(mets, (MdSecType) mdSecType)));
         }
     }
 

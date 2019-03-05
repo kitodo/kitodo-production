@@ -99,11 +99,11 @@ public class DivXmlElementAccess extends Structure {
     DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap) {
         super();
         super.setLabel(div.getLABEL());
-        for (Object mdSec : div.getDMDID()) {
-            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, MdSec.DMD_SEC));
+        for (Object mdSecType : div.getDMDID()) {
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, MdSec.DMD_SEC));
         }
-        for (Object mdSec : div.getADMID()) {
-            super.getMetadata().addAll(readMetadata((MdSecType) mdSec, amdSecTypeOf(mets, (MdSecType) mdSec)));
+        for (Object mdSecType : div.getADMID()) {
+            super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, amdSecTypeOf(mets, (MdSecType) mdSecType)));
         }
         metsReferrerId = div.getID();
         super.setOrderlabel(div.getORDERLABEL());
@@ -155,25 +155,26 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Reads a meta-data section and adds the meta-data to the structure.
      * 
-     * @param mdSec
-     *            meta-data section to be read
      * @param mdSecType
      *            type of meta-data section
+     * @param mdSec
+     *            meta-data section to be read
+     *
      * @return
      */
-    static final Collection<Metadata> readMetadata(MdSecType mdSec, MdSec mdSecType) {
+    static final Collection<Metadata> readMetadata(MdSecType mdSecType, MdSec mdSec) {
         Collection<Metadata> metadata = new HashSet<>();
-        for (Object object : mdSec.getMdWrap().getXmlData().getAny()) {
+        for (Object object : mdSecType.getMdWrap().getXmlData().getAny()) {
             if (object instanceof JAXBElement) {
                 JAXBElement<?> jaxbElement = (JAXBElement<?>) object;
                 Object value = jaxbElement.getValue();
                 if (value instanceof KitodoType) {
                     KitodoType kitodoType = (KitodoType) value;
                     for (MetadataType metadataEntry : kitodoType.getMetadata()) {
-                        metadata.add(new MetadataXmlElementAccess(mdSecType, metadataEntry).getMetadataEntry());
+                        metadata.add(new MetadataXmlElementAccess(mdSec, metadataEntry).getMetadataEntry());
                     }
                     for (MetadataGroupType metadataGroup : kitodoType.getMetadataGroup()) {
-                        metadata.add(new MetadataGroupXmlElementAccess(mdSecType, metadataGroup).getMetadataGroup());
+                        metadata.add(new MetadataGroupXmlElementAccess(mdSec, metadataGroup).getMetadataGroup());
                     }
                 }
             }
