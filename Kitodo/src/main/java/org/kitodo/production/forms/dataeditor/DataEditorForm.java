@@ -44,14 +44,12 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.metadata.MetadataImpl;
 import org.kitodo.production.metadata.pagination.Paginator;
 import org.kitodo.production.metadata.pagination.enums.Mode;
 import org.kitodo.production.metadata.pagination.enums.Scope;
 import org.kitodo.production.metadata.pagination.enums.Type;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
@@ -64,8 +62,6 @@ public class DataEditorForm implements Serializable {
      * editor.
      */
     private static final String PAGE_METADATA_EDITOR = "/pages/metadataEditor?faces-redirect=true";
-    private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
-    private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
     /**
@@ -80,9 +76,14 @@ public class DataEditorForm implements Serializable {
     private final CommentPanel commentPanel;
 
     /**
+     * Backing bean for the gallery panel.
+     */
+    private final GalleryPanel galleryPanel;
+
+    /**
      * All file system locks that the user is currently holding.
      */
-    private LockResult lock;
+    private LockResult locks;
 
     /**
      * The path to the main file, to save it later.
@@ -126,9 +127,7 @@ public class DataEditorForm implements Serializable {
      */
     private Workpiece workpiece;
 
-    private String galleryViewMode = "list";
     private boolean showPagination = false;
-    private boolean showNewComment = false;
 
     // pages
     private String[] allPages;
@@ -163,19 +162,13 @@ public class DataEditorForm implements Serializable {
     private MetadataImpl newMetadata;
     private List<MetadataImpl> newMetadataList;
 
-    // comments
-    private String newComment;
-
-    // gallery
-    private int pageIndex;
-    private String selectedImage;
-
     /**
      * Public constructor.
      */
     public DataEditorForm() {
         this.structurePanel = new StructurePanel(this);
         this.metadataPanel = new MetadataPanel(this);
+        this.galleryPanel = new GalleryPanel(this);
         this.commentPanel = new CommentPanel(this);
     }
 
@@ -190,8 +183,8 @@ public class DataEditorForm implements Serializable {
      */
     public String open(int id, String referringView) {
         try {
-            if (Objects.nonNull(lock)) {
-                lock.close();
+            if (Objects.nonNull(locks)) {
+                locks.close();
             }
             this.referringView = referringView;
             Helper.getRequestParameter("referringView");
@@ -231,13 +224,13 @@ public class DataEditorForm implements Serializable {
                         : workDirectoryPath + '/' + fileName,
                 workPathUri.getQuery(), null);
 
-        lock = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
-        if (!lock.isSuccessful()) {
-            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", lock.getConflicts().get(mainFileUri)));
-            return lock.isSuccessful();
+        locks = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
+        if (!locks.isSuccessful()) {
+            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", locks.getConflicts().get(mainFileUri)));
+            return locks.isSuccessful();
         }
 
-        try (InputStream in = ServiceManager.getFileService().read(mainFileUri, lock)) {
+        try (InputStream in = ServiceManager.getFileService().read(mainFileUri, locks)) {
             workpiece = ServiceManager.getMetsService().load(in);
         }
         if (logger.isTraceEnabled()) {
@@ -259,11 +252,14 @@ public class DataEditorForm implements Serializable {
         return ruleset;
     }
 
-    private void init() {
+    private void init() throws IOException {
         final long begin = System.nanoTime();
+
         structurePanel.show(workpiece);
         metadataPanel.show(structurePanel.getSelectedStructure());
+        galleryPanel.show(workpiece);
         commentPanel.show(workpiece);
+
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
                 TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
@@ -273,13 +269,13 @@ public class DataEditorForm implements Serializable {
     /**
      * Releases the locks and clears all remaining content from the data editor
      * form.
-     * 
+     *
      * @return the referring view, to return there
      */
     public String close() {
         try {
-            lock.close();
-            lock = null;
+            locks.close();
+            locks = null;
 
             commentPanel.clear();
             metadataPanel.clear();
@@ -302,9 +298,9 @@ public class DataEditorForm implements Serializable {
      */
     @Override
     protected void finalize() throws Throwable {
-        if (lock != null) {
+        if (locks != null) {
             try {
-                lock.close();
+                locks.close();
             } catch (Throwable any) {
                 /* make sure finalize() can run through */
             }
@@ -338,14 +334,14 @@ public class DataEditorForm implements Serializable {
 
     /**
      * Save the structure and metadata.
-     * 
+     *
      * @return navigation target
      */
     public String save() {
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
-            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, lock)) {
+            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, locks)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             close();
@@ -368,6 +364,10 @@ public class DataEditorForm implements Serializable {
 
     public CommentPanel getCommentPanel() {
         return commentPanel;
+    }
+
+    public GalleryPanel getGalleryPanel() {
+        return galleryPanel;
     }
 
     public MetadataPanel getMetadataPanel() {
@@ -456,7 +456,7 @@ public class DataEditorForm implements Serializable {
 
     /**
      * Get possible positions of new element relative to its parent.
-     * 
+     *
      * @return list of enums
      */
     public PositionOfNewDocStrucElement[] getNewElementPositionList() {
@@ -465,7 +465,7 @@ public class DataEditorForm implements Serializable {
 
     /**
      * Get possible element types for a new element at the selected position.
-     * 
+     *
      * @return List of possible element types
      */
     public SelectItem[] getNewLogicalTypeList() {
@@ -475,7 +475,7 @@ public class DataEditorForm implements Serializable {
 
     /**
      * Get list of possible metadata for the selected element type.
-     * 
+     *
      * @return list of possible metadata fields
      */
     public List<SelectItem> getNewLogicalMetadataList() {
@@ -502,7 +502,7 @@ public class DataEditorForm implements Serializable {
 
     /**
      * Get all pages assigned to the currently selected logical TreeNode.
-     * 
+     *
      * @return SelectItem array containing all assigned pages
      */
     public SelectItem[] getPagesOfSelectedLogicalTreeNode() {
@@ -621,114 +621,6 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get the list of image file paths for the current process.
-     * 
-     * @return List of fullsize PNG images
-     */
-    public List<String> getImageList() {
-        // TODO implement
-        return new ArrayList<>();
-    }
-
-    /**
-     * Get list of all logical structure elements for this process.
-     * 
-     * @return List of logical elements
-     */
-    public List<LegacyDocStructHelperInterface> getLogicalElementList() {
-        // TODO implement
-        // get list of all logical structure elements
-        return new ArrayList<>();
-    }
-
-    /**
-     * Get list of all pages allocated to the passed logical element.
-     * 
-     * @param logicalElement // TODO add param description
-     * @return List of all allocated pages
-     */
-    public List<LegacyDocStructHelperInterface> getLogicalElementPageList(
-            LegacyDocStructHelperInterface logicalElement) {
-        // TODO implement
-        // get list of all pages allocated to the logicalElement
-        return new ArrayList<>();
-    }
-
-    /**
-     * Get file path to png image for passed LegacyDocStructHelperInterface
-     * 'page' representing a single scanned image.
-     * 
-     * @param page
-     *            LegacyDocStructHelperInterface for which the corresponding png
-     *            image file path is returned
-     * @return File path to the png image
-     */
-    public String getPageImageFilePath(LegacyDocStructHelperInterface page) {
-        // TODO implement
-        // like getPageImageFilePath(LegacyDocStructHelperInterface
-        // pageDocStruct) in MetadataProcessor:2560?
-        return "";
-    }
-
-    /**
-     * Get the physical page number for the passed
-     * LegacyDocStructHelperInterface 'page'.
-     * 
-     * @param page
-     *            LegacyDocStructHelperInterface which physical page number is
-     *            returned
-     * @return physical page number
-     */
-    public int getPhysicalPageNumber(LegacyDocStructHelperInterface page) {
-        // TODO implement
-        return 0;
-    }
-
-    /**
-     * Get the logical page number for a paginated docstruct.
-     * 
-     * @param docStruct The DocStruct object
-     * @return The logical page number
-     */
-    public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
-        // TODO implement
-        return "";
-    }
-
-    /**
-     * Get the path to the thumbnail for the with the passed image path.
-     * 
-     * @param imagePath Path to the fullsize PNG image
-     * @return Path to the thumnail PNG image
-     */
-    public String getThumbnail(String imagePath) {
-        File imageFile = new File(imagePath);
-        String filename = imageFile.getName();
-        return imagePath.replace(FULLSIZE_FOLDER_NAME, THUMBNAIL_FOLDER_NAME).replace(filename, "thumbnail." + filename);
-    }
-
-    /**
-     * Handle event of page being dragged and dropped.
-     * @param event TODO add param description
-     */
-    public void onPageDrop(DragDropEvent event) {
-        // TODO implement
-        // like method onPageDrop(DragDropEvent dragDropEvent) in MetadataProcessor:2453?
-    }
-
-    /**
-     * Checks and returns whether access is granted to the image with the given filepath "imagePath".
-     *
-     * @param imagePath the filepath of the image for which access rights are checked
-     * @return true if access is granted and false otherwise
-     */
-    public boolean getImageAccessible(String imagePath) {
-        // TODO implement
-        // like method isAccessGranted(String imagePath) in MetadataProcessor:2643?
-        return false;
-    }
-
-    /**
      * Get current user.
      *
      * @return User
@@ -806,24 +698,6 @@ public class DataEditorForm implements Serializable {
     }
 
     /**
-     * Get galleryViewMode.
-     *
-     * @return value of galleryViewMode
-     */
-    public String getGalleryViewMode() {
-        return galleryViewMode;
-    }
-
-    /**
-     * Set galleryViewMode.
-     *
-     * @param galleryViewMode as java.lang.String
-     */
-    public void setGalleryViewMode(String galleryViewMode) {
-        this.galleryViewMode = galleryViewMode;
-    }
-
-    /**
      * Get showPagination.
      *
      * @return value of showPagination
@@ -839,24 +713,6 @@ public class DataEditorForm implements Serializable {
      */
     public void setShowPagination(boolean showPagination) {
         this.showPagination = showPagination;
-    }
-
-    /**
-     * Get showNewComment.
-     *
-     * @return value of showNewComment
-     */
-    public boolean isShowNewComment() {
-        return showNewComment;
-    }
-
-    /**
-     * Set showNewComment.
-     *
-     * @param showNewComment as boolean
-     */
-    public void setShowNewComment(boolean showNewComment) {
-        this.showNewComment = showNewComment;
     }
 
     /**
@@ -1393,57 +1249,7 @@ public class DataEditorForm implements Serializable {
         this.newMetadataList = newMetadataList;
     }
 
-    /**
-     * Get newComment.
-     *
-     * @return value of newComment
-     */
-    public String getNewComment() {
-        return newComment;
-    }
-
-    /**
-     * Set newComment.
-     *
-     * @param newComment as java.lang.String
-     */
-    public void setNewComment(String newComment) {
-        this.newComment = newComment;
-    }
-
-    /**
-     * Get pageIndex.
-     *
-     * @return value of pageIndex
-     */
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    /**
-     * Set pageIndex.
-     *
-     * @param pageIndex as int
-     */
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
-    /**
-     * Get selectedImage.
-     *
-     * @return value of selectedImage
-     */
-    public String getSelectedImage() {
-        return selectedImage;
-    }
-
-    /**
-     * Set selectedImage.
-     *
-     * @param selectedImage as java.lang.String
-     */
-    public void setSelectedImage(String selectedImage) {
-        this.selectedImage = selectedImage;
+    LockResult getLocks() {
+        return this.locks;
     }
 }

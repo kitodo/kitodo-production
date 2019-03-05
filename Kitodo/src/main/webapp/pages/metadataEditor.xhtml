@@ -130,11 +130,11 @@
 
                         <div class="columnHeadingWrapper">
                             <h:panelGroup id="galleryHeadingWrapper">
-                                <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'list' or DataEditorForm.galleryViewMode eq 'grid'}">
+                                <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' or DataEditorForm.galleryPanel.galleryViewMode eq 'grid'}">
                                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
                                 </ui:fragment>
-                                <ui:fragment rendered="#{DataEditorForm.galleryViewMode eq 'preview'}">
-                                    <h:outputText styleClass="columnHeading" value="#{msgs.page} #DataEditorForm.pageIndex}"/>
+                                <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
+                                    <h:outputText styleClass="columnHeading" value="#{msgs.page} #{DataEditorForm.galleryPanel.selectedMedia.order}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>

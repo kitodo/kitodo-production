@@ -20,7 +20,7 @@ abstract class MetadataTableRow implements Serializable {
      * Describes the relationship between the domain in the rule set and the
      * mdSec in the METS.
      */
-    protected static final EnumMap<Domain, MdSec> DOMAIN_TO_MDSEC = new EnumMap<Domain, MdSec>(Domain.class);
+    protected static final EnumMap<Domain, MdSec> DOMAIN_TO_MDSEC = new EnumMap<>(Domain.class);
 
     static {
         DOMAIN_TO_MDSEC.put(Domain.DESCRIPTION, MdSec.DMD_SEC);
@@ -35,7 +35,15 @@ abstract class MetadataTableRow implements Serializable {
      * The label of this row.
      */
     protected final String label;
+
+    /**
+     * Meta-data panel on which this row is showing.
+     */
     protected final MetadataPanel panel;
+
+    /**
+     * Parental meta-data group.
+     */
     private FieldedMetadataTableRow container;
 
     /**
@@ -50,6 +58,9 @@ abstract class MetadataTableRow implements Serializable {
         this.label = label;
     }
 
+    /**
+     * This method is triggered when the user clicks the copy meta-data button.
+     */
     public void copyClick() {
         try {
             panel.getClipboard().addAll(this.getMetadata());
@@ -60,6 +71,10 @@ abstract class MetadataTableRow implements Serializable {
             Arrays.asList(Integer.toString(panel.getClipboard().size())));
     }
 
+    /**
+     * This method is triggered when the user clicks the delete meta-data
+     * button.
+     */
     public void deleteClick() {
         container.remove(this);
     }

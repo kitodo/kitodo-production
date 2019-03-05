@@ -49,7 +49,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     private static final long serialVersionUID = 1L;
 
     /**
-     * An empty meta-data panel showing.
+     * An empty meta-data group for the empty meta-data panel showing. The empty
+     * meta-data panel can be displayed if the element selected in the structure
+     * window isn’t a structure (has no meta-data).
      */
     static final FieldedMetadataTableRow EMPTY = new FieldedMetadataTableRow();
 
@@ -84,9 +86,8 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     private Structure structure;
 
     /**
-     * Creates an empty meta-data panel. This constructor is used to create the
-     * ‘EMPTY’ constant above. An empty panel contains no rows and calling
-     * {@link #preserve()} does nothing.
+     * Creates an empty meta-data group. This constructor is used to create the
+     * {@link #EMPTY} constant above.
      */
     private FieldedMetadataTableRow() {
         super(null, null, null);
@@ -96,7 +97,8 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Creates a new meta-data panel to show in the meta-data editor.
+     * Creates a new root meta-data group representing the meta-data table
+     * content in the meta-data panel.
      *
      * @param structure
      *            structure selected by the user
@@ -105,6 +107,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     FieldedMetadataTableRow(MetadataPanel panel, Structure structure,
             StructuralElementViewInterface divisionView) {
+
         this(panel, null, structure, divisionView, structure.getMetadata());
     }
 
@@ -118,6 +121,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
+
         this(panel, container, null, metadataView, metadata);
     }
 
@@ -134,6 +138,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, Structure structure,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
+
         super(panel, container, metadataView.getId());
         this.structure = structure;
         this.metadata = metadata;
@@ -141,11 +146,16 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         createMetadataTable();
     }
 
+    /**
+     * The method for building the meta-data table.
+     */
     private final void createMetadataTable() {
+        // the existing meta-data is passed to the rule set, which sorts it
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> tableData = metadataView
                 .getSortedVisibleMetadata(metadataWithKeys, additionallySelectedFields);
+
         rows.clear();
         hiddenMetadata = Collections.emptyList();
         for (MetadataViewWithValuesInterface<Metadata> rowData : tableData) {
@@ -204,6 +214,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private final FieldedMetadataTableRow createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
             Collection<Metadata> values) {
+
         Collection<Metadata> value;
         switch (values.size()) {
             case 0:
@@ -227,6 +238,16 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         return new FieldedMetadataTableRow(panel, this, complexMetadataView, value);
     }
 
+    /**
+     * Creates an object to represent a single-row meta-data input.
+     *
+     * @param simpleMetadataView
+     *            presentation information about the meta-data entry from the
+     *            ruleset
+     * @param values
+     *            the value(s) to be displayed
+     * @return a backing bean for the row
+     */
     private final MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
             Collection<Metadata> values) {
         switch (simpleMetadataView.getInputType()) {
@@ -261,7 +282,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
             throw new IllegalStateException("Got complex meta-data entry with key \"" + fault.get().getKey()
                     + "\" which isn't declared as substructured key in the rule set.");
         }
-        return (Collection<MetadataEntry>) (Collection) values;
+        return (Collection) values;
     }
 
     /**
@@ -298,6 +319,11 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         createMetadataTable();
     }
 
+    /**
+     * Returns the elements for the drop-down addable meta-data picklist.
+     *
+     * @return the addable meta-data elements
+     */
     public List<SelectItem> getAddableMetadata() {
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
@@ -388,6 +414,10 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         rows.remove(rowToDelete);
     }
 
+    /**
+     * This method is triggered when the user clicks the insert meta-data
+     * button.
+     */
     public void pasteClick() {
         try {
             Collection<Metadata> clipboard = panel.getClipboard();

@@ -34,7 +34,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.Problem;
 
 /**
- * Backing bean for the comment panel of the meta-data editor
+ * Backing bean for the comment panel of the meta-data editor.
  */
 public class CommentPanel implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -76,7 +76,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Creates a new comment panel backing bean.
-     * 
+     *
      * @param dataEditor
      *            the meta-data editor this panel belongs to
      */
@@ -93,7 +93,7 @@ public class CommentPanel implements Serializable {
      * Formats a comment that is stored in different fields internally to a
      * single string. The METS role and type attributes are verbalized if they
      * conform to one of the default strings.
-     * 
+     *
      * @param processingNote
      *            comment in internal format
      * @return comment as string
@@ -126,7 +126,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Returns the list of comments showing on the panel.
-     * 
+     *
      * @return the list of comments showing on the panel
      */
     public List<String> getCommentList() {
@@ -136,7 +136,7 @@ public class CommentPanel implements Serializable {
     /**
      * Returns the backing bean property for the input box to input the text for
      * a new comment.
-     * 
+     *
      * @return the backing bean property for the input box to input the text for
      *         a new comment
      */
@@ -147,7 +147,7 @@ public class CommentPanel implements Serializable {
     /**
      * Get a list of all previous tasks that could be used for correction
      * purposes.
-     * 
+     *
      * @return list of previous tasks
      */
     public List<Task> getPreviousStepsForCorrection() {
@@ -185,7 +185,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Returns whether the input box to input a new comment is showing.
-     * 
+     *
      * @return whether the input box to input a new comment is showing
      */
     public boolean isShowingNewComment() {
@@ -247,7 +247,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Sets whether the input box to input a new comment is showing.
-     * 
+     *
      * @param showingNewComment
      *            whether the input box to input a new comment is showing
      */
@@ -258,7 +258,7 @@ public class CommentPanel implements Serializable {
     /**
      * Sets the backing bean property for the input box to input the text for a
      * new comment.
-     * 
+     *
      * @param newComment
      *            the backing bean property for the input box to input the text
      *            for a new comment
@@ -279,7 +279,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Initializes the panel to show the comments from a workpiece.
-     * 
+     *
      * @param workpeace
      *            workpiece whose comments are to show
      */
@@ -293,6 +293,9 @@ public class CommentPanel implements Serializable {
 
     /**
      * Mark the reported problem solved.
+     * 
+     * @param comment
+     *            comment on the solved problem
      */
     public void solveProblem(String comment) {
         BatchTaskHelper batchStepHelper = new BatchTaskHelper();

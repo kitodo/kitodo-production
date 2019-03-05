@@ -51,7 +51,7 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
 
     /**
      * Creates a new meta-data panel row with an on/off switch.
-     * 
+     *
      * @param dataEditor
      *            meta-data editor instance
      * @param container
@@ -63,9 +63,9 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
      */
     BooleanMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             SimpleMetadataViewInterface settings, MetadataEntry data) {
+
         super(panel, container, settings);
         this.on = Objects.nonNull(data);
-
         Iterator<Entry<String, String>> selectItems = settings.getSelectItems().entrySet().iterator();
         this.optionLabel = selectItems.hasNext() ? selectItems.next().getValue() : "";
     }
