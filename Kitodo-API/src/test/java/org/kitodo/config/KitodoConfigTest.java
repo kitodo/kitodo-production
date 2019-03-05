@@ -13,16 +13,21 @@ package org.kitodo.config;
 
 import java.util.NoSuchElementException;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.kitodo.config.enums.ParameterAPI;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(PowerMockRunner.class)
 public class KitodoConfigTest {
 
     @Rule
@@ -68,18 +73,36 @@ public class KitodoConfigTest {
         assertTrue("Incorrect param!", KitodoConfig.getBooleanParameter(ParameterAPI.DIR_PROCESSES, true));
     }
 
-    @Ignore("find a way to mock enum or add more enums")
     @Test
+    @PrepareForTest(ParameterAPI.class)
     public void shouldGetIntParameterWithoutDefault() {
-        //int param = KitodoConfig.getIntParameter("intParam");
-        //assertEquals("Incorrect param!", 1, param);
+        ParameterAPI NONE = PowerMockito.mock(ParameterAPI.class);
+        Whitebox.setInternalState(NONE, "name", "NONE");
+        Whitebox.setInternalState(NONE, "ordinal", 3);
+
+        PowerMockito.mockStatic(ParameterAPI.class);
+        PowerMockito.when(ParameterAPI.values())
+                .thenReturn(new ParameterAPI[] {ParameterAPI.DIR_MODULES, ParameterAPI.DIR_PROCESSES,
+                                                ParameterAPI.DIR_XML_CONFIG, NONE });
+
+        int param = KitodoConfig.getIntParameter(NONE);
+        assertEquals("Incorrect param for non existing enum without default value!", 0, param);
     }
 
-    @Ignore("find a way to mock enum or add more enums")
     @Test
+    @PrepareForTest(ParameterAPI.class)
     public void shouldGetIntParameterWithDefault() {
-        //int param = KitodoConfig.getIntParameter("intParam", 3);
-        //assertEquals("Incorrect param!", 1, param);
+        ParameterAPI NONE = PowerMockito.mock(ParameterAPI.class);
+        Whitebox.setInternalState(NONE, "name", "NONE");
+        Whitebox.setInternalState(NONE, "ordinal", 3);
+
+        PowerMockito.mockStatic(ParameterAPI.class);
+        PowerMockito.when(ParameterAPI.values())
+                .thenReturn(new ParameterAPI[] {ParameterAPI.DIR_MODULES, ParameterAPI.DIR_PROCESSES,
+                        ParameterAPI.DIR_XML_CONFIG, NONE });
+
+        int param = KitodoConfig.getIntParameter(NONE, 3);
+        assertEquals("Incorrect param for non existing enum with default value!", 3, param);
     }
 
     @Test
