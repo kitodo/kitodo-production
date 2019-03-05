@@ -67,6 +67,7 @@
         <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
+        <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
     </properties>
