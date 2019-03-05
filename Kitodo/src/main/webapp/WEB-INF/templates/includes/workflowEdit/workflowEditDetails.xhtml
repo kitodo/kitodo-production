@@ -40,9 +40,11 @@
         </p:row>
         <p:row>
             <p:outputLabel for="status" value="#{msgs.status}"/>
-            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" converter="#{workflowStatusConverter}"
-                             class="input">
-                <f:selectItems value="#{WorkflowForm.workflowStatuses}"/>
+            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input">
+                <p:ajax event="change" update="@this" />
+                <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
+                <f:selectItems value="#{WorkflowForm.workflowStatuses}" var="status"
+                               itemValue = "#{status}"/>
             </p:selectOneMenu>
         </p:row>
     </p:panelGrid>
