@@ -22,6 +22,7 @@
         <h:form id="commentsBox">
             <p:panelGrid id="comments" columns="1" rendered="#{not MetadataProcessor.showNewComment}">
 
+                <!-- Existing comments -->
                 <p:dataTable id="commentsGrid" value="#{MetadataProcessor.wikiField}" var="item"
                              rendered="#{!empty MetadataProcessor.wikiField}">
                     <p:column style="width: 100%;" rendered="#{item.contains('Red K')}">
@@ -51,19 +52,9 @@
                                       style="width:100%;"/>
                     </p:column>
                 </p:dataTable>
-                <p:column>
-                    <p:commandButton id="newButton"
-                                     onclick="PF('newCommentDialog').show()"
-                                     icon="fa fa-comment fa-lg"
-                                     styleClass="secondary"
-                                     title="#{msgs.newElement}"
-                                     iconPos="right" immediate="true"
-                                     value="#{msgs.comment}"
-                                     update=":newCommentForm">
-                        <p:resetInput target=":newCommentForm"/>
-                    </p:commandButton>
-                </p:column>
             </p:panelGrid>
+
+            <!-- Form for new normal (non-correction) comments -->
             <p:panelGrid id="newComments" columns="1"
                          rendered="#{(not MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
 
@@ -101,6 +92,8 @@
                 </p:column>
 
             </p:panelGrid>
+
+            <!-- Form for new correction comments -->
             <p:panelGrid columns="1" rendered="#{(MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.remark}"/>
@@ -137,6 +130,19 @@
 
                 </p:column>
             </p:panelGrid>
+
+            <p:commandButton id="newButton"
+                             actionListener="#{MetadataProcessor.setShowNewComment(true)}"
+                             oncomplete="PF('newCommentDialog').show()"
+                             icon="fa fa-comment fa-lg"
+                             styleClass="secondary"
+                             title="#{msgs.newElement}"
+                             iconPos="right"
+                             immediate="true"
+                             value="#{msgs.comment}"
+                             update=":newCommentForm">
+                <p:resetInput target=":newCommentForm"/>
+            </p:commandButton>
         </h:form>
     </p:panel>
 </ui:composition>

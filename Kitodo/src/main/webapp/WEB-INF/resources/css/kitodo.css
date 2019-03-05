@@ -1083,14 +1083,39 @@ Metadata Editor
 form#metadata,
 form#metadata textarea,
 form#metadata div label,
+#commentsBox,
 #commentsBox\:comments tr,
 #metadata\:metadataTable_data td,
 #metadata\:metadataTable_data textarea {
     background-color: var(--trans-blue);
 }
 
+#commentsBox {
+    overflow-y: scroll;
+}
+
+#commentsBox,
+#commentPanel .wrapperPanel,
+#commentWrapperPanel_content {
+    height: 100%;
+}
+
+#commentsBox\:newButton {
+    position: absolute !important;
+    bottom: 16px;
+    left: 8px;
+}
+
 #commentsBox\:comments > tbody > tr.ui-widget-content:first-child > td.ui-panelgrid-cell {
     padding: 0;
+}
+
+#commentsBox\:commentsGrid.ui-datatable tbody tr:last-child td {
+    border-bottom: 1px solid var(--disabled-light) !important;
+}
+
+#commentsBox\:commentsGrid {
+    margin-bottom: 50px;
 }
 
 #commentsBox\:commentsGrid_head {
