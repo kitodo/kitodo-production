@@ -2594,7 +2594,7 @@ public class MetadataProcessor {
                 }
                 String author = "<i>" + parts[0] + "</i>";
                 String comment = String.join(":", (String[]) Arrays.copyOfRange(parts, 1, parts.length));
-                comments[i] = author + ": " + comment;
+                comments[i] = author + ":" + comment;
             }
             return comments;
         }
@@ -2718,7 +2718,8 @@ public class MetadataProcessor {
         batchStepHelper.solveProblemForSingle(ServiceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
-        wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
+        comment = comment.replace("<i>", "").replace("</i>", "").trim();
+        wikiField = wikiField.replace(comment, comment.replace("Red K", "Orange K "));
         ServiceManager.getProcessService().setWikiField(wikiField, this.process);
         try {
             ServiceManager.getProcessService().save(process);

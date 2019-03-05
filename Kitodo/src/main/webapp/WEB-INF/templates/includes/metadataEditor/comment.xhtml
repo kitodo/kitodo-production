@@ -32,7 +32,6 @@
                                       style="width:100%;"/>
                         <p:commandButton icon="fa fa-check"
                                          update="commentsBox"
-                                         title="test"
                                          styleClass="right"
                                          immediate="true"
                                          action="#{MetadataProcessor.solveProblem(item)}">
@@ -54,83 +53,6 @@
                 </p:dataTable>
             </p:panelGrid>
 
-            <!-- Form for new normal (non-correction) comments -->
-            <p:panelGrid id="newComments" columns="1"
-                         rendered="#{(not MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
-
-                <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.correctionMessage}"
-                                   rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"/>
-                    <p:selectBooleanCheckbox id="korrekturMeldung"
-                                             value="#{MetadataProcessor.correctionComment}"
-                                             rendered="#{MetadataProcessor.sizeOfPreviousStepsForProblemReporting > 0}"
-                                             immediate="true" style="width: 100%;">
-                        <p:ajax event="change" update="commentsBox"/>
-                    </p:selectBooleanCheckbox>
-                </p:column>
-                <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.remark}"/>
-                    <p:inputTextarea id="addToWikiField" value="#{MetadataProcessor.addToWikiField}" style="width:100%;"/>
-                </p:column>
-                <p:column style="width: 100%;">
-                    <p:commandButton value="#{msgs.cancel}"
-                                     action="#{MetadataProcessor.setShowNewComment(false)}"
-                                     icon="fa fa-times fa-lg"
-                                     iconPos="right"
-                                     styleClass="secondary"
-                                     update="commentsBox"
-                                     immediate="true">
-                        <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
-                    </p:commandButton>
-                    <p:commandButton id="saveNewComment"
-                                     action="#{MetadataProcessor.addToWikiField()}"
-                                     value="#{msgs.save}"
-                                     styleClass="secondary"
-                                     update="commentsBox"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"/>
-                </p:column>
-
-            </p:panelGrid>
-
-            <!-- Form for new correction comments -->
-            <p:panelGrid columns="1" rendered="#{(MetadataProcessor.correctionComment) and (MetadataProcessor.showNewComment)}">
-                <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.remark}"/>
-                    <p:inputTextarea style="width:100%;"
-                                     styleClass="secondary"
-                                     value="#{MetadataProcessor.problem.message}">
-                        <p:ajax event="change"/>
-                    </p:inputTextarea>
-                </p:column>
-                <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.backToTask}"/>
-                    <p:selectOneMenu
-                            style="width: 100%;"
-                            value="#{MetadataProcessor.problem.id}">
-                        <f:selectItems
-                                value="#{MetadataProcessor.previousStepsForProblemReporting}"
-                                var="step1" itemLabel="#{step1.titleWithUserName}"
-                                itemValue="#{step1.id}"/>
-                        <p:ajax event="change"/>
-                    </p:selectOneMenu>
-                </p:column>
-                <p:column style="width: 100%;">
-                    <p:commandButton value="#{msgs.cancel}" action="#{MetadataProcessor.setShowNewComment(false)}"
-                                     icon="fa fa-times fa-lg" iconPos="right" update="commentsBox" immediate="true"
-                                     styleClass="secondary">
-                        <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
-                    </p:commandButton>
-                    <p:commandButton id="sendProblem"
-                                     value="#{msgs.correctionMessageSend}"
-                                     action="#{MetadataProcessor.reportProblem()}"
-                                     title="#{msgs.correctionMessageSend}"
-                                     immediate="true"
-                                     update="commentsBox"/>
-
-                </p:column>
-            </p:panelGrid>
-
             <p:commandButton id="newButton"
                              actionListener="#{MetadataProcessor.setShowNewComment(true)}"
                              oncomplete="PF('newCommentDialog').show()"
@@ -143,6 +65,7 @@
                              update=":newCommentForm">
                 <p:resetInput target=":newCommentForm"/>
             </p:commandButton>
+            <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
         </h:form>
     </p:panel>
 </ui:composition>
