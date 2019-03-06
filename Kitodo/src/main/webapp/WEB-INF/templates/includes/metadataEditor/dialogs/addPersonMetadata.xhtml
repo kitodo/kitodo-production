@@ -1,0 +1,60 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="dialogAddPersonId"
+              header="#{msgs.neuePersonAnlegen}"
+              resizable="false"
+              widgetVar="dialogAddPerson"
+              modal="true"
+              showHeader="false"
+              appendTo="@(body)">
+        <h:form id="dialogAddPersonForm">
+
+            <p:panelGrid columns="2" styleClass="ui-noborder">
+
+                <p:outputLabel value="#{msgs.role}:"/>
+                <p:selectOneMenu value="#{MetadataProcessor.tempPersonRolle}" style="width: 350px;"
+                                 id="selectTempPersonRoll">
+                    <f:selectItems value="#{MetadataProcessor.addableRollen}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel value="#{msgs.normDataRecord}:"/>
+                <p:inputText value="#{MetadataProcessor.tempPersonRecord}"
+                             style="width: 350px;"
+                             id="addPersonRecord"/>
+
+                <p:outputLabel value="#{msgs.firstName}:"/>
+                <p:inputText value="#{MetadataProcessor.tempPersonVorname}"
+                             style="width: 350px;"
+                             id="addPersonFirstname"/>
+
+                <p:outputLabel value="#{msgs.surname}:"/>
+                <p:inputText value="#{MetadataProcessor.tempPersonNachname}"
+                             style="width: 350px;"
+                             id="addPersonLastname"/>
+            </p:panelGrid>
+
+            <p:commandButton value="#{msgs.apply}"
+                             action="#{MetadataProcessor.savePerson}"
+                             update="metadata"
+                             oncomplete="PF('dialogAddPerson').hide();">
+            </p:commandButton>
+        </h:form>
+    </p:dialog>
+</ui:composition>

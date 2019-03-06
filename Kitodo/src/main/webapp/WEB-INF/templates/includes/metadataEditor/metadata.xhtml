@@ -145,74 +145,19 @@
                 </p:column>
             </p:dataTable>
 
-            <div style="margin-top:30px;">
-                <h:outputText value="#{msgs.neueMetadatenHinzufuegen}:"/>
-            </div>
-
             <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
                 <p:row>
-                    <p:selectOneMenu id="metadataTypeSelection"
-                                     disabled="#{readOnly}"
-                                     value="#{MetadataProcessor.selectedMetadataType}">
-                        <f:selectItems value="#{MetadataProcessor.allowedMetadata}"/>
-                    </p:selectOneMenu>
-                </p:row>
-                <p:row>
-                    <p:inputTextarea value="#{MetadataProcessor.selectedMetadataValue}"
-                                     rows="2"
-                                     styleClass="#{readOnly ? 'disabled' : ''}"
-                                     disabled="#{readOnly}"
-                                     style="width:83%; margin-top: 8px;"/>
-                    <p:commandButton update="metadata:metadataTable"
+                    <p:commandButton id="addMetadataButton"
                                      icon="fa fa-plus"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
                                      style="vertical-align: top; margin-left: 10px;"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
-                                     action="#{MetadataProcessor.addMetadata}">
+                                     onclick="PF('addMetadataDialog').show();">
                     </p:commandButton>
                 </p:row>
             </p:panelGrid>
         </h:form>
 
-        <p:dialog id="dialogAddPersonId"
-                  header="#{msgs.neuePersonAnlegen}"
-                  resizable="false"
-                  widgetVar="dialogAddPerson"
-                  modal="true"
-                  showHeader="false"
-                  appendTo="@(body)">
-            <h:form id="dialogAddPersonForm">
-
-                <p:panelGrid columns="2" styleClass="ui-noborder">
-
-                    <p:outputLabel value="#{msgs.role}:"/>
-                    <p:selectOneMenu value="#{MetadataProcessor.tempPersonRolle}" style="width: 350px;"
-                                     id="selectTempPersonRoll">
-                        <f:selectItems value="#{MetadataProcessor.addableRollen}"/>
-                    </p:selectOneMenu>
-
-                    <p:outputLabel value="#{msgs.normDataRecord}:"/>
-                    <p:inputText value="#{MetadataProcessor.tempPersonRecord}"
-                                 style="width: 350px;"
-                                 id="addPersonRecord"/>
-
-                    <p:outputLabel value="#{msgs.firstName}:"/>
-                    <p:inputText value="#{MetadataProcessor.tempPersonVorname}"
-                                 style="width: 350px;"
-                                 id="addPersonFirstname"/>
-
-                    <p:outputLabel value="#{msgs.surname}:"/>
-                    <p:inputText value="#{MetadataProcessor.tempPersonNachname}"
-                                 style="width: 350px;"
-                                 id="addPersonLastname"/>
-                </p:panelGrid>
-
-                <p:commandButton value="#{msgs.apply}" action="#{MetadataProcessor.savePerson}"
-                                 update="metadata"
-                                 oncomplete="PF('dialogAddPerson').hide();">
-                </p:commandButton>
-            </h:form>
-        </p:dialog>
     </p:panel>
 </ui:composition>
