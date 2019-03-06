@@ -251,7 +251,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         try {
             return new URI(href);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+            throw new IllegalArgumentException("Erroneous URI: \"" + href + "\" (" + e.getMessage() + ')', e);
         }
     }
 
