@@ -47,9 +47,11 @@ public class MptrXmlElementAccess {
      *             parent’s METS
      */
     MptrXmlElementAccess(DivType div, Mets parent, InputStreamProviderInterface inputStreamProvider) {
+        String href = null;
         try {
             linkedStructure.setOrder(div.getORDER());
-            URI uri = new URI(div.getMptr().stream().findFirst().get().getHref());
+            href = div.getMptr().stream().findFirst().get().getHref();
+            URI uri = new URI(href);
             linkedStructure.setUri(uri);
             Mets child;
             try (InputStream in = inputStreamProvider.getInputStream(uri, true)) {
@@ -62,7 +64,7 @@ public class MptrXmlElementAccess {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (URISyntaxException e) {
-            throw new DataBindingException(e.getMessage(), e);
+            throw new DataBindingException("Erroneous URI: \"" + href + "\" (" + e.getMessage() + ')', e);
         }
     }
 
