@@ -341,17 +341,26 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                     URI parentUri = hrefToUri(href);
                     Mets parent = readMets(inputStreamProvider, parentUri, false);
 
-                    LinkedList<LinkedStructure> found = getStructMapsStreamByType(parent, "LOGICAL")
-                            .map(structMap -> structMap.getDiv())
-                            .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
-                            .map(div -> findCurrentStructureInParent(div, current, parentUri, inputStreamProvider))
-                            .filter(Objects::nonNull).reduce((one, another) -> {
-                                if (one.equals(another)) {
-                                    return one;
-                                }
+                    LinkedList<LinkedStructure> found = null;
+                    for (StructMapType structMap : getStructMapsStreamByType(parent, "LOGICAL")
+                            .collect(Collectors.toList())) {
+                        DivType div = structMap.getDiv();
+                        if (!div.getMptr().isEmpty()) {
+                            div = div.getDiv().get(0);
+                        }
+                        LinkedList<LinkedStructure> maybeFound = findCurrentStructureInParent(div, current, parentUri,
+                            inputStreamProvider);
+                        if (maybeFound != null) {
+                            if (found == null) {
+                                found = maybeFound;
+                            } else {
                                 throw new IllegalStateException("Child is referenced from parent multiple times");
-                            })
-                            .orElseThrow(() -> new IllegalStateException("Child not referenced from parent"));
+                            }
+                        }
+                    }
+                    if (found == null) {
+                        throw new IllegalStateException("Child not referenced from parent");
+                    }
                     found.addAll(0, readUplinks(parent, inputStreamProvider));
                     return found;
                 }).reduce((one, another) -> {
