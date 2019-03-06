@@ -52,14 +52,14 @@
             <h5 >
                 <h:outputText value="#{msgs.project}"/>
             </h5>
-            <p:dataList value="#{SearchResultForm.projectsForFiltering}" var="project" type="definition">
+            <p:dataList id="filterProjects" value="#{SearchResultForm.projectsForFiltering}" var="project" type="definition">
                 <p:commandLink update="searchResultForm" action="#{SearchResultForm.filterListByProject(project)}">#{project.title}</p:commandLink>
             </p:dataList>
 
             <h5 >
                 <h:outputText value="#{msgs.task}"/>
             </h5>
-            <p:dataList value="#{SearchResultForm.tasksForFiltering}" var="task" type="definition">
+            <p:dataList id="filterTasks" value="#{SearchResultForm.tasksForFiltering}" var="task" type="definition">
                 <p:commandLink update="searchResultForm" action="#{SearchResultForm.filterListByTask(task)}">#{task.title}</p:commandLink>
             </p:dataList>
         </h:form>
