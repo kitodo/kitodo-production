@@ -30,7 +30,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MptrXmlElementAccess {
 
-    LinkedStructure linkedStructure = new LinkedStructure();
+    private LinkedStructure linkedStructure = new LinkedStructure();
 
     /**
      * Constructor to read a linked structure from METS.
@@ -122,5 +122,14 @@ public class MptrXmlElementAccess {
         if (!Objects.deepEquals(linked, current)) {
             throw new IllegalStateException("METS file linked as child points to different parent METS");
         }
+    }
+
+    /**
+     * Returns the linked structure of this {@code <mptr>} XML element access.
+     * 
+     * @return the linked structure
+     */
+    public LinkedStructure getLinkedStructure() {
+        return linkedStructure;
     }
 }
