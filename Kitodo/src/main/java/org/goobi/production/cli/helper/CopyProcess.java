@@ -300,19 +300,14 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addProperties(ImportObject io) {
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription);
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
+
         if (Objects.isNull(io)) {
             addAdditionalFields(this.additionalFields, this.prozessKopie);
-
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
-
             for (Property processProperty : io.getProcessProperties()) {
                 addPropertyForProcess(this.prozessKopie, processProperty);
             }
@@ -323,8 +318,8 @@ public class CopyProcess extends ProzesskopieForm {
             for (Property templateProperty : io.getTemplateProperties()) {
                 addPropertyForTemplate(this.prozessKopie, templateProperty);
             }
-            BeanHelper.addPropertyForProcess(prozessKopie, "Template", this.template.getTitle());
-            BeanHelper.addPropertyForProcess(prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
+            BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
+            BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
         }
     }
 
