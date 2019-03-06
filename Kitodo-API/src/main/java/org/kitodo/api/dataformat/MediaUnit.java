@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -157,7 +158,7 @@ public class MediaUnit {
             URI uri = mediaFiles.entrySet().iterator().next().getValue();
             fileName = FilenameUtils.getBaseName(uri.getPath()).concat(" (");
         }
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             fileName = type + ' ' + fileName;
         }
         return mediaFiles.entrySet().stream().map(Entry::getKey).map(MediaVariant::getUse)
@@ -171,7 +172,7 @@ public class MediaUnit {
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
         result = prime * result + order;
         result = prime * result + ((orderlabel == null) ? 0 : orderlabel.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + (Objects.isNull(type) ? 0 : type.hashCode());
         return result;
     }
 
@@ -179,9 +180,6 @@ public class MediaUnit {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
-            return false;
         }
         if (!(obj instanceof MediaUnit)) {
             return false;
@@ -204,8 +202,8 @@ public class MediaUnit {
         } else if (!orderlabel.equals(other.orderlabel)) {
             return false;
         }
-        if (type == null) {
-            if (other.type != null) {
+        if (Objects.isNull(type)) {
+            if (Objects.nonNull(other.type)) {
                 return false;
             }
         } else if (!type.equals(other.type)) {
