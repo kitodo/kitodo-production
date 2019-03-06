@@ -119,6 +119,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             InputStreamProviderInterface inputStreamProvider) {
 
         Workpiece workpiece = new Workpiece();
+        readEditHistory(mets, workpiece);
+        Map<String, FileXmlElementAccess> divIDsToMediaUnits = readMediaUnits(mets, workpiece);
+        Map<String, Set<FileXmlElementAccess>> mediaUnitsMap = readViews(mets, divIDsToMediaUnits);
+        readStructure(mets, mediaUnitsMap, workpiece, inputStreamProvider);
+        return workpiece;
+    }
+
+    private static void readEditHistory(Mets mets, Workpiece workpiece) {
         MetsHdr metsHdr = mets.getMetsHdr();
         if (Objects.nonNull(metsHdr)) {
             workpiece.setCreationDate(metsHdr.getCREATEDATE().toGregorianCalendar());
@@ -130,6 +138,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 workpiece.setId(metsDocumentID.getID());
             }
         }
+    }
+
+    private static Map<String, FileXmlElementAccess> readMediaUnits(Mets mets, Workpiece workpiece) {
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> useXmlAttributeAccess = fileSec != null
                 ? fileSec.getFileGrp().parallelStream().map(UseXmlAttributeAccess::new)
@@ -147,6 +158,11 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             divIDsToMediaUnits.put(div.getID(), fileXmlElementAccess);
             readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, mediaUnit, divIDsToMediaUnits);
         }
+        return divIDsToMediaUnits;
+    }
+
+    private static Map<String, Set<FileXmlElementAccess>> readViews(Mets mets,
+            Map<String, FileXmlElementAccess> divIDsToMediaUnits) {
         StructLink structLink = mets.getStructLink();
         if (structLink == null) {
             structLink = new StructLink();
@@ -159,17 +175,22 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        /*
-         * If the topmost <mets:div> contains a <mets:mptr>, then it is a holder
-         * <div> for that <mptr> and must be skipped.
-         */
+        return mediaUnitsMap;
+    }
+
+    /**
+     * If the topmost {@code <mets:div>} contains a {@code <mets:mptr>}, then it
+     * is a holder {@code <div>} for that {@code <mptr>} and must be skipped.
+     */
+    private static void readStructure(Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap,
+            Workpiece workpiece, InputStreamProviderInterface inputStreamProvider) {
+
         workpiece.setStructure(
             getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
                 .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
                     .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, inputStreamProvider))
                 .collect(Collectors.toList()).iterator().next());
         workpiece.getUplinks().addAll(readUplinks(mets, inputStreamProvider));
-        return workpiece;
     }
 
     private static void readMeadiaUnitsTreeRecursive(DivType div, Mets mets,
