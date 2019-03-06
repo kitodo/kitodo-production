@@ -201,7 +201,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            a function that opens an input stream
      * @return a list of the parent structures of the document
      */
-    private static final LinkedList<LinkedStructure> findMyself(DivType div, Mets current, URI parentUri,
+    private static final LinkedList<LinkedStructure> findCurrentStructureInParent(DivType div, Mets current, URI parentUri,
             InputStreamProviderInterface inputStreamProvider) {
 
         if (!div.getMptr().isEmpty()) {
@@ -211,7 +211,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             return found ? new LinkedList<>() : null;
         } else {
             Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
-                LinkedList<LinkedStructure> links = findMyself(child, current, parentUri, inputStreamProvider);
+                LinkedList<LinkedStructure> links = findCurrentStructureInParent(child, current, parentUri, inputStreamProvider);
                 return links != null ? Pair.of(child, links) : null;
             }).filter(Objects::nonNull).reduce((one, another) -> {
                 if (one.getRight().equals(another.getRight())) {
@@ -344,7 +344,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                     LinkedList<LinkedStructure> found = getStructMapsStreamByType(parent, "LOGICAL")
                             .map(structMap -> structMap.getDiv())
                             .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
-                            .map(div -> findMyself(div, current, parentUri, inputStreamProvider))
+                            .map(div -> findCurrentStructureInParent(div, current, parentUri, inputStreamProvider))
                             .filter(Objects::nonNull).reduce((one, another) -> {
                                 if (one.equals(another)) {
                                     return one;
