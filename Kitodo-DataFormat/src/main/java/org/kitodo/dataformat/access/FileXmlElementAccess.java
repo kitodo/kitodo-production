@@ -89,6 +89,7 @@ public class FileXmlElementAccess {
             mediaUnit.setOrder(order.intValue());
         }
         mediaUnit.setOrderlabel(div.getORDERLABEL());
+        mediaUnit.setType(div.getTYPE());
         for (Object mdSecType : div.getDMDID()) {
             mediaUnit.getMetadata().addAll(DivXmlElementAccess.readMetadata((MdSecType) mdSecType, MdSec.DMD_SEC));
         }
@@ -138,6 +139,7 @@ public class FileXmlElementAccess {
             div.setORDER(BigInteger.valueOf(mediaUnit.getOrder()));
         }
         div.setORDERLABEL(mediaUnit.getOrderlabel());
+        div.setTYPE(mediaUnit.getType());
         for (Entry<MediaVariant, URI> use : mediaUnit.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
             fptr.setFILEID(mediaFilesToIDFiles.get(use.getValue()));
