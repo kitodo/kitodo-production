@@ -11,22 +11,16 @@
 
 package org.kitodo.production.services.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.security.SecurityAccess;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-public class SecurityAccessService {
+public class SecurityAccessService extends SecurityAccess {
 
     private static SecurityAccessService instance = null;
-    private static final String GLOBAL_IDENTIFIER = "GLOBAL";
-    private static final String CLIENT_IDENTIFIER = "CLIENT";
 
     /**
      * Return singleton variable of type SecurityAccessService.
@@ -44,28 +38,10 @@ public class SecurityAccessService {
         return instance;
     }
 
-    private Collection<? extends GrantedAuthority> getAuthoritiesOfCurrentAuthentication() {
-        Authentication authentication = getCurrentAuthentication();
-        if (Objects.nonNull(authentication)) {
-            return authentication.getAuthorities();
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
     /**
-     * Gets Authentication object of current threads security context.
+     * Get the current authenticated user of current threads security context.
      *
-     * @return authentication object
-     */
-    private Authentication getCurrentAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    /**
-     * Gets the current authenticated user of current threads security context.
-     *
-     * @return The SecurityUserDetails object or null if no user is authenticated.
+     * @return the SecurityUserDetails object or null if no user is authenticated
      */
     public SecurityUserDetails getAuthenticatedSecurityUserDetails() {
         if (isAuthenticated()) {
@@ -78,7 +54,7 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if there is currently an authenticated user.
+     * Check if there is currently an authenticated user.
      *
      * @return true if there is currently an authenticated user
      */
@@ -90,101 +66,51 @@ public class SecurityAccessService {
         return false;
     }
 
-    private boolean hasAuthority(String authorityTitle) {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorityTitle);
-        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-        return authorities.contains(authority);
-    }
-
-    private String[] getStringArray(String strings) {
-        strings = strings.replaceAll("\\s+", ""); // remove whitespaces
-        return strings.split(",");
-    }
-
     /**
-     * Checks if the current user has a specified authority globally or for a
-     * client.
+     * Check if the current user has a specified authority for a client.
      *
      * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean hasAuthorityGlobalOrForClient(String authorityTitle) {
-        return hasAuthorityGlobal(authorityTitle) || hasAuthorityForClient(authorityTitle);
-    }
-
-    /**
-     * Checks if the current user has a specified authority for a client.
-     *
-     * @param authorityTitles
-     *            The authority title.
-     * @return True if the current user has the specified authority.
-     */
-    public boolean hasAnyAuthorityForClient(String authorityTitles) {
-        String[] authorityTitlesArray = getStringArray(authorityTitles);
-        for (String authorityTitle : authorityTitlesArray) {
-            if (hasAuthorityForClient(authorityTitle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the current user has a specified authority for a client.
-     *
-     * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user has the specified authority.
+     *            the authority title
+     * @return true if the current user has the specified authority
      */
     public boolean hasAuthorityForClient(String authorityTitle) {
-        String clientAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_"
-                + ServiceManager.getUserService().getSessionClientId();
-        return hasAuthority(clientAuthority);
+        return hasAuthorityForClient(authorityTitle, ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
-     * Checks if the current user has a specified authority globally.
+     * Check if the current user has a specified authority globally or for a client.
      *
      * @param authorityTitle
-     *            The authority title.
-     * @return True if the current user has the specified authority.
+     *            the authority title
+     * @return true if the current user has the specified authority
      */
-    public boolean hasAuthorityGlobal(String authorityTitle) {
-        return hasAuthority(authorityTitle + "_" + GLOBAL_IDENTIFIER);
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle) {
+        return hasAuthorityGlobalOrForClient(authorityTitle, ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
-     * Checks if the current user has any of the specified authorities globally.
+     * Check if the current user has a specified authority for a client.
      *
      * @param authorityTitles
-     *            The authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return True if the current user has any of the specified authorities
-     *         globally
+     *            the authority title
+     * @return true if the current user has the specified authority
      */
-    public boolean hasAnyAuthorityGlobal(String authorityTitles) {
-        String[] authorityTitlesArray = getStringArray(authorityTitles);
-        for (String authorityTitle : authorityTitlesArray) {
-            if (hasAuthorityGlobal(authorityTitle)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean hasAnyAuthorityForClient(String authorityTitles) {
+        return hasAnyAuthorityForClient(authorityTitles, ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
-     * Checks if the current user has any of the specified authorities globally or
+     * Check if the current user has any of the specified authorities globally or
      * for client.
      *
      * @param authorityTitles
-     *            The authority titles separated with commas e.g. "authority1,
+     *            the authority titles separated with commas e.g. "authority1,
      *            authority2, authority3".
      * @return true if the current user has any of the specified authorities
      *         globally or for client
      */
     public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles) {
-        return hasAnyAuthorityGlobal(authorityTitles) || hasAnyAuthorityForClient(authorityTitles);
+        return hasAnyAuthorityGlobalOrForClient(authorityTitles, ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
