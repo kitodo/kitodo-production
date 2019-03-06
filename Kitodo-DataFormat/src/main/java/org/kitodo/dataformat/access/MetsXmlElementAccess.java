@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,6 +46,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Mptr;
@@ -116,7 +116,8 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     }
 
     static final Workpiece toWorkpiece(Mets mets,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+            InputStreamProviderInterface inputStreamProvider) {
+
         Workpiece workpiece = new Workpiece();
         MetsHdr metsHdr = mets.getMetsHdr();
         if (Objects.nonNull(metsHdr)) {
@@ -165,9 +166,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         workpiece.setStructure(
             getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
                 .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
-                    .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, getInputStreamFunction))
+                    .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, inputStreamProvider))
                 .collect(Collectors.toList()).iterator().next());
-        workpiece.getUplinks().addAll(readUplinks(mets, getInputStreamFunction));
+        workpiece.getUplinks().addAll(readUplinks(mets, inputStreamProvider));
         return workpiece;
     }
 
@@ -188,7 +189,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * Locates the pointer to the current METS document within the parent
      * documents and return a list of hierarchy levels to that pointer within
      * the parent METS documents.
-     * 
+     *
      * @param div
      *            substructure of the structure tree of the immediately superior
      *            METS document to be examined (to be called recursively)
@@ -196,23 +197,21 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            content of the current METS file to be found
      * @param parentUri
      *            URI of the parent METS document to be returned within the link
-     * @param getInputStreamFunction
-     *            a function
-     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
-     *            to open found URIs and compare their content
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      * @return a list of the parent structures of the document
      */
     private static final LinkedList<LinkedStructure> findMyself(DivType div, Mets current, URI parentUri,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+            InputStreamProviderInterface inputStreamProvider) {
 
         if (!div.getMptr().isEmpty()) {
             boolean found = div.getMptr().stream().map(Mptr::getHref)
-                    .map(href -> Objects.deepEquals(readMets(getInputStreamFunction, hrefToUri(href), false), current))
+                    .map(href -> Objects.deepEquals(readMets(inputStreamProvider, hrefToUri(href), false), current))
                     .reduce(Boolean::logicalOr).get();
             return found ? new LinkedList<>() : null;
         } else {
             Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
-                LinkedList<LinkedStructure> links = findMyself(child, current, parentUri, getInputStreamFunction);
+                LinkedList<LinkedStructure> links = findMyself(child, current, parentUri, inputStreamProvider);
                 return links != null ? Pair.of(child, links) : null;
             }).filter(Objects::nonNull).reduce((one, another) -> {
                 if (one.getRight().equals(another.getRight())) {
@@ -261,17 +260,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *
      * @param in
      *            InputStream to read from
-     * @param getInputStreamFunction
-     *            A reference to a function
-     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
-     *            If invoked, the calling function is responsible of closing the
-     *            stream.
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      */
     @Override
-    public Workpiece read(InputStream in, Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction)
+    public Workpiece read(InputStream in, InputStreamProviderInterface inputStreamProvider)
             throws IOException {
 
-        return toWorkpiece(readMets(in), getInputStreamFunction);
+        return toWorkpiece(readMets(in), inputStreamProvider);
     }
 
     /**
@@ -298,12 +294,10 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     }
 
     /**
-     * Use the {@code getInputStreamFunction} function to read in a METS file.
-     * 
-     * @param getInputStreamFunction
-     *            a function
-     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
-     *            to open found URIs and compare their content
+     * Use the {@code inputStreamProvider} function to read in a METS file.
+     *
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      * @param uri
      *            URI to read
      * @param couldHaveToBeWrittenInTheFuture
@@ -311,17 +305,17 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            That would be the case, if it is a subordinate METS file and
      *            the link to this is to be removed. This is never the case for
      *            higher-level METS files. Depending on this, the
-     *            {@code getInputStreamFunction} function must request the lock
-     *            so that a later change may still be possible, but no documents
+     *            {@code inputStreamProvider} function must request the lock so
+     *            that a later change may still be possible, but no documents
      *            are unnecessarily locked for other users.
      * @return the parsed METS document
      * @throws UncheckedIOException
      *             if the reading fails (to be used in lambda expressions)
      */
-    static final Mets readMets(Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction, URI uri,
+    static final Mets readMets(InputStreamProviderInterface inputStreamProvider, URI uri,
             boolean couldHaveToBeWrittenInTheFuture) {
 
-        try (InputStream in = getInputStreamFunction.apply(Pair.of(uri, couldHaveToBeWrittenInTheFuture))) {
+        try (InputStream in = inputStreamProvider.getInputStream(uri, couldHaveToBeWrittenInTheFuture)) {
             return readMets(in);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -331,28 +325,26 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     /**
      * Reads the superordinate structures of this workpiece from a METS
      * document.
-     * 
+     *
      * @param current
      *            content of the current METS file
-     * @param getInputStreamFunction
-     *            a function
-     *            {@code InputStream getInputStream(URI uri, boolean couldHaveToBeWrittenInTheFuture)}
-     *            to open found URIs and compare their content
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      * @return a list of the parent structures of the document
      */
     private static final List<LinkedStructure> readUplinks(Mets current,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+            InputStreamProviderInterface inputStreamProvider) {
 
         Optional<List<LinkedStructure>> result = getStructMapsStreamByType(current, "LOGICAL")
                 .map(structMap -> structMap.getDiv()).filter(div -> !div.getMptr().isEmpty())
                 .flatMap(div -> div.getMptr().parallelStream()).map(mptr -> mptr.getHref()).map(href -> {
                     URI parentUri = hrefToUri(href);
-                    Mets parent = readMets(getInputStreamFunction, parentUri, false);
+                    Mets parent = readMets(inputStreamProvider, parentUri, false);
 
                     LinkedList<LinkedStructure> found = getStructMapsStreamByType(parent, "LOGICAL")
                             .map(structMap -> structMap.getDiv())
                             .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
-                            .map(div -> findMyself(div, current, parentUri, getInputStreamFunction))
+                            .map(div -> findMyself(div, current, parentUri, inputStreamProvider))
                             .filter(Objects::nonNull).reduce((one, another) -> {
                                 if (one.equals(another)) {
                                     return one;
@@ -360,7 +352,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                                 throw new IllegalStateException("Child is referenced from parent multiple times");
                             })
                             .orElseThrow(() -> new IllegalStateException("Child not referenced from parent"));
-                    found.addAll(0, readUplinks(parent, getInputStreamFunction));
+                    found.addAll(0, readUplinks(parent, inputStreamProvider));
                     return found;
                 }).reduce((one, another) -> {
                     one.addAll(another);
