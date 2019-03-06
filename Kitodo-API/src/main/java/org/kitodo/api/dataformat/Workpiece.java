@@ -54,7 +54,7 @@ public class Workpiece {
 
     /**
      * Returns the creation date of the workpiece.
-     * 
+     *
      * @return the creation date
      */
     public GregorianCalendar getCreationDate() {
@@ -63,7 +63,7 @@ public class Workpiece {
 
     /**
      * Sets the creation date of the workpiece.
-     * 
+     *
      * @param creationDate
      *            creation date to set
      */
@@ -73,7 +73,7 @@ public class Workpiece {
 
     /**
      * Returns the edit history.
-     * 
+     *
      * @return the edit history
      */
     public List<ProcessingNote> getEditHistory() {
@@ -82,7 +82,7 @@ public class Workpiece {
 
     /**
      * Returns the ID of the workpiece.
-     * 
+     *
      * @return the ID
      */
     public String getId() {
@@ -91,7 +91,7 @@ public class Workpiece {
 
     /**
      * Sets the ID of the workpiece.
-     * 
+     *
      * @param id
      *            ID to set
      */
@@ -101,7 +101,7 @@ public class Workpiece {
 
     /**
      * Returns the media unit of this workpiece.
-     * 
+     *
      * @return the media units
      */
     public MediaUnit getMediaUnit() {
@@ -110,7 +110,7 @@ public class Workpiece {
 
     /**
      * Returns the media units of this workpiece.
-     * 
+     *
      * @return the media units
      * @deprecated Use {@code getMediaUnit().getChildren()}.
      */
@@ -121,7 +121,7 @@ public class Workpiece {
 
     /**
      * Returns the root element of the structure.
-     * 
+     *
      * @return root element of the structure
      */
     public Structure getStructure() {
@@ -130,7 +130,7 @@ public class Workpiece {
 
     /**
      * Sets the media unit of the workpiece.
-     * 
+     *
      * @param mediaUnit
      *            media unit to set
      */
@@ -140,7 +140,7 @@ public class Workpiece {
 
     /**
      * Sets the structure of the workpiece.
-     * 
+     *
      * @param structure
      *            structure to set
      */
@@ -149,8 +149,8 @@ public class Workpiece {
     }
 
     /**
-     * Returns the uplinks of this workpiece
-     * 
+     * Returns the uplinks of this workpiece.
+     *
      * @return the uplinks
      */
     public List<LinkedStructure> getUplinks() {
