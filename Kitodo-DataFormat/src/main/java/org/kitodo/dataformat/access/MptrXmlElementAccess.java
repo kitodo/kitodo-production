@@ -17,7 +17,6 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.xml.bind.DataBindingException;
 
@@ -25,7 +24,9 @@ import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.DivType.Mptr;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MptrXmlElementAccess {
 
@@ -75,7 +76,7 @@ public class MptrXmlElementAccess {
      * child. Therefore, it is checked at this point whether the assumed child
      * is actually a child. For this, the link is opened and the METS data
      * compared. If the link is missing or the METS data is not equal, the child
-     * is a mistake, and an exception is throne.
+     * is a mistake, and an exception is thrown.
      *
      * @param current
      *            METS data of the current process
@@ -91,24 +92,31 @@ public class MptrXmlElementAccess {
     private void ensureParenthood(Mets current, Mets child,
             InputStreamProviderInterface inputStreamProvider) throws IOException {
 
-        Optional<String> optionalParentLink = child.getStructMap().parallelStream()
-                .filter(structMap -> "LOGICAL".equals(structMap.getTYPE())).map(structMap -> structMap.getDiv())
-                .filter(Objects::nonNull).flatMap(div -> div.getMptr().parallelStream()).map(mptr -> mptr.getHref())
-                .reduce((one, another) -> {
-                    if (!one.equals(another)) {
-                        throw new IllegalStateException("Parent link is ambiguous");
-                    } else {
-                        return one;
-                    }
-                });
-
-        if (!optionalParentLink.isPresent()) {
+        String parentLink = null;
+        for (StructMapType structMap : child.getStructMap()) {
+            if (!"LOGICAL".equals(structMap.getTYPE())) {
+                continue;
+            }
+            DivType div = structMap.getDiv();
+            if (Objects.isNull(div)) {
+                continue;
+            }
+            for (Mptr mptr : div.getMptr()) {
+                String href = mptr.getHref();
+                if (parentLink == null || parentLink.equals(href)) {
+                    parentLink = href;
+                } else {
+                    throw new IllegalStateException("Parent link is ambiguous");
+                }
+            }
+        }
+        if (parentLink == null) {
             throw new IllegalStateException("METS file linked as child misses parent link");
         }
 
         Mets linked;
         try (InputStream in = inputStreamProvider
-                .getInputStream(MetsXmlElementAccess.hrefToUri(optionalParentLink.get()), false)) {
+                .getInputStream(MetsXmlElementAccess.hrefToUri(parentLink), false)) {
             linked = MetsXmlElementAccess.readMets(in);
         }
         if (!Objects.deepEquals(linked, current)) {
