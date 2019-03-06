@@ -268,7 +268,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         return mets.getStructMap().parallelStream().filter(structMap -> structMap.getTYPE().equals(type));
     }
 
-    static final URI hrefToUri(String href) {
+    /**
+     * Converts a URI given as a string to a URI object.
+     *
+     * @param href
+     *            URI to be converted
+     * @return URI as {@code URI} object
+     */
+    public static final URI hrefToUri(String href) {
         try {
             return new URI(href);
         } catch (URISyntaxException e) {
@@ -333,7 +340,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * @throws UncheckedIOException
      *             if the reading fails (to be used in lambda expressions)
      */
-    static final Mets readMets(InputStreamProviderInterface inputStreamProvider, URI uri,
+    public static final Mets readMets(InputStreamProviderInterface inputStreamProvider, URI uri,
             boolean couldHaveToBeWrittenInTheFuture) {
 
         try (InputStream in = inputStreamProvider.getInputStream(uri, couldHaveToBeWrittenInTheFuture)) {
