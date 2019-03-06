@@ -18,7 +18,6 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +47,6 @@ public class RoleForm extends BaseForm {
     /**
      * Default constructor that also sets the LazyDTOModel instance of this bean.
      */
-    @Inject
     public RoleForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRoleService()));

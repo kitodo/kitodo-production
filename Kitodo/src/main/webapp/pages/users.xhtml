@@ -33,13 +33,16 @@
                             rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
                             action="#{RoleForm.newRole}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addClient')}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddClient()}"
                             action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
                             rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"
+                            icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newAuthority}" id="newAuthority" action="#{AuthorityForm.newAuthority}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddAuthority()}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
@@ -79,6 +82,10 @@
             <p:tab title="#{msgs.ldapServers}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewLdapServerList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.authorities}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewAuthorityList()}">
+                <ui:include src="/WEB-INF/templates/includes/users/authorityList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>

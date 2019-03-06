@@ -27,8 +27,7 @@
     <ui:param name="isCreateMode"
               value="#{ClientForm.client.id eq null and SecurityAccessController.hasAuthorityToAddClient()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
-    <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode}"/>
+    <ui:param name="isViewMode" value="#{not isEditMode and not isCreateMode}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />

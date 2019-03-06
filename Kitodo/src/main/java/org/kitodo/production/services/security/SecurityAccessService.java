@@ -204,6 +204,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to add the authority.
+     *
+     * @return true if the current user has the authority to add the authority
+     */
+    public boolean hasAuthorityToAddAuthority() {
+        return hasAuthorityGlobal("addAuthority");
+    }
+
+    /**
      * Check if current user has authority to add anything on user page. It returns
      * true if user has at least one of below given authorities.
      *
@@ -316,6 +325,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to delete the authority.
+     *
+     * @return true if the current user has the authority to delete the authority
+     */
+    public boolean hasAuthorityToDeleteAuthority() {
+        return hasAuthorityGlobalOrForClient("deleteAuthority");
+    }
+
+    /**
      * Check if the current user has the authority to edit the task.
      *
      * @return true if the current user has the authority to edit the task
@@ -411,7 +429,16 @@ public class SecurityAccessService extends SecurityAccess {
      * @return true if the current user has the authority to edit the client
      */
     public boolean hasAuthorityToEditClient() {
-        return hasAuthorityGlobal("addClient");
+        return hasAuthorityGlobal("editClient");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the authority.
+     *
+     * @return true if the current user has the authority to edit the authority
+     */
+    public boolean hasAuthorityToEditAuthority() {
+        return hasAuthorityGlobal("editAuthority");
     }
 
     /**
@@ -523,6 +550,16 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewClient() {
         return hasAnyAuthorityGlobalOrForClient("viewClient, addClient, editClient");
+    }
+
+    /**
+     * Check if the current user has the authority to view the authority. Add and
+     * edit authorities include also view.
+     *
+     * @return true if the current user has the authority to view the authority
+     */
+    public boolean hasAuthorityToViewAuthority() {
+        return hasAnyAuthorityGlobalOrForClient("viewAuthority, addAuthority, editAuthority");
     }
 
     /**
@@ -643,6 +680,16 @@ public class SecurityAccessService extends SecurityAccess {
      */
     public boolean hasAuthorityToViewClientList() {
         return hasAuthorityGlobalOrForClient("viewAllClients");
+    }
+
+    /**
+     * Check if current user has global authority to view authority list. It returns
+     * true if user has "viewAllAuthorities" authority globally.
+     *
+     * @return true if user has authority 'viewAllAuthorities' globally
+     */
+    public boolean hasAuthorityToViewAuthorityList() {
+        return hasAuthorityGlobal("viewAllAuthorities");
     }
 
     /**

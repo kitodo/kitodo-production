@@ -97,8 +97,9 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Authority> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        return new ArrayList<>();
+        return dao.getByQuery("FROM Authority"  + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
     /**
