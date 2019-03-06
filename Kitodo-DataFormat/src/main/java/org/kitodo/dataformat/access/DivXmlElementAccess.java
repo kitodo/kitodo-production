@@ -116,7 +116,8 @@ public class DivXmlElementAccess extends Structure {
             if (child.getMptr().isEmpty()) {
                 super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, inputStreamProvider));
             } else {
-                super.getChildren().add(new MptrXmlElementAccess(child, mets, inputStreamProvider).linkedStructure);
+                super.getChildren()
+                        .add(new MptrXmlElementAccess(child, mets, inputStreamProvider).getLinkedStructure());
             }
         }
         super.setType(div.getTYPE());
