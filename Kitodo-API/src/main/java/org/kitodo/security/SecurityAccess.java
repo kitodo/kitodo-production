@@ -23,9 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /**
  * If module wants to use own roles, it needs to extend this class. Currently it
  * is usable only for global roles as client id is not available to modules.
- * // TODO: find a way for modules to get information about current client id
  */
-public class SecurityAccess {
+public abstract class SecurityAccess {
 
     private static final String GLOBAL_IDENTIFIER = "GLOBAL";
     private static final String CLIENT_IDENTIFIER = "CLIENT";
@@ -38,6 +37,14 @@ public class SecurityAccess {
             return new ArrayList<>();
         }
     }
+
+    /**
+     * Get client id for current session.
+     *
+     * @return value of client id for current session
+     */
+    // TODO: find a way for modules to get information about current client id
+    public abstract int getClientId();
 
     /**
      * Check if the current user has a specified authority globally.
@@ -55,12 +62,10 @@ public class SecurityAccess {
      *
      * @param authorityTitle
      *            the authority title
-     * @param clientId
-     *            id of current session client
      * @return true if the current user has the specified authority
      */
-    public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
-        String clientAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_" + clientId;
+    public boolean hasAuthorityForClient(String authorityTitle) {
+        String clientAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_" + getClientId();
         return hasAuthority(clientAuthority);
     }
 
@@ -69,12 +74,10 @@ public class SecurityAccess {
      *
      * @param authorityTitle
      *            the authority title
-     * @param clientId
-     *            id of current session client
      * @return true if the current user has the specified authority
      */
-    public boolean hasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
-        return hasAuthorityGlobal(authorityTitle) || hasAuthorityForClient(authorityTitle, clientId);
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle) {
+        return hasAuthorityGlobal(authorityTitle) || hasAuthorityForClient(authorityTitle);
     }
 
     /**
@@ -101,14 +104,12 @@ public class SecurityAccess {
      *
      * @param authorityTitles
      *            the authority title
-     * @param clientId
-     *            id of current session client
      * @return true if the current user has the specified authority
      */
-    public boolean hasAnyAuthorityForClient(String authorityTitles, int clientId) {
+    public boolean hasAnyAuthorityForClient(String authorityTitles) {
         String[] authorityTitlesArray = getStringArray(authorityTitles);
         for (String authorityTitle : authorityTitlesArray) {
-            if (hasAuthorityForClient(authorityTitle, clientId)) {
+            if (hasAuthorityForClient(authorityTitle)) {
                 return true;
             }
         }
@@ -122,13 +123,11 @@ public class SecurityAccess {
      * @param authorityTitles
      *            the authority titles separated with commas e.g. "authority1,
      *            authority2, authority3"
-     * @param clientId
-     *            id of current session client
      * @return true if the current user has any of the specified authorities
      *         globally or for client
      */
-    public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles, int clientId) {
-        return hasAnyAuthorityGlobal(authorityTitles) || hasAnyAuthorityForClient(authorityTitles, clientId);
+    public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles) {
+        return hasAnyAuthorityGlobal(authorityTitles) || hasAnyAuthorityForClient(authorityTitles);
     }
 
     /**

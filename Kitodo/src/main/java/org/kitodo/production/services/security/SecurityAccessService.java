@@ -38,6 +38,11 @@ public class SecurityAccessService extends SecurityAccess {
         return instance;
     }
 
+    @Override
+    public int getClientId() {
+        return ServiceManager.getUserService().getSessionClientId();
+    }
+
     /**
      * Get the current authenticated user of current threads security context.
      *
@@ -64,53 +69,6 @@ public class SecurityAccessService extends SecurityAccess {
             return currentAuthentication.isAuthenticated();
         }
         return false;
-    }
-
-    /**
-     * Check if the current user has a specified authority for a client.
-     *
-     * @param authorityTitle
-     *            the authority title
-     * @return true if the current user has the specified authority
-     */
-    public boolean hasAuthorityForClient(String authorityTitle) {
-        return hasAuthorityForClient(authorityTitle, ServiceManager.getUserService().getSessionClientId());
-    }
-
-    /**
-     * Check if the current user has a specified authority globally or for a client.
-     *
-     * @param authorityTitle
-     *            the authority title
-     * @return true if the current user has the specified authority
-     */
-    public boolean hasAuthorityGlobalOrForClient(String authorityTitle) {
-        return hasAuthorityGlobalOrForClient(authorityTitle, ServiceManager.getUserService().getSessionClientId());
-    }
-
-    /**
-     * Check if the current user has a specified authority for a client.
-     *
-     * @param authorityTitles
-     *            the authority title
-     * @return true if the current user has the specified authority
-     */
-    public boolean hasAnyAuthorityForClient(String authorityTitles) {
-        return hasAnyAuthorityForClient(authorityTitles, ServiceManager.getUserService().getSessionClientId());
-    }
-
-    /**
-     * Check if the current user has any of the specified authorities globally or
-     * for client.
-     *
-     * @param authorityTitles
-     *            the authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return true if the current user has any of the specified authorities
-     *         globally or for client
-     */
-    public boolean hasAnyAuthorityGlobalOrForClient(String authorityTitles) {
-        return hasAnyAuthorityGlobalOrForClient(authorityTitles, ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
