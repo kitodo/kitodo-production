@@ -34,6 +34,7 @@ import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
+import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 
 public class EditingST extends BaseTestSelenium {
 
@@ -114,9 +115,15 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editWorkflowTest() throws Exception {
-        projectsPage.editWorkflow();
+        String status = projectsPage.goToWorkflowTab().getWorkflowStatusForWorkflow();
+        assertEquals("Status is not correct", "Entwurf", status);
+        WorkflowEditPage workflowEditPage = projectsPage.editWorkflow();
+        workflowEditPage.changeWorkflowStatusToActive();
         assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test)",
             Pages.getWorkflowEditPage().getHeaderText());
+        projectsPage = workflowEditPage.save();
+        status = projectsPage.goToWorkflowTab().getWorkflowStatusForWorkflow();
+        assertEquals("Status change was not saved", "Aktiv", status);
     }
 
     @Test

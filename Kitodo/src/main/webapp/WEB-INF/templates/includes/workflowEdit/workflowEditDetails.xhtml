@@ -26,27 +26,24 @@
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
             <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
-                         value="#{WorkflowForm.workflow.title}"
-                         required="true"/>
+                         value="#{WorkflowForm.workflow.title}" required="true"/>
             <div class="workflow-editor-hidden">
-	            <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
+                <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
 
-	            <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}">
-	                <f:selectItems value="#{WorkflowForm.roles}" />
-	            </p:selectOneMenu>
-	            <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
-	                             action="#{WorkflowForm.readXMLDiagram}"
-	                             rendered="#{WorkflowForm.workflow.title ne null}"
-	                             immediate="true"/>
+                <p:selectOneMenu id="roleId" value="#{WorkflowForm.roleId}">
+                    <f:selectItems value="#{WorkflowForm.roles}"/>
+                </p:selectOneMenu>
+                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
+                                 action="#{WorkflowForm.readXMLDiagram}"
+                                 rendered="#{WorkflowForm.workflow.title ne null}" immediate="true"/>
             </div>
         </p:row>
         <p:row>
             <p:outputLabel for="status" value="#{msgs.status}"/>
-            <p:selectOneMenu id="status" value="#{WorkflowForm.workflow.status}"
-                             required="#{empty param['editForm:saveButtonToggler']}" class="input">
-                <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
-                <f:selectItems value="#{WorkflowForm.workflowStatuses}"/>
-                <p:ajax event="change" oncomplete="toggleSave()"/>
+            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input">
+                <p:ajax event="change" update="@this" />
+                <f:selectItems value="#{WorkflowForm.workflowStatuses}" var="status"
+                               itemValue = "#{status}"/>
             </p:selectOneMenu>
         </p:row>
     </p:panelGrid>
