@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,17 +86,6 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
 public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
-    /**
-     * There must not be multiple references to the child, or they must be
-     * identical.
-     */
-    private static final BinaryOperator<LinkedList<LinkedStructure>> CHILD_REFERENCED_ONCE = (one, another) -> {
-        if (one.equals(another)) {
-            return one;
-        }
-        throw new IllegalStateException("Child is referenced from parent multiple times");
-    };
-
     /**
      * The data object of this mets XML element access.
      */
