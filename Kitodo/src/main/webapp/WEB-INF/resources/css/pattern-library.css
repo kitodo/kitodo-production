@@ -811,6 +811,17 @@ Popup dialogs
     display: none;
 }
 
+.ui-dialog.legal-dialog div.dialogFieldWrapper {
+    overflow-y: scroll;
+    max-height: calc(100% - 100px);
+}
+
+.ui-dialog.legal-dialog button.secondary.right {
+    position: absolute;
+    bottom: var(--default-double-size);
+    right: var(--default-double-size);
+}
+
 #loadingDialog {
     padding: var(--default-half-size);
 }

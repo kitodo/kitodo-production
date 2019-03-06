@@ -144,9 +144,8 @@ public class LegalTexts implements Serializable {
     }
 
     private static String getDefaultText(String legalText, String language) {
-        return "<h1>" + Helper.getString(Locale.forLanguageTag(language), legalText) + "</h1><br/><p>"
-                + Helper.getString(Locale.forLanguageTag(language), legalText + "DefaultText") + "</p><br/><p>"
-                + Helper.getString(Locale.forLanguageTag(language), "adjustSettingText") + "</p>";
+        return "<p>" + Helper.getString(Locale.forLanguageTag(language), legalText + "DefaultText") + "</p><br/>"
+                + "<p>" + Helper.getString(Locale.forLanguageTag(language), "adjustSettingText") + "</p>";
 
     }
 }
