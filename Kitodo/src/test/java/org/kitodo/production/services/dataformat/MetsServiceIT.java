@@ -82,10 +82,11 @@ public class MetsServiceIT {
     @Test
     public void testReadingHierarchy() throws Exception {
         Workpiece workpiece = MetsService.getInstance()
-                .load(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/between.xml")), args -> {
+                .load(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/between.xml")),
+                    (uri, couldHaveToBeWrittenInTheFuture) -> {
             try {
                 return new FileInputStream(
-                        new File("../Kitodo-DataFormat/src/test/resources/" + args.getLeft().getPath()));
+                                    new File("../Kitodo-DataFormat/src/test/resources/" + uri.getPath()));
             } catch (FileNotFoundException e) {
                 throw new UncheckedIOException(e);
             }

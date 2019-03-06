@@ -18,13 +18,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.bind.DataBindingException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LinkedStructure;
 import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
@@ -34,33 +33,30 @@ public class MptrXmlElementAccess {
 
     /**
      * Constructor to read a linked structure from METS.
-     * 
+     *
      * @param div
      *            METS {@code <div>} element from which the structure is to be
      *            built
      * @param mets
      *            METS data structure of the current workpiece
-     * @param getInputStreamFunction
-     *            A reference to a function
-     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
-     *            If invoked, the calling function is responsible of closing the
-     *            stream.
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      * @throws IllegalStateException
      *             if the child does not have a link to the parent, or the
      *             parent link of the child returns METS data different from the
      *             parent’s METS
      */
-    MptrXmlElementAccess(DivType div, Mets parent, Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+    MptrXmlElementAccess(DivType div, Mets parent, InputStreamProviderInterface inputStreamProvider) {
         try {
             linkedStructure.setOrder(div.getORDER());
             URI uri = new URI(div.getMptr().stream().findFirst().get().getHref());
             linkedStructure.setUri(uri);
             Mets child;
-            try (InputStream in = getInputStreamFunction.apply(Pair.of(uri, true))) {
+            try (InputStream in = inputStreamProvider.getInputStream(uri, true)) {
                 child = MetsXmlElementAccess.readMets(in);
             }
-            ensureParenthood(parent, child, getInputStreamFunction);
-            Structure linked = MetsXmlElementAccess.toWorkpiece(child, getInputStreamFunction).getStructure();
+            ensureParenthood(parent, child, inputStreamProvider);
+            Structure linked = MetsXmlElementAccess.toWorkpiece(child, inputStreamProvider).getStructure();
             linkedStructure.setLabel(linked.getLabel());
             linkedStructure.setType(linked.getType());
         } catch (IOException e) {
@@ -78,7 +74,7 @@ public class MptrXmlElementAccess {
      * is actually a child. For this, the link is opened and the METS data
      * compared. If the link is missing or the METS data is not equal, the child
      * is a mistake, and an exception is throne.
-     * 
+     *
      * @param current
      *            METS data of the current process
      * @param child
@@ -91,7 +87,7 @@ public class MptrXmlElementAccess {
      *             parent’s METS
      */
     private void ensureParenthood(Mets current, Mets child,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) throws IOException {
+            InputStreamProviderInterface inputStreamProvider) throws IOException {
 
         Optional<String> optionalParentLink = child.getStructMap().parallelStream()
                 .filter(structMap -> "LOGICAL".equals(structMap.getTYPE())).map(structMap -> structMap.getDiv())
@@ -109,8 +105,8 @@ public class MptrXmlElementAccess {
         }
 
         Mets linked;
-        try (InputStream in = getInputStreamFunction
-                .apply(Pair.of(MetsXmlElementAccess.hrefToUri(optionalParentLink.get()), false))) {
+        try (InputStream in = inputStreamProvider
+                .getInputStream(MetsXmlElementAccess.hrefToUri(optionalParentLink.get()), false)) {
             linked = MetsXmlElementAccess.readMets(in);
         }
         if (!Objects.deepEquals(linked, current)) {

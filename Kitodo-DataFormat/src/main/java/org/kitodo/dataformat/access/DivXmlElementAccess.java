@@ -11,8 +11,6 @@
 
 package org.kitodo.dataformat.access;
 
-import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,6 +37,7 @@ import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -88,7 +87,7 @@ public class DivXmlElementAccess extends Structure {
 
     /**
      * Constructor to read a structure from METS.
-     * 
+     *
      * @param div
      *            METS {@code <div>} element from which the structure is to be
      *            built
@@ -98,14 +97,11 @@ public class DivXmlElementAccess extends Structure {
      * @param mediaUnitsMap
      *            From this map, the media units are read, which must be
      *            referenced here by their ID.
-     * @param getInputStreamFunction
-     *            A reference to a function
-     *            {@code InputStream getInputStream(URI uri, Boolean couldHaveToBeWrittenInTheFuture)}.
-     *            If invoked, the calling function is responsible of closing the
-     *            stream.
+     * @param inputStreamProvider
+     *            a function that opens an input stream
      */
     DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap,
-            Function<Pair<URI, Boolean>, InputStream> getInputStreamFunction) {
+            InputStreamProviderInterface inputStreamProvider) {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
@@ -118,9 +114,9 @@ public class DivXmlElementAccess extends Structure {
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
             if (child.getMptr().isEmpty()) {
-                super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, getInputStreamFunction));
+                super.getChildren().add(new DivXmlElementAccess(child, mets, mediaUnitsMap, inputStreamProvider));
             } else {
-                super.getChildren().add(new MptrXmlElementAccess(child, mets, getInputStreamFunction).linkedStructure);
+                super.getChildren().add(new MptrXmlElementAccess(child, mets, inputStreamProvider).linkedStructure);
             }
         }
         super.setType(div.getTYPE());
@@ -137,11 +133,11 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Determines from a METS data structure of which type is a meta-data
      * section.
-     * 
+     *
      * <p>
      * Implementation note: This method would be a good candidate for
      * parallelization.
-     * 
+     *
      * @param mets
      *            METS data structure that determines what type of meta-data
      *            section is
@@ -197,7 +193,7 @@ public class DivXmlElementAccess extends Structure {
 
     /**
      * Creates a METS {@code <div>} element from this structure.
-     * 
+     *
      * @param mediaUnitIDs
      *            the assigned identifier for each media unit so that the link
      *            pairs of the struct link section can be formed later
@@ -240,7 +236,7 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Creates a meta-data section of the specified domain of the Kitodo type
      * and returns it with its connection to the METS if there is data for it.
-     * 
+     *
      * @param domain
      *            Domain for which a metadata section is to be generated
      * @return a metadata section, if there is data for it
@@ -273,7 +269,7 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Generates an {@code <amdSec>} if administrative meta-data exists on this
      * structure.
-     * 
+     *
      * @param div
      *            div where ADMID references must be added to the generated
      *            meta-data sections
@@ -296,7 +292,7 @@ public class DivXmlElementAccess extends Structure {
      * Adds a meta-data section to an administrative meta-data section, if there
      * is one. This function deduplicates fourfold existing function for four
      * different meta-data sections.
-     * 
+     *
      * @param optionalMdSec
      *            perhaps existing meta-data section to be added if it exists
      * @param mdSecType

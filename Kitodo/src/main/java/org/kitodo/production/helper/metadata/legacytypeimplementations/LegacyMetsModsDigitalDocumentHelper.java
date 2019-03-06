@@ -30,6 +30,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.User;
@@ -121,7 +122,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Creates a new legacy METS MODS digital document helper with a ruleset.
-     * 
+     *
      * @param ruleset
      *            ruleset to set
      */
@@ -133,7 +134,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Creates a new legacy METS MODS digital document helper with a workpiece.
-     * 
+     *
      * @param ruleset
      *            ruleset to set
      * @param workpiece
@@ -185,7 +186,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     /**
      * Extracts the formation of the error message as it occurs during both
      * reading and writing. In addition, the error is logged.
-     * 
+     *
      * @param uri
      *            URI to be read/written
      * @param lockResult
@@ -226,7 +227,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Returns the workpiece of the legacy METS/MODS digital document helper.
-     * 
+     *
      * @return the workpiece
      */
     public Workpiece getWorkpiece() {
@@ -256,7 +257,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
                 try (InputStream in = fileService.read(uri, lockResult)) {
                     logger.info("Reading {}", uri.toString());
                     workpiece = ServiceManager.getMetsService().load(in,
-                        args -> getInputStream(args.getLeft(), lockResult, args.getRight()));
+                        getInputStream(lockResult));
                 }
             } else {
                 throw new IOException(createLockErrorMessage(uri, lockResult.getConflicts()));
@@ -264,7 +265,8 @@ public class LegacyMetsModsDigitalDocumentHelper {
         }
     }
 
-    private InputStream getInputStream(URI uri, LockResult lockResult, boolean couldHaveToBeWrittenInTheFuture) {
+    private InputStreamProviderInterface getInputStream(LockResult lockResult) {
+        return (uri, couldHaveToBeWrittenInTheFuture) -> {
         try {
             Map<URI, LockingMode> requests = new HashMap<>(2);
             requests.put(uri,
@@ -278,6 +280,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+        };
     }
 
     @Deprecated
@@ -328,7 +331,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * operation. The name was chosen deliberately short in order to keep the
      * calling code clear. This method must be implemented in every class
      * because it uses the logger tailored to the class.
-     * 
+     *
      * @param exception
      *            created {@code UnsupportedOperationException}
      * @return the exception

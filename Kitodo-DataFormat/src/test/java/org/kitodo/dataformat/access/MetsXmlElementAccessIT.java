@@ -28,10 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
@@ -44,16 +42,13 @@ import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 
 public class MetsXmlElementAccessIT {
 
     private static final File OUT_FILE = new File("src/test/resources/out.xml");
 
-    public static final Function<Pair<URI, Boolean>, InputStream> GET_INPUT_STREAM_FUNCTION = args -> {
-        URI uri = args.getLeft();
-        @SuppressWarnings("unused")
-        boolean couldHaveToBeWrittenInTheFuture = args.getRight();
-
+    private static final InputStreamProviderInterface INPUT_STREAM_PROVIDER = (uri, unused) -> {
         try {
             return new FileInputStream(new File("src/test/resources/" + uri.getPath()));
         } catch (FileNotFoundException e) {
@@ -113,7 +108,7 @@ public class MetsXmlElementAccessIT {
     @Test
     public void testReadingHierarchyOfTop() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/top.xml")), GET_INPUT_STREAM_FUNCTION);
+                .read(new FileInputStream(new File("src/test/resources/top.xml")), INPUT_STREAM_PROVIDER);
 
         List<ExistingOrLinkedStructure> topStructMapChildren = workpiece.getStructure().getChildren();
         ExistingOrLinkedStructure firstBranch = topStructMapChildren.get(0);
@@ -151,7 +146,7 @@ public class MetsXmlElementAccessIT {
     public void testReadingHierarchyOfBetween() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/between.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
 
         ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
         assertEquals(LinkedStructure.class, downlink.getClass());
@@ -179,7 +174,7 @@ public class MetsXmlElementAccessIT {
     public void testReadingHierarchyOfLeaf() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/leaf.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
 
         List<LinkedStructure> leafUplinks = workpiece.getUplinks();
         assertEquals(3, leafUplinks.size());
@@ -206,28 +201,28 @@ public class MetsXmlElementAccessIT {
     public void testReadingHierarchyFailsIfSubordinateFileHasNoBackreference() throws Exception {
         new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/subordinate-no-backreference_between.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testReadingHierarchyFailsIfSubordinateFileHasWrongBackreference() throws Exception {
         new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/subordinate-wrong-backreference_between.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testReadingHierarchyFailsIfSuperordinateFileHasNoBackreference() throws Exception {
         new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/superordinate-no-backreference_leaf.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testReadingHierarchyFailsIfSuperordinateFileHasAmbiguousBackreference() throws Exception {
         new MetsXmlElementAccess().read(
             new FileInputStream(new File("src/test/resources/superordinate-ambiguous-backreference_leaf.xml")),
-            GET_INPUT_STREAM_FUNCTION);
+            INPUT_STREAM_PROVIDER);
     }
 
     @Test
