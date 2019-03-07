@@ -257,7 +257,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
                 try (InputStream in = fileService.read(uri, lockResult)) {
                     logger.info("Reading {}", uri.toString());
                     workpiece = ServiceManager.getMetsService().load(in,
-                        getInputStream(lockResult));
+                        getInputStreamProvider(lockResult));
                 }
             } else {
                 throw new IOException(createLockErrorMessage(uri, lockResult.getConflicts()));
@@ -265,22 +265,22 @@ public class LegacyMetsModsDigitalDocumentHelper {
         }
     }
 
-    private InputStreamProviderInterface getInputStream(LockResult lockResult) {
-        return (uri, couldHaveToBeWrittenInTheFuture) -> {
-        try {
-            Map<URI, LockingMode> requests = new HashMap<>(2);
-            requests.put(uri,
-                couldHaveToBeWrittenInTheFuture ? LockingMode.UPGRADEABLE_READ : LockingMode.IMMUTABLE_READ);
-            Map<URI, Collection<String>> conflicts = lockResult.tryLock(requests);
-            if (conflicts.isEmpty()) {
-                return fileService.read(uri, lockResult);
-            } else {
-                throw new IOException(createLockErrorMessage(uri, conflicts));
+    private InputStreamProviderInterface getInputStreamProvider(LockResult lockResult) {
+        InputStreamProviderInterface inputStreamProvider = (uri, mayWrite) -> {
+            try {
+                Map<URI, LockingMode> requests = new HashMap<>(2);
+                requests.put(uri, mayWrite ? LockingMode.UPGRADEABLE_READ : LockingMode.IMMUTABLE_READ);
+                Map<URI, Collection<String>> conflicts = lockResult.tryLock(requests);
+                if (conflicts.isEmpty()) {
+                    return fileService.read(uri, lockResult);
+                } else {
+                    throw new IOException(createLockErrorMessage(uri, conflicts));
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
         };
+        return inputStreamProvider;
     }
 
     @Deprecated
