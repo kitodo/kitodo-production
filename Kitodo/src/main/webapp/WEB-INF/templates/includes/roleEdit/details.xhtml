@@ -55,7 +55,7 @@
                                     value="#{RoleForm.globalAssignableAuthorities}"
                                     converter="#{authorityConverter}"
                                     var="authority"
-                                    itemLabel="#{AuthorityForm.getTranslatedTitle(authority.getTitleWithoutSuffix())}"
+                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
                                     itemValue="#{authority}"
                                     onTransfer="toggleSave()">
                             <f:facet name="sourceCaption">#{msgs.available}</f:facet>
@@ -77,7 +77,7 @@
                                     filterMatchMode="contains"
                                     responsive="true"
                                     onTransfer="toggleSave()"
-                                    itemLabel="#{AuthorityForm.getTranslatedTitle(authority.getTitleWithoutSuffix())}"
+                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
                                     itemValue="#{authority}">
                             <f:facet name="sourceCaption">#{msgs.available}</f:facet>
                             <f:facet name="targetCaption">#{msgs.assigned}</f:facet>

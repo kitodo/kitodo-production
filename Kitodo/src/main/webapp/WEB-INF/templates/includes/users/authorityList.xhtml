@@ -25,10 +25,10 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.authority}">
-            <h:outputText value="#{AuthorityForm.getTranslatedTitle(item.titleWithoutSuffix)}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
         </p:column>
         <p:column headerText="#{msgs.type}">
-            <h:outputText value="#{item.type}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.type)}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
