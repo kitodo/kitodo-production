@@ -46,7 +46,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
             case DATE:
                 return "calendar";
             case INTEGER:
-                return "inputNumber";
+                return "spinner";
             case MULTI_LINE_TEXT:
                 return "inputTextarea";
             case ONE_LINE_TEXT:

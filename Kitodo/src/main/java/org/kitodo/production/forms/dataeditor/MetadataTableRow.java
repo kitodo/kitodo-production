@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
@@ -29,7 +40,6 @@ abstract class MetadataTableRow implements Serializable {
         DOMAIN_TO_MDSEC.put(Domain.SOURCE, MdSec.SOURCE_MD);
         DOMAIN_TO_MDSEC.put(Domain.TECHNICAL, MdSec.TECH_MD);
     }
-
 
     /**
      * The label of this row.
@@ -106,8 +116,8 @@ abstract class MetadataTableRow implements Serializable {
      * <td>InputTextarea</td>
      * </tr>
      * <tr>
-     * <td>inputNumber</td>
-     * <td>InputNumber</td>
+     * <td>spinner</td>
+     * <td>Spinner</td>
      * </tr>
      * <tr>
      * <td>calendar</td>

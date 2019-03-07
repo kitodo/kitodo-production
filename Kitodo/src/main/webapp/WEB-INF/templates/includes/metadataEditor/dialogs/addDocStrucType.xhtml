@@ -33,10 +33,9 @@
                     <h:outputLabel value="#{msgs.position}:"
                                    for="docStructPositionSelection"/>
                     <p:selectOneMenu id="docStructPositionSelection"
-                                     value="#{DataEditorForm.selectedNewLogicalPosition}"
+                                     value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionSelectedItem}"
                                      style="width: 180px;">
-                        <!--TODO check addable types-->
-                        <f:selectItems value="#{DataEditorForm.getNewElementPositionList}"
+                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructPositionSelectionItems}"
                                        var="positionSelection"
                                        itemValue="#{positionSelection}"
                                        itemLabel="#{positionSelection.label}"/>
@@ -46,10 +45,10 @@
                     <h:outputLabel value="#{msgs.typ}:"
                                    for="docStructAddTypeSelection"/>
                     <p:selectOneMenu id="docStructAddTypeSelection"
-                                     value="#{DataEditorForm.selectedNewLogicalType}"
+                                     value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                      style="width: 180px;">
                         <!--TODO check addable types-->
-                        <f:selectItems value="#{DataEditorForm.newLogicalTypeList}"/>
+                        <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
                         <p:ajax update="selectAddableMetadataTypes"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
@@ -69,29 +68,29 @@
                 </h:panelGrid>
 
                 <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
-                    <h:panelGroup rendered="#{!DataEditorForm.addMultipleLogicalElements}">
+                    <h:panelGroup rendered="#{!DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
                         <p:panelGrid columns="2">
                             <p:row>
                                 <h:outputText value="#{msgs.firstPage}:"/>
                                 <p:selectOneMenu id="selectFirstPageOnAddNode"
-                                                 value="#{DataEditorForm.selectedFirstPage}"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectFirstPageOnAddNodeSelectedItem}"
                                                  filter="true"
                                                  filterMatchMode="startsWith">
                                     <f:selectItem itemLabel="#{msgs.firstPage}"
                                                   itemValue="" />
-                                    <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
                                 </p:selectOneMenu>
                             </p:row>
 
                             <p:row>
                                 <h:outputText value="#{msgs.lastPage}:"/>
                                 <p:selectOneMenu id="selectLastPageOnAddNode"
-                                                 value="#{DataEditorForm.selectedLastPage}"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.selectLastPageOnAddNodeSelectedItem}"
                                                  filter="true"
                                                  filterMatchMode="startsWith">
                                     <f:selectItem itemLabel="#{msgs.lastPage}"
                                                   itemValue="" />
-                                    <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectPageOnAddNodeItems}"/>
                                 </p:selectOneMenu>
                             </p:row>
                         </p:panelGrid>
@@ -99,7 +98,7 @@
                         <h:panelGroup layout="block">
                             <p:commandButton id="addSingleDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
-                                             action="#{DataEditorForm.addLogicalNode}"
+                                             action="#{DataEditorForm.addDocStrucTypeDialog.addSingleDocStrucSubmitBtnClick}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
@@ -113,23 +112,23 @@
                         </h:panelGroup>
                     </h:panelGroup>
 
-                    <h:panelGroup rendered="#{DataEditorForm.addMultipleLogicalElements}">
+                    <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
                         <h:panelGrid columns="2">
                             <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
-                            <p:spinner value="#{DataEditorForm.numberOfLogicalElements}" id="elementsToAddSpinner" size="5" min="1"/>
+                            <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}" id="elementsToAddSpinner" size="5" min="1"/>
 
                             <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
-                            <p:selectOneMenu id="selectAddableMetadataTypes" value="#{DataEditorForm.selectedMetadataType}" style="width: 180px;">
-                                <f:selectItems value="#{DataEditorForm.newLogicalMetadataList}" />
+                            <p:selectOneMenu id="selectAddableMetadataTypes" value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesSelectedItem}" style="width: 180px;">
+                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.selectAddableMetadataTypesItems}" />
                             </p:selectOneMenu>
 
                             <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
-                            <h:inputTextarea id="inputMetaDataValue" value="#{DataEditorForm.metadataValue}"/>
+                            <h:inputTextarea id="inputMetaDataValue" value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValueValue}"/>
                         </h:panelGrid>
                         <h:panelGroup layout="block">
                             <p:commandButton id="addMultiDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
-                                             action="#{DataEditorForm.addMultipleLogicalNodes}"
+                                             action="#{DataEditorForm.addDocStrucTypeDialog.addMultiDocStrucSubmitBtnClick}"
                                              update="structureTreeForm"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"

@@ -255,7 +255,7 @@ public class StructurePanel implements Serializable {
          * JSF at this point.
          */
         try {
-            dataEditor.switchTheMetadataPanelTo(getSelectedStructure());
+            dataEditor.switchToStructure(getSelectedStructure());
             previouslySelectedNode = selectedNode;
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());

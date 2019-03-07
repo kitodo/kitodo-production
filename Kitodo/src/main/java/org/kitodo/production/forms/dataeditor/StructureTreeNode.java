@@ -25,7 +25,7 @@ public class StructureTreeNode implements Serializable {
     private final StructurePanel structurePanel;
     private final boolean undefined;
 
-    public StructureTreeNode(StructurePanel structurePanel, String label, boolean undefined, boolean linked,
+    StructureTreeNode(StructurePanel structurePanel, String label, boolean undefined, boolean linked,
             Object dataObject) {
         this.structurePanel = structurePanel;
         this.label = label;
@@ -52,7 +52,7 @@ public class StructureTreeNode implements Serializable {
 
     /**
      * TODO add javaDoc.
-     * 
+     *
      * @param event
      *            TreeDragDropEvent triggered by logical node being dropped
      */
@@ -62,7 +62,7 @@ public class StructureTreeNode implements Serializable {
 
     /**
      * TODO add javaDoc.
-     * 
+     *
      * @param event
      *            NodeSelectEvent triggered by logical node being selected
      */

@@ -50,6 +50,9 @@ import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+/**
+ * Backing bean for the gallery panel of the meta-data editor.
+ */
 public class GalleryPanel {
     private static final Logger logger = LogManager.getLogger(GalleryPanel.class);
 
@@ -281,20 +284,15 @@ public class GalleryPanel {
             GalleryMediaContent mediaContent = fromStripe.getMedias().get(fromStripeMediaIndex);
             GalleryStripe toStripe = stripes.get(toStripeIndex);
 
-            // move view from structure to structure
-            View view = mediaContent.getView();
-            Collection<View> fromStripeViews = fromStripe.getStructure().getViews();
-            fromStripeViews.remove(view);
-            Collection<View> toStripeViews = toStripe.getStructure().getViews();
-            toStripeViews.add(view);
+            MetadataEditor.moveView(mediaContent.getView(), fromStripe.getStructure(), toStripe.getStructure());
 
             // update stripes
             fromStripe.getMedias().clear();
-            for (View fromStripeView : fromStripeViews) {
+            for (View fromStripeView : fromStripe.getStructure().getViews()) {
                 fromStripe.getMedias().add(createGalleryMediaContent(fromStripeView));
             }
             toStripe.getMedias().clear();
-            for (View toStripeView : toStripeViews) {
+            for (View toStripeView : toStripe.getStructure().getViews()) {
                 toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
             }
             return;
@@ -326,10 +324,10 @@ public class GalleryPanel {
     }
 
     /**
-     * Set selectedImage.
+     * Set selectedMedia.
      *
-     * @param selectedImage
-     *            as java.lang.String
+     * @param selectedMedia
+     *            as org.kitodo.production.forms.dataeditor.GalleryMediaContent
      */
     public void setSelectedMedia(GalleryMediaContent selectedMedia) {
         this.selectedMedia = selectedMedia;

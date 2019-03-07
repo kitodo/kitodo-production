@@ -26,6 +26,8 @@ import org.kitodo.production.helper.Helper;
  * This exception can be thrown to indicate that locking files has failed.
  */
 public class LockingConflictsException extends IOException {
+    private static final long serialVersionUID = 1L;
+
     /**
      * The map of conflicts.
      */
@@ -33,7 +35,7 @@ public class LockingConflictsException extends IOException {
 
     /**
      * Creates a new locking conflicts exception.
-     * 
+     *
      * @param conflicts
      *            the map of conflicts
      */
@@ -55,7 +57,7 @@ public class LockingConflictsException extends IOException {
 
     /**
      * Unifies the conflicting users and returns them as a string.
-     * 
+     *
      * @return the conflicting users, unified
      */
     private String conflictingUsers() {

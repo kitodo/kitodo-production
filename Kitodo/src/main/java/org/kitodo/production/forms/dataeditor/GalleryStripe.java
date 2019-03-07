@@ -33,11 +33,6 @@ public class GalleryStripe {
     private final List<GalleryMediaContent> medias = new ArrayList<>();
 
     /**
-     * Gallery panel this gallery stripe belongs to.
-     */
-    private final GalleryPanel panel;
-
-    /**
      * Structure this gallery stripe is related to.
      */
     private Structure structure;
@@ -51,7 +46,6 @@ public class GalleryStripe {
      *            structure this gallery stripe is related to
      */
     GalleryStripe(GalleryPanel panel, Structure structure) {
-        this.panel = panel;
         this.structure = structure;
         this.label = getLabel(panel, structure);
     }

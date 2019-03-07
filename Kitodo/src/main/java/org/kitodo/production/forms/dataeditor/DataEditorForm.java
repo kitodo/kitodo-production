@@ -42,7 +42,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataImpl;
 import org.kitodo.production.metadata.pagination.Paginator;
@@ -69,6 +68,11 @@ public class DataEditorForm implements Serializable {
      * not configurable anywhere and is therefore on “edit”.
      */
     private String acquisitionStage = "edit";
+
+    /**
+     * Backing bean for the add doc struc type dialog.
+     */
+    private final AddDocStrucTypeDialog addDocStrucTypeDialog;
 
     /**
      * Backing bean for the comment panel.
@@ -144,7 +148,7 @@ public class DataEditorForm implements Serializable {
     // structure
     private TreeNode logicalStructure;
     private TreeNode selectedLogicalTreeNode;
-    private PositionOfNewDocStrucElement selectedNewLogicalPosition;
+    private InsertionPosition selectedNewLogicalPosition;
     private String selectedNewLogicalType;
     private boolean addMultipleLogicalElements = false;
     private int numberOfLogicalElements;
@@ -170,6 +174,7 @@ public class DataEditorForm implements Serializable {
         this.metadataPanel = new MetadataPanel(this);
         this.galleryPanel = new GalleryPanel(this);
         this.commentPanel = new CommentPanel(this);
+        this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
     }
 
     /**
@@ -352,6 +357,7 @@ public class DataEditorForm implements Serializable {
         }
 
     }
+
     /**
      * Returns the acquisition stage, so that the individual panels can access
      * it.
@@ -360,6 +366,10 @@ public class DataEditorForm implements Serializable {
      */
     String getAcquisitionStage() {
         return acquisitionStage;
+    }
+
+    public AddDocStrucTypeDialog getAddDocStrucTypeDialog() {
+        return addDocStrucTypeDialog;
     }
 
     public CommentPanel getCommentPanel() {
@@ -416,14 +426,19 @@ public class DataEditorForm implements Serializable {
         return structurePanel;
     }
 
+    void refreshStructurePanel() {
+        structurePanel.show(workpiece);
+    }
+
     void setProcess(Process process) {
         this.process = process;
     }
 
-    void switchTheMetadataPanelTo(Structure structure)
+    void switchToStructure(Structure structure)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preserve();
         metadataPanel.show(structure);
+        addDocStrucTypeDialog.prepare(workpiece, structure);
     }
 
     /**
@@ -459,8 +474,8 @@ public class DataEditorForm implements Serializable {
      *
      * @return list of enums
      */
-    public PositionOfNewDocStrucElement[] getNewElementPositionList() {
-        return PositionOfNewDocStrucElement.values();
+    public InsertionPosition[] getNewElementPositionList() {
+        return InsertionPosition.values();
     }
 
     /**
@@ -984,7 +999,7 @@ public class DataEditorForm implements Serializable {
      *
      * @return value of selectedNewLogicalPosition
      */
-    public PositionOfNewDocStrucElement getSelectedNewLogicalPosition() {
+    public InsertionPosition getSelectedNewLogicalPosition() {
         return selectedNewLogicalPosition;
     }
 
@@ -993,7 +1008,7 @@ public class DataEditorForm implements Serializable {
      *
      * @param selectedNewLogicalPosition as org.kitodo.production.enums.PositionOfNewDocStrucElement
      */
-    public void setSelectedNewLogicalPosition(PositionOfNewDocStrucElement selectedNewLogicalPosition) {
+    public void setSelectedNewLogicalPosition(InsertionPosition selectedNewLogicalPosition) {
         this.selectedNewLogicalPosition = selectedNewLogicalPosition;
     }
 

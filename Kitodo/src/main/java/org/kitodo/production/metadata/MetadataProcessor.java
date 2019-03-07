@@ -70,8 +70,8 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.enums.PositionOfNewDocStrucElement;
 import org.kitodo.production.enums.SortType;
+import org.kitodo.production.forms.dataeditor.InsertionPosition;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
 import org.kitodo.production.helper.XmlArticleCounter;
@@ -170,7 +170,7 @@ public class MetadataProcessor {
     private final FileService fileService = ServiceManager.getFileService();
     private Paginator paginator = new Paginator();
     private TreeNode selectedTreeNode;
-    private PositionOfNewDocStrucElement positionOfNewDocStrucElement = PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT;
+    private InsertionPosition insertionPosition = InsertionPosition.AFTER_CURRENT_ELEMENT;
     private int metadataElementsToAdd = 1;
     private String addMetaDataType;
     private String addMetaDataValue;
@@ -742,18 +742,18 @@ public class MetadataProcessor {
      *
      * @return The position of new inserted DocStruc elements.
      */
-    public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement() {
-        return this.positionOfNewDocStrucElement;
+    public InsertionPosition getPositionOfNewDocStrucElement() {
+        return this.insertionPosition;
     }
 
     /**
      * Sets position of new inserted DocStruc elements.
      *
-     * @param positionOfNewDocStrucElement
+     * @param insertionPosition
      *            The position of new inserted DocStruc elements.
      */
-    public void setPositionOfNewDocStrucElement(PositionOfNewDocStrucElement positionOfNewDocStrucElement) {
-        this.positionOfNewDocStrucElement = positionOfNewDocStrucElement;
+    public void setPositionOfNewDocStrucElement(InsertionPosition insertionPosition) {
+        this.insertionPosition = insertionPosition;
     }
 
     /**
@@ -761,8 +761,8 @@ public class MetadataProcessor {
      *
      * @return The positions of new DocStruct elements.
      */
-    public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
-        return PositionOfNewDocStrucElement.values();
+    public InsertionPosition[] getPositionsOfNewDocStrucElement() {
+        return InsertionPosition.values();
     }
 
     /**
@@ -772,9 +772,8 @@ public class MetadataProcessor {
     public void addSingleNodeWithPages() {
         IncludedStructuralElement selectedIncludedStructuralElement = null;
         IncludedStructuralElement parentIncludedStructuralElement;
-        if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)
-                || this.positionOfNewDocStrucElement
-                        .equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+        if (this.insertionPosition.equals(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT)
+                || this.insertionPosition.equals(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT)) {
             if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
                 parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             } else {
@@ -795,7 +794,7 @@ public class MetadataProcessor {
 
         IncludedStructuralElement newElement = new IncludedStructuralElement();
         newElement.setType(this.selectedStructureType);
-        switch (this.positionOfNewDocStrucElement) {
+        switch (this.insertionPosition) {
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
                 parentIncludedStructuralElement.getChildren().add(0, newElement);
                 break;
@@ -813,8 +812,7 @@ public class MetadataProcessor {
                     newElement);
                 break;
             default:
-                Helper.setErrorMessage(
-                    "\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
+                Helper.setErrorMessage("\"" + this.insertionPosition.toString() + "\" is not a valid position");
                 break;
         }
     }
@@ -825,7 +823,7 @@ public class MetadataProcessor {
      */
     public void addSeveralNodesWithMetadata() {
         LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-        addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement,
+        addNode(this.docStruct, this.digitalDocument, docStructType, this.insertionPosition,
             this.metadataElementsToAdd, this.addMetaDataType, this.addMetaDataValue);
         readMetadataAsFirstTree();
     }
@@ -838,7 +836,7 @@ public class MetadataProcessor {
 
     private LegacyDocStructHelperInterface addNode(LegacyDocStructHelperInterface docStruct,
             LegacyMetsModsDigitalDocumentHelper digitalDocument, LegacyLogicalDocStructTypeHelper docStructType,
-            PositionOfNewDocStrucElement positionOfNewDocStrucElement, int quantity, String metadataType,
+            InsertionPosition insertionPosition, int quantity, String metadataType,
             String value) {
 
         ArrayList<LegacyDocStructHelperInterface> createdElements = new ArrayList<>(quantity);
@@ -851,13 +849,13 @@ public class MetadataProcessor {
             createdElements.add(createdElement);
         }
 
-        if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+        if (insertionPosition.equals(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT)) {
             for (LegacyDocStructHelperInterface element : createdElements) {
                 docStruct.addChild(element);
             }
         } else {
-            LegacyDocStructHelperInterface edited = positionOfNewDocStrucElement.equals(
-                PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) ? docStruct : docStruct.getParent();
+            LegacyDocStructHelperInterface edited = insertionPosition.equals(
+                InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT) ? docStruct : docStruct.getParent();
             if (edited == null) {
                 logger.debug("The selected element cannot investigate the father.");
             } else {
@@ -869,18 +867,18 @@ public class MetadataProcessor {
                 } else {
                     // Build a new list of children for the edited element
                     List<LegacyDocStructHelperInterface> newChildren = new ArrayList<>(childrenBefore.size() + 1);
-                    if (positionOfNewDocStrucElement
-                            .equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
+                    if (insertionPosition
+                            .equals(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
                         newChildren.addAll(createdElements);
                     }
                     for (LegacyDocStructHelperInterface child : childrenBefore) {
-                        if (child == docStruct && positionOfNewDocStrucElement
-                                .equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
+                        if (child == docStruct && insertionPosition
+                                .equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)) {
                             newChildren.addAll(createdElements);
                         }
                         newChildren.add(child);
-                        if (child == docStruct && positionOfNewDocStrucElement
-                                .equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
+                        if (child == docStruct && insertionPosition
+                                .equals(InsertionPosition.AFTER_CURRENT_ELEMENT)) {
                             newChildren.addAll(createdElements);
                         }
                     }
@@ -906,7 +904,7 @@ public class MetadataProcessor {
      * @return The DocStruct types.
      */
     public SelectItem[] getAddableDocStructTypes() {
-        switch (positionOfNewDocStrucElement) {
+        switch (insertionPosition) {
             case BEFOR_CURRENT_ELEMENT:
             case AFTER_CURRENT_ELEMENT:
                 return this.metaHelper.getAddableDocStructTypes(this.docStruct, true);
@@ -2634,7 +2632,7 @@ public class MetadataProcessor {
 
     /**
      * Get translation for name of metadata.
-     * 
+     *
      * @param inputString
      *            key of the metadata to translate
      * @return translated label as String
@@ -2647,7 +2645,7 @@ public class MetadataProcessor {
 
     /**
      * Get translation for name of logical structure element.
-     * 
+     *
      * @param inputString
      *            key of logical structure element to translate
      * @return translated label as String
@@ -2660,7 +2658,7 @@ public class MetadataProcessor {
 
     /**
      * Get structure types that may be added at the selected position.
-     * 
+     *
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedStructureTypes() {
@@ -2669,7 +2667,7 @@ public class MetadataProcessor {
 
     /**
      * Get metadata types that may be added to the selected logical element.
-     * 
+     *
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedMetadata() {

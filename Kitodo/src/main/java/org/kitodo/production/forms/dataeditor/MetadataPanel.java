@@ -23,6 +23,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.production.helper.Helper;
 
+/**
+ * Backing bean for the meta-data panel of the meta-data editor.
+ */
 public class MetadataPanel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -61,14 +64,14 @@ public class MetadataPanel implements Serializable {
             String label = metadataTable.getAddableMetadata().parallelStream()
                     .filter(selectItem -> addMetadataKeySelectedItem.equals(selectItem.getValue())).findAny()
                     .orElseThrow(IllegalStateException::new).getLabel();
-    
+
             /*
              * Then we add the meta-data to add. This will rebuild the table and
              * create an empty table line (somewhere) into which we can enter
              * the value.
              */
             metadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
-    
+
             /*
              * Now we just have to find the line and enter the value. The latter
              * happens differently depending on what kind of input field it is.
@@ -127,7 +130,7 @@ public class MetadataPanel implements Serializable {
         return metadataTable.getRows();
     }
 
-    public void show(Structure structure) {
+    void show(Structure structure) {
         if (structure == null) {
             metadataTable = FieldedMetadataTableRow.EMPTY;
         } else {

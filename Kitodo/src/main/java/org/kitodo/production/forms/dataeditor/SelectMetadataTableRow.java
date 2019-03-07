@@ -68,7 +68,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    public SelectMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
+    SelectMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
         super(panel, container, settings);
         this.items = toItems(settings.getSelectItems());
@@ -106,7 +106,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
     @Override
     Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
         int items = selectedItems.size();
-        Collection<Metadata> result = new HashSet<Metadata>((int) Math.ceil(items / .75));
+        Collection<Metadata> result = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();
         MdSec domain = DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION));
         for (String selectedItem : selectedItems) {
