@@ -65,7 +65,7 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
-        <p:menuitem value="#{msgs.processEdit}" rendered="#{not empty ProcessForm.process.title}"/>
+        <p:menuitem value="#{msgs.editProcess}" rendered="#{not empty ProcessForm.process.title}"/>
         <p:menuitem value="#{msgs.createNewProcessFromTemplate}" rendered="#{empty ProcessForm.process.title}"/>
     </ui:define>
 

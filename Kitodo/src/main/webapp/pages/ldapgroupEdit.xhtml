@@ -37,9 +37,9 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.ldapGroupEdit} (#{LdapGroupForm.myLdapGruppe.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupForm.myLdapGruppe.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.ldapGroupView}" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.viewLdapGroup}" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
@@ -234,8 +234,8 @@
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
         <p:menuitem value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.ldapGroupEdit}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.ldapGroupView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.editLdapGroup}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.viewLdapGroup}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>

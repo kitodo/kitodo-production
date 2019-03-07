@@ -75,10 +75,10 @@
                         <h:outputText><i class="fa fa-print"/> #{msgs.docketPrint}</h:outputText>
                     </h:commandLink>
 
-                    <h:link outcome="batchProperties" title="#{msgs.propertyEdit}"
+                    <h:link outcome="batchProperties" title="#{msgs.editProperty}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditBatch()}">
                         <f:param name="id" value="#{BatchForm.selectedBatchId}"/>
-                        <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
+                        <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.editProperty}"/>
                     </h:link>
 
                     <h:commandLink id="deleteBatch" action="#{BatchForm.delete}"

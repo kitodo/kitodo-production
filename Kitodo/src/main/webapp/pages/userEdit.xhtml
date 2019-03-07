@@ -37,11 +37,11 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.userEdit} (#{UserForm.userObject.fullName})"
+            <h:outputText value="#{msgs.editUser} (#{UserForm.userObject.fullName})"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.userCreate}"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.userView}"
+            <h:outputText value="#{msgs.viewUser}"
                           rendered="#{isViewMode}"/>
             <h:outputText value="#{msgs.userConfiguration}"
                           rendered="#{isConfigMode}"/>
@@ -101,9 +101,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.userEdit}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.editUser}" rendered="#{isEditMode}"/>
         <p:menuitem value="#{msgs.userCreate}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.userView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.viewUser}" rendered="#{isViewMode}"/>
         <p:menuitem value="#{msgs.userConfiguration}" rendered="#{isConfigMode}"/>
     </ui:define>
 

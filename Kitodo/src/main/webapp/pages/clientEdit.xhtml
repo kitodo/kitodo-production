@@ -35,11 +35,11 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.clientEdit}"
+            <h:outputText value="#{msgs.editClient}"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.clientNew}"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.clientView}"
+            <h:outputText value="#{msgs.viewClient}"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
@@ -83,9 +83,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.clientEdit}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.editClient}" rendered="#{isEditMode}"/>
         <p:menuitem value="#{msgs.clientNew}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.clientView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.viewClient}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>

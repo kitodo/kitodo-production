@@ -38,9 +38,9 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.roleEdit} (#{RoleForm.role.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.editRole} (#{RoleForm.role.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewRole}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.roleView} (#{RoleForm.role.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.viewRole} (#{RoleForm.role.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -82,9 +82,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.roleEdit}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.editRole}" rendered="#{isEditMode}"/>
         <p:menuitem value="#{msgs.newRole}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.roleView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.viewRole}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>

@@ -33,11 +33,11 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.ldapServerEdit} (#{LdapServerForm.ldapServer.title})"
+            <h:outputText value="#{msgs.editLdapServer} (#{LdapServerForm.ldapServer.title})"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.ldapServerNew}"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.ldapServerView}"
+            <h:outputText value="#{msgs.viewLdapServer}"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
@@ -201,8 +201,8 @@
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
         <p:menuitem value="#{msgs.ldapServerNew}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.ldapServerEdit}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.ldapServerView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.editLdapServer}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.viewLdapServer}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>

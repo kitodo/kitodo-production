@@ -59,14 +59,14 @@
                   styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:link id="viewProject" rendered="#{SecurityAccessController.hasAuthorityToViewProject() and not SecurityAccessController.hasAuthorityToEditProject()}"
-                        outcome="projectEdit" title="#{msgs.projectView}">
+                        outcome="projectEdit" title="#{msgs.view}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
                 <h:link id="editProject" rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
-                        outcome="projectEdit" title="#{msgs.projectEdit}">
+                        outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>

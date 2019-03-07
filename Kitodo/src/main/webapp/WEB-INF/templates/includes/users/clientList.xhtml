@@ -28,12 +28,12 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewClient" outcome="clientEdit" title="#{msgs.clientView}"
+                <h:link id="viewClient" outcome="clientEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewClient() and not SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
-                <h:link outcome="clientEdit" title="#{msgs.clientEdit}"
+                <h:link outcome="clientEdit" title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
