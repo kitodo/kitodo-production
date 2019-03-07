@@ -75,6 +75,10 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewClientList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
+            <p:tab id="authoritiesTab" title="#{msgs.authorities}"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewAuthorityList()}">
+                <ui:include src="/WEB-INF/templates/includes/users/authorityList.xhtml"/>
+            </p:tab>
             <p:tab id="ldapGroupsTab" title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewLdapGroupList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
@@ -82,10 +86,6 @@
             <p:tab id="ldapServersTab" title="#{msgs.ldapServers}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewLdapServerList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
-            </p:tab>
-            <p:tab id="authoritiesTab" title="#{msgs.authorities}"
-                   rendered="#{SecurityAccessController.hasAuthorityToViewAuthorityList()}">
-                <ui:include src="/WEB-INF/templates/includes/users/authorityList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
