@@ -84,6 +84,17 @@ public class AuthorityForm extends BaseForm {
     }
 
     /**
+     * Get translated title of authority.
+     * 
+     * @param title
+     *            first part of title for translation eg. "addBatch"
+     * @return translated title
+     */
+    public String getTranslatedTitle(String title) {
+        return Helper.getTranslation(title);
+    }
+
+    /**
      * Create new authority.
      *
      * @return page address
