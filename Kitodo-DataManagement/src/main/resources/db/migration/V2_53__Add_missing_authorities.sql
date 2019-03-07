@@ -51,11 +51,7 @@ INSERT INTO authority (title) VALUES ('assignTasks_globalAssignable');
 INSERT INTO authority (title) VALUES ('overrideTasks_globalAssignable');
 INSERT INTO authority (title) VALUES ('superviseTasks_globalAssignable');
 
-INSERT INTO authority (title) VALUES ('resetWorkflow_globalAssignable');
-
 INSERT INTO authority (title) VALUES ('performTask_clientAssignable');
 INSERT INTO authority (title) VALUES ('assignTasks_clientAssignable');
 INSERT INTO authority (title) VALUES ('overrideTasks_clientAssignable');
 INSERT INTO authority (title) VALUES ('superviseTasks_clientAssignable');
-
-INSERT INTO authority (title) VALUES ('resetWorkflow_clientAssignable');
