@@ -145,8 +145,8 @@ public abstract class SecurityAccess {
         return authorities.contains(authority);
     }
 
-    private String[] getStringArray(String strings) {
-        strings = strings.replaceAll("\\s+", ""); // remove whitespaces
-        return strings.split(",");
+    private String[] getStringArray(String values) {
+        // remove white spaces and split values
+        return values.replaceAll("\\s+", "").split(",");
     }
 }
