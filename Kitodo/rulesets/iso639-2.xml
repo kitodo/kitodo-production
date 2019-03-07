@@ -13,7 +13,7 @@
 -->
 <namespace xmlns="http://names.kitodo.org/ruleset/v2"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../Kitodo-DataEditor/src/main/resources/ruleset.xsd"
+           xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ruleset.xsd"
            about="http://id.loc.gov/vocabulary/iso639-2/">
     <option value="http://id.loc.gov/vocabulary/iso639-2/aar">
         <label>Afar</label>
