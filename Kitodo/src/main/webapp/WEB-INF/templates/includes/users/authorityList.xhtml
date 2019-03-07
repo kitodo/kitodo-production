@@ -25,7 +25,10 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.authority}">
-            <h:outputText value="#{item.title}"/>
+            <h:outputText value="#{item.titleWithoutSuffix}"/>
+        </p:column>
+        <p:column headerText="#{msgs.type}">
+            <h:outputText value="#{item.type}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
@@ -45,7 +48,7 @@
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteAuthority()}"
                                update="usersTabView:authoritiesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{AuthorityForm.load}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{AuthorityForm.authorityById}"/>
                     <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteAuthority}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>

@@ -38,11 +38,9 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.roleEdit} (#{RoleForm.role.title})"
-                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.roleEdit} (#{RoleForm.role.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewRole}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.roleView} (#{RoleForm.role.title})"
-                          rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.roleView} (#{RoleForm.role.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"

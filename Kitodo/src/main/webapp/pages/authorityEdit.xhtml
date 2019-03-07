@@ -43,8 +43,13 @@
                          actionListener="#{AuthorityForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="users.jsf?id=#{UserForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

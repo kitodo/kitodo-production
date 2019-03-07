@@ -61,16 +61,6 @@ public class Authority extends BaseBean {
     }
 
     /**
-     * Gets the title without suffixes separated by "_" e.g. "admin_global" will
-     * become "admin".
-     * 
-     * @return The title without suffix.
-     */
-    public String getTitleWithoutSuffix() {
-        return title.split("_")[0];
-    }
-
-    /**
      * Sets the title.
      *
      * @param title
@@ -101,6 +91,26 @@ public class Authority extends BaseBean {
      */
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    /**
+     * Get the title without suffixes separated by "_" e.g.
+     * "admin_globallyAssignable" will become "admin".
+     *
+     * @return the title without suffix
+     */
+    public String getTitleWithoutSuffix() {
+        return this.title.split("_")[0];
+    }
+
+    /**
+     * Get the title without suffixes separated by "_" e.g.
+     * "admin_globallyAssignable" will become "globallyAssignable".
+     *
+     * @return the type without suffix
+     */
+    public String getType() {
+        return this.title.split("_")[1];
     }
 
     @Override

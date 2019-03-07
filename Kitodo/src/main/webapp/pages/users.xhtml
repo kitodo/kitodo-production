@@ -63,11 +63,11 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView">
             <p:ajax event="tabChange" listener="#{UserForm.onTabChange}"/>
-            <p:tab title="#{msgs.users}"
+            <p:tab id="usersTab" title="#{msgs.users}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewUserList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.roles}"
+            <p:tab id="rolesTab" title="#{msgs.roles}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewRoleList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/roleList.xhtml"/>
             </p:tab>
@@ -75,15 +75,15 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewClientList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
-            <p:tab title="#{msgs.ldapGroups}"
+            <p:tab id="ldapGroupsTab" title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewLdapGroupList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.ldapServers}"
+            <p:tab id="ldapServersTab" title="#{msgs.ldapServers}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewLdapServerList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.authorities}"
+            <p:tab id="authoritiesTab" title="#{msgs.authorities}"
                    rendered="#{SecurityAccessController.hasAuthorityToViewAuthorityList()}">
                 <ui:include src="/WEB-INF/templates/includes/users/authorityList.xhtml"/>
             </p:tab>
