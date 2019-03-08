@@ -25,7 +25,7 @@ import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.Query;
 import org.camunda.bpm.model.bpmn.instance.EndEvent;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
-import org.camunda.bpm.model.bpmn.instance.ParallelGateway;
+import org.camunda.bpm.model.bpmn.instance.Gateway;
 import org.camunda.bpm.model.bpmn.instance.Process;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
@@ -151,7 +151,7 @@ public class Reader {
     private void iterateOverNodes(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
         if (node instanceof Task) {
             addTask(node, ordering, workflowCondition);
-        } else if (node instanceof ParallelGateway) {
+        } else if (node instanceof Gateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
             if (nextNodes.count() == 1) {
                 iterateOverNodes(nextNodes.singleResult(), ordering, workflowCondition);
