@@ -19,7 +19,6 @@ public enum TemplateTypeField implements TypeInterface {
     ACTIVE("active"),
     SORT_HELPER_STATUS("sortHelperStatus"),
     WORKFLOW_TITLE("workflow.title"),
-    WORKFLOW_FILE_NAME("workflow.fileName"),
     DOCKET("docket"),
     RULESET("ruleset"),
     PROJECTS("projects"),
