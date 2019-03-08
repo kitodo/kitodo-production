@@ -571,25 +571,6 @@ public class Task extends BaseIndexedBean {
         this.batchStep = batchStep;
     }
 
-    /**
-     * Get localized title.
-     *
-     * @return localized title as String
-     */
-    public String getLocalizedTitle() {
-        return this.localizedTitle;
-    }
-
-    /**
-     * Set localized titles as String.
-     *
-     * @param localizedTitle
-     *            as String
-     */
-    public void setLocalizedTitle(String localizedTitle) {
-        this.localizedTitle = localizedTitle;
-    }
-
     // Here will be methods which should be in TaskService but are used by jsp
     // files
     /**

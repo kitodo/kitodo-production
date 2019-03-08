@@ -17,7 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item" value="#{CurrentTaskForm.currentTask}">
         <p:column headerText="#{msgs.title}">
-            <h:outputText value="#{CurrentTaskForm.currentTask.localizedTitle}"/>
+            <h:outputText value="#{CurrentTaskForm.currentTask.title}"/>
         </p:column>
         <p:column headerText="#{msgs.processTitle}">
             <h:outputText value="#{item.process.title}"/>
