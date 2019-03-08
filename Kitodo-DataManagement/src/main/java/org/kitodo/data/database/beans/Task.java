@@ -104,6 +104,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "batchStep")
     private boolean batchStep = false;
 
+    @Column(name = "repeatOnCorrection")
+    private boolean repeatOnCorrection = false;
+
     @Column(name = "workflowId")
     private String workflowId;
 
@@ -193,6 +196,7 @@ public class Task extends BaseIndexedBean {
         this.typeImagesRead = templateTask.isTypeImagesRead();
         this.typeImagesWrite = templateTask.isTypeImagesWrite();
         this.typeMetadata = templateTask.isTypeMetadata();
+        this.repeatOnCorrection = templateTask.isRepeatOnCorrection();
         this.processingStatus = templateTask.getProcessingStatus();
         this.homeDirectory = templateTask.getHomeDirectory();
         this.workflowId = templateTask.getWorkflowId();
@@ -569,6 +573,24 @@ public class Task extends BaseIndexedBean {
 
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
+    }
+
+    /**
+     * Get information if task should be repeated on correction.
+     *
+     * @return value of repeatOnCorrection
+     */
+    public boolean isRepeatOnCorrection() {
+        return repeatOnCorrection;
+    }
+
+    /**
+     * Set information if task should be repeated on correction.
+     *
+     * @param repeatOnCorrection as boolean
+     */
+    public void setRepeatOnCorrection(boolean repeatOnCorrection) {
+        this.repeatOnCorrection = repeatOnCorrection;
     }
 
     /**

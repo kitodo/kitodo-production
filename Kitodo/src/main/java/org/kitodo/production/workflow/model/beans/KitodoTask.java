@@ -31,6 +31,7 @@ public class KitodoTask {
     private boolean typeAcceptClose;
     private boolean typeCloseVerify;
     private boolean batchStep;
+    private boolean repeatOnCorrection;
     private String conditionType;
     private String conditionValue;
     private String userRoles;
@@ -58,6 +59,7 @@ public class KitodoTask {
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
         this.typeCloseVerify = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeCloseVerify"));
         this.batchStep = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "batchStep"));
+        this.repeatOnCorrection = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "repeatOnCorrection"));
         this.conditionType = task.getAttributeValueNs(NAMESPACE, "kitodoConditionType");
         this.conditionValue = task.getAttributeValueNs(NAMESPACE, "kitodoConditionValue");
         this.userRoles = task.getAttributeValueNs(NAMESPACE, "permittedUserRole");
@@ -323,6 +325,23 @@ public class KitodoTask {
         this.batchStep = batchStep;
     }
 
+    /**
+     * Get information if task should be repeated on correction.
+     *
+     * @return value of repeatOnCorrection
+     */
+    public boolean isRepeatOnCorrection() {
+        return repeatOnCorrection;
+    }
+
+    /**
+     * Set information if task should be repeated on correction.
+     *
+     * @param repeatOnCorrection as boolean
+     */
+    public void setRepeatOnCorrection(boolean repeatOnCorrection) {
+        this.repeatOnCorrection = repeatOnCorrection;
+    }
 
     /**
      * Get condition type (XPath or Script) for conditional task.
