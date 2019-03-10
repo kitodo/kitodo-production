@@ -57,7 +57,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
-    private WebElement metadataLanguageInput;
+    private WebElement metadataLanguageSelect;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":table-size")
@@ -126,7 +126,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
         locationInput.sendKeys(user.getLocation());
-        metadataLanguageInput.sendKeys(user.getMetadataLanguage());
+        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_0")));
         return this;
     }
 
@@ -161,8 +162,8 @@ public class UserEditPage extends EditPage<UserEditPage> {
         openUserConfig();
         tableSizeInput.clear();
         tableSizeInput.sendKeys("50");
-        metadataLanguageInput.clear();
-        metadataLanguageInput.sendKeys("en");
+        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_1")));
         clickElement(languageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(languageSelect.getAttribute("id") + "_1")));
         save();

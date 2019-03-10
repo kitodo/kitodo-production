@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,8 @@ import javax.naming.NamingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
@@ -99,9 +103,9 @@ public class UserForm extends BaseForm {
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("user"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("role"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("client"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup"));
+        selectedColumns
+                .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ldapgroup"));
     }
-
 
     /**
      * New user.
@@ -387,6 +391,21 @@ public class UserForm extends BaseForm {
     }
 
     /**
+     * Get map of supported metadata languages.
+     * 
+     * @return map of supported metadata languages
+     */
+    public Map<String, String> getMetadataLanguages() {
+        Map<String, String> metadataLanguages = new HashMap<>();
+        String[] availableMetadataLanguages = ConfigCore.getStringArrayParameter(ParameterCore.METADATA_LANGUAGE_LIST);
+        for (String availableLanguage : availableMetadataLanguages) {
+            String[] language = availableLanguage.split("-");
+            metadataLanguages.put(language[0], language[1]);
+        }
+        return metadataLanguages;
+    }
+
+    /**
      * Return list of projects available for assignment to the user.
      *
      * @return list of projects available for assignment to the user
@@ -491,7 +510,8 @@ public class UserForm extends BaseForm {
     /**
      * Set old password.
      *
-     * @param oldPassword as java.lang.String
+     * @param oldPassword
+     *            as java.lang.String
      */
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;

@@ -118,9 +118,12 @@
             </div>
             <div>
                 <p:outputLabel for="metaDataLanguage" value="#{msgs.metadataLanguage}"/>
-                <p:inputText id="metaDataLanguage" class="input" disabled="#{isViewMode}"
-                             placeholder="#{msgs.metadataLanguage}" value="#{UserForm.userObject.metadataLanguage}"
-                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"/>
+                <p:selectOneMenu id="metaDataLanguage" value="#{UserForm.userObject.metadataLanguage}" disabled="#{isViewMode}"
+                                 required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItems value="#{UserForm.metadataLanguages.entrySet().toArray()}" var="language"
+                                   itemLabel="#{language.key}" itemValue="#{language.value}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
             </div>
             <div>
                 <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
