@@ -138,7 +138,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (!showAutomaticTasks) {
-            query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
+            query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), false, true));
         }
 
         List<Map<String, Object>> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
@@ -331,7 +331,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
+        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true));
         return findDocuments(query, sort);
     }
 
@@ -354,7 +354,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
         query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
+        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true));
         return findDocuments(query, sort);
     }
 
