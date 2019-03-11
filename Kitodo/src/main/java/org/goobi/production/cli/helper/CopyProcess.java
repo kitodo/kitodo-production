@@ -404,25 +404,7 @@ public class CopyProcess extends ProzesskopieForm {
             if (token.startsWith("'") && token.endsWith("'")) {
                 newTitle.append(token, 1, token.length() - 1);
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
-                for (AdditionalField additionalField : this.additionalFields) {
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
-                    String title = additionalField.getTitle();
-                    String value = additionalField.getValue();
-                    if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
-                            && (Objects.isNull(value) || value.isEmpty())) {
-                        additionalField.setValue(CopyProcess.atstsl);
-                    }
-
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (title.equals(token) && additionalField.getShowDependingOnDoctype()
-                            && Objects.nonNull(value)) {
-                        newTitle.append(calcProcessTitleCheck(title, value));
-                    }
-                }
+                appendDataFromAdditionalFields(token, newTitle);
             }
         }
 
@@ -467,35 +449,45 @@ public class CopyProcess extends ProzesskopieForm {
         StringTokenizer tokenizer = new StringTokenizer(this.tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
-            String string = tokenizer.nextToken();
+            String token = tokenizer.nextToken();
             // if the string begins and ends with ', then take over the content
-            if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
-                tifHeaderImageDescriptionBuilder.append(string, 1, string.length() - 1);
-            } else if (string.equals("$Doctype")) {
+            if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
+                tifHeaderImageDescriptionBuilder.append(token, 1, token.length() - 1);
+            } else if (token.equals("$Doctype")) {
                 tifHeaderImageDescriptionBuilder.append(this.docType);
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
-                for (AdditionalField additionalField : this.additionalFields) {
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
-                    String title = additionalField.getTitle();
-                    String value = additionalField.getValue();
-                    if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
-                            && (Objects.isNull(value) || value.isEmpty())) {
-                        additionalField.setValue(CopyProcess.atstsl);
-                    }
-
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (title.equals(string) && additionalField.getShowDependingOnDoctype()
-                            && Objects.nonNull(value)) {
-                        tifHeaderImageDescriptionBuilder.append(calcProcessTitleCheck(title, value));
-                    }
-                }
+                appendDataFromAdditionalFields(token, tifHeaderImageDescriptionBuilder);
             }
         }
         this.tifHeaderImageDescription = tifHeaderImageDescriptionBuilder.toString();
+    }
+
+    /**
+     * Evaluate the token as field name.
+     * 
+     * @param token
+     *            as String
+     * @param stringBuilder
+     *            as StringBuilder
+     */
+    private void appendDataFromAdditionalFields(String token, StringBuilder stringBuilder) {
+        for (AdditionalField additionalField : this.additionalFields) {
+            /*
+             * if it is the ATS or TSL field, then use the calculated atstsl if it does not
+             * already exist
+             */
+            String title = additionalField.getTitle();
+            String value = additionalField.getValue();
+            if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
+                    && (Objects.isNull(value) || value.isEmpty())) {
+                additionalField.setValue(CopyProcess.atstsl);
+            }
+
+            // add the content to the title
+            if (title.equals(token) && additionalField.getShowDependingOnDoctype() && Objects.nonNull(value)) {
+                stringBuilder.append(calcProcessTitleCheck(title, value));
+            }
+        }
     }
 
     private void addPropertyForTemplate(Process template, Property property) {
