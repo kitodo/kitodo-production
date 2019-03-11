@@ -18,20 +18,23 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dialog widgetVar="hitlist"
               id="hitlist"
-              header="#{msgs.hitlist} (#{ImportForm.numberOfHits} #{msgs.hits})"
               width="700px"
-              height="480px"
               modal="true"
+              resizable="false"
+              showHeader="false"
               dynamic="true">
+        <h3>#{msgs.hitlist} (#{ImportForm.numberOfHits} #{msgs.hits})</h3>
         <h:form id="hitlistDialogForm">
             <p:dataTable id="hitlistDialogTable"
                          value="#{ImportForm.hits}"
                          var="hit"
                          rows="#{LoginForm.loggedUser.tableSize}"
+                         paginatorPosition="bottom"
                          paginator="true">
                 <p:column headerText="#{msgs.hits}">
                     <p:commandLink id="selectRecord"
                                    value="#{hit.title}"
+                                   title="#{hit.title}"
                                    onclick="PF('hitlist').hide()"
                                    update="editForm"
                                    immediate="true"
@@ -41,6 +44,15 @@
                     </p:commandLink>
                 </p:column>
             </p:dataTable>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="cancel"
+                                 onclick="PF('hitlist').hide();"
+                                 value="#{msgs.cancel}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 </ui:composition>

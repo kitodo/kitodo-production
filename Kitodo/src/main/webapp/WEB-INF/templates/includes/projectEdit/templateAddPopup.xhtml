@@ -21,17 +21,20 @@
         <!-- edit dialog -->
         <p:dialog widgetVar="addTemplateDialog"
                   id="addTemplateDialog"
-                  header="#{msgs.templates}"
-                  width="700px"
+                  width="480px"
                   modal="true"
-                  dynamic="true">
+                  resizable="false"
+                  dynamic="true"
+                  showHeader="false"
+                  styleClass="editDialog">
+            <h3>#{msgs.templates}</h3>
             <h:form id="templateForm">
                 <p:dataTable var="item"
                              id="selectTemplateTable"
                              value="#{ProjectForm.templates}"
                              lazy="true"
                              paginator="true"
-                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{msgs.template}">
                         <h:outputText value="#{item.title}"/>

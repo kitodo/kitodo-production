@@ -18,27 +18,43 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="deletePropertyDialog"
-              header="#{msgs.deleteProperty}"
-              width="700px"
               modal="true"
+              resizable="false"
               dynamic="true"
+              showHeader="false"
               styleClass="editDialog">
         <h:form id="propertyDeleteForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <p:commandButton value="#{msgs.cancel}" immediate="true" icon="fa fa-times fa-lg" iconPos="right"
-                                     styleClass="secondary" onclick="PF('deletePropertyDialog').hide();">
-                    </p:commandButton>
-                    <p:commandButton value="#{msgs.applyToThisProcess}" id="deleteCurrentProperty"
-                                     action="#{BatchForm.batchHelper.deletePropertyForOneProcess}"
-                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
-                                     oncomplete="PF('deletePropertyDialog').hide();">
-                    </p:commandButton>
-                    <p:commandButton value="#{msgs.applyToAllProcesses}" id="deleteCurrentPropertyForAll"
-                                     action="#{BatchForm.batchHelper.deletePropertyForAllProcesses}"
-                                     update="editForm" styleClass="right" icon="fa fa-floppy-o fa-lg" iconPos="right"
-                                     oncomplete="PF('deletePropertyDialog').hide();">
-                    </p:commandButton>
+                    <h3>#{msgs.deleteProperty}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton value="#{msgs.applyToThisProcess}"
+                                         id="deleteCurrentProperty"
+                                         action="#{BatchForm.batchHelper.deletePropertyForOneProcess}"
+                                         update="editForm"
+                                         styleClass="primary right"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         iconPos="right"
+                                         oncomplete="PF('deletePropertyDialog').hide();">
+                        </p:commandButton>
+                        <p:commandButton value="#{msgs.applyToAllProcesses}"
+                                         id="deleteCurrentPropertyForAll"
+                                         action="#{BatchForm.batchHelper.deletePropertyForAllProcesses}"
+                                         update="editForm"
+                                         styleClass="primary right"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         iconPos="right"
+                                         oncomplete="PF('deletePropertyDialog').hide();">
+                        </p:commandButton>
+                        <p:commandButton value="#{msgs.cancel}"
+                                         immediate="true"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"
+                                         onclick="PF('deletePropertyDialog').hide();">
+                        </p:commandButton>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>

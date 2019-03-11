@@ -17,26 +17,46 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <p:dialog widgetVar="createBatchDialog" header="#{msgs.createNewBatchFromSelectedProcesses}" width="700px"
-              modal="true" dynamic="true" styleClass="editDialog">
+    <p:dialog widgetVar="createBatchDialog"
+              width="480px"
+              modal="true"
+              dynamic="true"
+              resizable="false"
+              showHeader="false"
+              styleClass="editDialog">
         <h:form id="createBatchForm">
+            <h3>#{msgs.createNewBatchFromSelectedProcesses}</h3>
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <div>
-                        <h:outputText>#{msgs.enterBatchName}</h:outputText>
-                    </div>
-                    <div>
-                        <p:outputLabel for="batchTitle" value="#{msgs.title}"/>
-                        <p:inputText id="batchTitle" value="#{BatchForm.batchTitle}" placeholder="#{msgs.title}"
-                                     required="true" styleClass="input editDialog"/>
-                    </div>
-                    <p:commandButton value="#{msgs.cancel}" immediate="true" icon="fa fa-times fa-lg" iconPos="right"
-                                     styleClass="secondary" onclick="PF('createBatchDialog').hide();">
-                    </p:commandButton>
-                    <p:commandButton action="#{BatchForm.createNew}" id="save" update="processesTabView:batchForm"
-                                     oncomplete="PF('createBatchDialog').hide();" value="#{msgs.apply}"
-                                     styleClass="right">
-                    </p:commandButton>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <p:outputLabel for="batchTitle"
+                                           value="#{msgs.enterBatchName}"/>
+                            <p:inputText id="batchTitle"
+                                         value="#{BatchForm.batchTitle}"
+                                         placeholder="#{msgs.name}"
+                                         required="#{not empty param['createBatchForm:save']}"
+                                         styleClass="input editDialog"/>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton action="#{BatchForm.createNew}"
+                                         id="save"
+                                         update="processesTabView:batchForm"
+                                         oncomplete="PF('createBatchDialog').hide();"
+                                         value="#{msgs.apply}"
+                                         styleClass="primary right">
+                        </p:commandButton>
+                        <p:commandButton value="#{msgs.cancel}"
+                                         immediate="true"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"
+                                         onclick="PF('createBatchDialog').hide();">
+                        </p:commandButton>
+                    </h:panelGroup>
                 </p:row>
             </p:panelGrid>
         </h:form>

@@ -17,24 +17,29 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <h:form>
-        <p:confirmDialog header="#{msgs.generatePNGs}"
-                         message="#{msgs.confirm}"
-                         icon="ui-icon-alert"
+        <p:confirmDialog message="#{msgs.confirm}"
+                         icon="fa fa-exclamation fa-lg"
                          showEffect="fade"
                          hideEffect="fade"
-                         styleClass="confirm-delete"
+                         styleClass="confirm-delete alert"
                          widgetVar="generatePNGsConfirmDialog">
-            <p:commandButton value="Yes"
-                             styleClass="ui-confirmdialog-yes"
-                             icon="ui-icon-check"
-                             onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
-                             action="#{MetadataProcessor.generatePNGs()}"
-                             immediate="true"/>
-            <p:commandButton value="No"
-                             type="button"
-                             styleClass="ui-confirmdialog-no"
-                             icon="ui-icon-close"
-                             onclick="PF('generatePNGsConfirmDialog').hide()"/>
+            <h3>#{msgs.generatePNGs}</h3>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton value="#{msgs.ok}"
+                                 styleClass="ui-confirmdialog-yes primary right"
+                                 icon="fa fa-check fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
+                                 action="#{MetadataProcessor.generatePNGs()}"
+                                 immediate="true"/>
+                <p:commandButton value="#{msgs.cancel}"
+                                 type="button"
+                                 styleClass="ui-confirmdialog-no secondary right"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 onclick="PF('generatePNGsConfirmDialog').hide()"/>
+            </h:panelGroup>
         </p:confirmDialog>
     </h:form>
 

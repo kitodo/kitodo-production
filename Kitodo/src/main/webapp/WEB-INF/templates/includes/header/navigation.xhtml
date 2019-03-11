@@ -136,19 +136,20 @@
             </ul>
         </nav>
     </section>
-    <p:dialog header="#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}"
-              class="client-select-dialog"
+    <p:dialog class="client-select-dialog"
               id="clientSelectDialog"
               widgetVar="selectClientDialog"
+              showHeader="false"
               modal="true"
               width="500px"
               appendTo="@(body)"
               resizable="false"
               closable="false">
+        <h3>#{msgs.welcome}, #{LoginForm.loggedUser.name} #{LoginForm.loggedUser.surname}</h3>
         <h:form id="select-session-client-form">
-            <div class="select-client-note">#{msgs.clientSelectNote }</div>
+            <div class="select-client-note">#{msgs.clientSelectNote}</div>
             <div class="select-client-selector">
-                <p>#{msgs.clientSelect }</p>
+                <p>#{msgs.clientSelect}</p>
                 <p>
                     <p:selectOneMenu id="client"
                                  converter="#{clientConverter}"
@@ -160,25 +161,23 @@
                 </p>
                 <p:panelGrid>
                     <p:row>
-                        <p:column>
-                            <p:button href="/logout"
-                                      id="cancelSessionClientSelectionButton"
-                                      type="button"
-                                      value="#{msgs.cancel}"
-                                      icon="fa fa-close"
-                                      iconPos="right"/>
-                        </p:column>
-                        <p:column style="text-align: right">
-                            <p:commandButton id="setSessionClientButton"
-                                             action="#{SessionClientController.setSelectedClientAsSessionClient}"
-                                             onstart="PF('selectClientDialog').hide(); PF('loadingDialog').show();"
-                                             oncomplete="PF('loadingDialog').hide();"
-                                             disabled="#{not SessionClientController.areClientsAvailableForUser()}"
-                                             update="@all"
-                                             value="#{msgs.select}"
-                                             icon="fa fa-check"
-                                             iconPos="right"/>
-                        </p:column>
+                        <p:commandButton id="setSessionClientButton"
+                                         action="#{SessionClientController.setSelectedClientAsSessionClient}"
+                                         onstart="PF('selectClientDialog').hide(); PF('loadingDialog').show();"
+                                         oncomplete="PF('loadingDialog').hide();"
+                                         disabled="#{not SessionClientController.areClientsAvailableForUser()}"
+                                         update="@all"
+                                         styleClass="primary right"
+                                         value="#{msgs.select}"
+                                         icon="fa fa-check"
+                                         iconPos="right"/>
+                        <p:button href="/logout"
+                                  id="cancelSessionClientSelectionButton"
+                                  type="button"
+                                  value="#{msgs.cancel}"
+                                  styleClass="secondary right"
+                                  icon="fa fa-close"
+                                  iconPos="right"/>
                     </p:row>
                 </p:panelGrid>
             </div>

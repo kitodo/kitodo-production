@@ -19,28 +19,43 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="addRoleDialog"
-              header="#{msgs.rolesAdd}"
               width="700px"
               modal="true"
+              resizable="false"
+              showHeader="false"
               dynamic="true">
         <h:form id="roleForm">
+            <h3>#{msgs.rolesAdd}</h3>
             <p:dataTable id="roleTable"
                          var="role"
                          value="#{RoleForm.lazyDTOModel}"
                          lazy="true"
                          rows="#{LoginForm.loggedUser.tableSize}"
-                         paginator="true">
+                         paginator="true"
+                         paginatorPosition="bottom">
                 <p:column headerText="#{msgs.role}">
                     <h:outputText value="#{role.title}"/>
                 </p:column>
-                <p:column headerText="#{msgs.actions}">
-                    <p:commandLink id="addRule" action="#{ProcessForm.addRole}" oncomplete="toggleSave()"
+                <p:column headerText="#{msgs.actions}"
+                          styleClass="actionsColumn">
+                    <p:commandLink id="addRule"
+                                   action="#{ProcessForm.addRole}"
+                                   oncomplete="toggleSave()"
                                    update="editForm:tabs:roleTable">
                         <i class="fa fa-user-plus"/>
                         <f:param name="ID" value="#{role.id}"/>
                     </p:commandLink>
                 </p:column>
             </p:dataTable>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="close"
+                                 onclick="PF('addRoleDialog').hide();"
+                                 value="#{msgs.close}"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 </ui:composition>

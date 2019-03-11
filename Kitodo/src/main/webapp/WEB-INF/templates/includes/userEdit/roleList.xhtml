@@ -32,7 +32,7 @@
                            title="#{msgs.ausGruppeLoeschen}"
                            immediate="true"
                            oncomplete="toggleSave()"
-                           update="@form">
+                           update="editForm:userTabView:roleDatatable">
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{item.id}"/>
             </p:commandLink>

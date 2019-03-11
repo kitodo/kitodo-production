@@ -233,7 +233,7 @@ public class Browser {
     }
 
     public static void closeDialog(WebElement dialog) {
-        dialog.findElement(By.className("ui-dialog-titlebar-close")).click();
+        dialog.findElement(By.className("close")).click();
     }
 
     /**

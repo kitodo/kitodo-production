@@ -61,6 +61,7 @@
                                  action="#{UserForm.writeUserAtLdapServer}"
                                  value="#{msgs.ldapKonfigurationSchreiben}"
                                  icon="fa fa-user-plus fa-lg"
+                                 iconPos="right"
                                  immediate="true"
                                  disabled="#{isViewMode || isConfigMode}"
                                  rendered="#{AuthenticationController.ldapAuthentication}"
@@ -70,17 +71,19 @@
                                  id="changePasswordButton"
                                  value="#{msgs.passwordChange}"
                                  icon="fa fa-pencil fa-lg"
+                                 iconPos="right"
                                  immediate="true"
-                                 rendered="#{isConfigMode}"
-                                 class="button-filled-green">
+                                 styleClass="seoncdary"
+                                 rendered="#{isConfigMode}">
                 </p:commandButton>
                 <p:commandButton onclick="PF('resetPasswordDialog').show()"
                                  id="resetPasswordButton"
                                  value="#{msgs.passwordReset}"
                                  icon="fa fa-pencil fa-lg"
+                                 iconPos="right"
                                  immediate="true"
-                                 rendered="#{isEditMode}"
-                                 class="button-filled-green">
+                                 styleClass="secondary"
+                                 rendered="#{isEditMode}">
                 </p:commandButton>
             </div>
         </p:row>
