@@ -151,21 +151,7 @@ public class AddDocStrucTypeDialog {
         try {
             int firstPage = Integer.parseInt(selectFirstPageOnAddNodeSelectedItem);
             int lastPage = Integer.parseInt(selectLastPageOnAddNodeSelectedItem);
-            List<View> result = new ArrayList<>(Math.abs(firstPage - lastPage) + 1);
-            if (firstPage <= lastPage) {
-                for (int i = firstPage; i <= lastPage; i++) {
-                    View newView = new View();
-                    newView.setMediaUnit(workpiece.getMediaUnits().get(i));
-                    result.add(newView);
-                }
-            } else {
-                for (int i = lastPage; i >= firstPage; i--) {
-                    View newView = new View();
-                    newView.setMediaUnit(workpiece.getMediaUnits().get(i));
-                    result.add(newView);
-                }
-            }
-            return result;
+            return EditPagesDialog.getViewsToAdd(workpiece, firstPage, lastPage);
         } catch (NumberFormatException e) {
             // user didn’t select both start and end page
             logger.catching(Level.TRACE, e);

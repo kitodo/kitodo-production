@@ -1,10 +1,13 @@
 package org.kitodo.production.forms.dataeditor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -112,6 +115,33 @@ public class MetadataEditor {
             structuree.getViews().addAll(viewsToAdd);
         }
         return newStructure;
+    }
+
+    public static void assignViewsFromChildren(Structure structure) {
+        structure.getViews().addAll(getViewsFromChildrenRecursive(structure));
+    }
+
+    private static Collection<View> getViewsFromChildrenRecursive(Structure structure) {
+        List<View> result = new ArrayList<>();
+        result.addAll(structure.getViews());
+        for (Structure child : structure.getChildren()) {
+            result.addAll(getViewsFromChildrenRecursive(child));
+        }
+        return result;
+    }
+
+    /**
+     * Creates a view on a media unit that is not further restricted; that is,
+     * the entire media unit is displayed.
+     *
+     * @param mediaUnit
+     *            media unit on which a view is to be formed
+     * @return the created media unit
+     */
+    public static View createUnrestrictedViewOn(MediaUnit mediaUnit) {
+        View result = new View();
+        result.setMediaUnit(mediaUnit);
+        return result;
     }
 
     /**

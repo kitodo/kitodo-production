@@ -35,12 +35,12 @@ public class MetadataPanel implements Serializable {
 
     private Collection<Metadata> clipboard = new ArrayList<>();
 
-    private final DataEditorForm dataEditor;
+    private final RulesetSetupInterface rulesetSetup;
 
     private FieldedMetadataTableRow metadataTable = FieldedMetadataTableRow.EMPTY;
 
-    public MetadataPanel(DataEditorForm dataEditor) {
-        this.dataEditor = dataEditor;
+    public MetadataPanel(RulesetSetupInterface rulesetSetup) {
+        this.rulesetSetup = rulesetSetup;
     }
 
     /**
@@ -134,8 +134,8 @@ public class MetadataPanel implements Serializable {
         if (structure == null) {
             metadataTable = FieldedMetadataTableRow.EMPTY;
         } else {
-            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
-                structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
+                structure.getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
             metadataTable = new FieldedMetadataTableRow(this, structure, divisionView);
         }
 

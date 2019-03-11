@@ -36,20 +36,20 @@
                             <p:outputLabel for="selectFirstPage"
                                            value="#{msgs.firstPage}:"/>
                             <p:selectOneMenu id="selectFirstPage"
-                                             value="#{DataEditorForm.selectedFirstPageForAssignment}"
+                                             value="#{DataEditorForm.editPagesDialog.selectFirstPageSelectedItem}"
                                              filter="true"
                                              filterMatchMode="startsWith">
-                                <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                <f:selectItems value="#{DataEditorForm.editPagesDialog.selectPageItems}"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
                             <p:outputLabel for="selectLastPage"
                                            value="#{msgs.lastPage}:"/>
                             <p:selectOneMenu id="selectLastPage"
-                                             value="#{DataEditorForm.selectedLastPageForAssignment}"
+                                             value="#{DataEditorForm.editPagesDialog.selectLastPageSelectedItem}"
                                              filter="true"
                                              filterMatchMode="startsWith">
-                                <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                <f:selectItems value="#{DataEditorForm.editPagesDialog.selectPageItems}"/>
                             </p:selectOneMenu>
                         </div>
                     </h:panelGroup>
@@ -58,7 +58,7 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="takePagesFromChildrenBtn"
                                          value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                         action="#{DataEditorForm.assignPagesFromChildren}"
+                                         action="#{DataEditorForm.editPagesDialog.takePagesFromChildrenBtnClick}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
                                          update="structureTreeForm,paginationSubSelection"/>
@@ -66,7 +66,7 @@
                                          value="#{msgs.pageAssign}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
-                                         action="#{DataEditorForm.assignPagesFromSelection}"
+                                         action="#{DataEditorForm.editPagesDialog.setPageStartAndEndBtnClick}"
                                          update="structureTreeForm,paginationSubSelection"/>
                     </h:panelGroup>
 
@@ -78,18 +78,18 @@
                                     <h:outputText value="#{msgs.allPages}"/>
                                     <p:selectManyMenu id="paginationSelection"
                                                       value="#{DataEditorForm.selectedPagesForAssignment}">
-                                        <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                        <f:selectItems value="#{DataEditorForm.editPagesDialog.selectPageItems}"/>
                                     </p:selectManyMenu>
                                 </h:panelGroup>
 
                                 <h:panelGroup>
                                     <h:panelGrid columns="1">
                                         <p:commandButton id="addPageBtn"
-                                                         action="#{DataEditorForm.addPagesToLogicalTreeNode}"
+                                                         action="#{DataEditorForm.editPagesDialog.addPageBtnClick}"
                                                          icon="fa fa-arrow-right"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                         <p:commandButton id="removePageBtn"
-                                                         action="#{DataEditorForm.removePagesFromLogicalTreeNode}"
+                                                         action="#{DataEditorForm.editPagesDialog.removePageBtnClick}"
                                                          icon="fa fa-arrow-left"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                     </h:panelGrid>
@@ -98,8 +98,8 @@
                                 <h:panelGroup>
                                     <h:outputText value="#{msgs.relatedPages}"/>
                                     <p:selectManyMenu id="paginationSubSelection"
-                                                      value="#{DataEditorForm.selectedPagesOfSelectedLogicalTreeNode}">
-                                        <f:selectItems value="#{DataEditorForm.pagesOfSelectedLogicalTreeNode}"/>
+                                                      value="#{DataEditorForm.editPagesDialog.paginationSubSelectionSelectedItems}">
+                                        <f:selectItems value="#{DataEditorForm.editPagesDialog.paginationSubSelectionItems}"/>
                                         <p:ajax update="structureTreeForm"/>
                                     </p:selectManyMenu>
                                 </h:panelGroup>

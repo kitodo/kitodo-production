@@ -53,7 +53,7 @@ import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
 @SessionScoped
-public class DataEditorForm implements Serializable {
+public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -78,6 +78,11 @@ public class DataEditorForm implements Serializable {
      * Backing bean for the comment panel.
      */
     private final CommentPanel commentPanel;
+
+    /**
+     * Backing bean for the edit pages dialog.
+     */
+    private final EditPagesDialog editPagesDialog;
 
     /**
      * Backing bean for the gallery panel.
@@ -175,6 +180,7 @@ public class DataEditorForm implements Serializable {
         this.galleryPanel = new GalleryPanel(this);
         this.commentPanel = new CommentPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
+        this.editPagesDialog = new EditPagesDialog(this);
     }
 
     /**
@@ -358,13 +364,8 @@ public class DataEditorForm implements Serializable {
 
     }
 
-    /**
-     * Returns the acquisition stage, so that the individual panels can access
-     * it.
-     *
-     * @return the acquisition stage
-     */
-    String getAcquisitionStage() {
+    @Override
+    public String getAcquisitionStage() {
         return acquisitionStage;
     }
 
@@ -376,6 +377,10 @@ public class DataEditorForm implements Serializable {
         return commentPanel;
     }
 
+    public EditPagesDialog getEditPagesDialog() {
+        return editPagesDialog;
+    }
+
     public GalleryPanel getGalleryPanel() {
         return galleryPanel;
     }
@@ -384,14 +389,8 @@ public class DataEditorForm implements Serializable {
         return metadataPanel;
     }
 
-    /**
-     * Returns the language preference list of the editing user, so that the
-     * individual panels can access it.
-     *
-     * @return the language preference list
-     */
-
-    List<LanguageRange> getPriorityList() {
+    @Override
+    public List<LanguageRange> getPriorityList() {
         return priorityList;
     }
 
@@ -413,12 +412,8 @@ public class DataEditorForm implements Serializable {
         return process.getTitle();
     }
 
-    /**
-     * Returns the rule set, so that the individual panels can access it.
-     *
-     * @return the rule set
-     */
-    RulesetManagementInterface getRuleset() {
+    @Override
+    public RulesetManagementInterface getRuleset() {
         return ruleset;
     }
 
