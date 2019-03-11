@@ -155,6 +155,20 @@ public class ProcessServiceIT {
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size()));
     }
 
+
+    @Test
+    public void shouldFindByMetadataContent() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+                processService.findByMetadataContent("Proc").size()));
+    }
+
+
+    @Test
+    public void shouldNotFindByMetadataContent() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 0,
+                processService.findByMetadataContent("Nope").size()));
+    }
+
     @Test
     public void shouldNotFindByMetadata() {
         await().untilAsserted(() -> assertEquals("Process was found in index!", 0,

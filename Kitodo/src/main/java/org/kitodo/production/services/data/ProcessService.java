@@ -144,6 +144,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String LOCKED = "locked";
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
+    private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
@@ -481,25 +482,45 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find processes by metadata.
-     * 
+     *
      * @param metadata
      *             key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
     public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
-        String key = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (Map.Entry<String, String> entry : metadata.entrySet()) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-            pairQuery.must(matchQuery(key + ".name", entry.getKey()));
-            pairQuery.must(matchQuery(key + ".content", entry.getValue()));
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", entry.getKey()));
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", entry.getValue()));
             query.must(pairQuery);
         }
+        System.out.println(query);
 
-        return findByQuery(nestedQuery(key, query, ScoreMode.Total), true);
+        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
     }
 
+    /**
+     * Find processes by metadata in configured fields.
+     *
+     * @param metadataContent
+     *            The string, which should be found in metadata
+     * @return A List of found ProcessDTOs
+     */
+    public List<ProcessDTO> findByMetadataContent(String metadataContent) throws DataException {
+
+        List<String> metadataSearchFields = Arrays.asList("TitleDocMain", "TSL_ATS");
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        for (String searchField : metadataSearchFields) {
+            BoolQueryBuilder pairQuery = new BoolQueryBuilder();
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", searchField));
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent));
+            query.should(pairQuery);
+        }
+        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), false);
+    }
+    
     /**
      * Find processes by id of project.
      *
@@ -513,7 +534,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find processes by title.
-     * 
+     *
      * @param title
      *            the title
      * @return a list of processes
@@ -526,7 +547,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find processes by title with wildcard.
-     * 
+     *
      * @param title
      *            the title
      * @return a list of processes
