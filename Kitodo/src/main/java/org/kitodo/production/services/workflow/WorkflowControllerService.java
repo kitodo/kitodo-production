@@ -288,13 +288,10 @@ public class WorkflowControllerService {
 
                 Process process = task.getProcess();
 
-                List<Task> concurrentTasks = getConcurrentTasksForOpen(process.getTasks(), task);
-
-                if (!concurrentTasks.isEmpty()) {
-                    for (Task concurrentTask : concurrentTasks) {
-                        concurrentTask.setProcessingStatus(TaskStatus.LOCKED);
-                        taskService.save(concurrentTask);
-                    }
+                List<Task> concurrentTasks = getConcurrentTasksForClose(process.getTasks(), task);
+                for (Task concurrentTask : concurrentTasks) {
+                    concurrentTask.setProcessingStatus(TaskStatus.LOCKED);
+                    taskService.save(concurrentTask);
                 }
 
                 updateProcessSortHelperStatus(process);
@@ -560,6 +557,17 @@ public class WorkflowControllerService {
             }
         }
         return allHigherTasks;
+    }
+
+    private List<Task> getConcurrentTasksForClose(List<Task> tasks, Task task) {
+        List<Task> allConcurrentTasks = new ArrayList<>();
+        for (Task tempTask : tasks) {
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus().getValue() < 2
+                    && !tempTask.getId().equals(task.getId()) && !tempTask.isConcurrent()) {
+                allConcurrentTasks.add(tempTask);
+            }
+        }
+        return allConcurrentTasks;
     }
 
     private List<Task> getConcurrentTasksForOpen(List<Task> tasks, Task task) {
