@@ -164,8 +164,21 @@ public class TemplateForm extends TemplateBaseForm {
             Helper.setErrorMessage("processAssignedError");
         } else {
             try {
+                for (Task templateTask : this.template.getTasks()) {
+                    templateTask.setTemplate(null);
+                }
+                this.template.getTasks().clear();
+
+                for (Project templateProject : this.template.getProjects()) {
+                    templateProject.getTemplates().remove(this.template);
+                }
+                this.template.getProjects().clear();
+
+                this.template.getWorkflow().getTemplates().remove(this.template);
+                this.template.setWorkflow(null);
+
                 ServiceManager.getTemplateService().remove(this.template);
-            } catch (DataException e) {
+            } catch (Exception e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
             }
