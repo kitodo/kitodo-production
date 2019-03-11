@@ -147,6 +147,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
+    private static final List<String> METADATA_SEARCH_FIELDS = Arrays.asList(ConfigCore.getStringArrayParameter(ParameterCore.METADATA_SEARCH_FIELDS));
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -510,9 +511,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public List<ProcessDTO> findByMetadataContent(String metadataContent) throws DataException {
 
-        List<String> metadataSearchFields = Arrays.asList("TitleDocMain", "TSL_ATS");
         BoolQueryBuilder query = new BoolQueryBuilder();
-        for (String searchField : metadataSearchFields) {
+        for (String searchField : METADATA_SEARCH_FIELDS) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
             pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", searchField));
             pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent));
