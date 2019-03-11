@@ -291,6 +291,7 @@ public class WorkflowForm extends BaseForm {
             URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
             this.workflow = ServiceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
+            setWorkflowStatus(WorkflowStatus.DRAFT);
             Map<String, URI> diagramsCopyUris = getDiagramUris();
 
             URI svgDiagramCopyURI = diagramsCopyUris.get(SVG_DIAGRAM_URI);
@@ -339,7 +340,9 @@ public class WorkflowForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setWorkflow(ServiceManager.getWorkflowService().getById(id));
+                Workflow workflow = ServiceManager.getWorkflowService().getById(id);
+                setWorkflow(workflow);
+                setWorkflowStatus(workflow.getStatus());
                 readXMLDiagram();
             }
             setSaveDisabled(false);
