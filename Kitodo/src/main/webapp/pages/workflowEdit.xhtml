@@ -23,12 +23,16 @@
         <f:viewAction action="#{WorkflowForm.load(id)}"/>
     </f:metadata>
 
+    <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
               value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title eq null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+    <!--@elvariable id="isDuplicateMode" type="boolean"-->
     <ui:param name="isDuplicateMode"
               value="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title ne null and SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
+    <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
               value="#{WorkflowForm.workflow.id ne null and WorkflowForm.workflow.status eq 'DRAFT' and SecurityAccessController.hasAuthorityToEditWorkflow()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewWorkflow()}"/>
 

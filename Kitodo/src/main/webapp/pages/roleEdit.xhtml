@@ -22,10 +22,13 @@
         <f:viewAction action="#{RoleForm.load(id)}"/>
     </f:metadata>
 
+    <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
               value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
+    <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
               value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRole()}"/>
 
