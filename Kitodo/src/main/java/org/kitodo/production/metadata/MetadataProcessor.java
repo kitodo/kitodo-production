@@ -2135,7 +2135,7 @@ public class MetadataProcessor {
      * @return The logical page number.
      */
     public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
-        for (String page : allPages) {
+        for (String page : Arrays.stream(allPages).filter(Objects::nonNull).collect(Collectors.toList())) {
             int physicalPageNumber = getPhysicalPageNumber(docStruct);
             if (page.startsWith(String.valueOf(physicalPageNumber))) {
                 return getLogicalPageNumberOfPaginatedImage(page);
