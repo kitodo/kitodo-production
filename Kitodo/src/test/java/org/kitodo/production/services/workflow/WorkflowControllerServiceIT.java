@@ -259,32 +259,70 @@ public class WorkflowControllerServiceIT {
     }
 
     @Test
-    public void shouldCloseForProcessWithScriptParallelTasks() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
-        // if you want to execute test on windows change sh to bat in
-        // gateway-test5.bpmn20.xml
-
-        Task task = taskService.getById(49);
+    public void shouldCloseAndAssignNextForProcessWithParallelTasks() throws Exception {
+        Task task = taskService.getById(44);
 
         workflowService.close(task);
         assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
 
         // Task 2 and 4 are set up to open because they are concurrent and conditions
         // were evaluated to true
-        Task nextTask = taskService.getById(50);
+        Task nextTask = taskService.getById(45);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+                nextTask.getProcessingStatus());
+
+        // Task 3 has XPath which evaluates to false - it gets immediately closed
+        nextTask = taskService.getById(46);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
+                nextTask.getProcessingStatus());
+
+        nextTask = taskService.getById(47);
+        assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
+                nextTask.getProcessingStatus());
+
+        nextTask = taskService.getById(48);
+        assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
+                nextTask.getProcessingStatus());
+
+        fileService.createDirectory(URI.create("9"), "images");
+
+        workflowService.assignTaskToUser(taskService.getById(45));
+
+        fileService.delete(URI.create("9/images"));
+
+        // Task 4 should be kept open
+        Task nextConcurrentTask = taskService.getById(47);
+        assertEquals("Task '" + nextConcurrentTask.getTitle() + "' was not kept to open!", TaskStatus.OPEN,
+                nextConcurrentTask.getProcessingStatus());
+    }
+
+    @Test
+    public void shouldCloseForProcessWithScriptParallelTasks() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        // if you want to execute test on windows change sh to bat in
+        // gateway-test5.bpmn20.xml
+
+        Task task = taskService.getById(54);
+
+        workflowService.close(task);
+        assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
+
+        // Task 2 and 4 are set up to open because they are concurrent and conditions
+        // were evaluated to true
+        Task nextTask = taskService.getById(55);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatus());
 
         // Task 3 has Script which evaluates to false - it gets immediately closed
-        nextTask = taskService.getById(51);
+        nextTask = taskService.getById(56);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to done!", TaskStatus.DONE,
             nextTask.getProcessingStatus());
 
-        nextTask = taskService.getById(52);
+        nextTask = taskService.getById(57);
         assertEquals("Task '" + nextTask.getTitle() + "' was not set up to open!", TaskStatus.OPEN,
             nextTask.getProcessingStatus());
 
-        nextTask = taskService.getById(53);
+        nextTask = taskService.getById(58);
         assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
             nextTask.getProcessingStatus());
     }

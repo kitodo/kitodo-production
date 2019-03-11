@@ -1352,6 +1352,25 @@ public class MockDatabase {
         fifthProcess.setDocket(template.getDocket());
         fifthProcess.setRuleset(template.getRuleset());
         ServiceManager.getProcessService().save(fifthProcess);
+
+        Process sixthProcess = new Process();
+        sixthProcess.setTitle("ParallelInWorkWithNonBlockingToAssign");
+        sixthProcess.setTemplate(template);
+
+        BeanHelper.copyTasks(template, sixthProcess);
+        sixthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
+        sixthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);
+        sixthProcess.getTasks().get(1).setConcurrent(true);
+        sixthProcess.getTasks().get(2).setProcessingStatus(TaskStatus.LOCKED);
+        sixthProcess.getTasks().get(2).setConcurrent(true);
+        sixthProcess.getTasks().get(3).setProcessingStatus(TaskStatus.LOCKED);
+        sixthProcess.getTasks().get(3).setConcurrent(true);
+        sixthProcess.getTasks().get(4).setProcessingStatus(TaskStatus.LOCKED);
+
+        sixthProcess.setProject(project);
+        sixthProcess.setDocket(template.getDocket());
+        sixthProcess.setRuleset(template.getRuleset());
+        ServiceManager.getProcessService().save(sixthProcess);
     }
 
     private static void insertDataForScriptParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
