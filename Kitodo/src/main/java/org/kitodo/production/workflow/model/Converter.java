@@ -113,6 +113,7 @@ public class Converter {
         task.setConcurrent(kitodoTask.isConcurrent());
         task.setLast(taskInfo.isLast());
         task.setBatchStep(kitodoTask.isBatchStep());
+        task.setTypeMetadata(kitodoTask.isTypeMetadata());
         task.setTypeAutomatic(kitodoTask.isTypeAutomatic());
         task.setTypeImagesRead(kitodoTask.isTypeImagesRead());
         task.setTypeImagesWrite(kitodoTask.isTypeImagesWrite());

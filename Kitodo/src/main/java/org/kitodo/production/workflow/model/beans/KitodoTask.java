@@ -370,14 +370,4 @@ public class KitodoTask {
     public String getUserRoles() {
         return userRoles;
     }
-
-    /**
-     * Set user role.
-     *
-     * @param userRoles
-     *            as java.lang.Integer
-     */
-    public void setUserRoles(String userRoles) {
-        this.userRoles = userRoles;
-    }
 }
