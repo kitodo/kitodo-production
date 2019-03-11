@@ -26,7 +26,7 @@
         <p:row>
             <p:outputLabel for="xmlDiagramName" value="#{msgs.title}"/>
             <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input"
-                         value="#{WorkflowForm.workflow.title}" required="true"/>
+                         value="#{WorkflowForm.workflow.title}" required="true" disabled="#{isViewMode}"/>
             <div class="workflow-editor-hidden">
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
 
@@ -40,7 +40,7 @@
         </p:row>
         <p:row>
             <p:outputLabel for="status" value="#{msgs.status}"/>
-            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input">
+            <p:selectOneMenu id="status" value="#{WorkflowForm.workflowStatus}" class="input" disabled="#{isViewMode}">
                 <p:ajax event="change" update="@this" />
                 <f:selectItems value="#{WorkflowForm.workflowStatuses}" var="status"
                                itemValue = "#{status}"/>
