@@ -124,7 +124,7 @@ public class SearchResultForm extends BaseForm {
     public Collection<ProjectDTO> getProjectsForFiltering() {
         HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
         for (ProcessDTO process : resultList) {
-            projectsForFiltering.put(process.getId(), process.getProject());
+            projectsForFiltering.put(process.getProject().getId(), process.getProject());
         }
         return projectsForFiltering.values();
     }
