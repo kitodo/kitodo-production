@@ -36,7 +36,7 @@
 
                             <div>
                                 <p:commandButton id="createPaginationButton"
-                                                 action="#{DataEditorForm.applyPaginationReadFromImages}"
+                                                 action="#{DataEditorForm.paginationPanel.createPaginationButtonClick}"
                                                  value="#{msgs.paginationRead}"
                                                  icon="fa fa-magic fa-lg"
                                                  iconPos="right"
@@ -47,10 +47,10 @@
                             </div>
 
                             <div>
-                                <p:selectManyMenu id="paginationSelection" value="#{DataEditorForm.selectedPages}" style="height: 100%;"
+                                <p:selectManyMenu id="paginationSelection" value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}" style="height: 100%;"
                                                   required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
                                                   filter="true" filterMatchMode="contains">
-                                    <f:selectItems value="#{DataEditorForm.allPages}"/>
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
 
                                 </p:selectManyMenu>
                             </div>
@@ -59,8 +59,8 @@
                                 <p:outputLabel for="paginationTypeSelect"
                                                value="#{msgs.pagination}"/>
                                 <p:selectOneMenu id="paginationTypeSelect"
-                                                 value="#{DataEditorForm.paginationType}">
-                                    <f:selectItems value="#{DataEditorForm.paginationTypes}"
+                                                 value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems}"
                                                    var="type"
                                                    itemValue="#{type}"
                                                    itemLabel="#{type.label}"/>
@@ -72,7 +72,7 @@
                                                for="paginationStartValue"/>
                                 <p:inputText id="paginationStartValue"
                                              required="true"
-                                             value="#{DataEditorForm.paginationValue}"
+                                             value="#{DataEditorForm.paginationPanel.paginationStartValueValue}"
                                              label="#{msgs.paginationStartValue}"
                                              class="input"
                                              requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
@@ -82,8 +82,8 @@
                                 <p:outputLabel value="#{msgs.paginationScope}:"
                                                for="selectPaginationScope"/>
                                 <p:selectOneMenu id="selectPaginationScope"
-                                                 value="#{DataEditorForm.paginator.paginationScope}">
-                                    <f:selectItems value="#{DataEditorForm.paginator.paginationModes}"
+                                                 value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
                                                    var="scope"
                                                    itemValue="#{scope}"
                                                    itemLabel="#{scope.label}"/>
@@ -93,10 +93,10 @@
                             <div>
                                 <p:outputLabel value="#{msgs.counting}:"
                                                for="selectPaginationMode"/>
-                                <p:selectOneMenu value="#{DataEditorForm.paginator.paginationMode}"
+                                <p:selectOneMenu value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
                                                  var="mode"
                                                  id="selectPaginationMode">
-                                    <f:selectItems value="#{DataEditorForm.paginator.paginationModes}"
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
                                                    var="modeSelection"
                                                    itemValue="#{modeSelection}"
                                                    itemLabel="#{modeSelection.label}"/>
@@ -114,7 +114,7 @@
                                         value="#{msgs.insertNewImages}"
                                         for="newPagesCount"/>
                                 <p:inputText id="newPagesCount"
-                                             value="#{DataEditorForm.numberOfImagesToAdd}"
+                                             value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
                                              class="input"
                                              style="width: 70%;"
                                              label="#{msgs.paginationStartValue}">
@@ -124,7 +124,7 @@
                                 <p:commandButton id="generateDummyImagesButton"
                                                  value="#{msgs.insert}"
                                                  styleClass="secondary"
-                                                 action="#{DataEditorForm.addNewImagesAndPaginate}"
+                                                 action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick}"
                                                  update="structureTreeForm,galleryWrapperPanel"
                                                  immediate="true"/>
                             </div>
@@ -135,7 +135,7 @@
                                 <p:selectBooleanCheckbox id="fictitiousCheckbox"
                                                          styleClass="input"
                                                          style="margin-bottom: 0;"
-                                                         value="#{DataEditorForm.fictitious}"/>
+                                                         value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
                             </div>
 
                         </h:panelGroup>
@@ -144,7 +144,7 @@
                                       styleClass="dialogButtonWrapper">
 
                             <p:commandButton id="startPagination"
-                                             action="#{DataEditorForm.applyPagination}"
+                                             action="#{DataEditorForm.paginationPanel.startPaginationClick}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"

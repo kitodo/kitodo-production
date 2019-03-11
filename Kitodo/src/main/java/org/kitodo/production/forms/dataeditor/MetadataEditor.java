@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.MediaUnit;
@@ -71,7 +72,7 @@ public class MetadataEditor {
     public static Structure addStructure(String type, Workpiece workpiece, Structure structure,
             InsertionPosition position, List<View> viewsToAdd) {
 
-        LinkedList<Structure> parents = getParentsOfStructure(structure, workpiece.getStructure(), null);
+        LinkedList<Structure> parents = getAncestorsOfStructureRecursive(structure, workpiece.getStructure(), null);
         Structure newStructure = new Structure();
         newStructure.setType(type);
         List<Structure> siblings = parents.getLast().getChildren();
@@ -145,25 +146,31 @@ public class MetadataEditor {
     }
 
     /**
-     * Determines the parent node to a tree node.
+     * Determines the ancestors of a tree node.
      *
      * @param searched
-     *            node whose parent node is to be found
+     *            node whose ancestor nodes are to be found
      * @param position
      *            node to be searched recursively
-     * @param parent
-     *            parent node of the node to be searched
-     * @return the parent node, if one is found, {@code null} otherwise
+     * @return the parent nodes (maybe empty)
      */
-    public static LinkedList<Structure> getParentsOfStructure(Structure searched, Structure position,
+    public static LinkedList<Structure> getAncestorsOfStructure(Structure searched, Structure position) {
+        return getAncestorsOfStructureRecursive(searched, position, null);
+    }
+
+    private static LinkedList<Structure> getAncestorsOfStructureRecursive(Structure searched, Structure position,
             Structure parent) {
         if (position.equals(searched)) {
+            if (Objects.isNull(parent)) {
+                return (LinkedList<Structure>) Collections.<Structure>emptyList();
+            }
             LinkedList<Structure> result = new LinkedList<>();
             result.add(parent);
             return result;
+
         }
         for (Structure child : position.getChildren()) {
-            LinkedList<Structure> maybeFound = getParentsOfStructure(searched, child, position);
+            LinkedList<Structure> maybeFound = getAncestorsOfStructureRecursive(searched, child, position);
             if (!maybeFound.isEmpty()) {
                 maybeFound.addFirst(parent);
                 return maybeFound;

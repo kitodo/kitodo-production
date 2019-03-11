@@ -18,14 +18,12 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
@@ -43,13 +41,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.metadata.MetadataImpl;
-import org.kitodo.production.metadata.pagination.Paginator;
-import org.kitodo.production.metadata.pagination.enums.Mode;
-import org.kitodo.production.metadata.pagination.enums.Scope;
-import org.kitodo.production.metadata.pagination.enums.Type;
 import org.kitodo.production.services.ServiceManager;
-import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
 @SessionScoped
@@ -99,7 +91,15 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private URI mainFileUri;
 
+    /**
+     * Backing bean for the meta-data panel.
+     */
     private final MetadataPanel metadataPanel;
+
+    /**
+     * Backing bean for the pagination panel.
+     */
+    private final PaginationPanel paginationPanel;
 
     /**
      * The language preference list of the editing user for displaying the
@@ -138,39 +138,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     private boolean showPagination = false;
 
-    // pages
-    private String[] allPages;
-    private String[] selectedPages;
-    private String selectedFirstPage;
-    private String selectedLastPage;
-
-    // pagination
-    private int numberOfImagesToAdd;
-    private Paginator paginator = new Paginator();
-    private String paginationValue;
-    private boolean paginationFictitious = false;
-
-    // structure
-    private TreeNode logicalStructure;
-    private TreeNode selectedLogicalTreeNode;
-    private InsertionPosition selectedNewLogicalPosition;
-    private String selectedNewLogicalType;
-    private boolean addMultipleLogicalElements = false;
-    private int numberOfLogicalElements;
-    private String selectedMetadataType;
-    private String metadataValue;
-    private String selectedFirstPageForAssignment;
-    private String selectedLastPageForAssignment;
-    private String[] selectedPagesForAssignment;
-    private String[] selectedPagesOfSelectedLogicalTreeNode;
-
-    // metadata
-    private List<MetadataImpl> selectedLogicalTreeNodeMetadataList;
-    private MetadataImpl selectedMetadata;
-    private String selectedNewMetadataType;
-    private MetadataImpl newMetadata;
-    private List<MetadataImpl> newMetadataList;
-
     /**
      * Public constructor.
      */
@@ -178,6 +145,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.structurePanel = new StructurePanel(this);
         this.metadataPanel = new MetadataPanel(this);
         this.galleryPanel = new GalleryPanel(this);
+        this.paginationPanel = new PaginationPanel(this);
         this.commentPanel = new CommentPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -267,9 +235,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         final long begin = System.nanoTime();
 
         structurePanel.show(workpiece);
-        metadataPanel.show(structurePanel.getSelectedStructure());
+        Structure selectedStructure = structurePanel.getSelectedStructure();
+        metadataPanel.show(selectedStructure);
         galleryPanel.show(workpiece);
+        paginationPanel.show(workpiece);
         commentPanel.show(workpiece);
+
+        addDocStrucTypeDialog.prepare(workpiece, selectedStructure);
+        editPagesDialog.prepare(workpiece, selectedStructure);
 
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
@@ -344,7 +317,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Save the structure and metadata.
+     * Save the structure and meta-data.
      *
      * @return navigation target
      */
@@ -362,6 +335,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return null;
         }
 
+    }
+
+    public void deleteButtonClick() {
+        structurePanel.deleteSelectedStructure();
     }
 
     @Override
@@ -385,8 +362,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return galleryPanel;
     }
 
+    LockResult getLocks() {
+        return this.locks;
+    }
+
     public MetadataPanel getMetadataPanel() {
         return metadataPanel;
+    }
+
+    public PaginationPanel getPaginationPanel() {
+        return paginationPanel;
     }
 
     @Override
@@ -421,292 +406,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return structurePanel;
     }
 
-    void refreshStructurePanel() {
-        structurePanel.show(workpiece);
-    }
-
-    void setProcess(Process process) {
-        this.process = process;
-    }
-
-    void switchToStructure(Structure structure)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preserve();
-        metadataPanel.show(structure);
-        addDocStrucTypeDialog.prepare(workpiece, structure);
-    }
-
-    /**
-     * Add a single new logical Element and set the specified pages.
-     */
-    public void addLogicalNode() {
-        // TODO implement
-    }
-
-    /**
-     * Add multiple new logical Elements.
-     */
-    public void addMultipleLogicalNodes() {
-        // TODO implement
-        /* use this.selectedLogicalTreeNode
-               this.selectedNewLogicalPosition
-               this.selectedNewLogicalType
-               this.numberOfLogicalElements
-               this.selectedMetadataType
-               this.metadataValue
-        */
-    }
-
-    /**
-     * Delete the currently selected logical TreeNode.
-     */
-    public void deleteLogicalNode() {
-        // TODO implement: delete node from selectedLogicalTreeNode
-    }
-
-    /**
-     * Get possible positions of new element relative to its parent.
-     *
-     * @return list of enums
-     */
-    public InsertionPosition[] getNewElementPositionList() {
-        return InsertionPosition.values();
-    }
-
-    /**
-     * Get possible element types for a new element at the selected position.
-     *
-     * @return List of possible element types
-     */
-    public SelectItem[] getNewLogicalTypeList() {
-        // TODO implement
-        return new SelectItem[0];
-    }
-
-    /**
-     * Get list of possible metadata for the selected element type.
-     *
-     * @return list of possible metadata fields
-     */
-    public List<SelectItem> getNewLogicalMetadataList() {
-        // TODO implement
-        // get list of possible metadata for element in this.selectedNewLogicalType
-        return new ArrayList<>();
-    }
-
-    /**
-     * Assign all pages to the currently selected logical TreeNode that are already assigned to its children.
-     */
-    public void assignPagesFromChildren() {
-        // TODO implement
-        // assign all pages of this.selectedLogicalTreeNode's children to this.selectedLogicalTreeNode
-    }
-
-    /**
-     * Assign all selected pages to the currently selected logical TreeNode.
-     */
-    public void assignPagesFromSelection() {
-        // TODO implement
-        // assign all pages within the selection of this.selectedFirstPageForAssignment and this.selectedLastPageForAssignment to this.selectedLogicalTreeNode
-    }
-
-    /**
-     * Get all pages assigned to the currently selected logical TreeNode.
-     *
-     * @return SelectItem array containing all assigned pages
-     */
-    public SelectItem[] getPagesOfSelectedLogicalTreeNode() {
-        // TODO implement
-        // get pages assigned to this.selectedLogicalTreeNode
-        return new SelectItem[0];
-    }
-
-    /**
-     * Assign selected pages to the currently selected logical TreeNode.
-     */
-    public void addPagesToLogicalTreeNode() {
-        // TODO implement
-        // assign pages in this.selectedPagesForAssignment to this.selectedLogicalTreeNode (they might already be assigned to that element)
-    }
-
-    /**
-     * Remove selected pages from the currently selected logical TreeNode.
-     */
-    public void removePagesFromLogicalTreeNode() {
-        // TODO implement
-        // remove pages in this.selectedPagesForAssignment from this.selectedLogicalTreeNode
-    }
-
-    /**
-     * Create dummy images and paginate by configured default setting.
-     */
-    public void addNewImagesAndPaginate() {
-        try {
-            // TODO implement
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Apply the pagination settings to the selected pages.
-     */
-    public void applyPagination() {
-        try {
-            // TODO implement
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * TODO add javaDoc.
-     */
-    public void applyPaginationReadFromImages() {
-        try {
-            // TODO implement
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Get metadata.
-     *
-     * @return MetadataImpl object
-     */
-    public MetadataImpl getMetadata() {
-
-        if (this.selectedMetadata == null) {
-            getAddableMetadataTypes();
-            if (Objects.nonNull(this.newMetadataList) && !this.newMetadataList.isEmpty()) {
-                this.selectedMetadata = this.newMetadataList.get(0);
-            }
-        }
-        return this.selectedMetadata;
-    }
-
-    /**
-     * Get metadata value.
-     *
-     * @return String object
-     */
-    public String getMetadataImplValue() {
-        MetadataImpl metadataImpl = getMetadata();
-        return metadataImpl != null ? metadataImpl.getValue() : "";
-    }
-
-    /**
-     * Copy the metadata.
-     */
-    public void copyMetadata() {
-        try {
-            // TODO implement
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Delete the metadata.
-     */
-    public void deleteMetadata() {
-        // TODO implement
-        // delete current metadata in this.selectedMetadata
-    }
-
-    public void saveMetadata() {
-        // TODO implement
-        // save metadata with this.selectedNewMetadataType and this.newMetadata.value to this.selectedLogicalTreeNode
-    }
-
-    /**
-     * Get List of allowed addable metadata types for the currently selected logical TreeNode.
-     * @return List of SelectItems containing the allowed types of metadata
-     */
-    public List<SelectItem> getAddableMetadataTypes() {
-        // TODO implement
-        // get possible types for metadata of this.selectedLogicalTreeNode
-        return new ArrayList<>();
-    }
-
-    /**
-     * Get current user.
-     *
-     * @return User
-     */
-    public User getCurrentUser() {
-        if (this.user == null) {
-            this.user = ServiceManager.getUserService().getAuthenticatedUser();
-        }
-        return this.user;
-    }
-
-
-
-    /**
-     * Get logger.
-     *
-     * @return value of logger
-     */
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    /**
-     * Sets the ID of the process whose meta-data file is to be edited. This
-     * method must be called using a {@code setPropertyActionListener} before
-     * the meta-data editor is opened.
-     *
-     * @param processId
-     *            ID of the process whose meta-data file is to be edited
-     */
-    public void setProcessId(int processId) {
-    }
-
-    /**
-     * Get user.
-     *
-     * @return value of user
-     */
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * Sets the user running the editor. This method must be called using a
-     * {@code setPropertyActionListener} before the meta-data editor is opened
-     * to set the user.
-     *
-     * @param user
-     *            user object
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * Get referringView.
-     *
-     * @return value of referringView
-     */
-    public String getReferringView() {
-        return referringView;
-    }
-
-    /**
-     * Sets the referring view. This method must be called using a
-     * {@code setPropertyActionListener} before the meta-data editor is opened
-     * to set the JSF view the user shall return to when he or she closes the
-     * editor, or when opening fails.
-     *
-     * @param referringView
-     *            view to return to
-     */
-    public void setReferringView(String referringView) {
-        this.referringView = referringView;
-    }
-
     /**
      * Get showPagination.
      *
@@ -714,6 +413,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public boolean isShowPagination() {
         return showPagination;
+    }
+
+    void refreshStructurePanel() {
+        structurePanel.show(workpiece);
+    }
+
+    void setProcess(Process process) {
+        this.process = process;
     }
 
     /**
@@ -725,541 +432,9 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.showPagination = showPagination;
     }
 
-    /**
-     * Get allPages.
-     *
-     * @return value of allPages
-     */
-    public String[] getAllPages() {
-        return allPages;
-    }
-
-    /**
-     * Set allPages.
-     *
-     * @param allPages as java.lang.String[]
-     */
-    public void setAllPages(String[] allPages) {
-        this.allPages = allPages;
-    }
-
-    /**
-     * Get selectedPages.
-     *
-     * @return value of selectedPages
-     */
-    public String[] getSelectedPages() {
-        return selectedPages;
-    }
-
-    /**
-     * Set selectedPages.
-     *
-     * @param selectedPages as java.lang.String[]
-     */
-    public void setSelectedPages(String[] selectedPages) {
-        this.selectedPages = selectedPages;
-    }
-
-    /**
-     * Get selectedFirstPage.
-     *
-     * @return value of selectedFirstPage
-     */
-    public String getSelectedFirstPage() {
-        return selectedFirstPage;
-    }
-
-    /**
-     * Set selectedFirstPage.
-     *
-     * @param selectedFirstPage as java.lang.String
-     */
-    public void setSelectedFirstPage(String selectedFirstPage) {
-        this.selectedFirstPage = selectedFirstPage;
-    }
-
-    /**
-     * Get selectedLastPage.
-     *
-     * @return value of selectedLastPage
-     */
-    public String getSelectedLastPage() {
-        return selectedLastPage;
-    }
-
-    /**
-     * Set selectedLastPage.
-     *
-     * @param selectedLastPage as java.lang.String
-     */
-    public void setSelectedLastPage(String selectedLastPage) {
-        this.selectedLastPage = selectedLastPage;
-    }
-
-    /**
-     * Get numberOfImagesToAdd.
-     *
-     * @return value of numberOfImagesToAdd
-     */
-    public int getNumberOfImagesToAdd() {
-        return numberOfImagesToAdd;
-    }
-
-    /**
-     * Set numberOfImagesToAdd.
-     *
-     * @param numberOfImagesToAdd as int
-     */
-    public void setNumberOfImagesToAdd(int numberOfImagesToAdd) {
-        this.numberOfImagesToAdd = numberOfImagesToAdd;
-    }
-
-    /**
-     * Get pagination mode.
-     *
-     * @return value of pagination mode
-     */
-    public Mode getPaginationMode() {
-        return paginator.getPaginationMode();
-    }
-
-    /**
-     * Set paginationMode.
-     *
-     * @param paginationMode
-     *            as org.kitodo.production.metadata.pagination.enums.Mode
-     */
-    public void setPaginationMode(Mode paginationMode) {
-        paginator.setPaginationMode(paginationMode);
-    }
-
-    /**
-     * Get pagination modes.
-     *
-     * @return value of pagination modes
-     */
-    public Mode[] getPaginationModes() {
-        return paginator.getPaginationModes();
-    }
-
-    /**
-     * Get pagination scope.
-     *
-     * @return value of pagination scope
-     */
-    public Scope getPaginationScope() {
-        return paginator.getPaginationScope();
-    }
-
-    /**
-     * Set paginationScope.
-     *
-     * @param paginationMode
-     *            as org.kitodo.production.metadata.pagination.enums.Scope
-     */
-    public void setPaginationScope(Scope paginationScope) {
-        paginator.setPaginationScope(paginationScope);
-    }
-
-    /**
-     * Get pagination scopes.
-     *
-     * @return value of pagination scopes
-     */
-    public Scope[] getPaginationScopes() {
-        return paginator.getPaginationScopes();
-    }
-
-    /**
-     * Get pagination type.
-     *
-     * @return value of pagination type
-     */
-    public Type getPaginationType() {
-        return paginator.getPaginationType();
-    }
-
-    /**
-     * Set paginationType.
-     *
-     * @param paginationType
-     *            as org.kitodo.production.metadata.pagination.enums.Type
-     */
-    public void setPaginationType(Type paginationType) {
-        paginator.setPaginationType(paginationType);
-    }
-
-    /**
-     * Get pagination types.
-     *
-     * @return value of pagination types
-     */
-    public Type[] getPaginationTypes() {
-        return paginator.getPaginationTypes();
-    }
-
-    /**
-     * Get paginator.
-     *
-     * @return value of paginator
-     */
-    public Paginator getPaginator() {
-        return paginator;
-    }
-
-    /**
-     * Set paginator.
-     *
-     * @param paginator as org.kitodo.production.metadata.pagination.Paginator
-     */
-    public void setPaginator(Paginator paginator) {
-        this.paginator = paginator;
-    }
-
-    /**
-     * Get paginationValue.
-     *
-     * @return value of paginationValue
-     */
-    public String getPaginationValue() {
-        return paginationValue;
-    }
-
-    /**
-     * Set paginationValue.
-     *
-     * @param paginationValue as java.lang.String
-     */
-    public void setPaginationValue(String paginationValue) {
-        this.paginationValue = paginationValue;
-    }
-
-    /**
-     * Get paginationFictitious.
-     *
-     * @return value of paginationFictitious
-     */
-    public boolean isPaginationFictitious() {
-        return paginationFictitious;
-    }
-
-    /**
-     * Set paginationFictitious.
-     *
-     * @param paginationFictitious as boolean
-     */
-    public void setPaginationFictitious(boolean paginationFictitious) {
-        this.paginationFictitious = paginationFictitious;
-    }
-
-    /**
-     * Get logicalStructure.
-     *
-     * @return value of logicalStructure
-     */
-    public TreeNode getLogicalStructure() {
-        return logicalStructure;
-    }
-
-    /**
-     * Set logicalStructure.
-     *
-     * @param logicalStructure as org.primefaces.model.TreeNode
-     */
-    public void setLogicalStructure(TreeNode logicalStructure) {
-        this.logicalStructure = logicalStructure;
-    }
-
-    /**
-     * Get selectedLogicalTreeNode.
-     *
-     * @return value of selectedLogicalTreeNode
-     */
-    public TreeNode getSelectedLogicalTreeNode() {
-        return selectedLogicalTreeNode;
-    }
-
-    /**
-     * Set selectedLogicalTreeNode.
-     *
-     * @param selectedLogicalTreeNode as org.primefaces.model.TreeNode
-     */
-    public void setSelectedLogicalTreeNode(TreeNode selectedLogicalTreeNode) {
-        this.selectedLogicalTreeNode = selectedLogicalTreeNode;
-    }
-
-    /**
-     * Get selectedNewLogicalPosition.
-     *
-     * @return value of selectedNewLogicalPosition
-     */
-    public InsertionPosition getSelectedNewLogicalPosition() {
-        return selectedNewLogicalPosition;
-    }
-
-    /**
-     * Set selectedNewLogicalPosition.
-     *
-     * @param selectedNewLogicalPosition as org.kitodo.production.enums.PositionOfNewDocStrucElement
-     */
-    public void setSelectedNewLogicalPosition(InsertionPosition selectedNewLogicalPosition) {
-        this.selectedNewLogicalPosition = selectedNewLogicalPosition;
-    }
-
-    /**
-     * Get selectedNewLogicalType.
-     *
-     * @return value of selectedNewLogicalType
-     */
-    public String getSelectedNewLogicalType() {
-        return selectedNewLogicalType;
-    }
-
-    /**
-     * Set selectedNewLogicalType.
-     *
-     * @param selectedNewLogicalType as java.lang.String
-     */
-    public void setSelectedNewLogicalType(String selectedNewLogicalType) {
-        this.selectedNewLogicalType = selectedNewLogicalType;
-    }
-
-    /**
-     * Get addMultipleLogicalElements.
-     *
-     * @return value of addMultipleLogicalElements
-     */
-    public boolean isAddMultipleLogicalElements() {
-        return addMultipleLogicalElements;
-    }
-
-    /**
-     * Set addMultipleLogicalElements.
-     *
-     * @param addMultipleLogicalElements as boolean
-     */
-    public void setAddMultipleLogicalElements(boolean addMultipleLogicalElements) {
-        this.addMultipleLogicalElements = addMultipleLogicalElements;
-    }
-
-    /**
-     * Get numberOfLogicalElements.
-     *
-     * @return value of numberOfLogicalElements
-     */
-    public int getNumberOfLogicalElements() {
-        return numberOfLogicalElements;
-    }
-
-    /**
-     * Set numberOfLogicalElements.
-     *
-     * @param numberOfLogicalElements as int
-     */
-    public void setNumberOfLogicalElements(int numberOfLogicalElements) {
-        this.numberOfLogicalElements = numberOfLogicalElements;
-    }
-
-    /**
-     * Get selectedMetadataType.
-     *
-     * @return value of selectedMetadataType
-     */
-    public String getSelectedMetadataType() {
-        return selectedMetadataType;
-    }
-
-    /**
-     * Set selectedMetadataType.
-     *
-     * @param selectedMetadataType as java.lang.String
-     */
-    public void setSelectedMetadataType(String selectedMetadataType) {
-        this.selectedMetadataType = selectedMetadataType;
-    }
-
-    /**
-     * Get metadataValue.
-     *
-     * @return value of metadataValue
-     */
-    public String getMetadataValue() {
-        return metadataValue;
-    }
-
-    /**
-     * Set metadataValue.
-     *
-     * @param metadataValue as java.lang.String
-     */
-    public void setMetadataValue(String metadataValue) {
-        this.metadataValue = metadataValue;
-    }
-
-    /**
-     * Get selectedFirstPageForAssignment.
-     *
-     * @return value of selectedFirstPageForAssignment
-     */
-    public String getSelectedFirstPageForAssignment() {
-        return selectedFirstPageForAssignment;
-    }
-
-    /**
-     * Set selectedFirstPageForAssignment.
-     *
-     * @param selectedFirstPageForAssignment as java.lang.String
-     */
-    public void setSelectedFirstPageForAssignment(String selectedFirstPageForAssignment) {
-        this.selectedFirstPageForAssignment = selectedFirstPageForAssignment;
-    }
-
-    /**
-     * Get selectedLastPageForAssignment.
-     *
-     * @return value of selectedLastPageForAssignment
-     */
-    public String getSelectedLastPageForAssignment() {
-        return selectedLastPageForAssignment;
-    }
-
-    /**
-     * Set selectedLastPageForAssignment.
-     *
-     * @param selectedLastPageForAssignment as java.lang.String
-     */
-    public void setSelectedLastPageForAssignment(String selectedLastPageForAssignment) {
-        this.selectedLastPageForAssignment = selectedLastPageForAssignment;
-    }
-
-    /**
-     * Get selectedPagesForAssignment.
-     *
-     * @return value of selectedPagesForAssignment
-     */
-    public String[] getSelectedPagesForAssignment() {
-        return selectedPagesForAssignment;
-    }
-
-    /**
-     * Set selectedPagesForAssignment.
-     *
-     * @param selectedPagesForAssignment as java.lang.String[]
-     */
-    public void setSelectedPagesForAssignment(String[] selectedPagesForAssignment) {
-        this.selectedPagesForAssignment = selectedPagesForAssignment;
-    }
-
-    /**
-     * Get selectedPagesOfSelectedLogicalTreeNode.
-     *
-     * @return value of selectedPagesOfSelectedLogicalTreeNode
-     */
-    public String[] getSelectedPagesOfSelectedLogicalTreeNode() {
-        return selectedPagesOfSelectedLogicalTreeNode;
-    }
-
-    /**
-     * Set selectedPagesOfSelectedLogicalTreeNode.
-     *
-     * @param selectedPagesOfSelectedLogicalTreeNode as java.lang.String[]
-     */
-    public void setSelectedPagesOfSelectedLogicalTreeNode(String[] selectedPagesOfSelectedLogicalTreeNode) {
-        this.selectedPagesOfSelectedLogicalTreeNode = selectedPagesOfSelectedLogicalTreeNode;
-    }
-
-    /**
-     * Get selectedLogicalTreeNodeMetadataList.
-     *
-     * @return value of selectedLogicalTreeNodeMetadataList
-     */
-    public List<MetadataImpl> getSelectedLogicalTreeNodeMetadataList() {
-        return selectedLogicalTreeNodeMetadataList;
-    }
-
-    /**
-     * Set selectedLogicalTreeNodeMetadataList.
-     *
-     * @param selectedLogicalTreeNodeMetadataList as java.util.List<org.kitodo.production.metadata.MetadataImpl>
-     */
-    public void setSelectedLogicalTreeNodeMetadataList(List<MetadataImpl> selectedLogicalTreeNodeMetadataList) {
-        this.selectedLogicalTreeNodeMetadataList = selectedLogicalTreeNodeMetadataList;
-    }
-
-    /**
-     * Get selectedMetadata.
-     *
-     * @return value of selectedMetadata
-     */
-    public MetadataImpl getSelectedMetadata() {
-        return selectedMetadata;
-    }
-
-    /**
-     * Set selectedMetadata.
-     *
-     * @param selectedMetadata as org.kitodo.production.metadata.MetadataImpl
-     */
-    public void setSelectedMetadata(MetadataImpl selectedMetadata) {
-        this.selectedMetadata = selectedMetadata;
-    }
-
-    /**
-     * Get selectedNewMetadataType.
-     *
-     * @return value of selectedNewMetadataType
-     */
-    public String getSelectedNewMetadataType() {
-        return selectedNewMetadataType;
-    }
-
-    /**
-     * Set selectedNewMetadataType.
-     *
-     * @param selectedNewMetadataType as java.lang.String
-     */
-    public void setSelectedNewMetadataType(String selectedNewMetadataType) {
-        this.selectedNewMetadataType = selectedNewMetadataType;
-    }
-
-    /**
-     * Get newMetadata.
-     *
-     * @return value of newMetadata
-     */
-    public MetadataImpl getNewMetadata() {
-        return newMetadata;
-    }
-
-    /**
-     * Set newMetadata.
-     *
-     * @param newMetadata as org.kitodo.production.metadata.MetadataImpl
-     */
-    public void setNewMetadata(MetadataImpl newMetadata) {
-        this.newMetadata = newMetadata;
-    }
-
-    /**
-     * Get newMetadataList.
-     *
-     * @return value of newMetadataList
-     */
-    public List<MetadataImpl> getNewMetadataList() {
-        return newMetadataList;
-    }
-
-    /**
-     * Set newMetadataList.
-     *
-     * @param newMetadataList as java.util.List<org.kitodo.production.metadata.MetadataImpl>
-     */
-    public void setNewMetadataList(List<MetadataImpl> newMetadataList) {
-        this.newMetadataList = newMetadataList;
-    }
-
-    LockResult getLocks() {
-        return this.locks;
+    void switchToStructure(Structure structure) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        metadataPanel.preserve();
+        metadataPanel.show(structure);
+        addDocStrucTypeDialog.prepare(workpiece, structure);
     }
 }

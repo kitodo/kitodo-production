@@ -166,7 +166,7 @@ public class AddDocStrucTypeDialog {
     void prepare(Workpiece workpiece, Structure selectedStructure) {
         this.structure = selectedStructure;
         this.workpiece = workpiece;
-        this.parents = MetadataEditor.getParentsOfStructure(selectedStructure, workpiece.getStructure(), null);
+        this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure, workpiece.getStructure());
 
         prepareDocStructPositionSelectionItems(parents.size() == 0);
         prepareDocStructAddTypeSelectionItemsForChildren();
@@ -242,9 +242,9 @@ public class AddDocStrucTypeDialog {
         selectPageOnAddNodeItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
-            selectPageOnAddNodeItems.add(
-                new SelectItem(Integer.toString(i), Objects.isNull(mediaUnit.getOrderlabel()) ? Integer.toString(i)
-                        : i + " : " + mediaUnit.getOrderlabel()));
+            String label = Objects.isNull(mediaUnit.getOrderlabel()) ? Integer.toString(mediaUnit.getOrder())
+                    : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
+            selectPageOnAddNodeItems.add(new SelectItem(Integer.toString(i), label));
         }
     }
 

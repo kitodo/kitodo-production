@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -65,6 +66,8 @@ public class StructurePanel implements Serializable {
      */
     private final List<DefaultTreeNode> trees = new ArrayList<>();
 
+    private Workpiece workpiece;
+
     /**
      * Creates a new structure panel.
      *
@@ -81,6 +84,25 @@ public class StructurePanel implements Serializable {
         selectedNode = null;
         previouslySelectedNode = null;
         structure = null;
+    }
+
+    void deleteSelectedStructure() {
+        Structure selectedStructure = getSelectedStructure();
+        if (Objects.isNull(selectedStructure)) {
+            /*
+             * No element is selected or the selected element is not a structure
+             * but, for example, a media unit.
+             */
+            return;
+        }
+        LinkedList<Structure> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure, structure);
+        if (ancestors.isEmpty()) {
+            // The selected element is the root node of the tree.
+            return;
+        }
+        Structure parent = ancestors.getLast();
+        parent.getChildren().remove(selectedStructure);
+        show(workpiece);
     }
 
     public TreeNode getSelectedNode() {
@@ -146,6 +168,7 @@ public class StructurePanel implements Serializable {
      */
     void show(Workpiece workpiece) {
         trees.clear();
+        this.workpiece = workpiece;
         this.structure = workpiece.getStructure();
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
         trees.addAll(result.getLeft());
