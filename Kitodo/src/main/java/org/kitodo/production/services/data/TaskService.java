@@ -187,32 +187,29 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     @Override
     protected void manageDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
-        manageProcessDependenciesForIndex(task);
-        manageTemplateDependenciesForIndex(task);
+        if (Objects.nonNull(task.getProcess())) {
+            manageProcessDependenciesForIndex(task);
+        } else if (Objects.nonNull(task.getTemplate())) {
+            manageTemplateDependenciesForIndex(task);
+        }
     }
 
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
+        Process process = task.getProcess();
         if (task.getIndexAction() == IndexAction.DELETE) {
-            Process process = task.getProcess();
-            if (Objects.nonNull(process)) {
-                process.getTasks().remove(task);
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
+            process.getTasks().remove(task);
+            ServiceManager.getProcessService().saveToIndex(process, false);
         } else {
-            Process process = task.getProcess();
             ServiceManager.getProcessService().saveToIndex(process, false);
         }
     }
 
     private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
+        Template template = task.getTemplate();
         if (task.getIndexAction().equals(IndexAction.DELETE)) {
-            Template template = task.getTemplate();
-            if (Objects.nonNull(template)) {
-                template.getTasks().remove(task);
-                ServiceManager.getTemplateService().saveToIndex(template, false);
-            }
+            template.getTasks().remove(task);
+            ServiceManager.getTemplateService().saveToIndex(template, false);
         } else {
-            Template template = task.getTemplate();
             ServiceManager.getTemplateService().saveToIndex(template, false);
         }
     }

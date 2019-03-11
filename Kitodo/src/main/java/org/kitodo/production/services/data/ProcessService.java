@@ -196,28 +196,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
-        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
-            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
-            Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
-            if (json.keySet().contains("mets")) {
-                Map<String, Object> mets = (Map<String, Object>) json.get("mets");
-                Object dmdSec = mets.get("dmdSec");
-                List<Map<String, Object>> metadata = new ArrayList<>();
-                if (dmdSec instanceof List) {
-                    metadata = (List<Map<String, Object>>) dmdSec;
-                } else if (dmdSec instanceof Map) {
-                    metadata.add((Map<String, Object>) dmdSec);
-                }
-                process.setMetadata(metadata);
-            }
-        } catch (NullPointerException | IOException e) {
-            logger.info("File was not found: " + e.getMessage(), e);
-        }
-
+        process.setMetadata(getMetadataForIndex(process));
         super.saveToIndex(process, forceRefresh);
+    }
+
+    @Override
+    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
+        for (Process process : processes) {
+            process.setMetadata(getMetadataForIndex(process));
+        }
+        super.addAllObjectsToIndex(processes);
     }
 
     /**
@@ -2208,6 +2198,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         return propertiesForDocket;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<Map<String, Object>> getMetadataForIndex(Process process) {
+        try (InputStream metadataFile = ServiceManager.getFileService().readMetadataFile(process)) {
+            JSONObject xmlJSONObject = XML.toJSONObject(IOUtils.toString(metadataFile, StandardCharsets.UTF_8));
+            Map<String, Object> json = iterateOverJsonObject(xmlJSONObject);
+            if (json.keySet().contains("mets")) {
+                Map<String, Object> mets = (Map<String, Object>) json.get("mets");
+                Object dmdSec = mets.get("dmdSec");
+                List<Map<String, Object>> metadata = new ArrayList<>();
+                if (dmdSec instanceof List) {
+                    metadata = (List<Map<String, Object>>) dmdSec;
+                } else if (dmdSec instanceof Map) {
+                    metadata.add((Map<String, Object>) dmdSec);
+                }
+                return metadata;
+            }
+        } catch (NullPointerException | IOException e) {
+            logger.info("File was not found: " + e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     private Map<String, Object> iterateOverJsonObject(JSONObject xmlJSONObject) {
