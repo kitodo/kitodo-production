@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms.dataeditor;
+package org.kitodo.production.metadata;
 
 public enum InsertionPosition {
     BEFOR_CURRENT_ELEMENT,

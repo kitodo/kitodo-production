@@ -11,7 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import static org.kitodo.production.forms.dataeditor.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +30,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.metadata.InsertionPosition;
+import org.kitodo.production.metadata.MetadataEditor;
 
 /**
  * Backing bean for the add doc struc type dialog of the meta-data editor.
@@ -55,8 +56,6 @@ public class AddDocStrucTypeDialog {
     private String selectLastPageOnAddNodeSelectedItem;
     private List<SelectItem> selectPageOnAddNodeItems;
     private boolean showingAddMultipleLogicalElements;
-    private Structure structure;
-    private Workpiece workpiece;
 
     /**
      * Adds a new doc struc type dialog.
@@ -70,10 +69,17 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     public void addMultiDocStrucSubmitBtnClick() {
-        MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
-            workpiece, structure, docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
-            inputMetaDataValueValue);
-        dataEditor.refreshStructurePanel();
+        try {
+            if (dataEditor.getSelectedStructure().isPresent()) {
+                MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
+                    dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
+                    docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
+                    inputMetaDataValueValue);
+                dataEditor.refreshStructurePanel();
+            }
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -81,9 +87,15 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     public void addSingleDocStrucSubmitBtnClick() {
-        MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, workpiece,
-            structure, docStructPositionSelectionSelectedItem, getViewsToAdd());
-        dataEditor.refreshStructurePanel();
+        try {
+            if (dataEditor.getSelectedStructure().isPresent()) {
+                MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(),
+                    dataEditor.getSelectedStructure().get(), docStructPositionSelectionSelectedItem, getViewsToAdd());
+                dataEditor.refreshStructurePanel();
+            }
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -151,7 +163,7 @@ public class AddDocStrucTypeDialog {
         try {
             int firstPage = Integer.parseInt(selectFirstPageOnAddNodeSelectedItem);
             int lastPage = Integer.parseInt(selectLastPageOnAddNodeSelectedItem);
-            return EditPagesDialog.getViewsToAdd(workpiece, firstPage, lastPage);
+            return dataEditor.getEditPagesDialog().getViewsToAdd(firstPage, lastPage);
         } catch (NumberFormatException e) {
             // user didn’t select both start and end page
             logger.catching(Level.TRACE, e);
@@ -163,23 +175,31 @@ public class AddDocStrucTypeDialog {
         return showingAddMultipleLogicalElements;
     }
 
-    void prepare(Workpiece workpiece, Structure selectedStructure) {
-        this.structure = selectedStructure;
-        this.workpiece = workpiece;
-        this.parents = MetadataEditor.getAncestorsOfStructure(selectedStructure, workpiece.getStructure());
+    void prepare() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
+                dataEditor.getWorkpiece().getStructure());
 
-        prepareDocStructPositionSelectionItems(parents.size() == 0);
-        prepareDocStructAddTypeSelectionItemsForChildren();
-        prepareDocStructAddTypeSelectionItemsForParent();
-        prepareDocStructAddTypeSelectionItemsForSiblings();
+            prepareDocStructPositionSelectionItems(parents.size() == 0);
+            prepareDocStructAddTypeSelectionItemsForChildren();
+            prepareDocStructAddTypeSelectionItemsForParent();
+            prepareDocStructAddTypeSelectionItemsForSiblings();
+            prepareSelectAddableMetadataTypesItems();
+        } else {
+            docStructAddTypeSelectionItemsForChildren = Collections.emptyList();
+            docStructAddTypeSelectionItemsForParent = Collections.emptyList();
+            docStructAddTypeSelectionItemsForSiblings = Collections.emptyList();
+            docStructPositionSelectionItems = Collections.emptyList();
+            selectAddableMetadataTypesItems = Collections.emptyList();
+        }
         prepareSelectPageOnAddNodeItems();
-        prepareSelectAddableMetadataTypesItems();
     }
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
         docStructAddTypeSelectionItemsForChildren = new ArrayList<>();
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
-            structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
             docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
         }
@@ -194,7 +214,8 @@ public class AddDocStrucTypeDialog {
                 String newParent = entry.getKey();
                 StructuralElementViewInterface newParentDivisionView = dataEditor.getRuleset().getStructuralElementView(
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(structure.getType())) {
+                if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
+                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
                     docStructAddTypeSelectionItemsForChildren.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
@@ -230,15 +251,17 @@ public class AddDocStrucTypeDialog {
 
     private void prepareSelectAddableMetadataTypesItems() {
         selectAddableMetadataTypesItems = new ArrayList<>();
-        for (MetadataViewInterface keyView : dataEditor.getRuleset().getStructuralElementView(structure.getType(),
-            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()).getAddableMetadata(Collections.emptyMap(),
-                Collections.emptyList())) {
+        for (MetadataViewInterface keyView : dataEditor.getRuleset()
+                .getStructuralElementView(
+                    dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
+                .getAddableMetadata(Collections.emptyMap(), Collections.emptyList())) {
             selectAddableMetadataTypesItems.add(new SelectItem(keyView.getId(), keyView.getLabel()));
         }
     }
 
     private void prepareSelectPageOnAddNodeItems() {
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         selectPageOnAddNodeItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
@@ -252,8 +275,7 @@ public class AddDocStrucTypeDialog {
         this.docStructAddTypeSelectionSelectedItem = docStructAddTypeSelectionSelectedItem;
     }
 
-    public void setDocStructPositionSelectionSelectedItem(
-            InsertionPosition docStructPositionSelectionSelectedItem) {
+    public void setDocStructPositionSelectionSelectedItem(InsertionPosition docStructPositionSelectionSelectedItem) {
         this.docStructPositionSelectionSelectedItem = docStructPositionSelectionSelectedItem;
     }
 

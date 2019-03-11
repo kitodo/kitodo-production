@@ -105,8 +105,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * @param divisionView
      *            information about that structure from the rule set
      */
-    FieldedMetadataTableRow(MetadataPanel panel, Structure structure,
-            StructuralElementViewInterface divisionView) {
+    FieldedMetadataTableRow(MetadataPanel panel, Structure structure, StructuralElementViewInterface divisionView) {
 
         this(panel, null, structure, divisionView, structure.getMetadata());
     }

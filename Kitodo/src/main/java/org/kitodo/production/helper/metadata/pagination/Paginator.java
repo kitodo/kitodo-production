@@ -13,9 +13,6 @@ package org.kitodo.production.helper.metadata.pagination;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-
-import org.kitodo.dataformat.metskitodo.DivType;
 
 /**
  * Class to generate different sorts of paginations.
@@ -352,18 +349,5 @@ public class Paginator implements Iterator<String> {
     @Override
     public String toString() {
         return value + (operateReverse ? ", reversed, " : ", ") + fragments;
-    }
-
-    /**
-     * Writes the current configured pagination values to the order labels of the
-     * given physical DiyType objects.
-     * 
-     * @param physicalDivTypes
-     *            The physical DivType objects.
-     */
-    public void writeToOrderLabelsOfDiyTypes(List<DivType> physicalDivTypes) {
-        for (DivType div : physicalDivTypes) {
-            div.setORDERLABEL(this.next());
-        }
     }
 }

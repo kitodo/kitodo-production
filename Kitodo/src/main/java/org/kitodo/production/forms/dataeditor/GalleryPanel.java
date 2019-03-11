@@ -38,13 +38,13 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -337,10 +337,10 @@ public class GalleryPanel {
         this.selectedStripe = selectedStripe;
     }
 
-    void show(Workpiece workpiece) throws IOException {
+    void show() throws IOException {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
@@ -364,7 +364,7 @@ public class GalleryPanel {
             lockRequests.putAll(mediaContent.getRequiredLocks());
         }
 
-        lockRequests.putAll(addStripesRecursive(workpiece.getStructure(), previewFolder));
+        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getStructure(), previewFolder));
         int imagesInStructuredView = stripes.parallelStream()
                 .collect(Collectors.summingInt(stripe -> stripe.getMedias().size()));
         if (imagesInStructuredView > 200) {

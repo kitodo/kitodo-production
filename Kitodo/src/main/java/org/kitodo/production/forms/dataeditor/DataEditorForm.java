@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.SessionScoped;
@@ -154,9 +155,12 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * This method must be called to start the meta-data editor. When this
      * method is executed, the meta-data editor is not yet open in the browser,
-     * but the previous page is still displayed. Three variables are expected to
-     * have been set in advance using property action listeners: ‘process’,
-     * ‘user’, and ‘referringView’.
+     * but the previous page is still displayed.
+     *
+     * @param id
+     *            ID of the process to open
+     * @param referringView
+     *            JSF page the user came from
      *
      * @return which page JSF should navigate to
      */
@@ -234,15 +238,14 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void init() throws IOException {
         final long begin = System.nanoTime();
 
-        structurePanel.show(workpiece);
-        Structure selectedStructure = structurePanel.getSelectedStructure();
-        metadataPanel.show(selectedStructure);
-        galleryPanel.show(workpiece);
-        paginationPanel.show(workpiece);
-        commentPanel.show(workpiece);
+        structurePanel.show();
+        metadataPanel.show(getSelectedStructure());
+        galleryPanel.show();
+        paginationPanel.show();
+        commentPanel.show();
 
-        addDocStrucTypeDialog.prepare(workpiece, selectedStructure);
-        editPagesDialog.prepare(workpiece, selectedStructure);
+        addDocStrucTypeDialog.prepare();
+        editPagesDialog.prepare();
 
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
@@ -402,8 +405,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return ruleset;
     }
 
+    Optional<Structure> getSelectedStructure() {
+        return structurePanel.getSelectedStructure();
+    }
+
     public StructurePanel getStructurePanel() {
         return structurePanel;
+    }
+
+    Workpiece getWorkpiece() {
+        return workpiece;
     }
 
     /**
@@ -416,7 +427,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     void refreshStructurePanel() {
-        structurePanel.show(workpiece);
+        structurePanel.show();
     }
 
     void setProcess(Process process) {
@@ -426,15 +437,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * Set showPagination.
      *
-     * @param showPagination as boolean
+     * @param showPagination
+     *            as boolean
      */
     public void setShowPagination(boolean showPagination) {
         this.showPagination = showPagination;
     }
 
-    void switchToStructure(Structure structure) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    void switchStructure() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preserve();
-        metadataPanel.show(structure);
-        addDocStrucTypeDialog.prepare(workpiece, structure);
+        metadataPanel.show(structurePanel.getSelectedStructure());
+        addDocStrucTypeDialog.prepare();
     }
 }

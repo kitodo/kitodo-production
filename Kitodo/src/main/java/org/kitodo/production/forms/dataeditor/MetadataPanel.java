@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
@@ -103,6 +104,9 @@ public class MetadataPanel implements Serializable {
         }
     }
 
+    /**
+     * Empties the meta-data panel.
+     */
     public void clear() {
         metadataTable = FieldedMetadataTableRow.EMPTY;
         clipboard.clear();
@@ -130,13 +134,13 @@ public class MetadataPanel implements Serializable {
         return metadataTable.getRows();
     }
 
-    void show(Structure structure) {
-        if (structure == null) {
+    void show(Optional<Structure> optionalStructure) {
+        if (!optionalStructure.isPresent()) {
             metadataTable = FieldedMetadataTableRow.EMPTY;
         } else {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                structure.getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
-            metadataTable = new FieldedMetadataTableRow(this, structure, divisionView);
+                optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            metadataTable = new FieldedMetadataTableRow(this, optionalStructure.get(), divisionView);
         }
 
     }

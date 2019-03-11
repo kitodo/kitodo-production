@@ -68,8 +68,8 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      */
     private List<String> selectedItems = new ArrayList<>();
 
-    SelectMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
-            SimpleMetadataViewInterface settings, Collection<MetadataEntry> selected) {
+    SelectMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, SimpleMetadataViewInterface settings,
+            Collection<MetadataEntry> selected) {
         super(panel, container, settings);
         this.items = toItems(settings.getSelectItems());
         for (MetadataEntry entry : selected) {

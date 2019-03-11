@@ -222,10 +222,9 @@ public class GalleryMediaContent {
             return new DefaultStreamedContent(previewData, mimeType);
         } catch (Exception e) {
             logger.catching(e);
-            String errorpage = "<html>" + System.lineSeparator()
-                + "<h1>Error!</h1>" + System.lineSeparator()
-                + "<p>" + e.getClass().getSimpleName() + ": " + e.getMessage() + "</p>" + System.lineSeparator()
-                + "</html>" + System.lineSeparator();
+            String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
+                    + e.getClass().getSimpleName() + ": " + e.getMessage() + "</p>" + System.lineSeparator() + "</html>"
+                    + System.lineSeparator();
             ByteArrayInputStream errorPage = new ByteArrayInputStream(errorpage.getBytes(Charset.forName("UTF-8")));
             return new DefaultStreamedContent(errorPage, "text/html", "errorpage.html", "UTF-8");
         }

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,8 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -66,8 +67,6 @@ public class StructurePanel implements Serializable {
      */
     private final List<DefaultTreeNode> trees = new ArrayList<>();
 
-    private Workpiece workpiece;
-
     /**
      * Creates a new structure panel.
      *
@@ -87,32 +86,32 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedStructure() {
-        Structure selectedStructure = getSelectedStructure();
-        if (Objects.isNull(selectedStructure)) {
+        Optional<Structure> selectedStructure = getSelectedStructure();
+        if (!selectedStructure.isPresent()) {
             /*
              * No element is selected or the selected element is not a structure
              * but, for example, a media unit.
              */
             return;
         }
-        LinkedList<Structure> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure, structure);
+        LinkedList<Structure> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(), structure);
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;
         }
         Structure parent = ancestors.getLast();
-        parent.getChildren().remove(selectedStructure);
-        show(workpiece);
+        parent.getChildren().remove(selectedStructure.get());
+        show();
     }
 
     public TreeNode getSelectedNode() {
         return selectedNode;
     }
 
-    Structure getSelectedStructure() {
+    Optional<Structure> getSelectedStructure() {
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
-        return dataObject instanceof Structure ? (Structure) dataObject : null;
+        return Optional.ofNullable(dataObject instanceof Structure ? (Structure) dataObject : null);
     }
 
     public List<DefaultTreeNode> getTrees() {
@@ -166,16 +165,16 @@ public class StructurePanel implements Serializable {
      * @param workpiece
      *            workpiece to load
      */
-    void show(Workpiece workpiece) {
+    void show() {
         trees.clear();
-        this.workpiece = workpiece;
-        this.structure = workpiece.getStructure();
+        this.structure = dataEditor.getWorkpiece().getStructure();
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
         trees.addAll(result.getLeft());
         if (separateMedia != null) {
             Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
                     .map(View::getMediaUnit).collect(Collectors.toSet());
-            DefaultTreeNode mediaTree = buildMediaTree(workpiece.getMediaUnits(), mediaUnitsShowingOnTheStructureTree);
+            DefaultTreeNode mediaTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnits(),
+                mediaUnitsShowingOnTheStructureTree);
             if (mediaTree != null) {
                 trees.add(mediaTree);
             }
@@ -278,7 +277,7 @@ public class StructurePanel implements Serializable {
          * JSF at this point.
          */
         try {
-            dataEditor.switchToStructure(getSelectedStructure());
+            dataEditor.switchStructure();
             previouslySelectedNode = selectedNode;
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());

@@ -77,8 +77,7 @@ abstract class MetadataTableRow implements Serializable {
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
-        Helper.getTranslation("dataEditor.copy",
-            Arrays.asList(Integer.toString(panel.getClipboard().size())));
+        Helper.getTranslation("dataEditor.copy", Arrays.asList(Integer.toString(panel.getClipboard().size())));
     }
 
     /**

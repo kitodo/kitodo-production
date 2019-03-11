@@ -18,7 +18,6 @@ import java.util.Objects;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.Helper;
@@ -45,7 +44,6 @@ public class PaginationPanel {
     private PaginatorMode selectPaginationModeSelectedItem = PaginatorMode.PAGES;
     private List<SelectItem> selectPaginationScopeItems;
     private Boolean selectPaginationScopeSelectedItem = Boolean.TRUE;
-    private Workpiece workpiece;
 
     public PaginationPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -54,10 +52,13 @@ public class PaginationPanel {
         prepareSelectPaginationScopeItems();
     }
 
+    /**
+     * This method is invoked if the create pagination button is clicked.
+     */
     public void createPaginationButtonClick() {
-        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), workpiece);
+        ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         for (int i = 1; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
             mediaUnit.setOrder(i);
@@ -65,8 +66,11 @@ public class PaginationPanel {
         }
     }
 
+    /**
+     * This method is invoked if the generate dummy images button is clicked.
+     */
     public void generateDummyImagesButtonClick() {
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         int order = mediaUnits.isEmpty() ? 1 : mediaUnits.get(mediaUnits.size() - 1).getOrder() + 1;
         boolean withAutomaticPagination = ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION);
         Paginator orderlabel = new Paginator(metsEditorDefaultPagination(order));
@@ -137,8 +141,8 @@ public class PaginationPanel {
         return fictitiousCheckboxChecked;
     }
 
-    private void preparePaginationSelectionItems(Workpiece workpiece) {
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+    private void preparePaginationSelectionItems() {
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         paginationSelectionItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
@@ -161,8 +165,8 @@ public class PaginationPanel {
 
     private void prepareSelectPaginationModeItems() {
         selectPaginationModeItems = new ArrayList<>(6);
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.PAGES,
-                Helper.getTranslation("pageCount"), "paginierung_seite.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.PAGES, Helper.getTranslation("pageCount"),
+                "paginierung_seite.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES,
                 Helper.getTranslation("columnCount"), "paginierung_spalte.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION,
@@ -179,10 +183,12 @@ public class PaginationPanel {
         selectPaginationScopeItems = new ArrayList<>(2);
         selectPaginationScopeItems
                 .add(new SelectItem(Boolean.TRUE, Helper.getTranslation("abDerErstenMarkiertenSeite")));
-        selectPaginationScopeItems
-                .add(new SelectItem(Boolean.FALSE, Helper.getTranslation("nurDieMarkiertenSeiten")));
+        selectPaginationScopeItems.add(new SelectItem(Boolean.FALSE, Helper.getTranslation("nurDieMarkiertenSeiten")));
     }
 
+    /**
+     * This method is invoked if the start pagination action button is clicked.
+     */
     public void startPaginationClick() {
         if (paginationSelectionSelectedItems.isEmpty()) {
             Helper.setErrorMessage("fehlerBeimEinlesen", "No pages selected for pagination.");
@@ -193,7 +199,7 @@ public class PaginationPanel {
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem,
             paginationStartValueValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
         Paginator paginator = new Paginator(initializer);
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         if (selectPaginationScopeSelectedItem) {
             for (int i = paginationSelectionSelectedItems.get(0); i < mediaUnits.size(); i++) {
                 mediaUnits.get(0).setOrderlabel(paginator.next());
@@ -233,8 +239,7 @@ public class PaginationPanel {
         this.selectPaginationScopeSelectedItem = selectPaginationScopeSelectedItem;
     }
 
-    public void show(Workpiece workpiece) {
-        this.workpiece = workpiece;
-        preparePaginationSelectionItems(workpiece);
+    public void show() {
+        preparePaginationSelectionItems();
     }
 }

@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.ProcessingNote;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
@@ -279,12 +278,9 @@ public class CommentPanel implements Serializable {
 
     /**
      * Initializes the panel to show the comments from a workpiece.
-     *
-     * @param workpeace
-     *            workpiece whose comments are to show
      */
-    void show(Workpiece workpeace) {
-        editHistory = workpeace.getEditHistory();
+    void show() {
+        editHistory = dataEditor.getWorkpiece().getEditHistory();
         commentList.clear();
         for (ProcessingNote processingNote : editHistory) {
             commentList.add(formatProcessingNote(processingNote));
@@ -293,7 +289,7 @@ public class CommentPanel implements Serializable {
 
     /**
      * Mark the reported problem solved.
-     * 
+     *
      * @param comment
      *            comment on the solved problem
      */

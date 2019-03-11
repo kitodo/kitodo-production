@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -21,9 +22,8 @@ import java.util.stream.Stream;
 import javax.faces.model.SelectItem;
 
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.metadata.MetadataEditor;
 
 public class EditPagesDialog {
 
@@ -38,7 +38,7 @@ public class EditPagesDialog {
      * Views on media units that are not associated with this structure selected
      * by the user to add them.
      */
-    private List<Integer> paginationSelectionSelectedItems;
+    private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
 
     /**
      * Views on media units that are associated with this structure.
@@ -49,7 +49,7 @@ public class EditPagesDialog {
      * Views on media units that are associated with this structure selected by
      * the user to remove them.
      */
-    private List<Integer> paginationSubSelectionSelectedItems;
+    private List<Integer> paginationSubSelectionSelectedItems = new ArrayList<>();
 
     /**
      * The first of the views to be assigned.
@@ -66,16 +66,6 @@ public class EditPagesDialog {
      */
     private List<SelectItem> selectPageItems;
 
-    /**
-     * The selected structure.
-     */
-    private Structure structure;
-
-    /**
-     * The current workpiece.
-     */
-    private Workpiece workpiece;
-
     public EditPagesDialog(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
@@ -85,9 +75,11 @@ public class EditPagesDialog {
      * button.
      */
     public void addPageBtnClick() {
-        structure.getViews().addAll(getViewsToAdd(workpiece, paginationSelectionSelectedItems));
-        dataEditor.refreshStructurePanel();
-        refreshDialog();
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getSelectedStructure().get().getViews().addAll(getViewsToAdd(paginationSelectionSelectedItems));
+            dataEditor.refreshStructurePanel();
+            prepare();
+        }
     }
 
     public List<Integer> getPaginationSelectionSelectedItems() {
@@ -118,27 +110,25 @@ public class EditPagesDialog {
         return selectPageItems;
     }
 
-    static List<View> getViewsToAdd(Workpiece workpiece, int firstPage, int lastPage) {
+    List<View> getViewsToAdd(int firstPage, int lastPage) {
         boolean forward = firstPage <= lastPage;
         List<Integer> pages = Stream.iterate(firstPage, i -> forward ? i + 1 : i - 1)
                 .limit(Math.abs(firstPage - lastPage) + 1).collect(Collectors.toList());
-        return getViewsToAdd(workpiece, pages);
+        return getViewsToAdd(pages);
     }
 
-    private static List<View> getViewsToAdd(Workpiece workpiece, List<Integer> pages) {
-        return pages.parallelStream().map(workpiece.getMediaUnits()::get).map(MetadataEditor::createUnrestrictedViewOn)
-                .collect(Collectors.toList());
+    private List<View> getViewsToAdd(List<Integer> pages) {
+        return pages.parallelStream().map(dataEditor.getWorkpiece().getMediaUnits()::get)
+                .map(MetadataEditor::createUnrestrictedViewOn).collect(Collectors.toList());
     }
 
-    void prepare(Workpiece workpiece, Structure selectedStructure) {
-        this.workpiece = workpiece;
-        this.structure = selectedStructure;
-        refreshDialog();
-    }
-
-    private void refreshDialog() {
+    void prepare() {
         // refresh selectable items
-        List<MediaUnit> mediaUnits = workpiece.getMediaUnits();
+        selectPageItems = new ArrayList<>();
+        paginationSubSelectionItems = new ArrayList<>();
+        paginationSelectionItems = new ArrayList<>();
+
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
         int capacity = (int) Math.ceil(mediaUnits.size() / .75);
         Set<Integer> assigneds = new HashSet<>(capacity);
         Set<Integer> unassigneds = new HashSet<>(capacity);
@@ -149,8 +139,10 @@ public class EditPagesDialog {
                     : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
             Integer id = Integer.valueOf(i);
             SelectItem selectItem = new SelectItem(id, label);
-            this.selectPageItems.add(selectItem);
-            boolean assigned = structure.getViews().contains(view);
+            selectPageItems.add(selectItem);
+            boolean assigned = dataEditor.getSelectedStructure().isPresent()
+                    ? dataEditor.getSelectedStructure().get().getViews().contains(view)
+                    : false;
             (assigned ? paginationSubSelectionItems : paginationSelectionItems).add(selectItem);
             (assigned ? assigneds : unassigneds).add(id);
         }
@@ -171,9 +163,12 @@ public class EditPagesDialog {
      * btn command button.
      */
     public void setPageStartAndEndBtnClick() {
-        structure.getViews().addAll(getViewsToAdd(workpiece, selectFirstPageSelectedItem, selectLastPageSelectedItem));
-        dataEditor.refreshStructurePanel();
-        refreshDialog();
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getSelectedStructure().get().getViews()
+                    .addAll(getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem));
+            dataEditor.refreshStructurePanel();
+            prepare();
+        }
     }
 
     public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
@@ -197,9 +192,11 @@ public class EditPagesDialog {
      * btn command button.
      */
     public void takePagesFromChildrenBtnClick() {
-        MetadataEditor.assignViewsFromChildren(structure);
-        dataEditor.refreshStructurePanel();
-        refreshDialog();
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            MetadataEditor.assignViewsFromChildren(dataEditor.getSelectedStructure().get());
+            dataEditor.refreshStructurePanel();
+            prepare();
+        }
     }
 
     /**
@@ -207,8 +204,11 @@ public class EditPagesDialog {
      * button.
      */
     public void removePageBtnClick() {
-        structure.getViews().removeAll(getViewsToAdd(workpiece, paginationSubSelectionSelectedItems));
-        dataEditor.refreshStructurePanel();
-        refreshDialog();
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getSelectedStructure().get().getViews()
+                    .removeAll(getViewsToAdd(paginationSubSelectionSelectedItems));
+            dataEditor.refreshStructurePanel();
+            prepare();
+        }
     }
 }

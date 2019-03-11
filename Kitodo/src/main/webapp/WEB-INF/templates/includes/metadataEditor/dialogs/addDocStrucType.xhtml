@@ -59,7 +59,7 @@
                     <h:outputText value="#{msgs.defaults}:"/>
 
                     <h:panelGroup>
-                        <p:selectOneRadio layout="grid" columns="1" value="#{DataEditorForm.addMultipleLogicalElements}">
+                        <p:selectOneRadio layout="grid" columns="1" value="#{DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
                             <f:selectItem itemLabel="#{msgs.pageAllocation}" itemValue="#{false}" />
                             <f:selectItem itemLabel="#{msgs.metadata}" itemValue="#{true}" />
                             <p:ajax event="click" update="AddDocStrucTypeSpecs" />

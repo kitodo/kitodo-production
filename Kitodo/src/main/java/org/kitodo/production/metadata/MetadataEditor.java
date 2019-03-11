@@ -1,4 +1,15 @@
-package org.kitodo.production.forms.dataeditor;
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.production.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,8 +25,10 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 
+/**
+ * This class contains some methods to handle meta-data (semi) automatically.
+ */
 public class MetadataEditor {
-
     /**
      * Creates a given number of new structures and inserts them into the
      * workpiece. The insertion position is given relative to an existing
@@ -162,7 +175,7 @@ public class MetadataEditor {
             Structure parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
-                return (LinkedList<Structure>) Collections.<Structure>emptyList();
+                return new LinkedList<>();
             }
             LinkedList<Structure> result = new LinkedList<>();
             result.add(parent);
@@ -176,7 +189,7 @@ public class MetadataEditor {
                 return maybeFound;
             }
         }
-        return (LinkedList<Structure>) Collections.<Structure>emptyList();
+        return new LinkedList<>();
     }
 
     public static void moveView(View view, Structure from, Structure to) {
