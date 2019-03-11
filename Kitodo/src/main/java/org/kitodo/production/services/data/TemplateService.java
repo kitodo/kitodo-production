@@ -300,7 +300,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(jsonObject)));
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
-        workflowDTO.setTitle(TemplateTypeField.WORKFLOW_FILE_NAME.getStringValue(jsonObject));
         templateDTO.setWorkflow(workflowDTO);
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
