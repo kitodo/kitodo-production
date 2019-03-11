@@ -108,6 +108,7 @@ public class FileXmlElementAccess {
             this.mediaUnit.getMetadata().addAll(mediaUnit.getMetadata());
             this.mediaUnit.setOrder(mediaUnit.getOrder());
             this.mediaUnit.setOrderlabel(mediaUnit.getOrderlabel());
+            this.mediaUnit.setType(mediaUnit.getType());
         }
     }
 
