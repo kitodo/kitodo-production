@@ -605,14 +605,13 @@ public class MetadataProcessor {
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
         List<? extends LegacyMetadataHelper> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(
-            inStrukturelement, ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false,
+            inStrukturelement, ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(),
             this.process);
-        if (tempMetadata != null) {
-            for (LegacyMetadataHelper metadata : tempMetadata) {
-                MetadataImpl meta = new MetadataImpl(metadata, 0, this.myPrefs, this.process);
-                meta.getSelectedItem();
-                lsMeta.add(meta);
-            }
+
+        for (LegacyMetadataHelper metadata : tempMetadata) {
+            MetadataImpl meta = new MetadataImpl(metadata, 0, this.myPrefs, this.process);
+            meta.getSelectedItem();
+            lsMeta.add(meta);
         }
 
         this.myMetadaten = lsMeta;
@@ -912,11 +911,11 @@ public class MetadataProcessor {
         switch (positionOfNewDocStrucElement) {
             case BEFOR_CURRENT_ELEMENT:
             case AFTER_CURRENT_ELEMENT:
-                return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
+                return this.metaHelper.getAddableDocStructTypes(this.docStruct, true);
 
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                return this.metaHelper.getAddableDocStructTypen(this.docStruct, false);
+                return this.metaHelper.getAddableDocStructTypes(this.docStruct, false);
 
             default:
                 logger.error("Invalid positionOfNewDocStrucElement");

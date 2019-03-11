@@ -69,14 +69,18 @@ public class MetadataHelper {
     }
 
     /**
-     * die MetadatenTypen zurückgeben.
+     * Get metadata types as select items.
+     * 
+     * @param inStruct
+     *            as LegacyDocStructHelperInterface
+     * @param checkTypesFromParent
+     *            as boolean
      */
-    public SelectItem[] getAddableDocStructTypen(LegacyDocStructHelperInterface inStruct, boolean checkTypesFromParent) {
-        /*
-         * zuerst mal die addierbaren Metadatentypen ermitteln
-         */
+    public SelectItem[] getAddableDocStructTypes(LegacyDocStructHelperInterface inStruct,
+            boolean checkTypesFromParent) {
+        // determine the addable metadata types
         List<String> types;
-        SelectItem[] myTypes = new SelectItem[0];
+        SelectItem[] selectTypes = new SelectItem[0];
 
         try {
             if (!checkTypesFromParent) {
@@ -85,48 +89,51 @@ public class MetadataHelper {
                 types = inStruct.getParent().getDocStructType().getAllAllowedDocStructTypes();
             }
         } catch (RuntimeException e) {
-            return myTypes;
+            return selectTypes;
         }
 
-        if (types == null) {
-            return myTypes;
+        if (Objects.isNull(types)) {
+            return selectTypes;
         }
 
-        List<LegacyLogicalDocStructTypeHelper> newTypes = new ArrayList<>();
-        for (String tempTitel : types) {
-            LegacyLogicalDocStructTypeHelper dst = this.prefs.getDocStrctTypeByName(tempTitel);
-            if (dst != null) {
-                newTypes.add(dst);
-            } else {
-                Helper.setMessage("Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-                logger.error(
-                    "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
-            }
-        }
+        List<LegacyLogicalDocStructTypeHelper> newTypes = getNewTypes(types);
 
-        /*
-         * die Metadatentypen sortieren
-         */
-        HelperComparator c = new HelperComparator();
-        c.setSortType(SortType.DOC_STRUCT_TYPE);
-        newTypes.sort(c);
+        // create an array with the correct size
+        int size = newTypes.size();
+        selectTypes = new SelectItem[size];
 
-        // nun ein Array mit der richtigen Größe anlegen
-        int zaehler = newTypes.size();
-        myTypes = new SelectItem[zaehler];
-
-        // und anschliessend alle Elemente in das Array packen
-        zaehler = 0;
+        // pack all the elements into the array
         String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
-        for (LegacyLogicalDocStructTypeHelper docStructType : newTypes) {
+        for (int i = 0; i < size; i++) {
+            LegacyLogicalDocStructTypeHelper docStructType = newTypes.get(i);
             String label = docStructType.getNameByLanguage(language);
-            if (label == null) {
+            if (Objects.isNull(label)) {
                 label = docStructType.getName();
             }
-            myTypes[zaehler] = new SelectItem(docStructType.getName(), label);
-            zaehler++;
+            selectTypes[i] = new SelectItem(docStructType.getName(), label);
         }
-        return myTypes;
+        return selectTypes;
+    }
+
+    private List<LegacyLogicalDocStructTypeHelper> getNewTypes(List<String> types) {
+        List<LegacyLogicalDocStructTypeHelper> newTypes = new ArrayList<>();
+        for (String tempTitle : types) {
+            LegacyLogicalDocStructTypeHelper dst = this.prefs.getDocStrctTypeByName(tempTitle);
+            if (Objects.nonNull(dst)) {
+                newTypes.add(dst);
+            } else {
+                Helper.setMessage("Regelsatz-Fehler: ", " DocstructType " + tempTitle + " nicht definiert");
+                logger.error(
+                        "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitle + " nicht definiert");
+            }
+        }
+
+        // sort metadata
+        HelperComparator comparator = new HelperComparator();
+        comparator.setSortType(SortType.DOC_STRUCT_TYPE);
+        newTypes.sort(comparator);
+
+        return newTypes;
     }
 
     /**
@@ -184,13 +191,11 @@ public class MetadataHelper {
      * missing DefaultDisplay meta-data.
      */
     public List<LegacyMetadataHelper> getMetadataInclDefaultDisplay(LegacyDocStructHelperInterface inStruct,
-            String inLanguage, boolean inIsPerson, Process inProzess) {
+            String inLanguage, Process inProzess) {
 
         supplementDefaultMetadata(inStruct, inStruct.getDisplayMetadataTypes());
 
-        /*
-         * if you do not want to sort by ruleset, sort alphabetically here
-         */
+        // if you do not want to sort by ruleset, sort alphabetically here
         if (!inProzess.getRuleset().isOrderMetadataByRuleset()) {
             List<LegacyMetadataHelper> metadata = inStruct.getAllMetadata();
             if (metadata != null) {
@@ -224,9 +229,7 @@ public class MetadataHelper {
         }
     }
 
-    /** TODO: Replace it, after Maven is kicked :). */
     private List<LegacyMetadataHelper> getAllVisibleMetadataHack(LegacyDocStructHelperInterface inStruct) {
-
         // Start with the list of all metadata.
         List<LegacyMetadataHelper> result = new LinkedList<>();
 
@@ -240,9 +243,7 @@ public class MetadataHelper {
                 }
             }
         }
-        if (result.isEmpty()) {
-            result = null;
-        }
+
         return result;
     }
 
