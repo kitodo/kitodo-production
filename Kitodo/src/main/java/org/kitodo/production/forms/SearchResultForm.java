@@ -29,6 +29,7 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 
 @Named("SearchResultForm")
 @SessionScoped
@@ -46,9 +47,10 @@ public class SearchResultForm extends BaseForm {
      * @return The searchResultPage
      */
     public String search() {
+        ProcessService processService = ServiceManager.getProcessService();
         if (searchQuery.equalsIgnoreCase("all")) {
             try {
-                resultList = ServiceManager.getProcessService().findAll();
+                resultList = processService.findAll();
                 filteredList.clear();
                 filteredList.addAll(resultList);
             } catch (DataException e) {
@@ -57,8 +59,9 @@ public class SearchResultForm extends BaseForm {
             }
         } else {
             try {
-                resultList = ServiceManager.getProcessService().findDTOsByTitleWithWildcard(searchQuery);
-                resultList.addAll(ServiceManager.getProcessService().findByProjectTitleWithWildcard(searchQuery));
+                resultList = processService.findDTOsByTitleWithWildcard(searchQuery);
+                resultList.addAll(processService.findByMetadataContent(searchQuery));
+                resultList.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
                 filteredList.clear();
                 filteredList.addAll(resultList);
             } catch (DataException e) {
