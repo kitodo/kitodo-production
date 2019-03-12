@@ -27,6 +27,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
+import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -38,6 +39,8 @@ public class SearchResultForm extends BaseForm {
     private String searchQuery;
     private List<ProcessDTO> filteredList = new ArrayList<>();
     private List<ProcessDTO> resultList;
+    private String currentTaskFilter;
+    private Integer currentProjectFilter;
 
     private String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
 
@@ -75,46 +78,55 @@ public class SearchResultForm extends BaseForm {
     /**
      * Filters the searchResults by project.
      *
-     * @param projectDTO
-     *            The project to be filtered by
+     * @param projectId
+     *            The project id to be filtered by
      * @return a filtered list
      */
-    public String filterListByProject(ProjectDTO projectDTO) {
-        filteredList.clear();
-        filteredList.addAll(resultList);
-        for (ProcessDTO result : resultList) {
-            if (!result.getProject().getId().equals(projectDTO.getId())) {
-                filteredList.remove(result);
+    void filterListByProject(Integer projectId) {
+        if(Objects.nonNull(projectId)) {
+            for (ProcessDTO result : new ArrayList<>(filteredList)) {
+                if (!result.getProject().getId().equals(projectId)) {
+                    filteredList.remove(result);
+                }
             }
         }
-        return this.stayOnCurrentPage;
     }
 
     /**
      * Filters the searchResults by task.
      *
-     * @param task
-     *            The project to be filtered by
+     * @param taskTitle
+     *            The title of the task to be filtered by
      * @return a filtered list
      */
-    public String filterListByTask(Task task) {
+    void filterListByTask(String taskTitle) {
+        if(Objects.nonNull(taskTitle) && !taskTitle.isEmpty()) {
+            for (ProcessDTO processDTO : new ArrayList<>(filteredList)) {
+                try {
+                    Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                    Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+                    if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(taskTitle)) {
+                        filteredList.remove(processDTO);
+                    }
+                } catch (DAOException e) {
+                    Helper.setErrorMessage("errorOnSearch", searchQuery);
+
+                }
+
+            }
+        }
+    }
+
+    /**
+     * filteres the searchresult list by the selected filters.
+     */
+    public void filterList(){
         filteredList.clear();
         filteredList.addAll(resultList);
-        for (ProcessDTO result : resultList) {
-            try {
-                Process process = ServiceManager.getProcessService().getById(result.getId());
-                Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-                if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(task.getTitle())) {
-                    filteredList.remove(result);
-                }
-            } catch (DAOException e) {
-                Helper.setErrorMessage("errorOnSearch", searchQuery);
-                return this.stayOnCurrentPage;
-            }
-
-        }
-        return this.stayOnCurrentPage;
+        filterListByProject(currentProjectFilter);
+        filterListByTask(currentTaskFilter);
     }
+
 
     /**
      * Get all Projects assigned to the search results.
@@ -134,14 +146,17 @@ public class SearchResultForm extends BaseForm {
      *
      * @return A list of Tasks for filter list
      */
-    public Collection<Task> getTasksForFiltering() {
-        HashMap<String, Task> tasksForFiltering = new HashMap<>();
+    public Collection<TaskDTO> getTasksForFiltering() {
+        HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
         for (ProcessDTO processDTO : resultList) {
             try {
                 Process process = ServiceManager.getProcessService().getById(processDTO.getId());
                 Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
                 if (Objects.nonNull(currentTask)) {
-                    tasksForFiltering.put(currentTask.getTitle(), currentTask);
+                    TaskDTO taskDTO = new TaskDTO();
+                    taskDTO.setTitle(currentTask.getTitle());
+                    taskDTO.setProcessingStatus(currentTask.getProcessingStatus());
+                    tasksForFiltering.put(currentTask.getTitle(), taskDTO);
                 }
             } catch (DAOException e) {
                 e.printStackTrace();
@@ -188,4 +203,43 @@ public class SearchResultForm extends BaseForm {
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
+
+    /**
+     * Gets the current task filter.
+     *
+     * @return a List of Task title to filter
+     */
+    public String getCurrentTaskFilter() {
+        return currentTaskFilter;
+    }
+
+    /**
+     * Sets the current task filter.
+     *
+     * @param currentTaskFilter
+     *            the task title to filter
+     */
+    public void setCurrentTaskFilter(String currentTaskFilter) {
+        this.currentTaskFilter = currentTaskFilter;
+    }
+
+    /**
+     * Gets the current project filter.
+     *
+     * @return a List of project id to filter
+     */
+    public Integer getCurrentProjectFilter() {
+        return currentProjectFilter;
+    }
+
+    /**
+     * Sets the current project filter.
+     *
+     * @param currentProjectFilter
+     *            the project id to filter
+     */
+    public void setCurrentProjectFilter(Integer currentProjectFilter) {
+        this.currentProjectFilter = currentProjectFilter;
+    }
+
 }

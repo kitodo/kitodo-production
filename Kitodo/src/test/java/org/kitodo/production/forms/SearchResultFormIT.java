@@ -8,10 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
 
 public class SearchResultFormIT {
 
@@ -70,12 +68,20 @@ public class SearchResultFormIT {
         searchResultForm.setSearchQuery("es");
         searchResultForm.search();
 
-        ProjectDTO projectDTO = new ProjectDTO();
-        projectDTO.setId(1);
-        searchResultForm.filterListByProject(projectDTO);
-        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
 
+        searchResultForm.filterListByProject(1000);
+        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(0, resultList.size());
+
+        searchResultForm.search();
+        searchResultForm.filterListByProject(1);
+        resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
+
+        searchResultForm.search();
+        searchResultForm.filterListByProject(null);
+        resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(5, resultList.size());
 
     }
 
@@ -84,13 +90,40 @@ public class SearchResultFormIT {
         searchResultForm.setSearchQuery("es");
         searchResultForm.search();
 
-        Task task = new Task();
-        task.setTitle("Progress");
-
-        searchResultForm.filterListByTask(task);
+        searchResultForm.filterListByTask("notExistent");
         List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(0, resultList.size());
+
+        searchResultForm.search();
+        searchResultForm.filterListByTask("Progress");
+        resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(1, resultList.size());
 
     }
+
+    @Test
+    public void testFilterList(){
+        searchResultForm.setSearchQuery("es");
+        searchResultForm.search();
+
+        searchResultForm.setCurrentProjectFilter(1);
+        searchResultForm.filterList();
+        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(2, resultList.size());
+
+        searchResultForm.search();
+        searchResultForm.setCurrentTaskFilter("");
+        searchResultForm.filterList();
+        resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(2, resultList.size());
+
+        searchResultForm.search();
+        searchResultForm.setCurrentTaskFilter("TaskNotExistent");
+        searchResultForm.filterList();
+        resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(0, resultList.size());
+
+    }
+
 
 }
