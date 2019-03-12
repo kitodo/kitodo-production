@@ -100,24 +100,6 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldFindManyByProcessingStatusAndUser() {
-        await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 2,
-            taskService.findByProcessingStatusAndUser(TaskStatus.DONE, 1, null).size()));
-    }
-
-    @Test
-    public void shouldFindOneByProcessingStatusAndUser() {
-        await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 1,
-            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
-    }
-
-    @Test
-    public void shouldNotFindByProcessingStatusAndUser() {
-        await().untilAsserted(() -> assertEquals("Some tasks were found in database!", 0,
-            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 3, null).size()));
-    }
-
-    @Test
     public void shouldReplaceProcessingUser() throws Exception {
         UserService userService = ServiceManager.getUserService();
 
