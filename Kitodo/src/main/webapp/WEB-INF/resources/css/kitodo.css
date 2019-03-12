@@ -703,7 +703,7 @@ section#content-section {
 
 .input-with-button,
 .input-with-button > input {
-    width: calc(100% - 44px); !important;
+    width: calc(100% - 44px);
 }
 
 .input-with-button + .ui-button,
@@ -1101,7 +1101,7 @@ form#metadata div label,
 }
 
 #commentsBox\:newButton {
-    position: absolute !important;
+    position: absolute;
     bottom: 16px;
     left: 8px;
 }
@@ -1111,7 +1111,7 @@ form#metadata div label,
 }
 
 #commentsBox\:commentsGrid.ui-datatable tbody tr:last-child td {
-    border-bottom: 1px solid var(--disabled-light) !important;
+    border-bottom: 1px solid var(--cloudy-gray);
 }
 
 #commentsBox\:commentsGrid {
@@ -1686,7 +1686,7 @@ footer {
 }
 
 .ui-datatable tbody tr:last-child td {
-    border-bottom: none !important;
+    border-bottom: none;
 }
 
 .ui-datatable tr th.actionsColumn,

@@ -2718,8 +2718,8 @@ public class MetadataProcessor {
         batchStepHelper.solveProblemForSingle(ServiceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
-        comment = comment.replace("<i>", "").replace("</i>", "").trim();
-        wikiField = wikiField.replace(comment, comment.replace("Red K", "Orange K "));
+        String updatedComment = comment.replace("<i>", "").replace("</i>", "").trim();
+        wikiField = wikiField.replace(updatedComment, updatedComment.replace("Red K", "Orange K "));
         ServiceManager.getProcessService().setWikiField(wikiField, this.process);
         try {
             ServiceManager.getProcessService().save(process);
