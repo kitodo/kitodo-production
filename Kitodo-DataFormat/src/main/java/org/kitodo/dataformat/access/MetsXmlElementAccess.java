@@ -103,7 +103,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         this.workpiece = workpiece;
     }
 
-    static final Workpiece toWorkpiece(Mets mets,
+    /**
+     * Converts a mets to a workpiece.
+     *
+     * @param mets
+     *            mets to convert
+     * @param inputStreamProvider
+     *            a functional interface that returns an input stream for an URI
+     * @return the workpiece
+     */
+    public static final Workpiece toWorkpiece(Mets mets,
             InputStreamProviderInterface inputStreamProvider) {
 
         Workpiece workpiece = new Workpiece();
@@ -295,7 +304,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * @throws IOException
      *             if the reading fails
      */
-    static Mets readMets(InputStream in) throws IOException {
+    public static Mets readMets(InputStream in) throws IOException {
         try {
             JAXBContext jc = JAXBContext.newInstance(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
