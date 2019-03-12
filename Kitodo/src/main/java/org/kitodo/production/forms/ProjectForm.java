@@ -275,7 +275,7 @@ public class ProjectForm extends BaseForm {
      * Save folder.
      */
     public void saveFolder() {
-        if (!this.project.getFolders().contains(this.myFolder)) {
+        if (Objects.isNull(myFolder.getId()) || !this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
         }
     }
@@ -585,7 +585,7 @@ public class ProjectForm extends BaseForm {
 
     /**
      * Get project edit page referring view.
-     * 
+     *
      * @return project edit page referring view
      */
     public String getProjectEditReferer() {
