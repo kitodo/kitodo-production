@@ -177,7 +177,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             ServiceManager.getTaskService().saveToIndex(task, false);
         }
 
-        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByProcessId(template.getId());
+        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByTemplateId(template.getId());
         for (Map<String, Object> object : searchResults) {
             index.add(getIdFromJSONObject(object));
         }

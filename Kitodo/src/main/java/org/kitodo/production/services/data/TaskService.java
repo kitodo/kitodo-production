@@ -110,7 +110,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
+        query.must(getQueryForTemplate(0));
 
         if (onlyOpenTasks) {
             query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
@@ -681,6 +681,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
+     * Find tasks by id of template.
+     *
+     * @param id
+     *            of template
+     * @return list of JSON objects with tasks for specific template id
+     */
+    List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
+        return findDocuments(getQueryForProcess(id));
+    }
+
+    /**
      * Get query for automatic type of task.
      *
      * @param typeAutomatic
@@ -744,6 +755,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
         return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
+    }
+
+    /**
+     * Get query for template.
+     *
+     * @param templateId
+     *            template id as int
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForTemplate(int templateId) {
+        return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
     }
 
     /**
