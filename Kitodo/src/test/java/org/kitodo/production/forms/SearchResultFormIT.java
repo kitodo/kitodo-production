@@ -33,7 +33,7 @@ public class SearchResultFormIT {
     }
 
     /**
-     * Cleanup the database and stop elasticsearch
+     * Cleanup the database and stop elasticsearch.
      * @throws Exception if elasticsearch could not been stopped.
      */
     @AfterClass

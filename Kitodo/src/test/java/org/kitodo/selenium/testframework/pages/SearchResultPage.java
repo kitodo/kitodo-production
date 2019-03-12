@@ -20,16 +20,22 @@ import org.openqa.selenium.support.FindBy;
 public class SearchResultPage extends Page<SearchResultPage> {
 
     private static final String SEARCH_RESULT_TABLE = "searchResultTable";
-
     private static final String SEARCH_RESULT_FORM = "searchResultForm";
+    private static final String FILTER_CONFIGURATION = "configureFilters";
+
+
 
     @SuppressWarnings("unused")
     @FindBy(id = SEARCH_RESULT_FORM + ":" + SEARCH_RESULT_TABLE + "_data")
     private WebElement searchResultTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = SEARCH_RESULT_FORM + ":filterProjects")
-    private WebElement filterProjects;
+    @FindBy(id = FILTER_CONFIGURATION + ":projectfilter")
+    private WebElement projectsDropdown;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_CONFIGURATION + ":projectfilter_items")
+    private WebElement projectsForFiltering;
 
     public SearchResultPage() {
         super("searchResult.jsf");
@@ -45,7 +51,8 @@ public class SearchResultPage extends Page<SearchResultPage> {
     }
 
     public String getProjectsForFilter() {
-        return filterProjects.getText();
+        projectsDropdown.click();
+        return projectsForFiltering.getText();
     }
 
     public void filterByProject() {
