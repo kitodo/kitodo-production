@@ -41,6 +41,10 @@ public class SearchingST extends BaseTestSelenium {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
+    /**
+     * Logout after every test
+     * @throws Exception if topNavigationElement is not found
+     */
     @After
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();

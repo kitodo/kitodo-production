@@ -256,7 +256,7 @@ public abstract class Page<T> {
     /**
      * Searches in the header-searchfield with the given query.
      * @param query the input to search for.
-     * @throws Exception
+     * @throws Exception if Page could not be instantiated.
      */
     public void searchInSearchField(String query) throws Exception {
         searchField.clear();

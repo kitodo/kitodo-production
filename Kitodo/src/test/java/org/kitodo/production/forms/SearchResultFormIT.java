@@ -32,6 +32,10 @@ public class SearchResultFormIT {
         MockDatabase.insertProcessesFull();
     }
 
+    /**
+     * Cleanup the database and stop elasticsearch
+     * @throws Exception if elasticsearch could not been stopped.
+     */
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();

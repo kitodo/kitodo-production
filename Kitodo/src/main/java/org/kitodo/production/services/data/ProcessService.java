@@ -1741,7 +1741,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return true or false
      */
 
-    boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
+    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
@@ -2033,7 +2033,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    private boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
+    protected boolean writeMetsFile(Process process, String targetFileName, LegacyMetsModsDigitalDocumentHelper gdzfile,
             boolean writeLocalFilegroup) throws IOException {
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper mm = new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset());
