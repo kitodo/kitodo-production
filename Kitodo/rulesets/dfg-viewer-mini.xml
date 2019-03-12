@@ -1,0 +1,1209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../Kitodo-DataEditor/src/main/resources/ruleset.xsd">
+    <!--
+        'declaration' tag:
+            Declares the object classes of the divisions and keys.
+
+            - possible member tags, in order as mentioned:
+                    division            (repeatable, min. quantity: 1)
+                    key                 (optional, repeatable)
+
+        'correlation' tag:
+            Declares correlations between divisions and keys.
+
+            - possible member tag:
+                    restriction         (optional, repeatable)
+         
+        'editing' tag:
+            Describes how the program should behave when editing the data.
+
+            - possible member tags, in order as mentioned:
+                    compose             (optional, repeatable)
+                    setting             (optional, repeatable)
+                    acquisitionStage    (optional, repeatable)
+    -->
+    <declaration>
+        <!--
+            'division' tag:
+                Declares a subclass of mets:div.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        subdivisionByDate   (optional, not repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'subdivisionByDate' tag:
+                Determines how this division is broken down by date.
+                
+                - optional attribute 'yearBegin':
+                        Annual first day of the operating year, if the annual
+                        accounts do not coincide with the turn of the year.
+                        Format: Two hyphens, the month as a two-digit number,
+                                one hyphen, the day as a two-digit number.
+
+                - required member tag:
+                        division            (repeatable, min. quantity: 1)
+
+            'division' tag, as child of 'subdivisionByDate':
+                Declares a subclass of mets:div for temporal breakdown.
+
+                - required attribute 'id':
+                        Internal name of the division. This should be a
+                        xsd:NMTOKEN (that is, do not include spaces).
+
+                - required attribute 'dates':
+                        meta-data key containing the date value
+
+                - required attribute 'scheme':
+                        Formatting pattern for the date value. Either
+                        "yyyy/yyyy" to indicate a double year in conjunction
+                        with the attribute yearBegin, otherwise any formatting
+                        that is understood by Java’s date formatter.
+        -->
+
+        <!-- Divisions as per https://dfg-viewer.de/en/structural-data-set/ -->
+
+        <division id="section">
+            <label>Section</label>
+            <label lang="de">Abschnitt</label>
+        </division>
+
+        <division id="file">
+            <label>File</label>
+            <label lang="de">Akte</label>
+        </division>
+
+        <division id="album">
+            <label>Album</label>
+            <label lang="de">Album</label>
+        </division>
+
+        <division id="register">
+            <label>Register</label>
+            <label lang="de">Amtsbuch</label>
+        </division>
+
+        <division id="annotation">
+            <label>Annotation</label>
+            <label lang="de">Annotation</label>
+        </division>
+
+        <division id="address">
+            <label>Address</label>
+            <label lang="de">Anrede</label>
+        </division>
+
+        <division id="article">
+            <label>Article</label>
+            <label lang="de">Artikel</label>
+        </division>
+
+        <division id="atlas">
+            <label>Atlas</label>
+            <label lang="de">Atlas</label>
+        </division>
+
+        <division id="issue">
+            <label>Issue</label>
+            <label lang="de">Ausgabe (auch: Heft)</label>
+        </division>
+
+        <division id="bachelor_thesis">
+            <label>Bachelor Thesis</label>
+            <label lang="de">Bachelorarbeit</label>
+        </division>
+
+        <division id="volume">
+            <label>Volume</label>
+            <label lang="de">Band</label>
+        </division>
+
+        <division id="contained_work">
+            <label>Contained Work</label>
+            <label lang="de">Beigefügtes oder Enthaltenes Werk</label>
+        </division>
+
+        <division id="additional">
+            <label>Additional</label>
+            <label lang="de">Beilage</label>
+        </division>
+
+        <division id="report">
+            <label>Report</label>
+            <label lang="de">Bericht</label>
+        </division>
+
+        <division id="official_notification">
+            <label>Official Notification</label>
+            <label lang="de">Bescheid</label>
+        </division>
+
+        <division id="provenance">
+            <label>Provenance</label>
+            <label lang="de">Besitznachweis</label>
+        </division>
+
+        <division id="image">
+            <label>Image</label>
+            <label lang="de">Bild</label>
+        </division>
+
+        <division id="collation">
+            <label>Collation</label>
+            <label lang="de">Bogensignatur</label>
+        </division>
+
+        <division id="ornament">
+            <label>Ornament</label>
+            <label lang="de">Buchschmuck</label>
+        </division>
+
+        <division id="letter">
+            <label>Letter</label>
+            <label lang="de">Brief</label>
+        </division>
+
+        <division id="cover">
+            <label>Cover</label>
+            <label lang="de">Deckel</label>
+        </division>
+
+        <division id="cover_front">
+            <label>Front Cover</label>
+            <label lang="de">Vorderdeckel</label>
+        </division>
+
+        <division id="cover_back">
+            <label>Back Cover</label>
+            <label lang="de">Rückdeckel</label>
+        </division>
+
+        <division id="diploma_thesis">
+            <label>Diploma Thesis</label>
+            <label lang="de">Diplomarbeit</label>
+        </division>
+
+        <division id="doctoral_thesis">
+            <label>Doctoral Thesis</label>
+            <label lang="de">Dissertation</label>
+        </division>
+
+        <division id="document">
+            <label>Document</label>
+            <label lang="de">Dokument</label>
+        </division>
+
+        <division id="printers_mark">
+            <label>Printers Mark</label>
+            <label lang="de">Druckermarke</label>
+        </division>
+
+        <division id="printed_archives">
+            <label>Printed Archives</label>
+            <label lang="de">Druckerzeugnis (Archivale)</label>
+        </division>
+
+        <division id="binding">
+            <label>Binding</label>
+            <label lang="de">Einband</label>
+        </division>
+
+        <division id="entry">
+            <label>Entry</label>
+            <label lang="de">Eintrag</label>
+        </division>
+
+        <division id="corrigenda">
+            <label>Corrigenda</label>
+            <label lang="de">Errata</label>
+        </division>
+
+        <division id="bookplate">
+            <label>Bookplate</label>
+            <label lang="de">Exlibris</label>
+        </division>
+
+        <division id="fascicle">
+            <label>Fascicle</label>
+            <label lang="de">Faszikel</label>
+        </division>
+
+        <division id="leaflet">
+            <label>Leaflet</label>
+            <label lang="de">Flugblatt</label>
+        </division>
+
+        <division id="research_paper">
+            <label>Research paper</label>
+            <label lang="de">Forschungsarbeit</label>
+        </division>
+
+        <division id="photograph">
+            <label>Photograph</label>
+            <label lang="de">Fotografie</label>
+        </division>
+
+        <division id="fragment">
+            <label>Fragment</label>
+            <label lang="de">Fragment</label>
+        </division>
+
+        <division id="land_register">
+            <label>Land register</label>
+            <label lang="de">Grundbuch</label>
+        </division>
+
+        <division id="ground_plan">
+            <label>Ground plan</label>
+            <label lang="de">Grundriss</label>
+        </division>
+
+        <division id="habilitation_thesis">
+            <label>Habilitation thesis</label>
+            <label lang="de">Habilitation</label>
+        </division>
+
+        <division id="manuscript">
+            <label>Manuscript</label>
+            <label lang="de">Handschrift</label>
+        </division>
+
+        <division id="illustration">
+            <label>Illustration</label>
+            <label lang="de">Illustration</label>
+        </division>
+
+        <division id="imprint">
+            <label>Imprint</label>
+            <label lang="de">Impressum</label>
+        </division>
+
+        <division id="contents">
+            <label>Table of contents</label>
+            <label lang="de">Inhaltsverzeichnis</label>
+        </division>
+
+        <division id="initial_decoration">
+            <label>Initial decoration</label>
+            <label lang="de">Initialschmuck</label>
+        </division>
+
+        <division id="year">
+            <label>Year</label>
+            <label lang="de">Jahr</label>
+        </division>
+
+        <division id="chapter">
+            <label>Chapter</label>
+            <label lang="de">Kapitel</label>
+        </division>
+
+        <division id="map">
+            <label>Map</label>
+            <label lang="de">Karte</label>
+        </division>
+
+        <division id="cartulary">
+            <label>Cartulary</label>
+            <label lang="de">Kartular</label>
+        </division>
+
+        <division id="colophon">
+            <label>Colophon</label>
+            <label lang="de">Kolophon</label>
+        </division>
+
+        <division id="engraved_titlepage">
+            <label>Engraved titlepage</label>
+            <label lang="de">Kupfertitel</label>
+        </division>
+
+        <division id="magister_thesis">
+            <label>Magister thesis</label>
+            <label lang="de">Magisterarbeit</label>
+        </division>
+
+        <division id="folder">
+            <label>Folder</label>
+            <label lang="de">Mappe</label>
+        </division>
+
+        <division id="master_thesis">
+            <label>Master thesis</label>
+            <label lang="de">Masterarbeit</label>
+        </division>
+
+        <division id="multivolume_work">
+            <label>Multivolume work</label>
+            <label lang="de">Mehrbändiges Werk</label>
+        </division>
+
+        <division id="month">
+            <label>Month</label>
+            <label lang="de">Monat</label>
+        </division>
+
+        <division id="monograph">
+            <label>Monograph</label>
+            <label lang="de">Monographie</label>
+        </division>
+
+        <division id="musical_notation">
+            <label>Musical notation</label>
+            <label lang="de">Musiknotation</label>
+        </division>
+
+        <division id="periodical">
+            <label>Periodical</label>
+            <label lang="de">Periodica</label>
+        </division>
+
+        <division id="poster">
+            <label>Poster</label>
+            <label lang="de">Plakat</label>
+        </division>
+
+        <division id="plan">
+            <label>Plan</label>
+            <label lang="de">Plan</label>
+        </division>
+
+        <division id="privileges">
+            <label>Privileges</label>
+            <label lang="de">Privilegien</label>
+        </division>
+
+        <division id="index">
+            <label>Index</label>
+            <label lang="de">Register</label>
+        </division>
+
+        <division id="spine">
+            <label>Spine</label>
+            <label lang="de">Rücken</label>
+        </division>
+
+        <division id="scheme">
+            <label>Scheme</label>
+            <label lang="de">Schema</label>
+        </division>
+
+        <division id="edge">
+            <label>Edge</label>
+            <label lang="de">Schnitt</label>
+        </division>
+
+        <division id="seal">
+            <label>Seal</label>
+            <label lang="de">Siegel</label>
+        </division>
+
+        <division id="paste_down">
+            <label>Paste down</label>
+            <label lang="de">Spiegel</label>
+        </division>
+
+        <division id="stamp">
+            <label>Stamp</label>
+            <label lang="de">Stempel</label>
+        </division>
+
+        <division id="study">
+            <label>Study</label>
+            <label lang="de">Studie</label>
+        </division>
+
+        <division id="table">
+            <label>Table</label>
+            <label lang="de">Tabelle</label>
+        </division>
+
+        <division id="day">
+            <label>Day</label>
+            <label lang="de">Tag</label>
+        </division>
+
+        <division id="proceeding">
+            <label>Proceeding</label>
+            <label lang="de">Tagungsband</label>
+        </division>
+
+        <division id="text">
+            <label>Text</label>
+            <label lang="de">Text</label>
+        </division>
+
+        <division id="title_page">
+            <label>Title page</label>
+            <label lang="de">Titelblatt</label>
+        </division>
+
+        <division id="act">
+            <label>Act</label>
+            <label lang="de">Urkunde</label>
+        </division>
+
+        <division id="judgement">
+            <label>Judgement</label>
+            <label lang="de">Urteil</label>
+        </division>
+
+        <division id="verse">
+            <label>Verse</label>
+            <label lang="de">Verse</label>
+        </division>
+
+        <division id="note">
+            <label>Note</label>
+            <label lang="de">Vermerk</label>
+        </division>
+
+        <division id="preprint">
+            <label>Preprint</label>
+            <label lang="de">Vorabdruck</label>
+        </division>
+
+        <division id="dossier">
+            <label>Dossier</label>
+            <label lang="de">Vorgang</label>
+        </division>
+
+        <division id="lecture">
+            <label>Lecture</label>
+            <label lang="de">Vorlesung</label>
+        </division>
+
+        <division id="endsheet">
+            <label>Endsheet</label>
+            <label lang="de">Vorsatz</label>
+        </division>
+
+        <division id="paper">
+            <label>Paper</label>
+            <label lang="de">Vortrag</label>
+        </division>
+
+        <division id="preface">
+            <label>Preface</label>
+            <label lang="de">Vorwort</label>
+        </division>
+
+        <division id="dedication">
+            <label>Dedication</label>
+            <label lang="de">Widmung</label>
+        </division>
+
+        <division id="newspaper">
+            <label>Newspaper</label>
+            <label lang="de">Zeitung</label>
+        </division>
+
+        <!--
+            'key' tag:
+                Declare a subclass of kitodo:metadata or kitodo:metadataGroup.
+
+                - required attribute 'id':
+                        Internal name of the key. This should be a xsd:NMTOKEN
+                        (that is, do not include spaces).
+     
+                - optional attribute 'domain':
+                        location where to store entries with that key in the
+                        METS file. Defaults to 'description'. Possible values:
+
+                        description         saves the entry in the associated
+                                            dmdSec
+                        digitalProvenance   saves the entry in the associated
+                                            amdSec in the element digiprovMD
+                        rights              saves the entry in the associated
+                                            amdSec in the element rightsMD
+                        source              saves the entry in the associated
+                                            amdSec in the element sourceMD
+                        technical           saves the entry in the associated
+                                            amdSec in the element techMD
+                        mets:div            saves the entry in element div of
+                                            the METS structure
+     
+                - possible member tags, in order as mentioned:
+                        label               (repeatable, min. quantity: 1)
+                        codomain            (optional, not repeatable)
+                        option              (optional, repeatable)
+                        pattern             (optional, not repeatable)
+                        preset              (optional, repeatable)
+                        key                 (optional, repeatable)
+             
+            'label' tag:
+                Sets a human readable label for an item.
+                
+                - optional attribute 'lang':
+                        ISO 639 alpha-2 language code - display language to use
+                        the label for. If missing, defines the default value
+                        used if there is no specific label for one language
+
+                - text content:
+                        human-readable label, displayed to the editing user
+
+            'codomain' tag:
+                Defines the codomain (value space) of the data type.
+                
+                - optional attribute 'type':
+                        Sets the XML Schema Datatype of which this key is a
+                        subclass (cf. https://www.w3.org/TR/xmlschema-2/ ).
+                        Defaults to 'string'. Possible values:
+
+                        anyURI              represents a Uniform Resource
+                                            Identifier Reference (URI)
+                        boolean             the mathematical concept of
+                                            binary-valued logic (*)
+                        date                a top-open interval of exactly one
+                                            day in length on the timeline,
+                                            beginning on the beginning moment
+                                            of the day 
+                        integer             the standard mathematical concept
+                                            of the integer numbers
+                        string              character strings
+                  (*) see also the explanation at the boolean example below
+
+                - optional attribute 'namespace':
+                        Specifies that the value is a URI and must be in the
+                        specified namespace.
+
+            'option' tag:
+                Specifies that the data type is an enumerated type and defines
+                the possible values of the enumeration type.
+
+                - required attribute 'value':
+                        A possible value of the enumeration type. This is a
+                        xsd:string (that is, it may include spaces).
+     
+                - optional member tag:
+                        label               Sets a human readable label for the
+                                            option. Labels for options are
+                                            optional. If absent, the value is
+                                            also used as a label. The label can
+                                            be repeated for multilingualism.
+
+            'pattern' tag:
+                Sets a regular expression to which the string representation of
+                the values must correspond.
+
+                - text content:
+                        the regular expression to which the string
+                        representation must correspond
+
+            'key' tag:
+                If present, declares the containing element to be a subclass of
+                kitodo:metadataGroup (otherwise the element is a subclass of
+                kitodo:metatadata). For attributes and member tags, the
+                definition given above applies, with the exception of the
+                domain, which can only be set on the very outer key tag and is
+                inherited by all sub-keys. A key that groups other keys should
+                not contain any other elements than key and preset. Keys can be
+                nested repeatedly.
+
+            'preset' tag:
+                Sets the pre-filled value when creating a new entry using this
+                key. A repetition of the element is only appropriate if it is
+                an enumerated type and its use allows multiple selections.
+
+                - optional attribute 'key':
+                        With grouped keys, the sub-key to which this preset
+                        should apply.
+
+                - optional member tag:
+                        preset              With multiple-grouped keys, the key
+                                            is set to a sub-key.
+
+                - text content:
+                        the value
+        -->
+
+        <!--
+            Required keys (“Verpflichtungsgrad: verpflichtend”, commitment 
+            level: mandatory) according to the application profile, waiving the
+            use of meta-data groups. Source (German):
+            https://dfg-viewer.de/fileadmin/groups/dfgviewer/MODS-Anwendungsprofil_2.3.1.pdf
+        -->
+
+        <key id="titleInfoTitle">
+            <label>Chief title</label>
+            <label lang="de">Haupttitel</label>
+        </key>
+
+        <key id="nameDisplayForm">
+            <label>personal name in direct order</label>
+            <label lang="de">Namensangabe</label>
+        </key>
+
+        <key id="originInfoPlacePlaceTerm">
+            <label>Place</label>
+            <label lang="de">Erscheinungsort</label>
+        </key>
+        
+        <key id="originInfoDateIssued">
+            <label>Date published</label>
+            <label lang="de">Erscheinungsjahr</label>
+            <codomain type="integer" />
+        </key>
+
+        <key id="originInfoLanguageLanguageTerm">
+            <label>Language</label>
+            <label lang="de">Sprache</label>
+            <codomain namespace="http://id.loc.gov/vocabulary/iso639-2/" />
+        </key>
+
+        <key id="physicalDescription">
+            <label>Physical attributes</label>
+            <label lang="de">Physische Eigenschaften</label>
+        </key>
+
+        <key id="relatedItem">
+            <label>Related resource</label>
+            <label lang="de">Beziehungsangaben</label>
+        </key>
+
+        <key id="relatedItemPartDetail">
+            <label>Numbering</label>
+        </key>
+
+        <key id="identifierType">
+            <label>Type</label>
+            <label lang="de">Typ</label>
+
+            <option value="agorha">
+                <label>AGORHA (Accès Global et Organisé aux Ressources en Histoire de l'Art)</label>
+            </option>
+            <option value="agrovoc">
+                <label>AGROVOC multilingual agricultural thesaurus</label>
+            </option>
+            <option value="allmovie">
+                <label>AllMovie</label>
+            </option>
+            <option value="allmusic">
+                <label>AllMusic</label>
+            </option>
+            <option value="allocine">
+                <label>AlloCiné</label>
+            </option>
+            <option value="amnbo">
+                <label>American National Biography Online</label>
+            </option>
+            <option value="ansi">
+                <label>ANSI/NISO standard number</label>
+            </option>
+            <option value="artsy">
+                <label>Artsy</label>
+            </option>
+            <option value="artukart">
+                <label>Art UK Artists</label>
+            </option>
+            <option value="artukaw">
+                <label>Art UK Artworks</label>
+            </option>
+            <option value="atg">
+                <label>Agricultural Thesaurus and Glossary</label>
+            </option>
+            <option value="balat">
+                <label>BALaT (Belgian Art Links and Tools) People &amp; Institutions</label>
+            </option>
+            <option value="bbcth">
+                <label>BBC Things</label>
+            </option>
+            <option value="bdusc">
+                <label>Biographical Directory of the United States Congress</label>
+            </option>
+            <option value="belvku">
+                <label>Belvedere Künstler</label>
+            </option>
+            <option value="belvwrk">
+                <label>Belvedere Werke</label>
+            </option>
+            <option value="benezit">
+                <label>Benezit Dictionary of Artists</label>
+            </option>
+            <option value="bfi">
+                <label>BFI - British Film Institute</label>
+            </option>
+            <option value="bigenc">
+                <label>Большая российская энциклопедия</label>
+            </option>
+            <option value="bnfcg">
+                <label>BnF catalogue général</label>
+            </option>
+            <option value="bpn">
+                <label>Biography portal of the Netherlands</label>
+                <label lang="nl">Biografisch Portaal van Nederland</label>
+            </option>
+            <option value="cabt">
+                <label>CABI Thesaurus</label>
+            </option>
+            <option value="cana">
+                <label>Canadiana Authorities</label>
+            </option>
+            <option value="cantic">
+                <label>CANTIC</label>
+            </option>
+            <option value="cbwpid">
+                <label>Collective Biographies of Women Persons ID</label>
+            </option>
+            <option value="cerl">
+                <label>CERL Thesaurus</label>
+            </option>
+            <option value="cgndb">
+                <label>Canadian Geographical Names Database</label>
+            </option>
+            <option value="clara">
+                <label>Clara: Database of Women Artists</label>
+            </option>
+            <option value="cnbksy">
+                <label>Quan Guo Bao Kan Suo Yin</label>
+            </option>
+            <option value="csfdcz">
+                <label>Cesko-Slovenská filmová databáze</label>
+            </option>
+            <option value="danacode">
+                <label>Danacode</label>
+            </option>
+            <option value="datoses">
+                <label>datos.bne.es</label>
+            </option>
+            <option value="discogs">
+                <label>Discogs</label>
+            </option>
+            <option value="dkfilm">
+                <label>Det Danske Filminstitut Filmdatabasen</label>
+            </option>
+            <option value="doi">
+                <label>Digital object identifier</label>
+            </option>
+            <option value="dpb">
+                <label>Dictionnaire des peintres belges</label>
+            </option>
+            <option value="ean">
+                <label>International Article Number</label>
+            </option>
+            <option value="eidr">
+                <label>EIDR: Entertainment Identifier Registry</label>
+            </option>
+            <option value="emlo">
+                <label>Early Modern Letters Online</label>
+            </option>
+            <option value="fast">
+                <label>FAST - Faceted Application of Subject Terminology</label>
+            </option>
+            <option value="fidecp">
+                <label>Fide Chess Profile</label>
+            </option>
+            <option value="filmaff">
+                <label>Film Affinity</label>
+            </option>
+            <option value="filmport">
+                <label>filmportal.de</label>
+            </option>
+            <option value="findagr">
+                <label>Find a Grave</label>
+            </option>
+            <option value="fisa">
+                <label>FIS Athlete</label>
+            </option>
+            <option value="freebase">
+                <label>Freebase</label>
+            </option>
+            <option value="gacsch">
+                <label>Global Agricultural Concept Scheme</label>
+            </option>
+            <option value="gec">
+                <label>Gran enciclopèdia catalana</label>
+            </option>
+            <option value="geogndb">
+                <label>Geographic Names Database</label>
+            </option>
+            <option value="geonames">
+                <label>GeoNames</label>
+            </option>
+            <option value="gettyart">
+                <label>J. Paul Getty Museum Artists</label>
+            </option>
+            <option value="gettyobj">
+                <label>J. Paul Getty Museum Objects</label>
+            </option>
+            <option value="gettytgn">
+                <label>Getty Thesaurus of Geographic Names Online</label>
+            </option>
+            <option value="gettyulan">
+                <label>Union List of Artist Names Online</label>
+            </option>
+            <option value="gnd">
+                <label>Gemeinsame Normdatei</label>
+            </option>
+            <option value="gnis">
+                <label>Geographic Names Information System</label>
+            </option>
+            <option value="goodra">
+                <label>Goodreads Author ID</label>
+            </option>
+            <option value="gtaa">
+                <label>Gemeenschappelijke Thesaurus Audiovisuele Archieven</label>
+            </option>
+            <option value="gtin-14">
+                <label>Global Trade Identification Number 14</label>
+            </option>
+            <option value="hdl">
+                <label>Handle</label>
+            </option>
+            <option value="iaafa">
+                <label>IAAF Athletes</label>
+            </option>
+            <option value="ibdb">
+                <label>IBDB - Internet Broadway Database</label>
+            </option>
+            <option value="idref">
+                <label>IdRef: le référentiel des autorités Sudoc</label>
+            </option>
+            <option value="imdb">
+                <label>IMDb - Internet Movie Database</label>
+            </option>
+            <option value="isan">
+                <label>International standard audiovisual number</label>
+            </option>
+            <option value="isbn">
+                <label>International standard book number</label>
+            </option>
+            <option value="isbn-a">
+                <label>International Standard Book Number</label>
+            </option>
+            <option value="isbnre">
+                <label>ISBN (International Standard Book Number) registrant element</label>
+            </option>
+            <option value="isbnsbn">
+                <label>Identificativo SBN</label>
+            </option>
+            <option value="ismn">
+                <label>International standard music number</label>
+            </option>
+            <option value="isni">
+                <label>International standard name identifier</label>
+            </option>
+            <option value="iso">
+                <label>ISO standard number</label>
+            </option>
+            <option value="isfdbau">
+                <label>ISFDB author directory</label>
+            </option>
+            <option value="isfdbaw">
+                <label>ISFDB award directory</label>
+            </option>
+            <option value="isfdbma">
+                <label>ISFDB magazine directory</label>
+            </option>
+            <option value="isfdbpu">
+                <label>ISFDB publisher directory</label>
+            </option>
+            <option value="isil">
+                <label>ISIL</label>
+            </option>
+            <option value="isrc">
+                <label>International standard recording code</label>
+            </option>
+            <option value="issn">
+                <label>International standard serial number</label>
+            </option>
+            <option value="issn-l">
+                <label>Linking International standard serial number</label>
+            </option>
+            <option value="issue-number">
+                <label>Sound recording issue number</label>
+            </option>
+            <option value="istc">
+                <label>International standard text code</label>
+            </option>
+            <option value="iswc">
+                <label>International standard musical work code</label>
+            </option>
+            <option value="itar">
+                <label>ITAR</label>
+            </option>
+            <option value="kda">
+                <label>Kunstindeks Danmark Artist</label>
+            </option>
+            <option value="kdw">
+                <label>Kunstindeks Danmark Work</label>
+            </option>
+            <option value="kinopo">
+                <label>КиноПоиск = KinoPoisk</label>
+            </option>
+            <option value="lattes">
+                <label>Currículo Lattes</label>
+            </option>
+            <option value="lccn">
+                <label>Library of Congress control number</label>
+            </option>
+            <option value="lcmd">
+                <label>Library of Congress Manuscript Division field of history codes</label>
+            </option>
+            <option value="lei">
+                <label>Legal entity identifier</label>
+            </option>
+            <option value="libaus">
+                <label>Libraries Australia</label>
+            </option>
+            <option value="local">
+                <label>Locally defined identifier</label>
+            </option>
+            <option value="matrix-number">
+                <label>Sound recording matrix number</label>
+            </option>
+            <option value="mesh">
+                <label>Medical Subject Headings</label>
+            </option>
+            <option value="mocofo">
+                <label>Musée d'Orsay Catalogue des oeuvres fiche oeuvre</label>
+            </option>
+            <option value="moma">
+                <label>Museum of Modern Art</label>
+            </option>
+            <option value="morana">
+                <label>Musée d'Orsay Répertoire des artistes notice artiste</label>
+            </option>
+            <option value="moviemetf">
+                <label>MovieMeter Films</label>
+            </option>
+            <option value="moviemetr">
+                <label>MovieMeter Regisseurs</label>
+            </option>
+            <option value="munzing">
+                <label>Munzinger</label>
+            </option>
+            <option value="muscl">
+                <label>Music Sales Classical</label>
+            </option>
+            <option value="music-plate">
+                <label>Publisher's music plate number</label>
+            </option>
+            <option value="music-publisher">
+                <label>Publisher-assigned music number</label>
+            </option>
+            <option value="musicb">
+                <label>MusicBrainz</label>
+            </option>
+            <option value="nacat">
+                <label>National Archives Catalog</label>
+            </option>
+            <option value="natgazfid">
+                <label>U.S. National Gazetteer Feature Name Identifier</label>
+            </option>
+            <option value="nga">
+                <label>National Gallery of Art</label>
+            </option>
+            <option value="ngva">
+                <label>National Gallery of Victoria Artist</label>
+            </option>
+            <option value="ngvw">
+                <label>National Gallery of Victoria Work</label>
+            </option>
+            <option value="nipo">
+                <label>NIPO</label>
+            </option>
+            <option value="nndb">
+                <label>NNDB</label>
+            </option>
+            <option value="npg">
+                <label>National Portrait Gallery</label>
+            </option>
+            <option value="odnb">
+                <label>Oxford Dictionary of National Biography</label>
+            </option>
+            <option value="ofdb">
+                <label>OFDb: Online-Filmdatenbank</label>
+            </option>
+            <option value="onix">
+                <label>ONIX</label>
+            </option>
+            <option value="opensm">
+                <label>OpenStreetMap</label>
+            </option>
+            <option value="orcid">
+                <label>Open Researcher and Contributor Identifier</label>
+            </option>
+            <option value="oxforddnb">
+                <label>Oxford Biography Index</label>
+            </option>
+            <option value="permid">
+                <label>PermID</label>
+            </option>
+            <option value="picnypl">
+                <label>PIC - Photographers' Identities Catalog</label>
+            </option>
+            <option value="pnta">
+                <label>Personen uit de Nederlandse Thesaurus van Auteursnamen</label>
+            </option>
+            <option value="porthu">
+                <label>PORT.hu</label>
+            </option>
+            <option value="prabook">
+                <label>Prabook</label>
+            </option>
+            <option value="rbmsbt">
+                <label>RBMS Controlled Vocabularies: Binding Terms</label>
+            </option>
+            <option value="rbmsgt">
+                <label>RBMS Controlled Vocabularies: Genre Terms</label>
+            </option>
+            <option value="rbmspe">
+                <label>RBMS Controlled Vocabularies: Provenance Evidence Terms</label>
+            </option>
+            <option value="rbmsppe">
+                <label>RBMS Controlled Vocabularies: Printing and Publishing Terms</label>
+            </option>
+            <option value="rbmspt">
+                <label>RBMS Controlled Vocabularies: Paper Terms</label>
+            </option>
+            <option value="rbmsrd">
+                <label>RBMS Controlled Vocabularies: Relationship Designators</label>
+            </option>
+            <option value="rbmste">
+                <label>RBMS Controlled Vocabularies: Type Evidence</label>
+            </option>
+            <option value="rid">
+                <label>ResearcherID</label>
+            </option>
+            <option value="rkda">
+                <label>RKDartists&amp;</label>
+            </option>
+            <option value="saam">
+                <label>Smithsonian American Art Museum</label>
+            </option>
+            <option value="scholaru">
+                <label>Scholar Universe</label>
+            </option>
+            <option value="scope">
+                <label>Scope</label>
+            </option>
+            <option value="scopus">
+                <label>Scopus Author Identifier</label>
+            </option>
+            <option value="sici">
+                <label>Serial Item and Contribution Identifier</label>
+            </option>
+            <option value="snac">
+                <label>Social Networks and Archival Context</label>
+            </option>
+            <option value="spotify">
+                <label>Spotify</label>
+            </option>
+            <option value="sprfbsb">
+                <label>Sports Reference: Baseball</label>
+            </option>
+            <option value="sprfbsk">
+                <label>Sports Reference: Basketball</label>
+            </option>
+            <option value="sprfcbb">
+                <label>Sports Reference: College Basketball</label>
+            </option>
+            <option value="sprfcfb">
+                <label>Sports Reference: College Football</label>
+            </option>
+            <option value="sprfhoc">
+                <label>Sports Reference: Hockey</label>
+            </option>
+            <option value="sprfoly">
+                <label>Sports Reference: Olympic Sports</label>
+            </option>
+            <option value="sprfpfb">
+                <label>Sports Reference: Pro Football</label>
+            </option>
+            <option value="stock-number">
+                <label>Publisher, distributor, or vendor stock number</label>
+            </option>
+            <option value="strn">
+                <label>Standard Technical Report Number</label>
+            </option>
+            <option value="stw">
+                <label>Standard-Thesaurus Wirtschaft = STW thesaurus for economics</label>
+            </option>
+            <option value="svfilm">
+                <label>Svensk Filmdatabas</label>
+            </option>
+            <option value="tatearid">
+                <label>Tate Artist Identifier</label>
+            </option>
+            <option value="theatr">
+                <label>Theatricalia</label>
+            </option>
+            <option value="trove">
+                <label>Trove</label>
+            </option>
+            <option value="unescot">
+                <label>UNESCO thesaurus</label>
+                <label lang="fr">Thésaurus de l'UNESCO</label>
+                <label lang="es">Tesauro de la UNESCO</label>
+            </option>
+            <option value="upc">
+                <label>Universal Product Code</label>
+            </option>
+            <option value="uri">
+                <label>Uniform Resource Identifier</label>
+            </option>
+            <option value="urn">
+                <label>Uniform Resource Name</label>
+            </option>
+            <option value="vd16">
+                <label>Verzeichnis der Drucke des 16. Jahrhunderts</label>
+            </option>
+            <option value="vd17">
+                <label>Verzeichnis der Drucke des 17. Jahrhunderts</label>
+            </option>
+            <option value="vd18">
+                <label>Verzeichnis der Drucke des 18. Jahrhunderts</label>
+            </option>
+            <option value="vgmdb">
+                <label>VGMdb artists </label>
+            </option>
+            <option value="viaf">
+                <label>Virtual International Authority File number</label>
+            </option>
+            <option value="videorecording-identifier">
+                <label>Publisher-assigned videorecording number</label>
+            </option>
+            <option value="wikidata">
+                <label>Wikidata</label>
+            </option>
+            <option value="wndla">
+                <label>Web NDL Authorities</label>
+            </option>
+            <option value="ysopai">
+                <label>YSO-paikat</label>
+            </option>
+            <option value="xgamea">
+                <label>X Games Athletes</label>
+            </option>
+        </key>
+    </declaration>
+</ruleset>

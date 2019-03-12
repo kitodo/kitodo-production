@@ -71,9 +71,11 @@ INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) V
 
 /*!40000 ALTER TABLE `metadatenkonfigurationen` DISABLE KEYS */;
 INSERT INTO `metadatenkonfigurationen` (`MetadatenKonfigurationID`, `Titel`, `Datei`, `orderMetadataByRuleset`) VALUES
+<<<<<<< HEAD
 (1, 'Simple book', 'simple-book.xml', b'0'),
 (2, 'SUBHH', 'subhh.xml', b'0'),
-(3, 'DFG-Viewer', 'dfg-viewer.xml', b'0');
+(3, 'DFG-Viewer', 'dfg-viewer.xml', b'0'),
+(4, 'DFG-Viewer minimal', 'dfg-viewer-mini.xml', b'0');
 /*!40000 ALTER TABLE `metadatenkonfigurationen` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `dockets` DISABLE KEYS */;
