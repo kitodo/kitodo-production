@@ -49,23 +49,25 @@
         </p:dataTable>
         </h:form>
         <h:form id="configureFilters">
-            <h3 id="headerText">
+            <h3 id="headerText" class="m-1em">
                 <h:outputText value="#{msgs.filter}"/>
             </h3>
-            <p:outputLabel for="taskFilter" value="#{msgs.task}: " />
-            <p:selectOneMenu id="taskFilter" value="#{SearchResultForm.currentTaskFilter}">
-                <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTask}"/>
-                <f:selectItems value="#{SearchResultForm.tasksForFiltering}" var="task" itemValue="#{task.title}" itemLabel="#{task.title}"/>
-                <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
-                        update="searchResultForm"/>
-            </p:selectOneMenu>
-            <p:outputLabel for="projectfilter" value="#{msgs.project}: " />
-            <p:selectOneMenu id="projectfilter" value="#{SearchResultForm.currentProjectFilter}">
-                <f:selectItem value="#{null}" itemLabel="#{msgs.filterByProject}" />
-                <f:selectItems value="#{SearchResultForm.projectsForFiltering}" var="project" itemValue="#{project.id}" itemLabel="#{project.title}"/>
-                <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
-                        update="searchResultForm"/>
-            </p:selectOneMenu>
+            <div>
+                <p:outputLabel for="taskFilter" value="#{msgs.task}: " />
+                <p:selectOneMenu id="taskFilter" value="#{SearchResultForm.currentTaskFilter}">
+                    <f:selectItem value="#{null}" itemLabel="#{msgs.filterByTask}"/>
+                    <f:selectItems value="#{SearchResultForm.tasksForFiltering}" var="task" itemValue="#{task.title}" itemLabel="#{task.title}"/>
+                    <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
+                            update="searchResultForm"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="projectfilter" value="#{msgs.project}: " />
+                <p:selectOneMenu id="projectfilter" value="#{SearchResultForm.currentProjectFilter}">
+                    <f:selectItem value="#{null}" itemLabel="#{msgs.filterByProject}" />
+                    <f:selectItems value="#{SearchResultForm.projectsForFiltering}" var="project" itemValue="#{project.id}" itemLabel="#{project.title}"/>
+                    <p:ajax process="@this" listener="#{SearchResultForm.filterList()}"
+                            update="searchResultForm"/>
+                </p:selectOneMenu>
+            </div>
         </h:form>
     </ui:define>
 
