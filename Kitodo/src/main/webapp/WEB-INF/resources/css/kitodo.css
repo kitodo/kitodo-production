@@ -1040,6 +1040,19 @@ main i.fa {
     display: none;
 }
 
+#configureFilters > div {
+    padding: 0 var(--default-full-size) var(--default-full-size) var(--default-full-size);
+}
+
+#configureFilters .ui-outputlabel {
+    line-height: var(--default-double-size);
+    height: var(--default-double-size);
+}
+
+#configureFilters .ui-outputlabel:not(:first-child) {
+    margin-left: var(--default-double-size);
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -1745,7 +1758,7 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .ui-selectonemenu {
-    min-width: 0 !important;
+    min-width: 0;
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
