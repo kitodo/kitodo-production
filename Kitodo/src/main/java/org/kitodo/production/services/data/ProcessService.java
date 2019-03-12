@@ -497,7 +497,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", entry.getValue()));
             query.must(pairQuery);
         }
-        System.out.println(query);
 
         return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
     }
@@ -554,7 +553,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @throws DataException when there is an error on conversion
      */
     public List<ProcessDTO> findDTOsByTitleWithWildcard(String title) throws DataException {
-        return convertJSONObjectsToDTOs(super.findByTitleWithWildcard(title), true);
+        return convertJSONObjectsToDTOs(super.findByTitleWithWildcard(title), false);
     }
 
     private QueryBuilder getQueryProcessTitle(String title) {
@@ -630,7 +629,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes with given title
      */
     public List<ProcessDTO> findByProjectTitleWithWildcard(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findDocuments(getWildcardQueryProjectTitle(title)), true);
+        return convertJSONObjectsToDTOs(findDocuments(getWildcardQueryProjectTitle(title)), false);
     }
 
     /**
@@ -1097,6 +1096,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
         return null;
     }
+
+    /**
+     * Get current task.
+     *
+     * @param processDTO
+     *            DTOobject
+     * @return current task
+     */
+    public TaskDTO getCurrentTaskDTO(ProcessDTO processDTO) {
+        for (TaskDTO task : processDTO.getTasks()) {
+            if (task.getProcessingStatus() == TaskStatus.OPEN
+                    || task.getProcessingStatus() == TaskStatus.INWORK) {
+                return task;
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Get full progress for process.

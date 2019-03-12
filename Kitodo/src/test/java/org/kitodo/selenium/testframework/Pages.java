@@ -33,6 +33,7 @@ public class Pages {
     public static DesktopPage getDesktopPage() throws InstantiationException, IllegalAccessException {
         return getPage(DesktopPage.class);
     }
+
     public static SearchResultPage getSearchResultPage() throws InstantiationException, IllegalAccessException {
         return getPage(SearchResultPage.class);
     }

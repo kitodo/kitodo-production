@@ -47,24 +47,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.LocalDate;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.LdapGroup;
-import org.kitodo.data.database.beans.LdapServer;
-import org.kitodo.data.database.beans.ListColumn;
+import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.PasswordEncryption;
@@ -501,7 +485,8 @@ public class MockDatabase {
     }
 
     private static void insertProcesses() throws DAOException, DataException {
-        Project project = ServiceManager.getProjectService().getById(1);
+        Project projectOne = ServiceManager.getProjectService().getById(1);
+        Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = ServiceManager.getTemplateService().getById(1);
 
         Process firstProcess = new Process();
@@ -512,7 +497,7 @@ public class MockDatabase {
         firstProcess.setSortHelperImages(30);
         firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        firstProcess.setProject(project);
+        firstProcess.setProject(projectOne);
         firstProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         firstProcess.setTemplate(template);
         firstProcess.setSortHelperStatus("100000000");
@@ -524,13 +509,14 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 2, 10);
         secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        secondProcess.setProject(project);
+        secondProcess.setProject(projectOne);
         secondProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         secondProcess.setTemplate(template);
         ServiceManager.getProcessService().save(secondProcess);
 
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
+        thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
     }
 

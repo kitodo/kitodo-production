@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms;
 
 import java.util.List;
@@ -31,32 +42,32 @@ public class SearchResultFormIT {
     @Test
     public void testSearch(){
         searchResultForm.setSearchQuery("es");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
 
         Assert.assertEquals(3, resultList.size());
 
         searchResultForm.setSearchQuery("process");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
         Assert.assertEquals(2, resultList.size());
 
         searchResultForm.setSearchQuery("First process");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
         //TODO: it's not working
         //Assert.assertEquals(1, resultList.size());
 
         searchResultForm.setSearchQuery("Not Existing");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
         Assert.assertEquals(0, resultList.size());
 
         searchResultForm.setSearchQuery("First project");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
         //TODO: search with withspace obvisously not working correctly
@@ -66,35 +77,35 @@ public class SearchResultFormIT {
     @Test
     public void testFilterByProject() throws DAOException {
         searchResultForm.setSearchQuery("es");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
 
 
         searchResultForm.filterListByProject(1000);
         List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.filterListByProject(1);
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.filterListByProject(null);
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(5, resultList.size());
+        Assert.assertEquals(3, resultList.size());
 
     }
 
     @Test
     public void testFilterByTask(){
         searchResultForm.setSearchQuery("es");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
 
         searchResultForm.filterListByTask("notExistent");
         List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.filterListByTask("Progress");
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(1, resultList.size());
@@ -104,20 +115,20 @@ public class SearchResultFormIT {
     @Test
     public void testFilterList(){
         searchResultForm.setSearchQuery("es");
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
 
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterList();
         List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentTaskFilter("");
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
-        searchResultForm.search();
+        searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentTaskFilter("TaskNotExistent");
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();

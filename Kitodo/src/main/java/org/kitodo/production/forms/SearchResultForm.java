@@ -21,9 +21,6 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -49,28 +46,21 @@ public class SearchResultForm extends BaseForm {
      *
      * @return The searchResultPage
      */
-    public String search() {
+    public String searchForProcessesBySearchQuery() {
         ProcessService processService = ServiceManager.getProcessService();
-        if (searchQuery.equalsIgnoreCase("all")) {
-            try {
-                resultList = processService.findAll();
-                filteredList.clear();
-                filteredList.addAll(resultList);
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorOnSearch", searchQuery);
-                return this.stayOnCurrentPage;
+        HashMap<Integer, ProcessDTO> resultHash = new HashMap<>();
+        try {
+            List<ProcessDTO> results = processService.findDTOsByTitleWithWildcard(searchQuery);
+            results.addAll(processService.findByMetadataContent(searchQuery));
+            results.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
+            for(ProcessDTO processDTO : results){
+                resultHash.put(processDTO.getId(),processDTO);
             }
-        } else {
-            try {
-                resultList = processService.findDTOsByTitleWithWildcard(searchQuery);
-                resultList.addAll(processService.findByMetadataContent(searchQuery));
-                resultList.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
-                filteredList.clear();
-                filteredList.addAll(resultList);
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorOnSearch", searchQuery);
-                return this.stayOnCurrentPage;
-            }
+            resultList =new ArrayList<>(resultHash.values());
+            refreshFilteredList();
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorOnSearch", searchQuery);
+            return this.stayOnCurrentPage;
         }
         return searchResultListPath;
     }
@@ -80,10 +70,9 @@ public class SearchResultForm extends BaseForm {
      *
      * @param projectId
      *            The project id to be filtered by
-     * @return a filtered list
      */
     void filterListByProject(Integer projectId) {
-        if(Objects.nonNull(projectId)) {
+        if (Objects.nonNull(projectId)) {
             for (ProcessDTO result : new ArrayList<>(filteredList)) {
                 if (!result.getProject().getId().equals(projectId)) {
                     filteredList.remove(result);
@@ -97,20 +86,13 @@ public class SearchResultForm extends BaseForm {
      *
      * @param taskTitle
      *            The title of the task to be filtered by
-     * @return a filtered list
      */
     void filterListByTask(String taskTitle) {
-        if(Objects.nonNull(taskTitle) && !taskTitle.isEmpty()) {
+        if (Objects.nonNull(taskTitle) && !taskTitle.isEmpty()) {
             for (ProcessDTO processDTO : new ArrayList<>(filteredList)) {
-                try {
-                    Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                    Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-                    if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(taskTitle)) {
-                        filteredList.remove(processDTO);
-                    }
-                } catch (DAOException e) {
-                    Helper.setErrorMessage("errorOnSearch", searchQuery);
-
+                TaskDTO currentTask = ServiceManager.getProcessService().getCurrentTaskDTO(processDTO);
+                if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(taskTitle)) {
+                    filteredList.remove(processDTO);
                 }
 
             }
@@ -118,20 +100,19 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * filteres the searchresult list by the selected filters.
+     * Filters the searchResultList by the selected filters.
      */
-    public void filterList(){
-        filteredList.clear();
-        filteredList.addAll(resultList);
+    public void filterList() {
+        refreshFilteredList();
+
         filterListByProject(currentProjectFilter);
         filterListByTask(currentTaskFilter);
     }
 
-
     /**
      * Get all Projects assigned to the search results.
      *
-     * @return A list of Projects for filter list
+     * @return A list of projects for filter list
      */
     public Collection<ProjectDTO> getProjectsForFiltering() {
         HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
@@ -144,26 +125,23 @@ public class SearchResultForm extends BaseForm {
     /**
      * Get all current Tasks from to the search results.
      *
-     * @return A list of Tasks for filter list
+     * @return A list of tasks for filter list
      */
     public Collection<TaskDTO> getTasksForFiltering() {
         HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
         for (ProcessDTO processDTO : resultList) {
-            try {
-                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
-                if (Objects.nonNull(currentTask)) {
-                    TaskDTO taskDTO = new TaskDTO();
-                    taskDTO.setTitle(currentTask.getTitle());
-                    taskDTO.setProcessingStatus(currentTask.getProcessingStatus());
-                    tasksForFiltering.put(currentTask.getTitle(), taskDTO);
-                }
-            } catch (DAOException e) {
-                e.printStackTrace();
+            TaskDTO currentTask = ServiceManager.getProcessService().getCurrentTaskDTO(processDTO);
+            if (Objects.nonNull(currentTask)) {
+                tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
 
         }
         return tasksForFiltering.values();
+    }
+
+    private void refreshFilteredList() {
+        filteredList.clear();
+        filteredList.addAll(resultList);
     }
 
     /**
@@ -195,7 +173,7 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * sets the searchQuery.
+     * Sets the searchQuery.
      *
      * @param searchQuery
      *            the query to search for

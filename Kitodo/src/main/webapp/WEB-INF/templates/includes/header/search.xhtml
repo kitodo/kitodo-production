@@ -29,7 +29,7 @@
         <h:form id="search-form" action="">
             <p:inputText id="search-field" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.search}"/>
             <!--<p:inputText id="search-field-short" value="#{SearchResultForm.searchQuery}" a:placeholder="#{msgs.search}"/>-->
-            <p:commandButton id="search" type="submit" action="#{SearchResultForm.search()}" icon="fa fa-search"/>
+            <p:commandButton id="search" type="submit" action="#{SearchResultForm.searchForProcessesBySearchQuery()}" icon="fa fa-search"/>
         </h:form>
     </section>
 
