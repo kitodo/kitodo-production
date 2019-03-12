@@ -171,12 +171,6 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldNotFindByProcessTitle() {
-        await().untilAsserted(() -> assertEquals("Projects were found in index!", 0,
-            projectService.findByProcessTitle("DBConnectionTest").size()));
-    }
-
-    @Test
     public void shouldFindByUserId() {
         await().untilAsserted(
             () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserId(1).size()));
