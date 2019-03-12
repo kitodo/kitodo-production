@@ -84,13 +84,13 @@ public class MetsServiceIT {
         Workpiece workpiece = MetsService.getInstance()
                 .load(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/between.xml")),
                     (uri, couldHaveToBeWrittenInTheFuture) -> {
-            try {
-                return new FileInputStream(
+                        try {
+                            return new FileInputStream(
                                     new File("../Kitodo-DataFormat/src/test/resources/" + uri.getPath()));
-            } catch (FileNotFoundException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
+                        } catch (FileNotFoundException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
 
         ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
         assertTrue(downlink.isLinked());
