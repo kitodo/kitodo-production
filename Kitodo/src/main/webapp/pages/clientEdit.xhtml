@@ -20,10 +20,13 @@
         <f:viewAction action="#{ClientForm.load(id)}"/>
     </f:metadata>
 
+    <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
               value="#{ClientForm.client.id ne null and SecurityAccessController.hasAuthorityGlobal('editClient')}"/>
+    <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
               value="#{ClientForm.client.id eq null and SecurityAccessController.hasAuthorityGlobal('addClient')}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>
 
