@@ -46,10 +46,10 @@
                     <h:outputLabel value="#{msgs.typ}:"
                                    for="docStructAddTypeSelection"/>
                     <p:selectOneMenu id="docStructAddTypeSelection"
-                                     value="#{MetadataProcessor.tempTyp}"
+                                     value="#{MetadataProcessor.selectedStructureType}"
                                      style="width: 180px;">
                         <!--TODO check addable types-->
-                        <f:selectItems value="#{MetadataProcessor.addableDocStructTypes}"/>
+                        <f:selectItems value="#{MetadataProcessor.allowedStructureTypes}"/>
                         <p:ajax update="selectAddableMetadataTypes"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
@@ -93,7 +93,7 @@
                         <h:panelGroup layout="block">
                             <p:commandButton id="addSingleDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
-                                             action="#{MetadataProcessor.addSingleNodeWithPages}"
+                                             action="#{MetadataProcessor.addSingleNodeWithPages()}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"

@@ -27,14 +27,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,6 +54,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.config.ConfigCore;
@@ -188,6 +198,10 @@ public class MetadataProcessor {
         "paginationForm:paginationWrapperPanel", "metadataWrapperPanel", "commentWrapperPanel",
         "galleryWrapperPanel");
     private String referringView = "desktop";
+    private RulesetManagementInterface rulesetManagement;
+    private String selectedStructureType;
+    private String selectedMetadataType;
+    private String selectedMetadataValue;
 
     /**
      * Public constructor.
@@ -202,28 +216,12 @@ public class MetadataProcessor {
     }
 
     /**
-     * Add.
-     */
-    public void add() {
-        Modes.setBindState(BindState.CREATE);
-        getMetadata().setValue("");
-    }
-
-    /**
      * Add person.
      */
     public void addPerson() {
         this.tempPersonNachname = "";
         this.tempPersonRecord = ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
-    }
-
-    /**
-     * cancel.
-     */
-    public void cancel() {
-        Modes.setBindState(BindState.EDIT);
-        getMetadata().setValue("");
     }
 
     /**
@@ -262,25 +260,21 @@ public class MetadataProcessor {
     }
 
     /**
-     * Save.
+     * Add new metadata.
      */
-    public void save() {
-        LegacyMetadataHelper md = new LegacyMetadataHelper(this.myPrefs.getMetadataTypeByName(this.tempTyp));
-        md.setStringValue(this.selectedMetadata.getValue());
-
-        this.docStruct.addMetadata(md);
-
-        // if TitleDocMain, then create equal sort titles with the same content
-        if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
-            LegacyMetadataHelper secondMetadata = new LegacyMetadataHelper(
-                    this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
-            secondMetadata.setStringValue(this.selectedMetadata.getValue());
-            this.docStruct.addMetadata(secondMetadata);
+    public void addMetadata() {
+        if (!(this.selectedTreeNode.getData() instanceof Structure)) {
+            Helper.setErrorMessage("TreeNode data does not contain structure element!");
+            return;
         }
 
-        Modes.setBindState(BindState.EDIT);
-        this.selectedMetadata.setValue("");
-        saveMetadataAsBean(this.docStruct);
+        MetadataEntry metadataEntry = new MetadataEntry();
+        metadataEntry.setDomain(MdSec.DMD_SEC);
+        metadataEntry.setKey(this.selectedMetadataType);
+        metadataEntry.setValue(this.selectedMetadataValue);
+
+        ((Structure) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
+        this.selectedMetadataValue = "";
     }
 
     /**
@@ -440,8 +434,12 @@ public class MetadataProcessor {
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
             this.process = ServiceManager.getProcessService().getById(id);
+            this.rulesetManagement = ServiceManager.getRulesetManagementService().getRulesetManagement();
+            rulesetManagement.load(new File(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile()));
         } catch (NumberFormatException | DAOException e) {
             Helper.setErrorMessage("error while loading process data" + e.getMessage(), logger, e);
+        } catch (IOException e) {
+            Helper.setErrorMessage("Could not load ruleset file " + this.process.getRuleset().getFile());
         }
         this.userId = Helper.getRequestParameter("BenutzerID");
         this.allPagesSelectionFirstPage = "";
@@ -801,23 +799,49 @@ public class MetadataProcessor {
     }
 
     /**
-     * Adds a single new DocStruct element to the current DocStruct tree and
-     * sets the specified pages.
+     * Adds a single new Structure element to the current Structure tree.
      */
     public void addSingleNodeWithPages() {
-        LegacyDocStructHelperInterface docStruct;
-        LegacyLogicalDocStructTypeHelper docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-        docStruct = addNode(this.docStruct, this.digitalDocument, docStructType, this.positionOfNewDocStrucElement, 1,
-            null, null);
-
-        if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-
-            this.ajaxPageStart = this.pagesStart;
-            this.ajaxPageEnd = this.pagesEnd;
-            setFirstAndLastPageViaAjax(docStruct);
-
+        Structure selectedStructure = null;
+        Structure parentStructure;
+        if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)
+                || this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+            if (this.selectedTreeNode.getData() instanceof Structure) {
+                parentStructure = (Structure) this.selectedTreeNode.getData();
+            } else {
+                Helper.setErrorMessage("Node does not contain structure element!");
+                return;
+            }
+        } else {
+            if (this.selectedTreeNode.getParent().getData() instanceof Structure
+                    && this.selectedTreeNode.getData() instanceof Structure) {
+                parentStructure = (Structure) this.selectedTreeNode.getParent().getData();
+                selectedStructure = (Structure) this.selectedTreeNode.getData();
+            } else {
+                Helper.setErrorMessage("Parent node does not contain structure element!");
+                return;
+            }
         }
-        readMetadataAsFirstTree();
+
+        Structure newElement = new Structure();
+        newElement.setType(this.selectedStructureType);
+        switch (this.positionOfNewDocStrucElement) {
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
+                parentStructure.getChildren().add(0, newElement);
+                break;
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
+                parentStructure.getChildren().add(newElement);
+                break;
+            case BEFOR_CURRENT_ELEMENT:
+                parentStructure.getChildren().add(parentStructure.getChildren().indexOf(selectedStructure), newElement);
+                break;
+            case AFTER_CURRENT_ELEMENT:
+                parentStructure.getChildren().add(parentStructure.getChildren().indexOf(selectedStructure) + 1, newElement);
+                break;
+            default:
+                Helper.setErrorMessage("\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
+                break;
+        }
     }
 
     /**
@@ -1526,21 +1550,19 @@ public class MetadataProcessor {
     /**
      * Get metadata.
      *
-     * @return MetadataImpl object
+     * @return selectedMetadataValue as java.lang.String
      */
-    public MetadataImpl getMetadata() {
-
-        if (this.selectedMetadata == null) {
-            getAddableMetadataTypes();
-            if (!this.tempMetadataList.isEmpty()) {
-                this.selectedMetadata = this.tempMetadataList.get(0);
-            }
-        }
-        return this.selectedMetadata;
+    public String getSelectedMetadataValue() {
+        return this.selectedMetadataValue;
     }
 
-    public void setMetadatum(MetadataImpl meta) {
-        this.selectedMetadata = meta;
+    /**
+     * Set selectedMetadataValue.
+     *
+     * @param selectedMetadataValue as java.lang.String
+     */
+    public void setSelectedMetadataValue(String selectedMetadataValue) {
+        this.selectedMetadataValue = selectedMetadataValue;
     }
 
     public String getTempPersonNachname() {
@@ -1673,8 +1695,9 @@ public class MetadataProcessor {
      */
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
-        List<LegacyDocStructHelperInterface> children = logicalTopstruct != null ? this.logicalTopstruct.getAllChildren() : null;
-        TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
+        Structure structure = this.gdzfile.getWorkpiece().getStructure();
+        List<Structure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
+        TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getStructure(), root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
         } else {
@@ -1684,36 +1707,45 @@ public class MetadataProcessor {
         }
 
         if (children != null) {
-            Optional<TreeNode> optionalPrimeFacesTreeNode = convertDocstructToPrimeFacesTreeNode(children, visibleRoot);
-            if (optionalPrimeFacesTreeNode.isPresent()) {
-                visibleRoot.getChildren().add(optionalPrimeFacesTreeNode.get());
+            TreeNode primeFacesTreeNode = convertStructureToPrimeFacesTreeNode(children, visibleRoot);
+            if (Objects.nonNull(primeFacesTreeNode)) {
+                visibleRoot.getChildren().add(primeFacesTreeNode);
             }
         }
         return setExpandingAll(root, true);
     }
 
-    private Optional<TreeNode> convertDocstructToPrimeFacesTreeNode(List<LegacyDocStructHelperInterface> elements,
-            TreeNode parentTreeNode) {
+    private TreeNode convertStructureToPrimeFacesTreeNode(List<Structure> elements, TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
-        for (LegacyDocStructHelperInterface element : elements) {
+        for (Structure element : elements) {
 
             treeNode = new DefaultTreeNode(element, parentTreeNode);
             if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element)) {
                 treeNode.setSelected(true);
             }
-            List<LegacyDocStructHelperInterface> children = element.getAllChildren();
-            List<LegacyDocStructHelperInterface> pages = getPageReferencesToDocStruct(element);
-            if (children != null) {
-                if (Objects.nonNull(pages) && !pages.isEmpty()) {
-                    children.addAll(pages);
-                }
-                convertDocstructToPrimeFacesTreeNode(children, treeNode);
-            } else if (Objects.nonNull(pages) && !pages.isEmpty()) {
-                convertDocstructToPrimeFacesTreeNode(pages, treeNode);
+            List<Structure> children = element.getChildren();
+            Collection<View> pages = element.getViews();
+            if (Objects.nonNull(children)) {
+                convertStructureToPrimeFacesTreeNode(children, treeNode);
+            }
+            if (Objects.nonNull(pages)) {
+                convertViewToPrimeFacesTreeNode(pages, treeNode);
             }
         }
-        return Optional.ofNullable(treeNode);
+        return treeNode;
+    }
+
+    private void convertViewToPrimeFacesTreeNode(Collection<View> elements, TreeNode parentTreeNode) {
+        TreeNode treeNode = null;
+
+        for (View element : elements) {
+
+            treeNode = new DefaultTreeNode(element.getMediaUnit(), parentTreeNode);
+            if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element.getMediaUnit())) {
+                treeNode.setSelected(true);
+            }
+        }
     }
 
     private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
@@ -2034,6 +2066,42 @@ public class MetadataProcessor {
      */
     public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
         this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
+    }
+
+    /**
+     * Get selectedStructureType.
+     *
+     * @return value of selectedStructureType
+     */
+    public String getSelectedStructureType() {
+        return selectedStructureType;
+    }
+
+    /**
+     * Set selectedStructureType.
+     *
+     * @param selectedStructureType as java.lang.String
+     */
+    public void setSelectedStructureType(String selectedStructureType) {
+        this.selectedStructureType = selectedStructureType;
+    }
+
+    /**
+     * Get selectedMetadataType.
+     *
+     * @return value of selectedMetadataType
+     */
+    public String getSelectedMetadataType() {
+        return selectedMetadataType;
+    }
+
+    /**
+     * Set selectedMetadataType.
+     *
+     * @param selectedMetadataType as java.lang.String
+     */
+    public void setSelectedMetadataType(String selectedMetadataType) {
+        this.selectedMetadataType = selectedMetadataType;
     }
 
     /**
@@ -2755,4 +2823,71 @@ public class MetadataProcessor {
         return this.referringView;
     }
 
+    /**
+     * Get translation for name of metadata.
+     * @param inputString key of the metadata to translate
+     * @return translated label as String
+     */
+    public String getMetadataTranslation(String inputString) {
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        LegacyPrefsHelper legacyPrefsHelper = this.metaHelper.getPrefs();
+        return legacyPrefsHelper.getMetadataTypeByName(inputString).getLanguage(language);
+    }
+
+    /**
+     * Get translation for name of logical structure element.
+     * @param inputString key of logical structure element to translate
+     * @return translated label as String
+     */
+    public String getDocStructTranslation(String inputString) {
+        String language = ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
+        LegacyPrefsHelper legacyPrefsHelper = this.metaHelper.getPrefs();
+        return legacyPrefsHelper.getDocStrctTypeByName(inputString).getNameByLanguage(language);
+    }
+
+    /**
+     * Get structure types that may be added at the selected position.
+     * @return List of SelectItems
+     */
+    public List<SelectItem> getAllowedStructureTypes() {
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
+                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+
+        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
+            Helper.setErrorMessage("TreeNode data does not contain structure element!");
+            return Collections.EMPTY_LIST;
+        }
+
+        Structure structure = (Structure) this.selectedTreeNode.getData();
+        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
+                structure.getType(), "", priorityList);
+        Map<String, String> structureElements = structuralElementView.getAllowedSubstructuralElements();
+        return structureElements.entrySet().stream()
+                .map(e -> new SelectItem(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get metadata types that may be added to the selected logical element.
+     * @return List of SelectItems
+     */
+    public List<SelectItem> getAllowedMetadata() {
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
+                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+
+        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
+            Helper.setErrorMessage("TreeNode data does not contain structure element!");
+            return Collections.EMPTY_LIST;
+        }
+
+        Structure structure = (Structure) this.selectedTreeNode.getData();
+        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
+                structure.getType(), "", priorityList);
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+
+        return structuralElementView.getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).stream()
+                .map(e -> new SelectItem(e.getId(), e.getLabel()))
+                .collect(Collectors.toList());
+    }
 }

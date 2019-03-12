@@ -102,13 +102,12 @@
             </h:panelGroup>
 
             <p:dataTable id="metadataTable"
-                         rendered="#{!empty MetadataProcessor.myMetadaten}"
                          styleClass="no-header"
-                         value="#{MetadataProcessor.myMetadaten}"
+                         value="#{MetadataProcessor.selectedTreeNode.data.metadata}"
                          var="item">
 
                 <p:column style="width: 100%;">
-                    <p:outputLabel value="#{item.typ}"/>
+                    <p:outputLabel value="#{MetadataProcessor.getMetadataTranslation(item.key)}"/>
                     <p:inputTextarea value="#{item.value}"
                                      rows="2"
                                      disabled="#{readOnly}"
@@ -147,12 +146,12 @@
                 <p:row>
                     <p:selectOneMenu id="metadataTypeSelection"
                                      disabled="#{readOnly}"
-                                     value="#{MetadataProcessor.tempTyp}">
-                        <f:selectItems value="#{MetadataProcessor.addableMetadataTypes}"/>
+                                     value="#{MetadataProcessor.selectedMetadataType}">
+                        <f:selectItems value="#{MetadataProcessor.allowedMetadata}"/>
                     </p:selectOneMenu>
                 </p:row>
                 <p:row>
-                    <p:inputTextarea value="#{MetadataProcessor.metadata.value}"
+                    <p:inputTextarea value="#{MetadataProcessor.selectedMetadataValue}"
                                      rows="2"
                                      styleClass="#{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
@@ -162,7 +161,7 @@
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
                                      style="vertical-align: top; margin-left: 10px;"
-                                     title="#{msgs.neueMetadatenHinzufuegen}" action="#{MetadataProcessor.save}">
+                                     title="#{msgs.neueMetadatenHinzufuegen}" action="#{MetadataProcessor.addMetadata}">
                     </p:commandButton>
                 </p:row>
             </p:panelGrid>

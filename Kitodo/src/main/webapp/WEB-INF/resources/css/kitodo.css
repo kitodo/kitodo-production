@@ -1088,6 +1088,7 @@ form#metadata div label,
 #metadata\:metadataTable_data td,
 #metadata\:metadataTable_data textarea {
     background-color: var(--trans-blue);
+    color: var(--blue);
 }
 
 #commentsBox {
