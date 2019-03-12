@@ -847,7 +847,7 @@
             </key>
 
             <key id="displayForm">
-                <label lang="de">personal name in direct order</label>
+                <label>personal name in direct order</label>
                 <label lang="de">Anzeigeform</label>
             </key>
 
@@ -2709,7 +2709,7 @@
                 </key>
     
                 <key id="displayForm">
-                    <label lang="de">personal name in direct order</label>
+                    <label>personal name in direct order</label>
                     <label lang="de">Anzeigeform</label>
                 </key>
     
