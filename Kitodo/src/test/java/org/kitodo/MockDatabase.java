@@ -1104,6 +1104,7 @@ public class MockDatabase {
         sixthUser.setPassword(passwordEncoder.encrypt("test"));
         sixthUser.getClients().add(firstClient);
         sixthUser.getRoles().add(metadataRole);
+        sixthUser.setMetadataLanguage("de");
         ServiceManager.getUserService().saveToDatabase(sixthUser);
     }
 
