@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -110,23 +109,23 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private BoolQueryBuilder createUserTaskQuery() throws DataException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
 
-        Set<Integer> processingStatuses = new HashSet<>();
-        processingStatuses.add(TaskStatus.OPEN.getValue());
-        processingStatuses.add(TaskStatus.INWORK.getValue());
-
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForProcessingStatus(processingStatuses));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
         if (onlyOpenTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.OPEN.getValue(), true));
+            query.must(getQueryForProcessingStatus(TaskStatus.OPEN.getValue()));
+        } else {
+            Set<Integer> processingStatuses = new HashSet<>();
+            processingStatuses.add(TaskStatus.OPEN.getValue());
+            processingStatuses.add(TaskStatus.INWORK.getValue());
+            query.must(getQueryForProcessingStatuses(processingStatuses));
         }
 
         if (onlyOwnTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
+            query.must(getQueryForProcessingUser(user.getId()));
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
-            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), user.getId(), true));
+            subQuery.should(getQueryForProcessingUser(user.getId()));
             for (Role role : user.getRoles()) {
                 subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
             }
@@ -134,11 +133,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (hideCorrectionTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), 10, true));
+            query.must(getQueryForPriority(10));
         }
 
         if (!showAutomaticTasks) {
-            query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), false, true));
+            query.must(getQueryForTypeAutomatic(false));
         }
 
         List<Map<String, Object>> processes = ServiceManager.getProcessService().findForCurrentSessionClient();
@@ -194,7 +193,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
+    private void manageProcessDependenciesForIndex(Task task)
+            throws CustomResponseException, DataException, IOException {
         Process process = task.getProcess();
         if (task.getIndexAction() == IndexAction.DELETE) {
             process.getTasks().remove(task);
@@ -204,7 +204,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
+    private void manageTemplateDependenciesForIndex(Task task)
+            throws CustomResponseException, DataException, IOException {
         Template template = task.getTemplate();
         if (task.getIndexAction().equals(IndexAction.DELETE)) {
             template.getTasks().remove(task);
@@ -250,109 +251,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
         return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true);
-    }
-
-    /**
-     * Get query for processing statuses.
-     *
-     * @param processingStatus
-     *            set of processing statuses as Integer
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
-        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-    }
-
-    /**
-     * Find tasks by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with tasks for specific process id
-     */
-    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), id, true);
-        return findDocuments(query);
-    }
-
-    /**
-     * Find tasks by four parameters.
-     *
-     * @param taskStatus
-     *            as String
-     * @param processingUser
-     *            id of processing user
-     * @return list of task as JSONObject objects
-     */
-    List<Map<String, Object>> findByProcessingStatusAndUser(TaskStatus taskStatus, Integer processingUser, SortBuilder sort)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        return findDocuments(query, sort);
-    }
-
-    /**
-     * Find tasks by four parameters.
-     *
-     * @param taskStatus
-     *            as String
-     * @param processingUser
-     *            id of processing user
-     * @param priority
-     *            as Integer
-     * @return list of task as JSONObject objects
-     */
-    private List<Map<String, Object>> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
-            Integer priority, SortBuilder sort) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
-        return findDocuments(query, sort);
-    }
-
-    /**
-     * Find tasks by three parameters.
-     *
-     * @param taskStatus
-     *            as String
-     * @param processingUser
-     *            id of processing user
-     * @param typeAutomatic
-     *            as boolean
-     * @return list of task as JSONObject objects
-     */
-    private List<Map<String, Object>> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-            boolean typeAutomatic, SortBuilder sort) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true));
-        return findDocuments(query, sort);
-    }
-
-    /**
-     * Find tasks by four parameters.
-     *
-     * @param taskStatus
-     *            as String
-     * @param processingUser
-     *            id of processing user
-     * @param priority
-     *            as Integer
-     * @param typeAutomatic
-     *            as boolean
-     * @return list of task as JSONObject objects
-     */
-    private List<Map<String, Object>> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus,
-            Integer processingUser, Integer priority, boolean typeAutomatic, SortBuilder sort) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true));
-        return findDocuments(query, sort);
     }
 
     @Override
@@ -699,64 +597,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Find open tasks for current user sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     *
-     * @return the list of sorted tasks as TaskDTO objects
-     */
-    public List<TaskDTO> findOpenTasksForCurrentUser(SortBuilder sort) throws DataException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<Map<String,Object>> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
-        return convertJSONObjectsToDTOs(results, false);
-    }
-
-    /**
-     * Find open tasks without correction for current user sorted according to
-     * sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted tasks as TaskDTO objects
-     */
-    public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(SortBuilder sort) throws DataException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<Map<String, Object>> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
-        return convertJSONObjectsToDTOs(results, false);
-    }
-
-    /**
-     * Find open not automatic tasks for current user sorted according to sort
-     * query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted tasks as TaskDTO objects
-     */
-    public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(SortBuilder sort) throws DataException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<Map<String, Object>> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
-            sort);
-        return convertJSONObjectsToDTOs(results, false);
-    }
-
-    /**
-     * Find open not automatic tasks without correction for current user sorted
-     * according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of tasks as TaskDTO objects
-     */
-    public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(SortBuilder sort) throws DataException {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-        List<Map<String, Object>> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
-            10, false, sort);
-        return convertJSONObjectsToDTOs(results, false);
-    }
-
-    /**
      * Get current tasks with exact title for batch with exact id.
      *
      * @param title
@@ -827,6 +667,83 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }
+    }
+
+    /**
+     * Find tasks by id of process.
+     *
+     * @param id
+     *            of process
+     * @return list of JSON objects with tasks for specific process id
+     */
+    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+        return findDocuments(getQueryForProcess(id));
+    }
+
+    /**
+     * Get query for automatic type of task.
+     *
+     * @param typeAutomatic
+     *            automatic type of task as boolean
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
+        return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
+    }
+
+    /**
+     * Get query for priority.
+     *
+     * @param priority
+     *            priority as int
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForPriority(int priority) {
+        return createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true);
+    }
+
+    /**
+     * Get query for process.
+     *
+     * @param processId
+     *            process id as int
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForProcess(int processId) {
+        return createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), processId, true);
+    }
+
+    /**
+     * Get query for processing user.
+     *
+     * @param processingUserId
+     *            processing user id as int
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForProcessingUser(int processingUserId) {
+        return createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUserId, true);
+    }
+
+    /**
+     * Get query for processing status.
+     *
+     * @param processingStatus
+     *            processing status as int
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForProcessingStatus(int processingStatus) {
+        return createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
+    }
+
+    /**
+     * Get query for processing statuses.
+     *
+     * @param processingStatus
+     *            set of processing statuses as Integer
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
+        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
     }
 
     /**
