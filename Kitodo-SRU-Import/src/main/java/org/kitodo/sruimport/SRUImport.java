@@ -14,8 +14,10 @@ package org.kitodo.sruimport;
 import static org.apache.http.HttpStatus.SC_OK;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,16 +109,12 @@ public class SRUImport implements ExternalDataImportInterface {
             }
 
             try {
-                // FIXME:
-                // adding "query" to the list of parameters to be formatted by 'URLEncodedUtils.format'
-                // results in the "==" between search fields and terms to become URL encoded and a failed query!
-                //queryParameters.put("query", createSearchFieldString(searchFieldMap));
                 URI queryURL = createQueryURI(queryParameters);
                 return performQuery(
                         queryURL.toString()
                                 + "&maximumRecords=" + numberOfRecords
                                 + "&query=" + createSearchFieldString(searchFieldMap));
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException | UnsupportedEncodingException e) {
                 logger.error(e.getLocalizedMessage());
             }
         }
@@ -163,11 +161,11 @@ public class SRUImport implements ExternalDataImportInterface {
         return URLEncodedUtils.format(nameValuePairList, StandardCharsets.UTF_8);
     }
 
-    private String createSearchFieldString(LinkedHashMap<String, String> searchFields) {
+    private String createSearchFieldString(LinkedHashMap<String, String> searchFields) throws UnsupportedEncodingException {
         List<String> searchOperands = searchFields.entrySet().stream()
                 .map(entry -> entry.getKey() + equalsOperand + entry.getValue())
                 .collect(Collectors.toList());
-        return String.join(" AND ", searchOperands);
+        return URLEncoder.encode(String.join(" AND ", searchOperands), StandardCharsets.UTF_8.displayName());
     }
 
     private static void loadOPACConfiguration(String opacName) {

@@ -64,6 +64,7 @@
         </urlParameters>
         <searchFields>
             <searchField label="Titel" value="pica.tit"/>
+            <searchField label="PPN" value="pica.ppn"/>
             <searchField label="Author" value="pica.per"/>
             <searchField label="ISSN" value="pica.iss"/>
             <searchField label="ISBN" value="pica.isb"/>

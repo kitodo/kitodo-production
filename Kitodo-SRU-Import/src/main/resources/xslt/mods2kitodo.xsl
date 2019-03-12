@@ -36,7 +36,7 @@
     </xsl:template>
 
     <!-- ### TitleDocMain ### -->
-    <xsl:template match="mods:mods/mods:titleInfo/mods:title">
+    <xsl:template match="mods:mods/mods:titleInfo/mods:title[not(@type='alternative')]">
         <kitodo:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></kitodo:metadata>
     </xsl:template>
 
