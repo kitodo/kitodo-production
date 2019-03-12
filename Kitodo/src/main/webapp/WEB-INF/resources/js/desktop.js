@@ -10,7 +10,7 @@
  */
 
 $(window).on("load resize", function() {
-    $("main").height(window.innerHeight - ($("footer").outerHeight(true) + $("#breadcrumb").outerHeight(true) + $("header").outerHeight(true)));
+    $("main").height(window.innerHeight - ($("footer").outerHeight(true) + $("header").outerHeight(true)));
 
     // update widget heights
     const widgetTables = $("#taskTable, #processTable, #projectTable, #statisticsTable");
