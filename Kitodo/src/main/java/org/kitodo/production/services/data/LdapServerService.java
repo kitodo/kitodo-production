@@ -213,92 +213,10 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         // Start TLS
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_TLS)) {
             logger.debug("use TLS for auth");
-            env.put("java.naming.ldap.version", "3");
-            LdapContext ctx = null;
-            StartTlsResponse tls = null;
-            try {
-                ctx = new InitialLdapContext(env, null);
-
-                // Authentication must be performed over a secure channel
-                tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
-                tls.negotiate();
-
-                // Authenticate via SASL EXTERNAL mechanism using client X.509
-                // certificate contained in JVM keystore
-                ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-                ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, buildUserDN(user));
-                ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
-                ctx.reconnect(null);
-                return true;
-                // Perform search for privileged attributes under authenticated
-                // context
-
-            } catch (IOException e) {
-                logger.error("TLS negotiation error:", e);
-                return false;
-            } catch (NamingException e) {
-                logger.error("JNDI error:", e);
-                return false;
-            } finally {
-                if (Objects.nonNull(tls)) {
-                    try {
-                        // Tear down TLS connection
-                        tls.close();
-                    } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-                if (Objects.nonNull(ctx)) {
-                    try {
-                        // Close LDAP connection
-                        ctx.close();
-                    } catch (NamingException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-            }
+            return isPasswordCorrectForAuthWithTLS(env, user, password);
         } else {
             logger.debug("don't use TLS for auth");
-            if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_SIMPLE_AUTH, false)) {
-                env.put(Context.SECURITY_AUTHENTICATION, "none");
-                // TODO auf passwort testen
-            } else {
-                env.put(Context.SECURITY_PRINCIPAL, buildUserDN(user));
-                env.put(Context.SECURITY_CREDENTIALS, password);
-            }
-            logger.debug("ldap environment set");
-
-            try {
-                logger.debug("start classic ldap authentication");
-                logger.debug("user DN is {}", buildUserDN(user));
-
-                if (Objects.isNull(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST))) {
-                    logger.debug("ldap attribute to test is null");
-                    DirContext ctx = new InitialDirContext(env);
-                    ctx.close();
-                    return true;
-                } else {
-                    logger.debug("ldap attribute to test is not null");
-                    DirContext ctx = new InitialDirContext(env);
-
-                    Attributes attrs = ctx.getAttributes(buildUserDN(user));
-                    Attribute la = attrs.get(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST));
-                    logger.debug("ldap attributes set");
-                    String test = (String) la.get(0);
-                    if (test.equals(ConfigCore.getParameter(ParameterCore.LDAP_VALUE_OF_ATTRIBUTE))) {
-                        logger.debug("ldap ok");
-                        ctx.close();
-                        return true;
-                    } else {
-                        logger.debug("ldap not ok");
-                        ctx.close();
-                        return false;
-                    }
-                }
-            } catch (NamingException e) {
-                logger.debug("login not allowed for {}. Exception: {}", user.getLogin(), e);
-                return false;
-            }
+            return isPasswordCorrectForAuthWithoutTLS(env, user, password);
         }
     }
 
@@ -310,7 +228,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      * @return path as URI
      */
     public URI getUserHomeDirectory(User user) {
-
         String userFolderBasePath = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_LOCAL_DIRECTORY)) {
@@ -318,54 +235,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         }
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_TLS)) {
-
-            env.put("java.naming.ldap.version", "3");
-            LdapContext ctx = null;
-            StartTlsResponse tls = null;
-            try {
-                ctx = new InitialLdapContext(env, null);
-
-                // Authentication must be performed over a secure channel
-                tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
-                tls.negotiate();
-
-                ctx.reconnect(null);
-
-                Attributes attrs = ctx.getAttributes(buildUserDN(user));
-                Attribute la = attrs.get("homeDirectory");
-                return URI.create((String) la.get(0));
-
-                // Perform search for privileged attributes under authenticated
-                // context
-
-            } catch (IOException e) {
-                logger.error("TLS negotiation error:", e);
-
-                return Paths.get(userFolderBasePath, user.getLogin()).toUri();
-            } catch (NamingException e) {
-
-                logger.error("JNDI error:", e);
-
-                return Paths.get(userFolderBasePath, user.getLogin()).toUri();
-            } finally {
-                if (Objects.nonNull(tls)) {
-                    try {
-                        // Tear down TLS connection
-                        tls.close();
-                    } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-                if (Objects.nonNull(ctx)) {
-                    try {
-                        // Close LDAP connection
-                        ctx.close();
-                    } catch (NamingException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-            }
+            return getUserHomeDirectoryWithTLS(env, userFolderBasePath, user);
         }
+
         if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_SIMPLE_AUTH, false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
         }
@@ -539,6 +411,125 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             }
         }
         return false;
+    }
+
+    private URI getUserHomeDirectoryWithTLS(Hashtable<String, String> env, String userFolderBasePath, User user) {
+        env.put("java.naming.ldap.version", "3");
+        LdapContext ctx = null;
+        StartTlsResponse tls = null;
+        try {
+            ctx = new InitialLdapContext(env, null);
+
+            // Authentication must be performed over a secure channel
+            tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
+            tls.negotiate();
+
+            ctx.reconnect(null);
+
+            Attributes attrs = ctx.getAttributes(buildUserDN(user));
+            Attribute la = attrs.get("homeDirectory");
+            return URI.create((String) la.get(0));
+        } catch (IOException e) {
+            logger.error("TLS negotiation error:", e);
+            return Paths.get(userFolderBasePath, user.getLogin()).toUri();
+        } catch (NamingException e) {
+            logger.error("JNDI error:", e);
+            return Paths.get(userFolderBasePath, user.getLogin()).toUri();
+        } finally {
+            closeConnections(ctx, tls);
+        }
+    }
+
+    private boolean isPasswordCorrectForAuthWithTLS(Hashtable<String, String> env, User user, String password) {
+        env.put("java.naming.ldap.version", "3");
+        LdapContext ctx = null;
+        StartTlsResponse tls = null;
+        try {
+            ctx = new InitialLdapContext(env, null);
+
+            // Authentication must be performed over a secure channel
+            tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
+            tls.negotiate();
+
+            // Authenticate via SASL EXTERNAL mechanism using client X.509
+            // certificate contained in JVM keystore
+            ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+            ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, buildUserDN(user));
+            ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
+            ctx.reconnect(null);
+            return true;
+            // perform search for privileged attributes under authenticated context
+        } catch (IOException e) {
+            logger.error("TLS negotiation error:", e);
+            return false;
+        } catch (NamingException e) {
+            logger.error("JNDI error:", e);
+            return false;
+        } finally {
+            closeConnections(ctx, tls);
+        }
+    }
+
+    private boolean isPasswordCorrectForAuthWithoutTLS(Hashtable<String, String> env, User user, String password) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_SIMPLE_AUTH, false)) {
+            env.put(Context.SECURITY_AUTHENTICATION, "none");
+            // TODO: test for password
+        } else {
+            env.put(Context.SECURITY_PRINCIPAL, buildUserDN(user));
+            env.put(Context.SECURITY_CREDENTIALS, password);
+        }
+        logger.debug("ldap environment set");
+
+        try {
+            logger.debug("start classic ldap authentication");
+            logger.debug("user DN is {}", buildUserDN(user));
+
+            if (Objects.isNull(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST))) {
+                logger.debug("ldap attribute to test is null");
+                DirContext ctx = new InitialDirContext(env);
+                ctx.close();
+                return true;
+            } else {
+                logger.debug("ldap attribute to test is not null");
+                DirContext ctx = new InitialDirContext(env);
+
+                Attributes attrs = ctx.getAttributes(buildUserDN(user));
+                Attribute la = attrs.get(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST));
+                logger.debug("ldap attributes set");
+                String test = (String) la.get(0);
+                if (test.equals(ConfigCore.getParameter(ParameterCore.LDAP_VALUE_OF_ATTRIBUTE))) {
+                    logger.debug("ldap ok");
+                    ctx.close();
+                    return true;
+                } else {
+                    logger.debug("ldap not ok");
+                    ctx.close();
+                    return false;
+                }
+            }
+        } catch (NamingException e) {
+            logger.debug("login not allowed for {}. Exception: {}", user.getLogin(), e);
+            return false;
+        }
+    }
+
+    private void closeConnections(LdapContext ctx, StartTlsResponse tls) {
+        if (Objects.nonNull(tls)) {
+            try {
+                // Tear down TLS connection
+                tls.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (Objects.nonNull(ctx)) {
+            try {
+                // Close LDAP connection
+                ctx.close();
+            } catch (NamingException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
     }
 
     private BasicAttribute proceedPassword(String identifier, String newPassword, JDKMessageDigest.MD4 digester) {
