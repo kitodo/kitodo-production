@@ -91,21 +91,16 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          * return the corresponding field type.
          */
         switch (universal.getType()) {
-            case ANY_URI: {
+            case ANY_URI:
                 return InputType.ONE_LINE_TEXT;
-            }
-            case BOOLEAN: {
+            case BOOLEAN:
                 return InputType.BOOLEAN;
-            }
-            case DATE: {
+            case DATE:
                 return InputType.DATE;
-            }
-            case INTEGER: {
+            case INTEGER:
                 return InputType.INTEGER;
-            }
-            default: {
-                // do noting
-            }
+            default:
+                // do nothing
         }
 
         /*
@@ -211,33 +206,28 @@ class KeyView extends AbstractKeyView<UniversalKey> implements DatesSimpleMetada
          */
         try {
             switch (universal.getType()) {
-                case ANY_URI: {
+                case ANY_URI:
                     if (!isLocatedInTheNamespace(value)) {
                         return false;
                     }
                     new URI(value);
                     break;
-                }
-                case DATE: {
+                case DATE:
                     DateTimeFormatter.ISO_LOCAL_DATE.parse(value);
                     break;
-                }
-                case INTEGER: {
+                case INTEGER:
                     new BigInteger(value);
                     break;
-                }
-                default: {
+                default:
                     if (!isLocatedInTheNamespace(value)) {
                         return false;
                     }
-                }
             }
         } catch (URISyntaxException | DateTimeParseException | NumberFormatException e) {
             return false;
         }
 
         // If the key has options, then the value must be in it.
-
         if (universal.isHavingOptions() && !universalRule.getSelectItems(universal.getSelectItems()).contains(value)) {
             return false;
         }
