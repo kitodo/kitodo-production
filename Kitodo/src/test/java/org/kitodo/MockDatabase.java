@@ -529,7 +529,6 @@ public class MockDatabase {
         secondProcess.setTemplate(template);
         ServiceManager.getProcessService().save(secondProcess);
 
-
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");

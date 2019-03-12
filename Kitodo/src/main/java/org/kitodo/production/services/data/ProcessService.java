@@ -489,8 +489,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *             key is metadata tag and value is metadata content
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
-    public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
-
+    List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (Map.Entry<String, String> entry : metadata.entrySet()) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
@@ -510,7 +509,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return A List of found ProcessDTOs
      */
     public List<ProcessDTO> findByMetadataContent(String metadataContent) throws DataException {
-
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (String searchField : METADATA_SEARCH_FIELDS) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
@@ -555,10 +553,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public List<ProcessDTO> findDTOsByTitleWithWildcard(String title) throws DataException {
         return convertJSONObjectsToDTOs(super.findByTitleWithWildcard(title), false);
-    }
-
-    private QueryBuilder getQueryProcessTitle(String title) {
-        return createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true);
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
@@ -1090,8 +1084,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Task getCurrentTask(Process process) {
         for (Task task : process.getTasks()) {
-            if (task.getProcessingStatus() == TaskStatus.OPEN
-                    || task.getProcessingStatus() == TaskStatus.INWORK) {
+            if (task.getProcessingStatus().equals(TaskStatus.OPEN)
+                    || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
                 return task;
             }
         }
@@ -1107,14 +1101,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public TaskDTO getCurrentTaskDTO(ProcessDTO processDTO) {
         for (TaskDTO task : processDTO.getTasks()) {
-            if (task.getProcessingStatus() == TaskStatus.OPEN
-                    || task.getProcessingStatus() == TaskStatus.INWORK) {
+            if (task.getProcessingStatus().equals(TaskStatus.OPEN)
+                    || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
                 return task;
             }
         }
         return null;
     }
-
 
     /**
      * Get full progress for process.

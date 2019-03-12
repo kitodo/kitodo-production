@@ -29,7 +29,6 @@ public class SearchingST extends BaseTestSelenium {
     private static DesktopPage desktopPage;
     private static SearchResultPage searchResultPage;
 
-
     @BeforeClass
     public static void setup() throws Exception {
         desktopPage = Pages.getDesktopPage();
@@ -63,7 +62,6 @@ public class SearchingST extends BaseTestSelenium {
         numberOfResults = searchResultPage.getNumberOfResults();
         assertEquals("There should be two processes found",2,numberOfResults);
 
-
         searchResultPage.searchInSearchField("möhö");
         numberOfResults = searchResultPage.getNumberOfResults();
         assertEquals("There should be no process found",0,numberOfResults);
@@ -78,6 +76,5 @@ public class SearchingST extends BaseTestSelenium {
 
         String projectsForFilter = searchResultPage.getProjectsForFilter();
         assertTrue("Wrong Project name. Expected: First project",projectsForFilter.contains("First project"));
-
     }
 }
