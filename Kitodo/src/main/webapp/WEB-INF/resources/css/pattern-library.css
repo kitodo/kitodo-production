@@ -260,6 +260,11 @@ button .ui-icon,
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.ui-button.dialog {
+    float: right;
+    margin-left: 16px;
+}
+
 button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
     height: 100%;
