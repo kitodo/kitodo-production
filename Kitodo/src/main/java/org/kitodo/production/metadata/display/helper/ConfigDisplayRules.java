@@ -221,26 +221,29 @@ public final class ConfigDisplayRules {
                     String myElementName = config
                             .getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")[@tns:ref]");
                     if (myElementName.equals(elementName)) {
-                        int item = config
-                                .getMaxIndex(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM);
-                        for (int k = 0; k <= item; k++) {
-                            Item myItem = new Item(
-                                    // the displayed value
-                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
-                                            + "(" + k + ")." + LABEL),
-                                    // the internal value, which will be taken if label is selected
-                                    config.getString(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
-                                            + "(" + k + ")." + VALUE),
-                                    // indicated whether given item is preselected or not
-                                    config.getBoolean(RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM
-                                            + "(" + k + ")[@tns:selected]"));
-                            listOfItems.add(myItem);
-                        }
+                        String key = RULESET_CONTEXT + "(" + i + ")." + select + "(" + j + ")." + ITEM;
+                        int item = config.getMaxIndex(key);
+                        listOfItems.addAll(getItems(item, key));
                     }
                 }
             }
         }
         return listOfItems;
+    }
+
+    private List<Item> getItems(int item, String key) {
+        List<Item> items = new ArrayList<>();
+        for (int k = 0; k <= item; k++) {
+            Item currentItem = new Item(
+                    // the displayed value
+                    config.getString(key + "(" + k + ")." + LABEL),
+                    // the internal value, which will be taken if label is selected
+                    config.getString(key + "(" + k + ")." + VALUE),
+                    // indicated whether given item is preselected or not
+                    config.getBoolean(key + "(" + k + ")[@tns:selected]"));
+            items.add(currentItem);
+        }
+        return items;
     }
 
     /**
