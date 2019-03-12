@@ -268,14 +268,12 @@ public class MetadataProcessor {
             return;
         }
 
-        Structure structure = (Structure) this.selectedTreeNode.getData();
-
         MetadataEntry metadataEntry = new MetadataEntry();
         metadataEntry.setDomain(MdSec.DMD_SEC);
         metadataEntry.setKey(this.selectedMetadataType);
         metadataEntry.setValue(this.selectedMetadataValue);
 
-        structure.getMetadata().add(metadataEntry);
+        ((Structure) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
         this.selectedMetadataValue = "";
     }
 
@@ -806,8 +804,8 @@ public class MetadataProcessor {
     public void addSingleNodeWithPages() {
         Structure selectedStructure = null;
         Structure parentStructure;
-        if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) ||
-                this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+        if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)
+                || this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
             if (this.selectedTreeNode.getData() instanceof Structure) {
                 parentStructure = (Structure) this.selectedTreeNode.getData();
             } else {
@@ -839,6 +837,9 @@ public class MetadataProcessor {
                 break;
             case AFTER_CURRENT_ELEMENT:
                 parentStructure.getChildren().add(parentStructure.getChildren().indexOf(selectedStructure) + 1, newElement);
+                break;
+            default:
+                Helper.setErrorMessage("\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
                 break;
         }
     }
@@ -1694,7 +1695,8 @@ public class MetadataProcessor {
      */
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
-        List<Structure> children = this.gdzfile.getWorkpiece().getStructure() != null ? this.gdzfile.getWorkpiece().getStructure().getChildren() : null;
+        Structure structure = this.gdzfile.getWorkpiece().getStructure();
+        List<Structure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
         TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getStructure(), root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
@@ -1707,7 +1709,7 @@ public class MetadataProcessor {
         if (children != null) {
             TreeNode primeFacesTreeNode = convertStructureToPrimeFacesTreeNode(children, visibleRoot);
             if (Objects.nonNull(primeFacesTreeNode)) {
-                 visibleRoot.getChildren().add(primeFacesTreeNode);
+                visibleRoot.getChildren().add(primeFacesTreeNode);
             }
         }
         return setExpandingAll(root, true);
@@ -2838,7 +2840,8 @@ public class MetadataProcessor {
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedStructureTypes() {
-        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
+                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
 
         if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
@@ -2846,7 +2849,8 @@ public class MetadataProcessor {
         }
 
         Structure structure = (Structure) this.selectedTreeNode.getData();
-        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(structure.getType(), "", priorityList);
+        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
+                structure.getType(), "", priorityList);
         Map<String, String> structureElements = structuralElementView.getAllowedSubstructuralElements();
         return structureElements.entrySet().stream()
                 .map(e -> new SelectItem(e.getKey(), e.getValue()))
@@ -2858,7 +2862,8 @@ public class MetadataProcessor {
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedMetadata() {
-        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
+                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
 
         if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
@@ -2866,7 +2871,8 @@ public class MetadataProcessor {
         }
 
         Structure structure = (Structure) this.selectedTreeNode.getData();
-        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(structure.getType(), "", priorityList);
+        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
+                structure.getType(), "", priorityList);
         Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
 
