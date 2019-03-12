@@ -14,6 +14,7 @@ package org.kitodo.api.dataformat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The administrative structure of the product of an element that passes through
@@ -160,20 +161,16 @@ public class Workpiece {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Workpiece other = (Workpiece) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
+
+        if (obj instanceof Workpiece) {
+            Workpiece other = (Workpiece) obj;
+
+            if (Objects.isNull(id)) {
+                return Objects.isNull(other.id);
+            } else {
+                return id.equals(other.id);
             }
-        } else if (!id.equals(other.id)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }

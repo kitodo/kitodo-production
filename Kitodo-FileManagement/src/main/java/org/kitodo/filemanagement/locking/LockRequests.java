@@ -13,6 +13,7 @@ package org.kitodo.filemanagement.locking;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.filemanagement.LockingMode;
@@ -52,28 +53,25 @@ class LockRequests {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        LockRequests other = (LockRequests) obj;
-        if (locks == null) {
-            if (other.locks != null) {
+
+        if (obj instanceof LockRequests) {
+            LockRequests other = (LockRequests) obj;
+
+            if (Objects.isNull(locks)) {
+                if (Objects.nonNull(other.locks)) {
+                    return false;
+                }
+            } else if (!locks.equals(other.locks)) {
                 return false;
             }
-        } else if (!locks.equals(other.locks)) {
-            return false;
-        }
-        if (user == null) {
-            if (other.user != null) {
-                return false;
+
+            if (Objects.isNull(user)) {
+                return Objects.isNull(other.user);
+            } else {
+                return user.equals(other.user);
             }
-        } else if (!user.equals(other.user)) {
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**
