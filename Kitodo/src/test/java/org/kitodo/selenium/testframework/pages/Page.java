@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
@@ -57,6 +58,14 @@ public abstract class Page<T> {
     @SuppressWarnings("unused")
     @FindBy(id = "headerText")
     private WebElement header;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "search-form:search-field")
+    private WebElement searchField;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "search-form:search")
+    private WebElement searchButton;
 
     private String URL;
 
@@ -106,8 +115,8 @@ public abstract class Page<T> {
     }
 
     /**
-     * Find row matching to give table, click toggle row and return index of found
-     * row.
+     * Find row matching to give table, click toggle row and return index of
+     * found row.
      *
      * @param dataTable
      *            table for search
@@ -242,5 +251,16 @@ public abstract class Page<T> {
         Thread.sleep(Browser.getDelayAfterDelete());
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
         wait.until(ExpectedConditions.urlContains(getUrl()));
+    }
+
+    /**
+     * Searches in the header-searchfield with the given query.
+     * @param query the input to search for.
+     * @throws Exception if Page could not be instantiated.
+     */
+    public void searchInSearchField(String query) throws Exception {
+        searchField.clear();
+        searchField.sendKeys(query);
+        clickButtonAndWaitForRedirect(searchButton, Pages.getSearchResultPage().getUrl());
     }
 }

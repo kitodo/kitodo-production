@@ -65,6 +65,17 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
     }
 
     /**
+     * Find object matching to given title with wildcard.
+     *
+     * @param title
+     *            of the searched process
+     * @return list of search result
+     */
+    protected List<Map<String, Object>> findByTitleWithWildcard(String title) throws DataException {
+        return findDocuments(getWildcardQueryTitle(title));
+    }
+
+    /**
      * Get query to find object matching to given title.
      *
      * @param title
@@ -76,6 +87,17 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      */
     public QueryBuilder getQueryTitle(String title, boolean contains) {
         return createSimpleQuery("title", title, contains, Operator.AND);
+    }
+
+    /**
+     * Get wildcard query to given title.
+     *
+     * @param title
+     *            of the searched process
+     * @return query
+     */
+    private QueryBuilder getWildcardQueryTitle(String title) {
+        return createSimpleWildcardQuery("title", title);
     }
 
     /**

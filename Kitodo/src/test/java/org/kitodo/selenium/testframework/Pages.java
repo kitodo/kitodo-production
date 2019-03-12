@@ -34,6 +34,10 @@ public class Pages {
         return getPage(DesktopPage.class);
     }
 
+    public static SearchResultPage getSearchResultPage() throws InstantiationException, IllegalAccessException {
+        return getPage(SearchResultPage.class);
+    }
+
     public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
         return getPage(HelpPage.class);
     }

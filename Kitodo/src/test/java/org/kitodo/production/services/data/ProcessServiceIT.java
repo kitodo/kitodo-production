@@ -156,6 +156,18 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByMetadataContent() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+                processService.findByMetadataContent("Proc").size()));
+    }
+
+    @Test
+    public void shouldNotFindByMetadataContent() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 0,
+                processService.findByMetadataContent("Nope").size()));
+    }
+
+    @Test
     public void shouldNotFindByMetadata() {
         await().untilAsserted(() -> assertEquals("Process was found in index!", 0,
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size()));
@@ -194,7 +206,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldNotFindByProjectId() {
         await().untilAsserted(() -> assertEquals("Some processes were found in index!", 0,
-            processService.findByProjectId(2, true).size()));
+            processService.findByProjectId(3, true).size()));
     }
 
     @Test

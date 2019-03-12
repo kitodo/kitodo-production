@@ -643,7 +643,12 @@ public enum ParameterCore implements ParameterInterface {
      * Elasticsearch properties
      */
 
-    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500));
+    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
+
+    /**
+     * The fields in which a metadatafile is searched through.
+     */
+    METADATA_SEARCH_FIELDS(new Parameter<>("metadata.search.fields", "TitleDocMain"));
 
     private Parameter parameter;
 

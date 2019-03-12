@@ -501,7 +501,7 @@ public class MockDatabase {
     }
 
     private static void insertProcesses() throws DAOException, DataException {
-        Project project = ServiceManager.getProjectService().getById(1);
+        Project projectOne = ServiceManager.getProjectService().getById(1);
         Template template = ServiceManager.getTemplateService().getById(1);
 
         Process firstProcess = new Process();
@@ -512,7 +512,7 @@ public class MockDatabase {
         firstProcess.setSortHelperImages(30);
         firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        firstProcess.setProject(project);
+        firstProcess.setProject(projectOne);
         firstProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         firstProcess.setTemplate(template);
         firstProcess.setSortHelperStatus("100000000");
@@ -524,13 +524,15 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 2, 10);
         secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        secondProcess.setProject(project);
+        secondProcess.setProject(projectOne);
         secondProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         secondProcess.setTemplate(template);
         ServiceManager.getProcessService().save(secondProcess);
 
+        Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
+        thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
     }
 
