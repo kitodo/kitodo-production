@@ -632,8 +632,8 @@ public class ProzesskopieForm implements Serializable {
          */
         for (AdditionalField field : this.additionalFields) {
             String value = field.getValue();
-            if ((Objects.isNull(value) || value.isEmpty()) && field.isRequired()
-                    && field.getShowDependingOnDoctype() && (StringUtils.isBlank(value))) {
+            if ((Objects.isNull(value) || value.isEmpty()) && field.isRequired() && field.getShowDependingOnDoctype()
+                    && (StringUtils.isBlank(value))) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA,
                     " " + field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
@@ -848,7 +848,6 @@ public class ProzesskopieForm implements Serializable {
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (Objects.nonNull(populizer.getAnchorClass()) && Objects.isNull(populizer.getAllChildren())) {
-                LegacyPrefsHelper ruleset = ServiceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 LegacyLogicalDocStructTypeHelper docStructType = populizer.getDocStructType();
                 while (Objects.nonNull(docStructType.getAnchorClass())) {
                     throw new UnsupportedOperationException("Dead code pending removal");
@@ -1580,65 +1579,72 @@ public class ProzesskopieForm implements Serializable {
         StringBuilder tifHeaderImageDescriptionBuilder = new StringBuilder();
         // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
-        // jetzt den Tiffheader parsen
-        String title = "";
+
+        String tiffHeader = "";
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
-             */
+            // if the token begins and ends with ' then take over the content
             if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
                 tifHeaderImageDescriptionBuilder.append(token, 1, token.length() - 1);
             } else if (token.equals("$Doctype")) {
-                /* wenn der Doctype angegeben werden soll */
-                try {
-                    tifHeaderImageDescriptionBuilder
-                            .append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
-                } catch (FileNotFoundException | RuntimeException e) {
-                    Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
-                }
+                tifHeaderImageDescriptionBuilder.append(getTifHeaderType());
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
+                // otherwise, evaluate the token as a field name
                 for (AdditionalField additionalField : this.additionalFields) {
-                    if (additionalField.getTitle().equals("Titel") || additionalField.getTitle().equals("Title")
-                            && Objects.nonNull(additionalField.getValue()) && !additionalField.getValue().isEmpty()) {
-                        title = additionalField.getValue();
+                    String title = additionalField.getTitle();
+                    String value = additionalField.getValue();
+                    boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
+
+                    if ("Titel".equals(title) || "Title".equals(title) && Objects.nonNull(value) && !value.isEmpty()) {
+                        tiffHeader = value;
                     }
                     /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
+                     * if it is the ATS or TSL field, then use the calculated
+                     * atstsl if it does not already exist
                      */
-                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
-                            && additionalField.getShowDependingOnDoctype()
-                            && (Objects.isNull(additionalField.getValue()) || additionalField.getValue().isEmpty())) {
+                    if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype
+                            && (Objects.isNull(value) || value.isEmpty())) {
                         additionalField.setValue(this.atstsl);
                     }
 
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                            && Objects.nonNull(additionalField.getValue())) {
-                        tifHeaderImageDescriptionBuilder.append(
-                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                    // add the content to the tif header
+                    if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
+                        tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(title, value));
                     }
-
                 }
             }
         }
         this.tifHeaderImageDescription = tifHeaderImageDescriptionBuilder.toString();
-        reduceLengthOfTifHeaderImageDescription(title);
+        reduceLengthOfTifHeaderImageDescription(tiffHeader);
+    }
+
+    /**
+     * Get tif header type from config Opac if the doctype should be specified.
+     * 
+     * @return tif header type
+     */
+    private String getTifHeaderType() {
+        try {
+            ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
+            if (Objects.nonNull(configOpacDoctype)) {
+                return configOpacDoctype.getTifHeaderType();
+            }
+        } catch (FileNotFoundException e) {
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+        }
+        return "";
     }
 
     /**
      * Reduce to 255 characters.
      */
-    private void reduceLengthOfTifHeaderImageDescription(String title) {
+    private void reduceLengthOfTifHeaderImageDescription(String tiffHeader) {
         int length = this.tifHeaderImageDescription.length();
         if (length > 255) {
             try {
                 int toCut = length - 255;
-                String newTitle = title.substring(0, title.length() - toCut);
-                this.tifHeaderImageDescription = this.tifHeaderImageDescription.replace(title, newTitle);
+                String newTiffHeader = tiffHeader.substring(0, tiffHeader.length() - toCut);
+                this.tifHeaderImageDescription = this.tifHeaderImageDescription.replace(tiffHeader, newTiffHeader);
             } catch (IndexOutOfBoundsException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
