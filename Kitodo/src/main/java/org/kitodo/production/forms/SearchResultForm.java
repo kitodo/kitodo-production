@@ -53,10 +53,10 @@ public class SearchResultForm extends BaseForm {
             List<ProcessDTO> results = processService.findDTOsByTitleWithWildcard(searchQuery);
             results.addAll(processService.findByMetadataContent(searchQuery));
             results.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
-            for(ProcessDTO processDTO : results){
-                resultHash.put(processDTO.getId(),processDTO);
+            for (ProcessDTO processDTO : results) {
+                resultHash.put(processDTO.getId(), processDTO);
             }
-            resultList =new ArrayList<>(resultHash.values());
+            resultList = new ArrayList<>(resultHash.values());
             refreshFilteredList();
         } catch (DataException e) {
             Helper.setErrorMessage("errorOnSearch", searchQuery);

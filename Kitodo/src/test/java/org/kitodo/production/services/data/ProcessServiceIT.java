@@ -208,7 +208,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldNotFindByProjectId() {
         await().untilAsserted(() -> assertEquals("Some processes were found in index!", 0,
-            processService.findByProjectId(2, true).size()));
+            processService.findByProjectId(3, true).size()));
     }
 
     @Test

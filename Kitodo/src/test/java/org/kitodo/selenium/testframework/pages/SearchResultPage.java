@@ -44,11 +44,11 @@ public class SearchResultPage extends Page<SearchResultPage> {
         return getRowsOfTable(searchResultTable).size();
     }
 
-    public String getProjectsForFilter(){
+    public String getProjectsForFilter() {
         return filterProjects.getText();
     }
 
-    public void filterByProject(){
+    public void filterByProject() {
         WebElement projectFilter = getDriver().findElementByPartialLinkText("First");
         projectFilter.click();
     }

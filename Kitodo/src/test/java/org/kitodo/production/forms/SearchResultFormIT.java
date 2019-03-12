@@ -40,7 +40,7 @@ public class SearchResultFormIT {
     }
 
     @Test
-    public void testSearch(){
+    public void testSearch() {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
@@ -57,8 +57,8 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        //TODO: it's not working
-        //Assert.assertEquals(1, resultList.size());
+        // TODO: it's not working
+        // Assert.assertEquals(1, resultList.size());
 
         searchResultForm.setSearchQuery("Not Existing");
         searchResultForm.searchForProcessesBySearchQuery();
@@ -70,7 +70,7 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        //TODO: search with withspace obvisously not working correctly
+        // TODO: search with withspace obvisously not working correctly
         // Assert.assertEquals(2, resultList.size());
     }
 
@@ -79,9 +79,8 @@ public class SearchResultFormIT {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
 
-
         searchResultForm.filterListByProject(1000);
-        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
         searchResultForm.searchForProcessesBySearchQuery();
@@ -97,12 +96,12 @@ public class SearchResultFormIT {
     }
 
     @Test
-    public void testFilterByTask(){
+    public void testFilterByTask() {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
 
         searchResultForm.filterListByTask("notExistent");
-        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
         searchResultForm.searchForProcessesBySearchQuery();
@@ -113,13 +112,13 @@ public class SearchResultFormIT {
     }
 
     @Test
-    public void testFilterList(){
+    public void testFilterList() {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
 
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterList();
-        List<ProcessDTO>  resultList = searchResultForm.getFilteredList();
+        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
         searchResultForm.searchForProcessesBySearchQuery();
@@ -135,6 +134,5 @@ public class SearchResultFormIT {
         Assert.assertEquals(0, resultList.size());
 
     }
-
 
 }

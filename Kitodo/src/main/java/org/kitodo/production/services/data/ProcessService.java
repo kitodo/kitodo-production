@@ -147,7 +147,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
-    private static final List<String> METADATA_SEARCH_FIELDS = Arrays.asList(ConfigCore.getStringArrayParameter(ParameterCore.METADATA_SEARCH_FIELDS));
+    private static final List<String> METADATA_SEARCH_FIELDS = Arrays.asList(ConfigCore
+            .getStringArrayParameter(ParameterCore.METADATA_SEARCH_FIELDS));
 
     /**
      * Constructor with Searcher and Indexer assigning.

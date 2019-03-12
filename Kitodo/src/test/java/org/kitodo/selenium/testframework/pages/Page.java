@@ -253,6 +253,11 @@ public abstract class Page<T> {
         wait.until(ExpectedConditions.urlContains(getUrl()));
     }
 
+    /**
+     * Searches in the header-searchfield with the given query.
+     * @param query the input to search for.
+     * @throws Exception
+     */
     public void searchInSearchField(String query) throws Exception {
         searchField.clear();
         searchField.sendKeys(query);

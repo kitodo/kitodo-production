@@ -47,8 +47,24 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.LocalDate;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.enums.LinkingMode;
 import org.kitodo.data.database.enums.PasswordEncryption;
@@ -486,7 +502,6 @@ public class MockDatabase {
 
     private static void insertProcesses() throws DAOException, DataException {
         Project projectOne = ServiceManager.getProjectService().getById(1);
-        Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = ServiceManager.getTemplateService().getById(1);
 
         Process firstProcess = new Process();
@@ -514,6 +529,8 @@ public class MockDatabase {
         secondProcess.setTemplate(template);
         ServiceManager.getProcessService().save(secondProcess);
 
+
+        Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
         thirdProcess.setProject(projectTwo);

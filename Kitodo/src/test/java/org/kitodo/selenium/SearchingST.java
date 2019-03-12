@@ -26,8 +26,8 @@ import org.kitodo.selenium.testframework.pages.SearchResultPage;
 
 public class SearchingST extends BaseTestSelenium {
 
-   private static DesktopPage desktopPage;
-   private static SearchResultPage searchResultPage;
+    private static DesktopPage desktopPage;
+    private static SearchResultPage searchResultPage;
 
 
     @BeforeClass
