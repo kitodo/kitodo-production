@@ -14,10 +14,12 @@ package org.kitodo.export;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
@@ -25,11 +27,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
@@ -40,6 +44,7 @@ import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -598,8 +603,7 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Starts copying all directories configured in kitodo_config.properties
-     * parameter "processDirs" to export folder.
+     * Starts copying all directories configured as export folder.
      *
      * @param process
      *            object
@@ -608,16 +612,17 @@ public class ExportDms extends ExportMets {
      *
      */
     private void directoryDownload(Process process, URI destination) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = Helper.getNormalizedTitle(process.getTitle());
+        Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
+                .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
+                .collect(Collectors.toList());
+        VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
 
-        for (String processDir : processDirs) {
-            URI srcDir = ServiceManager.getProcessService().getProcessDataDirectory(process)
-                    .resolve(processDir.replace("(processtitle)", normalizedTitle));
-            URI dstDir = destination.resolve(processDir.replace("(processtitle)", normalizedTitle));
+        for (Subfolder processDir : processDirs) {
+            URI dstDir = destination.resolve(variableReplacer.replace(processDir.getFolder().getRelativePath()));
+            fileService.createDirectories(dstDir);
 
-            if (fileService.isDirectory(srcDir)) {
-                fileService.copyDirectory(srcDir, dstDir);
+            for (URI src : processDir.listContents().values()) {
+                fileService.copyFileToDirectory(src, dstDir);
             }
         }
     }

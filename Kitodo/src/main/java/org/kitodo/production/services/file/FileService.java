@@ -97,6 +97,24 @@ public class FileService {
     }
 
     /**
+     * Creates a directory including any missing parent directories.
+     *
+     * @param pathToCreate
+     *            path to create
+     */
+    public void createDirectories(URI pathToCreate) throws IOException {
+        if (fileManagementModule.isDirectory(pathToCreate)) {
+            return;
+        }
+        String path = pathToCreate.toString();
+        int lastSlash = path.lastIndexOf('/');
+        URI before = URI.create(path.substring(0, lastSlash));
+        String after = path.substring(lastSlash + 1);
+        createDirectories(before);
+        createDirectory(before, after);
+    }
+
+    /**
      * Creates a directory at a given URI with a given name.
      *
      * @param parentFolderUri
@@ -198,7 +216,7 @@ public class FileService {
      * running in, to request or assume meta-data locks for that user. The name
      * of the user is returned, or “System”, if the code is running in the
      * system context (i.e. not running under a registered user).
-     * 
+     *
      * @return the user name for locks
      */
     public static String getCurrentLockingUser() {
@@ -224,7 +242,7 @@ public class FileService {
 
     /**
      * Read metadata file (meta.xml).
-     * 
+     *
      * @param process
      *            for which file should be read
      * @return InputStream with metadata file
@@ -883,7 +901,7 @@ public class FileService {
     /**
      * Creates images files by copy of a configured source dummy image at images
      * source folder of given process.
-     * 
+     *
      * @param process
      *            The process object.
      * @param numberOfNewImages
