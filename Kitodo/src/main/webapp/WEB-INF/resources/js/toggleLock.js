@@ -40,8 +40,8 @@ function enableOrDisable(target, locked, unlocked) {
 }
 
 function disableGlobally(locked) {
-    var lockbutons = $('#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton,' +
-        ' #editForm\\:projectTabView\\:metsParamLockedButton, #editForm\\:projectTabView\\:templateLockedButton');
+    var lockbutons = $("#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton," +
+        " #editForm\\:projectTabView\\:metsParamLockedButton, #editForm\\:projectTabView\\:templateLockedButton");
     lockbutons.each(function () {
         $(this).children(':first').removeClass('fa-unlock');
         $(this).children(':first').addClass('fa-lock');
