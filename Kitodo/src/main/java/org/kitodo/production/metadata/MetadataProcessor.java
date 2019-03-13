@@ -112,6 +112,9 @@ import org.primefaces.model.TreeNode;
 public class MetadataProcessor {
     private static final Logger logger = LogManager.getLogger(MetadataProcessor.class);
 
+    private static final String METADATA = "Metadata";
+    private static final String STRUCTURE_ELEMENT = "StructureElement";
+
     private ImageHelper imageHelper;
     private MetadataHelper metaHelper;
     private LegacyMetsModsDigitalDocumentHelper gdzfile;
@@ -2823,21 +2826,7 @@ public class MetadataProcessor {
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedStructureTypes() {
-        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
-                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
-
-        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
-            Helper.setErrorMessage("TreeNode data does not contain structure element!");
-            return Collections.EMPTY_LIST;
-        }
-
-        Structure structure = (Structure) this.selectedTreeNode.getData();
-        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
-                structure.getType(), "", priorityList);
-        Map<String, String> structureElements = structuralElementView.getAllowedSubstructuralElements();
-        return structureElements.entrySet().stream()
-                .map(e -> new SelectItem(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
+        return getAllowedItems(STRUCTURE_ELEMENT);
     }
 
     /**
@@ -2845,22 +2834,35 @@ public class MetadataProcessor {
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedMetadata() {
+        return getAllowedItems(METADATA);
+    }
+
+    private List<SelectItem> getAllowedItems(String itemType) {
         List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
                 ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
 
         if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         Structure structure = (Structure) this.selectedTreeNode.getData();
         StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
                 structure.getType(), "", priorityList);
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
-                .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
 
-        return structuralElementView.getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).stream()
-                .map(e -> new SelectItem(e.getId(), e.getLabel()))
-                .collect(Collectors.toList());
+        if (itemType.equals(METADATA)) {
+            Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+                    .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
+            return structuralElementView.getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).stream()
+                    .map(e -> new SelectItem(e.getId(), e.getLabel()))
+                    .collect(Collectors.toList());
+        } else if (itemType.equals(STRUCTURE_ELEMENT)) {
+            Map<String, String> structureElements = structuralElementView.getAllowedSubstructuralElements();
+            return structureElements.entrySet().stream()
+                    .map(e -> new SelectItem(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 }
