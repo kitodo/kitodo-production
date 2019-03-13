@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -52,9 +50,7 @@ public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
     private String atsPpnBand;
     private boolean exportWithImages = true;
-    private boolean exportFullText = true;
     private final FileService fileService = ServiceManager.getFileService();
-    private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
 
@@ -73,7 +69,6 @@ public class ExportDms extends ExportMets {
     }
 
     public void setExportFullText(boolean exportFullText) {
-        this.exportFullText = exportFullText;
     }
 
     /**
@@ -210,9 +205,17 @@ public class ExportDms extends ExportMets {
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
             URI destination, URI userHome) throws IOException {
 
-        boolean downloadImages = downloadImages(process, userHome, destination);
-        if (!downloadImages) {
-            return false;
+        if (exportWithImages) {
+            try {
+                directoryDownload(process, destination);
+            } catch (IOException | InterruptedException | RuntimeException e) {
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setException(e);
+                } else {
+                    Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
+                }
+                return false;
+            }
         }
 
         /*
@@ -309,26 +312,6 @@ public class ExportDms extends ExportMets {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
             return null;
-        }
-    }
-
-    private boolean downloadImages(Process process, URI userHome, URI destinationDirectory) {
-        try {
-            if (this.exportWithImages) {
-                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-                fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-            } else if (this.exportFullText) {
-                fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-            }
-            directoryDownload(process, destinationDirectory);
-            return true;
-        } catch (IOException | InterruptedException | RuntimeException e) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(e);
-            } else {
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
-            }
-            return false;
         }
     }
 
@@ -460,73 +443,6 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Download full text.
-     *
-     * @param process
-     *            object
-     * @param userHome
-     *            File
-     * @param atsPpnBand
-     *            String
-     * @param ordnerEndung
-     *            String
-     */
-    public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException {
-
-        downloadSources(process, userHome, atsPpnBand);
-        downloadOCR(process, userHome, atsPpnBand);
-
-        if (Objects.nonNull(exportDmsTask)) {
-            exportDmsTask.setWorkDetail(null);
-        }
-    }
-
-    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI sources = fileService.getSourceDirectory(process);
-        if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
-            URI destination = userHome.resolve(atsPpnBand + "_src");
-            if (!fileService.fileExist(destination)) {
-                fileService.createDirectory(userHome, atsPpnBand + "_src");
-            }
-            List<URI> files = fileService.getSubUris(sources);
-            copyFiles(files, destination);
-        }
-    }
-
-    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI ocr = fileService.getOcrDirectory(process);
-        if (fileService.fileExist(ocr)) {
-            List<URI> folder = fileService.getSubUris(ocr);
-            for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()
-                        && fileService.getFileName(dir).contains("_")) {
-                    String suffix = fileService.getFileName(dir)
-                            .substring(fileService.getFileName(dir).lastIndexOf('_'));
-                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
-                    if (!fileService.fileExist(destination)) {
-                        fileService.createDirectory(userHome, atsPpnBand + suffix);
-                    }
-                    List<URI> files = fileService.getSubUris(dir);
-                    copyFiles(files, destination);
-                }
-            }
-        }
-    }
-
-    private void copyFiles(List<URI> files, URI destination) throws IOException {
-        for (URI file : files) {
-            if (fileService.isFile(file)) {
-                if (Objects.nonNull(exportDmsTask)) {
-                    exportDmsTask.setWorkDetail(fileService.getFileName(file));
-                }
-                URI target = destination.resolve(fileService.getFileName(file));
-                fileService.copyFile(file, target);
-            }
-        }
-    }
-
-    /**
      * Download image.
      *
      * @param process
@@ -567,28 +483,8 @@ public class ExportDms extends ExportMets {
                 }
             }
 
-            copyTifFilesForProcess(tifOrdner, zielTif);
-
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setWorkDetail(null);
-            }
-        }
-    }
-
-    private void copyTifFilesForProcess(URI tifSourceDirectory, URI tifDestinationDirectory)
-            throws IOException, InterruptedException {
-        List<URI> files = fileService.getSubUris(ImageHelper.dataFilter, tifSourceDirectory);
-        for (int i = 0; i < files.size(); i++) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
-            }
-
-            fileService.copyFile(files.get(i), tifDestinationDirectory);
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
-                if (exportDmsTask.isInterrupted()) {
-                    throw new InterruptedException();
-                }
             }
         }
     }
