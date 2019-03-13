@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +36,6 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
-import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
@@ -101,14 +98,14 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
     @Override
     public List<Template> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
+        return dao.getActiveTemplates(ServiceManager.getUserService().getSessionClientId());
     }
 
     @Override
     public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return findByQuery(createUserTemplatesQuery(filters),
-            getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        return findByQuery(createUserTemplatesQuery(filters), getSortBuilder(sortField, sortOrder), first, pageSize,
+            false);
 
     }
 
@@ -126,124 +123,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Add process to project, if project is assigned to process.
-     *
-     * @param template
-     *            object
-     */
-    private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, DataException, IOException {
-        for (Project project : template.getProjects()) {
-            if (template.getIndexAction().equals(IndexAction.DELETE)) {
-                project.getTemplates().remove(template);
-                ServiceManager.getProjectService().saveToIndex(project, false);
-            } else {
-                ServiceManager.getProjectService().saveToIndex(project, false);
-            }
-        }
-    }
-
-    /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks from
-     * index, if other call saveOrRemoveTaskInIndex() method.
-     *
-     * @param template
-     *            object
-     */
-    private void manageTaskDependenciesForIndex(Template template)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        if (template.getIndexAction().equals(IndexAction.DELETE)) {
-            for (Task task : template.getTasks()) {
-                ServiceManager.getTaskService().removeFromIndex(task, false);
-            }
-        } else {
-            saveOrRemoveTasksInIndex(template);
-        }
-    }
-
-    /**
-     * Compare index and database, according to comparisons results save or remove
-     * tasks.
-     *
-     * @param template
-     *            object
-     */
-    private void saveOrRemoveTasksInIndex(Template template)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        List<Integer> database = new ArrayList<>();
-        List<Integer> index = new ArrayList<>();
-
-        for (Task task : template.getTasks()) {
-            database.add(task.getId());
-            ServiceManager.getTaskService().saveToIndex(task, false);
-        }
-
-        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByTemplateId(template.getId());
-        for (Map<String, Object> object : searchResults) {
-            index.add(getIdFromJSONObject(object));
-        }
-
-        List<Integer> missingInIndex = findMissingValues(database, index);
-        List<Integer> notNeededInIndex = findMissingValues(index, database);
-        for (Integer missing : missingInIndex) {
-            ServiceManager.getTaskService().saveToIndex(ServiceManager.getTaskService().getById(missing), false);
-        }
-
-        for (Integer notNeeded : notNeededInIndex) {
-            ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
-        }
-    }
-
-    /**
-     * Compare two list and return difference between them.
-     *
-     * @param firstList
-     *            list from which records can be remove
-     * @param secondList
-     *            records stored here will be removed from firstList
-     * @return difference between two lists
-     */
-    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
-        List<Integer> newList = new ArrayList<>(firstList);
-        newList.removeAll(secondList);
-        return newList;
-    }
-
-    private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-
-        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query.must(
-                ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
-        }
-        return query;
-    }
-
-    /**
-     * Creates and returns a query to retrieve templates for which the currently
-     * logged in user is eligible.
-     *
-     * @param filters
-     *            map of applicable filters
-     * @return query to retrieve templates for which the user eligible
-     */
-    @SuppressWarnings("unchecked")
-    private BoolQueryBuilder createUserTemplatesQuery(Map filters) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-
-        if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = (Map<String, String>) filters;
-            query.must(readFilters(filterMap));
-        }
-        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
-
-        if (!showInactiveTemplates) {
-            query.must(ServiceManager.getProcessService().getQuerySortHelperStatus(false));
-        }
-
-        return query;
-    }
-
-    /**
      * Find all templates available to assign to the edited project. It will be
      * displayed in the templateAddPopup.
      *
@@ -258,7 +137,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
-        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
+        query.must(getQueryForSelectedClient());
+        query.must(getQueryForActive(true));
         return findByQuery(query, true);
     }
 
@@ -273,6 +153,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         // Template _title_ should explicitly _not_ be duplicated!
         duplicatedTemplate.setCreationDate(new Date());
         duplicatedTemplate.setInChoiceListShown(baseTemplate.getInChoiceListShown());
+        duplicatedTemplate.setClient(baseTemplate.getClient());
         duplicatedTemplate.setDocket(baseTemplate.getDocket());
         duplicatedTemplate.setRuleset(baseTemplate.getRuleset());
         // tasks don't need to be duplicated - will be created out of copied workflow
@@ -312,7 +193,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return templateDTO;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateDTO templateDTO) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateDTO templateDTO)
+            throws DataException {
         templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
             ServiceManager.getProjectService()));
     }
@@ -418,15 +300,141 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
+     * Add process to project, if project is assigned to process.
+     *
+     * @param template
+     *            object
+     */
+    private void manageProjectDependenciesForIndex(Template template)
+            throws CustomResponseException, DataException, IOException {
+        for (Project project : template.getProjects()) {
+            if (template.getIndexAction().equals(IndexAction.DELETE)) {
+                project.getTemplates().remove(template);
+                ServiceManager.getProjectService().saveToIndex(project, false);
+            } else {
+                ServiceManager.getProjectService().saveToIndex(project, false);
+            }
+        }
+    }
+
+    /**
+     * Check IndexAction flag in for process object. If DELETE remove all tasks from
+     * index, if other call saveOrRemoveTaskInIndex() method.
+     *
+     * @param template
+     *            object
+     */
+    private void manageTaskDependenciesForIndex(Template template)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        if (template.getIndexAction().equals(IndexAction.DELETE)) {
+            for (Task task : template.getTasks()) {
+                ServiceManager.getTaskService().removeFromIndex(task, false);
+            }
+        } else {
+            saveOrRemoveTasksInIndex(template);
+        }
+    }
+
+    /**
+     * Compare index and database, according to comparisons results save or remove
+     * tasks.
+     *
+     * @param template
+     *            object
+     */
+    private void saveOrRemoveTasksInIndex(Template template)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        List<Integer> database = new ArrayList<>();
+        List<Integer> index = new ArrayList<>();
+
+        for (Task task : template.getTasks()) {
+            database.add(task.getId());
+            ServiceManager.getTaskService().saveToIndex(task, false);
+        }
+
+        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByTemplateId(template.getId());
+        for (Map<String, Object> object : searchResults) {
+            index.add(getIdFromJSONObject(object));
+        }
+
+        List<Integer> missingInIndex = findMissingValues(database, index);
+        List<Integer> notNeededInIndex = findMissingValues(index, database);
+        for (Integer missing : missingInIndex) {
+            ServiceManager.getTaskService().saveToIndex(ServiceManager.getTaskService().getById(missing), false);
+        }
+
+        for (Integer notNeeded : notNeededInIndex) {
+            ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
+        }
+    }
+
+    /**
+     * Compare two list and return difference between them.
+     *
+     * @param firstList
+     *            list from which records can be remove
+     * @param secondList
+     *            records stored here will be removed from firstList
+     * @return difference between two lists
+     */
+    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
+        List<Integer> newList = new ArrayList<>(firstList);
+        newList.removeAll(secondList);
+        return newList;
+    }
+
+    private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
+            query.must(
+                ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false));
+        }
+        return query;
+    }
+
+    /**
+     * Creates and returns a query to retrieve templates for which the currently
+     * logged in user is eligible.
+     *
+     * @param filters
+     *            map of applicable filters
+     * @return query to retrieve templates for which the user eligible
+     */
+    @SuppressWarnings("unchecked")
+    private BoolQueryBuilder createUserTemplatesQuery(Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        if (Objects.nonNull(filters) && !filters.isEmpty()) {
+            Map<String, String> filterMap = (Map<String, String>) filters;
+            query.must(readFilters(filterMap));
+        }
+        query.must(getQueryForSelectedClient());
+
+        if (!showInactiveTemplates) {
+            query.must(getQueryForActive(true));
+        }
+
+        return query;
+    }
+
+    /**
      * Get query for projects assigned to selected client.
      *
-     * @param id
-     *            of selected client
      * @return query as QueryBuilder
      */
-    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
-        return createSetQuery(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID,
-            Stream.of(0, id).collect(Collectors.toSet()), true);
+    private QueryBuilder getQueryForActive(boolean active) {
+        return createSimpleQuery(TemplateTypeField.ACTIVE.getKey(), active, true);
+    }
+
+    /**
+     * Get query for projects assigned to selected client.
+     *
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryForSelectedClient() {
+        return createSimpleQuery(TemplateTypeField.CLIENT_ID.getKey(),
+            ServiceManager.getUserService().getSessionClientId(), true);
     }
 
     /**
@@ -438,14 +446,5 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     public List<Template> getProcessTemplatesWithTitle(String title) {
         return dao.getTemplatesWithTitle(title);
-    }
-
-    /**
-     * Get all active process templates.
-     *
-     * @return A list of all process templates as Template objects.
-     */
-    public List<Template> getActiveTemplates() {
-        return dao.getActiveTemplates();
     }
 }

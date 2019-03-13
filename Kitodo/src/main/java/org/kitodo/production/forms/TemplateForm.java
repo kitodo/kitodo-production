@@ -90,6 +90,7 @@ public class TemplateForm extends TemplateBaseForm {
     public String newTemplate() {
         this.template = new Template();
         this.template.setTitle("");
+        this.template.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         this.assignedProjects.clear();
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
