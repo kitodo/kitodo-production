@@ -730,16 +730,17 @@ public class MetadataProcessor {
     }
 
     /**
-     * Knoten nach oben schieben.
+     * Delete selected tree node.
      */
     public void deleteNode() {
-        if (this.docStruct != null && this.docStruct.getParent() != null) {
-            LegacyDocStructHelperInterface tempParent = this.docStruct.getParent();
-            this.docStruct.getParent().removeChild(this.docStruct);
-            this.docStruct = tempParent;
+        if (this.selectedTreeNode != null
+                && this.selectedTreeNode.getParent() != null
+                && this.selectedTreeNode.getData() instanceof Structure
+                && this.selectedTreeNode.getParent().getData() instanceof Structure) {
+            Structure parentStructure = (Structure) this.selectedTreeNode.getParent().getData();
+            Structure structure = (Structure) this.selectedTreeNode.getData();
+            parentStructure.getChildren().remove(structure);
         }
-        // den Tree neu einlesen
-        readMetadataAsFirstTree();
     }
 
     /**
