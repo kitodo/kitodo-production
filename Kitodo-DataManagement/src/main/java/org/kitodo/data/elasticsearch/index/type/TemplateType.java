@@ -28,9 +28,11 @@ public class TemplateType extends BaseType<Template> {
         jsonObject.put(TemplateTypeField.ACTIVE.getKey(), template.isActive());
         jsonObject.put(TemplateTypeField.SORT_HELPER_STATUS.getKey(),
             preventNull(template.getSortHelperStatus()));
-        jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), getTitle(template.getWorkflow()));
-        jsonObject.put(TemplateTypeField.RULESET.getKey(), getId(template.getRuleset()));
+        jsonObject.put(TemplateTypeField.CLIENT_ID.getKey(), getId(template.getClient()));
+        jsonObject.put(TemplateTypeField.CLIENT_NAME.getKey(), getTitle(template.getClient()));
         jsonObject.put(TemplateTypeField.DOCKET.getKey(), getId(template.getDocket()));
+        jsonObject.put(TemplateTypeField.RULESET.getKey(), getId(template.getRuleset()));
+        jsonObject.put(TemplateTypeField.WORKFLOW_TITLE.getKey(), getTitle(template.getWorkflow()));
         jsonObject.put(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
         if (template.getProjects().isEmpty()) {
             jsonObject.put(TemplateTypeField.PROJECTS + "." + ProjectTypeField.CLIENT_ID, 0);

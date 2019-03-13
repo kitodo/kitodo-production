@@ -87,11 +87,14 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     /**
-     * Get all active templates.
+     * Get all active templates for selected client.
      *
-     * @return list of all active templates as Template objects
+     * @return list of all active templates for selected client as Template objects
      */
-    public List<Template> getActiveTemplates() {
-        return getByQuery("SELECT t FROM Template AS t INNER JOIN t.projects AS p WHERE p.active = 1");
+    public List<Template> getActiveTemplates(int clientId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", clientId);
+        return getByQuery("SELECT t FROM Template AS t WHERE active = 1 AND client_id = :clientId",
+            parameters);
     }
 }
