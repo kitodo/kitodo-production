@@ -117,7 +117,7 @@ public class MetadataProcessor {
     private LegacyMetsModsDigitalDocumentHelper gdzfile;
     private LegacyDocStructHelperInterface docStruct;
     private List<MetadataImpl> myMetadaten = new LinkedList<>();
-    private MetadataImpl currentMetadata;
+    private Metadata currentMetadata;
     private LegacyMetsModsDigitalDocumentHelper digitalDocument;
     private Process process;
     private LegacyPrefsHelper myPrefs;
@@ -243,12 +243,17 @@ public class MetadataProcessor {
      *
      */
     public void copy() {
-        LegacyMetadataHelper md;
-        md = new LegacyMetadataHelper(this.currentMetadata.getMd().getMetadataType());
 
-        md.setStringValue(this.currentMetadata.getMd().getValue());
-        this.docStruct.addMetadata(md);
-        saveMetadataAsBean(this.docStruct);
+        if (this.currentMetadata instanceof MetadataEntry) {
+            MetadataEntry currentMetadataEntry = (MetadataEntry) this.currentMetadata;
+
+            MetadataEntry newMetadataEntry = new MetadataEntry();
+            newMetadataEntry.setValue(currentMetadataEntry.getValue());
+            newMetadataEntry.setKey(currentMetadataEntry.getKey());
+            newMetadataEntry.setDomain(currentMetadataEntry.getDomain());
+
+            setCurrentMetadata(newMetadataEntry);
+        }
     }
 
     /**
@@ -263,18 +268,17 @@ public class MetadataProcessor {
      * Add new metadata.
      */
     public void addMetadata() {
-        if (!(this.selectedTreeNode.getData() instanceof Structure)) {
+        if (this.selectedTreeNode.getData() instanceof Structure) {
+            MetadataEntry metadataEntry = new MetadataEntry();
+            metadataEntry.setDomain(MdSec.DMD_SEC);
+            metadataEntry.setKey(this.selectedMetadataType);
+            metadataEntry.setValue(this.selectedMetadataValue);
+
+            ((Structure) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
+            this.selectedMetadataValue = "";
+        } else {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
-            return;
         }
-
-        MetadataEntry metadataEntry = new MetadataEntry();
-        metadataEntry.setDomain(MdSec.DMD_SEC);
-        metadataEntry.setKey(this.selectedMetadataType);
-        metadataEntry.setValue(this.selectedMetadataValue);
-
-        ((Structure) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
-        this.selectedMetadataValue = "";
     }
 
     /**
@@ -285,48 +289,16 @@ public class MetadataProcessor {
     }
 
     /**
-     * The function parseAuthorityFileArgs() parses a valueURI (i.e.
-     * “http://d-nb.info/gnd/117034592”) and returns the three arguments
-     * authority, authorityURI and valueURI required to call
-     * {@link ugh.dl.Metadata#setAutorityFile(String, String, String)}. The
-     * authorityURI may end in # or / otherwise. The authority’s name id must be
-     * configured in the main configuration file like referencing the
-     * authorityURI (remember to escape colons):
-     *
-     * <code>authority.http\://d-nb.info/gnd/.id=gnd</code>
-     *
-     * @param valueURI
-     *            URI in an authority file
-     * @return a String[] with authority, authorityURI and valueURI
-     */
-    public static String[] parseAuthorityFileArgs(String valueURI) {
-        String authority = null;
-        String authorityURI = null;
-        if (valueURI != null && !valueURI.isEmpty()) {
-            int boundary = valueURI.indexOf('#');
-            if (boundary == -1) {
-                boundary = valueURI.lastIndexOf('/');
-            }
-            if (boundary == -1) {
-                throw new IllegalArgumentException("uriMalformed");
-            } else {
-                authorityURI = valueURI.substring(0, boundary + 1);
-                if (!authorityURI.equals(valueURI)) {
-                    authority = ConfigCore.getParameter(
-                        ParameterCore.AUTHORITY_ID_FROM_URI.getName().replaceFirst("\\{0\\}", authorityURI), null);
-                }
-            }
-        }
-        return new String[] {authority, authorityURI, valueURI };
-    }
-
-    /**
      * Delete.
      *
      */
     public void delete() {
-        this.docStruct.removeMetadata(this.currentMetadata.getMd());
-        saveMetadataAsBean(this.docStruct);
+        if (this.selectedTreeNode.getData() instanceof Structure) {
+            Structure structure = (Structure) this.selectedTreeNode.getData();
+            structure.getMetadata().remove(this.currentMetadata);
+        } else {
+            Helper.setErrorMessage("Node does not contain structure element!");
+        }
     }
 
     /**
@@ -1811,11 +1783,11 @@ public class MetadataProcessor {
         // Dead code pending removal. TODO remove
     }
 
-    public MetadataImpl getCurrentMetadata() {
+    public Metadata getCurrentMetadata() {
         return this.currentMetadata;
     }
 
-    public void setCurrentMetadata(MetadataImpl currentMetadata) {
+    public void setCurrentMetadata(Metadata currentMetadata) {
         this.currentMetadata = currentMetadata;
     }
 
