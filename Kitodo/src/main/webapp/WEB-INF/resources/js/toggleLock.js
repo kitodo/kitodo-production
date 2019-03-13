@@ -9,13 +9,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
- function enableOrDisable(target, locked, unlocked) {
+function enableOrDisable(target, locked, unlocked) {
     target.firstChild.classList.toggle('fa-lock');
     target.firstChild.classList.toggle('fa-unlock');
 
     var elements = $('#editForm\\:projectTabView input:visible');
     var calandars = $('#editForm\\:projectTabView .ui-datepicker-trigger');
-    if ($("span", target).filter(".ui-button-text").text() === locked){
+    if ($("span", target).filter(".ui-button-text").text() === locked) {
         elements.removeClass('ui-state-disabled');
         elements.prop('disabled', false);
         $("#editForm\\:projectTabView .ui-selectonemenu:visible").removeClass('ui-state-disabled');
@@ -34,25 +34,26 @@
         $("#editForm\\:projectTabView .ui-commandlink:visible").addClass('ui-state-disabled');
         $('#editForm\\:projectTabView :submit:visible').not(target).addClass('ui-state-disabled');
     }
-    $("span", target).filter(".ui-button-text").text(function(i, text){
-            return text === unlocked ? locked : unlocked;
-            });
- }
+    $("span", target).filter(".ui-button-text").text(function (i, text) {
+        return text === unlocked ? locked : unlocked;
+    });
+}
 
- function disableGlobally(locked){
-    var lockbutons = $('#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton, #editForm\\:projectTabView\\:metsParamLockedButton');
+function disableGlobally(locked) {
+    var lockbutons = $('#editForm\\:projectTabView\\:detailLockedButton, #editForm\\:projectTabView\\:technicalLockedButton,' +
+        ' #editForm\\:projectTabView\\:metsParamLockedButton, #editForm\\:projectTabView\\:templateLockedButton');
     lockbutons.each(function () {
-                          $(this).children(':first').removeClass('fa-unlock');
-                          $(this).children(':first').addClass('fa-lock');
-                          $("span", $(this)).filter(".ui-button-text").text(locked);
-               });
+        $(this).children(':first').removeClass('fa-unlock');
+        $(this).children(':first').addClass('fa-lock');
+        $("span", $(this)).filter(".ui-button-text").text(locked);
+    });
     var all = $('#editForm\\:projectTabView input');
-    all.each(function() {
-           var disabledAttr = $( this ).attr('disabled');
-           if (typeof disabledAttr === typeof undefined || disabledAttr === false) {
-               $( this ).attr('disabled', 'disabled');
-               $( this ).addClass('ui-state-disabled');
-           }
+    all.each(function () {
+        var disabledAttr = $(this).attr('disabled');
+        if (typeof disabledAttr === typeof undefined || disabledAttr === false) {
+            $(this).attr('disabled', 'disabled');
+            $(this).addClass('ui-state-disabled');
+        }
     });
     $("#editForm\\:projectTabView .ui-chkbox-box").addClass('ui-state-disabled');
     $("#editForm\\:projectTabView .ui-commandlink").addClass('ui-state-disabled');
@@ -61,4 +62,4 @@
     calandars.addClass('ui-state-disabled');
     $('#editForm\\:projectTabView :submit').not(lockbutons).addClass('ui-state-disabled');
     $("#editForm\\:projectTabView .ui-selectonemenu").addClass("ui-state-disabled");
- }
+}

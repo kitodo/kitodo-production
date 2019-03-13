@@ -16,6 +16,17 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:panel>
+        <p:commandButton
+                value="#{msgs.unlocked}"
+                icon="fa fa-unlock fa-lg"
+                iconPos="right"
+                styleClass="callto"
+                id="templateLockedButton"
+                onclick="enableOrDisable(this,'#{msgs.locked}','#{msgs.unlocked}')">
+        </p:commandButton>
+    </p:panel>
+
     <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.templates}" sortBy="#{template.title}">
         <p:column headerText="#{msgs.task}" id="taskTitle">
             <p:rowToggler />
