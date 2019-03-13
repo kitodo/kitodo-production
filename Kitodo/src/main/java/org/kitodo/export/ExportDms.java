@@ -609,9 +609,12 @@ public class ExportDms extends ExportMets {
      *            object
      * @param destination
      *            the destination directory
+     * @throws InterruptedException
+     *             if the user clicked stop on the thread running the export DMS
+     *             task
      *
      */
-    private void directoryDownload(Process process, URI destination) throws IOException {
+    private void directoryDownload(Process process, URI destination) throws IOException, InterruptedException {
         Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
                 .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
                 .collect(Collectors.toList());
@@ -621,8 +624,19 @@ public class ExportDms extends ExportMets {
             URI dstDir = destination.resolve(variableReplacer.replace(processDir.getFolder().getRelativePath()));
             fileService.createDirectories(dstDir);
 
-            for (URI src : processDir.listContents().values()) {
+            Collection<URI> srcs = processDir.listContents().values();
+            int progress = 0;
+            for (URI src : srcs) {
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setWorkDetail(fileService.getFileName(src));
+                }
                 fileService.copyFileToDirectory(src, dstDir);
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setProgress((int) ((progress++ + 1) * 98d / processDirs.size() / srcs.size() + 1));
+                    if (exportDmsTask.isInterrupted()) {
+                        throw new InterruptedException();
+                    }
+                }
             }
         }
     }
