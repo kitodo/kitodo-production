@@ -18,9 +18,11 @@ public enum TemplateTypeField implements TypeInterface {
     CREATION_DATE("creationDate"),
     ACTIVE("active"),
     SORT_HELPER_STATUS("sortHelperStatus"),
-    WORKFLOW_TITLE("workflow.title"),
+    CLIENT_ID("client.id"),
+    CLIENT_NAME("client.name"),
     DOCKET("docket"),
     RULESET("ruleset"),
+    WORKFLOW_TITLE("workflow.title"),
     PROJECTS("projects"),
     TASKS("tasks");
 

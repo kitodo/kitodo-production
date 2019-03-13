@@ -39,6 +39,10 @@ public class Template extends BaseTemplateBean {
     private Boolean active = true;
 
     @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_template_client_id"))
+    private Client client;
+
+    @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_template_docket_id"))
     private Docket docket;
 
@@ -60,7 +64,7 @@ public class Template extends BaseTemplateBean {
     @JoinTable(name = "project_x_template", joinColumns = {
             @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_project_x_template_template_id")) },
             inverseJoinColumns = {
-            @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
+                    @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
     private List<Project> projects;
 
     /**
@@ -92,6 +96,61 @@ public class Template extends BaseTemplateBean {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Get client.
+     *
+     * @return the client bean
+     */
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * Set client.
+     *
+     * @param client
+     *            bean
+     */
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    /**
+     * Get docket.
+     *
+     * @return value of docket
+     */
+    public Docket getDocket() {
+        return docket;
+    }
+
+    /**
+     * Set docket.
+     *
+     * @param docket as Docket object
+     */
+    public void setDocket(Docket docket) {
+        this.docket = docket;
+    }
+
+    /**
+     * Get ruleset.
+     *
+     * @return value of ruleset
+     */
+    public Ruleset getRuleset() {
+        return this.ruleset;
+    }
+
+    /**
+     * Set ruleset.
+     *
+     * @param ruleset as Ruleset object
+     */
+    public void setRuleset(Ruleset ruleset) {
+        this.ruleset = ruleset;
     }
 
     /**
@@ -135,33 +194,6 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get ruleset.
-     *
-     * @return value of ruleset
-     */
-    public Ruleset getRuleset() {
-        return this.ruleset;
-    }
-
-    /**
-     * Set ruleset.
-     *
-     * @param ruleset as Ruleset object
-     */
-    public void setRuleset(Ruleset ruleset) {
-        this.ruleset = ruleset;
-    }
-
-    /**
-     * Get docket.
-     *
-     * @return value of docket
-     */
-    public Docket getDocket() {
-        return docket;
-    }
-
-    /**
      * Get processes.
      *
      * @return value of processes
@@ -181,15 +213,6 @@ public class Template extends BaseTemplateBean {
      */
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
-    }
-
-    /**
-     * Set docket.
-     *
-     * @param docket as Docket object
-     */
-    public void setDocket(Docket docket) {
-        this.docket = docket;
     }
 
     /**
@@ -239,6 +262,6 @@ public class Template extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(docket, ruleset, workflow);
+        return Objects.hash(client, docket, ruleset, workflow);
     }
 }
