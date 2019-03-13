@@ -569,6 +569,22 @@
                     "format": "yyyy-MM-dd HH:mm:ss",
                     "ignore_malformed": true
                 },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
                 "docket": {
                     "type": "long"
                 },
