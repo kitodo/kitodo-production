@@ -16,11 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,12 +84,12 @@ public class MetsServiceIT {
     @Test
     public void testReadingHierarchy() throws Exception {
         Workpiece workpiece = MetsService.getInstance()
-                .load(new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/between.xml")),
+                .load(Files.newInputStream(Paths.get("../Kitodo-DataFormat/src/test/resources/between.xml")),
                     (uri, couldHaveToBeWrittenInTheFuture) -> {
                         try {
-                            return new FileInputStream(
-                                    new File("../Kitodo-DataFormat/src/test/resources/" + uri.getPath()));
-                        } catch (FileNotFoundException e) {
+                            return Files.newInputStream(
+                                Paths.get("../Kitodo-DataFormat/src/test/resources/" + uri.getPath()));
+                        } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
                     });
