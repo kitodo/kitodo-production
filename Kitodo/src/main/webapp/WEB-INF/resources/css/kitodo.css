@@ -1156,11 +1156,6 @@ form#metadata div label,
     margin-top: 8px;
     margin-left: 8px;
 }
-#metadata\:addMetadataButton {
-    position: absolute;
-    bottom: var(--default-half-size);
-    left: var(--default-half-size);
-}
 
 .collapsibleWrapper {
     display: inline-block;

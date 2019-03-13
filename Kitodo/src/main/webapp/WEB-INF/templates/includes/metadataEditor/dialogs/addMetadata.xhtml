@@ -31,7 +31,6 @@
 
                         <div>
                             <p:selectOneMenu id="metadataTypeSelection"
-                                             disabled="#{readOnly}"
                                              value="#{MetadataProcessor.selectedMetadataType}">
                                 <f:selectItems value="#{MetadataProcessor.allowedMetadata}"/>
                             </p:selectOneMenu>
@@ -40,8 +39,6 @@
                         <div>
                             <p:inputTextarea value="#{MetadataProcessor.selectedMetadataValue}"
                                              rows="2"
-                                             styleClass="#{readOnly ? 'disabled' : ''}"
-                                             disabled="#{readOnly}"
                                              style="width:83%; margin-top: 8px;"/>
                         </div>
                     </h:panelGroup>
