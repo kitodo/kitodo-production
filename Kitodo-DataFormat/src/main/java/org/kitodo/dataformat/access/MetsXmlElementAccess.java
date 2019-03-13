@@ -86,6 +86,9 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
 public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
+
+    private static final String LOGICAL = "LOGICAL";
+
     /**
      * The data object of this mets XML element access.
      */
@@ -183,7 +186,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             Workpiece workpiece, InputStreamProviderInterface inputStreamProvider) {
 
         workpiece.setStructure(
-            getStructMapsStreamByType(mets, "LOGICAL").map(structMap -> structMap.getDiv())
+            getStructMapsStreamByType(mets, LOGICAL).map(structMap -> structMap.getDiv())
                 .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
                     .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, inputStreamProvider))
                 .collect(Collectors.toList()).iterator().next());
@@ -222,15 +225,10 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private static final LinkedList<LinkedStructure> findCurrentStructureInParent(DivType div, Mets current, URI parentUri,
             InputStreamProviderInterface inputStreamProvider) {
 
-        if (!div.getMptr().isEmpty()) {
-            boolean found = div.getMptr().stream().map(Mptr::getHref)
-                    .map(href -> Objects.deepEquals(readMets(inputStreamProvider, hrefToUri(href), false), current))
-                    .reduce(Boolean::logicalOr).get();
-            return found ? new LinkedList<>() : null;
-        } else {
+        if (div.getMptr().isEmpty()) {
             Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
                 LinkedList<LinkedStructure> links = findCurrentStructureInParent(child, current, parentUri, inputStreamProvider);
-                return links != null ? Pair.of(child, links) : null;
+                return Objects.isNull(links) ? null : Pair.of(child, links);
             }).filter(Objects::nonNull).reduce((one, another) -> {
                 if (one.getRight().equals(another.getRight())) {
                     return one;
@@ -248,6 +246,11 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 result.addFirst(linkedStructure);
                 return result;
             }
+        } else {
+            boolean found = div.getMptr().stream().map(Mptr::getHref)
+                    .map(href -> Objects.deepEquals(readMets(inputStreamProvider, hrefToUri(href), false), current))
+                    .reduce(Boolean::logicalOr).get();
+            return found ? new LinkedList<>() : null;
         }
         return null;
     }
@@ -313,7 +316,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
             } else {
-                throw new IOException(e.getMessage(), e);
+                throw new IOException(
+                        e.getMessage() == null && e.getCause() != null ? e.getCause().getMessage() : e.getMessage(),
+                        Objects.isNull(e.getCause()) ? e : e.getCause());
             }
         }
     }
@@ -360,14 +365,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private static final List<LinkedStructure> readUplinks(Mets current,
             InputStreamProviderInterface inputStreamProvider) {
 
-        Optional<List<LinkedStructure>> result = getStructMapsStreamByType(current, "LOGICAL")
+        Optional<List<LinkedStructure>> result = getStructMapsStreamByType(current, LOGICAL)
                 .map(structMap -> structMap.getDiv()).filter(div -> !div.getMptr().isEmpty())
                 .flatMap(div -> div.getMptr().parallelStream()).map(mptr -> mptr.getHref()).map(href -> {
                     URI parentUri = hrefToUri(href);
                     Mets parent = readMets(inputStreamProvider, parentUri, false);
 
                     LinkedList<LinkedStructure> found = null;
-                    for (StructMapType structMap : getStructMapsStreamByType(parent, "LOGICAL")
+                    for (StructMapType structMap : getStructMapsStreamByType(parent, LOGICAL)
                             .collect(Collectors.toList())) {
                         DivType div = structMap.getDiv();
                         if (!div.getMptr().isEmpty()) {
@@ -438,7 +443,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
-        logical.setTYPE("LOGICAL");
+        logical.setTYPE(LOGICAL);
         DivType structureRoot = new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets);
         List<LinkedStructure> uplinks = workpiece.getUplinks();
         if (uplinks.isEmpty()) {
