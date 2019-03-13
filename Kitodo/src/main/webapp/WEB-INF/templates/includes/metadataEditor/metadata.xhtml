@@ -17,6 +17,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
 
+    <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
     <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
@@ -116,22 +117,28 @@
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
                     <p:commandButton update="metadata:metadataTable"
+                                     id="deleteMetadata"
                                      icon="fa fa-trash"
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataDelete}"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
+                                     onclick="PF('loadingDialog').show();"
+                                     oncomplete="PF('loadingDialog').hide();"
                                      action="#{MetadataProcessor.delete}">
                         <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
                     </p:commandButton>
                     <p:commandButton update="metadata:metadataTable"
+                                     id="copyMetadata"
                                      icon="fa fa-clipboard"
                                      immediate="true"
                                      tabindex="-1"
                                      title="#{msgs.metadataCopy}"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
+                                     onclick="PF('loadingDialog').show();"
+                                     oncomplete="PF('loadingDialog').hide();"
                                      action="#{MetadataProcessor.copy}">
                         <f:setPropertyActionListener value="#{item}" target="#{MetadataProcessor.currentMetadata}"/>
                     </p:commandButton>
@@ -161,7 +168,8 @@
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
                                      disabled="#{readOnly}"
                                      style="vertical-align: top; margin-left: 10px;"
-                                     title="#{msgs.neueMetadatenHinzufuegen}" action="#{MetadataProcessor.addMetadata}">
+                                     title="#{msgs.neueMetadatenHinzufuegen}"
+                                     action="#{MetadataProcessor.addMetadata}">
                     </p:commandButton>
                 </p:row>
             </p:panelGrid>
