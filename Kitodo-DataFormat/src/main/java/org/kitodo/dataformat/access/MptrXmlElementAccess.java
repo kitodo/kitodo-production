@@ -144,6 +144,11 @@ public class MptrXmlElementAccess {
         return linkedStructure;
     }
 
+    /**
+     * Creates a METS {@code <div>} element from this linked structure.
+     *
+     * @return a METS {@code <div>} element
+     */
     public DivType toDiv() {
         DivType div = new DivType();
         div.setORDER(linkedStructure.getOrder());
