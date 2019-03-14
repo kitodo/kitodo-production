@@ -130,13 +130,15 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            id of project which is going to be edited
      * @return list of all matching templates
      */
-    public List<TemplateDTO> findAllAvailableForAssignToProject(int projectId) throws DataException {
+    public List<TemplateDTO> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
         return findAvailableForAssignToUser(projectId);
     }
 
     private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
+        if (Objects.nonNull(projectId)) {
+            query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
+        }
         query.must(getQueryForSelectedClient());
         query.must(getQueryForActive(true));
         return findByQuery(query, true);
