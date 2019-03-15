@@ -148,6 +148,13 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean delete(URI uri) throws IOException {
+        if (Objects.isNull(uri) || uri.getPath().isEmpty()) {
+            /*
+                This exception is thrown when the passed URI is empty or null.
+                Using this URI would cause the deletion of the metadata directory.
+            */
+            throw new IOException("Attempt to delete subdirectory with URI that is empty or null!");
+        }
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         File file = new File(uri);
         if (file.exists()) {
