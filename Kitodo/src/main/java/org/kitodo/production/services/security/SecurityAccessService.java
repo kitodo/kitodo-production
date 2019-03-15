@@ -269,6 +269,37 @@ public class SecurityAccessService {
     }
 
     /**
+     * Check if the current user has the authority to add the client.
+     *
+     * @return true if the current user has the authority to add the client
+     */
+    public boolean hasAuthorityToAddClient() {
+        return hasAuthorityGlobal("addClient");
+    }
+
+    /**
+     * Check if current user has authority to add anything on user page. It returns
+     * true if user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'addUser' or 'addRole' or 'addClient' or
+     *         'addLdapGroup' or 'addLdapServer' globally or for client
+     */
+    public boolean hasAuthorityToAddOnUserPage() {
+        return hasAnyAuthorityGlobalOrForClient("addUser, addRole, addClient, addLdapGroup, addLdapServer");
+    }
+
+    /**
+     * Check if current user has authority to add anything on project page. It
+     * returns true if user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'addProject' or 'addTemplate' or
+     *         'addWorkflow' or 'addDocket' or 'addRuleset' for client
+     */
+    public boolean hasAuthorityToAddOnProjectPage() {
+        return hasAnyAuthorityForClient("addProject, addTemplate, addWorkflow, addDocket, addRuleset");
+    }
+
+    /**
      * Check if the current user has the authority to delete the batch.
      *
      * @return true if the current user has the authority to delete the batch
@@ -347,6 +378,15 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToDeleteRole() {
         return hasAuthorityGlobalOrForClient("deleteRole");
+    }
+
+    /**
+     * Check if the current user has the authority to delete the client.
+     *
+     * @return true if the current user has the authority to delete the client
+     */
+    public boolean hasAuthorityToDeleteClient() {
+        return hasAuthorityGlobal("deleteClient");
     }
 
     /**
@@ -437,6 +477,15 @@ public class SecurityAccessService {
      */
     public boolean hasAuthorityToEditRole() {
         return hasAuthorityGlobalOrForClient("editRole");
+    }
+
+    /**
+     * Check if the current user has the authority to edit the client.
+     *
+     * @return true if the current user has the authority to edit the client
+     */
+    public boolean hasAuthorityToEditClient() {
+        return hasAuthorityGlobal("addClient");
     }
 
     /**
@@ -672,7 +721,7 @@ public class SecurityAccessService {
 
     /**
      * Check if current user has authority to view LDAP group list. It returns true
-     * if user has "viewAllLdapGroups" authority for client.
+     * if user has "viewAllLdapGroups" authority globally.
      *
      * @return true if user has authority 'viewAllLdapGroups' globally
      */
@@ -682,12 +731,12 @@ public class SecurityAccessService {
 
     /**
      * Check if current user has authority to view LDAP server list. It returns true
-     * if user has "viewAllLdapServers" authority for client.
+     * if user has "viewAllLdapServers" authority globally.
      *
      * @return true if user has authority 'viewAllLdapServers' globally
      */
     public boolean hasAuthorityToViewLdapServerList() {
-        return hasAuthorityForClient("viewAllLdapServers");
+        return hasAuthorityGlobal("viewAllLdapServers");
     }
 
     /**
@@ -720,10 +769,12 @@ public class SecurityAccessService {
         return hasAuthorityGlobal("viewAllUsers");
     }
 
-    /** Check if current usr has authority to configure list views. It returns true if
-     * the user has "configureColumns" authority globally or for a client.
+    /**
+     * Check if current usr has authority to configure list views. It returns true
+     * if the user has "configureColumns" authority globally or for a client.
      *
-     * @return true if user has authority 'configureColumns' globally or for a client
+     * @return true if user has authority 'configureColumns' globally or for a
+     *         client
      */
     public boolean hasAuthorityToConfigureColumns() {
         return hasAuthorityGlobalOrForClient("configureColumns");
@@ -732,7 +783,8 @@ public class SecurityAccessService {
     /**
      * Check if the current user has the authority to edit the process metadata.
      *
-     * @return true if the current user has the authority to edit the process metadata
+     * @return true if the current user has the authority to edit the process
+     *         metadata
      */
     public boolean hasAuthorityToEditProcessMetaData() {
         return hasAuthorityForClient("editProcessMetaData");
@@ -741,25 +793,30 @@ public class SecurityAccessService {
     /**
      * Check if the current user has the authority to view the process metadata.
      *
-     * @return true if the current user has the authority to view the process metadata
+     * @return true if the current user has the authority to view the process
+     *         metadata
      */
     public boolean hasAuthorityToViewProcessMetaData() {
         return hasAuthorityForClient("viewProcessMetaData");
     }
 
     /**
-     * Check if the current user has the authority to edit the process structure data.
+     * Check if the current user has the authority to edit the process structure
+     * data.
      *
-     * @return true if the current user has the authority to edit the process structure data
+     * @return true if the current user has the authority to edit the process
+     *         structure data
      */
     public boolean hasAuthorityToEditProcessStructureData() {
         return hasAuthorityForClient("editProcessStructureData");
     }
 
     /**
-     * Check if the current user has the authority to view the process structure data.
+     * Check if the current user has the authority to view the process structure
+     * data.
      *
-     * @return true if the current user has the authority to view the process structure data
+     * @return true if the current user has the authority to view the process
+     *         structure data
      */
     public boolean hasAuthorityToViewProcessStructureData() {
         return hasAuthorityForClient("viewProcessStructureData");

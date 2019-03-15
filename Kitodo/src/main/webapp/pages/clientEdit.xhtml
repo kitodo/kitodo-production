@@ -22,10 +22,10 @@
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{ClientForm.client.id ne null and SecurityAccessController.hasAuthorityGlobal('editClient')}"/>
+              value="#{ClientForm.client.id ne null and SecurityAccessController.hasAuthorityToEditClient()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{ClientForm.client.id eq null and SecurityAccessController.hasAuthorityGlobal('addClient')}"/>
+              value="#{ClientForm.client.id eq null and SecurityAccessController.hasAuthorityToAddClient()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode}"/>

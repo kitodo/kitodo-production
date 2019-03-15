@@ -20,8 +20,7 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
-        <h:form id="newElementForm"
-                rendered="#{SecurityAccessController.hasAnyAuthorityGlobalOrForClient('addUser, addRole, addClient, addLdapGroup, addLdapServer')}">
+        <h:form id="newElementForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnUserPage()}">
             <p:menuButton value="#{msgs.newElement}"
                           id="newElementButton"
                           icon="fa fa-plus-circle fa-lg"

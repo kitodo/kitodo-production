@@ -163,6 +163,37 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to add the client.
+     *
+     * @return true if the current user has the authority to add the client
+     */
+    public boolean hasAuthorityToAddClient() {
+        return securityAccessService.hasAuthorityToAddClient();
+    }
+
+    /**
+     * Check if current user has authority to add anything on user page. It returns
+     * true if user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'addUser' or 'addRole' or 'addClient' or
+     *         'addLdapGroup' or 'addLdapServer' globally or for client
+     */
+    public boolean hasAuthorityToAddOnUserPage() {
+        return securityAccessService.hasAuthorityToAddOnUserPage();
+    }
+
+    /**
+     * Check if current user has authority to add anything on project page. It
+     * returns true if user has at least one of below given authorities.
+     *
+     * @return true if user has authority 'addProject' or 'addTemplate' or
+     *         'addWorkflow' or 'addDocket' or 'addRuleset' for client
+     */
+    public boolean hasAuthorityToAddOnProjectPage() {
+        return securityAccessService.hasAuthorityToAddOnProjectPage();
+    }
+
+    /**
      * Check if the current user has the authority to delete the batch.
      *
      * @return true if the current user has the authority to delete the batch
@@ -241,6 +272,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToDeleteRole() {
         return securityAccessService.hasAuthorityToDeleteRole();
+    }
+
+    /**
+     * Check if the current user has the authority to delete the client.
+     *
+     * @return true if the current user has the authority to delete the client
+     */
+    public boolean hasAuthorityToDeleteClient() {
+        return securityAccessService.hasAuthorityToDeleteClient();
     }
 
     /**
@@ -331,6 +371,15 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToEditRole() {
         return securityAccessService.hasAuthorityToEditRole();
+    }
+
+    /**
+     * Check if the current user has the authority to edit the client.
+     *
+     * @return true if the current user has the authority to edit the client
+     */
+    public boolean hasAuthorityToEditClient() {
+        return securityAccessService.hasAuthorityToEditClient();
     }
 
     /**
@@ -459,12 +508,12 @@ public class SecurityAccessController {
      * user has at least one of below given authorities.
      *
      * @return true if user has authority 'viewAllProjects' or 'viewAllTemplates' or
-     *         'viewAllWorkflows' or 'viewAllDockets' or 'viewAllRulestes' for
+     *         'viewAllWorkflows' or 'viewAllDockets' or 'viewAllRulesets' for
      *         client
      */
     public boolean hasAuthorityToViewProjectPage() {
         return securityAccessService.hasAnyAuthorityForClient(
-            "viewAllProjects, viewAllTemplates, viewAllWorkflows, viewAllDockets, viewAllRulestes");
+            "viewAllProjects, viewAllTemplates, viewAllWorkflows, viewAllDockets, viewAllRulesets");
     }
 
     /**
@@ -491,13 +540,13 @@ public class SecurityAccessController {
      * Check if current user has authority to view user page. It returns true if
      * user has at least one of below given authorities.
      *
-     * @return true if user has authority 'viewAllUsers' or 'viewAllUsers' or
+     * @return true if user has authority 'viewAllUsers' or 'viewAllRoles' or
      *         'viewAllClients' or 'viewAllLdapGroups' or 'viewAllLdapServers'
      *         globally or for client
      */
     public boolean hasAuthorityToViewUserPage() {
         return securityAccessService.hasAnyAuthorityGlobalOrForClient(
-            "viewAllUsers, viewAllUsers, viewAllClients, viewAllLdapGroups, viewAllLdapServers");
+            "viewAllUsers, viewAllRoles, viewAllClients, viewAllLdapGroups, viewAllLdapServers");
     }
 
     /**
@@ -642,8 +691,8 @@ public class SecurityAccessController {
     }
 
     /**
-     * Checks if current user has authority to configure displayed columns
-     * in list views.
+     * Checks if current user has authority to configure displayed columns in list
+     * views.
      *
      * @return true if current user has authority to configure columns
      */
@@ -654,7 +703,8 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to edit the process metadata.
      *
-     * @return true if the current user has the authority to edit the process metadata
+     * @return true if the current user has the authority to edit the process
+     *         metadata
      */
     public boolean hasAuthorityToEditProcessMetaData() {
         return securityAccessService.hasAuthorityToEditProcessMetaData();
@@ -663,27 +713,32 @@ public class SecurityAccessController {
     /**
      * Check if the current user has the authority to view the process metadata.
      *
-     * @return true if the current user has the authority to view the process metadata
+     * @return true if the current user has the authority to view the process
+     *         metadata
      */
     public boolean hasAuthorityToViewProcessMetaData() {
         return securityAccessService.hasAuthorityToViewProcessMetaData();
     }
 
     /**
-     * Check if the current user has the authority to edit the process structure data.
+     * Check if the current user has the authority to edit the process structure
+     * data.
      *
-     * @return true if the current user has the authority to edit the process structure data
+     * @return true if the current user has the authority to edit the process
+     *         structure data
      */
     public boolean hasAuthorityToEditProcessStructureData() {
         return securityAccessService.hasAuthorityToEditProcessStructureData();
     }
 
     /**
-     * Check if the current user has the authority to view the process structure data.
+     * Check if the current user has the authority to view the process structure
+     * data.
      *
-     * @return true if the current user has the authority to view the process structure data
+     * @return true if the current user has the authority to view the process
+     *         structure data
      */
-    public boolean hasAuthorityToViewProcesStructureData() {
+    public boolean hasAuthorityToViewProcessStructureData() {
         return securityAccessService.hasAuthorityToViewProcessStructureData();
     }
 
@@ -701,16 +756,17 @@ public class SecurityAccessController {
      *
      * @return true if the current user has the authority to view the process images
      */
-    public boolean hasAuthorityToViewProcesImages() {
+    public boolean hasAuthorityToViewProcessImages() {
         return securityAccessService.hasAuthorityToViewProcessImages();
     }
 
     /**
      * Check if the current user has the authority to open the metadata editor.
-     * Access to the metadata editor is granted if the user has the authority to view or edit data in any part of the
-     * editor.
+     * Access to the metadata editor is granted if the user has the authority to
+     * view or edit data in any part of the editor.
      *
-     * @return true if the current user has the authority to view or edit any part of the data in the metadata editor
+     * @return true if the current user has the authority to view or edit any part
+     *         of the data in the metadata editor
      */
     public boolean hasAuthorityToOpenMetadataEditor() {
         return securityAccessService.hasAuthorityToViewProcessMetaData()
