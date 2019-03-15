@@ -1053,6 +1053,14 @@ main i.fa {
     margin-left: var(--default-double-size);
 }
 
+h3#headerText {
+    display: inline-block;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - 300px);
+    white-space: nowrap;
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/
@@ -1068,23 +1076,11 @@ Metadata Editor
 
 #metadataEditorHeader h3 {
     width: calc(100% - 450px);
-    display: inline-block;
-    white-space: nowrap;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
 }
 
 #metadataEditorHeader .ui-panel,
 #metadataEditorHeader .ui-panel-content {
     padding: 0;
-}
-
-#metadataEditorHeader .button-wrapper {
-    position: absolute;
-    right: 0;
-    vertical-align: top;
-    white-space: nowrap;
-    float: right;
 }
 
 #metadataEditorWrapper {
