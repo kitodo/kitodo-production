@@ -17,7 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <!--@elvariable id="readOnly" type="boolean"-->
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcesStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
     <ui:fragment id="actionButtons">
     <p:commandButton id="newButton"

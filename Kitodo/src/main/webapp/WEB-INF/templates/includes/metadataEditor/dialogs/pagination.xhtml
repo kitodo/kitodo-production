@@ -18,7 +18,7 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
 
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcesStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
     <p:dialog id="paginationDialog"
               widgetVar="paginationDialog"

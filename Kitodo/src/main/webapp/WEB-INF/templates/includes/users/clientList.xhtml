@@ -28,13 +28,18 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
+                <h:link id="viewClient" outcome="clientEdit" title="#{msgs.clientView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewClient() and not SecurityAccessController.hasAuthorityToEditClient()}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
                 <h:link outcome="clientEdit" title="#{msgs.clientEdit}"
-                        rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('editClient')}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditClient()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteClient" action="#{ClientForm.delete}" title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityGlobalOrForClient('deleteClient')}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteClient()}"
                                update="usersTabView:clientsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{ClientForm.clientById}"/>

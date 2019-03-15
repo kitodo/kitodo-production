@@ -19,16 +19,15 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
-        <h:form id="projectForm"
-                rendered="#{SecurityAccessController.hasAnyAuthorityForClient('addProject, addTemplate, addWorkflow, addDocket, addRuleset')}">
-            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
+        <h:form id="projectForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnProjectPage()}">
+            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg"
+                          iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
-                            id="newTemplateButton" immediate="true" style="width: inherit;"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"
-                            icon="ui-icon-plusthick"/>
+                            id="newTemplateButton" immediate="true" icon="ui-icon-plusthick"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
                         immediate="true" icon="ui-icon-plusthick"
                         rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
@@ -41,8 +40,7 @@
                             id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
-        <h:form id="configureColumnsForm"
-                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+        <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button"
                                   label=""
                                   converter="#{listColumnConverter}"

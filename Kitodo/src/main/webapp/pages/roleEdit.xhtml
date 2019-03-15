@@ -74,7 +74,9 @@
     <ui:define name="pageTabView">
         <p:tabView id="roleTabView">
             <p:tab id="roleTab" title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/roleEdit/details.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/roleEdit/details.xhtml">
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
