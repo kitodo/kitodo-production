@@ -12,6 +12,7 @@
 package org.kitodo.production.dto;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,10 +20,12 @@ import org.kitodo.production.services.ServiceManager;
 
 public class TemplateDTO extends BaseTemplateDTO {
 
+    private static final long serialVersionUID = 5187947220333333343L;
+
     private boolean active;
     private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;
-    private List<ProjectDTO> projects;
+    private List<ProjectDTO> projects = new ArrayList<>();
 
     /**
      * Get diagram image.

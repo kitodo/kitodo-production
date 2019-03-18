@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDTO extends BaseDTO {
+
+    private static final long serialVersionUID = 5187947220333333334L;
+
     private String name;
     private List<UserDTO> users = new ArrayList<>();
     private List<ProjectDTO> projects = new ArrayList<>();

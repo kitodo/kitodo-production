@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class UserDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333344L;
+
     private String login;
     private String name;
     private String surname;
