@@ -110,6 +110,19 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
+     * Count rows in database according to given query.
+     *
+     * @param query
+     *            for database search
+     * @param parameters
+     *            for query
+     * @return amount of rows in database according to given query
+     */
+    public Long countDatabaseRows(String query, Map<String, Object> parameters) throws DAOException {
+        return dao.count(query, parameters);
+    }
+
+    /**
      * This function is used for count amount of results for frontend lists.
      *
      * @param filters
@@ -144,6 +157,19 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      */
     public List<T> getByQuery(String query) {
         return dao.getByQuery(query);
+    }
+
+    /**
+     * Retrieves BaseBean objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
+     * @return list of beans objects
+     */
+    public List<T> getByQuery(String query, Map<String, Object> parameters) {
+        return dao.getByQuery(query, parameters);
     }
 
     /**
