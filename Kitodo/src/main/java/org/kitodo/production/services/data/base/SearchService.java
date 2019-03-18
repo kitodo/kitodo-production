@@ -235,9 +235,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException {
         indexer.setMethod(HttpMethod.PUT);
-        indexer.performMultipleRequests(baseIndexedBeans, type, true);
-        for (T baseIndexedBean : baseIndexedBeans) {
-            updateIndexFlag(baseIndexedBean);
+        if (!baseIndexedBeans.isEmpty()) {
+            indexer.performMultipleRequests(baseIndexedBeans, type, true);
+            for (T baseIndexedBean : baseIndexedBeans) {
+                updateIndexFlag(baseIndexedBean);
+            }
         }
     }
 
