@@ -175,8 +175,10 @@ public class TemplateForm extends TemplateBaseForm {
                 }
                 this.template.getProjects().clear();
 
-                this.template.getWorkflow().getTemplates().remove(this.template);
-                this.template.setWorkflow(null);
+                if (Objects.nonNull(this.template.getWorkflow())) {
+                    this.template.getWorkflow().getTemplates().remove(this.template);
+                    this.template.setWorkflow(null);
+                }
 
                 ServiceManager.getTemplateService().remove(this.template);
             } catch (Exception e) {
