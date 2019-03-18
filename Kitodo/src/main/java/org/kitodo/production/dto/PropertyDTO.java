@@ -16,6 +16,8 @@ package org.kitodo.production.dto;
  */
 public class PropertyDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333339L;
+
     private String title;
     private String value;
     private String creationDate;

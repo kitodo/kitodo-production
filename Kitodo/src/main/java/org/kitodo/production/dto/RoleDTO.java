@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class RoleDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333340L;
+
     private String title;
     private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;

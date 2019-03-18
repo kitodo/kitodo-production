@@ -16,6 +16,8 @@ package org.kitodo.production.dto;
  */
 public class FilterDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333336L;
+
     private String value;
 
     /**

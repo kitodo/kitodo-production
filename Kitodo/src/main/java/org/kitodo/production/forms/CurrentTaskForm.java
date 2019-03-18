@@ -69,7 +69,7 @@ public class CurrentTaskForm extends BaseForm {
     private Task currentTask = new Task();
     private transient Problem problem = new Problem();
     private transient Solution solution = new Solution();
-    private transient List<TaskDTO> selectedTasks;
+    private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
     private boolean onlyOpenTasks = false;

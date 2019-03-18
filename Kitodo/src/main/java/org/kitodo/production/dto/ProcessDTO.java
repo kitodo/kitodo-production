@@ -20,6 +20,8 @@ import java.util.Objects;
  */
 public class ProcessDTO extends BaseTemplateDTO {
 
+    private static final long serialVersionUID = 5187947220333333337L;
+
     private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();

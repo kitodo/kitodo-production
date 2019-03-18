@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class ProjectDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333338L;
+
     private String title;
     private String startDate;
     private String endDate;

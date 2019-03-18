@@ -13,6 +13,8 @@ package org.kitodo.production.dto;
 
 public class WorkflowDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333345L;
+
     private String title;
     private String status;
 

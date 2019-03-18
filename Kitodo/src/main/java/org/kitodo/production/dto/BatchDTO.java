@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class BatchDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333333L;
+
     private String title;
     private String type;
     private List<ProcessDTO> processes = new ArrayList<>();

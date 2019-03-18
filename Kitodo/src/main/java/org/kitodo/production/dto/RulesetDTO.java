@@ -16,6 +16,8 @@ package org.kitodo.production.dto;
  */
 public class RulesetDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333341L;
+
     private String file;
     private String title;
     private Boolean orderMetadataByRuleset = false;

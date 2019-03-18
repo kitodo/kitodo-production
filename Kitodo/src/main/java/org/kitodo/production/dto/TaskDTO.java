@@ -22,6 +22,8 @@ import org.kitodo.data.database.enums.TaskStatus;
  */
 public class TaskDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 5187947220333333342L;
+
     private String title;
     private String localizedTitle;
     private Integer priority;
