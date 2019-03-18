@@ -12,6 +12,7 @@
 package org.kitodo.api.command;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CommandResult {
 
@@ -91,23 +92,23 @@ public class CommandResult {
      */
     @Override
     public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (object == this) {
+        if (this == object) {
             return true;
         }
 
-        if (!object.getClass().equals(getClass())) {
-            return false;
+        if (object instanceof CommandResult) {
+            CommandResult that = (CommandResult) object;
+
+            return this.id.equals(that.id)
+                    && this.successful == that.successful
+                    && this.command.equals(that.command)
+                    && this.messages.equals(that.messages);
         }
+        return false;
+    }
 
-        CommandResult that = (CommandResult) object;
-
-        return this.id == that.id
-                && this.successful == that.successful
-                && this.command.equals(that.command)
-                && this.messages.equals(that.messages);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, successful, command, messages);
     }
 }

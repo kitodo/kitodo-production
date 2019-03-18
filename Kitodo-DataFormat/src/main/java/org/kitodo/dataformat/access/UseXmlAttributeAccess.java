@@ -89,20 +89,15 @@ public class UseXmlAttributeAccess {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UseXmlAttributeAccess other = (UseXmlAttributeAccess) obj;
-        if (mediaVariant == null) {
-            if (other.mediaVariant != null) {
-                return false;
+
+        if (obj instanceof UseXmlAttributeAccess) {
+            UseXmlAttributeAccess other = (UseXmlAttributeAccess) obj;
+            if (Objects.isNull(mediaVariant)) {
+                return Objects.isNull(other.mediaVariant);
+            } else {
+                return mediaVariant.equals(other.mediaVariant);
             }
-        } else if (!mediaVariant.equals(other.mediaVariant)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }

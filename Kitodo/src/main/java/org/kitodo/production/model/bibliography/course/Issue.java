@@ -626,41 +626,40 @@ public class Issue {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Issue)) {
-            return false;
-        }
-        Issue other = (Issue) obj;
-        if (additions == null) {
-            if (other.additions != null) {
+
+        if (obj instanceof Issue) {
+            Issue other = (Issue) obj;
+
+            if (Objects.isNull(additions)) {
+                if (Objects.nonNull(other.additions)) {
+                    return false;
+                }
+            } else if (!additions.equals(other.additions)) {
                 return false;
             }
-        } else if (!additions.equals(other.additions)) {
-            return false;
-        }
-        if (daysOfWeek == null) {
-            if (other.daysOfWeek != null) {
+
+            if (Objects.isNull(daysOfWeek)) {
+                if (Objects.nonNull(other.daysOfWeek)) {
+                    return false;
+                }
+            } else if (!daysOfWeek.equals(other.daysOfWeek)) {
                 return false;
             }
-        } else if (!daysOfWeek.equals(other.daysOfWeek)) {
-            return false;
-        }
-        if (exclusions == null) {
-            if (other.exclusions != null) {
+
+            if (Objects.isNull(exclusions)) {
+                if (Objects.nonNull(other.exclusions)) {
+                    return false;
+                }
+            } else if (!exclusions.equals(other.exclusions)) {
                 return false;
             }
-        } else if (!exclusions.equals(other.exclusions)) {
-            return false;
-        }
-        if (heading == null) {
-            if (other.heading != null) {
-                return false;
+
+            if (Objects.isNull(heading)) {
+                return Objects.isNull(other.heading);
+            } else {
+                return heading.equals(other.heading);
             }
-        } else if (!heading.equals(other.heading)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }

@@ -511,36 +511,39 @@ public class Block {
             return true;
         }
 
-        if (!(obj instanceof Block)) {
-            return false;
-        }
+        if (obj instanceof Block) {
+            Block other = (Block) obj;
 
-        Block other = (Block) obj;
-        if (Objects.isNull(firstAppearance)) {
-            if (Objects.nonNull(other.firstAppearance)) {
+            if (Objects.isNull(firstAppearance)) {
+                if (Objects.nonNull(other.firstAppearance)) {
+                    return false;
+                }
+            } else if (!firstAppearance.equals(other.firstAppearance)) {
                 return false;
             }
-        } else if (!firstAppearance.equals(other.firstAppearance)) {
-            return false;
-        }
-        if (Objects.isNull(issues)) {
-            if (Objects.nonNull(other.issues)) {
+
+            if (Objects.isNull(issues)) {
+                if (Objects.nonNull(other.issues)) {
+                    return false;
+                }
+            } else if (!issues.equals(other.issues)) {
                 return false;
             }
-        } else if (!issues.equals(other.issues)) {
-            return false;
-        }
-        if (Objects.isNull(lastAppearance)) {
-            if (Objects.nonNull(other.lastAppearance)) {
+
+            if (Objects.isNull(lastAppearance)) {
+                if (Objects.nonNull(other.lastAppearance)) {
+                    return false;
+                }
+            } else if (!lastAppearance.equals(other.lastAppearance)) {
                 return false;
             }
-        } else if (!lastAppearance.equals(other.lastAppearance)) {
-            return false;
+
+            if (Objects.isNull(variant)) {
+                return Objects.isNull(other.variant);
+            } else {
+                return variant.equals(other.variant);
+            }
         }
-        if (Objects.isNull(variant)) {
-            return other.variant == null;
-        } else {
-            return variant.equals(other.variant);
-        }
+        return false;
     }
 }

@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat;
 
+import java.util.Objects;
+
 /**
  * A variant of the {@code MediaUnit}s for a particular use. By use is meant a
  * technical form of use. Therefore, the variant has as technical property the
@@ -86,20 +88,16 @@ public class MediaVariant {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        MediaVariant other = (MediaVariant) obj;
-        if (use == null) {
-            if (other.use != null) {
-                return false;
+
+        if (obj instanceof MediaVariant) {
+            MediaVariant other = (MediaVariant) obj;
+
+            if (Objects.isNull(use)) {
+                return Objects.isNull(other.use);
+            } else {
+                return use.equals(other.use);
             }
-        } else if (!use.equals(other.use)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }

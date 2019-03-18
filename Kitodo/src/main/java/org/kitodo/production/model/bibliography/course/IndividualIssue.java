@@ -13,6 +13,7 @@ package org.kitodo.production.model.bibliography.course;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -275,34 +276,29 @@ public class IndividualIssue {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof IndividualIssue)) {
-            return false;
-        }
-        IndividualIssue other = (IndividualIssue) obj;
-        if (date == null) {
-            if (other.date != null) {
+
+        if (obj instanceof IndividualIssue) {
+            IndividualIssue other = (IndividualIssue) obj;
+            if (Objects.isNull(date)) {
+                if (Objects.nonNull(other.date)) {
+                    return false;
+                }
+            } else if (!date.equals(other.date)) {
                 return false;
             }
-        } else if (!date.equals(other.date)) {
-            return false;
-        }
-        if (issue == null) {
-            if (other.issue != null) {
+            if (Objects.isNull(issue)) {
+                if (Objects.nonNull(other.issue)) {
+                    return false;
+                }
+            } else if (!issue.equals(other.issue)) {
                 return false;
             }
-        } else if (!issue.equals(other.issue)) {
-            return false;
-        }
-        if (block == null) {
-            if (other.block != null) {
-                return false;
+            if (Objects.isNull(block)) {
+                return Objects.isNull(other.block);
+            } else {
+                return block.equals(other.block);
             }
-        } else if (!block.equals(other.block)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }

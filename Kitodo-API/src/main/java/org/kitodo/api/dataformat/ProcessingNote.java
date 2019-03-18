@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat;
 
+import java.util.Objects;
+
 /**
  * A processing note is a comment by an editor to communicate the status of
  * editing to other editors of the file.
@@ -156,41 +158,40 @@ public class ProcessingNote {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProcessingNote other = (ProcessingNote) obj;
-        if (name == null) {
-            if (other.name != null) {
+
+        if (obj instanceof ProcessingNote) {
+            ProcessingNote other = (ProcessingNote) obj;
+
+            if (Objects.isNull(name)) {
+                if (Objects.nonNull(other.name)) {
+                    return false;
+                }
+            } else if (!name.equals(other.name)) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (note == null) {
-            if (other.note != null) {
+
+            if (Objects.isNull(note)) {
+                if (Objects.nonNull(other.note)) {
+                    return false;
+                }
+            } else if (!note.equals(other.note)) {
                 return false;
             }
-        } else if (!note.equals(other.note)) {
-            return false;
-        }
-        if (role == null) {
-            if (other.role != null) {
+
+            if (Objects.isNull(role)) {
+                if (Objects.nonNull(other.role)) {
+                    return false;
+                }
+            } else if (!role.equals(other.role)) {
                 return false;
             }
-        } else if (!role.equals(other.role)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
+
+            if (Objects.isNull(type)) {
+                return Objects.isNull(other.type);
+            } else {
+                return type.equals(other.type);
             }
-        } else if (!type.equals(other.type)) {
-            return false;
         }
-        return true;
+        return false;
     }
 }
