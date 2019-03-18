@@ -37,11 +37,15 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     private static final MetsService metsService = ServiceManager.getMetsService();
 
     /**
-     * A constant for local use. We cannot make this constant constant because
-     * the service loader is an instance variable.
+     * A constant for local use.
      */
     @Deprecated
-    public final MediaVariant local = new MediaVariant();
+    public static final MediaVariant LOCAL = new MediaVariant();
+
+    static {
+        LOCAL.setUse("LOCAL");
+        LOCAL.setMimeType("image/tiff");
+    }
 
     /**
      * The media unit accessed via this soldering class.
@@ -61,7 +65,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Override
     @Deprecated
     public void addContentFile(LegacyContentFileHelper contentFile) {
-        mediaUnit.getMediaFiles().put(local, contentFile.getMediaFile());
+        mediaUnit.getMediaFiles().put(LOCAL, contentFile.getMediaFile());
     }
 
     @Override
@@ -132,7 +136,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     @Override
     @Deprecated
     public String getImageName() {
-        URI uri = mediaUnit.getMediaFiles().get(local);
+        URI uri = mediaUnit.getMediaFiles().get(LOCAL);
         return new File(uri.getPath()).getName();
     }
 
@@ -149,7 +153,7 @@ public class LegacyInnerPhysicalDocStructHelper implements LegacyDocStructHelper
     /**
      * This method is not part of the interface, but the JSF code digs in the
      * depths of the UGH and uses it on the guts.
-     * 
+     *
      * @return Method delegated to {@link #getDocStructType()}
      */
     @Deprecated
