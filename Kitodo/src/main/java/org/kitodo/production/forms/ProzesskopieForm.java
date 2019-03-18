@@ -118,101 +118,6 @@ public class ProzesskopieForm implements Serializable {
         this.activeTabId = activeTabId;
     }
 
-    /**
-     * The class SelectableHit represents a hit on the hit list that shows up if
-     * a catalogue search yielded more than one result. We need an inner class
-     * for this because Faces is strictly object oriented and the always
-     * argument-less actions can only be executed relatively to the list entry
-     * in question this way if they are concerning elements that are rendered by
-     * iterating along a list.
-     *
-     * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
-     */
-    public class SelectableHit {
-        /**
-         * The field hit holds the hit to be rendered as a list entry.
-         */
-        private final Hit hit;
-
-        /**
-         * The field error holds an error message to be rendered as a list entry
-         * in case that retrieving the hit failed within the plug-in used for
-         * catalogue access.
-         */
-        private final String error;
-
-        /**
-         * Selectable hit constructor. Creates a new SelectableHit object with a
-         * hit to show.
-         *
-         * @param hit
-         *            Hit to show
-         */
-        public SelectableHit(Hit hit) {
-            this.hit = hit;
-            error = null;
-        }
-
-        /**
-         * Selectable hit constructor. Creates a new SelectableHit object with
-         * an error message to show.
-         *
-         * @param error
-         *            error message
-         */
-        public SelectableHit(String error) {
-            hit = null;
-            this.error = error;
-        }
-
-        /**
-         * The function getBibliographicCitation() returns a summary of this hit
-         * in bibliographic citation style as HTML as read-only property
-         * “bibliographicCitation”.
-         *
-         * @return a summary of this hit in bibliographic citation style as HTML
-         */
-        public String getBibliographicCitation() {
-            return hit.getBibliographicCitation();
-        }
-
-        /**
-         * The function getErrorMessage() returns an error if that had occurred
-         * when trying to retrieve that hit from the catalogue as read-only
-         * property “errorMessage”.
-         *
-         * @return an error message to be rendered as a list entry
-         */
-        public String getErrorMessage() {
-            return error;
-        }
-
-        /**
-         * The function isError() returns whether an error occurred when trying
-         * to retrieve that hit from the catalogue as read-only property
-         * “error”.
-         *
-         * @return whether an error occurred when retrieving that hit
-         */
-        public boolean isError() {
-            return Objects.isNull(hit);
-        }
-
-        /**
-         * The function selectClick() is called if the user clicks on a
-         * catalogue hit summary in order to import it into Production.
-         */
-        public void selectClick() {
-            try {
-                importHit(hit);
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC" }, logger, e);
-            } finally {
-                hitlistPage = -1;
-            }
-        }
-    }
-
     private static final String DIRECTORY_SUFFIX = ConfigCore
             .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
@@ -1693,41 +1598,6 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getHitlist returns the hits for the currently showing page
-     * of the hitlist as read-only property "hitlist".
-     *
-     * @return a list of hits to render in the hitlist
-     */
-    public List<SelectableHit> getHitlist() {
-        if (hitlistPage < 0) {
-            return Collections.emptyList();
-        }
-        int pageSize = getPageSize();
-        List<SelectableHit> result = new ArrayList<>(pageSize);
-        long firstHit = hitlistPage * pageSize;
-        long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
-        for (long index = firstHit; index <= lastHit; index++) {
-            try {
-                Hit hit = importCatalogue.getHit(hitlist, index, CataloguePlugin.getTimeout());
-                result.add(new SelectableHit(hit));
-            } catch (RuntimeException e) {
-                result.add(new SelectableHit(e.getMessage()));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * The function getNumberOfHits() returns the number of hits on the hit list
-     * as read-only property "numberOfHits".
-     *
-     * @return the number of hits on the hit list
-     */
-    public long getNumberOfHits() {
-        return hits;
-    }
-
-    /**
      * The function getPageSize() retrieves the desired number of hits on one page
      * of the hit list from the configuration.
      *
@@ -1736,53 +1606,6 @@ public class ProzesskopieForm implements Serializable {
      */
     private int getPageSize() {
         return ConfigCore.getIntParameterOrDefaultValue(ParameterCore.HITLIST_PAGE_SIZE);
-    }
-
-    /**
-     * The function isFirstPage() returns whether the currently showing page of
-     * the hitlist is the first page of it as read-only property "firstPage".
-     *
-     * @return whether the currently showing page of the hitlist is the first
-     *         one
-     */
-    public boolean isFirstPage() {
-        return hitlistPage == 0;
-    }
-
-    /**
-     * The function getHitlistShowing returns whether the hitlist shall be
-     * rendered or not as read-only property "hitlistShowing".
-     *
-     * @return whether the hitlist is to be shown or not
-     */
-    public boolean isHitlistShowing() {
-        return hitlistPage >= 0;
-    }
-
-    /**
-     * The function isLastPage() returns whether the currently showing page of
-     * the hitlist is the last page of it as read-only property "lastPage".
-     *
-     * @return whether the currently showing page of the hitlist is the last one
-     */
-    public boolean isLastPage() {
-        return (hitlistPage + 1) * getPageSize() > hits - 1;
-    }
-
-    /**
-     * The function nextPageClick() is executed if the user clicks the action
-     * link to flip one page forward in the hit list.
-     */
-    public void nextPageClick() {
-        hitlistPage++;
-    }
-
-    /**
-     * The function previousPageClick() is executed if the user clicks the
-     * action link to flip one page backwards in the hit list.
-     */
-    public void previousPageClick() {
-        hitlistPage--;
     }
 
     /**
