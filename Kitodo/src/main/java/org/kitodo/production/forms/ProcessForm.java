@@ -88,7 +88,7 @@ public class ProcessForm extends TemplateBaseForm {
     private String doneDirectoryName;
     private static final String ERROR_CREATING = "errorCreating";
     private static final String EXPORT_FINISHED = "exportFinished";
-    private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
