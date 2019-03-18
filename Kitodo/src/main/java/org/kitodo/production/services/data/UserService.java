@@ -59,6 +59,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
     private static final String LOGIN_NOT_VALID = "loginNotValid";
+    private static final String CLIENT_ID = "clientId";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
@@ -97,16 +98,17 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return countDatabaseRows(
-                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0");
+                "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
+                Collections.singletonMap(CLIENT_ID, getSessionClientId()));
         }
         return 0L;
     }
 
     @Override
     public List<User> getAllForSelectedClient() {
-        return dao.getByQuery(
+        return getByQuery(
             "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap(CLIENT_ID, getSessionClientId()));
     }
 
     @Override
@@ -125,14 +127,14 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     @SuppressWarnings("unchecked")
     public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0"  + getSort(sortField, sortOrder), filters, first, pageSize);
+            return dao.getByQuery("FROM User WHERE deleted = 0" + getSort(sortField, sortOrder), filters, first,
+                pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             return dao.getByQuery(
                 "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
                         + getSort(sortField, sortOrder),
-                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
-                pageSize);
+                Collections.singletonMap(CLIENT_ID, getSessionClientId()), first, pageSize);
         }
         return new ArrayList<>();
     }
@@ -152,9 +154,9 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
     public User getByLdapLoginWithFallback(String login) throws DAOException, UsernameNotFoundException {
         User user;
         try {
-            user = ServiceManager.getUserService().getByLdapLogin(login);
+            user = getByLdapLogin(login);
         } catch (UsernameNotFoundException e) {
-            user = ServiceManager.getUserService().getByLogin(login);
+            user = getByLogin(login);
         }
         return user;
     }
@@ -477,8 +479,9 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      *         are "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
-        return user.getProcessingTasks().stream().filter(
-            task -> task.getProcessingStatus().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
+        return user.getProcessingTasks().stream()
+                .filter(
+                    task -> task.getProcessingStatus().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
                 .collect(Collectors.toList());
     }
 

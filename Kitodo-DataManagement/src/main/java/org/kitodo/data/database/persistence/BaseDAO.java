@@ -208,6 +208,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @param query
      *            for counting objects
+     * @param parameters
+     *            for query
      * @return amount of rows in database according to given query
      */
     public Long count(String query, Map<String, Object> parameters) throws DAOException {
