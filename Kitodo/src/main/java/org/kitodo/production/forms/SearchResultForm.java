@@ -49,10 +49,16 @@ public class SearchResultForm extends BaseForm {
     public String searchForProcessesBySearchQuery() {
         ProcessService processService = ServiceManager.getProcessService();
         HashMap<Integer, ProcessDTO> resultHash = new HashMap<>();
+        List<ProcessDTO> results;
         try {
-            List<ProcessDTO> results = processService.findDTOsByTitleWithWildcard(searchQuery);
+            if (searchQuery.contains(" ")) {
+                results = processService.findByTitle(searchQuery);
+                results.addAll(processService.findByProjectTitle(searchQuery));
+            } else {
+                results = processService.findDTOsByTitleWithWildcard(searchQuery);
+                results.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
+            }
             results.addAll(processService.findByMetadataContent(searchQuery));
-            results.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
             for (ProcessDTO processDTO : results) {
                 resultHash.put(processDTO.getId(), processDTO);
             }

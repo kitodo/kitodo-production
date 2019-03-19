@@ -61,8 +61,7 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        // TODO: it's not working
-        // Assert.assertEquals(1, resultList.size());
+        Assert.assertEquals(1, resultList.size());
 
         searchResultForm.setSearchQuery("Not Existing");
         searchResultForm.searchForProcessesBySearchQuery();
@@ -74,8 +73,7 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        // TODO: search with withspace obvisously not working correctly
-        // Assert.assertEquals(2, resultList.size());
+        Assert.assertEquals(2, resultList.size());
     }
 
     @Test

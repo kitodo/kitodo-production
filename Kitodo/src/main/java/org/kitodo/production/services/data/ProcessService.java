@@ -502,8 +502,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (String searchField : METADATA_SEARCH_FIELDS) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", searchField));
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent));
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", searchField).operator(Operator.AND));
+            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent).operator(Operator.AND));
             query.should(pairQuery);
         }
         return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), false);
