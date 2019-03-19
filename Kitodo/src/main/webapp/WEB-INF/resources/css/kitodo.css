@@ -1725,7 +1725,6 @@ footer {
 
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a  {
-    color: var(--blue);
     margin-right: 10px;
 }
 
