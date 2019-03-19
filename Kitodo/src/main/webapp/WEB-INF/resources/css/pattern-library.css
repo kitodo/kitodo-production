@@ -281,6 +281,24 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     vertical-align: bottom;
 }
 
+.ui-row-toggler.ui-icon {
+    background: none;
+    color: var(--blue);
+    display: inline;
+    font: normal normal normal x-large/1 FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: auto;
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-e:before {
+    content: "\f13a";
+}
+
+.ui-row-toggler.ui-icon-circle-triangle-s:before {
+    content: "\f139";
+}
+
 .ui-menu, .ui-menu .ui-menu-child {
     background: var(--cloudy-gray);
 }
