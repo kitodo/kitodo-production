@@ -1,0 +1,41 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid columns="2" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="titleInput" value="#{msgs.title}"/>
+                <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
+                             value="#{AuthorityForm.title}" placeholder="#{msgs.title}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="types" value="#{msgs.type}"/>
+                <p:selectOneMenu id="types" value="#{AuthorityForm.type}" disabled="#{isViewMode}"
+                                 required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItem itemLabel="clientAssignable" itemValue="clientAssignable"/>
+                    <f:selectItem itemLabel="globalAssignable" itemValue="globalAssignable"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+        </p:row>
+    </p:panelGrid>
+
+</ui:composition>

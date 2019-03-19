@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item"
+                 id="authoritiesTable"
+                 value="#{AuthorityForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.loggedUser.tableSize}"
+                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 paginatorPosition="bottom">
+        <p:column headerText="#{msgs.authority}">
+            <h:outputText value="#{item.titleWithoutSuffix}"/>
+        </p:column>
+        <p:column headerText="#{msgs.type}">
+            <h:outputText value="#{item.type}"/>
+        </p:column>
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+            <h:form id="actionForm">
+                <h:link id="viewAuthority" outcome="authorityEdit" title="#{msgs.authorityView}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewAuthority() and not SecurityAccessController.hasAuthorityToEditAuthority()}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
+
+                <h:link id="editAuthority" outcome="authorityEdit" title="#{msgs.authorityEdit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditAuthority()}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+
+                <p:commandLink id="deleteAuthority" action="#{AuthorityForm.delete}" title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteAuthority()}"
+                               update="usersTabView:authoritiesTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{AuthorityForm.authorityById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteAuthority}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:form>
+        </p:column>
+    </p:dataTable>
+</ui:composition>

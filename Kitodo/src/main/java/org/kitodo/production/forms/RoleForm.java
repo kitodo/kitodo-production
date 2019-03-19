@@ -18,7 +18,6 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +47,6 @@ public class RoleForm extends BaseForm {
     /**
      * Default constructor that also sets the LazyDTOModel instance of this bean.
      */
-    @Inject
     public RoleForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRoleService()));
@@ -81,7 +79,7 @@ public class RoleForm extends BaseForm {
         try {
             ServiceManager.getRoleService().saveToDatabase(this.role);
             return roleListPath;
-        } catch (DAOException | RuntimeException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -122,13 +120,8 @@ public class RoleForm extends BaseForm {
      *            ID of the role to load
      */
     public void load(int id) {
-        try {
-            if (!Objects.equals(id, 0)) {
-                setRole(ServiceManager.getRoleService().getById(id));
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), id },
-                logger, e);
+        if (!Objects.equals(id, 0)) {
+            setRoleById(id);
         }
         setSaveDisabled(true);
     }
@@ -153,16 +146,16 @@ public class RoleForm extends BaseForm {
     }
 
     /**
-     * Set role by ID.
+     * Set role by id.
      *
-     * @param roleID
-     *            ID of role to set.
+     * @param id
+     *            of role to set
      */
-    public void setRoleById(int roleID) {
+    public void setRoleById(int id) {
         try {
-            setRole(ServiceManager.getRoleService().getById(roleID));
+            setRole(ServiceManager.getRoleService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), roleID },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.ROLE.getTranslationSingular(), id },
                 logger, e);
         }
     }

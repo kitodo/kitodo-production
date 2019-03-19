@@ -19,18 +19,15 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{RoleForm.load(id)}"/>
+        <f:viewAction action="#{AuthorityForm.load(id)}"/>
     </f:metadata>
 
-    <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{RoleForm.role.id ne null and SecurityAccessController.hasAuthorityToEditRole()}"/>
-    <!--@elvariable id="isCreateMode" type="boolean"-->
+              value="#{AuthorityForm.authority.id ne null and SecurityAccessController.hasAuthorityToEditAuthority()}"/>
     <ui:param name="isCreateMode"
-              value="#{RoleForm.role.id eq null and SecurityAccessController.hasAuthorityToAddRole()}"/>
-    <!--@elvariable id="isViewMode" type="boolean"-->
+              value="#{AuthorityForm.authority.id eq null and SecurityAccessController.hasAuthorityToAddAuthority()}"/>
     <ui:param name="isViewMode"
-              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewRole()}"/>
+              value="#{not isEditMode and not isCreateMode}"/>
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
@@ -38,26 +35,25 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.roleEdit} (#{RoleForm.role.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.createNewRole}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.roleView} (#{RoleForm.role.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.clientEdit}"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.clientNew}"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.clientView}"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
-                         widgetVar="save"
                          rendered="#{isEditMode || isCreateMode}"
+                         widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{RoleForm.save}"
+                         action="#{AuthorityForm.save}"
+                         update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
-                                        'summary':'#{msgs.roleSaving}',
-                                        'detail':'#{msgs.youWillBeRedirected}',
-                                        'severity':'info'});"
-
-                         update="notifications"
-                         disabled="#{RoleForm.saveDisabled}"/>
+                         disabled="#{AuthorityForm.saveDisabled}"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.authoritySaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{RoleForm.setSaveDisabled(false)}"
+                         actionListener="#{AuthorityForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel"
@@ -70,11 +66,10 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="roleTabView">
-            <p:tab id="roleTab" title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/roleEdit/details.xhtml">
-                    <ui:param name="isViewMode" value="#{isViewMode}" />
-                </ui:include>
+        <p:tabView id="authorityTabView">
+            <p:tab id="authorityTab" title="#{msgs.details}">
+                <ui:include src="/WEB-INF/templates/includes/authorityEdit/details.xhtml"/>
+                <ui:param name="isViewMode" value="#{isViewMode}" />
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -82,9 +77,9 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.users}" url="users.jsf"/>
-        <p:menuitem value="#{msgs.roleEdit}" rendered="#{isEditMode}"/>
-        <p:menuitem value="#{msgs.newRole}" rendered="#{isCreateMode}"/>
-        <p:menuitem value="#{msgs.roleView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.authorityEdit}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.authorityNew}" rendered="#{isCreateMode}"/>
+        <p:menuitem value="#{msgs.authorityView}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>
