@@ -28,7 +28,7 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.taskAdd}" rendered="#{empty TemplateForm.task.title}"/>
+            <h:outputText value="#{msgs.addTask}" rendered="#{empty TemplateForm.task.title}"/>
             <h:outputText value="#{msgs.taskDetails} (#{TemplateForm.task.title})"
                           rendered="#{not empty TemplateForm.task.title}"/>
         </h3>

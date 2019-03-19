@@ -50,12 +50,12 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewRuleset" outcome="rulesetEdit" title="#{msgs.rulesetView}"
+                <h:link id="viewRuleset" outcome="rulesetEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewRuleset() and not SecurityAccessController.hasAuthorityToEditRuleset()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
-                <h:link id="editRuleset" outcome="rulesetEdit" title="#{msgs.rulesetEdit}"
+                <h:link id="editRuleset" outcome="rulesetEdit" title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditRuleset()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>

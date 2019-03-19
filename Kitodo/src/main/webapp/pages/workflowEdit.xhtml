@@ -48,7 +48,7 @@
             <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
             <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.workflowView} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          action="#{WorkflowForm.saveAndRedirect}"
@@ -93,7 +93,7 @@
         <p:menuitem value="#{msgs.editWorkflow}" rendered="#{isEditMode}"/>
         <p:menuitem value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
         <p:menuitem value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
-        <p:menuitem value="#{msgs.workflowView}" rendered="#{isViewMode}"/>
+        <p:menuitem value="#{msgs.viewWorkflow}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>

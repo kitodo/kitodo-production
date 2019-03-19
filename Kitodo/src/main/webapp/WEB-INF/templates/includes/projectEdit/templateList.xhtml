@@ -36,7 +36,7 @@
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteTemplate"
                            action="#{ProjectForm.deleteTemplate}"
-                           title="#{msgs.templateDelete}"
+                           title="#{msgs.deleteTemplate}"
                            immediate="true"
                            oncomplete="toggleSave()"
                            update="@form">
@@ -48,7 +48,7 @@
 
     <p:commandButton onclick="PF('addTemplateDialog').show()"
                      id="addTemplateButton"
-                     value="#{msgs.templateAdd}"
+                     value="#{msgs.addTemplate}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      immediate="true"

@@ -48,14 +48,14 @@
                 <h:outputText value="#{ProcessForm.getPropertyValue(process, fn:replace(propertyName, 'process.', ''))}"/>
             </p:columns>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                <h:link id="viewProcess" outcome="processEdit" title="#{msgs.processView}"
+                <h:link id="viewProcess" outcome="processEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewProcess() and not SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-eye fa-lg"/>
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
 
-                <h:link id="editProcess" outcome="processEdit" title="#{msgs.processEdit}"
+                <h:link id="editProcess" outcome="processEdit" title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="referer" value="processes"/>

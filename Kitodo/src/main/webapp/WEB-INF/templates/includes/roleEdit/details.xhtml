@@ -45,7 +45,7 @@
 
                     <h:panelGroup>
                         <h3 style="margin-bottom: 20px">
-                            <h:outputText value="#{msgs.authoritiesGlobal}"/>
+                            <h:outputText value="#{msgs.globalAssignable}"/>
                         </h3>
                         <p:pickList id="authoritiesGlobalPick"
                                     showSourceFilter="true" showTargetFilter="true"
@@ -55,7 +55,7 @@
                                     value="#{RoleForm.globalAssignableAuthorities}"
                                     converter="#{authorityConverter}"
                                     var="authority"
-                                    itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
                                     itemValue="#{authority}"
                                     onTransfer="toggleSave()">
                             <f:facet name="sourceCaption">#{msgs.available}</f:facet>
@@ -66,7 +66,7 @@
                     <!--client authorities-->
                     <h:panelGroup>
                         <h3 style="margin-bottom: 20px">
-                            <h:outputText value="#{msgs.authoritiesClient}"/>
+                            <h:outputText value="#{msgs.clientAssignable}"/>
                         </h3>
                         <p:pickList id="authoritiesClientPick"
                                     value="#{RoleForm.clientAssignableAuthorities}"
@@ -77,7 +77,7 @@
                                     filterMatchMode="contains"
                                     responsive="true"
                                     onTransfer="toggleSave()"
-                                    itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
                                     itemValue="#{authority}">
                             <f:facet name="sourceCaption">#{msgs.available}</f:facet>
                             <f:facet name="targetCaption">#{msgs.assigned}</f:facet>

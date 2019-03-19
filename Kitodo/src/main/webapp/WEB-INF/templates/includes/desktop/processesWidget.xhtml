@@ -37,7 +37,7 @@
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">
-                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}"
+                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>

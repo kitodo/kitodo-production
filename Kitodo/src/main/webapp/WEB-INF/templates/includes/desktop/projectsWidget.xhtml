@@ -33,7 +33,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.hasAuthorityToEditProject()}"
-                        outcome="projectEdit" title="#{msgs.projectEdit}">
+                        outcome="projectEdit" title="#{msgs.edit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>

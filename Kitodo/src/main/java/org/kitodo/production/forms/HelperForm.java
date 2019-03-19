@@ -23,6 +23,7 @@ import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.enums.MetadataFormat;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.version.KitodoVersion;
 
 /**
@@ -90,5 +91,16 @@ public class HelperForm implements Serializable {
      */
     public boolean getUserStepDoneSearchEnabled() {
         return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH);
+    }
+
+    /**
+     * Get translated input.
+     *
+     * @param input
+     *            for translation
+     * @return translated input
+     */
+    public String getTranslated(String input) {
+        return Helper.getTranslation(input);
     }
 }

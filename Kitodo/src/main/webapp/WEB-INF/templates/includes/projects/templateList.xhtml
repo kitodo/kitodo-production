@@ -47,13 +47,13 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
-                    <h:link id="viewTemplate" outcome="templateEdit" title="#{msgs.templateView}"
+                    <h:link id="viewTemplate" outcome="templateEdit" title="#{msgs.view}"
                             rendered="#{SecurityAccessController.hasAuthorityToViewTemplate() and not SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <i class="fa fa-eye fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:link id="editTemplate" outcome="templateEdit" title="#{msgs.editTemplate}"
+                    <h:link id="editTemplate" outcome="templateEdit" title="#{msgs.edit}"
                             rendered="#{SecurityAccessController.hasAuthorityToEditTemplate()}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>

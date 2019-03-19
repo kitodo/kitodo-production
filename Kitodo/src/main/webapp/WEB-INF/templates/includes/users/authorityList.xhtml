@@ -25,20 +25,20 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.authority}">
-            <h:outputText value="#{item.titleWithoutSuffix}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
         </p:column>
         <p:column headerText="#{msgs.type}">
-            <h:outputText value="#{item.type}"/>
+            <h:outputText value="#{HelperForm.getTranslated(item.type)}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewAuthority" outcome="authorityEdit" title="#{msgs.authorityView}"
+                <h:link id="viewAuthority" outcome="authorityEdit" title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewAuthority() and not SecurityAccessController.hasAuthorityToEditAuthority()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
-                <h:link id="editAuthority" outcome="authorityEdit" title="#{msgs.authorityEdit}"
+                <h:link id="editAuthority" outcome="authorityEdit" title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditAuthority()}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
