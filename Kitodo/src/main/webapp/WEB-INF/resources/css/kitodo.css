@@ -1397,7 +1397,7 @@ Column content
 }
 
 #metadata\:metadataTable td {
-    padding: 5px;
+    padding: var(--default-full-size);
 }
 
 #metadata\:personTable .ui-button {
@@ -1426,8 +1426,21 @@ Column content
     line-height: var(--input-height);
 }
 
+#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
+    padding: 0;
+}
+
 #imagePreviewForm\:imageControlPanel button {
+    background-color: transparent;
     margin-right: 0;
+}
+
+#imagePreviewForm\:imageControlPanel button.active .fa {
+    color: var(--green);
+}
+
+#imagePreviewForm\:imageControlPanel button.inactive .fa {
+    color: var(--blue);
 }
 
 #map .ol-overlaycontainer-stopevent {

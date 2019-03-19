@@ -497,38 +497,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding: 8px 16px;
 }
 
-#metadata\:metadataTable td {
-    padding: 8px 10px;
-}
-
-#metadata\:personTable .ui-button {
-    margin: 10px 0;
-}
-
-#metadata .ui-datatable-even {
-    background: var(--pure-white);
-}
-
-#metadata .ui-datatable-odd {
-    background: var(--light-gray);
-}
-
-#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
-    padding: 0;
-}
-
-#imagePreviewForm\:imageControlPanel button {
-    background-color: transparent;
-}
-
-#imagePreviewForm\:imageControlPanel button.active .fa {
-    color: var(--green);
-}
-
-#imagePreviewForm\:imageControlPanel button.inactive .fa {
-    color: var(--blue);
-}
-
 .ui-panelgrid .ui-panelgrid-cell {
     border: 0px;
     padding: 8px;
