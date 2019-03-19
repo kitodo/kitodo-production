@@ -926,7 +926,7 @@ public class MetadataProcessor {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public void createPagination() throws IOException {
+    public void createPagination() {
         this.imageHelper.createPagination(this.process, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1169,16 +1169,13 @@ public class MetadataProcessor {
     }
 
     /**
-     * identifyImage.
+     * Identify image. If the images are not displayed, we do not need
+     * to recalculate the image, else we recalculate them.
      *
      * @param pageNumber
      *            int
      */
     public void identifyImage(int pageNumber) {
-        /*
-         * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild
-         * nicht neu umrechnen
-         */
         logger.trace("start identifyImage 1");
         if (!this.displayImage) {
             logger.trace("end identifyImage 1");
@@ -1189,16 +1186,11 @@ public class MetadataProcessor {
         logger.trace("dataList");
         List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
-        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION)
-                && (dataList == null || dataList.isEmpty())) {
-            try {
-                createPagination();
-                dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION) && dataList.isEmpty()) {
+            createPagination();
+            dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         }
-        if (dataList != null && !dataList.isEmpty()) {
+        if (!dataList.isEmpty()) {
             logger.trace("dataList not null");
             logger.trace("myBildLetztes");
             if (this.image == null) {
@@ -1207,9 +1199,6 @@ public class MetadataProcessor {
             if (this.currentTifFolder != null) {
                 logger.trace("currentTifFolder: {}", this.currentTifFolder);
                 dataList = this.imageHelper.getImageFiles(this.currentTifFolder);
-                if (dataList == null) {
-                    return;
-                }
             }
 
             if (dataList.size() >= pageNumber) {

@@ -34,8 +34,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
                 result = compareDocStructTypes(firstObject, secondObject);
                 break;
             case METADATA:
-                result = compareMetadata(firstObject, secondObject);
-                break;
+                throw new UnsupportedOperationException("Dead code pending removal");
             case METADATA_TYPE:
                 result = compareMetadataTypes(firstObject, secondObject);
                 break;
@@ -60,10 +59,6 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         String secondName = secondMetadata.getLanguage(language);
 
         return compareString(firstName, secondName);
-    }
-
-    private int compareMetadata(Object firstObject, Object secondObject) {
-        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     private int compareDocStructTypes(Object firstObject, Object secondObject) {
