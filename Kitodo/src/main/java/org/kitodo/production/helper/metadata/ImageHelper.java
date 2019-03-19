@@ -78,7 +78,7 @@ public class ImageHelper {
      * DocStructs are less add new pages to physicalDocStruct if images are less
      * delete pages from the end of pyhsicalDocStruct.
      */
-    public void createPagination(Process process, URI directory) throws IOException {
+    public void createPagination(Process process, URI directory) {
         LegacyDocStructHelperInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
         LegacyDocStructHelperInterface logicalStructure = this.mydocument.getLogicalDocStruct();
         List<LegacyDocStructHelperInterface> allChildren = logicalStructure.getAllChildren();
@@ -459,7 +459,7 @@ public class ImageHelper {
         return orderedFileNameList;
     }
 
-    private LegacyDocStructHelperInterface createPhysicalStructure(Process process) throws IOException {
+    private LegacyDocStructHelperInterface createPhysicalStructure(Process process) {
         LegacyLogicalDocStructTypeHelper dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
         LegacyDocStructHelperInterface physicalStructure = this.mydocument.createDocStruct(dst);
 

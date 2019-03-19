@@ -52,7 +52,6 @@ public class SRUImport implements ExternalDataImportInterface {
     private static final String HOST_CONFIG = "host";
     private static final String SCHEME_CONFIG = "scheme";
     private static final String PATH_CONFIG = "path";
-    private static final String ID_PARAMETER_TAG = "identifierParameter";
     private static final String PARAM_TAG = "param";
     private static final String SEARCHFIELD_TAG = "searchField";
 
