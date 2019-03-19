@@ -9,19 +9,22 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.process;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.kitodo.production.helper.AdditionalField;
 
 /**
  * Created for test switch statement.
  */
-public class ProzesskopieFormTest {
+public class TitleGeneratorTest {
 
     private static Map<String, Map<String, String>> testData;
 
@@ -74,9 +77,42 @@ public class ProzesskopieFormTest {
     public void shouldCreateAtstsl() {
         for (String givenHash : testData.keySet()) {
             for (Map.Entry<String, String> entry : testData.get(givenHash).entrySet()) {
-                String created = ProzesskopieForm.createAtstsl(entry.getValue(), entry.getKey());
+                String created = TitleGenerator.createAtstsl(entry.getValue(), entry.getKey());
                 assertEquals("Created hash doesn't match the precomputed one!", givenHash, created);
             }
         }
+    }
+
+    @Test
+    //TODO: add more test cases
+    public void shouldGenerateTitle() {
+        List<AdditionalField> additionalFields = createAdditionalFields();
+
+        TitleGenerator titleGenerator = new TitleGenerator("", additionalFields);
+        String created = titleGenerator.generateTitle("ATS+TSL+'_'+PPN digital a-Satz", null);
+        assertEquals("Created hash doesn't match the precomputed one!", "TestTest_123", created);
+    }
+
+    private List<AdditionalField> createAdditionalFields() {
+        List<AdditionalField> additionalFields = new ArrayList<>();
+        additionalFields.add(createAdditionalField("Artist", "", ""));
+        additionalFields.add(createAdditionalField("Schrifttyp", "", ""));
+        additionalFields.add(createAdditionalField("Titel", "Test", "TitleDocMain"));
+        additionalFields.add(createAdditionalField("Titel (Sortierung)", "Test", "TitleDocMainShort"));
+        additionalFields.add(createAdditionalField("Autoren", "Test Author", "ListOfCreators"));
+        additionalFields.add(createAdditionalField("ATS", "", "TSL_ATS"));
+        additionalFields.add(createAdditionalField("TSL", "", "TSL_ATS"));
+        additionalFields.add(createAdditionalField("PPN analog a-Satz", "123", "CatalogIDSource"));
+        additionalFields.add(createAdditionalField("PPN digital a-Satz", "123", "CatalogIDDigital"));
+        return additionalFields;
+    }
+
+    private AdditionalField createAdditionalField(String title, String value, String metadata) {
+        AdditionalField additionalField = new AdditionalField("monograph");
+        additionalField.setTitle(title);
+        additionalField.setValue(value);
+        additionalField.setMetadata(metadata);
+        additionalField.setIsdoctype("monograph");
+        return additionalField;
     }
 }

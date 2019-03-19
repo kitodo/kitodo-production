@@ -36,6 +36,7 @@ import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.CourseToGerman;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
+import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -191,7 +192,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     newProcess.setDigitalCollections(pattern.getDigitalCollections());
                     newProcess.setDocType(pattern.getDocType());
                     newProcess.setAdditionalFields(pattern.getAdditionalFields());
-                    currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
+
+                    TitleGenerator titleGenerator = new TitleGenerator(newProcess.getAtstsl(), newProcess.getAdditionalFields());
+                    currentTitle = titleGenerator.generateTitle(newProcess.getTitleDefinition(), issues.get(0).getGenericFields());
                     if (currentTitle.equals("")) {
                         setException(new ProcessCreationException(
                                 "Couldn’t create process title for issue " + issues.get(0).toString()));
