@@ -207,8 +207,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     if (isInterrupted()) {
                         return;
                     }
-                    String state = newProcess.createNewProcess();
-                    if (Objects.isNull(state) || !state.equals("NewProcess/Page3")) {
+                    boolean created = newProcess.createProcess();
+                    if (!created) {
                         throw new ProcessCreationException(Helper.getLastMessage().replaceFirst(":\\?*$", ""));
                     }
                     addToBatches(newProcess.getProzessKopie(), issues, currentTitle);

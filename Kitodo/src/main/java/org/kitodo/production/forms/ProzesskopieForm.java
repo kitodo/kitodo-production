@@ -95,6 +95,7 @@ public class ProzesskopieForm implements Serializable {
     private static final String BOUND_BOOK = "boundbook";
     private static final String FIRST_CHILD = "firstchild";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
+    private static final String STAY_ON_CURRENT_PAGE = null;
     private transient MetsService metsService = ServiceManager.getMetsService();
 
     private int activeTabId = 0;
@@ -282,19 +283,36 @@ public class ProzesskopieForm implements Serializable {
      * @return path to page with form
      */
     public String prepare(int templateId, int projectId) {
+        if (prepareProcess(templateId, projectId)) {
+            return processFromTemplatePath;
+        }
+        return STAY_ON_CURRENT_PAGE;
+    }
+
+    /**
+     * Prepare new process which will be created.
+     *
+     * @param templateId
+     *            id of template to query from database
+     * @param projectId
+     *            id of project to query from database
+     *
+     * @return true if process was prepared, otherwise false
+     */
+    public boolean prepareProcess(int templateId, int projectId) {
         atstsl = "";
         try {
             this.template = ServiceManager.getTemplateService().getById(templateId);
             this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(
-                "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
-            return null;
+                    "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
+            return false;
         }
 
         if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
-            return null;
+            return false;
         }
 
         clearValues();
@@ -312,8 +330,9 @@ public class ProzesskopieForm implements Serializable {
 
         initializePossibleDigitalCollections();
 
-        return processFromTemplatePath;
+        return true;
     }
+
 
     /**
      * Get Process templates.
@@ -672,8 +691,21 @@ public class ProzesskopieForm implements Serializable {
      * Create the process and save the meta-data.
      */
     public String createNewProcess() {
+        if (createProcess()) {
+            return processListPath;
+        }
+
+        return STAY_ON_CURRENT_PAGE;
+    }
+
+    /**
+     * Create process.
+     *
+     * @return true if process was created, otherwise false
+     */
+    public boolean createProcess() {
         if (!isContentValid(true)) {
-            return null;
+            return false;
         }
         addProperties();
         updateTasks(this.prozessKopie);
@@ -683,20 +715,11 @@ public class ProzesskopieForm implements Serializable {
             ServiceManager.getProcessService().save(this.prozessKopie);
         } catch (DataException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular()}, logger, e);
-            return null;
+            return false;
         }
 
-        try {
-            URI processBaseUri = ServiceManager.getFileService().createProcessLocation(prozessKopie);
-            prozessKopie.setProcessBaseUri(processBaseUri);
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            try {
-                ServiceManager.getProcessService().remove(prozessKopie);
-            } catch (Exception ex) {
-                logger.catching(ex);
-            }
-            return null;
+        if (!createProcessLocation()) {
+            return false;
         }
 
         processRdfConfiguration();
@@ -705,11 +728,26 @@ public class ProzesskopieForm implements Serializable {
             ServiceManager.getProcessService().save(this.prozessKopie);
         } catch (DataException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
-            return null;
+                    e);
+            return false;
         }
+        return true;
+    }
 
-        return processListPath;
+    private boolean createProcessLocation() {
+        try {
+            URI processBaseUri = ServiceManager.getFileService().createProcessLocation(this.prozessKopie);
+            this.prozessKopie.setProcessBaseUri(processBaseUri);
+            return true;
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            try {
+                ServiceManager.getProcessService().remove(this.prozessKopie);
+            } catch (DataException ex) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+            return false;
+        }
     }
 
     /**

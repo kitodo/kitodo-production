@@ -136,8 +136,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
                 setUserFields(newProcess, userFields);
             }
             newProcess.calculateProcessTitle();
-            String state = newProcess.createNewProcess();
-            if (!state.equals("NewProcess/Page3")) {
+            boolean created = newProcess.createProcess();
+            if (!created) {
                 throw new ProcessCreationException(
                         Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
             }
@@ -165,7 +165,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
         Template selectedTemplate = getTemplateByTitle(templateTitle);
         result.setTemplate(selectedTemplate);
         //TODO: how to get here id of correct project?
-        result.prepare(selectedTemplate.getId(), 0);
+        result.prepareProcess(selectedTemplate.getId(), 0);
         return result;
     }
 
