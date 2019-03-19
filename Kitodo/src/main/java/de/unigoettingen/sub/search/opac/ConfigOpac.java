@@ -98,8 +98,8 @@ public class ConfigOpac {
      *
      * @return all media types
      */
-    public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
-        ArrayList<ConfigOpacDoctype> myList = new ArrayList<>();
+    public static List<ConfigOpacDoctype> getAllDoctypes() {
+        List<ConfigOpacDoctype> myList = new ArrayList<>();
         try {
             for (String title : getAllDoctypeTitles()) {
                 myList.add(getDoctypeByName(title));
