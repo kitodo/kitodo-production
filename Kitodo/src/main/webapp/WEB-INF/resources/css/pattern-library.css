@@ -288,6 +288,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     font: normal normal normal x-large/1 FontAwesome;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin-right: var(--default-full-size);
     text-rendering: auto;
 }
 
