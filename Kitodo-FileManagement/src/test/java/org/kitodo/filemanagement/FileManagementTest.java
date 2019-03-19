@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collections;
@@ -32,7 +33,9 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
@@ -40,6 +43,9 @@ import org.kitodo.config.KitodoConfig;
 public class FileManagementTest {
 
     private static FileManagement fileManagement = new FileManagement();
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -174,12 +180,18 @@ public class FileManagementTest {
     }
 
     @Test
-    public void shouldDeleteFile() throws IOException {
-        URI resource = fileManagement.create(URI.create(""), "testDelete.txt", true);
-        assertTrue("File not created", fileManagement.fileExist(resource));
+    public void shouldDeleteFile() throws URISyntaxException, IOException {
+        URI fileForDeletion = fileManagement.create(URI.create(""), "testDelete.txt", true);
+        assertTrue("File not created", fileManagement.fileExist(fileForDeletion));
 
-        fileManagement.delete(resource);
-        Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
+        fileManagement.delete(fileForDeletion);
+        Assert.assertFalse("File not deleted", fileManagement.fileExist(fileForDeletion));
+        assertTrue("File should not be deleted", fileManagement.fileExist(URI.create("fileTest")));
+
+        exception.expect(IOException.class);
+        exception.expectMessage("Attempt to delete subdirectory with URI that is empty or null!");
+        fileManagement.delete(new URI(""));
+
     }
 
     @Test
