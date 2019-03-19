@@ -11,11 +11,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<!-- For example, perhaps the simplest variant of a rule set might look like this.
-     It has only the declaration section. With this rule set only books
-     can be cataloged. For each book author, year, title, publisher and place
-     of publication can be recorded. Otherwise there are no further
-     requirements. -->
+<!-- An example how the perhaps simplest variant of a rule set might look like.
+     It has only the declaration section. With this rule set, only books
+     can be described. For each book author, year, title, publisher and place
+     of publication can be recorded.
+-->
 <ruleset xmlns="http://names.kitodo.org/ruleset/v2"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ruleset.xsd">

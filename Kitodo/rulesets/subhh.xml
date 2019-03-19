@@ -480,6 +480,7 @@
  
         <!-- persons as meta-data group -->
         <key id="Person">
+            <label>Person</label>
             <key id="Role">
                 <label>role</label>
                 <label lang="de">Rolle</label>
