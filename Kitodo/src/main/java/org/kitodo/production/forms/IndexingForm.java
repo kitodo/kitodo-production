@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
@@ -51,6 +52,7 @@ import org.kitodo.production.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
 import org.omnifaces.util.Ajax;
+import org.primefaces.PrimeFaces;
 
 @Named
 @ApplicationScoped
@@ -84,6 +86,8 @@ public class IndexingForm {
     private ObjectType currentIndexState = ObjectType.NONE;
 
     private boolean indexingAll = false;
+
+    private Boolean indexCorrupted;
 
     private enum IndexStates {
         NO_STATE,
@@ -189,6 +193,26 @@ public class IndexingForm {
             totalCount += countDatabaseObjects.get(objectType);
         }
         return totalCount;
+    }
+
+    /**
+     * Check index integrity and display warning if objects in index do not correspond to objects in database.
+     */
+    public void checkIndexIntegrity() throws IOException {
+        if (Objects.isNull(indexCorrupted)) {
+            updateCounts();
+            indexCorrupted = getTotalCount() != getAllIndexed();
+        }
+
+        if (indexCorrupted) {
+            if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
+                // redirect admins to system page
+                FacesContext.getCurrentInstance().getExternalContext().redirect("system.jsf");
+            } else {
+                // show dialog with logout button to other users
+                PrimeFaces.current().executeScript("PF('logoutDialog').show();");
+            }
+        }
     }
 
     /**
@@ -602,13 +626,19 @@ public class IndexingForm {
     }
 
     /**
-     * Update the view.
+     * Update counts of index and database objects.
      */
-    public void updateView() {
+    private void updateCounts() {
         for (ObjectType objectType : objectTypes) {
             updateCount(objectType);
         }
         countDatabaseObjects();
+    }
+    /**
+     * Update the view.
+     */
+    public void updateView() {
+        updateCounts();
         Ajax.update("@all");
     }
 

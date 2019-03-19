@@ -1,0 +1,47 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="logoutDialog"
+              widgetVar="logoutDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
+            <h3>System maintenance</h3>
+            <div class="select-note">The system is currently under maintenance. Please try again later!</div>
+        </ui:fragment>
+        <ui:fragment rendered="#{not indexingForm.indexingInProgress()}">
+            <h3>System error</h3>
+            <div class="select-note">Index is out of whack. Please inform an administrator!</div>
+        </ui:fragment>
+
+        <p:panelGrid>
+            <p:row>
+                <p:button href="${request.contextPath}/logout"
+                          id="logoutButton"
+                          type="button"
+                          value="#{msgs.logout}"
+                          styleClass="primary"
+                          icon="fa fa-close"
+                          iconPos="right"/>
+            </p:row>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>
