@@ -146,20 +146,13 @@ body.first-visit #portal-header {
     white-space: nowrap;
     }
 
-#portal-search form:hover {
-    background: linear-gradient(var(--focused-blue), #043759);
-    background: -moz-linear-gradient(var(--focused-blue), #043759);
-    background: -webkit-linear-gradient(var(--focused-blue), #043759);
-    background: -ms-linear-gradient(var(--focused-blue), #043759);
-    background: -o-linear-gradient(var(--focused-blue), #043759);
-    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    }
-
 #search-form\:search-field {
     display: none;
     }
+
+#search-form\:search-field::placeholder {
+    color: var(--pure-white);
+}
 
 #search-form\:search-field-short {
     display: table-cell;
@@ -192,11 +185,6 @@ body.first-visit #portal-header {
     }
 
 #portal-search button:hover {
-    background: linear-gradient(var(--green), var(--focused-blue));
-    background: -moz-linear-gradient(var(--green), var(--focused-blue));
-    background: -webkit-linear-gradient(var(--green), var(--focused-blue));
-    background: -ms-linear-gradient(var(--green), var(--focused-blue));
-    background: -o-linear-gradient(var(--green), var(--focused-blue));
     border-radius: 3px;
     }
 
