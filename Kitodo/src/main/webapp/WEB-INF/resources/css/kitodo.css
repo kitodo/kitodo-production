@@ -23,18 +23,18 @@ body {
     line-height: 18px;
     background: url("#{resource['/images/background-top.svg']}") no-repeat var(--light-gray) center top fixed;
     background-size: auto 300px;
-    }
+}
 
 body.first-visit {
     animation-duration: 1s;
     animation-name: slidein;
-    }
+}
 
 p, form, img, legend, ul, ol, li, h1, h2, h3, h4, h5, h6, dl, dt, dd {
     margin: 0;
     border: 0 none;
     padding: 0;
-    }
+}
 
 input, textarea, button, select {
     margin: 0;
@@ -43,38 +43,38 @@ input, textarea, button, select {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    }
+}
 
 textarea {
     overflow: auto;
-    }
+}
 
 mark {
     background-color: var(--orange);
     color: var(--carbon-blue);
-    }
+}
 
 sub, sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
-    }
+}
 
 sub {
     bottom: -0.25em;
-    }
+}
 
 sup {
     top: -0.5em;
-    }
+}
 
 .wrapper {
     margin: 0 auto;
     max-width: -webkit-calc(100% - 32px);
     max-width: -moz-calc(100% - 32px);
     max-width: calc(100% - 32px);
-    }
+}
 
 .clear:after {
     content: ".";
@@ -82,18 +82,18 @@ sup {
     display: block;
     visibility: hidden;
     height: 0;
-    }
+}
 
 @keyframes slidein {
     from {background-position: center -600px;}
     to {background-position: center top;}
-    }
+}
 
 @keyframes fadein {
     0% {opacity: 0;}
     50% {opacity: 0;}
     100% {opacity: 1;}
-    }
+}
 
 
 /*----------------------------------------------------------------------
@@ -103,31 +103,31 @@ Header
 header {
     z-index: 3;
     position: relative;
-    }
+}
 
 body.first-visit #portal-header {
     animation-duration: 2s;
     animation-name: fadein;
-    }
+}
 
 #portal-header .wrapper {
     display: block;
     width: 100%;
-    }
+}
 
 #portal-header section {
     display: inline-block;
     vertical-align: top;
-    }
+}
 
 #kitodo-logo {
     display: none;
-    }
+}
 
 #kitodo-icon {
     display: inline-block;
     margin: 15px 0;
-    }
+}
 
 #portal-header section.login-screen {
     width: 100% !important;
@@ -165,7 +165,8 @@ body.first-visit #portal-header {
     display: table-cell;
     }
 
-#search-form\:search-field, #search-form\:search-field-short {
+#search-form\:search-field,
+#search-form\:search-field-short {
     width: -webkit-calc(100% - 50px);
     width: -moz-calc(100% - 50px);
     width: calc(100% - 50px);
@@ -258,12 +259,12 @@ body.first-visit #portal-header {
     -webkit-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5);
     -moz-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5);
     box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5);
-    }
+}
 
 #header-nav li ul li {
     background-color: var(--light-gray);
     display: block;
-    }
+}
 
 #header-nav li ul li a,
 #header-nav li ul li div {
@@ -281,7 +282,7 @@ body.first-visit #portal-header {
     background-color: var(--carbon-blue) !important;
     color: #fff;
     border-color: var(--carbon-blue) !important;
-    }
+}
 
 .menu-active {
     max-height: 800px !important;
@@ -300,24 +301,24 @@ body.first-visit #portal-header {
     line-height: 22px;
     border-radius: 11px;
     color: var(--pure-white) !important;
-    }
+}
 
 #header-nav .bc-alert {
     background-color: var(--orange);
-    }
+}
 
 #header-nav .bc-info {
     background-color: var(--green);
-    }
+}
 
 #header-nav h3 {
     font-size: 16px;
     padding: 15px;
-    }
+}
 
 #header-nav h3 i {
     font-weight: 400;
-    }
+}
 
 #header-nav #nav-user h3 {
     padding: 32px 0 10px 0;
@@ -387,25 +388,25 @@ body.first-visit #portal-header {
     vertical-align: top;
     text-overflow: ellipsis;
     overflow: hidden;
-    }
+}
 
 #header-nav .nav-item-col:first-child {
     font-weight: 600;
     width: 55%;
-    }
+}
 
 #header-nav .nav-item-col:nth-child(3) {
     text-align: right;
     width: 20px;
-    }
+}
 
 #header-nav .nav-item-col .nc-info {
     color: var(--green);
-    }
+}
 
 #header-nav .nav-item-col .nc-alert {
     color: var(--orange);
-    }
+}
 
 #dashboard-menu + ul {
     background: var(--light-gray);
@@ -579,12 +580,12 @@ main {
     margin-bottom: 100px;
     padding: 0;
     overflow-y: hidden;
-    }
+}
 
 body.first-visit main {
     animation-duration: 3s;
     animation-name: fadein;
-    }
+}
 
 section#content-section {
     background: var(--pure-white);
@@ -646,7 +647,8 @@ section#content-section {
     background: var(--cloudy-gray);
 }
 
-#listWrapper, section#content-section {
+#listWrapper,
+section#content-section {
     margin: auto 16px;
     border-radius: 3px;
     padding: 0;
@@ -685,7 +687,8 @@ section#content-section {
     padding: .7em;
 }
 
-.input, .input.ui-inputnumber>input {
+.input,
+.input.ui-inputnumber > input {
     width:100%;
 }
 
@@ -1239,7 +1242,8 @@ form#metadata div label,
     transform-origin: 0 100%;
 }
 
-.collapsibleWrapper > .ui-panel, .collapsibleWrapper > .ui-panel > .ui-panel-content {
+.collapsibleWrapper > .ui-panel,
+.collapsibleWrapper > .ui-panel > .ui-panel-content {
     background: transparent;
     padding: 0;
     height: 100%;
@@ -1544,12 +1548,14 @@ Column content
     display: inline-block;
 }
 
-#imagePreviewForm\:scroll-up, #imagePreviewForm\:scroll-down {
+#imagePreviewForm\:scroll-up,
+#imagePreviewForm\:scroll-down {
     display: block;
     margin: 16px auto;
 }
 
-#imagePreviewForm\:scroll-up *, #imagePreviewForm\:scroll-down * {
+#imagePreviewForm\:scroll-up *,
+#imagePreviewForm\:scroll-down * {
     pointer-events: none;
 }
 
@@ -1648,23 +1654,23 @@ footer {
     display: block;
     text-align: center;
     font-size: 0.8rem;
-    }
+}
 
 #footer-content p {
     color: var(--orange);
-    }
+}
 
 #footer-content p span {
     color: var(--medium-gray);
-    }
+}
 
 #footer-meta-menu {
     list-style-type: none;
-    }
+}
 
 #footer-meta-menu li {
     display: inline;
-    }
+}
 
 #footer-meta-menu li a,
 #footer-meta-menu li input {
@@ -1675,12 +1681,12 @@ footer {
     border-radius: 3px;
     display: inline-block;
     margin-bottom: 5px;
-    }
+}
 
 #footer-meta-menu li a:hover,
 #footer-meta-menu li input:hover{
     background: var(--focused-blue);
-    }
+}
 
 /* Primefaces theme */
 
@@ -1834,7 +1840,8 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
     color: var(--orange);
 }
 
-.checkbox-checked, .checkbox-unchecked {
+.checkbox-checked,
+.checkbox-unchecked {
     cursor: default;
 }
 
@@ -1877,11 +1884,11 @@ min 700px
 
     #portal-header {
         margin-top: var(--default-full-size);
-        }
+    }
 
     #portal-header .wrapper {
         display: table;
-        }
+    }
 
     #search-form\:search-field {
         display: table-cell;
@@ -1899,7 +1906,7 @@ min 700px
         top: auto;
         right: auto;
         float: right;
-        }
+    }
 
     #portal-header section.login-screen {
         text-align: center !important;
@@ -1920,32 +1927,32 @@ min 700px
 
     #kitodo-icon {
         display: none;
-        }
+    }
 
     #breadcrumb {
         width: 50%;
-        }
+    }
 
     #header-nav li ul {
         position: absolute;
         width: 500px;
-        right: 0%;
+        right: 0;
         top: 30px;
-        }
+    }
 
     #header-nav h3 {
         font-size: 22px;
         padding: 30px;
-        }
+    }
 
     #header-nav li ul li.nav-pic-text a,
     #header-nav li ul li.nav-pic-text:last-child a {
         font-size: 16px;
-        }
+    }
 
     #footer-content {
         text-align: right;
-        }
+    }
 }
 
 
@@ -1958,7 +1965,7 @@ min 1200px
 
     body {
         background-size: 100% auto;
-        }
+    }
 }
 
 
@@ -1971,12 +1978,12 @@ min 1900px
 
     #breadcrumb {
         max-width: 1900px;
-        }
+    }
 
     #footer-content {
         background-size: 50% auto;
         background-position: left bottom;
-        }
+    }
 }
 
 
@@ -1990,37 +1997,37 @@ Print Styles
         box-shadow: none !important;
         text-shadow: none !important;
         background: transparent !important;
-        }
+    }
 
     /* Show link destinations in brackets after the link text */
     a[href]:after {
         content: " (" attr(href) ") ";
-        }
+    }
 
     a[href] {
         font-weight: bold;
         text-decoration: underline;
         color: #000;
         border: none;
-        }
+    }
 
     /* Don't show link destinations for JavaScript or internal links */
     a[href^="javascript:"]:after,
     a[href^="#"]:after {
         content:"";
-        }
+    }
 
     /* Show abbr title value in brackets after the text */
     abbr[title]:after {
         content: " (" attr(title) ")";
-        }
+    }
 
     figure {
         margin-bottom: 1em;
         overflow: hidden;
-        }
+    }
 
     figure img {
         border: 1px solid #000;
-        }
+    }
 }

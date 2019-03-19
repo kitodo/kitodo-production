@@ -372,7 +372,9 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     color: var(--pure-white);
 }
 
-.ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-widget-header .ui-inputfield.ui-state-focus {
+.ui-inputfield.ui-state-focus,
+.ui-widget-content .ui-inputfield.ui-state-focus,
+.ui-widget-header .ui-inputfield.ui-state-focus {
     box-shadow: 0 0 0 transparent;
 }
 
@@ -584,6 +586,7 @@ tr.ui-widget-content,
     font-family: FontAwesome;
     font-size: 14px;
 }
+
 .ui-paginator > span > span, .ui-paginator a span {
     display: none;
 }
