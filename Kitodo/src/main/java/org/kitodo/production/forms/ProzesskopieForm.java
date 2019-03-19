@@ -1637,17 +1637,6 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getPageSize() retrieves the desired number of hits on one page
-     * of the hit list from the configuration.
-     *
-     * @return desired number of hits on one page of the hit list from the
-     *         configuration
-     */
-    private int getPageSize() {
-        return ConfigCore.getIntParameterOrDefaultValue(ParameterCore.HITLIST_PAGE_SIZE);
-    }
-
-    /**
      * The function isCalendarButtonShowing tells whether the calendar button
      * shall show up or not as read-only property "calendarButtonShowing".
      *
