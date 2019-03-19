@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1541,30 +1542,24 @@ public class ProzesskopieForm implements Serializable {
         return newTitle.toString();
     }
 
-    private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
-        String rueckgabe = inFeldWert;
+    private String calculateProcessTitleCheck(String fieldName, String fieldValue) {
+        String result = fieldValue;
 
-        // Bandnummer
-        if (inFeldName.equals("Bandnummer") || inFeldName.equals("Volume number")) {
+        if (fieldName.equals("Bandnummer") || fieldName.equals("Volume number")) {
             try {
-                int bandint = Integer.parseInt(inFeldWert);
-                java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-                rueckgabe = df.format(bandint);
+                int bandInt = Integer.parseInt(fieldValue);
+                DecimalFormat df = new DecimalFormat("#0000");
+                result = df.format(bandInt);
             } catch (NumberFormatException e) {
-                if (inFeldName.equals("Bandnummer")) {
-                    Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + "Bandnummer ist keine gültige Zahl",
+                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"),
                         logger, e);
-                } else {
-                    Helper.setErrorMessage(
-                        Helper.getTranslation(INCOMPLETE_DATA) + "Volume number is not a valid number", logger, e);
-                }
             }
-            if (Objects.nonNull(rueckgabe) && rueckgabe.length() < 4) {
-                rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
+            if (Objects.nonNull(result) && result.length() < 4) {
+                result = "0000".substring(result.length()) + result;
             }
         }
 
-        return rueckgabe;
+        return result;
     }
 
     /**
