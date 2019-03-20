@@ -41,6 +41,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 
 public class CopyProcess extends ProzesskopieForm {
@@ -234,17 +235,15 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Test title.
+     * Test title correction.
      *
-     * @return boolean
+     * @return true if title is correct, false otherwise
      */
     public boolean testTitle() {
-        boolean valid = true;
-
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.MASS_IMPORT_UNIQUE_TITLE)) {
-            valid = isProcessTitleCorrect(this.prozessKopie);
+            return ProcessValidator.isProcessTitleCorrect(this.prozessKopie.getTitle());
         }
-        return valid;
+        return true;
     }
 
     /**
@@ -486,7 +485,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addPropertyForTemplate(Process template, Property property) {
-        if (!verifyProperty(template.getTemplates(), property)) {
+        if (ProcessValidator.existsProperty(template.getTemplates(), property)) {
             return;
         }
 
@@ -497,7 +496,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addPropertyForProcess(Process process, Property property) {
-        if (!verifyProperty(process.getProperties(), property)) {
+        if (ProcessValidator.existsProperty(process.getProperties(), property)) {
             return;
         }
 
@@ -508,7 +507,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addPropertyForWorkpiece(Process workpiece, Property property) {
-        if (!verifyProperty(workpiece.getWorkpieces(), property)) {
+        if (ProcessValidator.existsProperty(workpiece.getWorkpieces(), property)) {
             return;
         }
 
@@ -516,16 +515,6 @@ public class CopyProcess extends ProzesskopieForm {
         workpieceProperty.getWorkpieces().add(workpiece);
         List<Property> properties = workpiece.getWorkpieces();
         properties.add(workpieceProperty);
-    }
-
-    private boolean verifyProperty(List<Property> properties, Property property) {
-        for (Property tempProperty : properties) {
-            if (tempProperty.getTitle().equals(property.getTitle())) {
-                tempProperty.setValue(property.getValue());
-                return false;
-            }
-        }
-        return true;
     }
 
     private Property insertDataToProperty(Property property) {
