@@ -485,6 +485,14 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background-color: var(--light-gray);
 }
 
+.ui-inputfield.ui-state-disabled,
+.ui-inputfield.ui-state-disabled::placeholder,
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label,
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger {
+    color: var(--medium-gray);
+    border-color: var(--medium-gray);
+}
+
 .ui-tree {
     width: 100%;
 }
