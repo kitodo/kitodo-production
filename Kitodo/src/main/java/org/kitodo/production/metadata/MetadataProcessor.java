@@ -518,8 +518,6 @@ public class MetadataProcessor {
             ServiceManager.getProcessService().save(this.process);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);
-        } catch (IOException e) {
-            Helper.setErrorMessage("error while counting current images", logger, e);
         }
     }
 
