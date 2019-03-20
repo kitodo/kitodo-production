@@ -24,7 +24,7 @@
             <p:selectOneMenu id="catalogueSelectMenu"
                              required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
                              immediate="true"
-                             value="#{CreateProcessForm.importTab.selectedCatalog}">
+                             value="#{CreateProcessForm.importTab.hitModel.selectedCatalog}">
                 <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                 <f:selectItems value="#{CreateProcessForm.importTab.catalogs}" var="step" itemLabel="#{step}"
                                itemValue="#{step}"/>
@@ -37,11 +37,11 @@
                       id="catalogSearchField">
             <p:outputLabel for="fieldSelectMenu"
                            value="#{msgs.field}"
-                           rendered="#{CreateProcessForm.importTab.selectedCatalog ne null}"/>
+                           rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"/>
             <p:selectOneMenu id="fieldSelectMenu"
-                             rendered="#{CreateProcessForm.importTab.selectedCatalog ne null}"
+                             rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
                              required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
-                             value="#{CreateProcessForm.importTab.selectedField}">
+                             value="#{CreateProcessForm.importTab.hitModel.selectedField}">
                 <f:selectItem itemValue="#{null}"
                               itemLabel="-- #{msgs.selectSearchField} --"
                               noSelectionOption="true"/>
@@ -51,19 +51,19 @@
         <h:panelGroup layout="block"
                       id="catalogSearchTerm">
             <p:outputLabel for="searchTerm"
-                           rendered="#{CreateProcessForm.importTab.selectedCatalog ne null}"
+                           rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
                            value="#{msgs.value}"/>
             <p:inputText id="searchTerm"
                          onkeypress="if (event.keyCode === 13) { document.getElementById('editForm:processFromTemplateTabView:performCatalogSearch').click(); return false; }"
-                         rendered="#{CreateProcessForm.importTab.selectedCatalog ne null}"
-                         value="#{CreateProcessForm.importTab.searchTerm}"
+                         rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
+                         value="#{CreateProcessForm.importTab.hitModel.searchTerm}"
                          class="input"
                          required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"/>
         </h:panelGroup>
         <h:panelGroup layout="block"
                       id="catalogSearchButton">
             <p:commandButton id="performCatalogSearch"
-                             rendered="#{CreateProcessForm.importTab.selectedCatalog ne null}"
+                             rendered="#{CreateProcessForm.importTab.hitModel.selectedCatalog ne null}"
                              action="#{CreateProcessForm.importTab.search}"
                              value="#{msgs.searchOPAC}"
                              title="#{msgs.searchOPAC}"

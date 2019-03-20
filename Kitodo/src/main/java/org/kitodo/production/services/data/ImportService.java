@@ -69,6 +69,15 @@ public class ImportService {
         return localReference;
     }
 
+    private void loadOpacConfiguration(String catalogName) {
+        try {
+            OPACConfig.getOPACConfiguration(catalogName);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getLocalizedMessage());
+            throw new IllegalArgumentException("Error: OPAC '" + catalogName + "' is not supported!");
+        }
+    }
+
     /**
      * Load ExternalDataImportInterface implementation with KitodoServiceLoader and perform given query string
      * with loaded module.
@@ -80,13 +89,25 @@ public class ImportService {
      */
     public SearchResult performSearch(String searchField, String searchTerm, String catalogName) {
         importModule = initializeImportModule();
-        try {
-            OPACConfig.getOPACConfiguration(catalogName);
-        } catch (IllegalArgumentException e) {
-            logger.error(e.getLocalizedMessage());
-            throw new IllegalArgumentException("Error: OPAC '" + catalogName + "' is not supported!");
-        }
+        loadOpacConfiguration(catalogName);
         return importModule.search(catalogName, searchField, searchTerm, 10);
+    }
+
+    /**
+     * Load ExternalDataImportInterface implementation with KitodoServiceLoader and perform given query string
+     * with loaded module.
+     *
+     * @param searchField field to query
+     * @param searchTerm  given search term
+     * @param catalogName catalog to search
+     * @param start index of first record returned
+     * @param rows number of records returned
+     * @return search result
+     */
+    public SearchResult performSearch(String searchField, String searchTerm, String catalogName, int start, int rows) {
+        importModule = initializeImportModule();
+        loadOpacConfiguration(catalogName);
+        return importModule.search(catalogName, searchField, searchTerm, start, rows);
     }
 
     private ExternalDataImportInterface initializeImportModule() {

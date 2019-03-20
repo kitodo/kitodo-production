@@ -31,8 +31,10 @@
                          rows="#{LoginForm.loggedUser.tableSize}"
                          paginatorPosition="bottom"
                          paginator="true"
+                         lazy="true"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                          currentPageReportTemplate="#{msgs.currentPageReportTemplate}">
+                <p:ajax event="page" listener="#{CreateProcessForm.importTab.printPageNumber()}"/>
                 <p:column headerText="#{msgs.hits}">
                     <p:commandLink id="selectRecord"
                                    value="#{hit.title}"
