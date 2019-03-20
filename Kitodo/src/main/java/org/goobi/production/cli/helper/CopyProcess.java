@@ -78,7 +78,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
+        ProcessGenerator.copyTasks(this.template, this.prozessKopie);
 
         return this.naviFirstPage;
     }

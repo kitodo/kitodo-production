@@ -11,14 +11,10 @@
 
 package org.kitodo.production.helper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 
 public class BeanHelper {
 
@@ -84,46 +80,5 @@ public class BeanHelper {
         property.getWorkpieces().add(workpiece);
         List<Property> properties = workpiece.getWorkpieces();
         properties.add(property);
-    }
-
-    /**
-     * Copy tasks from process' template to process.
-     *
-     * @param processTemplate
-     *            template object
-     * @param processCopy
-     *            new object
-     */
-    public static void copyTasks(Template processTemplate, Process processCopy) {
-        List<Task> tasks = new ArrayList<>();
-
-        for (Task templateTask : processTemplate.getTasks()) {
-            Task task = new Task(templateTask);
-            task.setProcess(processCopy);
-            tasks.add(task);
-        }
-
-        tasks.sort(Comparator.comparing(Task::getOrdering).thenComparing(Task::getTitle));
-        processCopy.setTasks(tasks);
-    }
-
-    /**
-     * Determine workpiece property.
-     *
-     * @param process
-     *            process object
-     * @param inputProperty
-     *            input property
-     * @return property String
-     */
-    public static String determineWorkpieceProperty(Process process, String inputProperty) {
-        String propertyString = "";
-        for (Property workpieceProperty : process.getWorkpieces()) {
-            if (workpieceProperty.getTitle().equals(inputProperty)) {
-                propertyString = workpieceProperty.getValue();
-            }
-
-        }
-        return propertyString;
     }
 }

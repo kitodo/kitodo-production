@@ -11,13 +11,17 @@
 
 package org.kitodo.production.process;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -88,8 +92,29 @@ public class ProcessGenerator {
         this.generatedProcess.setRuleset(this.template.getRuleset());
         this.generatedProcess.setDocket(this.template.getDocket());
 
-        BeanHelper.copyTasks(this.template, this.generatedProcess);
+        ProcessGenerator.copyTasks(this.template, this.generatedProcess);
 
         return true;
+    }
+
+    /**
+     * Copy tasks from process' template to process.
+     *
+     * @param processTemplate
+     *            template object
+     * @param processCopy
+     *            new object
+     */
+    public static void copyTasks(Template processTemplate, Process processCopy) {
+        List<Task> tasks = new ArrayList<>();
+
+        for (Task templateTask : processTemplate.getTasks()) {
+            Task task = new Task(templateTask);
+            task.setProcess(processCopy);
+            tasks.add(task);
+        }
+
+        tasks.sort(Comparator.comparing(Task::getOrdering).thenComparing(Task::getTitle));
+        processCopy.setTasks(tasks);
     }
 }
