@@ -609,25 +609,23 @@ tr.ui-widget-content,
     content: '\f050';
 }
 
-.ui-widget-header .ui-state-default,
-.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    background: var(--pure-white);
-    color: var(--carbon-blue);
-}
-
 .ui-paginator {
     padding: 6px 0 !important;
 }
 
 .ui-paginator .ui-state-default {
-    color: var(--carbon-blue);
-    background: var(--pure-white);
+    color: var(--blue);
+    background: transparent;
     min-width: 20px;
 }
 
-.ui-paginator .ui-state-active {
-    background: var(--blue);
-    color: var(--pure-white);
+.ui-paginator .ui-state-disabled {
+    opacity: initial;
+    color: var(--medium-gray);
+}
+
+.ui-paginator .ui-paginator-current {
+    color: var(--carbon-blue);
 }
 
 @keyframes row-expansion-animation {
