@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.helper.AdditionalField;
@@ -156,8 +157,7 @@ public class TitleGenerator {
              * if it is the ATS or TSL field, then use the calculated atstsl if it does not
              * already exist
              */
-            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype
-                    && (Objects.isNull(value) || value.isEmpty())) {
+            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
                 if (this.atstsl.isEmpty()) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
                 }
