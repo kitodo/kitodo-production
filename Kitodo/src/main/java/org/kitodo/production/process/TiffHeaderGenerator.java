@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.helper.AdditionalField;
@@ -85,15 +86,14 @@ public class TiffHeaderGenerator extends Generator {
             String value = additionalField.getValue();
             boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
 
-            if ("Titel".equals(title) || "Title".equals(title) && Objects.nonNull(value) && !value.isEmpty()) {
+            if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
                 this.tiffHeader = value;
             }
             /*
              * if it is the ATS or TSL field, then use the calculated atstsl if it does not
              * already exist
              */
-            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype
-                    && (Objects.isNull(value) || value.isEmpty())) {
+            if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
                 additionalField.setValue(this.atstsl);
             }
 
