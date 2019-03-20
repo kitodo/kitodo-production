@@ -1258,9 +1258,11 @@ public class MockDatabase {
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
+        Client client = ServiceManager.getClientService().getById(1);
+
         Workflow workflow = new Workflow("gateway-test1");
         workflow.setStatus(WorkflowStatus.ACTIVE);
-        workflow.setClient(ServiceManager.getClientService().getById(1));
+        workflow.setClient(client);
         ServiceManager.getWorkflowService().save(workflow);
 
         Project project = ServiceManager.getProjectService().getById(1);
@@ -1270,6 +1272,7 @@ public class MockDatabase {
         Template template = new Template();
         template.setTitle("Parallel Template");
         converter.convertWorkflowToTemplate(template);
+        template.setClient(client);
         template.setDocket(ServiceManager.getDocketService().getById(1));
         template.setRuleset(ServiceManager.getRulesetService().getById(1));
         template.setWorkflow(workflow);
