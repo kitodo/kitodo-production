@@ -70,13 +70,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
-        try {
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
-            this.myRdf.read(this.metadataFile.getPath());
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        readPreferences();
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setProject(this.project);
@@ -100,13 +94,7 @@ public class CopyProcess extends ProzesskopieForm {
             this.template = processGenerator.getTemplate();
 
             clearValues();
-            LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            try {
-                this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
-                this.myRdf.read(this.metadataFile.getPath());
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
+            readPreferences();
             this.digitalCollections = new ArrayList<>();
             initializePossibleDigitalCollections();
 
@@ -133,6 +121,16 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromConfig();
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
+        }
+    }
+
+    private void readPreferences() {
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        try {
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
+            this.myRdf.read(this.metadataFile.getPath());
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
