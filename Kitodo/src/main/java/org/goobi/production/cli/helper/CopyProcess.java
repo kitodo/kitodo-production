@@ -95,16 +95,14 @@ public class CopyProcess extends ProzesskopieForm {
             this.template = ServiceManager.getTemplateService().getById(templateId);
             this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage(
+                    "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return null;
         }
+
         if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            for (Task s : this.template.getTasks()) {
-                if (ServiceManager.getTaskService().getRolesSize(s) == 0) {
-                    Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
-                }
-            }
-            return "";
+            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+            return null;
         }
 
         clearValues();
