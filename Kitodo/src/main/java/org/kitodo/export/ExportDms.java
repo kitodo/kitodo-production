@@ -225,10 +225,8 @@ public class ExportDms extends ExportMets {
     private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
         try {
             String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
-            if (Objects.nonNull(rules)) {
-                if (!executeDataCopierProcess(gdzfile, process, rules)) {
-                    return false;
-                }
+            if (Objects.nonNull(rules) && !executeDataCopierProcess(gdzfile, process, rules)) {
+                return false;
             }
         } catch (NoSuchElementException e) {
             logger.catching(Level.TRACE, e);
