@@ -409,7 +409,7 @@ public class BatchTaskHelper extends BatchHelper {
         return "";
     }
 
-    private boolean isTaskValid(Task task) throws IOException {
+    private boolean isTaskValid(Task task) {
         boolean valid = true;
 
         if (task.isTypeCloseVerify()) {
@@ -437,7 +437,7 @@ public class BatchTaskHelper extends BatchHelper {
         return false;
     }
 
-    private boolean invalidImageExists(Task task) throws IOException {
+    private boolean invalidImageExists(Task task) {
         if (task.isTypeImagesWrite()) {
             ImageHelper mih = new ImageHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),

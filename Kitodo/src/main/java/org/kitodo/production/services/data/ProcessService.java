@@ -970,7 +970,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return path
      */
-    public URI getImagesOriginDirectory(boolean useFallBack, Process process) throws IOException {
+    public URI getImagesOriginDirectory(boolean useFallBack, Process process) {
         if (USE_ORIG_FOLDER) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 

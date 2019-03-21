@@ -527,7 +527,7 @@ public class CurrentTaskForm extends BaseForm {
                                     ServiceManager.getProcessService().getImagesOriginDirectory(false, task.getProcess()))
                                 .size();
                     }
-                } catch (DAOException | IOException e) {
+                } catch (DAOException e) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
