@@ -34,7 +34,6 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,6 +76,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
@@ -230,7 +230,7 @@ public class ProzesskopieForm implements Serializable {
             this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(
-                    "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
+                "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return false;
         }
 
@@ -256,7 +256,6 @@ public class ProzesskopieForm implements Serializable {
 
         return true;
     }
-
 
     /**
      * Get Process templates.
@@ -535,82 +534,6 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private boolean isContentValid(boolean criticiseEmptyTitle) {
-        boolean valid = true;
-
-        if (criticiseEmptyTitle) {
-            valid = isProcessTitleCorrect(this.prozessKopie);
-        }
-
-        /*
-         * Prüfung der standard-Eingaben, die angegeben werden müssen
-         */
-        /* keine Collektion ausgewählt */
-        if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
-            valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
-        }
-
-        /*
-         * Prüfung der additional-Eingaben, die angegeben werden müssen
-         */
-        for (AdditionalField field : this.additionalFields) {
-            String value = field.getValue();
-            if ((Objects.isNull(value) || value.isEmpty()) && field.isRequired() && field.getShowDependingOnDoctype()
-                    && (StringUtils.isBlank(value))) {
-                valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA,
-                    " " + field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
-
-            }
-        }
-        return valid;
-    }
-
-    protected boolean isProcessTitleCorrect(Process process) {
-        boolean valid = true;
-        String title = process.getTitle();
-        if (Objects.isNull(title) || title.isEmpty()) {
-            valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
-        }
-
-        String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
-        if (Objects.isNull(title) || !title.matches(validateRegEx)) {
-            valid = false;
-            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
-        }
-
-        if (Objects.nonNull(title)) {
-            valid = isProcessTitleAvailable(title);
-        }
-        return valid;
-    }
-
-    /**
-     * Checks if process title is available. If yes, return true, if no, return
-     * false.
-     *
-     * @param title
-     *            of process
-     * @return boolean
-     */
-    protected boolean isProcessTitleAvailable(String title) {
-        long amount;
-        try {
-            amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation("process") }, logger, e);
-            return false;
-        }
-        if (amount > 0) {
-            Helper.setErrorMessage(
-                Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("processTitleAlreadyInUse"));
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Create the process and save the meta-data.
      */
@@ -628,7 +551,8 @@ public class ProzesskopieForm implements Serializable {
      * @return true if process was created, otherwise false
      */
     public boolean createProcess() {
-        if (!isContentValid(true)) {
+        if (!ProcessValidator.isContentValid(this.prozessKopie.getTitle(), this.additionalFields,
+            this.getDigitalCollections(), this.standardFields, true)) {
             return false;
         }
         addProperties();
@@ -638,7 +562,8 @@ public class ProzesskopieForm implements Serializable {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
             ServiceManager.getProcessService().save(this.prozessKopie);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular()}, logger, e);
+            Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                e);
             return false;
         }
 
@@ -652,7 +577,7 @@ public class ProzesskopieForm implements Serializable {
             ServiceManager.getProcessService().save(this.prozessKopie);
         } catch (DataException e) {
             Helper.setErrorMessage("errorCreating", new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+                e);
             return false;
         }
         return true;
@@ -982,7 +907,7 @@ public class ProzesskopieForm implements Serializable {
 
     /**
      * Creates a new file format. When a new process is created, an empty METS
-     * file must be created for it.
+     * file  must be created for it.
      */
     public void createNewFileformat() {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
