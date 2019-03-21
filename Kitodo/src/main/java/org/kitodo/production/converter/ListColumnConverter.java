@@ -32,7 +32,7 @@ public class ListColumnConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(ListColumnConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (Objects.isNull(value) || value.isEmpty()) {
             return null;
         } else {
@@ -46,7 +46,7 @@ public class ListColumnConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (Objects.isNull(value)) {
             return null;
         } else if (value instanceof ListColumn) {
@@ -55,7 +55,7 @@ public class ListColumnConverter implements Converter {
             return (String) value;
         } else {
             throw new ConverterException(Helper.getTranslation("errorConvert",
-                    Arrays.asList(value.getClass().getCanonicalName(), "ListColumn")));
+                Arrays.asList(value.getClass().getCanonicalName(), "ListColumn")));
         }
     }
 }
