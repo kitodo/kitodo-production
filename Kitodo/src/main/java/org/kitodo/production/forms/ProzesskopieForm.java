@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
@@ -79,6 +77,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -1365,127 +1364,30 @@ public class ProzesskopieForm implements Serializable {
         this.opacSuchbegriff = opacSuchbegriff;
     }
 
-    /*
-     * Helper
-     */
-
     /**
-     * Prozesstitel und andere Details generieren.
+     * Generate process titles and other details.
      */
     public void calculateProcessTitle() {
         TitleGenerator titleGenerator = new TitleGenerator(this.atstsl, this.additionalFields);
         String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
         this.prozessKopie.setTitle(newTitle);
+        // atstsl is created in title generator and next used in tiff header generator
+        this.atstsl = titleGenerator.getAtstsl();
 
         calculateTiffHeader();
 
         Ajax.update("editForm:processFromTemplateTabView:processDataTab");
     }
 
-    // TODO: remove after Tiff Header generator is in own class
-    private String calculateProcessTitleCheck(String fieldName, String fieldValue) {
-        String result = fieldValue;
-
-        if (fieldName.equals("Bandnummer") || fieldName.equals("Volume number")) {
-            try {
-                int bandInt = Integer.parseInt(fieldValue);
-                DecimalFormat df = new DecimalFormat("#0000");
-                result = df.format(bandInt);
-            } catch (NumberFormatException e) {
-                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"),
-                        logger, e);
-            }
-            if (Objects.nonNull(result) && result.length() < 4) {
-                result = "0000".substring(result.length()) + result;
-            }
-        }
-
-        return result;
-    }
-
     /**
      * Calculate tiff header.
      */
     public void calculateTiffHeader() {
-        // possible replacements
-        this.tifDefinition = this.tifDefinition.replaceAll("\\[\\[", "<");
-        this.tifDefinition = this.tifDefinition.replaceAll("\\]\\]", ">");
-
-        // Documentname ist im allgemeinen = Prozesstitel
+        // document name is generally equal to process title
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
-        StringBuilder tifHeaderImageDescriptionBuilder = new StringBuilder();
-        // image description
-        StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
 
-        String tiffHeader = "";
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            // if the token begins and ends with ' then take over the content
-            if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
-                tifHeaderImageDescriptionBuilder.append(token, 1, token.length() - 1);
-            } else if (token.equals("$Doctype")) {
-                tifHeaderImageDescriptionBuilder.append(getTifHeaderType());
-            } else {
-                // otherwise, evaluate the token as a field name
-                for (AdditionalField additionalField : this.additionalFields) {
-                    String title = additionalField.getTitle();
-                    String value = additionalField.getValue();
-                    boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
-
-                    if ("Titel".equals(title) || "Title".equals(title) && Objects.nonNull(value) && !value.isEmpty()) {
-                        tiffHeader = value;
-                    }
-                    /*
-                     * if it is the ATS or TSL field, then use the calculated
-                     * atstsl if it does not already exist
-                     */
-                    if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype
-                            && (Objects.isNull(value) || value.isEmpty())) {
-                        additionalField.setValue(this.atstsl);
-                    }
-
-                    // add the content to the tif header
-                    if (title.equals(token) && showDependingOnDoctype && Objects.nonNull(value)) {
-                        tifHeaderImageDescriptionBuilder.append(calculateProcessTitleCheck(title, value));
-                    }
-                }
-            }
-        }
-        this.tifHeaderImageDescription = tifHeaderImageDescriptionBuilder.toString();
-        reduceLengthOfTifHeaderImageDescription(tiffHeader);
-    }
-
-    /**
-     * Get tif header type from config Opac if the doctype should be specified.
-     * 
-     * @return tif header type
-     */
-    private String getTifHeaderType() {
-        try {
-            ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
-            if (Objects.nonNull(configOpacDoctype)) {
-                return configOpacDoctype.getTifHeaderType();
-            }
-        } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
-        }
-        return "";
-    }
-
-    /**
-     * Reduce to 255 characters.
-     */
-    private void reduceLengthOfTifHeaderImageDescription(String tiffHeader) {
-        int length = this.tifHeaderImageDescription.length();
-        if (length > 255) {
-            try {
-                int toCut = length - 255;
-                String newTiffHeader = tiffHeader.substring(0, tiffHeader.length() - toCut);
-                this.tifHeaderImageDescription = this.tifHeaderImageDescription.replace(tiffHeader, newTiffHeader);
-            } catch (IndexOutOfBoundsException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
+        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl, this.additionalFields);
+        this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
     }
 
     /**

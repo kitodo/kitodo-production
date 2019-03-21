@@ -11,7 +11,6 @@
 
 package org.kitodo.production.process;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,18 +20,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.helper.AdditionalField;
-import org.kitodo.production.helper.Helper;
 
-public class TitleGenerator {
+public class TitleGenerator extends Generator {
 
     private static final Logger logger = LogManager.getLogger(TitleGenerator.class);
 
-    private static final String INCOMPLETE_DATA = "errorDataIncomplete";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
     private static final String TITLE_DOC_MAIN = "TitleDocMain";
-
-    private String atstsl = "";
-    private List<AdditionalField> additionalFields;
 
     /**
      * Constructor for TitleGenerator.
@@ -43,10 +37,7 @@ public class TitleGenerator {
      *            fields used for title generation
      */
     public TitleGenerator(String atstsl, List<AdditionalField> additionalFields) {
-        if (Objects.nonNull(atstsl)) {
-            this.atstsl = atstsl;
-        }
-        this.additionalFields = additionalFields;
+        super(atstsl, additionalFields);
     }
 
     /**
@@ -80,7 +71,7 @@ public class TitleGenerator {
                     }
                 }
             } else {
-                newTitle.append(evaluateAdditionalFieldsForTitle(currentTitle, currentAuthors, token));
+                newTitle.append(evaluateAdditionalFields(currentTitle, currentAuthors, token));
             }
         }
 
@@ -146,7 +137,7 @@ public class TitleGenerator {
         return "";
     }
 
-    private String evaluateAdditionalFieldsForTitle(String currentTitle, String currentAuthors, String token) {
+    private String evaluateAdditionalFields(String currentTitle, String currentAuthors, String token) {
         StringBuilder newTitle = new StringBuilder();
 
         for (AdditionalField additionalField : this.additionalFields) {
@@ -170,26 +161,6 @@ public class TitleGenerator {
             }
         }
         return newTitle.toString();
-    }
-
-    private String calculateProcessTitleCheck(String fieldName, String fieldValue) {
-        String result = fieldValue;
-
-        if ("Bandnummer".equals(fieldName) || "Volume number".equals(fieldName)) {
-            try {
-                int bandInt = Integer.parseInt(fieldValue);
-                DecimalFormat df = new DecimalFormat("#0000");
-                result = df.format(bandInt);
-            } catch (NumberFormatException e) {
-                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"),
-                    logger, e);
-            }
-            if (Objects.nonNull(result) && result.length() < 4) {
-                result = "0000".substring(result.length()) + result;
-            }
-        }
-
-        return result;
     }
 
     private static String getPartString(String word, int length) {
