@@ -34,11 +34,6 @@ class ExclusiveLock extends AbstractLock {
     private final StreamManagement streamManagement;
 
     /**
-     * The locked URI.
-     */
-    private final URI uri;
-
-    /**
      * Creates a new exclusive lock.
      *
      * @param owner
@@ -53,7 +48,6 @@ class ExclusiveLock extends AbstractLock {
     ExclusiveLock(String owner, URI uri, StreamManagement streamManagement,
             ImmutableReadFileManagement immutableReadFileManagement) {
         super(owner, uri);
-        this.uri = uri;
         this.streamManagement = streamManagement;
         this.immutableReadFileManagement = immutableReadFileManagement;
     }
@@ -76,7 +70,7 @@ class ExclusiveLock extends AbstractLock {
      */
     @Override
     boolean isCombinableWith(LockingMode other) {
-        return other.equals(LockingMode.IMMUTABLE_READ) && (!streamManagement.isKnowingAnOpenOutputStreamTo(uri)
-                || immutableReadFileManagement.isHavingACopyOf(uri));
+        return other.equals(LockingMode.IMMUTABLE_READ) && (!streamManagement.isKnowingAnOpenOutputStreamTo(this.uri)
+                || immutableReadFileManagement.isHavingACopyOf(this.uri));
     }
 }
