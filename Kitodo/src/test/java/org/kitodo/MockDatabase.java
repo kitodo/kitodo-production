@@ -252,7 +252,7 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertAuthorities() throws DAOException {
+    public static void insertAuthorities() throws DAOException {
         List<Authority> authorities = new ArrayList<>();
 
         // Client

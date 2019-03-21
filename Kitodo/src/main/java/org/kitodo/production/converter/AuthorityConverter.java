@@ -16,29 +16,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class AuthorityConverter implements Converter {
-
-    private static final Logger logger = LogManager.getLogger(AuthorityConverter.class);
+public class AuthorityConverter extends BeanConverter implements Converter {
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
-        try {
-            return ServiceManager.getAuthorityService().getById(Integer.parseInt(s));
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-            return null;
-        }
+    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
+        return getAsObject(ServiceManager.getAuthorityService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
-        return ((Authority) o).getId().toString();
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
+        return getAsString(value, "authority");
     }
 }
