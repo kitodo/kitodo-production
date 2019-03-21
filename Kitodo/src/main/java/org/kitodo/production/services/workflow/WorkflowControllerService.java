@@ -215,10 +215,9 @@ public class WorkflowControllerService {
         if (task.isTypeCloseVerify()) {
             // metadata validation
             if (task.isTypeMetadata()
-                    && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)) {
-                if (!ServiceManager.getMetadataValidationService().validate(task.getProcess())) {
-                    return;
-                }
+                    && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
+                    && !ServiceManager.getMetadataValidationService().validate(task.getProcess())) {
+                return;
             }
 
             // image validation
