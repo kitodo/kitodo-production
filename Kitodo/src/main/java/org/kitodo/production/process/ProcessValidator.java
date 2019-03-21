@@ -102,9 +102,10 @@ public final class ProcessValidator {
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
         }
 
-        if (Objects.nonNull(title)) {
+        if (valid) {
             valid = isProcessTitleAvailable(title);
         }
+
         return valid;
     }
 
@@ -133,21 +134,26 @@ public final class ProcessValidator {
      *
      * @param title
      *            of process for checking availability
-     * @return boolean
+     * @return true if process title is not used, false if otherwise or title is
+     *         null
      */
-    private static boolean isProcessTitleAvailable(String title) {
-        long amount;
-        try {
-            amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
-            return false;
+    public static boolean isProcessTitleAvailable(String title) {
+        if (Objects.nonNull(title)) {
+            long amount;
+            try {
+                amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
+            } catch (DataException e) {
+                Helper.setErrorMessage(ERROR_READ, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                    e);
+                return false;
+            }
+            if (amount > 0) {
+                Helper.setErrorMessage(
+                    Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("processTitleAlreadyInUse"));
+                return false;
+            }
+            return true;
         }
-        if (amount > 0) {
-            Helper.setErrorMessage(
-                Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("processTitleAlreadyInUse"));
-            return false;
-        }
-        return true;
+        return false;
     }
 }
