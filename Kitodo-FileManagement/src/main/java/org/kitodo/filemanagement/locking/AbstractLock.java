@@ -46,21 +46,16 @@ abstract class AbstractLock {
             ImmutableReadFileManagement immutableReadFileManagement) {
 
         switch (lockType) {
-            case EXCLUSIVE: {
+            case EXCLUSIVE:
                 return new ExclusiveLock(owner, uri, streamManagement, immutableReadFileManagement);
-            }
-            case IMMUTABLE_READ: {
+            case IMMUTABLE_READ:
                 return new ImmutableReadLock(owner, uri, immutableReadFileManagement);
-            }
-            case UPGRADEABLE_READ: {
+            case UPGRADEABLE_READ:
                 return new UpgradeableReadLock(owner, uri, false);
-            }
-            case UPGRADE_WRITE_ONCE: {
+            case UPGRADE_WRITE_ONCE:
                 return new UpgradeableReadLock(owner, uri, true);
-            }
-            default: {
+            default:
                 throw new IllegalStateException("complete switch");
-            }
         }
     }
 

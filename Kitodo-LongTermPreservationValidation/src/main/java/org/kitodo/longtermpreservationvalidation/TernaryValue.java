@@ -73,19 +73,15 @@ enum TernaryValue {
      */
     static TernaryValue valueOf(int repInfo) {
         switch (repInfo) {
-            case RepInfo.UNDETERMINED: {
+            case RepInfo.UNDETERMINED:
                 return TernaryValue.MAYBE;
-            }
-            case RepInfo.FALSE: {
+            case RepInfo.FALSE:
                 return TernaryValue.FALSE;
-            }
-            case RepInfo.TRUE: {
+            case RepInfo.TRUE:
                 return TernaryValue.TRUE;
-            }
-            default: {
+            default:
                 throw new IllegalArgumentException(("The argument must be in the range " + RepInfo.UNDETERMINED + " to "
                         + RepInfo.TRUE + ", but was " + repInfo) + '.');
-            }
         }
     }
 }
