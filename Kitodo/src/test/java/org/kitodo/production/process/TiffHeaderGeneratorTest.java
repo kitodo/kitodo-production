@@ -23,7 +23,7 @@ public class TiffHeaderGeneratorTest {
 
     @Test
     // TODO: add more test cases
-    public void shouldGenerateTiffHeader() {
+    public void shouldGenerateTiffHeader() throws Exception {
         List<AdditionalField> additionalFields = createAdditionalFields();
 
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator("TestTest", additionalFields);

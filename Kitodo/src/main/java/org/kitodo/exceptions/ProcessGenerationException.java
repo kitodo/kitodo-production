@@ -11,7 +11,7 @@
 
 package org.kitodo.exceptions;
 
-public class ProcessGenerationException extends RuntimeException {
+public class ProcessGenerationException extends Exception {
 
     /**
      * Constructor with given exception message.

@@ -74,8 +74,7 @@ public final class ProcessValidator {
             String value = field.getValue();
             if (StringUtils.isBlank(value) && field.isRequired() && field.getShowDependingOnDoctype()) {
                 valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA,
-                    " " + field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
+                Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }
         }
         return valid;
@@ -148,8 +147,7 @@ public final class ProcessValidator {
                 return false;
             }
             if (amount > 0) {
-                Helper.setErrorMessage(
-                    Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("processTitleAlreadyInUse"));
+                Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleAlreadyInUse");
                 return false;
             }
             return true;

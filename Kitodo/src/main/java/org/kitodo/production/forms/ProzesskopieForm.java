@@ -60,6 +60,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
@@ -227,20 +228,24 @@ public class ProzesskopieForm implements Serializable {
         atstsl = "";
 
         ProcessGenerator processGenerator = new ProcessGenerator();
-        boolean generated = processGenerator.generateProcess(templateId, projectId);
+        try {
+            boolean generated = processGenerator.generateProcess(templateId, projectId);
 
-        if (generated) {
-            this.prozessKopie = processGenerator.getGeneratedProcess();
-            this.project = processGenerator.getProject();
-            this.template = processGenerator.getTemplate();
+            if (generated) {
+                this.prozessKopie = processGenerator.getGeneratedProcess();
+                this.project = processGenerator.getProject();
+                this.template = processGenerator.getTemplate();
 
-            clearValues();
-            readProjectConfigs();
-            this.rdf = null;
-            this.digitalCollections = new ArrayList<>();
-            initializePossibleDigitalCollections();
+                clearValues();
+                readProjectConfigs();
+                this.rdf = null;
+                this.digitalCollections = new ArrayList<>();
+                initializePossibleDigitalCollections();
 
-            return true;
+                return true;
+            }
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
         }
 
         return false;
@@ -1283,10 +1288,15 @@ public class ProzesskopieForm implements Serializable {
      */
     public void calculateProcessTitle() {
         TitleGenerator titleGenerator = new TitleGenerator(this.atstsl, this.additionalFields);
-        String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
-        this.prozessKopie.setTitle(newTitle);
-        // atstsl is created in title generator and next used in tiff header generator
-        this.atstsl = titleGenerator.getAtstsl();
+        try {
+            String newTitle = titleGenerator.generateTitle(this.titleDefinition, null);
+            this.prozessKopie.setTitle(newTitle);
+            // atstsl is created in title generator and next used in tiff header generator
+            this.atstsl = titleGenerator.getAtstsl();
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
+            return;
+        }
 
         calculateTiffHeader();
 
@@ -1301,7 +1311,11 @@ public class ProzesskopieForm implements Serializable {
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
 
         TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(this.atstsl, this.additionalFields);
-        this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
+        try {
+            this.tifHeaderImageDescription = tiffHeaderGenerator.generateTiffHeader(this.tifDefinition, this.docType);
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
+        }
     }
 
     /**

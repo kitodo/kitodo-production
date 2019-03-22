@@ -15,19 +15,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.helper.Helper;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessGenerator {
-
-    private static final Logger logger = LogManager.getLogger(ProcessGenerator.class);
 
     private Process generatedProcess;
     private Project project;
@@ -70,14 +66,13 @@ public class ProcessGenerator {
      *
      * @return true if process was generated, otherwise false
      */
-    public boolean generateProcess(int templateId, int projectId) {
+    public boolean generateProcess(int templateId, int projectId) throws ProcessGenerationException {
         try {
             this.template = ServiceManager.getTemplateService().getById(templateId);
             this.project = ServiceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
-            Helper.setErrorMessage(
-                    "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
-            return false;
+            throw new ProcessGenerationException(
+                    "Template with id " + templateId + " or project with id " + projectId + " not found.", e);
         }
 
         if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
