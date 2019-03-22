@@ -26,29 +26,30 @@
             <h:outputText value="#{MetadataProcessor.process.title} - #{msgs.metadataEdit}"
                           title="#{MetadataProcessor.process.title} - #{msgs.metadataEdit}"/>
         </h3>
-            <p:button value="#{msgs.exit}"
-                      outcome="#{MetadataProcessor.referringView}"
-                      icon="fa fa-times fa-lg"
-                      iconPos="right"
-                      style="margin-left: 16px;"
-                      styleClass="secondary"/>
-            <p:commandButton value="#{msgs.validate}"
-                             action="#{MetadataProcessor.validate}"
-                             update="metadataEditor"
-                             icon="fa fa-check fa-lg"
-                             iconPos="right"
-                             style="margin-left: 16px;"
-                             styleClass="secondary"/>
-            <p:commandButton id="save"
-                             widgetVar="save"
-                             action="#{MetadataProcessor.saveMetadataToXmlAndGoToProcessPage}"
-                             value="#{msgs.save}"
-                             icon="fa fa-floppy-o fa-lg"
-                             iconPos="right"
-                             styleClass="#{mayWrite ? '' : 'disabled'}"
-                             disabled="#{not mayWrite}"
-                             style="margin-left: 16px;"
-                             onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                             update="notifications"/>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         action="#{MetadataProcessor.saveMetadataToXmlAndGoToProcessPage}"
+                         value="#{msgs.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         styleClass="#{mayWrite ? '' : 'disabled'}"
+                         disabled="#{not mayWrite}"
+                         style="margin-left: 16px;"
+                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:commandButton value="#{msgs.validate}"
+                         action="#{MetadataProcessor.validate}"
+                         update="metadataEditor"
+                         icon="fa fa-check fa-lg"
+                         iconPos="right"
+                         style="margin-left: 16px;"
+                         styleClass="secondary"/>
+        <p:button value="#{msgs.exit}"
+                  outcome="#{MetadataProcessor.referringView}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  style="margin-left: 16px;"
+                  styleClass="secondary"/>
+
     </p:panel>
 </ui:composition>
