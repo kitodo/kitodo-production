@@ -289,24 +289,6 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * Returns a Map holding all translations that are configured in the front end
-     * of a given resource key.
-     *
-     * @param key
-     *            resource key to get translations for
-     * @return a map with all language id strings and the corresponding resource
-     */
-    public static Map<String, String> getAllStrings(String key) {
-        Map<String, String> result = new HashMap<>((int) Math.ceil(commonMessages.entrySet().size() / 0.75));
-        Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
-        while (languages.hasNext()) {
-            Locale language = languages.next();
-            result.put(language.getLanguage(), getString(language, key));
-        }
-        return result;
-    }
-
-    /**
      * Get String.
      *
      * @param language
