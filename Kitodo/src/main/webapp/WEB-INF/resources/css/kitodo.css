@@ -340,6 +340,15 @@ body.first-visit #portal-header {
     font-weight: bold;
 }
 
+#nav-user li:not(:first-child):not(:last-child):hover,
+#nav-user li:hover > div,
+#nav-user li:hover > span,
+#nav-user li:not(.logout):hover > a,
+#nav-user li.toggle-list:hover {
+    background-color: var(--focused-blue);
+    color: var(--pure-white);
+}
+
 #nav-user li.logout {
     background-color: var(--orange);
     border: none;
@@ -365,15 +374,11 @@ body.first-visit #portal-header {
     margin-left: 10px;
 }
 
-#header-nav #nav-user li.toggle-list {
+#nav-user li.toggle-list {
     background-color: var(--cloudy-gray);
 }
 
-#header-nav #nav-user li.toggle-list a.ui-commandlink {
-    border-top: 1px solid var(--cloudy-gray);
-}
-
-#header-nav #nav-user > li > div > span > div {
+#nav-user > li > div > span > div {
     padding: 0;
     border-width: 0;
 }
