@@ -184,6 +184,14 @@ body.first-visit #portal-header {
     font-size: 17px;
 }
 
+#portal-search form:hover,
+#portal-search form:hover #search-form\:search-field,
+#portal-search form:hover #search-form\:search-field::placeholder,
+#portal-search form:hover button {
+    background: var(--pure-white);
+    color: var(--carbon-blue);
+}
+
 #portal-search button:hover {
     border-radius: 3px;
 }
