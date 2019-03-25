@@ -13,7 +13,7 @@ package org.kitodo.longtermpreservationvalidation;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +29,16 @@ public class LongTermPreservationValidation implements LongTermPreservationValid
      * Returns the matching module name for the given file type.
      */
     @SuppressWarnings("serial")
-    private static final Map<FileType, String> MODULE_NAMES = new HashMap<FileType, String>(8) {
-        {
-            put(FileType.GIF, "GIF-hul");
-            put(FileType.JPEG, "JPEG-hul");
-            put(FileType.JPEG_2000, "JPEG2000-hul");
-            put(FileType.PDF, "PDF-hul");
-            put(FileType.PNG, "PNG-gdm");
-            put(FileType.TIFF, "TIFF-hul");
-        }
-    };
+    private static final Map<FileType, String> MODULE_NAMES = new EnumMap<>(FileType.class);
+
+    static {
+        MODULE_NAMES.put(FileType.GIF, "GIF-hul");
+        MODULE_NAMES.put(FileType.JPEG, "JPEG-hul");
+        MODULE_NAMES.put(FileType.JPEG_2000, "JPEG2000-hul");
+        MODULE_NAMES.put(FileType.PDF, "PDF-hul");
+        MODULE_NAMES.put(FileType.PNG, "PNG-gdm");
+        MODULE_NAMES.put(FileType.TIFF, "TIFF-hul");
+    }
 
     /**
      * Modules to initialize.
