@@ -303,8 +303,18 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     content: "\f139";
 }
 
-.ui-menu, .ui-menu .ui-menu-child {
+.ui-menu,
+.ui-menu .ui-menu-child {
     background: var(--light-gray);
+}
+
+.ui-menu .ui-menuitem:hover {
+    background: var(--focused-blue);
+}
+
+.ui-menu .ui-menuitem:hover .ui-menuitem-icon,
+.ui-menu .ui-menuitem:hover .ui-menuitem-text {
+    color: var(--pure-white);
 }
 
 .ui-inputfield,

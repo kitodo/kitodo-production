@@ -20,24 +20,24 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnProjectPage()}">
-            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg"
+            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus"
                           iconPos="right" styleClass="callto">
-                <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
+                <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="fa fa-plus"
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddProject()}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
-                            id="newTemplateButton" immediate="true" icon="ui-icon-plusthick"
+                            id="newTemplateButton" immediate="true" icon="fa fa-plus"
                             rendered="#{SecurityAccessController.hasAuthorityToAddTemplate()}"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
-                        immediate="true" icon="ui-icon-plusthick"
+                        immediate="true" icon="fa fa-plus"
                         rendered="#{SecurityAccessController.hasAuthorityToAddWorkflow()}"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
                             id="newDocketButton" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddDocket()}"
-                            icon="ui-icon-plusthick"/>
+                            icon="fa fa-plus"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
-                            id="newRulesetButton" icon="ui-icon-plusthick"/>
+                            id="newRulesetButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
