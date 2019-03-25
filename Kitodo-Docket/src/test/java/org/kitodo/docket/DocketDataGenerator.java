@@ -61,11 +61,11 @@ public class DocketDataGenerator {
     }
 
     public List<DocketData> createDocketData(List<String> processIds) {
-        List<DocketData> docketDatas = new ArrayList<>();
+        List<DocketData> docketData = new ArrayList<>();
         for (String processId : processIds) {
-            docketDatas.add(createDocketData(processId, "AZ-234", "manuscript"));
+            docketData.add(createDocketData(processId, "AZ-234", "manuscript"));
         }
-        return docketDatas;
+        return docketData;
     }
 
 }
