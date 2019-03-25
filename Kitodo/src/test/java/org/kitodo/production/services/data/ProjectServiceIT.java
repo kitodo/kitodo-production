@@ -151,35 +151,6 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindByProcessId() {
-        Integer expected = 1;
-        await().untilAsserted(() -> assertEquals("Project were not found in index!", expected,
-            projectService.getIdFromJSONObject(projectService.findByProcessId(1))));
-    }
-
-    @Test
-    public void shouldNotFindByProcessId() {
-        Integer expected = 0;
-        await().untilAsserted(() -> assertEquals("Some project was found in index!", expected,
-            projectService.getIdFromJSONObject(projectService.findByProcessId(4))));
-    }
-
-    @Test
-    public void shouldFindByProcessTitle() {
-        await().untilAsserted(() -> assertEquals("Project was not found in index!", 1,
-            projectService.findByProcessTitle("First process").size()));
-    }
-
-    @Test
-    public void shouldFindByUserId() {
-        await().untilAsserted(
-            () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserId(1).size()));
-
-        await().untilAsserted(
-            () -> assertEquals("Project was not found in index!", 1, projectService.findByUserId(3).size()));
-    }
-
-    @Test
     public void shouldFindByUserLogin() {
         await().untilAsserted(
             () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserLogin("kowal").size()));
