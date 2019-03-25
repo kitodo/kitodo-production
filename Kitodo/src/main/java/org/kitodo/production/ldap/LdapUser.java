@@ -94,39 +94,7 @@ public class LdapUser implements DirContext {
                 throw new NamingException("no objectclass defined");
             }
 
-            /* ObjectClasses */
-            Attribute oc = new BasicAttribute("objectclass");
-            StringTokenizer tokenizer = new StringTokenizer(ldapGroup.getObjectClasses(), ",");
-            while (tokenizer.hasMoreTokens()) {
-                oc.add(tokenizer.nextToken());
-            }
-            this.attributes.put(oc);
-
-            this.attributes.put("uid", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
-            this.attributes.put("cn", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
-            this.attributes.put("displayName", replaceVariables(ldapGroup.getDisplayName(), user, inUidNumber));
-            this.attributes.put("description", replaceVariables(ldapGroup.getDescription(), user, inUidNumber));
-            this.attributes.put("gecos", replaceVariables(ldapGroup.getGecos(), user, inUidNumber));
-            this.attributes.put("loginShell", replaceVariables(ldapGroup.getLoginShell(), user, inUidNumber));
-            this.attributes.put("sn", replaceVariables(ldapGroup.getSn(), user, inUidNumber));
-            this.attributes.put("homeDirectory", replaceVariables(ldapGroup.getHomeDirectory(), user, inUidNumber));
-
-            this.attributes.put("sambaAcctFlags", replaceVariables(ldapGroup.getSambaAcctFlags(), user, inUidNumber));
-            this.attributes.put("sambaLogonScript", replaceVariables(ldapGroup.getSambaLogonScript(), user, inUidNumber));
-            this.attributes.put("sambaPrimaryGroupSID",
-                replaceVariables(ldapGroup.getSambaPrimaryGroupSID(), user, inUidNumber));
-            this.attributes.put("sambaSID", replaceVariables(ldapGroup.getSambaSID(), user, inUidNumber));
-
-            this.attributes.put("sambaPwdMustChange",
-                replaceVariables(ldapGroup.getSambaPwdMustChange(), user, inUidNumber));
-            this.attributes.put("sambaPasswordHistory",
-                replaceVariables(ldapGroup.getSambaPasswordHistory(), user, inUidNumber));
-            this.attributes.put("sambaLogonHours", replaceVariables(ldapGroup.getSambaLogonHours(), user, inUidNumber));
-            this.attributes.put("sambaKickoffTime", replaceVariables(ldapGroup.getSambaKickoffTime(), user, inUidNumber));
-            this.attributes.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
-
-            this.attributes.put("uidNumber", inUidNumber);
-            this.attributes.put("gidNumber", replaceVariables(ldapGroup.getGidNumber(), user, inUidNumber));
+            prepareAttributes(ldapGroup, user, inUidNumber);
 
             /*
              * Samba passwords
@@ -157,6 +125,41 @@ public class LdapUser implements DirContext {
             String encodedDigest = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
             this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + encodedDigest);
         }
+    }
+
+    private void prepareAttributes(LdapGroup ldapGroup, User user, String inUidNumber) {
+        Attribute oc = new BasicAttribute("objectclass");
+        StringTokenizer tokenizer = new StringTokenizer(ldapGroup.getObjectClasses(), ",");
+        while (tokenizer.hasMoreTokens()) {
+            oc.add(tokenizer.nextToken());
+        }
+        this.attributes.put(oc);
+
+        this.attributes.put("uid", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+        this.attributes.put("cn", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+        this.attributes.put("displayName", replaceVariables(ldapGroup.getDisplayName(), user, inUidNumber));
+        this.attributes.put("description", replaceVariables(ldapGroup.getDescription(), user, inUidNumber));
+        this.attributes.put("gecos", replaceVariables(ldapGroup.getGecos(), user, inUidNumber));
+        this.attributes.put("loginShell", replaceVariables(ldapGroup.getLoginShell(), user, inUidNumber));
+        this.attributes.put("sn", replaceVariables(ldapGroup.getSn(), user, inUidNumber));
+        this.attributes.put("homeDirectory", replaceVariables(ldapGroup.getHomeDirectory(), user, inUidNumber));
+
+        this.attributes.put("sambaAcctFlags", replaceVariables(ldapGroup.getSambaAcctFlags(), user, inUidNumber));
+        this.attributes.put("sambaLogonScript", replaceVariables(ldapGroup.getSambaLogonScript(), user, inUidNumber));
+        this.attributes.put("sambaPrimaryGroupSID",
+                replaceVariables(ldapGroup.getSambaPrimaryGroupSID(), user, inUidNumber));
+        this.attributes.put("sambaSID", replaceVariables(ldapGroup.getSambaSID(), user, inUidNumber));
+
+        this.attributes.put("sambaPwdMustChange",
+                replaceVariables(ldapGroup.getSambaPwdMustChange(), user, inUidNumber));
+        this.attributes.put("sambaPasswordHistory",
+                replaceVariables(ldapGroup.getSambaPasswordHistory(), user, inUidNumber));
+        this.attributes.put("sambaLogonHours", replaceVariables(ldapGroup.getSambaLogonHours(), user, inUidNumber));
+        this.attributes.put("sambaKickoffTime", replaceVariables(ldapGroup.getSambaKickoffTime(), user, inUidNumber));
+        this.attributes.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
+
+        this.attributes.put("uidNumber", inUidNumber);
+        this.attributes.put("gidNumber", replaceVariables(ldapGroup.getGidNumber(), user, inUidNumber));
     }
 
     /**
