@@ -79,6 +79,12 @@ public class KitodoScriptService {
             return;
         }
 
+        if (executeScript(processes)) {
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "", "kitodoScript finished");
+        }
+    }
+
+    private boolean executeScript(List<Process> processes) throws DataException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -123,6 +129,7 @@ public class KitodoScriptService {
                 String scriptName = this.parameters.get(SCRIPT);
                 if (Objects.isNull(scriptName)) {
                     Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "", "Missing parameter");
+                    return false;
                 } else {
                     runScript(processes, taskName, scriptName);
                 }
@@ -140,10 +147,9 @@ public class KitodoScriptService {
                     " - use: 'action:swapsteps, action:adduser, action:addrole, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
-                return;
+                return false;
         }
-
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "kitodoScript finished");
+        return true;
     }
 
     private void updateContentFiles(List<Process> processes) {
@@ -412,7 +418,8 @@ public class KitodoScriptService {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    TaskStatus newTaskStatus = TaskStatus.getStatusFromValue(Integer.valueOf(this.parameters.get(STATUS)));
+                    TaskStatus newTaskStatus = TaskStatus
+                            .getStatusFromValue(Integer.valueOf(this.parameters.get(STATUS)));
                     task.setProcessingStatus(newTaskStatus);
                     saveTask(process.getTitle(), task);
                     Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
