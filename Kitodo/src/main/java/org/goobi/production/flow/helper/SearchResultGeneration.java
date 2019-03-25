@@ -68,8 +68,7 @@ public class SearchResultGeneration {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         try {
-            query = ServiceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
-                    false);
+            query = ServiceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -83,7 +82,7 @@ public class SearchResultGeneration {
 
         try {
             processDTOS = ServiceManager.getProcessService().findByQuery(query,
-                    ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+                ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -94,19 +93,19 @@ public class SearchResultGeneration {
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
         }
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("Search results");
+
+        return getWorkbook(processes);
+    }
+
+    private HSSFWorkbook getWorkbook(List<Process> processes) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Search results");
 
         HSSFRow title = sheet.createRow(0);
         title.createCell(0).setCellValue(this.filter);
-        title.createCell(1).setCellValue("");
-        title.createCell(2).setCellValue("");
-        title.createCell(3).setCellValue("");
-        title.createCell(4).setCellValue("");
-        title.createCell(5).setCellValue("");
-        title.createCell(6).setCellValue("");
-        title.createCell(7).setCellValue("");
-        title.createCell(8).setCellValue("");
+        for (int i = 1; i < 9; i++) {
+            title.createCell(i).setCellValue("");
+        }
 
         HSSFRow rowHeader = sheet.createRow(1);
         rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
@@ -120,36 +119,41 @@ public class SearchResultGeneration {
         rowHeader.createCell(8).setCellValue(Helper.getTranslation("b-number"));
 
         int rowCounter = 2;
-        for (Process p : processes) {
-            HSSFRow row = sheet.createRow(rowCounter);
-            row.createCell(0).setCellValue(p.getTitle());
-            row.createCell(1).setCellValue(p.getId());
-            DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
-            df.setTimeZone(TimeZone.getTimeZone("GMT"));
-            String gmtCreationDate = df.format(p.getCreationDate());
-            row.createCell(2).setCellValue(gmtCreationDate);
-            row.createCell(3).setCellValue(p.getSortHelperImages());
-            row.createCell(4).setCellValue(p.getSortHelperDocstructs());
-            row.createCell(5).setCellValue(p.getProject().getTitle());
-            String sortHelperStatus = "";
-            if (Objects.nonNull(p.getSortHelperStatus())) {
-                sortHelperStatus = p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6)
-                        + " / " + p.getSortHelperStatus().substring(6);
-            }
-            row.createCell(6).setCellValue(sortHelperStatus);
-            HSSFCell cellSeven = row.createCell(7);
-            cellSeven.setCellValue("");
-            HSSFCell cellEight = row.createCell(8);
-            cellEight.setCellValue("");
-            for (Property property : p.getProperties()) {
-                if (property.getTitle().equals("AltRefNo")) {
-                    cellSeven.setCellValue(property.getValue());
-                } else if (property.getTitle().equals("b-number")) {
-                    cellEight.setCellValue(property.getValue());
-                }
-            }
+        for (Process process : processes) {
+            prepareRow(rowCounter, sheet, process);
             rowCounter++;
         }
-        return wb;
+        return workbook;
+    }
+
+    private void prepareRow(int rowCounter, HSSFSheet sheet, Process process) {
+        HSSFRow row = sheet.createRow(rowCounter);
+        row.createCell(0).setCellValue(process.getTitle());
+        row.createCell(1).setCellValue(process.getId());
+        DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String gmtCreationDate = df.format(process.getCreationDate());
+        row.createCell(2).setCellValue(gmtCreationDate);
+        row.createCell(3).setCellValue(process.getSortHelperImages());
+        row.createCell(4).setCellValue(process.getSortHelperDocstructs());
+        row.createCell(5).setCellValue(process.getProject().getTitle());
+        String sortHelperStatus = "";
+        if (Objects.nonNull(process.getSortHelperStatus())) {
+            sortHelperStatus = process.getSortHelperStatus().substring(0, 3) + " / "
+                    + process.getSortHelperStatus().substring(3, 6) + " / "
+                    + process.getSortHelperStatus().substring(6);
+        }
+        row.createCell(6).setCellValue(sortHelperStatus);
+        HSSFCell cellSeven = row.createCell(7);
+        cellSeven.setCellValue("");
+        HSSFCell cellEight = row.createCell(8);
+        cellEight.setCellValue("");
+        for (Property property : process.getProperties()) {
+            if (property.getTitle().equals("AltRefNo")) {
+                cellSeven.setCellValue(property.getValue());
+            } else if (property.getTitle().equals("b-number")) {
+                cellEight.setCellValue(property.getValue());
+            }
+        }
     }
 }
