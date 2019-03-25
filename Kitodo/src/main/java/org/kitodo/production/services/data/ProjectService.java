@@ -152,41 +152,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return findByQuery(query, true);
     }
 
-    /**
-     * Find project by id of process.
-     *
-     * @param id
-     *            of process
-     * @return search result
-     */
-    Map<String, Object> findByProcessId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("processes.id", id, true);
-        return findDocument(query);
-    }
-
-    /**
-     * Find projects by title of process.
-     *
-     * @param title
-     *            of process
-     * @return list of JSON objects with projects for specific process title
-     */
-    List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
-        List<Map<String, Object>> processes = ServiceManager.getProcessService().findByTitle(title, true);
-        return findDocuments(createSetQuery(ProjectTypeField.PROCESSES + ".id", processes, true));
-    }
-
-    /**
-     * Find project by id of user.
-     *
-     * @param id
-     *            of user
-     * @return list of JSON objects
-     */
-    List<Map<String, Object>> findByUserId(Integer id) throws DataException {
-        return findDocuments(getQueryForUserId(id, true));
-    }
-
     private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
         return createSimpleQuery(ProjectTypeField.USERS.getKey() + ".id", id, contains);
     }
