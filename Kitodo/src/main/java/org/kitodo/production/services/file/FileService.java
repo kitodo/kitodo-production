@@ -1062,9 +1062,9 @@ public class FileService {
         Paginator paginator = new Paginator(value);
         if (first > 0) {
             paginator.next();
-        }
-        for (int i = first; i <= mediaUnits.size(); i++) {
-            mediaUnits.get(i).setOrderlabel(paginator.next());
+            for (int i = first; i <= mediaUnits.size(); i++) {
+                mediaUnits.get(i).setOrderlabel(paginator.next());
+            }
         }
         for (MediaUnit mediaUnit : mediaUnits) {
             if (Objects.isNull(mediaUnit.getOrderlabel())) {
