@@ -304,7 +304,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 }
 
 .ui-menu, .ui-menu .ui-menu-child {
-    background: var(--cloudy-gray);
+    background: var(--light-gray);
 }
 
 .ui-inputfield,
