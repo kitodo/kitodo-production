@@ -65,6 +65,7 @@
         <mapping class="org.kitodo.data.database.beans.Authority"/>
         <mapping class="org.kitodo.data.database.beans.Batch"/>
         <mapping class="org.kitodo.data.database.beans.Client"/>
+        <mapping class="org.kitodo.data.database.beans.Comment"/>
         <mapping class="org.kitodo.data.database.beans.Docket"/>
         <mapping class="org.kitodo.data.database.beans.Filter"/>
         <mapping class="org.kitodo.data.database.beans.Folder"/>

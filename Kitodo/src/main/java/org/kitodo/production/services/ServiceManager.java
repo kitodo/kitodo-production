@@ -17,6 +17,7 @@ import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.AuthorityService;
 import org.kitodo.production.services.data.BatchService;
 import org.kitodo.production.services.data.ClientService;
+import org.kitodo.production.services.data.CommentService;
 import org.kitodo.production.services.data.DocketService;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.FolderService;
@@ -82,6 +83,7 @@ public class ServiceManager {
     private static SessionService sessionService;
     private static WorkflowControllerService workflowControllerService;
     private static ListColumnService listColumnService;
+    private static CommentService commentService;
 
     /**
      * Private constructor.
@@ -284,6 +286,12 @@ public class ServiceManager {
     private static void initializeListColumnService() {
         if (Objects.isNull(listColumnService)) {
             listColumnService = ListColumnService.getInstance();
+        }
+    }
+
+    private static void initializeCommentService() {
+        if (Objects.isNull(commentService)) {
+            commentService = CommentService.getInstance();
         }
     }
 
@@ -634,5 +642,15 @@ public class ServiceManager {
     public static ListColumnService getListColumnService() {
         initializeListColumnService();
         return listColumnService;
+    }
+
+    /**
+     * Initialize CommentService if it is not yet initialized and return it.
+     *
+     * @return CommentService object
+     */
+    public static CommentService getCommentService() {
+        initializeCommentService();
+        return commentService;
     }
 }
