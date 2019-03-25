@@ -123,7 +123,8 @@ input.ui-state-error {
 }
 
 .ui-button.secondary,
-.ui-widget-content .ui-button.secondary {
+.ui-widget-content .ui-button.secondary,
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label  {
     background: var(--pure-white);
     border: solid 1px var(--light-blue);
     color: var(--light-blue);
