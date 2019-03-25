@@ -14,6 +14,7 @@ package org.kitodo.production.metadata.copier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +83,6 @@ public class MetadataPathSelector extends MetadataSelector {
      * @throws ConfigurationException
      *             if the path is invalid
      */
-
     public MetadataPathSelector(String path) throws ConfigurationException {
         String pathSegment = matchCurrentPathSegment(path);
         Matcher pathSelectorHasElementSelector = SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME.matcher(pathSegment);
@@ -135,8 +135,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            document structure node to start from, intended for recursion
      * @param value
      *            value to write if no metadata is available at the path’s end
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
-     *      LegacyDocStructHelperInterface, String)
+     * @see MetadataSelector#createIfPathExistsOnly(CopierData, LegacyDocStructHelperInterface, String)
      */
     @Override
     protected void createIfPathExistsOnly(CopierData data, LegacyDocStructHelperInterface logicalNode, String value) {
@@ -159,8 +158,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            document structure node to start from, intended for recursion
      * @param value
      *            value to write
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#createOrOverwrite(CopierData,
-     *      LegacyDocStructHelperInterface, String)
+     * @see MetadataSelector#createOrOverwrite(CopierData, LegacyDocStructHelperInterface, String)
      */
     @Override
     protected void createOrOverwrite(CopierData data, LegacyDocStructHelperInterface logicalNode, String value) {
@@ -189,13 +187,13 @@ public class MetadataPathSelector extends MetadataSelector {
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findAll(org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface)
+     * @see MetadataSelector#findAll(LegacyDocStructHelperInterface)
      */
     @Override
     protected Iterable<MetadataSelector> findAll(LegacyDocStructHelperInterface logicalNode) {
         LinkedList<MetadataSelector> result = new LinkedList<>();
         List<LegacyDocStructHelperInterface> children = logicalNode.getAllChildren();
-        if (children == null) {
+        if (Objects.isNull(children)) {
             children = Collections.emptyList();
         }
         int lastChild = children.size() - 1;
@@ -217,15 +215,15 @@ public class MetadataPathSelector extends MetadataSelector {
      * of the path aren’t available. This works recursively, by calling itself
      * on the subnode, if found, or returning null otherwise.
      *
-     * @see org.kitodo.production.metadata.copier.MetadataSelector#findIn(org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface)
+     * @see MetadataSelector#findIn(LegacyDocStructHelperInterface)
      */
     @Override
-    protected String findIn(LegacyDocStructHelperInterface supernode) {
-        LegacyDocStructHelperInterface subnode = getSubnode(supernode);
-        if (subnode == null) {
+    protected String findIn(LegacyDocStructHelperInterface superNode) {
+        LegacyDocStructHelperInterface subNode = getSubnode(superNode);
+        if (Objects.isNull(subNode)) {
             return null;
         } else {
-            return selector.findIn(subnode);
+            return selector.findIn(subNode);
         }
     }
 
