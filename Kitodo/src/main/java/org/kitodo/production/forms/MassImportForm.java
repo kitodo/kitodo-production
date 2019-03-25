@@ -53,7 +53,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -158,7 +157,7 @@ public class MassImportForm extends BaseForm {
      *
      * @return String
      */
-    public String convertData() throws IOException, DataException {
+    public String convertData() throws IOException {
         this.processList = new ArrayList<>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setErrorMessage("missingPlugin");
@@ -204,7 +203,7 @@ public class MassImportForm extends BaseForm {
         return massImportThreePath;
     }
 
-    private void iterateOverAnswer(List<ImportObject> answer) throws DataException, IOException {
+    private void iterateOverAnswer(List<ImportObject> answer) throws IOException {
         Batch batch = null;
         if (answer.size() > 1) {
             batch = getBatch();
@@ -308,18 +307,18 @@ public class MassImportForm extends BaseForm {
         }
     }
 
-    private void addProcessToList(ImportObject io) throws DataException, IOException {
-        URI importFileName = io.getImportFileName();
-        Process process = JobCreation.generateProcess(io, this.template);
+    private void addProcessToList(ImportObject importObject) throws IOException {
+        URI importFileName = importObject.getImportFileName();
+        Process process = JobCreation.generateProcess(importObject, this.template);
         if (Objects.isNull(process)) {
             if (Objects.nonNull(importFileName)
                     && !ServiceManager.getFileService().getFileName(importFileName).isEmpty()
                     && Objects.nonNull(selectedFilenames) && !selectedFilenames.isEmpty()) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
-            Helper.setErrorMessage("import failed for " + io.getProcessTitle() + ", process generation failed");
+            Helper.setErrorMessage("import failed for " + importObject.getProcessTitle() + ", process generation failed");
         } else {
-            Helper.setMessage(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());
+            Helper.setMessage(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + importObject.getProcessTitle());
             this.processList.add(process);
         }
     }

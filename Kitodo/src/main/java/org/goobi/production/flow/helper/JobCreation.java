@@ -29,7 +29,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
@@ -50,34 +49,30 @@ public class JobCreation {
     /**
      * Generate process.
      *
-     * @param io
+     * @param importObject
      *            ImportObject
      * @param template
      *            Template object
      * @return Process object
      */
-    public static Process generateProcess(ImportObject io, Template template) throws DataException, IOException {
-        String processTitle = io.getProcessTitle();
+    public static Process generateProcess(ImportObject importObject, Template template) throws IOException {
+        String processTitle = importObject.getProcessTitle();
         logger.trace("processtitle is {}", processTitle);
-        // TODO: what is differecene between metsfilename and basepath and
-        // metsfile
-        URI metsfilename = io.getMetsFilename();
-        logger.trace("mets filename is {}", metsfilename);
-        URI basepath = metsfilename;
-        logger.trace("basepath is {}", basepath);
-        URI metsfile = metsfilename;
-        Process p = null;
+
+        URI metsFilename = importObject.getMetsFilename();
+        logger.trace("mets filename is {}", metsFilename);
+        Process process = null;
         if (!ProcessValidator.isProcessTitleAvailable(processTitle)) {
-            logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
+            logger.error("cannot create process, process title '" + processTitle + "' is already in use");
             // removing all data
-            removeImages(basepath);
+            removeImages(metsFilename);
             try {
-                fileService.delete(metsfile);
+                fileService.delete(metsFilename);
             } catch (RuntimeException e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
-            File anchor = new File(basepath + "_anchor.xml");
+            File anchor = new File(metsFilename + "_anchor.xml");
             if (anchor.exists()) {
                 fileService.delete(anchor.toURI());
             }
@@ -86,16 +81,16 @@ public class JobCreation {
 
         CopyProcess cp = new CopyProcess();
         cp.setTemplate(template);
-        cp.setMetadataFile(metsfilename);
-        cp.prepare(io);
+        cp.setMetadataFile(metsFilename);
+        cp.prepare(importObject);
         cp.getProzessKopie().setTitle(processTitle);
         logger.trace("testing title");
         if (cp.testTitle()) {
             logger.trace("title is valid");
             cp.evaluateOpac();
             try {
-                p = cp.createProcess(io);
-                startThreads(p, basepath, metsfile);
+                process = cp.createProcess(importObject);
+                startThreads(process, metsFilename, metsFilename);
             } catch (IOException e) {
                 Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
             } catch (DAOException e) {
@@ -105,7 +100,7 @@ public class JobCreation {
         } else {
             logger.error("title " + processTitle + "is invalid");
         }
-        return p;
+        return process;
     }
 
     private static void removeImages(URI imagesFolder) throws IOException {
