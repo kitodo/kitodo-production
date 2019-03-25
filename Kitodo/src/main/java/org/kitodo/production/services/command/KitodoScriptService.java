@@ -177,8 +177,7 @@ public class KitodoScriptService {
                 } catch (IOException | RuntimeException e) {
                     Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title }, logger, e);
                 }
-            }
-            if (!contentOnly) {
+            } else {
                 try {
                     deleteMetadataDirectory(process);
                     ServiceManager.getProcessService().remove(process);
@@ -353,26 +352,30 @@ public class KitodoScriptService {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    if (property.equals("metadata")) {
-                        task.setTypeMetadata(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("automatic")) {
-                        task.setTypeAutomatic(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("batch")) {
-                        task.setBatchStep(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("readimages")) {
-                        task.setTypeImagesRead(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("writeimages")) {
-                        task.setTypeImagesWrite(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("validate")) {
-                        task.setTypeCloseVerify(Boolean.parseBoolean(value));
-                    }
-                    if (property.equals("exportdms")) {
-                        task.setTypeExportDMS(Boolean.parseBoolean(value));
+                    switch (property) {
+                        case "metadata":
+                            task.setTypeMetadata(Boolean.parseBoolean(value));
+                            break;
+                        case "automatic":
+                            task.setTypeAutomatic(Boolean.parseBoolean(value));
+                            break;
+                        case "batch":
+                            task.setBatchStep(Boolean.parseBoolean(value));
+                            break;
+                        case "readimages":
+                            task.setTypeImagesRead(Boolean.parseBoolean(value));
+                            break;
+                        case "writeimages":
+                            task.setTypeImagesWrite(Boolean.parseBoolean(value));
+                            break;
+                        case "validate":
+                            task.setTypeCloseVerify(Boolean.parseBoolean(value));
+                            break;
+                        case "exportdms":
+                            task.setTypeExportDMS(Boolean.parseBoolean(value));
+                            break;
+                        default:
+                            break;
                     }
 
                     saveProcess(process);
