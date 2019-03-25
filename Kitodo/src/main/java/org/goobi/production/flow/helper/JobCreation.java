@@ -31,6 +31,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -66,7 +67,7 @@ public class JobCreation {
         logger.trace("basepath is {}", basepath);
         URI metsfile = metsfilename;
         Process p = null;
-        if (!testTitle(processTitle)) {
+        if (!ProcessValidator.isProcessTitleAvailable(processTitle)) {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
             removeImages(basepath);
@@ -129,26 +130,6 @@ public class JobCreation {
                 }
             }
         }
-    }
-
-    /**
-     * Test title.
-     *
-     * @param title
-     *            String
-     * @return boolean
-     */
-    private static boolean testTitle(String title) throws DataException {
-        if (Objects.nonNull(title)) {
-            Long amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
-            if (amount > 0) {
-                Helper.setErrorMessage("processTitleAlreadyInUse");
-                return false;
-            }
-        } else {
-            return false;
-        }
-        return true;
     }
 
     /**
