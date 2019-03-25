@@ -78,8 +78,8 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
@@ -1283,7 +1283,7 @@ public class MockDatabase {
         firstProcess.setTitle("Parallel");
         firstProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, firstProcess);
+        ProcessGenerator.copyTasks(template, firstProcess);
         firstProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
         firstProcess.getTasks().get(0).setProcessingUser(ServiceManager.getUserService().getById(1));
         firstProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);
@@ -1300,7 +1300,7 @@ public class MockDatabase {
         secondProcess.setTitle("ParallelInWork");
         secondProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, secondProcess);
+        ProcessGenerator.copyTasks(template, secondProcess);
         secondProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
         secondProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
         secondProcess.getTasks().get(2).setProcessingStatus(TaskStatus.LOCKED);
@@ -1316,7 +1316,7 @@ public class MockDatabase {
         thirdProcess.setTitle("ParallelInWorkWithBlocking");
         thirdProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, thirdProcess);
+        ProcessGenerator.copyTasks(template, thirdProcess);
         thirdProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
         thirdProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
         thirdProcess.getTasks().get(2).setProcessingStatus(TaskStatus.INWORK);
@@ -1332,7 +1332,7 @@ public class MockDatabase {
         fourthProcess.setTitle("ParallelInWorkWithNonBlocking");
         fourthProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, fourthProcess);
+        ProcessGenerator.copyTasks(template, fourthProcess);
         fourthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
         fourthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.INWORK);
         fourthProcess.getTasks().get(2).setProcessingStatus(TaskStatus.INWORK);
@@ -1350,7 +1350,7 @@ public class MockDatabase {
         fifthProcess.setTitle("ParallelAlmostFinished");
         secondProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, fifthProcess);
+        ProcessGenerator.copyTasks(template, fifthProcess);
         fifthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.DONE);
         fifthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.DONE);
         fifthProcess.getTasks().get(2).setProcessingStatus(TaskStatus.DONE);
@@ -1366,7 +1366,7 @@ public class MockDatabase {
         sixthProcess.setTitle("ParallelInWorkWithNonBlockingToAssign");
         sixthProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, sixthProcess);
+        ProcessGenerator.copyTasks(template, sixthProcess);
         sixthProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
         sixthProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);
         sixthProcess.getTasks().get(1).setConcurrent(true);
@@ -1405,7 +1405,7 @@ public class MockDatabase {
         firstProcess.setTitle("Script");
         firstProcess.setTemplate(template);
 
-        BeanHelper.copyTasks(template, firstProcess);
+        ProcessGenerator.copyTasks(template, firstProcess);
         firstProcess.getTasks().get(0).setProcessingStatus(TaskStatus.INWORK);
         firstProcess.getTasks().get(0).setProcessingUser(ServiceManager.getUserService().getById(1));
         firstProcess.getTasks().get(1).setProcessingStatus(TaskStatus.LOCKED);

@@ -58,7 +58,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.production.enums.ObjectType;
@@ -76,6 +75,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
@@ -225,36 +225,25 @@ public class ProzesskopieForm implements Serializable {
      */
     public boolean prepareProcess(int templateId, int projectId) {
         atstsl = "";
-        try {
-            this.template = ServiceManager.getTemplateService().getById(templateId);
-            this.project = ServiceManager.getProjectService().getById(projectId);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(
-                "Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
-            return false;
+
+        ProcessGenerator processGenerator = new ProcessGenerator();
+        boolean generated = processGenerator.generateProcess(templateId, projectId);
+
+        if (generated) {
+            this.prozessKopie = processGenerator.getGeneratedProcess();
+            this.project = processGenerator.getProject();
+            this.template = processGenerator.getTemplate();
+
+            clearValues();
+            readProjectConfigs();
+            this.rdf = null;
+            this.digitalCollections = new ArrayList<>();
+            initializePossibleDigitalCollections();
+
+            return true;
         }
 
-        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
-            return false;
-        }
-
-        clearValues();
-        readProjectConfigs();
-        this.rdf = null;
-        this.prozessKopie = new Process();
-        this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(this.template);
-        this.prozessKopie.setProject(this.project);
-        this.prozessKopie.setRuleset(this.template.getRuleset());
-        this.prozessKopie.setDocket(this.template.getDocket());
-        this.digitalCollections = new ArrayList<>();
-
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
-
-        initializePossibleDigitalCollections();
-
-        return true;
+        return false;
     }
 
     /**

@@ -28,8 +28,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
@@ -41,6 +39,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
+import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 
@@ -71,13 +70,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
-        try {
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
-            this.myRdf.read(this.metadataFile.getPath());
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        readPreferences();
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setProject(this.project);
@@ -85,48 +78,29 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
+        ProcessGenerator.copyTasks(this.template, this.prozessKopie);
 
         return this.naviFirstPage;
     }
 
     @Override
     public String prepare(int templateId, int projectId) {
-        try {
-            this.template = ServiceManager.getTemplateService().getById(templateId);
-            this.project = ServiceManager.getProjectService().getById(projectId);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
+        ProcessGenerator processGenerator = new ProcessGenerator();
+        boolean generated = processGenerator.generateProcess(templateId, projectId);
+
+        if (generated) {
+            this.prozessKopie = processGenerator.getGeneratedProcess();
+            this.project = processGenerator.getProject();
+            this.template = processGenerator.getTemplate();
+
+            clearValues();
+            readPreferences();
+            this.digitalCollections = new ArrayList<>();
+            initializePossibleDigitalCollections();
+
+            return this.naviFirstPage;
         }
-        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            for (Task s : this.template.getTasks()) {
-                if (ServiceManager.getTaskService().getRolesSize(s) == 0) {
-                    Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
-                }
-            }
-            return "";
-        }
-
-        clearValues();
-        LegacyPrefsHelper myPrefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
-        try {
-            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(myPrefs.getRuleset());
-            this.myRdf.read(this.metadataFile.getPath());
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        this.prozessKopie = new Process();
-        this.prozessKopie.setTitle("");
-        this.prozessKopie.setProject(this.project);
-        this.prozessKopie.setRuleset(this.template.getRuleset());
-        this.digitalCollections = new ArrayList<>();
-
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
-
-        initializePossibleDigitalCollections();
-
-        return this.naviFirstPage;
+        return null;
     }
 
     /**
@@ -147,6 +121,16 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromConfig();
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
+        }
+    }
+
+    private void readPreferences() {
+        LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(this.template.getRuleset());
+        try {
+            this.myRdf = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
+            this.myRdf.read(this.metadataFile.getPath());
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
