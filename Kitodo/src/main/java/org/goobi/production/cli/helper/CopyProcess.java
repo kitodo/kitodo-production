@@ -190,8 +190,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     private void fillFieldsFromConfig() {
         for (AdditionalField field : this.additionalFields) {
-            if (!field.isUghBinding() && field.showDependingOnDoctype() && Objects.nonNull(field.getSelectList())
-                    && !field.getSelectList().isEmpty()) {
+            if (!field.isUghBinding() && field.showDependingOnDoctype() && !field.getSelectList().isEmpty()) {
                 field.setValue((String) field.getSelectList().get(0).getValue());
             }
         }

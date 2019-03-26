@@ -21,7 +21,7 @@
         <p:row>
             <ui:repeat id="fieldList" value="#{ProzesskopieForm.visibleAdditionalFields}" var="field">
                 <div>
-                    <ui:fragment rendered="#{field.selectList==null}">
+                    <ui:fragment rendered="#{empty field.selectList}">
                         <p:outputLabel for="additionalInputField" value="#{field.title}:"/>
                         <p:inputText id="additionalInputField" value="#{field.value}"
                                      styleClass="prozessKopieFeldbreite"
@@ -30,7 +30,7 @@
                         </p:inputText>
                     </ui:fragment>
 
-                    <ui:fragment rendered="#{field.selectList!=null}">
+                    <ui:fragment rendered="#{field.selectList.size() gt 0}">
                         <p:outputLabel for="additionalSelectField" value="#{field.title}:"/>
                         <p:selectOneListbox id="additionalSelectField" value="#{field.value}"
                                             styleClass="prozessKopieFeldbreite"

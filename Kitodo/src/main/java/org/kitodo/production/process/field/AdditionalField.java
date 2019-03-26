@@ -11,6 +11,7 @@
 
 package org.kitodo.production.process.field;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -117,6 +118,9 @@ public class AdditionalField {
      * @return list of select items.
      */
     public List<SelectItem> getSelectList() {
+        if (Objects.isNull(this.selectList)) {
+            this.selectList = new ArrayList<>();
+        }
         return this.selectList;
     }
 
