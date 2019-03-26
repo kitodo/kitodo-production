@@ -29,6 +29,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
@@ -86,19 +87,23 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String prepare(int templateId, int projectId) {
         ProcessGenerator processGenerator = new ProcessGenerator();
-        boolean generated = processGenerator.generateProcess(templateId, projectId);
+        try {
+            boolean generated = processGenerator.generateProcess(templateId, projectId);
 
-        if (generated) {
-            this.prozessKopie = processGenerator.getGeneratedProcess();
-            this.project = processGenerator.getProject();
-            this.template = processGenerator.getTemplate();
+            if (generated) {
+                this.prozessKopie = processGenerator.getGeneratedProcess();
+                this.project = processGenerator.getProject();
+                this.template = processGenerator.getTemplate();
 
-            clearValues();
-            readPreferences();
-            this.digitalCollections = new ArrayList<>();
-            initializePossibleDigitalCollections();
+                clearValues();
+                readPreferences();
+                this.digitalCollections = new ArrayList<>();
+                initializePossibleDigitalCollections();
 
-            return this.naviFirstPage;
+                return this.naviFirstPage;
+            }
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
         }
         return null;
     }

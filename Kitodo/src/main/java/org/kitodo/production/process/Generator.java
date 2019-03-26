@@ -15,14 +15,11 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
 
 public abstract class Generator {
-
-    private static final Logger logger = LogManager.getLogger(TiffHeaderGenerator.class);
 
     private static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
@@ -56,7 +53,8 @@ public abstract class Generator {
     /**
      * Set atstsl.
      *
-     * @param atstsl as java.lang.String
+     * @param atstsl
+     *            as java.lang.String
      */
     public void setAtstsl(String atstsl) {
         this.atstsl = atstsl;
@@ -74,13 +72,14 @@ public abstract class Generator {
     /**
      * Set additional fields.
      *
-     * @param additionalFields as List of AdditionalField objects
+     * @param additionalFields
+     *            as List of AdditionalField objects
      */
     public void setAdditionalFields(List<AdditionalField> additionalFields) {
         this.additionalFields = additionalFields;
     }
 
-    protected String calculateProcessTitleCheck(String fieldName, String fieldValue) {
+    protected String calculateProcessTitleCheck(String fieldName, String fieldValue) throws ProcessGenerationException {
         String result = fieldValue;
 
         if ("Bandnummer".equals(fieldName) || "Volume number".equals(fieldName)) {
@@ -89,10 +88,11 @@ public abstract class Generator {
                 DecimalFormat df = new DecimalFormat("#0000");
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
-                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"),
-                        logger, e);
+                throw new ProcessGenerationException(
+                        Helper.getTranslation(INCOMPLETE_DATA) + Helper.getTranslation("errorVolume"), e);
             }
-            if (Objects.nonNull(result) && result.length() < 4) {
+
+            if (result.length() < 4) {
                 result = "0000".substring(result.length()) + result;
             }
         }

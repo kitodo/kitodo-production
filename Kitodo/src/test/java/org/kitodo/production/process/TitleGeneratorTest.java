@@ -85,7 +85,7 @@ public class TitleGeneratorTest {
 
     @Test
     //TODO: add more test cases
-    public void shouldGenerateTitle() {
+    public void shouldGenerateTitle() throws Exception {
         List<AdditionalField> additionalFields = createAdditionalFields();
 
         TitleGenerator titleGenerator = new TitleGenerator("", additionalFields);

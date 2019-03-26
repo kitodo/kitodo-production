@@ -17,13 +17,10 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.AdditionalField;
 
 public class TitleGenerator extends Generator {
-
-    private static final Logger logger = LogManager.getLogger(TitleGenerator.class);
 
     private static final String LIST_OF_CREATORS = "ListOfCreators";
     private static final String TITLE_DOC_MAIN = "TitleDocMain";
@@ -49,7 +46,8 @@ public class TitleGenerator extends Generator {
      *            Map of Strings
      * @return String
      */
-    public String generateTitle(String titleDefinition, Map<String, String> genericFields) {
+    public String generateTitle(String titleDefinition, Map<String, String> genericFields)
+            throws ProcessGenerationException {
         String currentAuthors = getCurrentValue(LIST_OF_CREATORS);
         String currentTitle = getCurrentValue(TITLE_DOC_MAIN);
 
@@ -137,7 +135,8 @@ public class TitleGenerator extends Generator {
         return "";
     }
 
-    private String evaluateAdditionalFields(String currentTitle, String currentAuthors, String token) {
+    private String evaluateAdditionalFields(String currentTitle, String currentAuthors, String token)
+            throws ProcessGenerationException {
         StringBuilder newTitle = new StringBuilder();
 
         for (AdditionalField additionalField : this.additionalFields) {

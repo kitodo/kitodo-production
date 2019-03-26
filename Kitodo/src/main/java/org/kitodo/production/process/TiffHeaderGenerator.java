@@ -15,19 +15,17 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
 
 public class TiffHeaderGenerator extends Generator {
-
-    private static final Logger logger = LogManager.getLogger(TiffHeaderGenerator.class);
 
     private static final String ERROR_READ = "errorReading";
     private static final String OPAC_CONFIG = "configurationOPAC";
@@ -55,7 +53,7 @@ public class TiffHeaderGenerator extends Generator {
      *            document type for tiff header to generation
      * @return generated tiff header
      */
-    public String generateTiffHeader(String tiffDefinition, String docType) {
+    public String generateTiffHeader(String tiffDefinition, String docType) throws ProcessGenerationException {
         StringBuilder tiffHeaderImageDescriptionBuilder = new StringBuilder();
         // image description
         StringTokenizer tokenizer = new StringTokenizer(
@@ -78,7 +76,7 @@ public class TiffHeaderGenerator extends Generator {
         return reduceLengthOfTifHeaderImageDescription(tiffHeaderImageDescriptionBuilder.toString());
     }
 
-    private String evaluateAdditionalFields(String token) {
+    private String evaluateAdditionalFields(String token) throws ProcessGenerationException {
         StringBuilder newTiffHeader = new StringBuilder();
 
         for (AdditionalField additionalField : this.additionalFields) {
@@ -113,14 +111,15 @@ public class TiffHeaderGenerator extends Generator {
      *            for tiff header
      * @return tif header type
      */
-    private String getTifHeaderType(String docType) {
+    private String getTifHeaderType(String docType) throws ProcessGenerationException {
         try {
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(docType);
             if (Objects.nonNull(configOpacDoctype)) {
                 return configOpacDoctype.getTifHeaderType();
             }
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            throw new ProcessGenerationException(
+                    MessageFormat.format(Helper.getTranslation(ERROR_READ), Helper.getTranslation(OPAC_CONFIG)), e);
         }
         return "";
     }
@@ -128,7 +127,8 @@ public class TiffHeaderGenerator extends Generator {
     /**
      * Reduce to 255 characters.
      */
-    private String reduceLengthOfTifHeaderImageDescription(String tifHeaderImageDescription) {
+    private String reduceLengthOfTifHeaderImageDescription(String tifHeaderImageDescription)
+            throws ProcessGenerationException {
         int length = tifHeaderImageDescription.length();
         if (length > 255) {
             try {
@@ -136,7 +136,7 @@ public class TiffHeaderGenerator extends Generator {
                 String newTiffHeader = this.tiffHeader.substring(0, this.tiffHeader.length() - toCut);
                 return tifHeaderImageDescription.replace(this.tiffHeader, newTiffHeader);
             } catch (IndexOutOfBoundsException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                throw new ProcessGenerationException(e.getLocalizedMessage(), e);
             }
         }
         return tifHeaderImageDescription;

@@ -27,6 +27,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.ProzesskopieForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -194,10 +195,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     newProcess.setAdditionalFields(pattern.getAdditionalFields());
 
                     TitleGenerator titleGenerator = new TitleGenerator(newProcess.getAtstsl(), newProcess.getAdditionalFields());
-                    currentTitle = titleGenerator.generateTitle(newProcess.getTitleDefinition(), issues.get(0).getGenericFields());
-                    if (currentTitle.equals("")) {
+                    try {
+                        currentTitle = titleGenerator.generateTitle(newProcess.getTitleDefinition(), issues.get(0).getGenericFields());
+                    } catch (ProcessGenerationException e) {
                         setException(new ProcessCreationException(
-                                "Couldn’t create process title for issue " + issues.get(0).toString()));
+                                "Couldn’t create process title for issue " + issues.get(0).toString(), e));
                         return;
                     }
                     setWorkDetail(currentTitle);
