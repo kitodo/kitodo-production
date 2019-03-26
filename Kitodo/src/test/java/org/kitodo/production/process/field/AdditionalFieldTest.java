@@ -18,16 +18,15 @@ import org.junit.Test;
 
 public class AdditionalFieldTest {
 
+    private AdditionalField additionalField = new AdditionalField("monograph");
+
     @Test
     public void shouldShowDependingOnDoctypeWhenBothAreEmpty() {
-        AdditionalField additionalField = new AdditionalField("monograph");
-
         assertTrue(additionalField.showDependingOnDoctype());
     }
 
     @Test
     public void shouldShowDependingOnDoctypeWhenItIs() {
-        AdditionalField additionalField = new AdditionalField("monograph");
         additionalField.setIsDocType("monograph");
 
         assertTrue(additionalField.showDependingOnDoctype());
@@ -35,7 +34,6 @@ public class AdditionalFieldTest {
 
     @Test
     public void shouldShowDependingOnDoctypeWhenItIsNot() {
-        AdditionalField additionalField = new AdditionalField("monograph");
         additionalField.setIsDocType("multivolum");
 
         assertFalse(additionalField.showDependingOnDoctype());
@@ -43,7 +41,6 @@ public class AdditionalFieldTest {
 
     @Test
     public void shouldNotShowDependingOnDoctypeWhenItIs() {
-        AdditionalField additionalField = new AdditionalField("monograph");
         additionalField.setIsDocType("multivolume");
 
         assertFalse(additionalField.showDependingOnDoctype());
@@ -51,7 +48,6 @@ public class AdditionalFieldTest {
 
     @Test
     public void shouldNotShowDependingOnDoctypeWhenItIsNot() {
-        AdditionalField additionalField = new AdditionalField("monograph");
         additionalField.setIsNotDoctype("monograph");
 
         assertFalse(additionalField.showDependingOnDoctype());

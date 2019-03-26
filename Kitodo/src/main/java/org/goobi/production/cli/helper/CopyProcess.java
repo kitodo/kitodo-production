@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.importer.ImportObject;
@@ -460,9 +461,10 @@ public class CopyProcess extends ProzesskopieForm {
              */
             String title = additionalField.getTitle();
             String value = additionalField.getValue();
-            if ((title.equals("ATS") || title.equals("TSL")) && additionalField.showDependingOnDoctype()
-                    && (Objects.isNull(value) || value.isEmpty())) {
+            if (("ATS".equals(title) || "TSL".equals(title)) && additionalField.showDependingOnDoctype()
+                    && StringUtils.isEmpty(value)) {
                 additionalField.setValue(CopyProcess.atstsl);
+                value = additionalField.getValue();
             }
 
             // add the content to the title
