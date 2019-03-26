@@ -72,7 +72,7 @@ public final class ProcessValidator {
         // check the additional inputs that must be specified
         for (AdditionalField field : additionalFields) {
             String value = field.getValue();
-            if (StringUtils.isBlank(value) && field.isRequired() && field.getShowDependingOnDoctype()) {
+            if (StringUtils.isBlank(value) && field.isRequired() && field.showDependingOnDoctype()) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }

@@ -417,7 +417,7 @@ public class ProzesskopieForm implements Serializable {
     private void fillFieldsFromMetadataFile() {
         if (Objects.nonNull(this.rdf)) {
             for (AdditionalField field : this.additionalFields) {
-                if (field.isUghBinding() && field.getShowDependingOnDoctype()) {
+                if (field.isUghBinding() && field.showDependingOnDoctype()) {
                     proceedField(field);
                     String value = field.getValue();
                     if (Objects.nonNull(value) && !value.isEmpty()) {
@@ -608,7 +608,7 @@ public class ProzesskopieForm implements Serializable {
                 insertLogicalDocStruct();
 
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.isUghBinding() && field.getShowDependingOnDoctype()) {
+                    if (field.isUghBinding() && field.showDependingOnDoctype()) {
                         processAdditionalField(field);
                     }
                 }
@@ -968,7 +968,7 @@ public class ProzesskopieForm implements Serializable {
 
     protected void addAdditionalFields(List<AdditionalField> additionalFields, Process process) {
         for (AdditionalField field : additionalFields) {
-            if (field.getShowDependingOnDoctype()) {
+            if (field.showDependingOnDoctype()) {
                 if (field.getFrom().equals("werk")) {
                     BeanHelper.addPropertyForWorkpiece(process, field.getTitle(), field.getValue());
                 }
@@ -1101,7 +1101,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of AdditionalField
      */
     public List<AdditionalField> getVisibleAdditionalFields() {
-        return this.getAdditionalFields().stream().filter(AdditionalField::getShowDependingOnDoctype)
+        return this.getAdditionalFields().stream().filter(AdditionalField::showDependingOnDoctype)
                 .collect(Collectors.toList());
     }
 

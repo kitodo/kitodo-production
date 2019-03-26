@@ -142,7 +142,7 @@ public class TitleGenerator extends Generator {
         for (AdditionalField additionalField : this.additionalFields) {
             String title = additionalField.getTitle();
             String value = additionalField.getValue();
-            boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
+            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
             /*
              * if it is the ATS or TSL field, then use the calculated atstsl if it does not
              * already exist

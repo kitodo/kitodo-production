@@ -82,7 +82,7 @@ public class TiffHeaderGenerator extends Generator {
         for (AdditionalField additionalField : this.additionalFields) {
             String title = additionalField.getTitle();
             String value = additionalField.getValue();
-            boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
+            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
 
             if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
                 this.tiffHeader = value;

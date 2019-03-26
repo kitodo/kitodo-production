@@ -146,7 +146,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) {
         if (Objects.nonNull(myRdf)) {
             for (AdditionalField field : this.additionalFields) {
-                if (field.isUghBinding() && field.getShowDependingOnDoctype()) {
+                if (field.isUghBinding() && field.showDependingOnDoctype()) {
                     LegacyDocStructHelperInterface myTempStruct = getDocstructForMetadataFile(myRdf, field);
                     try {
                         setMetadataForMetadataFile(field, myTempStruct);
@@ -190,7 +190,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     private void fillFieldsFromConfig() {
         for (AdditionalField field : this.additionalFields) {
-            if (!field.isUghBinding() && field.getShowDependingOnDoctype() && Objects.nonNull(field.getSelectList())
+            if (!field.isUghBinding() && field.showDependingOnDoctype() && Objects.nonNull(field.getSelectList())
                     && !field.getSelectList().isEmpty()) {
                 field.setValue((String) field.getSelectList().get(0).getValue());
             }
@@ -461,13 +461,13 @@ public class CopyProcess extends ProzesskopieForm {
              */
             String title = additionalField.getTitle();
             String value = additionalField.getValue();
-            if ((title.equals("ATS") || title.equals("TSL")) && additionalField.getShowDependingOnDoctype()
+            if ((title.equals("ATS") || title.equals("TSL")) && additionalField.showDependingOnDoctype()
                     && (Objects.isNull(value) || value.isEmpty())) {
                 additionalField.setValue(CopyProcess.atstsl);
             }
 
             // add the content to the title
-            if (title.equals(token) && additionalField.getShowDependingOnDoctype() && Objects.nonNull(value)) {
+            if (title.equals(token) && additionalField.showDependingOnDoctype() && Objects.nonNull(value)) {
                 stringBuilder.append(calcProcessTitleCheck(title, value));
             }
         }

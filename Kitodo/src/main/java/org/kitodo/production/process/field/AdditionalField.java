@@ -323,18 +323,18 @@ public class AdditionalField {
      *
      * @return true or false
      */
-    public boolean getShowDependingOnDoctype() {
+    public boolean showDependingOnDoctype() {
         // if nothing was specified, then show
         if (this.isDocType.equals("") && this.isNotDoctype.equals("")) {
             return true;
         }
 
         // if obligatory was specified
-        if (!this.isDocType.equals("") && !StringUtils.containsIgnoreCase(isDocType, this.docType)) {
+        if (!this.isDocType.equals("") && !StringUtils.containsIgnoreCase(this.isDocType, this.docType)) {
             return false;
         }
 
         // if only "may not" was specified
-        return !(!this.isNotDoctype.equals("") && StringUtils.containsIgnoreCase(isNotDoctype, this.docType));
+        return !(!this.isNotDoctype.equals("") && StringUtils.containsIgnoreCase(this.isNotDoctype, this.docType));
     }
 }
