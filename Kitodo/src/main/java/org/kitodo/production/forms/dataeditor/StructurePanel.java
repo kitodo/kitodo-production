@@ -127,7 +127,9 @@ public class StructurePanel implements Serializable {
      * workpiece which is stored in the root element of the structure tree.
      */
     void preserve() {
-        preserveRecursive(structureTree);
+        if (!structureTree.getChildren().isEmpty()) {
+            preserveRecursive(structureTree.getChildren().get(0));
+        }
     }
 
     /**
@@ -138,11 +140,10 @@ public class StructurePanel implements Serializable {
      */
     private static Structure preserveRecursive(TreeNode treeNode) {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-        Object dataObject = structureTreeNode.getDataObject();
-        if (!(dataObject instanceof Structure)) {
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof Structure)) {
             return null;
         }
-        Structure structure = (Structure) dataObject;
+        Structure structure = (Structure) structureTreeNode.getDataObject();
 
         List<Structure> childrenLive = structure.getChildren();
         childrenLive.clear();
