@@ -13,8 +13,8 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +77,9 @@ public class StructurePanel implements Serializable {
         this.dataEditor = dataEditor;
     }
 
+    /**
+     * Clear content.
+     */
     public void clear() {
         trees.clear();
         structureTree = null;
@@ -152,6 +155,12 @@ public class StructurePanel implements Serializable {
         return structure;
     }
 
+    /**
+     * Set selected TreeNode.
+     *
+     * @param selected
+     *          TreeNode that will be selected
+     */
     public void setSelectedNode(TreeNode selected) {
         if (Objects.nonNull(selected)) {
             this.selectedNode = selected;
@@ -161,9 +170,6 @@ public class StructurePanel implements Serializable {
     /**
      * Loads the tree(s) into the panel and sets the selected element to the
      * root element of the structure tree.
-     *
-     * @param workpiece
-     *            workpiece to load
      */
     void show() {
         trees.clear();
@@ -173,7 +179,7 @@ public class StructurePanel implements Serializable {
         if (separateMedia != null) {
             Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
                     .map(View::getMediaUnit).collect(Collectors.toSet());
-            DefaultTreeNode mediaTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnits(),
+            DefaultTreeNode mediaTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit().getChildren(),
                 mediaUnitsShowingOnTheStructureTree);
             if (mediaTree != null) {
                 trees.add(mediaTree);
@@ -196,7 +202,7 @@ public class StructurePanel implements Serializable {
         DefaultTreeNode result = new DefaultTreeNode();
         result.setExpanded(true);
         Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, result);
-        return Pair.of(Arrays.asList(result), viewsShowingOnAChild);
+        return Pair.of(Collections.singletonList(result), viewsShowingOnAChild);
     }
 
     private Collection<View> buildStructureTreeRecursively(Structure structure, TreeNode result) {

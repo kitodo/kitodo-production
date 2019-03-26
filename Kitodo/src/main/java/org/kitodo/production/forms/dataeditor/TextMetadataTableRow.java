@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
@@ -32,12 +33,14 @@ import org.kitodo.production.helper.Helper;
 public class TextMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String value = "";
+    private String value;
 
-    public TextMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
-            SimpleMetadataViewInterface settings, MetadataEntry value) {
+    TextMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
+                         SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(panel, container, settings);
-        this.value = value.getValue();
+        if (Objects.nonNull(value)) {
+            this.value = value.getValue();
+        }
     }
 
     @Override
@@ -65,7 +68,7 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
         entry.setKey(settings.getId());
         entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
         entry.setValue(value);
-        return Arrays.asList(entry);
+        return Collections.singletonList(entry);
     }
 
     @Override

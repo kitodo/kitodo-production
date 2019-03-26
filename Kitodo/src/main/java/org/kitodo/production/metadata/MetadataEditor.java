@@ -23,6 +23,7 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 
 /**
@@ -57,6 +58,9 @@ public class MetadataEditor {
         Paginator metadataValues = new Paginator(metadataValue);
         for (int i = 1; i < number; i++) {
             Structure newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
+            if (Objects.isNull(newStructure)) {
+                continue;
+            }
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setKey(metadataKey);
             metadataEntry.setValue(metadataValues.next());
@@ -84,21 +88,27 @@ public class MetadataEditor {
      */
     public static Structure addStructure(String type, Workpiece workpiece, Structure structure,
             InsertionPosition position, List<View> viewsToAdd) {
-
         LinkedList<Structure> parents = getAncestorsOfStructureRecursive(structure, workpiece.getStructure(), null);
+        List<Structure> siblings = new LinkedList<>();
+        if (parents.isEmpty()) {
+            if ((position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
+                    || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
+                Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
+                return null;
+            }
+        } else {
+            siblings = parents.getLast().getChildren();
+        }
         Structure newStructure = new Structure();
         newStructure.setType(type);
-        List<Structure> siblings = parents.getLast().getChildren();
         LinkedList<Structure> structuresToAddViews = new LinkedList<>(parents);
         switch (position) {
             case AFTER_CURRENT_ELEMENT: {
-                int index = siblings.indexOf(structure) + 1;
-                siblings.add(index, newStructure);
+                siblings.add(siblings.indexOf(structure) + 1, newStructure);
                 break;
             }
             case BEFOR_CURRENT_ELEMENT: {
-                int index = siblings.indexOf(structure);
-                siblings.add(index, newStructure);
+                siblings.add(siblings.indexOf(structure), newStructure);
                 break;
             }
             case FIRST_CHILD_OF_CURRENT_ELEMENT: {
@@ -117,8 +127,7 @@ public class MetadataEditor {
                 if (parents.isEmpty()) {
                     workpiece.setStructure(newStructure);
                 } else {
-                    int index = siblings.indexOf(structure);
-                    siblings.set(index, newStructure);
+                    siblings.set(siblings.indexOf(structure), newStructure);
                 }
                 break;
             }
@@ -136,8 +145,7 @@ public class MetadataEditor {
     }
 
     private static Collection<View> getViewsFromChildrenRecursive(Structure structure) {
-        List<View> result = new ArrayList<>();
-        result.addAll(structure.getViews());
+        List<View> result = new ArrayList<>(structure.getViews());
         for (Structure child : structure.getChildren()) {
             result.addAll(getViewsFromChildrenRecursive(child));
         }

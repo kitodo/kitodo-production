@@ -18,7 +18,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core">
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
 
-        <h:form id="imagePreviewForm" style="height: 100%">
+        <h:form id="imagePreviewForm" style="height: 100%;">
 
             <!-- tell OpenLayers where to find the media file -->
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.selectedMedia.mediaViewData}" style="display: none;"/>
@@ -34,6 +34,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-list"
                                      oncomplete="destruct()"
+                                     title="Structured View"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -43,6 +44,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-th-large"
                                      oncomplete="destruct()"
+                                     title="Unstructured View"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -52,6 +54,7 @@
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-image"
                                      oncomplete="initialize()"
+                                     title="Detail View"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
@@ -64,12 +67,14 @@
             </ui:fragment>
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' and not empty DataEditorForm.galleryPanel.stripes}">
                 <p:fieldset id="structuredPagesField">
+                    <!--@elvariable id="currentElement" type="org.kitodo.production.forms.dataeditor.GalleryStripe"-->
                     <p:dataList id="structuredPages"
                                 var="stripe"
                                 value="#{DataEditorForm.galleryPanel.stripes}"
                                 type="definition"
                                 binding="#{currentElement}">
                         <h:outputText value="#{stripe.label}" style="font-weight: bold;"/>
+                        <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList styleClass="structureElementDataList"
                                     id="structureElementDataList"
                                     var="media"
@@ -122,7 +127,7 @@
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
                 <!-- OpenLayers Kitodo custom controls -->
-                <div id="olWrapper" style="overflow-x: auto; height: 100%">
+                <div id="olWrapper" style="overflow-x: auto; height: 100%;">
                     <div id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
@@ -150,7 +155,7 @@
                     <ui:fragment rendered="#{DataEditorForm.galleryPanel.selectedMedia.showingInMediaView}">
                         <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
                         <h:outputScript name="js/ol_custom.js"/>
-                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left"/>
+                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;"></div>
                     </ui:fragment>
                 </div>
             </ui:fragment>

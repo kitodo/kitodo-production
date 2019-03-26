@@ -84,6 +84,10 @@
             <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
                 <p:row>
                     <p:commandButton id="addMetadataButton"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     style="vertical-align: top; margin-left: 10px;"
+                                     disabled="#{readOnly}"
                                      title="#{msgs.neueMetadatenHinzufuegen}"
                                      onclick="PF('addMetadataDialog').show();"/>
                 </p:row>
