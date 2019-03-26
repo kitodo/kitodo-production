@@ -101,7 +101,6 @@ public class TitleGeneratorTest {
         additionalFields.add(createAdditionalField("Titel (Sortierung)", "Test", "TitleDocMainShort"));
         additionalFields.add(createAdditionalField("Autoren", "Test Author", "ListOfCreators"));
         additionalFields.add(createAdditionalField("ATS", "", "TSL_ATS"));
-        additionalFields.add(createAdditionalField("TSL", "", "TSL_ATS"));
         additionalFields.add(createAdditionalField("PPN analog a-Satz", "123", "CatalogIDSource"));
         additionalFields.add(createAdditionalField("PPN digital a-Satz", "123", "CatalogIDDigital"));
         return additionalFields;
