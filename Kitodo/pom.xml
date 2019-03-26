@@ -30,7 +30,7 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>44</maxAllowedViolations>
+        <maxAllowedViolations>39</maxAllowedViolations>
         <selenium.version>3.12.0</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>
     </properties>
