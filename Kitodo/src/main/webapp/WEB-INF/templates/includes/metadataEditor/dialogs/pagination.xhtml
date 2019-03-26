@@ -30,12 +30,13 @@
             <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
                 <p:panelGrid columns="1" layout="grid">
                     <p:row>
+
                         <h:panelGroup layout="block"
                                       styleClass="dialogFieldWrapper">
 
                             <div>
                                 <p:commandButton id="createPaginationButton"
-                                                 action="#{DataEditorForm.paginationPanel.createPaginationButtonClick}"
+                                                 action="#{DataEditorForm.paginationPanel.createPaginationButtonClick()}"
                                                  value="#{msgs.paginationRead}"
                                                  icon="fa fa-magic fa-lg"
                                                  iconPos="right"
@@ -46,11 +47,14 @@
                             </div>
 
                             <div>
-                                <p:selectManyMenu id="paginationSelection" value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}" style="height: 100%;"
-                                                  required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
-                                                  filter="true" filterMatchMode="contains">
+                                <p:selectManyMenu id="paginationSelection"
+                                                  value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
+                                                  style="height: 100%;"
+                                                  required="true"
+                                                  requiredMessage="#{msgs.paginationNoPagesSelected}"
+                                                  filter="true"
+                                                  filterMatchMode="contains">
                                     <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
-
                                 </p:selectManyMenu>
                             </div>
 
@@ -103,7 +107,7 @@
                                         <p:graphicImage value="/pages/images/buttons/#{modeSelection.image}"/>
                                     </p:column>
                                     <p:column>
-                                        <h:outputText value="#{mode.label}"/>
+                                        <h:outputText value="#{modeSelection.label}"/>
                                     </p:column>
                                 </p:selectOneMenu>
                             </div>
@@ -123,7 +127,7 @@
                                 <p:commandButton id="generateDummyImagesButton"
                                                  value="#{msgs.insert}"
                                                  styleClass="secondary"
-                                                 action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick}"
+                                                 action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
                                                  update="structureTreeForm,galleryWrapperPanel"
                                                  immediate="true"/>
                             </div>
@@ -143,7 +147,7 @@
                                       styleClass="dialogButtonWrapper">
 
                             <p:commandButton id="startPagination"
-                                             action="#{DataEditorForm.paginationPanel.startPaginationClick}"
+                                             action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
@@ -160,7 +164,6 @@
                                              update="structureTreeForm"
                                              immediate="true"/>
                         </h:panelGroup>
-
                     </p:row>
                 </p:panelGrid>
             </p:panel>
