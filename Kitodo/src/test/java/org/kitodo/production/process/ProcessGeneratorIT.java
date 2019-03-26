@@ -20,11 +20,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
 
 public class ProcessGeneratorIT {
+
+    private static final String NEW = "new";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -53,7 +57,7 @@ public class ProcessGeneratorIT {
 
         int expected = template.getTasks().size();
         int actual = process.getTasks().size();
-        assertEquals("Task were copied incorrectly!", expected, actual);
+        assertEquals("Tasks were copied incorrectly!", expected, actual);
     }
 
     @Test
@@ -62,6 +66,130 @@ public class ProcessGeneratorIT {
         ProcessGenerator processGenerator = new ProcessGenerator();
         boolean generated = processGenerator.generateProcess(2, 1);
         assertFalse("Process was generated!", generated);
+    }
+
+    @Test
+    public void shouldAddPropertyForProcess() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        ProcessGenerator.addPropertyForProcess(process, NEW, "process");
+        assertTrue("Property was added incorrectly!",
+            process.getProperties().stream().anyMatch(property -> property.getTitle().equals("new")));
+    }
+
+    @Test
+    public void shouldAddPropertyForTemplate() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        ProcessGenerator.addPropertyForTemplate(process, NEW, "template");
+        assertTrue("Property was added incorrectly!",
+            process.getTemplates().stream().anyMatch(property -> property.getTitle().equals(NEW)));
+    }
+
+    @Test
+    public void shouldAddPropertyForWorkpiece() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+
+        ProcessGenerator.addPropertyForWorkpiece(process, NEW, "workpiece");
+        assertTrue("Property was added incorrectly!",
+            process.getWorkpieces().stream().anyMatch(property -> property.getTitle().equals(NEW)));
+    }
+
+    @Test
+    public void shouldCopyPropertyForProcess() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property property = new Property();
+        property.setTitle(NEW);
+        property.setValue("process");
+
+        ProcessGenerator.copyPropertyForProcess(process, new Property());
+        assertTrue("Property was copied incorrectly!", process.getProperties().contains(property));
+    }
+
+    @Test
+    public void shouldCopyPropertyForTemplate() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property property = new Property();
+        property.setTitle(NEW);
+        property.setValue("template");
+
+        ProcessGenerator.copyPropertyForTemplate(process, new Property());
+        assertTrue("Property was copied incorrectly!", process.getTemplates().contains(property));
+    }
+
+    @Test
+    public void shouldCopyPropertyForWorkpiece() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property property = new Property();
+        property.setTitle(NEW);
+        property.setValue("workpiece");
+
+        ProcessGenerator.copyPropertyForWorkpiece(process, property);
+        assertTrue("Property was copied incorrectly!", process.getWorkpieces().contains(property));
+    }
+
+    @Test
+    public void shouldNotCopyPropertyForProcess() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property newProperty = new Property();
+        newProperty.setTitle("Process Property");
+        newProperty.setValue("new value");
+
+        boolean propertyForUpdateAlreadyExists = process.getProperties().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && !property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property which is going be updated doesn't exists or have exactly the same value!",
+            propertyForUpdateAlreadyExists);
+
+        ProcessGenerator.copyPropertyForProcess(process, newProperty);
+
+        boolean propertyValueUpdated = process.getProperties().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property value was not updated!", propertyValueUpdated);
+
+    }
+
+    @Test
+    public void shouldNotCopyPropertyForTemplate() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property newProperty = new Property();
+        newProperty.setTitle("template");
+        newProperty.setValue("new value");
+
+        boolean propertyForUpdateAlreadyExists = process.getTemplates().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && !property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property which is going be updated doesn't exists or have exactly the same value!",
+                propertyForUpdateAlreadyExists);
+
+        ProcessGenerator.copyPropertyForTemplate(process, newProperty);
+
+        boolean propertyValueUpdated = process.getTemplates().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property value was not updated!", propertyValueUpdated);
+    }
+
+    @Test
+    public void shouldNotCopyPropertyForWorkpiece() throws Exception {
+        Process process = ServiceManager.getProcessService().getById(1);
+        Property newProperty = new Property();
+        newProperty.setTitle("workpiece");
+        newProperty.setValue("new value");
+
+        boolean propertyForUpdateAlreadyExists = process.getWorkpieces().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && !property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property which is going be updated doesn't exists or have exactly the same value!",
+                propertyForUpdateAlreadyExists);
+
+        ProcessGenerator.copyPropertyForWorkpiece(process, newProperty);
+
+        boolean propertyValueUpdated = process.getWorkpieces().stream()
+                .anyMatch(property -> property.getTitle().equals(newProperty.getTitle())
+                        && property.getValue().equals(newProperty.getValue()));
+        assertTrue("Property value was not updated!", propertyValueUpdated);
     }
 
     @Test
@@ -75,6 +203,6 @@ public class ProcessGeneratorIT {
 
         ProcessGenerator.copyTasks(template, process);
         int actual = process.getTasks().size();
-        assertEquals("Task were copied incorrectly!", 5, actual);
+        assertEquals("Tasks were copied incorrectly!", 5, actual);
     }
 }
