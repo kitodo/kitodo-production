@@ -193,7 +193,9 @@ public class MetadataEditor {
         for (Structure child : position.getChildren()) {
             LinkedList<Structure> maybeFound = getAncestorsOfStructureRecursive(searched, child, position);
             if (!maybeFound.isEmpty()) {
-                maybeFound.addFirst(parent);
+                if (Objects.nonNull(parent)) {
+                    maybeFound.addFirst(parent);
+                }
                 return maybeFound;
             }
         }
