@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.helper.AdditionalField;
+import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessValidatorIT {
@@ -131,7 +131,7 @@ public class ProcessValidatorIT {
         additionalField.setTitle(title);
         additionalField.setValue(value);
         additionalField.setMetadata(metadata);
-        additionalField.setIsdoctype("monograph");
+        additionalField.setIsDocType("monograph");
         return additionalField;
     }
 

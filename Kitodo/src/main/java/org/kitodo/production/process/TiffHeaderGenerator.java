@@ -22,8 +22,8 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.field.AdditionalField;
 
 public class TiffHeaderGenerator extends Generator {
 

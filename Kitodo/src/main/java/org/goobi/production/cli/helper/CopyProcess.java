@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.ProzesskopieForm;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -42,6 +41,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
+import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 public class CopyProcess extends ProzesskopieForm {
@@ -146,7 +146,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void fillFieldsFromMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf) {
         if (Objects.nonNull(myRdf)) {
             for (AdditionalField field : this.additionalFields) {
-                if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
+                if (field.isUghBinding() && field.getShowDependingOnDoctype()) {
                     LegacyDocStructHelperInterface myTempStruct = getDocstructForMetadataFile(myRdf, field);
                     try {
                         setMetadataForMetadataFile(field, myTempStruct);
@@ -161,14 +161,14 @@ public class CopyProcess extends ProzesskopieForm {
     private LegacyDocStructHelperInterface getDocstructForMetadataFile(LegacyMetsModsDigitalDocumentHelper myRdf,
             AdditionalField field) {
         LegacyDocStructHelperInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
-        if (field.getDocstruct().equals("firstchild")) {
+        if (field.getDocStruct().equals("firstchild")) {
             try {
                 myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
         }
-        if (field.getDocstruct().equals("boundbook")) {
+        if (field.getDocStruct().equals("boundbook")) {
             myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
         }
         return myTempStruct;
@@ -190,7 +190,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     private void fillFieldsFromConfig() {
         for (AdditionalField field : this.additionalFields) {
-            if (!field.isUghbinding() && field.getShowDependingOnDoctype() && Objects.nonNull(field.getSelectList())
+            if (!field.isUghBinding() && field.getShowDependingOnDoctype() && Objects.nonNull(field.getSelectList())
                     && !field.getSelectList().isEmpty()) {
                 field.setValue((String) field.getSelectList().get(0).getValue());
             }
