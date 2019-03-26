@@ -38,7 +38,7 @@
                          iconPos="right"/>
         <p:commandButton id="deleteButton"
                          title="#{msgs.delete}"
-                         action="#{DataEditorForm.deleteLogicalNode}"
+                         action="#{DataEditorForm.deleteButtonClick()}"
                          onclick="PF('loadingDialog').show();"
                          oncomplete="PF('loadingDialog').hide();"
                          update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
