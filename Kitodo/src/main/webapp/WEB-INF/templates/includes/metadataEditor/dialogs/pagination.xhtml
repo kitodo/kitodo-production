@@ -18,13 +18,12 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
 
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
-
     <p:dialog id="paginationDialog"
               widgetVar="paginationDialog"
               modal="true"
               resizable="false"
               dynamic="true"
+              appendTo="@(body)"
               width="480px">
         <h3>#{msgs.paginationEdit}</h3>
         <h:form id="paginationForm">

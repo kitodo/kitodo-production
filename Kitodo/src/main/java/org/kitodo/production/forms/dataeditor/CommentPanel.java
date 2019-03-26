@@ -194,9 +194,8 @@ public class CommentPanel implements Serializable {
     /**
      * Refresh the process in the session.
      *
-     * @param process
-     *            Object process to refresh
-     * @return
+     * @return Process
+     *          the refreshed process
      */
     private Process refreshProcess() {
         Process process = dataEditor.getProcess();
@@ -306,6 +305,6 @@ public class CommentPanel implements Serializable {
         } catch (DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
-        process = refreshProcess();
+        refreshProcess();
     }
 }
