@@ -1124,14 +1124,10 @@ public class MetadataProcessor {
         return null;
     }
 
-    /**
-     * alle Knoten des Baums expanden oder collapsen.
-     */
-    public String expandTree() {
+    private void expandTree() {
         if (this.treeNodeStruct != null) {
             this.treeNodeStruct.expandNodes(this.treeProperties.get("fullexpanded"));
         }
-        return "Metadaten3links";
     }
 
     public List<URI> getAllTifFolders() {
@@ -1141,7 +1137,7 @@ public class MetadataProcessor {
     /**
      * Read all tif folders.
      */
-    public void readAllTifFolders() throws IOException {
+    public void readAllTifFolders() {
         this.allTifFolders = new ArrayList<>();
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
