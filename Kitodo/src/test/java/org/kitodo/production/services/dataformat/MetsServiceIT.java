@@ -41,8 +41,9 @@ public class MetsServiceIT {
     @Test
     public void testReadXML() throws Exception {
         Workpiece workpiece;
-        try (InputStream in = new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml"))) {
-            workpiece = MetsService.getInstance().load(in, null);
+        try (InputStream inputStream = new FileInputStream(
+                new File("../Kitodo-DataFormat/src/test/resources/meta.xml"))) {
+            workpiece = MetsService.getInstance().load(inputStream, null);
         }
 
         // METS file has 183 associated images
