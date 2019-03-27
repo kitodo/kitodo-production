@@ -124,6 +124,7 @@ public class ExportMets {
                     bufferedOutputStream.write(XsltHelper.transformXmlByXslt(source, xslFile).toByteArray());
                 } catch (TransformerException e) {
                     logger.error("Writing Mets file failed!", e);
+                    return false;
                 }
             }
         }
