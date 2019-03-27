@@ -11,6 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -99,9 +100,11 @@ public class DivXmlElementAccess extends Structure {
      *            referenced here by their ID.
      * @param inputStreamProvider
      *            a function that opens an input stream
+     * @throws IOException
+     *             if the reading fails
      */
     DivXmlElementAccess(DivType div, Mets mets, Map<String, Set<FileXmlElementAccess>> mediaUnitsMap,
-            InputStreamProviderInterface inputStreamProvider) {
+            InputStreamProviderInterface inputStreamProvider) throws IOException {
         super();
         super.setLabel(div.getLABEL());
         for (Object mdSecType : div.getDMDID()) {
@@ -164,7 +167,7 @@ public class DivXmlElementAccess extends Structure {
 
     /**
      * Reads a meta-data section and adds the meta-data to the structure.
-     * 
+     *
      * @param mdSecType
      *            type of meta-data section
      * @param mdSec

@@ -188,7 +188,13 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         workpiece.setStructure(
             getStructMapsStreamByType(mets, LOGICAL).map(structMap -> structMap.getDiv())
                 .map(div -> div.getMptr().isEmpty() ? div : div.getDiv().get(0))
-                    .map(div -> new DivXmlElementAccess(div, mets, mediaUnitsMap, inputStreamProvider))
+                    .map(div -> {
+                        try {
+                            return new DivXmlElementAccess(div, mets, mediaUnitsMap, inputStreamProvider);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    })
                 .collect(Collectors.toList()).iterator().next());
         workpiece.getUplinks().addAll(readUplinks(mets, inputStreamProvider));
     }

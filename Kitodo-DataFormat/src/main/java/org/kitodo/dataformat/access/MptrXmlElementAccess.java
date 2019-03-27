@@ -13,7 +13,6 @@ package org.kitodo.dataformat.access;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -42,12 +41,15 @@ public class MptrXmlElementAccess {
      *            METS data structure of the current workpiece
      * @param inputStreamProvider
      *            a function that opens an input stream
+     * @throws IOException
+     *             if the reading fails
      * @throws IllegalStateException
      *             if the child does not have a link to the parent, or the
      *             parent link of the child returns METS data different from the
      *             parent’s METS
      */
-    MptrXmlElementAccess(DivType div, Mets parent, InputStreamProviderInterface inputStreamProvider) {
+    MptrXmlElementAccess(DivType div, Mets parent, InputStreamProviderInterface inputStreamProvider)
+            throws IOException {
         String href = null;
         try {
             linkedStructure.setOrder(div.getORDER());
@@ -62,8 +64,6 @@ public class MptrXmlElementAccess {
             Structure linked = MetsXmlElementAccess.toWorkpiece(child, inputStreamProvider).getStructure();
             linkedStructure.setLabel(linked.getLabel());
             linkedStructure.setType(linked.getType());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         } catch (URISyntaxException e) {
             throw new DataBindingException("Erroneous URI: \"" + href + "\" (" + e.getMessage() + ')', e);
         }
@@ -126,7 +126,7 @@ public class MptrXmlElementAccess {
 
     /**
      * Returns the linked structure of this {@code <mptr>} XML element access.
-     * 
+     *
      * @return the linked structure
      */
     public LinkedStructure getLinkedStructure() {
