@@ -148,10 +148,11 @@ public class TitleGenerator extends Generator {
              * already exist
              */
             if (("ATS".equals(title) || "TSL".equals(title)) && showDependingOnDoctype && StringUtils.isEmpty(value)) {
-                if (this.atstsl.isEmpty()) {
+                if (StringUtils.isEmpty(this.atstsl)) {
                     this.atstsl = createAtstsl(currentTitle, currentAuthors);
                 }
                 additionalField.setValue(this.atstsl);
+                value = additionalField.getValue();
             }
 
             // add the content to the title
