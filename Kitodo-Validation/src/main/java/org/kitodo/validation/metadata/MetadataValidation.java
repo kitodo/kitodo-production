@@ -163,7 +163,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     private static Workpiece readWorkpiece(FileManagementInterface fileManagement, URI metsFileUri,
             LockResult lockResult) throws IOException {
         try (InputStream inputStream = fileManagement.read(metsFileUri, lockResult)) {
-            return createMetsXmlElementAccess().read(inputStream, (uri, unusedBecauseAccessIsReadOnly) -> {
+            Workpiece result = createMetsXmlElementAccess().read(inputStream, (uri, unusedBecauseAccessIsReadOnly) -> {
                 try {
                     Map<URI, LockingMode> requested = new HashMap<>(2);
                     requested.put(uri, LockingMode.IMMUTABLE_READ);
@@ -177,6 +177,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                     throw new UncheckedIOException(e);
                 }
             });
+            return result;
         }
     }
 
