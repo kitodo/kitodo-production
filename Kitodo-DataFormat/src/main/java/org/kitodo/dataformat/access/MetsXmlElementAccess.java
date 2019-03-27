@@ -365,39 +365,42 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private static final List<LinkedStructure> readUplinks(Mets current,
             InputStreamProviderInterface inputStreamProvider) {
 
-        Optional<List<LinkedStructure>> result = getStructMapsStreamByType(current, LOGICAL)
-                .map(structMap -> structMap.getDiv()).filter(div -> !div.getMptr().isEmpty())
-                .flatMap(div -> div.getMptr().parallelStream()).map(mptr -> mptr.getHref()).map(href -> {
-                    URI parentUri = hrefToUri(href);
-                    Mets parent = readMets(inputStreamProvider, parentUri, false);
+        for (StructMapType outerStructMap : getStructMapsStreamByType(current, LOGICAL).collect(Collectors.toList())) {
+            DivType outerDiv = outerStructMap.getDiv();
+            if (outerDiv.getMptr().isEmpty()) {
+                continue;
+            }
+            for (Mptr mptr : outerDiv.getMptr()) {
+                String href = mptr.getHref();
 
-                    LinkedList<LinkedStructure> found = null;
-                    for (StructMapType structMap : getStructMapsStreamByType(parent, LOGICAL)
-                            .collect(Collectors.toList())) {
-                        DivType div = structMap.getDiv();
-                        if (!div.getMptr().isEmpty()) {
-                            div = div.getDiv().get(0);
-                        }
-                        LinkedList<LinkedStructure> maybeFound = findCurrentStructureInParent(div, current, parentUri,
-                            inputStreamProvider);
-                        if (maybeFound != null) {
-                            if (found == null) {
-                                found = maybeFound;
-                            } else {
-                                throw new IllegalStateException("Child is referenced from parent multiple times");
-                            }
+                URI parentUri = hrefToUri(href);
+                Mets parent = readMets(inputStreamProvider, parentUri, false);
+
+                LinkedList<LinkedStructure> found = null;
+                for (StructMapType innerStructMap : getStructMapsStreamByType(parent, LOGICAL)
+                        .collect(Collectors.toList())) {
+                    DivType innerDiv = innerStructMap.getDiv();
+                    if (!innerDiv.getMptr().isEmpty()) {
+                        innerDiv = innerDiv.getDiv().get(0);
+                    }
+                    LinkedList<LinkedStructure> maybeFound = findCurrentStructureInParent(innerDiv, current, parentUri,
+                        inputStreamProvider);
+                    if (maybeFound != null) {
+                        if (found == null) {
+                            found = maybeFound;
+                        } else {
+                            throw new IllegalStateException("Child is referenced from parent multiple times");
                         }
                     }
-                    if (found == null) {
-                        throw new IllegalStateException("Child not referenced from parent");
-                    }
-                    found.addAll(0, readUplinks(parent, inputStreamProvider));
-                    return found;
-                }).reduce((one, another) -> {
-                    one.addAll(another);
-                    return one;
-                }).map(linkedList -> (List<LinkedStructure>) linkedList);
-        return result.orElse(Collections.emptyList());
+                }
+                if (found == null) {
+                    throw new IllegalStateException("Child not referenced from parent");
+                }
+                found.addAll(0, readUplinks(parent, inputStreamProvider));
+                return found;
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
