@@ -125,10 +125,7 @@ public class TemplateForm extends TemplateBaseForm {
     public String save() {
         if (Objects.nonNull(this.template.getTitle()) && !this.template.getTitle().isEmpty()) {
             try {
-                if (this.template.getTasks().isEmpty()) {
-                    Converter converter = new Converter(this.template.getWorkflow().getTitle());
-                    converter.convertWorkflowToTemplate(this.template);
-                }
+                prepareTasks();
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
                 return this.stayOnCurrentPage;
@@ -401,5 +398,16 @@ public class TemplateForm extends TemplateBaseForm {
         Stream<Folder> validatableFolders = template.getProjects().stream()
                 .flatMap(project -> project.getFolders().stream());
         return getSwitches(validatableFolders, task.getValidationFolders());
+    }
+
+    private void prepareTasks() throws DAOException, IOException, WorkflowException {
+        if (!this.template.getTasks().isEmpty()) {
+            for (Task oldTask : this.template.getTasks()) {
+                oldTask.setTemplate(null);
+            }
+            this.template.getTasks().clear();
+        }
+        Converter converter = new Converter(this.template.getWorkflow().getTitle());
+        converter.convertWorkflowToTemplate(this.template);
     }
 }
