@@ -51,7 +51,7 @@ public class Workpiece {
      * The list of parent linked structures. The list is to be read from top to
      * bottom, i.e. the element 0 of the list is the topmost structure.
      */
-    private List<LinkedStructure> uplinks = new ArrayList<>();
+    private Uplinks uplinks = new Uplinks();
 
     /**
      * Returns the creation date of the workpiece.
@@ -154,7 +154,7 @@ public class Workpiece {
      *
      * @return the uplinks
      */
-    public List<LinkedStructure> getUplinks() {
+    public Uplinks getUplinks() {
         return uplinks;
     }
 
