@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.kitodo.production.helper.AdditionalField;
+import org.kitodo.production.process.field.AdditionalField;
 
 /**
  * Created for test switch statement.
@@ -112,7 +112,7 @@ public class TitleGeneratorTest {
         additionalField.setTitle(title);
         additionalField.setValue(value);
         additionalField.setMetadata(metadata);
-        additionalField.setIsdoctype("monograph");
+        additionalField.setIsDocType("monograph");
         return additionalField;
     }
 }

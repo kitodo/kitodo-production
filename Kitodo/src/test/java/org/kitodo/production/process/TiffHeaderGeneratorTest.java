@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.kitodo.production.helper.AdditionalField;
+import org.kitodo.production.process.field.AdditionalField;
 
 public class TiffHeaderGeneratorTest {
 
@@ -56,7 +56,7 @@ public class TiffHeaderGeneratorTest {
         additionalField.setTitle(title);
         additionalField.setValue(value);
         additionalField.setMetadata(metadata);
-        additionalField.setIsdoctype("monograph");
+        additionalField.setIsDocType("monograph");
         return additionalField;
     }
 }

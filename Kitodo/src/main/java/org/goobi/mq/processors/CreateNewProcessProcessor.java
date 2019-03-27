@@ -33,8 +33,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.production.forms.ProzesskopieForm;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 /**

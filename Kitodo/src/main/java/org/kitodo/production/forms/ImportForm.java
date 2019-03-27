@@ -21,8 +21,8 @@ import javax.inject.Named;
 
 import org.kitodo.api.externaldatamanagement.Record;
 import org.kitodo.api.externaldatamanagement.SearchResult;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;

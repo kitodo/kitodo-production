@@ -23,8 +23,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 
 public final class ProcessValidator {
@@ -72,7 +72,7 @@ public final class ProcessValidator {
         // check the additional inputs that must be specified
         for (AdditionalField field : additionalFields) {
             String value = field.getValue();
-            if (StringUtils.isBlank(value) && field.isRequired() && field.getShowDependingOnDoctype()) {
+            if (StringUtils.isBlank(value) && field.isRequired() && field.showDependingOnDoctype()) {
                 valid = false;
                 Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
             }

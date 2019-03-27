@@ -22,8 +22,8 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.helper.AdditionalField;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.process.field.AdditionalField;
 
 public class TiffHeaderGenerator extends Generator {
 
@@ -82,7 +82,7 @@ public class TiffHeaderGenerator extends Generator {
         for (AdditionalField additionalField : this.additionalFields) {
             String title = additionalField.getTitle();
             String value = additionalField.getValue();
-            boolean showDependingOnDoctype = additionalField.getShowDependingOnDoctype();
+            boolean showDependingOnDoctype = additionalField.showDependingOnDoctype();
 
             if ("Titel".equals(title) || "Title".equals(title) && !StringUtils.isEmpty(value)) {
                 this.tiffHeader = value;
