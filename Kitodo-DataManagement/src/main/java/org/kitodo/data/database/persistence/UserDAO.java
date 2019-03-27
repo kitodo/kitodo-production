@@ -59,27 +59,6 @@ public class UserDAO extends BaseDAO<User> {
         save(user);
     }
 
-    public List<User> search(String query, String parameter) throws DAOException {
-        return retrieveObjects(query, parameter);
-    }
-
-    /**
-     * Search for a list of users by a named parameter.
-     *
-     * @param query
-     *            Search query
-     * @param namedParameter
-     *            Name of named parameter
-     * @param parameter
-     *            Parameter value
-     * @return list of users
-     * @throws DAOException
-     *             if a HibernateException is thrown
-     */
-    public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
-        return retrieveObjects(query, namedParameter, parameter);
-    }
-
     /**
      * Count amount of users with exactly the same login like given but different
      * id.

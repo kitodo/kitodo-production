@@ -14,12 +14,10 @@ package org.kitodo.production.security;
 import java.util.Collection;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
@@ -30,13 +28,9 @@ public class LdapUserDetailsContextMapper extends LdapUserDetailsMapper implemen
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
-        try {
-            User user = ServiceManager.getUserService().getByLdapLoginWithFallback(username);
-            SecurityLdapUserDetails securityLdapUserDetails = new SecurityLdapUserDetails(user);
-            securityLdapUserDetails.setDn(ctx.getDn().toString());
-            return securityLdapUserDetails;
-        } catch (DAOException e) {
-            throw new UsernameNotFoundException("Error on reading database while mapping user information from context");
-        }
+        User user = ServiceManager.getUserService().getByLdapLoginWithFallback(username);
+        SecurityLdapUserDetails securityLdapUserDetails = new SecurityLdapUserDetails(user);
+        securityLdapUserDetails.setDn(ctx.getDn().toString());
+        return securityLdapUserDetails;
     }
 }

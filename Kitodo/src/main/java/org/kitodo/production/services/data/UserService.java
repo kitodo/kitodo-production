@@ -113,14 +113,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user;
-        try {
-            user = getByLogin(username);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            throw new UsernameNotFoundException(e.getMessage(), e);
-        }
-        return new SecurityUserDetails(user);
+        return new SecurityUserDetails(getByLogin(username));
     }
 
     @Override
@@ -146,12 +139,10 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      * @param login
      *            The login of the user.
      * @return The user object.
-     * @throws DAOException
-     *             if there is an error at connection or reading database
      * @throws UsernameNotFoundException
      *             if no user can be found by ldap login and normal login
      */
-    public User getByLdapLoginWithFallback(String login) throws DAOException, UsernameNotFoundException {
+    public User getByLdapLoginWithFallback(String login) {
         User user;
         try {
             user = getByLdapLogin(login);
@@ -168,8 +159,8 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      *            The login.
      * @return The user.
      */
-    public User getByLogin(String login) throws DAOException {
-        return getByLoginQuery(login, "from User where login = :username");
+    public User getByLogin(String login) {
+        return getByLoginQuery(login, "from User where login = :login");
     }
 
     /**
@@ -179,18 +170,18 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
      *            The ldapLogin.
      * @return The user.
      */
-    public User getByLdapLogin(String ldapLogin) throws DAOException {
-        return getByLoginQuery(ldapLogin, "from User where ldapLogin = :username");
+    public User getByLdapLogin(String ldapLogin) {
+        return getByLoginQuery(ldapLogin, "from User where ldapLogin = :login");
     }
 
-    private User getByLoginQuery(String login, String query) throws DAOException {
-        List<User> users = getByQuery(query, "username", login);
+    private User getByLoginQuery(String login, String query) {
+        List<User> users = getByQuery(query, Collections.singletonMap("login", login));
         if (users.size() == 1) {
             return users.get(0);
         } else if (users.isEmpty()) {
-            throw new UsernameNotFoundException("Username " + login + " not found!");
+            throw new UsernameNotFoundException("Login " + login + " not found!");
         } else {
-            throw new UsernameNotFoundException("Username " + login + " was found more than once");
+            throw new UsernameNotFoundException("Login " + login + " was found more than once");
         }
     }
 
@@ -236,14 +227,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
             return getSessionClientOfAuthenticatedUser().getId();
         }
         return 0;
-    }
-
-    public List<User> getByQuery(String query, String parameter) throws DAOException {
-        return dao.search(query, parameter);
-    }
-
-    public List<User> getByQuery(String query, String namedParameter, String parameter) throws DAOException {
-        return dao.search(query, namedParameter, parameter);
     }
 
     /**

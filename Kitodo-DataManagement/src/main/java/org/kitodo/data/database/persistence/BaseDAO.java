@@ -22,7 +22,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.hibernate.type.StringType;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -314,48 +313,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             Query q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
-            return (List<T>) q.list();
-        } catch (HibernateException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    /**
-     * Standard design for returning the objects.
-     *
-     * @param query
-     *            string
-     * @param parameter
-     *            string
-     * @return list of results
-     */
-    @SuppressWarnings("unchecked")
-    List<T> retrieveObjects(String query, String parameter) throws DAOException {
-        try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
-            q.setParameter(0, parameter);
-            return (List<T>) q.list();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
-        }
-    }
-
-    /**
-     * Retrieve list of objects by query string and named parameter.
-     *
-     * @param query
-     *            string
-     * @param namedParameter
-     *            name of named parameter
-     * @param parameter
-     *            parameter value
-     * @return List of objects
-     */
-    @SuppressWarnings("unchecked")
-    List<T> retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
-        try (Session session = HibernateUtil.getSession()) {
-            Query q = session.createQuery(query);
-            q.setParameter(namedParameter, parameter, StringType.INSTANCE);
             return (List<T>) q.list();
         } catch (HibernateException e) {
             throw new DAOException(e);
