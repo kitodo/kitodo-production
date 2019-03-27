@@ -55,9 +55,7 @@ a:hover,
 a i,
 a:link i,
 a:visited i,
-.ui-widget-content a i,
-.ui-widget-content a:link i,
-.ui-widget-content a:visited i {
+.ui-widget-content a i {
     text-shadow: 0 0 0 transparent;
     color: var(--blue);
 }
@@ -125,7 +123,8 @@ input.ui-state-error {
 }
 
 .ui-button.secondary,
-.ui-widget-content .ui-button.secondary {
+.ui-widget-content .ui-button.secondary,
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label  {
     background: var(--pure-white);
     border: solid 1px var(--light-blue);
     color: var(--light-blue);
@@ -292,6 +291,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     text-rendering: auto;
 }
 
+.ui-row-toggler:hover {
+    color: var(--focused-blue);
+}
+
 .ui-row-toggler.ui-icon-circle-triangle-e:before {
     content: "\f13a";
 }
@@ -300,8 +303,18 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     content: "\f139";
 }
 
-.ui-menu, .ui-menu .ui-menu-child {
-    background: var(--cloudy-gray);
+.ui-menu,
+.ui-menu .ui-menu-child {
+    background: var(--light-gray);
+}
+
+.ui-menu .ui-menuitem:hover {
+    background: var(--focused-blue);
+}
+
+.ui-menu .ui-menuitem:hover .ui-menuitem-icon,
+.ui-menu .ui-menuitem:hover .ui-menuitem-text {
+    color: var(--pure-white);
 }
 
 .ui-inputfield,
@@ -483,6 +496,14 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background-color: var(--light-gray);
 }
 
+.ui-inputfield.ui-state-disabled,
+.ui-inputfield.ui-state-disabled::placeholder,
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label,
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger {
+    color: var(--medium-gray);
+    border-color: var(--medium-gray);
+}
+
 .ui-tree {
     width: 100%;
 }
@@ -607,25 +628,23 @@ tr.ui-widget-content,
     content: '\f050';
 }
 
-.ui-widget-header .ui-state-default,
-.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    background: var(--pure-white);
-    color: var(--carbon-blue);
-}
-
 .ui-paginator {
     padding: 6px 0 !important;
 }
 
 .ui-paginator .ui-state-default {
-    color: var(--carbon-blue);
-    background: var(--pure-white);
+    color: var(--blue);
+    background: transparent;
     min-width: 20px;
 }
 
-.ui-paginator .ui-state-active {
-    background: var(--blue);
-    color: var(--pure-white);
+.ui-paginator .ui-state-disabled {
+    opacity: initial;
+    color: var(--medium-gray);
+}
+
+.ui-paginator .ui-paginator-current {
+    color: var(--carbon-blue);
 }
 
 @keyframes row-expansion-animation {

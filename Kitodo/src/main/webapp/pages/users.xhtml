@@ -48,7 +48,7 @@
         </h:form>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button"
+            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                   label=""
                                   converter="#{listColumnConverter}"
                                   title="#{msgs.configureColumns}"

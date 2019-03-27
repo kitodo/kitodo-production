@@ -147,26 +147,19 @@ body.first-visit #portal-header {
     border-radius: 3px;
     display: table;
     white-space: nowrap;
-    }
-
-#portal-search form:hover {
-    background: linear-gradient(var(--focused-blue), #043759);
-    background: -moz-linear-gradient(var(--focused-blue), #043759);
-    background: -webkit-linear-gradient(var(--focused-blue), #043759);
-    background: -ms-linear-gradient(var(--focused-blue), #043759);
-    background: -o-linear-gradient(var(--focused-blue), #043759);
-    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
-    }
+}
 
 #search-form\:search-field {
     display: none;
-    }
+}
+
+#search-form\:search-field::placeholder {
+    color: var(--pure-white);
+}
 
 #search-form\:search-field-short {
     display: table-cell;
-    }
+}
 
 #search-form\:search-field,
 #search-form\:search-field-short {
@@ -179,7 +172,7 @@ body.first-visit #portal-header {
     background: transparent;
     color: var(--pure-white);
     box-shadow: inherit;
-    }
+}
 
 #portal-search button {
     display: table-cell;
@@ -192,16 +185,19 @@ body.first-visit #portal-header {
     cursor: pointer;
     font-weight: 600;
     font-size: 17px;
-    }
+}
+
+#portal-search form:hover,
+#portal-search form:hover #search-form\:search-field,
+#portal-search form:hover #search-form\:search-field::placeholder,
+#portal-search form:hover button {
+    background: var(--pure-white);
+    color: var(--carbon-blue);
+}
 
 #portal-search button:hover {
-    background: linear-gradient(var(--green), var(--focused-blue));
-    background: -moz-linear-gradient(var(--green), var(--focused-blue));
-    background: -webkit-linear-gradient(var(--green), var(--focused-blue));
-    background: -ms-linear-gradient(var(--green), var(--focused-blue));
-    background: -o-linear-gradient(var(--green), var(--focused-blue));
     border-radius: 3px;
-    }
+}
 
 #portal-header #portal-nav {
     width: auto;
@@ -209,11 +205,11 @@ body.first-visit #portal-header {
     position: absolute;
     top: 15px;
     right: 30px;
-    }
+}
 
 #header-nav > ul {
     width: 100%;
-    }
+}
 
 #header-nav > ul > li {
     list-style: none;
@@ -222,13 +218,13 @@ body.first-visit #portal-header {
     line-height: 1;
     position: relative;
     margin: 15px 0px 15px 30px;
-    }
+}
 
 #header-nav > ul > li > a {
     color: inherit;
     text-decoration: none !important;
     padding-bottom: 15px;
-    }
+}
 
 #header-nav > ul > li > a > i {
     color: inherit;
@@ -236,7 +232,7 @@ body.first-visit #portal-header {
 
 #header-nav li:hover a {
     color: var(--carbon-blue);
-    }
+}
 
 #header-nav li.disabled:hover > a {
     color: var(--pure-white);
@@ -347,6 +343,15 @@ body.first-visit #portal-header {
     font-weight: bold;
 }
 
+#nav-user li:not(:first-child):not(:last-child):hover,
+#nav-user li:hover > div,
+#nav-user li:hover > span,
+#nav-user li:not(.logout):hover > a,
+#nav-user li.toggle-list:hover {
+    background-color: var(--focused-blue);
+    color: var(--pure-white);
+}
+
 #nav-user li.logout {
     background-color: var(--orange);
     border: none;
@@ -372,15 +377,11 @@ body.first-visit #portal-header {
     margin-left: 10px;
 }
 
-#header-nav #nav-user li.toggle-list {
+#nav-user li.toggle-list {
     background-color: var(--cloudy-gray);
 }
 
-#header-nav #nav-user li.toggle-list a.ui-commandlink {
-    border-top: 1px solid var(--cloudy-gray);
-}
-
-#header-nav #nav-user > li > div > span > div {
+#nav-user > li > div > span > div {
     padding: 0;
     border-width: 0;
 }
@@ -1728,7 +1729,6 @@ footer {
 
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a  {
-    color: var(--blue);
     margin-right: 10px;
 }
 
