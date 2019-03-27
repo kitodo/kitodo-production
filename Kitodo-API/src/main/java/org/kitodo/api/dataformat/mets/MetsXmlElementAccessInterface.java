@@ -44,7 +44,7 @@ public interface MetsXmlElementAccessInterface {
     /**
      * Reads a METS file.
      *
-     * @param in
+     * @param inputStream
      *            open input channel for reading the file
      * @param getInputStreamFunction
      *            reference to a function that opens an input stream
@@ -52,7 +52,7 @@ public interface MetsXmlElementAccessInterface {
      * @throws IOException
      *             if the reading fails
      */
-    Workpiece read(InputStream in, InputStreamProviderInterface getInputStreamFunction) throws IOException;
+    Workpiece read(InputStream inputStream, InputStreamProviderInterface getInputStreamFunction) throws IOException;
 
     /**
      * Writes the workpiece to a METS file.
