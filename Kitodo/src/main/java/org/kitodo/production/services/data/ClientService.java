@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.production.services.ServiceManager;
@@ -89,5 +90,19 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     public Client addStandardListColumns(Client client) {
         client.setListColumns(ServiceManager.getListColumnService().getAllStandardListColumns());
         return client;
+    }
+
+    /**
+     * Find all clients available to assign to the edited user. It will be
+     * displayed in the addclientsPopup.
+     *
+     * @param user
+     *            user which is going to be edited
+     * @return list of all matching clients
+     */
+    public List<Client> getAllAvailableForAssignToUser(User user) throws DAOException {
+        List<Client> clients = getAll();
+        clients.removeAll(user.getClients());
+        return clients;
     }
 }

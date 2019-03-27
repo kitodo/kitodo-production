@@ -17,14 +17,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.enums.KitodoConfigFile;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
@@ -155,21 +158,29 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * Find all projects available to assign to the edited user. It will be
      * displayed in the addProjectsPopup.
      *
-     * @param userId
-     *            id of user which is going to be edited
+     * @param user
+     *            user which is going to be edited
      * @return list of all matching projects
      */
-    public List<ProjectDTO> findAllAvailableForAssignToUser(Integer userId) throws DataException {
-        return findAvailableForAssignToUser(userId);
+    public List<ProjectDTO> findAllAvailableForAssignToUser(User user) throws DataException {
+        return findAvailableForAssignToUser(user);
     }
 
-    private List<ProjectDTO> findAvailableForAssignToUser(Integer userId) throws DataException {
-        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
+    private List<ProjectDTO> findAvailableForAssignToUser(User user) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForUserId(userId, false));
-        query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClientId, true));
-        return findByQuery(query, true);
+        for (Client client : user.getClients()) {
+            query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
+        }
+
+        List<ProjectDTO> projectDTOS = findByQuery(query, true);
+        List<ProjectDTO> alreadyAssigned = new ArrayList<>();
+        for (Project project : user.getProjects()) {
+            alreadyAssigned.addAll(projectDTOS.stream().filter(projectDTO -> projectDTO.getId().equals(project.getId()))
+                    .collect(Collectors.toList()));
+        }
+        projectDTOS.removeAll(alreadyAssigned);
+        return projectDTOS;
     }
 
     private QueryBuilder getQueryForUserId(Integer id, boolean contains) {

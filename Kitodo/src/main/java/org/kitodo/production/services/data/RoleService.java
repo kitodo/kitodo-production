@@ -99,12 +99,14 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
      * @return list of all matching roles
      */
     public List<Role> getAllAvailableForAssignToUser(User user) throws DAOException {
-        if (Objects.nonNull(user.getId())) {
-            List<Role> roles = dao.getAllAvailableForAssignToUser(user.getClients());
-            roles.removeAll(user.getRoles());
-            return roles;
+        if (user.getClients().isEmpty()) {
+            return getAll();
         }
-        return getAll();
+        List<Role> roles = dao.getAllAvailableForAssignToUser(user.getClients());
+        roles.removeAll(user.getRoles());
+        return roles;
+
+
     }
 
     /**
