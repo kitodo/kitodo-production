@@ -49,7 +49,8 @@
                                      oncomplete="toggleSave()"
                                      update="statusColumn"
                                      icon="fa fa-long-arrow-left"
-                                     styleClass="ui-button-small">
+                                     styleClass="ui-button-small"
+                                     rendered="#{item.processingStatus.title eq 'statusOpen' or item.processingStatus.title eq 'statusInProcessing'}">
                         <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                     <!-- Set workflow state to next step -->
@@ -59,7 +60,8 @@
                                      oncomplete="toggleSave()"
                                      update="taskTable"
                                      icon="fa fa-long-arrow-right"
-                                     styleClass="ui-button-small">
+                                     styleClass="ui-button-small"
+                                     rendered="#{item.processingStatus.title eq 'statusOpen' or item.processingStatus.title eq 'statusInProcessing'}">
                         <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                 </p:panel>
