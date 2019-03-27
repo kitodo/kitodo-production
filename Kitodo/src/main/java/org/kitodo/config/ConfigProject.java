@@ -285,7 +285,7 @@ public class ConfigProject {
             inString = inString.replaceAll("\t", " ");
             inString = inString.replaceAll("\n", " ");
             while (inString.contains("  ")) {
-                inString = inString.replaceAll("  ", " ");
+                inString = inString.replaceAll(" {2}", " ");
             }
         }
         return inString;
