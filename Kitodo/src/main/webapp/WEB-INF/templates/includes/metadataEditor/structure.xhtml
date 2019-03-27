@@ -33,7 +33,9 @@
                     <ui:param name="elementType" value="#{MetadataProcessor.getDocStructTranslation(element.type)}"/>
                     <h:outputText value="#{elementType}"/> <h:outputText
                         value=" #{MetadataProcessor.getLogicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
-                    <h:outputText value=" 🔗" rendered="#{MetadataProcessor.isLink(element)}"/>
+                    <ui:fragment rendered="#{MetadataProcessor.isLink(element)}">
+                        <i class="fa fa-link"/>
+                    </ui:fragment>
                 </p:treeNode>
             </p:tree>
         </p:repeat>
