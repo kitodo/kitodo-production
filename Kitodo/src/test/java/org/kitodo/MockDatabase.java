@@ -670,6 +670,11 @@ public class MockDatabase {
         thirdProcessProperty.setCreationDate(localDate.toDate());
         thirdProcessProperty.getProcesses().add(firstProcess);
         ServiceManager.getPropertyService().save(thirdProcessProperty);
+
+        firstProcess.getProperties().add(firstProcessProperty);
+        firstProcess.getProperties().add(secondProcessProperty);
+        firstProcess.getProperties().add(thirdProcessProperty);
+        ServiceManager.getProcessService().save(firstProcess);
     }
 
     public static void insertClients() throws DAOException {

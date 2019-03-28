@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.ProzesskopieForm;
-import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
@@ -288,26 +287,26 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void addProperties(ImportObject io) {
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
                 this.tifHeaderImageDescription);
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
         if (Objects.isNull(io)) {
             addAdditionalFields(this.additionalFields, this.prozessKopie);
         } else {
             for (Property processProperty : io.getProcessProperties()) {
-                addPropertyForProcess(this.prozessKopie, processProperty);
+                ProcessGenerator.copyPropertyForProcess(this.prozessKopie, processProperty);
             }
             for (Property workpieceProperty : io.getWorkProperties()) {
-                addPropertyForWorkpiece(this.prozessKopie, workpieceProperty);
+                ProcessGenerator.copyPropertyForWorkpiece(this.prozessKopie, workpieceProperty);
             }
 
             for (Property templateProperty : io.getTemplateProperties()) {
-                addPropertyForTemplate(this.prozessKopie, templateProperty);
+                ProcessGenerator.copyPropertyForTemplate(this.prozessKopie, templateProperty);
             }
-            BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
-            BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
+            ProcessGenerator.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
+            ProcessGenerator.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
         }
     }
 
@@ -472,48 +471,6 @@ public class CopyProcess extends ProzesskopieForm {
                 stringBuilder.append(calcProcessTitleCheck(title, value));
             }
         }
-    }
-
-    private void addPropertyForTemplate(Process template, Property property) {
-        if (ProcessValidator.existsProperty(template.getTemplates(), property)) {
-            return;
-        }
-
-        Property templateProperty = insertDataToProperty(property);
-        templateProperty.getTemplates().add(template);
-        List<Property> properties = template.getTemplates();
-        properties.add(templateProperty);
-    }
-
-    private void addPropertyForProcess(Process process, Property property) {
-        if (ProcessValidator.existsProperty(process.getProperties(), property)) {
-            return;
-        }
-
-        Property processProperty = insertDataToProperty(property);
-        processProperty.getProcesses().add(process);
-        List<Property> properties = process.getProperties();
-        properties.add(processProperty);
-    }
-
-    private void addPropertyForWorkpiece(Process workpiece, Property property) {
-        if (ProcessValidator.existsProperty(workpiece.getWorkpieces(), property)) {
-            return;
-        }
-
-        Property workpieceProperty = insertDataToProperty(property);
-        workpieceProperty.getWorkpieces().add(workpiece);
-        List<Property> properties = workpiece.getWorkpieces();
-        properties.add(workpieceProperty);
-    }
-
-    private Property insertDataToProperty(Property property) {
-        Property newProperty = new Property();
-        newProperty.setTitle(property.getTitle());
-        newProperty.setValue(property.getValue());
-        newProperty.setChoice(property.getChoice());
-        newProperty.setDataType(property.getDataType());
-        return newProperty;
     }
 
     public void setMetadataFile(URI mdFile) {

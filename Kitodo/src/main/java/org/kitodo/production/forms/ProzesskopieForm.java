@@ -62,7 +62,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.helper.BeanHelper;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WikiFieldHelper;
@@ -955,28 +954,28 @@ public class ProzesskopieForm implements Serializable {
         addAdditionalFields(this.additionalFields, this.prozessKopie);
 
         for (String col : digitalCollections) {
-            BeanHelper.addPropertyForProcess(this.prozessKopie, "digitalCollection", col);
+            ProcessGenerator.addPropertyForProcess(this.prozessKopie, "digitalCollection", col);
         }
 
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
             this.tifHeaderImageDescription);
-        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
-        BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
-        BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
+        ProcessGenerator.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
+        ProcessGenerator.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
+        ProcessGenerator.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
     }
 
     protected void addAdditionalFields(List<AdditionalField> additionalFields, Process process) {
         for (AdditionalField field : additionalFields) {
             if (field.showDependingOnDoctype()) {
                 if (field.getFrom().equals("werk")) {
-                    BeanHelper.addPropertyForWorkpiece(process, field.getTitle(), field.getValue());
+                    ProcessGenerator.addPropertyForWorkpiece(process, field.getTitle(), field.getValue());
                 }
                 if (field.getFrom().equals("vorlage")) {
-                    BeanHelper.addPropertyForTemplate(process, field.getTitle(), field.getValue());
+                    ProcessGenerator.addPropertyForTemplate(process, field.getTitle(), field.getValue());
                 }
                 if (field.getFrom().equals("prozess")) {
-                    BeanHelper.addPropertyForProcess(process, field.getTitle(), field.getValue());
+                    ProcessGenerator.addPropertyForProcess(process, field.getTitle(), field.getValue());
                 }
             }
         }
