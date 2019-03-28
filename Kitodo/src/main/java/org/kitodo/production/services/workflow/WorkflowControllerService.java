@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -370,6 +371,26 @@ public class WorkflowControllerService {
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
 
+    public void reportProblem(Comment comment) throws DataException {
+        Task currentTask = comment.getCurrentTask();
+        this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
+        Date date = new Date();
+        currentTask.setProcessingStatus(TaskStatus.LOCKED);
+        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingTime(date);
+        taskService.replaceProcessingUser(currentTask, getCurrentUser());
+        currentTask.setProcessingBegin(null);
+        taskService.save(currentTask);
+
+        Task correctionTask = comment.getCorrectionTask();
+        correctionTask.setProcessingStatus(TaskStatus.OPEN);
+        correctionTask.setProcessingEnd(null);
+        taskService.save(correctionTask);
+
+        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        updateProcessSortHelperStatus(currentTask.getProcess());
+    }
+
     /**
      * Unified method for solve problem with task.
      *
@@ -404,6 +425,28 @@ public class WorkflowControllerService {
                     ServiceManager.getProcessService().getById(currentTask.getProcess().getId()));
                 currentTask = correctionTask;
             }
+        }
+    }
+
+    public void solveProblem(Comment comment) throws DataException {
+        Date date = new Date();
+        Task currentTask = comment.getCorrectionTask();
+        this.webDav.uploadFromHome(currentTask.getProcess());
+        currentTask.setProcessingStatus(TaskStatus.DONE);
+        currentTask.setProcessingEnd(date);
+        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingTime(date);
+        taskService.replaceProcessingUser(currentTask, getCurrentUser());
+        taskService.save(currentTask);
+        Task correctionTask = comment.getCurrentTask();
+        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
+        openTaskForProcessing(correctionTask);
+        comment.setCorrected(Boolean.TRUE);
+        comment.setCorrectionDate(date);
+        try {
+            ServiceManager.getCommentService().saveToDatabase(comment);
+        } catch (DAOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -686,6 +729,7 @@ public class WorkflowControllerService {
      *            object
      */
     private void updateProcessSortHelperStatus(Process process) throws DataException {
+        ServiceManager.getProcessService().refresh(process);
         String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
         process.setSortHelperStatus(value);
         ServiceManager.getProcessService().save(process);
