@@ -36,7 +36,7 @@
                                  disabled="#{not item.editable or readOnly}"
                                  styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
                                  style="width:100%;"
-                                 validator="#{item.validator}"
+                                 validator="#{item.validatorQuery}"
                                  rendered="#{item.input eq 'inputText'}">
                         <p:ajax event="blur"/>
                     </p:inputText>
