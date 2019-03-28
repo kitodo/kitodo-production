@@ -70,20 +70,23 @@
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <i class="fa fa-bell-o"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
-                <h:link outcome="/pages/currentTasksEdit"
+                <h:commandLink action="/pages/currentTasksEdit"
                         rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
                         title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
                     <i class="fa fa-bell"/>
                     <f:param name="id" value="#{item.id}"/>
-                </h:link>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
+                </h:commandLink>
                 <!-- already assigned task (different user) -->
                 <h:commandLink action="#{CurrentTaskForm.editTask}" id="view2"
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.loggedUser.id and (!item.batchStep || !item.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <i class="fa fa-bell-slash"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
 
                 <!-- take over batch -->
@@ -92,6 +95,7 @@
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
 
                 <!-- edit batch step (this user) -->
@@ -100,6 +104,7 @@
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
 
                 <!-- edit batch step (different user) -->
@@ -108,6 +113,7 @@
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                    <f:setPropertyActionListener value="#{item.process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
             </h:form>
         </p:column>

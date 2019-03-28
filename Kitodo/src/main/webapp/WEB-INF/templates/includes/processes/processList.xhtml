@@ -69,8 +69,7 @@
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                     <f:param name="stayOnCurrentPage" value="processList"/>
                     <f:setPropertyActionListener value="processes" target="#{MetadataProcessor.referringView}"/>
-                    <f:actionListener binding="#{MetadataProcessor.setCorrectionComment(false)}"/>
-                    <f:actionListener binding="#{MetadataProcessor.setShowNewComment(false)}"/>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{CommentForm.processId}"/>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}">
