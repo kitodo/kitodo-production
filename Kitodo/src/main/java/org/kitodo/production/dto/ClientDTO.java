@@ -21,7 +21,6 @@ public class ClientDTO extends BaseDTO {
     private String name;
     private List<UserDTO> users = new ArrayList<>();
     private List<ProjectDTO> projects = new ArrayList<>();
-    private int projectsSize;
 
     /**
      * Gets title.
@@ -78,24 +77,5 @@ public class ClientDTO extends BaseDTO {
      */
     public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
-    }
-
-    /**
-     * Gets projectsSize.
-     *
-     * @return The projectsSize.
-     */
-    public int getProjectsSize() {
-        return projectsSize;
-    }
-
-    /**
-     * Sets projects size.
-     *
-     * @param projectsSize
-     *            projects size as int
-     */
-    public void setProjectsSize(int projectsSize) {
-        this.projectsSize = projectsSize;
     }
 }
