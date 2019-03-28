@@ -51,6 +51,7 @@ public class SelectItemList {
     public static List<SelectItem> getBatches(List<Batch> batches) {
         List<SelectItem> selectItems = new ArrayList<>();
         for (Batch batch : batches) {
+            ServiceManager.getBatchService().createLabel(batch);
             selectItems.add(new SelectItem(batch, batch.toString(), null));
         }
         return selectItems;

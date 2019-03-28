@@ -136,7 +136,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             file fails
      */
     public ExportNewspaperBatchTask(Batch batch) throws IOException {
-        super(batch.getLabel());
+        super(ServiceManager.getBatchService().getLabel(batch));
         batchId = batch.getId();
         action = 1;
         aggregation = new ArrayListMap<>();

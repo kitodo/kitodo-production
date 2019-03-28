@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
@@ -65,6 +66,9 @@ public class Batch extends BaseIndexedBean {
             @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
     private List<Process> processes;
+
+    @Transient
+    private String label = "";
 
     /**
      * Default constructor. Creates an empty batch object.
@@ -202,6 +206,15 @@ public class Batch extends BaseIndexedBean {
     }
 
     /**
+     * Set label.
+     *
+     * @param label as java.lang.String
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
      * The function equals() indicates whether some other object is “equal to”
      * this one.
      *
@@ -229,48 +242,8 @@ public class Batch extends BaseIndexedBean {
         return Objects.hash(title, type, processes);
     }
 
-    // Here will be methods which should be in BatchService but are used by jsp
-    // files
-
-    public String getLabel() {
-        return this.getTitle() != null ? this.getTitle() : getNumericLabel();
-    }
-
-    private String getNumericLabel() {
-        return "batch" + ' ' + this.getId();
-    }
-
-    /**
-     * The function toString() returns a concise but informative representation
-     * that is easy for a person to read and that "textually represents" this
-     * batch.
-     *
-     */
+    @Override
     public String toString() {
-        try {
-            StringBuilder result = new StringBuilder(this.getTitle() != null ? this.getTitle().length() + 20 : 30);
-            if (this.getTitle() != null) {
-                result.append(this.getTitle());
-            } else if (this.getId() != null) {
-                result.append("Batch");
-                result.append(' ');
-                result.append(this.getId());
-            } else {
-                result.append('−');
-            }
-            result.append(" (");
-            String extent = "{0} processes";
-            String size = Integer.toString(this.getProcesses().size());
-            result.append(extent.replaceFirst("\\{0\\}", size));
-            result.append(')');
-            if (this.getType() != null) {
-                result.append(" [");
-                result.append(this.getType().toString());
-                result.append(']');
-            }
-            return result.toString();
-        } catch (RuntimeException fallback) {
-            return super.toString();
-        }
+        return this.label;
     }
 }

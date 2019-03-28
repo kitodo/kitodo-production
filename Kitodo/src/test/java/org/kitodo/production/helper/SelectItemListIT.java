@@ -68,13 +68,13 @@ public class SelectItemListIT {
 
         List<SelectItem> selectItems = SelectItemList.getBatches(batchService.getAll());
 
-        assertEquals("First item is not sorted correctly!", "First batch (1 processes) [LOGISTIC]",
+        assertEquals("First item is not sorted correctly!", "First batch (1 processes) [logistics]",
             selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "Second batch (0 processes) [LOGISTIC]",
+        assertEquals("Second item is not sorted correctly!", "Second batch (0 processes) [logistics]",
             selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "Third batch (2 processes) [NEWSPAPER]",
+        assertEquals("Third item is not sorted correctly!", "Third batch (2 processes) [newspaper]",
             selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "Batch 4 (0 processes) [SERIAL]",
+        assertEquals("Fourth item is not sorted correctly!", "Batch 4 (0 processes) [serial publication]",
             selectItems.get(3).getLabel());
 
         assertThat("First item is not a Batch type!", selectItems.get(0).getValue(), instanceOf(Batch.class));

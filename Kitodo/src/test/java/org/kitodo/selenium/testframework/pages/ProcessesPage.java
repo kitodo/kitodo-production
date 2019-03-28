@@ -183,7 +183,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select batchSelect = new Select(batchesSelect);
-        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+        batchSelect.selectByVisibleText("Third batch (2 Vorgänge) [Zeitung]");
 
         Select processSelect = new Select(processesSelect);
         processSelect.selectByVisibleText("First process");
@@ -199,7 +199,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select batchSelect = new Select(batchesSelect);
-        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+        batchSelect.selectByVisibleText("Third batch (2 Vorgänge) [Zeitung]");
 
         deleteBatchLink.click();
     }
@@ -208,7 +208,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select batchSelect = new Select(batchesSelect);
-        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+        batchSelect.selectByVisibleText("Third batch (2 Vorgänge) [Zeitung]");
 
         downloadDocketForBatchLink.click();
 
