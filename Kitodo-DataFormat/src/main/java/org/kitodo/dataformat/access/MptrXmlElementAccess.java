@@ -19,8 +19,8 @@ import java.util.Objects;
 
 import javax.xml.bind.DataBindingException;
 
-import org.kitodo.api.dataformat.LinkedStructure;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LinkedStructuralElement;
 import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Mptr;
@@ -29,7 +29,7 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MptrXmlElementAccess {
 
-    private LinkedStructure linkedStructure = new LinkedStructure();
+    private LinkedStructuralElement linkedStructure = new LinkedStructuralElement();
 
     /**
      * Constructor to read a linked structure from METS.
@@ -61,7 +61,7 @@ public class MptrXmlElementAccess {
                 child = MetsXmlElementAccess.readMets(inputStream);
             }
             ensureParenthood(parent, child, inputStreamProvider);
-            Structure linked = MetsXmlElementAccess.toWorkpiece(child, inputStreamProvider).getStructure();
+            IncludedStructuralElement linked = MetsXmlElementAccess.toWorkpiece(child, inputStreamProvider).getRootElement();
             linkedStructure.setLabel(linked.getLabel());
             linkedStructure.setType(linked.getType());
         } catch (URISyntaxException e) {
@@ -129,7 +129,7 @@ public class MptrXmlElementAccess {
      *
      * @return the linked structure
      */
-    public LinkedStructure getLinkedStructure() {
+    public LinkedStructuralElement getLinkedStructure() {
         return linkedStructure;
     }
 }

@@ -34,9 +34,9 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
@@ -51,10 +51,10 @@ import org.kitodo.dataformat.metskitodo.Mets;
 
 /**
  * The tree-like outline structure for digital representation. This structuring
- * structure can be subdivided into arbitrary finely granular
+ * included structural element can be subdivided into arbitrary finely granular
  * {@link #substructures}. It can be described by {@link #metadata}.
  */
-public class DivXmlElementAccess extends Structure {
+public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * The qualified name of the Kitodo meta-data format, needed to assemble the
      * meta-data entries in METS using JAXB.
@@ -80,9 +80,10 @@ public class DivXmlElementAccess extends Structure {
     /**
      * Creates a new DivXmlElementAccess for an existing structure.
      */
-    DivXmlElementAccess(Structure structure) {
-        super(structure);
-        metsReferrerId = structure instanceof DivXmlElementAccess ? ((DivXmlElementAccess) structure).metsReferrerId
+    DivXmlElementAccess(IncludedStructuralElement includedStructuralElement) {
+        super(includedStructuralElement);
+        metsReferrerId = includedStructuralElement instanceof DivXmlElementAccess
+                ? ((DivXmlElementAccess) includedStructuralElement).metsReferrerId
                 : UUID.randomUUID().toString();
     }
 
@@ -231,8 +232,8 @@ public class DivXmlElementAccess extends Structure {
             mets.getAmdSec().add(admSec);
         }
 
-        for (ExistingOrLinkedStructure substructure : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess((Structure) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (StructuralElement substructure : super.getChildren()) {
+            div.getDiv().add(new DivXmlElementAccess((IncludedStructuralElement) substructure).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }

@@ -14,8 +14,6 @@ package org.kitodo.production.services.dataformat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -28,9 +26,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
-import org.kitodo.api.dataformat.LinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 
 public class MetsServiceIT {
@@ -50,13 +48,13 @@ public class MetsServiceIT {
         assertEquals(183, workpiece.getMediaUnits().size());
 
         // all pages are linked to the root element
-        assertEquals(workpiece.getMediaUnits().size(), workpiece.getStructure().getViews().size());
+        assertEquals(workpiece.getMediaUnits().size(), workpiece.getRootElement().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getStructure().getChildren().size());
+        assertEquals(16, workpiece.getRootElement().getChildren().size());
 
         // root node has 11 meta-data entries
-        assertEquals(11, workpiece.getStructure().getMetadata().size());
+        assertEquals(11, workpiece.getRootElement().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
@@ -95,22 +93,22 @@ public class MetsServiceIT {
                         }
                     });
 
-        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
+        StructuralElement downlink = workpiece.getRootElement().getChildren().get(0);
         assertTrue(downlink.isLinked());
         assertEquals("Leaf METS file", downlink.getLabel());
-        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructuralElement) downlink).getOrder());
         assertEquals("leaf", downlink.getType());
-        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
+        assertEquals("leaf.xml", ((LinkedStructuralElement) downlink).getUri().getPath());
 
-        List<LinkedStructure> uplinks = workpiece.getUplinks();
+        List<LinkedStructuralElement> uplinks = workpiece.getUplinks();
         assertEquals(2, uplinks.size());
-        LinkedStructure top = uplinks.get(0);
+        LinkedStructuralElement top = uplinks.get(0);
         assertEquals("Top METS file", top.getLabel());
         assertEquals(null, top.getOrder());
         assertEquals("top", top.getType());
         assertEquals("top.xml", top.getUri().getPath());
 
-        LinkedStructure second = uplinks.get(1);
+        LinkedStructuralElement second = uplinks.get(1);
         assertEquals("My branch", second.getLabel());
         assertEquals(BigInteger.valueOf(10), second.getOrder());
         assertEquals("two", second.getType());

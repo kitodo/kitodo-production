@@ -34,12 +34,12 @@ import org.junit.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
-import org.kitodo.api.dataformat.LinkedStructure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.LinkedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
@@ -74,13 +74,13 @@ public class MetsXmlElementAccessIT {
         assertEquals(183, workpiece.getMediaUnits().size());
 
         // all pages are linked to the root element
-        assertEquals(workpiece.getMediaUnits().size(), workpiece.getStructure().getViews().size());
+        assertEquals(workpiece.getMediaUnits().size(), workpiece.getRootElement().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getStructure().getChildren().size());
+        assertEquals(16, workpiece.getRootElement().getChildren().size());
 
         // root node has 11 meta-data entries
-        assertEquals(11, workpiece.getStructure().getMetadata().size());
+        assertEquals(11, workpiece.getRootElement().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),
@@ -112,36 +112,36 @@ public class MetsXmlElementAccessIT {
         Workpiece workpiece = new MetsXmlElementAccess()
                 .read(Files.newInputStream(Paths.get("src/test/resources/top.xml")), INPUT_STREAM_PROVIDER);
 
-        List<ExistingOrLinkedStructure> topStructMapChildren = workpiece.getStructure().getChildren();
-        ExistingOrLinkedStructure firstBranch = topStructMapChildren.get(0);
+        List<StructuralElement> topStructMapChildren = workpiece.getRootElement().getChildren();
+        StructuralElement firstBranch = topStructMapChildren.get(0);
         assertEquals("Other branch", firstBranch.getLabel());
         assertEquals("one", firstBranch.getType());
-        ExistingOrLinkedStructure firstDownlink = ((Structure) firstBranch).getChildren().get(0);
-        assertEquals(LinkedStructure.class, firstDownlink.getClass());
+        StructuralElement firstDownlink = ((IncludedStructuralElement) firstBranch).getChildren().get(0);
+        assertEquals(LinkedStructuralElement.class, firstDownlink.getClass());
         assertEquals("Other METS file", firstDownlink.getLabel());
-        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) firstDownlink).getOrder());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructuralElement) firstDownlink).getOrder());
         assertEquals("leaf", firstDownlink.getType());
-        assertEquals("other.xml", ((LinkedStructure) firstDownlink).getUri().getPath());
+        assertEquals("other.xml", ((LinkedStructuralElement) firstDownlink).getUri().getPath());
 
-        ExistingOrLinkedStructure secondBranch = topStructMapChildren.get(1);
+        StructuralElement secondBranch = topStructMapChildren.get(1);
         assertEquals("My branch", secondBranch.getLabel());
         assertEquals("two", secondBranch.getType());
-        ExistingOrLinkedStructure secondDownlink = ((Structure) secondBranch).getChildren().get(0);
-        assertEquals(LinkedStructure.class, secondDownlink.getClass());
+        StructuralElement secondDownlink = ((IncludedStructuralElement) secondBranch).getChildren().get(0);
+        assertEquals(LinkedStructuralElement.class, secondDownlink.getClass());
         assertEquals("Between the METS files", secondDownlink.getLabel());
-        assertEquals(BigInteger.valueOf(10), ((LinkedStructure) secondDownlink).getOrder());
+        assertEquals(BigInteger.valueOf(10), ((LinkedStructuralElement) secondDownlink).getOrder());
         assertEquals("between", secondDownlink.getType());
-        assertEquals("between.xml", ((LinkedStructure) secondDownlink).getUri().getPath());
+        assertEquals("between.xml", ((LinkedStructuralElement) secondDownlink).getUri().getPath());
 
-        ExistingOrLinkedStructure thirdBranch = topStructMapChildren.get(2);
+        StructuralElement thirdBranch = topStructMapChildren.get(2);
         assertEquals("Another branch", thirdBranch.getLabel());
         assertEquals("three", thirdBranch.getType());
-        ExistingOrLinkedStructure thirdDownlink = ((Structure) thirdBranch).getChildren().get(0);
-        assertEquals(LinkedStructure.class, thirdDownlink.getClass());
+        StructuralElement thirdDownlink = ((IncludedStructuralElement) thirdBranch).getChildren().get(0);
+        assertEquals(LinkedStructuralElement.class, thirdDownlink.getClass());
         assertEquals("Anther METS file", thirdDownlink.getLabel());
-        assertEquals(BigInteger.valueOf(100), ((LinkedStructure) thirdDownlink).getOrder());
+        assertEquals(BigInteger.valueOf(100), ((LinkedStructuralElement) thirdDownlink).getOrder());
         assertEquals("leaf", thirdDownlink.getType());
-        assertEquals("another.xml", ((LinkedStructure) thirdDownlink).getUri().getPath());
+        assertEquals("another.xml", ((LinkedStructuralElement) thirdDownlink).getUri().getPath());
     }
 
     @Test
@@ -150,22 +150,22 @@ public class MetsXmlElementAccessIT {
             Files.newInputStream(Paths.get("src/test/resources/between.xml")),
             INPUT_STREAM_PROVIDER);
 
-        ExistingOrLinkedStructure downlink = workpiece.getStructure().getChildren().get(0);
-        assertEquals(LinkedStructure.class, downlink.getClass());
+        StructuralElement downlink = workpiece.getRootElement().getChildren().get(0);
+        assertEquals(LinkedStructuralElement.class, downlink.getClass());
         assertEquals("Leaf METS file", downlink.getLabel());
-        assertEquals(BigInteger.valueOf(1), ((LinkedStructure) downlink).getOrder());
+        assertEquals(BigInteger.valueOf(1), ((LinkedStructuralElement) downlink).getOrder());
         assertEquals("leaf", downlink.getType());
-        assertEquals("leaf.xml", ((LinkedStructure) downlink).getUri().getPath());
+        assertEquals("leaf.xml", ((LinkedStructuralElement) downlink).getUri().getPath());
 
-        List<LinkedStructure> uplinks = workpiece.getUplinks();
+        List<LinkedStructuralElement> uplinks = workpiece.getUplinks();
         assertEquals(2, uplinks.size());
-        LinkedStructure top = uplinks.get(0);
+        LinkedStructuralElement top = uplinks.get(0);
         assertEquals("Top METS file", top.getLabel());
         assertEquals(null, top.getOrder());
         assertEquals("top", top.getType());
         assertEquals(TOP_XML, top.getUri().getPath());
 
-        LinkedStructure second = uplinks.get(1);
+        LinkedStructuralElement second = uplinks.get(1);
         assertEquals("My branch", second.getLabel());
         assertEquals(BigInteger.valueOf(10), second.getOrder());
         assertEquals("two", second.getType());
@@ -178,21 +178,21 @@ public class MetsXmlElementAccessIT {
             Files.newInputStream(Paths.get("src/test/resources/leaf.xml")),
             INPUT_STREAM_PROVIDER);
 
-        List<LinkedStructure> leafUplinks = workpiece.getUplinks();
+        List<LinkedStructuralElement> leafUplinks = workpiece.getUplinks();
         assertEquals(3, leafUplinks.size());
-        LinkedStructure top = leafUplinks.get(0);
+        LinkedStructuralElement top = leafUplinks.get(0);
         assertEquals("Top METS file", top.getLabel());
         assertEquals(null, top.getOrder());
         assertEquals("top", top.getType());
         assertEquals(TOP_XML, top.getUri().getPath());
 
-        LinkedStructure second = leafUplinks.get(1);
+        LinkedStructuralElement second = leafUplinks.get(1);
         assertEquals("My branch", second.getLabel());
         assertEquals(BigInteger.valueOf(10), second.getOrder());
         assertEquals("two", second.getType());
         assertEquals(TOP_XML, second.getUri().getPath());
 
-        LinkedStructure third = leafUplinks.get(2);
+        LinkedStructuralElement third = leafUplinks.get(2);
         assertEquals("Between the METS files", third.getLabel());
         assertEquals(BigInteger.valueOf(1), third.getOrder());
         assertEquals("between", third.getType());
@@ -259,23 +259,23 @@ public class MetsXmlElementAccessIT {
         }
 
         // create document structure
-        workpiece.getStructure().setType("leaflet");
-        workpiece.getStructure().setLabel("The Leaflet");
+        workpiece.getRootElement().setType("leaflet");
+        workpiece.getRootElement().setLabel("The Leaflet");
         for (MediaUnit page : pages) {
             View view = new View();
             view.setMediaUnit(page);
-            workpiece.getStructure().getViews().add(view);
+            workpiece.getRootElement().getViews().add(view);
         }
 
-        Structure frontCover = new Structure();
+        IncludedStructuralElement frontCover = new IncludedStructuralElement();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
         view.setMediaUnit(pages.get(0));
         frontCover.getViews().add(view);
-        workpiece.getStructure().getChildren().add(frontCover);
+        workpiece.getRootElement().getChildren().add(frontCover);
 
-        Structure inside = new Structure();
+        IncludedStructuralElement inside = new IncludedStructuralElement();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
@@ -284,15 +284,15 @@ public class MetsXmlElementAccessIT {
         view = new View();
         view.setMediaUnit(pages.get(2));
         inside.getViews().add(view);
-        workpiece.getStructure().getChildren().add(inside);
+        workpiece.getRootElement().getChildren().add(inside);
 
-        Structure backCover = new Structure();
+        IncludedStructuralElement backCover = new IncludedStructuralElement();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
         view.setMediaUnit(pages.get(3));
         backCover.getViews().add(view);
-        workpiece.getStructure().getChildren().add(backCover);
+        workpiece.getRootElement().getChildren().add(backCover);
 
         // add metadata
         MetadataEntry title = new MetadataEntry();
@@ -317,7 +317,7 @@ public class MetsXmlElementAccessIT {
         imagesConverted.setKey("imageConversionHint");
         imagesConverted.setDomain(MdSec.DIGIPROV_MD);
         imagesConverted.setValue("Images have been converted from TIFF to JPEG.");
-        workpiece.getStructure().getMetadata().add(imagesConverted);
+        workpiece.getRootElement().getMetadata().add(imagesConverted);
         frontCover.getMetadata().add(imagesConverted);
         inside.getMetadata().add(imagesConverted);
         backCover.getMetadata().add(imagesConverted);
@@ -372,7 +372,7 @@ public class MetsXmlElementAccessIT {
             MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        Structure structureRoot = reread.getStructure();
+        IncludedStructuralElement structureRoot = reread.getRootElement();
         assertEquals(4, structureRoot.getViews().size());
         assertEquals(3, structureRoot.getChildren().size());
         assertEquals(1, structureRoot.getMetadata().size());

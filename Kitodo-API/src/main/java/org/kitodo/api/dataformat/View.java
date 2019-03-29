@@ -12,7 +12,7 @@
 package org.kitodo.api.dataformat;
 
 /**
- * A view on a media unit. The individual levels of the {@link Structure} refer
+ * A view on a media unit. The individual levels of the {@link IncludedStructuralElement} refer
  * to {@code View}s on {@link MediaUnit}s. At the moment, each {@code View}
  * refers to exactly one {@code MediaUnit} as a whole.
  */

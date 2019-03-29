@@ -14,7 +14,7 @@ package org.kitodo.api.dataformat;
 import java.util.ArrayList;
 
 /**
- * The list of parent linked structures. The list is to be read from top to
- * bottom, i.e. the element 0 of the list is the topmost structure.
+ * The list of parent linked structural elements. The list is to be read from top to
+ * bottom, i.e. the element 0 of the list is the topmost structural element.
  */
-public class Uplinks extends ArrayList<LinkedStructure> { }
+public class Uplinks extends ArrayList<LinkedStructuralElement> { }

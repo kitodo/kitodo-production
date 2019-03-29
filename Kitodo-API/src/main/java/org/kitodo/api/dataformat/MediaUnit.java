@@ -28,7 +28,7 @@ import org.kitodo.api.Metadata;
 public class MediaUnit {
     /**
      * The subordinate media units of this media unit, which form the media unit
-     * tree. The order of the substructures is subordinate media units by the
+     * tree. The order of the substructural elements is subordinate media units by the
      * order of the {@code <div>} elements in the
      * {@code <structMap TYPE="PHYSICAL">} in the METS file.
      */
@@ -48,7 +48,7 @@ public class MediaUnit {
 
     /**
      * Sequence number of the media unit. The playback order of the media units
-     * when referenced from a structure is determined by this attribute (not by
+     * when referenced from a structural element is determined by this attribute (not by
      * the order of the references).
      */
     private int order;

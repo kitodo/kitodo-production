@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The administrative structure of the product of an element that passes through
+ * The administrative structural element of the product of an element that passes through
  * a Production workflow.
  */
 public class Workpiece {
@@ -43,13 +43,13 @@ public class Workpiece {
     private MediaUnit mediaUnit = new MediaUnit();
 
     /**
-     * The logical structure.
+     * The logical structural element.
      */
-    private Structure structure = new Structure();
+    private IncludedStructuralElement rootElement = new IncludedStructuralElement();
 
     /**
-     * The list of parent linked structures. The list is to be read from top to
-     * bottom, i.e. the element 0 of the list is the topmost structure.
+     * The list of parent linked structural elements. The list is to be read from top to
+     * bottom, i.e. the element 0 of the list is the topmost structural element.
      */
     private Uplinks uplinks = new Uplinks();
 
@@ -121,12 +121,12 @@ public class Workpiece {
     }
 
     /**
-     * Returns the root element of the structure.
+     * Returns the root element of the structural element.
      *
-     * @return root element of the structure
+     * @return root element of the structural element
      */
-    public Structure getStructure() {
-        return structure;
+    public IncludedStructuralElement getRootElement() {
+        return rootElement;
     }
 
     /**
@@ -140,13 +140,13 @@ public class Workpiece {
     }
 
     /**
-     * Sets the structure of the workpiece.
+     * Sets the structural element of the workpiece.
      *
-     * @param structure
-     *            structure to set
+     * @param includedStructuralElement
+     *            structural element to set
      */
-    public void setStructure(Structure structure) {
-        this.structure = structure;
+    public void setStructure(IncludedStructuralElement includedStructuralElement) {
+        this.rootElement = includedStructuralElement;
     }
 
     /**
@@ -160,7 +160,7 @@ public class Workpiece {
 
     @Override
     public String toString() {
-        return id + ", " + structure;
+        return id + ", " + rootElement;
     }
 
     @Override

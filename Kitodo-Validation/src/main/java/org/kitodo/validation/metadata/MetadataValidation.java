@@ -45,9 +45,9 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
@@ -130,18 +130,19 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (Structure structure : treeStream(workpiece.getStructure()).filter(Structure.class::isInstance)
-                .map(Structure.class::cast).collect(Collectors.toList())) {
-            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(), null,
+        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement())
+                .filter(IncludedStructuralElement.class::isInstance)
+                .map(IncludedStructuralElement.class::cast).collect(Collectors.toList())) {
+            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), null,
                 metadataLanguage);
             results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                structure.getMetadata().parallelStream()
+                includedStructuralElement.getMetadata().parallelStream()
                         .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, structure.toString().concat(": "), translations));
+                divisionView, includedStructuralElement.toString().concat(": "), translations));
             results.add(checkForDetailsInTheMetadataRecursive(
-                structure.getMetadata().parallelStream()
+                includedStructuralElement.getMetadata().parallelStream()
                         .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, structure.toString().concat(": "), translations));
+                divisionView, includedStructuralElement.toString().concat(": "), translations));
         }
 
         return merge(results);
@@ -196,8 +197,8 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructure())
-                .filter(Structure.class::isInstance).map(Structure.class::cast)
+        Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement())
+                .filter(IncludedStructuralElement.class::isInstance).map(IncludedStructuralElement.class::cast)
                 .filter(structure -> structure.getViews().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
@@ -206,7 +207,8 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (treeStream(workpiece.getStructure()).filter(Structure.class::isInstance).map(Structure.class::cast)
+        if (treeStream(workpiece.getRootElement()).filter(IncludedStructuralElement.class::isInstance)
+                .map(IncludedStructuralElement.class::cast)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -231,7 +233,8 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(workpiece.getMediaUnits());
-        treeStream(workpiece.getStructure()).filter(Structure.class::isInstance).map(Structure.class::cast)
+        treeStream(workpiece.getRootElement()).filter(IncludedStructuralElement.class::isInstance)
+                .map(IncludedStructuralElement.class::cast)
                 .flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
@@ -472,9 +475,10 @@ public class MetadataValidation implements MetadataValidationInterface {
      *            starting node
      * @return all nodes as stream
      */
-    private static Stream<ExistingOrLinkedStructure> treeStream(ExistingOrLinkedStructure tree) {
+    private static Stream<StructuralElement> treeStream(StructuralElement tree) {
         return Stream.concat(Stream.of(tree),
-            tree instanceof Structure ? ((Structure) tree).getChildren().stream().flatMap(child -> treeStream(child))
+            tree instanceof IncludedStructuralElement
+                    ? ((IncludedStructuralElement) tree).getChildren().stream().flatMap(child -> treeStream(child))
                     : Stream.empty());
     }
 }

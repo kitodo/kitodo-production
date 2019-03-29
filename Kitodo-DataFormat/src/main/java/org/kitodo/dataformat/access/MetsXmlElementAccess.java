@@ -40,7 +40,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.api.dataformat.LinkedStructure;
+import org.kitodo.api.dataformat.LinkedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -228,12 +228,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            a function that opens an input stream
      * @return a list of the parent structures of the document
      */
-    private static final LinkedList<LinkedStructure> findCurrentStructureInParent(DivType div, Mets current, URI parentUri,
+    private static final LinkedList<LinkedStructuralElement> findCurrentStructureInParent(DivType div, Mets current, URI parentUri,
             InputStreamProviderInterface inputStreamProvider) {
 
         if (div.getMptr().isEmpty()) {
-            Optional<Pair<DivType, LinkedList<LinkedStructure>>> optionalResult = div.getDiv().stream().map(child -> {
-                LinkedList<LinkedStructure> links = findCurrentStructureInParent(child, current, parentUri, inputStreamProvider);
+            Optional<Pair<DivType, LinkedList<LinkedStructuralElement>>> optionalResult = div.getDiv().stream().map(child -> {
+                LinkedList<LinkedStructuralElement> links = findCurrentStructureInParent(child, current, parentUri, inputStreamProvider);
                 return Objects.isNull(links) ? null : Pair.of(child, links);
             }).filter(Objects::nonNull).reduce((one, another) -> {
                 if (one.getRight().equals(another.getRight())) {
@@ -242,13 +242,13 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 throw new IllegalStateException("Child is referenced from parent multiple times");
             });
             if (optionalResult.isPresent()) {
-                Pair<DivType, LinkedList<LinkedStructure>> found = optionalResult.get();
-                LinkedStructure linkedStructure = new LinkedStructure();
+                Pair<DivType, LinkedList<LinkedStructuralElement>> found = optionalResult.get();
+                LinkedStructuralElement linkedStructure = new LinkedStructuralElement();
                 linkedStructure.setLabel(div.getLABEL());
                 linkedStructure.setType(div.getTYPE());
                 linkedStructure.setOrder(found.getLeft().getORDER());
                 linkedStructure.setUri(parentUri);
-                LinkedList<LinkedStructure> result = found.getRight();
+                LinkedList<LinkedStructuralElement> result = found.getRight();
                 result.addFirst(linkedStructure);
                 return result;
             }
@@ -368,7 +368,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            a function that opens an input stream
      * @return a list of the parent structures of the document
      */
-    private static final List<LinkedStructure> readUplinks(Mets current,
+    private static final List<LinkedStructuralElement> readUplinks(Mets current,
             InputStreamProviderInterface inputStreamProvider) {
 
         for (StructMapType outerStructMap : getStructMapsStreamByType(current, LOGICAL).collect(Collectors.toList())) {
@@ -382,14 +382,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 URI parentUri = hrefToUri(href);
                 Mets parent = readMets(inputStreamProvider, parentUri, false);
 
-                LinkedList<LinkedStructure> found = null;
+                LinkedList<LinkedStructuralElement> found = null;
                 for (StructMapType innerStructMap : getStructMapsStreamByType(parent, LOGICAL)
                         .collect(Collectors.toList())) {
                     DivType innerDiv = innerStructMap.getDiv();
                     if (!innerDiv.getMptr().isEmpty()) {
                         innerDiv = innerDiv.getDiv().get(0);
                     }
-                    LinkedList<LinkedStructure> maybeFound = findCurrentStructureInParent(innerDiv, current, parentUri,
+                    LinkedList<LinkedStructuralElement> maybeFound = findCurrentStructureInParent(innerDiv, current, parentUri,
                         inputStreamProvider);
                     if (maybeFound != null) {
                         if (found == null) {
@@ -453,7 +453,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE(LOGICAL);
-        logical.setDiv(new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getRootElement()).toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));

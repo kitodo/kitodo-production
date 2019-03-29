@@ -27,8 +27,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.ExistingOrLinkedStructure;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.InputStreamProviderInterface;
 import org.kitodo.api.filemanagement.LockResult;
@@ -172,14 +172,14 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyDocStructHelperInterface createDocStruct(LegacyLogicalDocStructTypeHelper docStructType) {
         if (!docStructType.equals(LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE)) {
-            return createRootLegacyLogicalDocStructHelper(new Structure());
+            return createRootLegacyLogicalDocStructHelper(new IncludedStructuralElement());
         } else {
             return new LegacyInnerPhysicalDocStructHelper();
         }
     }
 
     public LegacyLogicalDocStructHelper createRootLegacyLogicalDocStructHelper(
-            ExistingOrLinkedStructure existingOrLinkedStructure) {
+            StructuralElement existingOrLinkedStructure) {
         return new LegacyLogicalDocStructHelper(existingOrLinkedStructure, null, ruleset, priorityList);
     }
 
@@ -217,7 +217,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
-        return new LegacyLogicalDocStructHelper(workpiece.getStructure(), null, ruleset, priorityList);
+        return new LegacyLogicalDocStructHelper(workpiece.getRootElement(), null, ruleset, priorityList);
     }
 
     @Deprecated
