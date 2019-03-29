@@ -42,10 +42,10 @@ import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
+public class ProjectService extends ClientSearchService<Project, ProjectDTO, ProjectDAO> {
 
     private static ProjectService instance = null;
 
@@ -53,7 +53,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * Constructor with Searcher and Indexer assigning.
      */
     private ProjectService() {
-        super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class));
+        super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class),
+                ProjectTypeField.CLIENT_ID.getKey());
     }
 
     /**

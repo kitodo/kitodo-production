@@ -30,10 +30,10 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
+public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
     private static WorkflowService instance = null;
 
@@ -41,7 +41,8 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
      * Private constructor with Searcher and Indexer assigning.
      */
     private WorkflowService() {
-        super(new WorkflowDAO(), new WorkflowType(), new Indexer<>(Workflow.class), new Searcher(Workflow.class));
+        super(new WorkflowDAO(), new WorkflowType(), new Indexer<>(Workflow.class), new Searcher(Workflow.class),
+                WorkflowTypeField.CLIENT_ID.getKey());
     }
 
     /**
@@ -127,8 +128,8 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     /**
-     * Get available workflows - available means that workflow has status active and is
-     * assigned to selected session client.
+     * Get available workflows - available means that workflow has status active
+     * and is assigned to selected session client.
      *
      * @return list of available Workflow objects
      */

@@ -47,10 +47,10 @@ import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
+public class TemplateService extends ClientSearchService<Template, TemplateDTO, TemplateDAO> {
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static TemplateService instance = null;
@@ -60,7 +60,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      * Constructor with Searcher and Indexer assigning.
      */
     private TemplateService() {
-        super(new TemplateDAO(), new TemplateType(), new Indexer<>(Template.class), new Searcher(Template.class));
+        super(new TemplateDAO(), new TemplateType(), new Indexer<>(Template.class), new Searcher(Template.class),
+                TemplateTypeField.CLIENT_ID.getKey());
     }
 
     /**

@@ -37,10 +37,10 @@ import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
+public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static RulesetService instance = null;
@@ -49,7 +49,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      * Constructor with Searcher and Indexer assigning.
      */
     private RulesetService() {
-        super(new RulesetDAO(), new RulesetType(), new Indexer<>(Ruleset.class), new Searcher(Ruleset.class));
+        super(new RulesetDAO(), new RulesetType(), new Indexer<>(Ruleset.class), new Searcher(Ruleset.class),
+                RulesetTypeField.CLIENT_ID.getKey());
     }
 
     /**
