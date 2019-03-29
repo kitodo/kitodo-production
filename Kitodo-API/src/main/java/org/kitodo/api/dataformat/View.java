@@ -25,7 +25,7 @@ public class View {
 
     /**
      * Returns the media unit in the view.
-     * 
+     *
      * @return the media unit
      */
     public MediaUnit getMediaUnit() {
@@ -34,7 +34,7 @@ public class View {
 
     /**
      * Inserts a media unit into the view.
-     * 
+     *
      * @param mediaUnit
      *            media unit to insert
      */
@@ -63,12 +63,9 @@ public class View {
         }
         View other = (View) obj;
         if (mediaUnit == null) {
-            if (other.mediaUnit != null) {
-                return false;
-            }
-        } else if (!mediaUnit.equals(other.mediaUnit)) {
-            return false;
+            return other.mediaUnit == null;
+        } else {
+            return mediaUnit.equals(other.mediaUnit);
         }
-        return true;
     }
 }

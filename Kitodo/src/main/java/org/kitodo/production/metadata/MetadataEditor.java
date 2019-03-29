@@ -89,19 +89,17 @@ public class MetadataEditor {
     public static Structure addStructure(String type, Workpiece workpiece, Structure structure,
             InsertionPosition position, List<View> viewsToAdd) {
         LinkedList<Structure> parents = getAncestorsOfStructureRecursive(structure, workpiece.getStructure(), null);
-        List<Structure> siblings = new LinkedList<>();
         if (parents.isEmpty()) {
             if ((position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
                 Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
                 return null;
             }
-        } else {
-            siblings = parents.getLast().getChildren();
         }
         Structure newStructure = new Structure();
         newStructure.setType(type);
         LinkedList<Structure> structuresToAddViews = new LinkedList<>(parents);
+        List<Structure> siblings = parents.getLast().getChildren();
         switch (position) {
             case AFTER_CURRENT_ELEMENT: {
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);

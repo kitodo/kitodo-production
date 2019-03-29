@@ -161,7 +161,7 @@ public class MediaUnit {
         if (Objects.nonNull(type)) {
             fileName = type + ' ' + fileName;
         }
-        return mediaFiles.entrySet().stream().map(Entry::getKey).map(MediaVariant::getUse)
+        return mediaFiles.keySet().stream().map(MediaVariant::getUse)
                 .collect(Collectors.joining(", ", fileName, ")"));
     }
 
@@ -203,12 +203,9 @@ public class MediaUnit {
             return false;
         }
         if (Objects.isNull(type)) {
-            if (Objects.nonNull(other.type)) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
+            return !Objects.nonNull(other.type);
+        } else {
+            return type.equals(other.type);
         }
-        return true;
     }
 }
