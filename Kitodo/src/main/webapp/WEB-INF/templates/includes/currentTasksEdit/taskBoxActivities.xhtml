@@ -21,7 +21,7 @@
     <c:set var="task" value="#{CurrentTaskForm.currentTask}" scope="request"/>
     <c:set var="process" value="#{CurrentTaskForm.currentTask.process}" scope="request"/>
 
-    <h:panelGroup rendered="#{task.processingUser.id == LoginForm.loggedUser.id}">
+    <h:panelGroup rendered="#{task.processingUser.id == LoginForm.loggedUser.id and task.processingStatus eq 'INWORK'}">
 
         <!--  Import -->
         <h:form id="actionForm">
@@ -187,7 +187,7 @@
 
                     </h:panelGroup>
 
-                    <!-- Lock button -->
+                    <!-- Close button -->
                     <p:commandLink id="close" action="#{CurrentTaskForm.closeTaskByUser}" title="#{msgs.closeTask}">
                         <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                         style="margin-right:3px;vertical-align:middle"/>
