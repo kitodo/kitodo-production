@@ -45,13 +45,6 @@ public class SRUHelper {
     private static final Namespace SRW = Namespace.getNamespace("srw", "http://www.loc.gov/zing/srw/");
     private static final Namespace PICA = Namespace.getNamespace("pica", "info:srw/schema/5/picaXML-v1.0");
 
-    // private static final Namespace DC = Namespace.getNamespace("dc",
-    // "http://purl.org/dc/elements/1.1/");
-    // private static final Namespace DIAG = Namespace.getNamespace("diag",
-    // "http://www.loc.gov/zing/srw/diagnostic/");
-    // private static final Namespace XCQL = Namespace.getNamespace("xcql",
-    // "http://www.loc.gov/zing/cql/xcql/");
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -86,6 +79,7 @@ public class SRUHelper {
      *            String
      * @return Node
      */
+    @SuppressWarnings("unchecked")
     public static Node parseResult(String resultString)
             throws IOException, JDOMException, ParserConfigurationException {
         final String recordString = "record";
@@ -124,7 +118,6 @@ public class SRUHelper {
             org.w3c.dom.Element picaRecord = answer.createElement(recordString);
             collection.appendChild(picaRecord);
 
-            @SuppressWarnings("unchecked")
             List<Element> data = record.getChildren();
             for (Element datafield : data) {
                 if (datafield.getAttributeValue(tag) != null) {
@@ -134,7 +127,6 @@ public class SRUHelper {
                         field.setAttribute(occurrence, datafield.getAttributeValue(occurrence));
                     }
                     field.setAttribute(tag, datafield.getAttributeValue(tag));
-                    @SuppressWarnings("unchecked")
                     List<Element> subfields = datafield.getChildren();
                     for (Element sub : subfields) {
                         org.w3c.dom.Element subfield = answer.createElement("subfield");
