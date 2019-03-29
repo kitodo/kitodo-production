@@ -342,6 +342,7 @@ public class MockDatabase {
         authorities.add(new Authority("editProcess" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("deleteProcess" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("addProcess" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("exportProcess" + CLIENT_ASSIGNABLE));
 
         authorities.add(new Authority("editProcessMetaData" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("editProcessStructureData" + CLIENT_ASSIGNABLE));
