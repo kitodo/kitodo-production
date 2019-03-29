@@ -651,25 +651,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Set up matching error messages for unreachable tasks. Unreachable task is
-     * this one which has no roles assigned to itself. Other possibility is that
-     * given list is empty. It means that whole workflow is unreachable.
-     *
-     * @param tasks
-     *            list of tasks for check
-     */
-    public void setUpErrorMessagesForUnreachableTasks(List<Task> tasks) {
-        if (tasks.isEmpty()) {
-            Helper.setErrorMessage("noStepsInWorkflow");
-        }
-        for (Task task : tasks) {
-            if (getRolesSize(task) == 0) {
-                Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
-            }
-        }
-    }
-
-    /**
      * Find tasks by id of process.
      *
      * @param id

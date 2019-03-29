@@ -66,7 +66,9 @@ public class CopyProcess extends ProzesskopieForm {
      */
     // TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
-        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+        try {
+            ServiceManager.getTemplateService().checkForUnreachableTasks(this.template.getTasks());
+        } catch (ProcessGenerationException e) {
             return "";
         }
 

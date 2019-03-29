@@ -76,10 +76,7 @@ public class ProcessGenerator {
                     "Template with id " + templateId + " or project with id " + projectId + " not found.", e);
         }
 
-        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
-            return false;
-        }
+        ServiceManager.getTemplateService().checkForUnreachableTasks(this.template.getTasks());
 
         this.generatedProcess = new Process();
         this.generatedProcess.setTitle("");

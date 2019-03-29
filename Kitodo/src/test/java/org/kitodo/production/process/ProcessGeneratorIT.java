@@ -12,23 +12,28 @@
 package org.kitodo.production.process;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
 
 public class ProcessGeneratorIT {
 
     private static final String NEW = "new";
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -61,11 +66,12 @@ public class ProcessGeneratorIT {
     }
 
     @Test
-    //TODO: when error handling will be changed it needs to check for thrown exception
     public void shouldNotGenerateProcess() throws Exception {
         ProcessGenerator processGenerator = new ProcessGenerator();
-        boolean generated = processGenerator.generateProcess(2, 1);
-        assertFalse("Process was generated!", generated);
+
+        expectedEx.expect(ProcessGenerationException.class);
+        expectedEx.expectMessage("No steps of the workflow defined.");
+        processGenerator.generateProcess(2, 1);
     }
 
     @Test

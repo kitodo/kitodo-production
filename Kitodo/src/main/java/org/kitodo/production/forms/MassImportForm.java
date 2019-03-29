@@ -53,6 +53,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -119,8 +120,10 @@ public class MassImportForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
 
-        if (ServiceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            ServiceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+        try {
+            ServiceManager.getTemplateService().checkForUnreachableTasks(this.template.getTasks());
+        } catch (ProcessGenerationException e) {
+            Helper.setErrorMessage(e.getMessage(), logger, e);
             return this.stayOnCurrentPage;
         }
 
