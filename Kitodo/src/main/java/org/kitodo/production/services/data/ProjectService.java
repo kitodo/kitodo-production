@@ -173,22 +173,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
-        return createSimpleQuery(ProjectTypeField.USERS.getKey() + ".id", id, contains);
-    }
-
-    /**
-     * Find projects by login of user.
-     *
-     * @param login
-     *            of user
-     * @return list of search result with projects for specific user login
-     */
-    List<Map<String, Object>> findByUserLogin(String login) throws DataException {
-        return findDocuments(getQueryForUserLogin(login, true));
-    }
-
-    private QueryBuilder getQueryForUserLogin(String login, boolean contains) {
-        return createSimpleQuery(ProjectTypeField.USERS + ".login", login, contains);
+        return createSimpleQuery(ProjectTypeField.USERS + ".id", id, contains);
     }
 
     /**
