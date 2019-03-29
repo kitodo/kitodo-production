@@ -151,15 +151,6 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindByUserLogin() {
-        await().untilAsserted(
-            () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserLogin("kowal").size()));
-
-        await().untilAsserted(
-            () -> assertEquals("Project was not found in index!", 1, projectService.findByUserLogin("dora").size()));
-    }
-
-    @Test
     public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DataException {
         Project project = new Project();
         project.setTitle("First project");
