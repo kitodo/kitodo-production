@@ -946,7 +946,7 @@ public class FileService {
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
-            if (unitCanonical.equals("")) {
+            if (mediaUnit.getMediaFiles().size() > 0 && unitCanonical.equals("")) {
                 throw new IllegalArgumentException("Missing canonical file name part in media unit " + mediaUnit);
             }
             canonicals.add(unitCanonical);
