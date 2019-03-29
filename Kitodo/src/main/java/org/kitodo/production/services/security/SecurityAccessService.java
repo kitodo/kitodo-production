@@ -409,6 +409,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to export process.
+     *
+     * @return true if the current user has the authority to export process
+     */
+    public boolean hasAuthorityToExportProcess() {
+        return hasAuthorityForClient("exportProcess");
+    }
+
+    /**
      * Check if the current user has the authority to view the process. Add and edit
      * authorities include also view.
      *
