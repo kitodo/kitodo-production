@@ -24,6 +24,7 @@ import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
@@ -69,7 +70,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Method saves processes and users related to modified project.
+     * Method saves processes and templates related to modified project.
      *
      * @param project
      *            object
@@ -78,10 +79,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     protected void manageDependenciesForIndex(Project project)
             throws CustomResponseException, DataException, IOException {
         manageProcessesDependenciesForIndex(project);
+        manageTemplatesDependenciesForIndex(project);
     }
 
     /**
-     * Management od processes for project object.
+     * Management of processes for project object.
      *
      * @param project
      *            object
@@ -95,6 +97,24 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
             for (Process process : project.getProcesses()) {
                 ServiceManager.getProcessService().saveToIndex(process, false);
             }
+        }
+    }
+
+    /**
+     * Management of templates for project object.
+     *
+     * @param project
+     *            object
+     */
+    private void manageTemplatesDependenciesForIndex(Project project) throws CustomResponseException, DataException, IOException {
+        if (project.getIndexAction() == IndexAction.DELETE) {
+            for (Template template : project.getTemplates()) {
+                template.getProjects().remove(project);
+            }
+        }
+
+        for (Template template : project.getTemplates()) {
+            ServiceManager.getTemplateService().saveToIndex(template, false);
         }
     }
 
