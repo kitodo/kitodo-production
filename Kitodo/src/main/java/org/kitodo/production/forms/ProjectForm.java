@@ -220,9 +220,12 @@ public class ProjectForm extends BaseForm {
                     for (Template template : this.baseProject.getTemplates()) {
                         template.getProjects().add(this.project);
                         this.project.getTemplates().add(template);
-                        ServiceManager.getTemplateService().save(template);
                     }
                     setCopyTemplates(false);
+                }
+
+                for (Template template : this.project.getTemplates()) {
+                    ServiceManager.getTemplateService().save(template);
                 }
 
                 return projectListPath;
@@ -322,6 +325,7 @@ public class ProjectForm extends BaseForm {
 
             if (!this.project.getTemplates().contains(template)) {
                 this.project.getTemplates().add(template);
+                template.getProjects().add(this.project);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
@@ -343,6 +347,7 @@ public class ProjectForm extends BaseForm {
             for (Template template : this.project.getTemplates()) {
                 if (template.getId().equals(templateId)) {
                     this.project.getTemplates().remove(template);
+                    template.getProjects().remove(this.project);
                 }
             }
         } catch (NumberFormatException e) {
