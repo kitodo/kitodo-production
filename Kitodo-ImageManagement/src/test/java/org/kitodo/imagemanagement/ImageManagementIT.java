@@ -11,9 +11,8 @@
 
 package org.kitodo.imagemanagement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Image;
 import java.io.File;
@@ -33,7 +32,6 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterImageManagement;
-import org.kitodo.imagemanagement.ImageManagement;
 
 /**
  * Tests the Image Management.
@@ -93,8 +91,8 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagement();
         Image scaledWebImage = module.getScaledWebImage(new File(_00000001_TIF).toURI(), 0.3);
-        assertThat(scaledWebImage.getWidth(null),
-            is((int) Math.round(0.3 * new Info(_00000001_TIF, true).getImageWidth())));
+        assertEquals((int) Math.round(0.3 * new Info(_00000001_TIF, true).getImageWidth()),
+            scaledWebImage.getWidth(null));
     }
 
     @Test
@@ -102,12 +100,10 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
         ImageManagementInterface module = new ImageManagement();
-        assertThat(
-            module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG),
-            is(true));
-        assertThat(maxDerivative.exists(), is(true));
-        assertThat(new Info(_00000001_MAX_JPG, true).getImageWidth(),
-            is(equalTo(new Info(_00000001_TIF, true).getImageWidth())));
+        assertTrue(
+            module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
+        assertTrue(maxDerivative.exists());
+        assertEquals(new Info(_00000001_TIF, true).getImageWidth(), new Info(_00000001_MAX_JPG, true).getImageWidth());
     }
 
     @Test
@@ -115,7 +111,7 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagement();
         Image image = module.changeDpi(new File(_00000001_TIF).toURI(), 300);
-        assertThat(72 * image.getWidth(null) / new Info(_00000001_TIF, true).getImageWidth(), is(equalTo(300)));
+        assertEquals(300, 72 * image.getWidth(null) / new Info(_00000001_TIF, true).getImageWidth());
 
     }
 
@@ -124,7 +120,7 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagement();
         Image scaledWebImage = module.getSizedWebImage(new File(_00000001_TIF).toURI(), 150);
-        assertThat(scaledWebImage.getWidth(null), is(equalTo(150)));
+        assertEquals(150, scaledWebImage.getWidth(null));
     }
 
     /**
