@@ -11,9 +11,8 @@
 
 package org.kitodo.production.forms;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,10 +67,10 @@ public class TemplateFormTest {
         List<String> switchesGenerated = testOutcome.parallelStream().map(folderSwitch -> folderSwitch.getLabel())
                 .collect(Collectors.toList());
 
-        assertThat(switchesGenerated, not(contains("folderInProjectWithoutSourceFolder")));
-        assertThat(switchesGenerated, not(contains("sourceFolder")));
-        assertThat(switchesGenerated, not(contains("folderWhichHasNothingToBeGenerated")));
-        assertThat(switchesGenerated, contains("folderToBeGenerated"));
+        assertFalse(switchesGenerated.contains("folderInProjectWithoutSourceFolder"));
+        assertFalse(switchesGenerated.contains("sourceFolder"));
+        assertFalse(switchesGenerated.contains("folderWhichHasNothingToBeGenerated"));
+        assertTrue(switchesGenerated.contains("folderToBeGenerated"));
     }
 
     @Test
@@ -97,6 +96,6 @@ public class TemplateFormTest {
         List<String> switchesGenerated = testOutcome.parallelStream().map(folderSwitch -> folderSwitch.getLabel())
                 .collect(Collectors.toList());
 
-        assertThat(switchesGenerated, contains("folderToBeValidated"));
+        assertTrue(switchesGenerated.contains("folderToBeValidated"));
     }
 }
