@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +40,12 @@ import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
 import org.primefaces.model.SortOrder;
@@ -253,22 +256,23 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Check whether the template contains tasks that are not assigned to a role.
+     * Check for unreachable tasks. Unreachable task is this one which has no roles
+     * assigned to itself. Other possibility is that given list is empty. It means
+     * that whole workflow is unreachable.
      *
      * @param tasks
-     *            list of tasks for testing
-     * @return true or false
+     *            list of tasks for check
      */
-    public boolean containsUnreachableTasks(List<Task> tasks) {
+    public void checkForUnreachableTasks(List<Task> tasks) throws ProcessGenerationException {
         if (tasks.isEmpty()) {
-            return true;
+            throw new ProcessGenerationException(Helper.getTranslation("noStepsInWorkflow"));
         }
         for (Task task : tasks) {
             if (ServiceManager.getTaskService().getRolesSize(task) == 0) {
-                return true;
+                throw new ProcessGenerationException(
+                        Helper.getTranslation("noUserInStep", Collections.singletonList(task.getTitle())));
             }
         }
-        return false;
     }
 
     /**

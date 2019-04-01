@@ -18,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.services.ServiceManager;
 
@@ -75,15 +76,16 @@ public class TemplateServiceIT {
         assertEquals("Incorrect size of templates with given title!", 1, templates.size());
     }
 
-    @Test
-    public void shouldGetContainsUnreachableTasks() throws Exception {
+    @Test(expected = Test.None.class)
+    public void shouldCheckForUnreachableTasks() throws Exception {
         Template template = templateService.getById(1);
-        boolean condition = templateService.containsUnreachableTasks(template.getTasks());
-        assertFalse("Process contains unreachable tasks!", condition);
+        templateService.checkForUnreachableTasks(template.getTasks());
+    }
 
-        template = templateService.getById(3);
-        condition = templateService.containsUnreachableTasks(template.getTasks());
-        assertTrue("Process doesn't contain unreachable tasks!", condition);
+    @Test(expected = ProcessGenerationException.class)
+    public void shouldCheckForUnreachableTasksWithException() throws Exception {
+        Template template = templateService.getById(3);
+        templateService.checkForUnreachableTasks(template.getTasks());
     }
 
     @Test
