@@ -25,8 +25,10 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WikiFieldHelper;
+import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("CommentForm")
@@ -38,6 +40,7 @@ public class CommentForm extends BaseForm {
     private String correctionTaskId;
     private String processId;
     private Process process;
+    private BatchTaskHelper batchHelper;
 
 
     public List<Comment> getAllComments() {
@@ -81,8 +84,10 @@ public class CommentForm extends BaseForm {
             try {
                 comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
             } catch (DAOException e) {
-                e.printStackTrace();
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId() },
+                        logger, e);
             }
+            setCorrectionComment(false);
         }
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
@@ -95,7 +100,16 @@ public class CommentForm extends BaseForm {
         }
         setCommentMessage("");
         setCorrectionTaskId("");
-        setCorrectionComment(false);
+    }
+
+    /**
+     * Add a new comment to all batch processes.
+     */
+    public void addCommentToAll() {
+        for (Task task : this.batchHelper.getSteps()) {
+            this.process = task.getProcess();
+            addComment();
+        }
     }
 
     /**
@@ -173,6 +187,20 @@ public class CommentForm extends BaseForm {
     }
 
     /**
+     * Solve the problem to all batch processes.
+     */
+    public void solveProblemForAll(Comment comment) {
+        for (Task task : batchHelper.getSteps()) {
+            for (Comment processComment : ServiceManager.getCommentService().getAllCommentsByProcess(task.getProcess())) {
+                if (!processComment.isCorrected()
+                        && processComment.getCorrectionTask().getTitle().equals(comment.getCorrectionTask().getTitle())) {
+                    solveProblem(processComment);
+                }
+            }
+        }
+    }
+
+    /**
      * Get process.
      *
      * @return value of process
@@ -229,5 +257,24 @@ public class CommentForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
         }
+    }
+
+    /**
+     * Get batchHelper.
+     *
+     * @return value of batchHelper
+     */
+    public BatchTaskHelper getBatchHelper() {
+        return batchHelper;
+    }
+
+    /**
+     * Set batchHelper.
+     *
+     * @param batchHelper as org.kitodo.production.helper.batch.BatchTaskHelper
+     */
+    public void setBatchHelper(BatchTaskHelper batchHelper) {
+        this.batchHelper = batchHelper;
+        setProcess(this.batchHelper.getCurrentStep().getProcess());
     }
 }
