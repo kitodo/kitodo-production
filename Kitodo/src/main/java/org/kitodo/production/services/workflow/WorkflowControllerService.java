@@ -38,11 +38,9 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.WorkflowCondition;
-import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowConditionType;
@@ -57,8 +55,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
-import org.kitodo.production.workflow.Problem;
-import org.kitodo.production.workflow.Solution;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -68,8 +64,6 @@ public class WorkflowControllerService {
     private final MetadataLock metadataLock = new MetadataLock();
     private List<Task> automaticTasks;
     private List<Task> tasksToFinish;
-    private Problem problem = new Problem();
-    private Solution solution = new Solution();
     private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
@@ -98,44 +92,6 @@ public class WorkflowControllerService {
             }
         }
         return instance;
-    }
-
-    /**
-     * Get problem.
-     *
-     * @return Problem object
-     */
-    public Problem getProblem() {
-        return problem;
-    }
-
-    /**
-     * Set problem.
-     *
-     * @param problem
-     *            object
-     */
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-    }
-
-    /**
-     * Get solution.
-     *
-     * @return Solution object
-     */
-    public Solution getSolution() {
-        return solution;
-    }
-
-    /**
-     * Set solution.
-     *
-     * @param solution
-     *            object
-     */
-    public void setSolution(Solution solution) {
-        this.solution = solution;
     }
 
     /**
@@ -359,39 +315,10 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Unified method for report problem with task.
+     * Unified method for report problem .
      *
-     * @param currentTask
-     *            as Task object
+     * @param comment as Comment object
      */
-    public void reportProblem(Task currentTask) throws DAOException, DataException {
-        this.webDav.uploadFromHome(getCurrentUser(), currentTask.getProcess());
-        Date date = new Date();
-        currentTask.setProcessingStatus(TaskStatus.LOCKED);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        taskService.replaceProcessingUser(currentTask, getCurrentUser());
-        currentTask.setProcessingBegin(null);
-        taskService.save(currentTask);
-
-        Task correctionTask = taskService.getById(getProblem().getId());
-        correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        setCorrectionTask(correctionTask);
-        correctionTask.setProcessingEnd(null);
-
-        Property processProperty = prepareProblemMessageProperty(date, currentTask, correctionTask);
-        processProperty.getProcesses().add(currentTask.getProcess());
-        currentTask.getProcess().getProperties().add(processProperty);
-
-        currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
-
-        taskService.save(correctionTask);
-
-        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
-
-        updateProcessSortHelperStatus(currentTask.getProcess());
-    }
-
     public void reportProblem(Comment comment) throws DataException {
         Task currentTask = comment.getCurrentTask();
         this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
@@ -405,6 +332,7 @@ public class WorkflowControllerService {
 
         Task correctionTask = comment.getCorrectionTask();
         correctionTask.setProcessingStatus(TaskStatus.OPEN);
+        correctionTask.setPriority(10);
         correctionTask.setProcessingEnd(null);
         taskService.save(correctionTask);
 
@@ -413,42 +341,11 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Unified method for solve problem with task.
+     * Unified method for solve problem.
      *
-     * @param currentTask
-     *            task which was send to correction and now was fixed as Task object
+     * @param comment
+     *              as Comment object
      */
-    public void solveProblem(Task currentTask) throws DAOException, DataException {
-        Date date = new Date();
-        this.webDav.uploadFromHome(currentTask.getProcess());
-        currentTask.setProcessingStatus(TaskStatus.DONE);
-        currentTask.setProcessingEnd(date);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        taskService.replaceProcessingUser(currentTask, getCurrentUser());
-        taskService.save(currentTask);
-
-        // TODO: find more suitable name for this task
-        // tasks which was executed at the moment of correction reporting
-        List<Property> properties = currentTask.getProcess().getProperties();
-        for (Property property : properties) {
-            if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
-                    && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
-                int id = Integer
-                        .parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
-                            property.getValue().indexOf(" CorrectionTask: ")));
-                Task correctionTask = taskService.getById(id);
-                closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
-                openTaskForProcessing(correctionTask);
-                Property processProperty = prepareSolveMessageProperty(property, currentTask);
-                ServiceManager.getPropertyService().save(processProperty);
-                updateProcessSortHelperStatus(
-                    ServiceManager.getProcessService().getById(currentTask.getProcess().getId()));
-                currentTask = correctionTask;
-            }
-        }
-    }
-
     public void solveProblem(Comment comment) throws DataException {
         Date date = new Date();
         Task currentTask = comment.getCorrectionTask();
@@ -560,35 +457,6 @@ public class WorkflowControllerService {
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
         taskService.save(correctionTask);
-    }
-
-    private Property prepareProblemMessageProperty(Date date, Task currentTask, Task correctionTask) {
-        Property processProperty = new Property();
-        processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
-        processProperty.setValue("[" + Helper.getDateAsFormattedString(date) + ", "
-                + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: "
-                + currentTask.getId().toString() + " CorrectionTask: " + correctionTask.getId().toString() + ") "
-                + this.problem.getMessage());
-        processProperty.setDataType(PropertyType.MESSAGE_ERROR);
-        return processProperty;
-    }
-
-    private Property prepareSolveMessageProperty(Property property, Task correctionTask) {
-        property.setTitle(Helper.getTranslation("correctionPerformed"));
-        property.setValue("[" + Helper.getDateAsFormattedString(new Date()) + ", "
-                + ServiceManager.getUserService().getFullName(getCurrentUser()) + "] "
-                + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
-        property.setDataType(PropertyType.MESSAGE_IMPORTANT);
-        return property;
-    }
-
-    private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = "Red K " + ServiceManager.getUserService().getFullName(getCurrentUser()) + " "
-                + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
-                + this.problem.getMessage();
-
-        ServiceManager.getProcessService().addToWikiField(message, process);
-        return process.getWikiField();
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {

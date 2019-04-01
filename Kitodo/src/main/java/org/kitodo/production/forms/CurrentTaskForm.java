@@ -60,8 +60,6 @@ import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
-import org.kitodo.production.workflow.Problem;
-import org.kitodo.production.workflow.Solution;
 
 @Named("CurrentTaskForm")
 @SessionScoped
@@ -70,8 +68,6 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private transient Problem problem = new Problem();
-    private transient Solution solution = new Solution();
     private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
@@ -81,7 +77,6 @@ public class CurrentTaskForm extends BaseForm {
     private boolean hideCorrectionTasks = false;
     private Map<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
-    private String addToWikiField = "";
     private String doneDirectoryName;
     private transient BatchTaskHelper batchHelper;
     private List<Property> properties;
@@ -310,62 +305,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Korrekturmeldung an vorherige Schritte.
-     */
-    public List<Task> getPreviousStepsForProblemReporting() {
-        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(this.currentTask.getOrdering(),
-            this.currentTask.getProcess().getId());
-    }
-
-    public int getSizeOfPreviousStepsForProblemReporting() {
-        return getPreviousStepsForProblemReporting().size();
-    }
-
-    /**
-     * Report the problem.
-     *
-     * @return problem as String
-     */
-    public String reportProblem() {
-        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
-        try {
-            ServiceManager.getWorkflowControllerService().reportProblem(this.currentTask);
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
-        }
-        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
-        return taskListPath;
-    }
-
-    /**
-     * Problem-behoben-Meldung an nachfolgende Schritte.
-     */
-    public List<Task> getNextStepsForProblemSolution() {
-        return ServiceManager.getTaskService().getNextTasksForProblemSolution(this.currentTask.getOrdering(),
-            this.currentTask.getProcess().getId());
-    }
-
-    public int getSizeOfNextStepsForProblemSolution() {
-        return getNextStepsForProblemSolution().size();
-    }
-
-    /**
-     * Solve problem.
-     *
-     * @return String
-     */
-    public String solveProblem() {
-        ServiceManager.getWorkflowControllerService().setSolution(getSolution());
-        try {
-            ServiceManager.getWorkflowControllerService().solveProblem(this.currentTask);
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
-        }
-        setSolution(ServiceManager.getWorkflowControllerService().getSolution());
-        return taskListPath;
-    }
-
-    /**
      * Upload from home.
      *
      * @return String
@@ -573,44 +512,6 @@ public class CurrentTaskForm extends BaseForm {
         loadTaskById(id);
     }
 
-    /**
-     * Get problem.
-     *
-     * @return Problem object
-     */
-    public Problem getProblem() {
-        return problem;
-    }
-
-    /**
-     * Set problem.
-     *
-     * @param problem
-     *            object
-     */
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-    }
-
-    /**
-     * Get solution.
-     *
-     * @return Solution object
-     */
-    public Solution getSolution() {
-        return solution;
-    }
-
-    /**
-     * Set solution.
-     *
-     * @param solution
-     *            object
-     */
-    public void setSolution(Solution solution) {
-        this.solution = solution;
-    }
-
     private void setAttributesForProcess() {
         Process process = this.currentTask.getProcess();
         process.setBlockedUser(ServiceManager.getProcessService().getBlockedUser(process));
@@ -763,53 +664,6 @@ public class CurrentTaskForm extends BaseForm {
 
     public void setAnzeigeAnpassen(Map<String, Boolean> anzeigeAnpassen) {
         this.anzeigeAnpassen = anzeigeAnpassen;
-    }
-
-    /**
-     * Get Wiki field.
-     *
-     * @return values for wiki field
-     */
-    public String getWikiField() {
-        if (Objects.nonNull(this.currentTask) && Objects.nonNull(this.currentTask.getProcess())) {
-            return this.currentTask.getProcess().getWikiField();
-        }
-        return "";
-    }
-
-    /**
-     * Sets new value for wiki field.
-     *
-     * @param inString
-     *            input String
-     */
-    public void setWikiField(String inString) {
-        this.currentTask.getProcess().setWikiField(inString);
-    }
-
-    public String getAddToWikiField() {
-        return this.addToWikiField;
-    }
-
-    public void setAddToWikiField(String addToWikiField) {
-        this.addToWikiField = addToWikiField;
-    }
-
-    /**
-     * Add to wiki field.
-     */
-    public void addToWikiField() {
-        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
-            this.currentTask.setProcess(
-                ServiceManager.getProcessService().addToWikiField(this.addToWikiField, this.currentTask.getProcess()));
-            this.addToWikiField = "";
-            try {
-                ServiceManager.getProcessService().save(this.currentTask.getProcess());
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                    logger, e);
-            }
-        }
     }
 
     /**
