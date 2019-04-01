@@ -43,6 +43,8 @@ public class WikiFieldHelper {
     private static final String TAG_DEBUG = "<font color=\"#CCCCCC\">";
     private static final String TAG_USER = "<font color=\"#006600\">";
     private static final String TAG_END = "</font>";
+    private static final String CORRECTION_FOR_TASK_DE = "Korrektur f&uuml;r Schritt";
+    private static final String CORRECTION_FOR_TASK_EN = "Correction for step";
 
     private static final String BREAK = "<br/>";
 
@@ -117,6 +119,12 @@ public class WikiFieldHelper {
         return message;
     }
 
+    /**
+     * transform wiki field to Comment objects.
+     *
+     * @param process
+     *          process as object.
+     */
     public static void transformWikiFieldToComment(Process process) {
         String[] messages = getWikiField(process);
         if (messages.length > 0) {
@@ -131,18 +139,13 @@ public class WikiFieldHelper {
                     if (Objects.nonNull(correctionRequiredProperty)) {
                         try {
                             comment.setCreationDate(getCreationDate(correctionRequiredProperty));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        try {
                             comment.setCurrentTask(getCurrentTask(correctionRequiredProperty));
                             comment.setCorrectionTask(getCorrectionTask(correctionRequiredProperty));
                             deleteProperty(process, correctionRequiredProperty);
-                        } catch (DAOException | DataException e) {
-                            e.printStackTrace();
+                        } catch (DAOException | DataException | ParseException e) {
+                            Helper.setErrorMessage("PropertyError", logger, e);
                         }
                     }
-
                 } else if (message.contains("Orange K")) {
                     comment.setType(CommentType.ERROR);
                     comment.setCorrected(Boolean.TRUE);
@@ -153,7 +156,7 @@ public class WikiFieldHelper {
                             comment.setCorrectionDate(getCreationDate(correctionPerformed));
                             deleteProperty(process, correctionPerformed);
                         } catch (ParseException | DAOException | DataException e) {
-                            e.printStackTrace();
+                            Helper.setErrorMessage("Deleting error", logger, e);
                         }
                     }
                     comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(process));
@@ -163,15 +166,11 @@ public class WikiFieldHelper {
                 }
                 try {
                     ServiceManager.getCommentService().saveToDatabase(comment);
-                } catch (DAOException e) {
-                    e.printStackTrace();
+                    process.setWikiField("");
+                    ServiceManager.getProcessService().save(process);
+                } catch (DAOException | DataException e) {
+                    Helper.setErrorMessage("Saving error", logger, e);
                 }
-            }
-            process.setWikiField("");
-            try {
-                ServiceManager.getProcessService().save(process);
-            } catch (DataException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -181,8 +180,8 @@ public class WikiFieldHelper {
         for (Property property : properties) {
             String translation = Helper.getTranslation("correctionNecessary");
             String msg = getWikiFieldMessage(message);
-            if ((property.getTitle().equals(translation)
-                    && (property.getValue().contains(msg)))) {
+            if (property.getTitle().equals(translation)
+                    && property.getValue().contains(msg)) {
                 return property;
             }
         }
@@ -201,16 +200,16 @@ public class WikiFieldHelper {
     }
 
     private static Task getCorrectionTask(Property property) throws DAOException {
-        int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf(" CorrectionTask: ") + 17,
+        int correctionTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf(" CorrectionTask: ") + 17,
                 property.getValue().indexOf(")")));
-        return ServiceManager.getTaskService().getById(id);
+        return ServiceManager.getTaskService().getById(correctionTaskId);
 
     }
 
     private static Task getCurrentTask(Property property) throws DAOException {
-        int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
+        int currentTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
                 property.getValue().indexOf(" CorrectionTask: ")));
-        return ServiceManager.getTaskService().getById(id);
+        return ServiceManager.getTaskService().getById(currentTaskId);
     }
 
     private static Date getCreationDate(Property property) throws ParseException {
@@ -218,7 +217,7 @@ public class WikiFieldHelper {
     }
 
     private static String getWikiFieldMessage(String message) {
-        return message.substring(message.indexOf(":") + 1).trim();
+        return message.substring(message.indexOf(':') + 1).trim();
     }
 
     private static User getWikiFieldAuthor(String message) {
@@ -227,10 +226,10 @@ public class WikiFieldHelper {
             return null;
         }
         String authorName = parts[0];
-        if (authorName.contains("Correction for step")) {
-            authorName = (authorName.split("Correction for step"))[0];
-        } else if (authorName.contains("Korrektur f&uuml;r Schritt")) {
-            authorName = (authorName.split("Korrektur f&uuml;r Schritt"))[0];
+        if (authorName.contains(CORRECTION_FOR_TASK_EN)) {
+            authorName = authorName.split(CORRECTION_FOR_TASK_EN)[0];
+        } else if (authorName.contains(CORRECTION_FOR_TASK_DE)) {
+            authorName = authorName.split(CORRECTION_FOR_TASK_DE)[0];
         }
         if (authorName.contains("Red K ")) {
             authorName = authorName.replace("Red K ", "");
@@ -253,10 +252,10 @@ public class WikiFieldHelper {
             return null;
         }
         String correctionTaskName = parts[0];
-        if (correctionTaskName.contains("Correction for step")) {
-            correctionTaskName = (correctionTaskName.split("Correction for step"))[1];
-        } else if (correctionTaskName.contains("Korrektur f&uuml;r Schritt")) {
-            correctionTaskName = (correctionTaskName.split("Korrektur f&uuml;r Schritt"))[1];
+        if (correctionTaskName.contains(CORRECTION_FOR_TASK_EN)) {
+            correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_EN)[1];
+        } else if (correctionTaskName.contains(CORRECTION_FOR_TASK_DE)) {
+            correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_DE)[1];
         }
         for (Task task : process.getTasks()) {
             if (task.getTitle().equals(correctionTaskName.trim())) {
