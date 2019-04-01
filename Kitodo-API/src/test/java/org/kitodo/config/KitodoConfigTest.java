@@ -11,11 +11,14 @@
 
 package org.kitodo.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.NoSuchElementException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.kitodo.config.enums.ParameterAPI;
 import org.powermock.api.mockito.PowerMockito;
@@ -23,15 +26,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(PowerMockRunner.class)
 public class KitodoConfigTest {
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
     public void shouldGetStringParameterWithoutDefault() {
@@ -47,9 +43,12 @@ public class KitodoConfigTest {
 
     @Test
     public void shouldGetStringParameterForNonexistentWithoutDefault() {
-        expectedEx.expect(NoSuchElementException.class);
-        expectedEx.expectMessage("No configuration found in kitodo_config.properties for key directory.metadata!");
-        KitodoConfig.getParameter(ParameterAPI.DIR_PROCESSES);
+        NoSuchElementException thrown = assertThrows(NoSuchElementException.class,
+            () -> KitodoConfig.getParameter(ParameterAPI.DIR_PROCESSES),
+            "Expected NoSuchElementException to be thrown, but it didn't");
+
+        assertEquals("No configuration found in kitodo_config.properties for key directory.metadata!",
+            thrown.getMessage());
     }
 
     @Test
@@ -99,7 +98,7 @@ public class KitodoConfigTest {
         PowerMockito.mockStatic(ParameterAPI.class);
         PowerMockito.when(ParameterAPI.values())
                 .thenReturn(new ParameterAPI[] {ParameterAPI.DIR_MODULES, ParameterAPI.DIR_PROCESSES,
-                        ParameterAPI.DIR_XML_CONFIG, NONE });
+                                                ParameterAPI.DIR_XML_CONFIG, NONE });
 
         int param = KitodoConfig.getIntParameter(NONE, 3);
         assertEquals("Incorrect param for non existing enum with default value!", 3, param);
