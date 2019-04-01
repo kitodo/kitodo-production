@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
@@ -112,7 +113,8 @@ public class TemplateForm extends TemplateBaseForm {
             this.assignedProjects.addAll(template.getProjects());
             return templateEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -127,13 +129,16 @@ public class TemplateForm extends TemplateBaseForm {
             try {
                 prepareTasks();
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                Helper.setErrorMessage("errorDiagramConvert", new Object[] {this.template.getWorkflow().getTitle() },
+                    logger, e);
                 return this.stayOnCurrentPage;
             } catch (IOException e) {
-                Helper.setErrorMessage("errorDiagramFile", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                Helper.setErrorMessage("errorDiagramFile", new Object[] {this.template.getWorkflow().getTitle() },
+                    logger, e);
                 return this.stayOnCurrentPage;
             } catch (WorkflowException e) {
-                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() }, logger, e);
+                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() },
+                    logger, e);
                 return this.stayOnCurrentPage;
             }
 
@@ -245,6 +250,22 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Check if user is not assigned to the project. Used for disabling projects.
+     * 
+     * @param project
+     *            for check
+     * @return false if user is assigned to this project, otherwise true
+     */
+    public boolean isUserNotAssignedToProject(Project project) {
+        for (User user : project.getUsers()) {
+            if (user.getId().equals(ServiceManager.getUserService().getCurrentUser().getId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Set template by id.
      *
      * @param id
@@ -332,9 +353,10 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set assignedProjects.
      *
-     * @param assignedProjects as assignedProjects
+     * @param assignedProjects
+     *            as assignedProjects
      */
-    public void setAssignedProjects(ArrayList<Project> assignedProjects) {
+    public void setAssignedProjects(List<Project> assignedProjects) {
         this.assignedProjects = assignedProjects;
     }
 
