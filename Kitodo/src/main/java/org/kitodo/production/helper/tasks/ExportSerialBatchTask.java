@@ -80,7 +80,7 @@ public class ExportSerialBatchTask extends EmptyTask {
      *            batch holding a serial publication
      */
     public ExportSerialBatchTask(Batch batch) {
-        super(batch.getLabel());
+        super(ServiceManager.getBatchService().getLabel(batch));
         this.batch = batch;
         int batchSize = batch.getProcesses().size();
         pointers = new ArrayList<>(batchSize);

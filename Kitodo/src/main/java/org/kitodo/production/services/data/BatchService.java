@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -41,6 +42,7 @@ import org.primefaces.model.SortOrder;
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
     private static BatchService instance = null;
+    private static final String BATCH = "batch";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -259,7 +261,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     private String getNumericLabel(Batch batch) {
-        return Helper.getTranslation("batch", "Batch") + ' ' + batch.getId();
+        return Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)) + ' ' + batch.getId();
     }
 
     /**
@@ -270,7 +272,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     private String getNumericLabel(BatchDTO batch) {
-        return Helper.getTranslation("batch", "Batch") + ' ' + batch.getId();
+        return Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)) + ' ' + batch.getId();
     }
 
     /**
@@ -280,7 +282,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public String getTypeTranslated(Batch batch) {
         if (Objects.nonNull(batch.getType())) {
-            return Helper.getTranslation("batch_type_".concat(batch.getType().toString().toLowerCase()));
+            return Helper.getTranslation(BATCH + "_type_".concat(batch.getType().toString().toLowerCase()));
         } else {
             return "";
         }
@@ -298,44 +300,51 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function toString() returns a concise but informative representation
-     * that is easy for a person to read and that "textually represents" this
-     * batch.
+     * The function creates label as informative representation that is easy for a
+     * person to read and that "textually represents" this batch.
      *
+     * @param batch
+     *            for which label is going to be created
      */
-    public String toString(Batch batch) {
+    public void createLabel(Batch batch) {
         try {
-            StringBuilder result = new StringBuilder(Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
-            try {
-                if (Objects.nonNull(batch.getTitle())) {
-                    result.append(batch.getTitle());
-                } else if (Objects.nonNull(batch.getId())) {
-                    result.append(Helper.getTranslation("batch", "Batch"));
-                    result.append(' ');
-                    result.append(batch.getId());
-                } else {
-                    result.append('−');
-                }
-                result.append(" (");
-                String extent = Helper.getTranslation("numProzesse", "{0} processes");
-                String size = Integer.toString(batch.getProcesses().size());
-                result.append(extent.replaceFirst("\\{0\\}", size));
-            } catch (RuntimeException unexpected) {
-                result.setLength(0);
-                result.append(Objects.nonNull(batch.getTitle()) ? batch.getTitle() : batch.getId());
-                result.append(" (");
-                result.append(batch.getProcesses().size());
-            }
-            result.append(')');
+            StringBuilder result = new StringBuilder(
+                    Objects.nonNull(batch.getTitle()) ? batch.getTitle().length() + 20 : 30);
+            result.append(prepareLabel(batch));
             if (Objects.nonNull(batch.getType())) {
                 result.append(" [");
-                // TODO: check out method
                 result.append(getTypeTranslated(batch));
                 result.append(']');
             }
-            return result.toString();
+            batch.setLabel(result.toString());
         } catch (RuntimeException fallback) {
-            return super.toString();
+            batch.setLabel("");
         }
+    }
+
+    private String prepareLabel(Batch batch) {
+        StringBuilder result = new StringBuilder();
+        try {
+            if (Objects.nonNull(batch.getTitle())) {
+                result.append(batch.getTitle());
+            } else if (Objects.nonNull(batch.getId())) {
+                result.append(Helper.getTranslation(BATCH, StringUtils.capitalize(BATCH)));
+                result.append(' ');
+                result.append(batch.getId());
+            } else {
+                result.append('−');
+            }
+            result.append(" (");
+            String extent = Helper.getTranslation("numProzesse", "{0} processes");
+            String size = Integer.toString(batch.getProcesses().size());
+            result.append(extent.replaceFirst("\\{0\\}", size));
+        } catch (RuntimeException unexpected) {
+            result.setLength(0);
+            result.append(Objects.nonNull(batch.getTitle()) ? batch.getTitle() : batch.getId());
+            result.append(" (");
+            result.append(batch.getProcesses().size());
+        }
+        result.append(')');
+        return result.toString();
     }
 }
