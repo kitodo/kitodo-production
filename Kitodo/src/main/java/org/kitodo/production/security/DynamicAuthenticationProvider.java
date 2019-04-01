@@ -16,14 +16,12 @@ import java.util.Objects;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
@@ -68,16 +66,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) {
         if (ldapAuthentication) {
-            try {
-                User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
-                configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(),
-                    user.getLdapGroup().getUserDN());
-            } catch (DAOException e) {
-                // getByLogin() throws DAOExeption, it must be converted in
-                // UsernameNotFoundException
-                // in order to match interface method signature
-                throw new UsernameNotFoundException("Error on reading user from database!");
-            }
+            User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
+            configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(), user.getLdapGroup().getUserDN());
         }
         return authenticationProvider.authenticate(authentication);
     }
@@ -97,7 +87,6 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      *            The user dn pattern.
      */
     private void configureAuthenticationProvider(String url, String userDn) {
-
         if (Objects.nonNull(url) && Objects.nonNull(userDn)) {
 
             if (Objects.isNull(this.ldapContextSource)) {
