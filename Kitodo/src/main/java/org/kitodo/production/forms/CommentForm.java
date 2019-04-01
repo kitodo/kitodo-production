@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -75,9 +76,7 @@ public class CommentForm extends BaseForm {
         comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
         comment.setCreationDate(new Date());
         comment.setProcess(this.process);
-        if (!isCorrectionComment()) {
-            comment.setType(CommentType.INFO);
-        } else {
+        if (isCorrectionComment()) {
             comment.setType(CommentType.ERROR);
             comment.setCorrected(Boolean.FALSE);
             comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(this.process));
@@ -88,6 +87,8 @@ public class CommentForm extends BaseForm {
                         logger, e);
             }
             setCorrectionComment(false);
+        } else {
+            comment.setType(CommentType.INFO);
         }
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
@@ -225,7 +226,7 @@ public class CommentForm extends BaseForm {
      */
     public void refreshProcess(Process process) {
         try {
-            if (process.getId() != 0) {
+            if (!Objects.equals(process.getId(), 0)) {
                 ServiceManager.getProcessService().refresh(process);
                 setProcess(ServiceManager.getProcessService().getById(process.getId()));
             }
