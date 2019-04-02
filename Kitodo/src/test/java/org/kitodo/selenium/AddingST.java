@@ -188,7 +188,6 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
-    @Ignore
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
@@ -198,7 +197,6 @@ public class AddingST extends BaseTestSelenium {
 
         userEditPage.insertUserData(user);
         userEditPage.addUserToRole(ServiceManager.getRoleService().getById(2).getTitle());
-        userEditPage.addUserToClient(ServiceManager.getClientService().getById(1).getName());
         userEditPage.addUserToClient(ServiceManager.getClientService().getById(2).getName());
         userEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
