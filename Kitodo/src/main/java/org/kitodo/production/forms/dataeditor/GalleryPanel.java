@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -365,8 +364,7 @@ public class GalleryPanel {
         }
 
         lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getStructure(), previewFolder));
-        int imagesInStructuredView = stripes.parallelStream()
-                .collect(Collectors.summingInt(stripe -> stripe.getMedias().size()));
+        int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
         }
@@ -415,8 +413,7 @@ public class GalleryPanel {
         URI previewUri = mediaUnit.getMediaFiles().get(previewVariant);
         URI mediaViewUri = mediaUnit.getMediaFiles().get(mediaViewVariant);
         String canonical = Objects.nonNull(previewUri) ? previewFolder.getCanonical(previewUri) : null;
-        GalleryMediaContent media = new GalleryMediaContent(this, view, canonical, mediaUnit.getOrder(),
+        return new GalleryMediaContent(this, view, canonical, mediaUnit.getOrder(),
                 mediaUnit.getOrderlabel(), previewUri, mediaViewUri);
-        return media;
     }
 }
