@@ -63,7 +63,7 @@
                 </h:link>
 
                 <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor() }">
+                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
@@ -73,14 +73,15 @@
                     <f:actionListener binding="#{MetadataProcessor.setShowNewComment(false)}"/>
                 </h:commandLink>
 
-                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}">
+                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                               rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                     <h:outputText><i class="fa fa-download"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <!-- TODO: add separate message in case it already exists and alert -->
                 </p:commandLink>
 
-                <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}"
-                               title="#{msgs.deleteLinkHomeDirectory}">
+                <p:commandLink id="upload" action="#{ProcessForm.uploadFromHome}" title="#{msgs.deleteLinkHomeDirectory}"
+                               rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
                     <h:outputText><i class="fa fa-upload"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
@@ -94,22 +95,25 @@
                 </p:commandLink>
 
                 <p:commandLink id="downloadDocket" action="#{ProcessForm.downloadDocket}" title="#{msgs.docketPrint}"
-                               ajax="false">
+                               ajax="false" rendered="#{SecurityAccessController.hasAuthorityToViewDocket()}">
                     <h:outputText><i class="fa fa-print"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </p:commandLink>
 
-                <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}">
+                <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}"
+                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
 
-                <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}">
+                <h:commandLink action="#{ProcessForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}"
+                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
 
-                <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}">
+                <h:commandLink action="#{ProcessForm.exportDMS}" id="exportDms" title="#{msgs.exportDMS}"
+                               rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>

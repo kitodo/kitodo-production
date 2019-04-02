@@ -401,8 +401,7 @@ public class SecurityAccessController {
     }
 
     /**
-     * <<<<<<< HEAD ======= Check if the current user has the authority to edit the
-     * authority.
+     * Check if the current user has the authority to edit the authority.
      *
      * @return true if the current user has the authority to edit the authority
      */
@@ -411,13 +410,21 @@ public class SecurityAccessController {
     }
 
     /**
-     * >>>>>>> Add form and frontend for authorities Check if the current user has
-     * the authority to edit the index.
+     * Check if the current user has the authority to edit the index.
      *
      * @return true if the current user has the authority to edit the index
      */
     public boolean hasAuthorityToEditIndex() {
         return securityAccessService.hasAuthorityToEditIndex();
+    }
+
+    /**
+     * Check if the current user has the authority to export process.
+     *
+     * @return true if the current user has the authority to export process
+     */
+    public boolean hasAuthorityToExportProcess() {
+        return securityAccessService.hasAuthorityToExportProcess();
     }
 
     /**
