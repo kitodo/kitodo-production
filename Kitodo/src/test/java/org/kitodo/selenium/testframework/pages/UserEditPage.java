@@ -20,6 +20,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -140,14 +141,26 @@ public class UserEditPage extends EditPage<UserEditPage> {
         switchToTabByIndex(TabIndex.USER_ROLES.getIndex());
         addUserToRoleButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectRoleTable);
-        addRow(tableRows, roleTitle, addToRoleDialog);
+        try {
+            addRow(tableRows, roleTitle, addToRoleDialog);
+        } catch (StaleElementReferenceException e) {
+            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("roleForm:selectRoleTable_data")));
+            addToRoleDialog = Browser.getDriver().findElement(By.id("addRoleDialog"));
+            addRow(tableRows, roleTitle, addToRoleDialog);
+        }
     }
 
     public void addUserToClient(String clientName) throws Exception {
         switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        addRow(tableRows, clientName, addToClientDialog);
+        try {
+            addRow(tableRows, clientName, addToClientDialog);
+        } catch (StaleElementReferenceException e) {
+            tableRows = Browser.getRowsOfTable(Browser.getDriver().findElement(By.id("userClientForm:selectClientTable_data")));
+            addToClientDialog = Browser.getDriver().findElement(By.id("addClientDialog"));
+            addRow(tableRows, clientName, addToClientDialog);
+        }
     }
 
     public UserEditPage addUserToProject(String projectName) throws Exception {
