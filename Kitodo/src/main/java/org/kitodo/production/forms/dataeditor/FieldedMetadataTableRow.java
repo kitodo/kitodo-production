@@ -111,6 +111,20 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
+     * Creates a new root meta-data group representing the meta-data table
+     * content in the meta-data panel.
+     *
+     * @param metadata
+     *            content for the metadata table
+     * @param divisionView
+     *            information about that structure from the rule set
+     */
+    FieldedMetadataTableRow(MetadataPanel panel, Collection<Metadata> metadata, StructuralElementViewInterface divisionView) {
+
+        this(panel, null, null, divisionView, metadata);
+    }
+
+    /**
      * Creates a sub-panel for a meta-data group.
      *
      * @param metadataView

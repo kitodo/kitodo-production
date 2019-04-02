@@ -21,6 +21,7 @@ import javax.faces.model.SelectItem;
 
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.production.helper.Helper;
 
@@ -38,12 +39,14 @@ public class MetadataPanel implements Serializable {
 
     private final RulesetSetupInterface rulesetSetup;
 
-    private FieldedMetadataTableRow metadataTable = FieldedMetadataTableRow.EMPTY;
+    private FieldedMetadataTableRow logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
+    private FieldedMetadataTableRow physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
 
     public MetadataPanel(RulesetSetupInterface rulesetSetup) {
         this.rulesetSetup = rulesetSetup;
     }
 
+    // TODO create similar method for physical metadata entries
     /**
      * The method is executed when a user clicks the add meta-data button. A new
      * meta-data entry will be created with the entered type and value. Actually
@@ -62,7 +65,7 @@ public class MetadataPanel implements Serializable {
              * selected and the maximum number of occurrences would be reached.
              * That's why we have to do that first.
              */
-            String label = metadataTable.getAddableMetadata().parallelStream()
+            String label = logicalMetadataTable.getAddableMetadata().parallelStream()
                     .filter(selectItem -> addMetadataKeySelectedItem.equals(selectItem.getValue())).findAny()
                     .orElseThrow(IllegalStateException::new).getLabel();
 
@@ -71,13 +74,13 @@ public class MetadataPanel implements Serializable {
              * create an empty table line (somewhere) into which we can enter
              * the value.
              */
-            metadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
+            logicalMetadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
 
             /*
              * Now we just have to find the line and enter the value. The latter
              * happens differently depending on what kind of input field it is.
              */
-            for (MetadataTableRow row : metadataTable.getRows()) {
+            for (MetadataTableRow row : logicalMetadataTable.getRows()) {
                 if (label.equals(row.getLabel())) {
                     if (row instanceof TextMetadataTableRow) {
                         TextMetadataTableRow textInput = (TextMetadataTableRow) row;
@@ -108,56 +111,88 @@ public class MetadataPanel implements Serializable {
      * Empties the meta-data panel.
      */
     public void clear() {
-        metadataTable = FieldedMetadataTableRow.EMPTY;
+        logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
+        physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         clipboard.clear();
         addMetadataKeySelectedItem = "";
         addMetadataValue = "";
     }
 
-    public List<SelectItem> getAddMetadataKeyItems() {
-        return metadataTable.getAddableMetadata();
+    public List<SelectItem> getAddLogicalMetadataKeyItems() {
+        return logicalMetadataTable.getAddableMetadata();
+    }
+
+    public List<SelectItem> getAddPhysicalMetadataKeyItems() {
+        return physicalMetadataTable.getAddableMetadata();
     }
 
     public String getAddMetadataKeySelectedItem() {
         return addMetadataKeySelectedItem;
     }
 
-    public String getAddMetadataValue() {
+    public void setAddMetadataKeySelectedItem(String addMetadataKeySelectedItem) {
+        this.addMetadataKeySelectedItem = addMetadataKeySelectedItem;
+    }
+
+    public String getAddLogicalMetadataValue() {
         return addMetadataValue;
+    }
+
+    public void setAddLogicalMetadataValue(String addMetadataValue) {
+        this.addMetadataValue = addMetadataValue;
+    }
+
+    public String getAddPhysicalMetadataValue() {
+        return addMetadataValue;
+    }
+
+    public void setAddPhysicalMetadataValue(String addMetadataValue) {
+        this.addMetadataValue = addMetadataValue;
     }
 
     Collection<Metadata> getClipboard() {
         return clipboard;
     }
 
-    public List<MetadataTableRow> getRows() {
-        return metadataTable.getRows();
+    public List<MetadataTableRow> getLogicalMetadataRows() {
+        return logicalMetadataTable.getRows();
     }
 
-    void show(Optional<Structure> optionalStructure) {
+    public List<MetadataTableRow> getPhysicalMetadataRows() {
+        return physicalMetadataTable.getRows();
+    }
+
+    void showLogical(Optional<Structure> optionalStructure) {
         if (!optionalStructure.isPresent()) {
-            metadataTable = FieldedMetadataTableRow.EMPTY;
+            logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         } else {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
                 optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
-            metadataTable = new FieldedMetadataTableRow(this, optionalStructure.get(), divisionView);
+            logicalMetadataTable = new FieldedMetadataTableRow(this, optionalStructure.get(), divisionView);
+        }
+
+    }
+
+    void showPhysical(Optional<MediaUnit> optionalMediaUnit) {
+        if (!optionalMediaUnit.isPresent()) {
+            physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
+        } else {
+            StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
+                optionalMediaUnit.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+            physicalMetadataTable = new FieldedMetadataTableRow(this, optionalMediaUnit.get().getMetadata(), divisionView);
         }
 
     }
 
     public void pasteClick() {
-        metadataTable.pasteClick();
+        logicalMetadataTable.pasteClick();
     }
 
-    void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataTable.preserve();
+    void preserveLogical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        logicalMetadataTable.preserve();
     }
 
-    public void setAddMetadataKeySelectedItem(String addMetadataKeySelectedItem) {
-        this.addMetadataKeySelectedItem = addMetadataKeySelectedItem;
-    }
-
-    public void setAddMetadataValue(String addMetadataValue) {
-        this.addMetadataValue = addMetadataValue;
+    void preservePhysical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        physicalMetadataTable.preserve();
     }
 }

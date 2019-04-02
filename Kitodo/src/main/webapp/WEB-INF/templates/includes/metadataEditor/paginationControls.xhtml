@@ -41,7 +41,7 @@
                          action="#{DataEditorForm.deleteButtonClick()}"
                          onclick="PF('loadingDialog').show();"
                          oncomplete="PF('loadingDialog').hide();"
-                         update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                         update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                          disabled="#{readOnly}"
                          icon="fa fa-trash fa-sm"

@@ -95,7 +95,14 @@
                         </div>
                         <p:panel id="secondColumnPanel">
                             <div id="metadataPanel" data-min-height="100" class="#{viewMetadata ? '' : 'collapsed'}">
-                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
+                                <p:accordionPanel id="metadataAccordion">
+                                    <p:tab title="#{msgs.logical} #{msgs.metadata}">
+                                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/logicalMetadata.xhtml" />
+                                    </p:tab>
+                                    <p:tab title="#{msgs.physical} #{msgs.metadata}">
+                                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/physicalMetadata.xhtml" />
+                                    </p:tab>
+                                </p:accordionPanel>
                             </div>
 
                             <!-- Vertical resizer -->

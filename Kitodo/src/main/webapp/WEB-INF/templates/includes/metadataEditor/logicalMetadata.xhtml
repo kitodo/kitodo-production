@@ -19,12 +19,12 @@
 
     <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
-    <p:panel id="metadataWrapperPanel" styleClass="wrapperPanel">
+    <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
             <p:dataTable id="metadataTable"
-                         rendered="#{!empty DataEditorForm.metadataPanel.rows}"
+                         rendered="#{!empty DataEditorForm.metadataPanel.logicalMetadataRows}"
                          styleClass="no-header"
-                         value="#{DataEditorForm.metadataPanel.rows}"
+                         value="#{DataEditorForm.metadataPanel.logicalMetadataRows}"
                          var="item">
 
                 <p:column style="width: 100%;">
@@ -54,7 +54,7 @@
                     <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
                     <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
 
-                    <p:commandButton update="metadata:metadataTable"
+                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
                                      id="deleteMetadata"
                                      icon="fa fa-trash"
                                      immediate="true"
@@ -66,7 +66,7 @@
                                      oncomplete="PF('loadingDialog').hide();"
                                      action="#{item.deleteClick}">
                     </p:commandButton>
-                    <p:commandButton update="metadata:metadataTable"
+                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
                                  id="copyMetadata"
                                  icon="fa fa-clipboard"
                                      immediate="true"

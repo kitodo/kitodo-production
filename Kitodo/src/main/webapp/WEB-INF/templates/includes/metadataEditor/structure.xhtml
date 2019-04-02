@@ -19,25 +19,46 @@
     <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
         <!--@elvariable id="readOnly" type="boolean"-->
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
-        <p:repeat var="tree" value="#{DataEditorForm.structurePanel.trees}">
-            <p:tree value="#{tree}"
-                    disabled="#{readOnly}"
-                    var="element"
-                    selectionMode="single" id="docStruct"
-                    selection="#{DataEditorForm.structurePanel.selectedNode}"
-                    draggable="true" droppable="true" dragdropScope="DocStructTree">
-                <p:ajax event="select" listener="#{element.treeElementSelect}"
-                        update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
-                <p:ajax event="dragdrop" listener="#{element.treeElementDragDrop}"
-                        update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
-                <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
-                    <!--@elvariable id="elementType" type="java.lang.String"-->
-                    <ui:param name="elementType" value="#{element.label}"/>
-                    <h:outputText value="#{elementType}" style="#{element.undefined ? 'background-color: gold' : ''}"/>
-                    <h:outputText value=" 🔗" rendered="#{element.linked}"/>
-                    <h:outputText value=" ⚠️" rendered="#{element.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
-                </p:treeNode>
-            </p:tree>
-        </p:repeat>
+
+        <!-- Logical Tree -->
+        <p:tree value="#{DataEditorForm.structurePanel.logicalTree}"
+                disabled="#{readOnly}"
+                var="logicalNode"
+                selectionMode="single" id="docStruct"
+                selection="#{DataEditorForm.structurePanel.selectedLogicalNode}"
+                draggable="true" droppable="true" dragdropScope="logicalTree">
+            <p:ajax event="select" listener="#{logicalNode.treeLogicalSelect}"
+                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+            <p:ajax event="dragdrop" listener="#{logicalNode.treeElementDragDrop}"
+                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+            <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                <!--@elvariable id="elementType" type="java.lang.String"-->
+                <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
+                <h:outputText value="#{logicalElementType}" style="#{logicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value=" 🔗" rendered="#{logicalNode.linked}"/>
+                <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
+            </p:treeNode>
+        </p:tree>
+
+        <!-- Physical Tree -->
+        <p:tree value="#{DataEditorForm.structurePanel.physicalTree}"
+                disabled="#{readOnly}"
+                var="physicalNode"
+                selectionMode="single" id="physicalTree"
+                selection="#{DataEditorForm.structurePanel.selectedPhysicalNode}"
+                draggable="true" droppable="true" dragdropScope="physicalTree">
+            <p:ajax event="select" listener="#{physicalNode.treePhysicalSelect}"
+                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+            <p:ajax event="dragdrop" listener="#{physicalNode.treeElementDragDrop}"
+                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+            <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                <!--@elvariable id="elementType" type="java.lang.String"-->
+                <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
+                <h:outputText value="#{physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
+                <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
+            </p:treeNode>
+        </p:tree>
+
     </p:panel>
 </ui:composition>

@@ -31,6 +31,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
@@ -239,7 +240,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         final long begin = System.nanoTime();
 
         structurePanel.show();
-        metadataPanel.show(getSelectedStructure());
+        metadataPanel.showLogical(getSelectedStructure());
+        metadataPanel.showPhysical(getSelectedMediaUnit());
         galleryPanel.show();
         paginationPanel.show();
         commentPanel.show();
@@ -326,7 +328,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String save() {
         try {
-            metadataPanel.preserve();
+            metadataPanel.preserveLogical();
+            metadataPanel.preservePhysical();
             structurePanel.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, locks)) {
                 ServiceManager.getMetsService().save(workpiece, out);
@@ -409,6 +412,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return structurePanel.getSelectedStructure();
     }
 
+    Optional<MediaUnit> getSelectedMediaUnit() {
+        return structurePanel.getSelectedMediaUnit();
+    }
+
     public StructurePanel getStructurePanel() {
         return structurePanel;
     }
@@ -426,14 +433,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return showPagination;
     }
 
-    void refreshStructurePanel() {
-        structurePanel.show();
-    }
-
-    void setProcess(Process process) {
-        this.process = process;
-    }
-
     /**
      * Set showPagination.
      *
@@ -444,9 +443,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.showPagination = showPagination;
     }
 
+    void refreshStructurePanel() {
+        structurePanel.show();
+    }
+
+    void setProcess(Process process) {
+        this.process = process;
+    }
+
     void switchStructure() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        metadataPanel.preserve();
-        metadataPanel.show(structurePanel.getSelectedStructure());
+        metadataPanel.preserveLogical();
+        metadataPanel.showLogical(structurePanel.getSelectedStructure());
         addDocStrucTypeDialog.prepare();
+    }
+
+    void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        metadataPanel.preservePhysical();
+        metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
+        // TODO addMediaUnitDialog.prepare();
     }
 }

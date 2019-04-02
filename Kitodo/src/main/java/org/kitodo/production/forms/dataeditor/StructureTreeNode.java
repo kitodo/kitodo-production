@@ -66,8 +66,18 @@ public class StructureTreeNode implements Serializable {
      * @param event
      *            NodeSelectEvent triggered by logical node being selected
      */
-    public void treeElementSelect(NodeSelectEvent event) {
-        structurePanel.treeElementSelect();
+    public void treeLogicalSelect(NodeSelectEvent event) {
+        structurePanel.treeLogicalSelect();
+    }
+
+    /**
+     * TODO add javaDoc.
+     *
+     * @param event
+     *            NodeSelectEvent triggered by logical node being selected
+     */
+    public void treePhysicalSelect(NodeSelectEvent event) {
+        structurePanel.treePhysicalSelect();
     }
 
 }

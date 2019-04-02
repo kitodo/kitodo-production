@@ -42,9 +42,17 @@ public class StructurePanel implements Serializable {
      * If changing the tree node fails, we need this value to undo the user’s
      * select action.
      */
-    private TreeNode previouslySelectedNode;
+    private TreeNode previouslySelectedLogicalNode;
 
-    private TreeNode selectedNode;
+    /**
+     * If changing the tree node fails, we need this value to undo the user’s
+     * select action.
+     */
+    private TreeNode previouslySelectedPhysicalNode;
+
+    private TreeNode selectedLogicalNode;
+
+    private TreeNode selectedPhysicalNode;
 
     /**
      * Whether the media shall be shown separately in a second tree. If false,
@@ -57,15 +65,12 @@ public class StructurePanel implements Serializable {
     /**
      * The logical structure tree of the edited document.
      */
-    private DefaultTreeNode structureTree;
+    private DefaultTreeNode logicalTree;
 
     /**
-     * List of structure trees to be displayed. This list contains a tree for
-     * each linked logical parent, then the logical tree, and last, in mixed
-     * mode, a tree with all the unlinked media, or in separate mode, the
-     * physical tree.
+     * The physical structure tree of the edited document.
      */
-    private final List<DefaultTreeNode> trees = new ArrayList<>();
+    private DefaultTreeNode physicalTree = null;
 
     /**
      * Creates a new structure panel.
@@ -81,10 +86,12 @@ public class StructurePanel implements Serializable {
      * Clear content.
      */
     public void clear() {
-        trees.clear();
-        structureTree = null;
-        selectedNode = null;
-        previouslySelectedNode = null;
+        logicalTree = null;
+        physicalTree = null;
+        selectedLogicalNode = null;
+        selectedPhysicalNode = null;
+        previouslySelectedLogicalNode = null;
+        previouslySelectedPhysicalNode = null;
         structure = null;
     }
 
@@ -107,18 +114,73 @@ public class StructurePanel implements Serializable {
         show();
     }
 
-    public TreeNode getSelectedNode() {
-        return selectedNode;
+    /**
+     * Get selected logical TreeNode.
+     *
+     * @return value of selectedLogicalNode
+     */
+    public TreeNode getSelectedLogicalNode() {
+        return selectedLogicalNode;
+    }
+
+    /**
+     * Set selected logical TreeNode.
+     *
+     * @param selected
+     *          TreeNode that will be selected
+     */
+    public void setSelectedLogicalNode(TreeNode selected) {
+        if (Objects.nonNull(selected)) {
+            this.selectedLogicalNode = selected;
+        }
+    }
+
+    /**
+     * Get selectedPhysicalNode.
+     *
+     * @return value of selectedPhysicalNode
+     */
+    public TreeNode getSelectedPhysicalNode() {
+        return selectedPhysicalNode;
+    }
+
+    /**
+     * Set selectedPhysicalNode.
+     *
+     * @param selectedPhysicalNode as org.primefaces.model.TreeNode
+     */
+    public void setSelectedPhysicalNode(TreeNode selectedPhysicalNode) {
+        this.selectedPhysicalNode = selectedPhysicalNode;
     }
 
     Optional<Structure> getSelectedStructure() {
-        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedNode.getData();
+        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
         return Optional.ofNullable(dataObject instanceof Structure ? (Structure) dataObject : null);
     }
 
-    public List<DefaultTreeNode> getTrees() {
-        return trees;
+    Optional<MediaUnit> getSelectedMediaUnit() {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedPhysicalNode.getData();
+        Object dataObject = structureTreeNode.getDataObject();
+        return Optional.ofNullable(dataObject instanceof MediaUnit ? (MediaUnit) dataObject : null);
+    }
+
+    /**
+     * Get logicalTree.
+     *
+     * @return value of logicalTree
+     */
+    public DefaultTreeNode getLogicalTree() {
+        return logicalTree;
+    }
+
+    /**
+     * Get physicalTree.
+     *
+     * @return value of physicalTree
+     */
+    public DefaultTreeNode getPhysicalTree() {
+        return physicalTree;
     }
 
     /**
@@ -127,8 +189,8 @@ public class StructurePanel implements Serializable {
      * workpiece which is stored in the root element of the structure tree.
      */
     void preserve() {
-        if (!structureTree.getChildren().isEmpty()) {
-            preserveRecursive(structureTree.getChildren().get(0));
+        if (!logicalTree.getChildren().isEmpty()) {
+            preserveRecursive(logicalTree.getChildren().get(0));
         }
     }
 
@@ -157,38 +219,23 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Set selected TreeNode.
-     *
-     * @param selected
-     *          TreeNode that will be selected
-     */
-    public void setSelectedNode(TreeNode selected) {
-        if (Objects.nonNull(selected)) {
-            this.selectedNode = selected;
-        }
-    }
-
-    /**
      * Loads the tree(s) into the panel and sets the selected element to the
      * root element of the structure tree.
      */
     void show() {
-        trees.clear();
         this.structure = dataEditor.getWorkpiece().getStructure();
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
-        trees.addAll(result.getLeft());
+        this.logicalTree = result.getLeft().get(result.getLeft().size() - 1); // TODO size() - 1 might be dangerous
         if (separateMedia != null) {
             Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
                     .map(View::getMediaUnit).collect(Collectors.toSet());
-            DefaultTreeNode mediaTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit().getChildren(),
+            this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit(),
                 mediaUnitsShowingOnTheStructureTree);
-            if (mediaTree != null) {
-                trees.add(mediaTree);
-            }
         }
-        this.structureTree = trees.get(result.getLeft().size() - 1);
-        this.selectedNode = structureTree.getChildren().get(0);
-        this.previouslySelectedNode = selectedNode;
+        this.selectedLogicalNode = logicalTree.getChildren().get(0);
+        this.selectedPhysicalNode = physicalTree.getChildren().get(0);
+        this.previouslySelectedLogicalNode = selectedLogicalNode;
+        this.previouslySelectedPhysicalNode = selectedPhysicalNode;
     }
 
     /**
@@ -241,8 +288,8 @@ public class StructurePanel implements Serializable {
     /**
      * Creates the media tree.
      *
-     * @param mediaUnits
-     *            media units to show on the tree
+     * @param mediaRoot
+     *            root of media units to show on the tree
      * @param mediaUnitsShowingOnTheStructureTree
      *            media units already showing on the structure tree. In mixed
      *            mode, only media units not yet linked anywhere will show in
@@ -250,21 +297,25 @@ public class StructurePanel implements Serializable {
      *
      * @return the media tree
      */
-    private DefaultTreeNode buildMediaTree(List<MediaUnit> mediaUnits,
+    private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot,
             Collection<MediaUnit> mediaUnitsShowingOnTheStructureTree) {
-        DefaultTreeNode result = new DefaultTreeNode();
-        result.setExpanded(true);
+        DefaultTreeNode rootTreeNode = new DefaultTreeNode();
+        rootTreeNode.setExpanded(true);
 
         /*
          * Creating the tree node by handing over the parent node automatically
          * appends it to the parent as a child. That's the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode mediaTreeRoot = new DefaultTreeNode(new StructureTreeNode(this,
+        /*DefaultTreeNode mediaTreeRoot = new DefaultTreeNode(new StructureTreeNode(this,
                 Helper.getTranslation(separateMedia ? "dataEditor.mediaTree" : "dataEditor.unlinkedMediaTree"), false,
-                false, mediaUnits), result);
+                false, mediaRoot.getChildren()), rootTreeNode);
         mediaTreeRoot.setExpanded(true);
+        */
 
+        buildMediaTreeRecursively(mediaRoot, rootTreeNode);
+
+        /*
         String page = Helper.getTranslation("page").concat(" ");
         boolean isEmpty = true;
         for (MediaUnit mediaUnit : mediaUnits) {
@@ -275,20 +326,48 @@ public class StructurePanel implements Serializable {
                 isEmpty = false;
             }
         }
-        return !isEmpty ? result : null;
+        return !isEmpty ? rootTreeNode : null;
+        */
+        return rootTreeNode;
     }
 
-    void treeElementSelect() {
+    private void buildMediaTreeRecursively(MediaUnit mediaUnit, DefaultTreeNode parentTreeNode) {
+        String displayLabel = mediaUnit.getType(); // TODO translate type with ruleset
+        DefaultTreeNode treeNode = new DefaultTreeNode(new StructureTreeNode(this,
+                displayLabel, false, false, mediaUnit), parentTreeNode);
+        treeNode.setExpanded(true);
+        if (Objects.nonNull(mediaUnit.getChildren())) {
+            for (MediaUnit child : mediaUnit.getChildren()) {
+                buildMediaTreeRecursively(child, treeNode);
+            }
+        }
+    }
+
+    void treeLogicalSelect() {
         /*
-         * The newly selected element has already been set in 'selectedNode' by
+         * The newly selected element has already been set in 'selectedLogicalNode' by
          * JSF at this point.
          */
         try {
             dataEditor.switchStructure();
-            previouslySelectedNode = selectedNode;
+            previouslySelectedLogicalNode = selectedLogicalNode;
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
-            selectedNode = previouslySelectedNode;
+            selectedLogicalNode = previouslySelectedLogicalNode;
+        }
+    }
+
+    void treePhysicalSelect() {
+        /*
+         * The newly selected element has already been set in 'selectedLogicalNode' by
+         * JSF at this point.
+         */
+        try {
+            dataEditor.switchMediaUnit();
+            previouslySelectedPhysicalNode = selectedPhysicalNode;
+        } catch (Exception e) {
+            Helper.setErrorMessage(e.getLocalizedMessage());
+            selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
     }
 }
