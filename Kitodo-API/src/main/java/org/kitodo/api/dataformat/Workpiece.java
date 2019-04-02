@@ -48,6 +48,14 @@ public class Workpiece {
     private IncludedStructuralElement rootElement = new IncludedStructuralElement();
 
     /**
+     * A reference to the root of the included structural element of another
+     * workpiece. If this workpiece is referenced from a sub-included structural
+     * element of the specified parent workpiece, this cannot be told from this
+     * link.
+     */
+    private LinkedStructuralElement uplink;
+
+    /**
      * Returns the creation date of the workpiece.
      *
      * @return the creation date
@@ -124,6 +132,15 @@ public class Workpiece {
     }
 
     /**
+     * Returns the uplink of this workpiece.
+     *
+     * @return the uplink
+     */
+    public LinkedStructuralElement getUplink() {
+        return uplink;
+    }
+
+    /**
      * Sets the media unit of the workpiece.
      *
      * @param mediaUnit
@@ -141,6 +158,16 @@ public class Workpiece {
      */
     public void setRootElement(IncludedStructuralElement rootElement) {
         this.rootElement = rootElement;
+    }
+
+    /**
+     * Sets the uplink of this workpiece.
+     *
+     * @param uplink
+     *            uplink to set
+     */
+    public void setUplink(LinkedStructuralElement uplink) {
+        this.uplink = uplink;
     }
 
     @Override
