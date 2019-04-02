@@ -43,9 +43,9 @@ public class Workpiece {
     private MediaUnit mediaUnit = new MediaUnit();
 
     /**
-     * The logical structure.
+     * The logical included structural element.
      */
-    private Structure structure = new Structure();
+    private IncludedStructuralElement structure = new IncludedStructuralElement();
 
     /**
      * Returns the creation date of the workpiece.
@@ -115,11 +115,11 @@ public class Workpiece {
     }
 
     /**
-     * Returns the root element of the structure.
+     * Returns the root element of the included structural element.
      * 
-     * @return root element of the structure
+     * @return root element of the included structural element
      */
-    public Structure getStructure() {
+    public IncludedStructuralElement getStructure() {
         return structure;
     }
 
@@ -134,12 +134,12 @@ public class Workpiece {
     }
 
     /**
-     * Sets the structure of the workpiece.
+     * Sets the included structural element of the workpiece.
      * 
      * @param structure
-     *            structure to set
+     *            included structural element to set
      */
-    public void setStructure(Structure structure) {
+    public void setStructure(IncludedStructuralElement structure) {
         this.structure = structure;
     }
 

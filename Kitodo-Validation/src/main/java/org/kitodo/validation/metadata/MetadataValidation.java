@@ -45,8 +45,8 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterfa
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
@@ -131,18 +131,19 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (Structure structure : treeStream(workpiece.getStructure(), Structure::getChildren)
+        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getStructure(),
+            IncludedStructuralElement::getChildren)
                 .collect(Collectors.toList())) {
-            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(), null,
+            StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), null,
                 metadataLanguage);
             results.add(checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                structure.getMetadata().parallelStream()
+                includedStructuralElement.getMetadata().parallelStream()
                         .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, structure.toString().concat(": "), translations));
+                divisionView, includedStructuralElement.toString().concat(": "), translations));
             results.add(checkForDetailsInTheMetadataRecursive(
-                structure.getMetadata().parallelStream()
+                includedStructuralElement.getMetadata().parallelStream()
                         .collect(Collectors.toMap(Function.identity(), Metadata::getKey)),
-                divisionView, structure.toString().concat(": "), translations));
+                divisionView, includedStructuralElement.toString().concat(": "), translations));
         }
 
         return merge(results);
@@ -152,7 +153,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * Reports structures that have no assigned media units. These structures
      * are undesirable because you cannot look at them. It is also checked if
      * the linked media are even referenced in the document.
-     * 
+     *
      * @param workpiece
      *            workpiece to be examined
      * @return the validation result
@@ -163,7 +164,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructure(), Structure::getChildren)
+        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren)
                 .filter(structure -> structure.getViews().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
@@ -172,7 +173,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (treeStream(workpiece.getStructure(), Structure::getChildren)
+        if (treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -185,7 +186,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     /**
      * Checks whether media are referenced in the document that are not assigned
      * to a structure. Maybe not a mistake but sloppy.
-     * 
+     *
      * @param workpiece
      *            workpiece to be examined
      * @return the validation result
@@ -197,7 +198,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(workpiece.getMediaUnits());
-        treeStream(workpiece.getStructure(), Structure::getChildren).flatMap(structure -> structure.getViews().stream())
+        treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {
@@ -213,7 +214,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     /**
      * Checks if all description data occur in the given frequency (minimum /
      * maximum).
-     * 
+     *
      * @param containedMetadata
      *            metadata
      * @param containingMetadataView
@@ -279,7 +280,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * criteria. This essentially checks the data type. Actually, this should
      * already happen at the input and not get here, but we check it anyway. For
      * example, corrupt data may have been imported.
-     * 
+     *
      * @param containedMetadata
      *            metadata
      * @param containingMetadataView
@@ -335,7 +336,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     /**
      * Creates a new METS XML element access to read the METS file.
-     * 
+     *
      * @return a new METS XML element access
      */
     private static MetsXmlElementAccessInterface createMetsXmlElementAccess() {
@@ -344,7 +345,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     /**
      * Returns a file management to read the METS file.
-     * 
+     *
      * @return a file management
      */
     private static FileManagementInterface getFileManagement() {
@@ -353,7 +354,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     /**
      * Returns a ruleset management to validate the METS file.
-     * 
+     *
      * @return a ruleset management
      */
     private static RulesetManagementInterface getRulesetManagement() {
@@ -365,7 +366,7 @@ public class MetadataValidation implements MetadataValidationInterface {
      * the rule set refers to the display form and therefore generates a
      * separate line for each metadata value. In the validation we need the
      * number. To get that, the lines are summarized here.
-     * 
+     *
      * @param metadataViewsWithValues
      *            list of meta-data view objects, each with their value
      * @return merged lines of identical type
@@ -386,7 +387,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     /**
      * Merges several individual validation results into one validation result.
-     * 
+     *
      * @param results
      *            individual validation results
      * @return merged validation result
@@ -411,7 +412,7 @@ public class MetadataValidation implements MetadataValidationInterface {
     /**
      * Extracts the formation of the error message as it occurs during both
      * reading and writing. In addition, the error is logged.
-     * 
+     *
      * @param uri
      *            URI to be read/written
      * @param lockResult
@@ -432,7 +433,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     /**
      * Generates a stream of nodes from a tree-like structure.
-     * 
+     *
      * @param tree
      *            starting node
      * @param childAccessor

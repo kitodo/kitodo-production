@@ -48,8 +48,8 @@ public class MediaUnit {
 
     /**
      * Sequence number of the media unit. The playback order of the media units
-     * when referenced from a structure is determined by this attribute (not by
-     * the order of the references).
+     * when referenced from an included structural element is determined by this
+     * attribute (not by the order of the references).
      */
     private int order;
 

@@ -68,13 +68,14 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
  * 
  * <p>
- * The {@code Structure} is a tree structure that can be finely subdivided, e.g.
- * a book, in which the chapters, in it individual elements such as tables or
- * figures. Each outline level points to the {@code MediaUnit}s that belong to
- * it via {@link AreaXmlElementAccess}s. Currently, a {@code View} always contains exactly one
- * {@code MediaUnit} unit, here a simple expandability is provided, so that in a
- * future version excerpts from {@code MediaUnit}s can be described. Each
- * outline level can be described with any {@link MetadataXmlElementsAccess}.
+ * The {@code IncludedStructuralElement} is a tree structure that can be finely
+ * subdivided, e.g. a book, in which the chapters, in it individual elements
+ * such as tables or figures. Each outline level points to the
+ * {@code MediaUnit}s that belong to it via {@link AreaXmlElementAccess}s.
+ * Currently, a {@code View} always contains exactly one {@code MediaUnit} unit,
+ * here a simple expandability is provided, so that in a future version excerpts
+ * from {@code MediaUnit}s can be described. Each outline level can be described
+ * with any {@link MetadataXmlElementsAccess}.
  * 
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */

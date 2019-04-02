@@ -33,7 +33,7 @@ import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 
@@ -130,7 +130,7 @@ public class MetsXmlElementAccessIT {
             workpiece.getStructure().getViews().add(view);
         }
 
-        Structure frontCover = new Structure();
+        IncludedStructuralElement frontCover = new IncludedStructuralElement();
         frontCover.setType("frontCover");
         frontCover.setLabel("Front cover");
         View view = new View();
@@ -138,7 +138,7 @@ public class MetsXmlElementAccessIT {
         frontCover.getViews().add(view);
         workpiece.getStructure().getChildren().add(frontCover);
 
-        Structure inside = new Structure();
+        IncludedStructuralElement inside = new IncludedStructuralElement();
         inside.setType("inside");
         inside.setLabel("Inside");
         view = new View();
@@ -149,7 +149,7 @@ public class MetsXmlElementAccessIT {
         inside.getViews().add(view);
         workpiece.getStructure().getChildren().add(inside);
 
-        Structure backCover = new Structure();
+        IncludedStructuralElement backCover = new IncludedStructuralElement();
         backCover.setType("backCover");
         backCover.setLabel("Back cover");
         view = new View();
@@ -232,10 +232,10 @@ public class MetsXmlElementAccessIT {
             MediaUnit mediaUnit = mediaUnits.get(i);
             assertEquals(2, mediaUnit.getMediaFiles().size());
         }
-        Structure structureRoot = reread.getStructure();
-        assertEquals(4, structureRoot.getViews().size());
-        assertEquals(3, structureRoot.getChildren().size());
-        assertEquals(1, structureRoot.getMetadata().size());
+        IncludedStructuralElement includedStructuralElementRoot = reread.getStructure();
+        assertEquals(4, includedStructuralElementRoot.getViews().size());
+        assertEquals(3, includedStructuralElementRoot.getChildren().size());
+        assertEquals(1, includedStructuralElementRoot.getMetadata().size());
 
         clean();
     }

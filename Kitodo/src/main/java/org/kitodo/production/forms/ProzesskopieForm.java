@@ -44,7 +44,7 @@ import org.goobi.production.plugin.catalogue.Hit;
 import org.goobi.production.plugin.catalogue.QueryBuilder;
 import org.jdom.JDOMException;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
@@ -907,7 +907,7 @@ public class ProzesskopieForm implements Serializable {
                 .getPreferences(this.prozessKopie.getRuleset()).getRuleset();
         try {
             Workpiece workpiece = new Workpiece();
-            Structure structure = workpiece.getStructure();
+            IncludedStructuralElement includedStructuralElement = workpiece.getStructure();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
             if (Objects.nonNull(configOpacDoctype)) {
                 // monograph
@@ -916,19 +916,19 @@ public class ProzesskopieForm implements Serializable {
                     this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isPeriodical()) {
                     // journal
-                    structure.setType("Periodical");
-                    addChild(structure, "PeriodicalVolume");
+                    includedStructuralElement.setType("Periodical");
+                    addChild(includedStructuralElement, "PeriodicalVolume");
                     this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isMultiVolume()) {
                     // volume of a multi-volume publication
-                    structure.setType("MultiVolumeWork");
-                    addChild(structure, "Volume");
+                    includedStructuralElement.setType("MultiVolumeWork");
+                    addChild(includedStructuralElement, "Volume");
                     this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 }
             }
             if (this.docType.equals("volumerun")) {
-                structure.setType("VolumeRun");
-                addChild(structure, "Record");
+                includedStructuralElement.setType("VolumeRun");
+                addChild(includedStructuralElement, "Record");
                 this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
             }
         } catch (FileNotFoundException e) {
@@ -939,15 +939,15 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Adds a child node to a part of the logical structure tree.
      * 
-     * @param structure
+     * @param includedStructuralElement
      *            tree to add to
      * @param type
      *            type of child to create
      */
-    private void addChild(Structure structure, String type) {
-        Structure volume = new Structure();
+    private void addChild(IncludedStructuralElement includedStructuralElement, String type) {
+        IncludedStructuralElement volume = new IncludedStructuralElement();
         volume.setType(type);
-        structure.getChildren().add(volume);
+        includedStructuralElement.getChildren().add(volume);
     }
 
     private void addProperties() {
