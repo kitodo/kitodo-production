@@ -24,14 +24,7 @@ import org.kitodo.api.Metadata;
  * finely granular {@link #subincludedStructuralElements}. It can be described
  * by {@link #metadata}.
  */
-public class IncludedStructuralElement {
-    /**
-     * The label for this included structural element. The label is displayed in
-     * the graphical representation of the included structural element tree for
-     * this level.
-     */
-    private String label;
-
+public class IncludedStructuralElement extends StructuralElement {
     /**
      * The meta-data for this included structural element. This included
      * structural element level can be described with any meta-data.
@@ -53,17 +46,6 @@ public class IncludedStructuralElement {
      * METS file.
      */
     private List<IncludedStructuralElement> subincludedStructuralElements = new LinkedList<>();
-
-    /**
-     * The type of included structural element, for example, book, chapter,
-     * page. Although the data type of this variable is a string, it is
-     * recommended to use a controlled vocabulary. If the generated METS files
-     * are to be used with the DFG Viewer, the list of possible included
-     * structural element types is defined.
-     *
-     * @see "https://dfg-viewer.de/en/structural-data-set/"
-     */
-    private String type;
 
     /**
      * The views on {@link MediaUnit}s that this included structural element
@@ -108,25 +90,6 @@ public class IncludedStructuralElement {
     }
 
     /**
-     * Returns the label of this included structural element.
-     *
-     * @return the label
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Sets the label of this included structural element.
-     *
-     * @param label
-     *            label to set
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    /**
      * Returns the meta-data on this included structural element.
      *
      * @return the meta-data
@@ -155,35 +118,11 @@ public class IncludedStructuralElement {
     }
 
     /**
-     * Returns the type of this included structural element.
-     *
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type of this included structural element.
-     *
-     * @param type
-     *            type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
      * Returns the views associated with this included structural element.
      *
      * @return the views
      */
     public Collection<View> getViews() {
         return views;
-    }
-
-    @Override
-    public String toString() {
-        return type + " \"" + label + "\"";
     }
 }
