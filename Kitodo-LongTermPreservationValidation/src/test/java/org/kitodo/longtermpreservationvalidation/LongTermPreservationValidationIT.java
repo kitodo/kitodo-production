@@ -11,14 +11,13 @@
 
 package org.kitodo.longtermpreservationvalidation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -29,7 +28,8 @@ import org.kitodo.api.validation.longtermpreservation.LongTermPreservationValida
 
 public class LongTermPreservationValidationIT {
     private static final String NEITHER_WELL_FORMED_NOR_VALID = "Examination result: not well-formed, not valid";
-    private static final List<String> WELL_FORMED_AND_VALID = Arrays.asList("Examination result: well-formed, valid");
+    private static final List<String> WELL_FORMED_AND_VALID = Collections
+            .singletonList("Examination result: well-formed, valid");
     private static final URI CORRUPTED_TIF_URI, GIF_URI, JAVA_URI, JP2_URI, JPG_URI, PDF_URI, PNG_URI, TIF_URI;
 
     static {
@@ -52,66 +52,67 @@ public class LongTermPreservationValidationIT {
     public void testThatACorruptedFileDoesNotValidate() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
         ValidationResult validationResult = validator.validate(CORRUPTED_TIF_URI, FileType.TIFF);
-        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
-        assertThat(validationResult.getResultMessages(),
-            is(equalTo(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "IFD offset not word-aligned:  110423"))));
+        assertEquals(State.ERROR, validationResult.getState());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "IFD offset not word-aligned:  110423"),
+            validationResult.getResultMessages());
     }
 
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
+        final String offset = "Offset: 0";
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
 
         ValidationResult validationResult = validator.validate(JAVA_URI, FileType.PDF);
-        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
-        assertThat(validationResult.getResultMessages(),
-            is(equalTo(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No PDF header", "Offset: 0"))));
+        assertEquals(State.ERROR, validationResult.getState());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No PDF header", offset),
+            validationResult.getResultMessages());
 
         validationResult = validator.validate(PDF_URI, FileType.GIF);
-        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
-        assertThat(validationResult.getResultMessages(),
-            is(equalTo(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid GIF header", "Offset: 0"))));
+        assertEquals(State.ERROR, validationResult.getState());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid GIF header", offset),
+            validationResult.getResultMessages());
 
         validationResult = validator.validate(JP2_URI, FileType.JPEG);
-        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
-        assertThat(validationResult.getResultMessages(),
-            is(equalTo(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid JPEG header", "Offset: 0"))));
+        assertEquals(State.ERROR, validationResult.getState());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid JPEG header", offset),
+            validationResult.getResultMessages());
 
         validationResult = validator.validate(PNG_URI, FileType.JPEG_2000);
-        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
-        assertThat(validationResult.getResultMessages(),
-            is(equalTo(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No JPEG 2000 header", "Offset: 0"))));
+        assertEquals(State.ERROR, validationResult.getState());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No JPEG 2000 header", offset),
+            validationResult.getResultMessages());
     }
 
     @Test
     public void testThatValidFilesValidateWithDefaultModules() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
         ValidationResult validationResult = validator.validate(GIF_URI, FileType.GIF);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
 
         validationResult = validator.validate(JP2_URI, FileType.JPEG_2000);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
 
         validationResult = validator.validate(JPG_URI, FileType.JPEG);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
 
         validationResult = validator.validate(PDF_URI, FileType.PDF);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
 
         validationResult = validator.validate(TIF_URI, FileType.TIFF);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
     }
 
     @Test
     public void testThatValidFilesValidateWithExtendedModules() {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
         ValidationResult validationResult = validator.validate(PNG_URI, FileType.PNG);
-        assertThat(validationResult.getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validationResult.getResultMessages(), is(equalTo(WELL_FORMED_AND_VALID)));
+        assertEquals(State.SUCCESS, validationResult.getState());
+        assertEquals(WELL_FORMED_AND_VALID, validationResult.getResultMessages());
     }
 
 }
