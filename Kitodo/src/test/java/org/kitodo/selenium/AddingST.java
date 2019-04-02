@@ -23,6 +23,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -187,6 +188,7 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
+    @Ignore
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();

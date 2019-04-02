@@ -114,6 +114,9 @@ public class UserForm extends BaseForm {
      */
     public String newUser() {
         this.userObject = new User();
+        List clients = new ArrayList();
+        clients.add(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.userObject.setClients(clients);
         this.userObject.setName("");
         this.userObject.setSurname("");
         this.userObject.setLogin("");
@@ -412,7 +415,7 @@ public class UserForm extends BaseForm {
      */
     public List<ProjectDTO> getProjects() {
         try {
-            return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject.getId());
+            return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
@@ -435,6 +438,20 @@ public class UserForm extends BaseForm {
         }
     }
 
+    /**
+     * Return list of clients available for assignment to the user.
+     *
+     * @return list of clients available for assignment to the user
+     */
+    public List<Client> getClients() {
+        try {
+            return ServiceManager.getClientService().getAllAvailableForAssignToUser(this.userObject);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.CLIENT.getTranslationPlural() }, logger,
+                    e);
+            return new LinkedList<>();
+        }
+    }
     /**
      * Gets password.
      *
