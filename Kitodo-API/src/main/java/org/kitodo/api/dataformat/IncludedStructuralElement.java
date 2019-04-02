@@ -85,16 +85,16 @@ public class IncludedStructuralElement {
      * Creates a new subclass of included structural element from an existing
      * included structural element.
      *
-     * @param in
+     * @param source
      *            included structural element that serves as data source
      */
-    protected IncludedStructuralElement(IncludedStructuralElement in) {
-        label = in.label;
-        metadata = in.metadata;
-        orderlabel = in.orderlabel;
-        subincludedStructuralElements = in.subincludedStructuralElements;
-        type = in.type;
-        views = in.views;
+    protected IncludedStructuralElement(IncludedStructuralElement source) {
+        label = source.label;
+        metadata = source.metadata;
+        orderlabel = source.orderlabel;
+        subincludedStructuralElements = source.subincludedStructuralElements;
+        type = source.type;
+        views = source.views;
     }
 
     /**
