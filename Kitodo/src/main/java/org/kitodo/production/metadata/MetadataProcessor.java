@@ -60,6 +60,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
@@ -1661,7 +1662,7 @@ public class MetadataProcessor {
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
         IncludedStructuralElement includedStructuralElement = this.gdzfile.getWorkpiece().getRootElement();
-        List<IncludedStructuralElement> children = Objects.nonNull(includedStructuralElement)
+        List<StructuralElement> children = Objects.nonNull(includedStructuralElement)
                 ? includedStructuralElement.getChildren()
                 : null;
         TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getRootElement(), root);
@@ -1682,23 +1683,26 @@ public class MetadataProcessor {
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertIncludedStructuralElementToPrimeFacesTreeNode(List<IncludedStructuralElement> elements,
+    private TreeNode convertIncludedStructuralElementToPrimeFacesTreeNode(List<StructuralElement> elements,
             TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
-        for (IncludedStructuralElement element : elements) {
+        for (StructuralElement element : elements) {
 
             treeNode = new DefaultTreeNode(element, parentTreeNode);
             if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element)) {
                 treeNode.setSelected(true);
             }
-            List<IncludedStructuralElement> children = element.getChildren();
-            Collection<View> pages = element.getViews();
-            if (Objects.nonNull(children)) {
-                convertIncludedStructuralElementToPrimeFacesTreeNode(children, treeNode);
-            }
-            if (Objects.nonNull(pages)) {
-                convertViewToPrimeFacesTreeNode(pages, treeNode);
+            if (element instanceof IncludedStructuralElement) {
+                IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) element;
+                List<StructuralElement> children = includedStructuralElement.getChildren();
+                Collection<View> pages = includedStructuralElement.getViews();
+                if (Objects.nonNull(children)) {
+                    convertIncludedStructuralElementToPrimeFacesTreeNode(children, treeNode);
+                }
+                if (Objects.nonNull(pages)) {
+                    convertViewToPrimeFacesTreeNode(pages, treeNode);
+                }
             }
         }
         return treeNode;

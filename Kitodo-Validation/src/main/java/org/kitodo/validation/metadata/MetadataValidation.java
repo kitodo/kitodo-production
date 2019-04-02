@@ -47,6 +47,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
@@ -131,8 +132,8 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement(),
-            IncludedStructuralElement::getChildren)
+        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement())
+                .filter(IncludedStructuralElement.class::isInstance).map(IncludedStructuralElement.class::cast)
                 .collect(Collectors.toList())) {
             StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), null,
                 metadataLanguage);
@@ -164,16 +165,18 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
+        Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement())
+                .filter(IncludedStructuralElement.class::isInstance).map(IncludedStructuralElement.class::cast)
                 .filter(structure -> structure.getViews().isEmpty())
-                    .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
-                    .collect(Collectors.toSet());
+                .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
+                .collect(Collectors.toSet());
         if (!structuresWithoutMedia.isEmpty()) {
             messages.addAll(structuresWithoutMedia);
             warning = true;
         }
 
-        if (treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
+        if (treeStream(workpiece.getRootElement()).filter(IncludedStructuralElement.class::isInstance)
+                .map(IncludedStructuralElement.class::cast)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -198,9 +201,9 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(workpiece.getMediaUnits());
-        treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
-                .map(View::getMediaUnit)
-                .forEach(unassignedMediaUnits::remove);
+        treeStream(workpiece.getRootElement()).filter(IncludedStructuralElement.class::isInstance)
+                .map(IncludedStructuralElement.class::cast).flatMap(structure -> structure.getViews().stream())
+                .map(View::getMediaUnit).forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {
             for (MediaUnit mediaUnit : unassignedMediaUnits) {
                 messages.add(translations.get(MESSAGE_MEDIA_UNASSIGNED) + ' ' + mediaUnit);
@@ -432,16 +435,16 @@ public class MetadataValidation implements MetadataValidationInterface {
     }
 
     /**
-     * Generates a stream of nodes from a tree-like structure.
+     * Generates a stream of nodes from a structure tree.
      *
      * @param tree
      *            starting node
-     * @param childAccessor
-     *            function to access the children of the node
      * @return all nodes as stream
      */
-    private static <T> Stream<T> treeStream(T tree, Function<T, Collection<T>> childAccessor) {
+    private static Stream<StructuralElement> treeStream(StructuralElement tree) {
         return Stream.concat(Stream.of(tree),
-            childAccessor.apply(tree).stream().flatMap(child -> treeStream(child, childAccessor)));
+            tree instanceof IncludedStructuralElement
+                    ? ((IncludedStructuralElement) tree).getChildren().stream().flatMap(child -> treeStream(child))
+                    : Stream.empty());
     }
 }

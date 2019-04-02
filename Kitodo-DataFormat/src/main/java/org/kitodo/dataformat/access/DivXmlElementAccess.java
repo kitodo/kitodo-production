@@ -35,6 +35,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.StructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -219,8 +220,13 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
             mets.getAmdSec().add(admSec);
         }
 
-        for (IncludedStructuralElement subincludedStructuralElement : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(subincludedStructuralElement).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (StructuralElement subStructuralElement : super.getChildren()) {
+            if (subStructuralElement instanceof IncludedStructuralElement) {
+                div.getDiv().add(new DivXmlElementAccess((IncludedStructuralElement) subStructuralElement)
+                        .toDiv(mediaUnitIDs, smLinkData, mets));
+            } else {
+                throw new UnsupportedOperationException("Saving linked structural elemenst not yet implemented");
+            }
         }
         return div;
     }

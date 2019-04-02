@@ -21,8 +21,8 @@ import org.kitodo.api.Metadata;
 /**
  * The tree-like outline included structural element for digital representation.
  * This structuring included structural element can be subdivided into arbitrary
- * finely granular {@link #subincludedStructuralElements}. It can be described
- * by {@link #metadata}.
+ * finely granular {@link #substructuralElements}. It can be described by
+ * {@link #metadata}.
  */
 public class IncludedStructuralElement extends StructuralElement {
     /**
@@ -45,7 +45,7 @@ public class IncludedStructuralElement extends StructuralElement {
      * {@code <div>} elements in the {@code <structMap TYPE="LOGICAL">} in the
      * METS file.
      */
-    private List<IncludedStructuralElement> subincludedStructuralElements = new LinkedList<>();
+    private List<StructuralElement> substructuralElements = new LinkedList<>();
 
     /**
      * The views on {@link MediaUnit}s that this included structural element
@@ -74,7 +74,7 @@ public class IncludedStructuralElement extends StructuralElement {
         label = source.label;
         metadata = source.metadata;
         orderlabel = source.orderlabel;
-        subincludedStructuralElements = source.subincludedStructuralElements;
+        substructuralElements = source.substructuralElements;
         type = source.type;
         views = source.views;
     }
@@ -85,8 +85,8 @@ public class IncludedStructuralElement extends StructuralElement {
      *
      * @return the sub-included structural elements
      */
-    public List<IncludedStructuralElement> getChildren() {
-        return subincludedStructuralElements;
+    public List<StructuralElement> getChildren() {
+        return substructuralElements;
     }
 
     /**
