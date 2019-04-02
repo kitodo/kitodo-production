@@ -261,7 +261,7 @@ public class StructurePanel implements Serializable {
          * framework. So you do not have to add the result anywhere.
          */
         DefaultTreeNode mediaTreeRoot = new DefaultTreeNode(new StructureTreeNode(this,
-                Helper.getTranslation(separateMedia ? "dataEditor.mediaTree" : "dataEditor.unlikedMediaTree"), false,
+                Helper.getTranslation(separateMedia ? "dataEditor.mediaTree" : "dataEditor.unlinkedMediaTree"), false,
                 false, mediaUnits), result);
         mediaTreeRoot.setExpanded(true);
 
