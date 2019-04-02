@@ -907,12 +907,12 @@ public class ProzesskopieForm implements Serializable {
                 .getPreferences(this.prozessKopie.getRuleset()).getRuleset();
         try {
             Workpiece workpiece = new Workpiece();
-            IncludedStructuralElement includedStructuralElement = workpiece.getStructure();
+            IncludedStructuralElement includedStructuralElement = workpiece.getRootElement();
             ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
             if (Objects.nonNull(configOpacDoctype)) {
                 // monograph
                 if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
-                    workpiece.getStructure().setType(configOpacDoctype.getRulesetType());
+                    workpiece.getRootElement().setType(configOpacDoctype.getRulesetType());
                     this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
                 } else if (configOpacDoctype.isPeriodical()) {
                     // journal

@@ -738,7 +738,8 @@ public class MetadataProcessor {
                 && this.selectedTreeNode.getParent() != null
                 && this.selectedTreeNode.getData() instanceof IncludedStructuralElement
                 && this.selectedTreeNode.getParent().getData() instanceof IncludedStructuralElement) {
-            IncludedStructuralElement parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getParent().getData();
+            IncludedStructuralElement parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
+                    .getParent().getData();
             IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             parentIncludedStructuralElement.getChildren().remove(includedStructuralElement);
         }
@@ -808,10 +809,14 @@ public class MetadataProcessor {
                 parentIncludedStructuralElement.getChildren().add(newElement);
                 break;
             case BEFOR_CURRENT_ELEMENT:
-                parentIncludedStructuralElement.getChildren().add(parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement), newElement);
+                parentIncludedStructuralElement.getChildren().add(
+                    parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement),
+                    newElement);
                 break;
             case AFTER_CURRENT_ELEMENT:
-                parentIncludedStructuralElement.getChildren().add(parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement) + 1, newElement);
+                parentIncludedStructuralElement.getChildren().add(
+                    parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement) + 1,
+                    newElement);
                 break;
             default:
                 Helper.setErrorMessage("\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
@@ -1655,9 +1660,11 @@ public class MetadataProcessor {
      */
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
-        IncludedStructuralElement includedStructuralElement = this.gdzfile.getWorkpiece().getStructure();
-        List<IncludedStructuralElement> children = Objects.nonNull(includedStructuralElement) ? includedStructuralElement.getChildren() : null;
-        TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getStructure(), root);
+        IncludedStructuralElement includedStructuralElement = this.gdzfile.getWorkpiece().getRootElement();
+        List<IncludedStructuralElement> children = Objects.nonNull(includedStructuralElement)
+                ? includedStructuralElement.getChildren()
+                : null;
+        TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getRootElement(), root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
         } else {
@@ -1675,7 +1682,8 @@ public class MetadataProcessor {
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertIncludedStructuralElementToPrimeFacesTreeNode(List<IncludedStructuralElement> elements, TreeNode parentTreeNode) {
+    private TreeNode convertIncludedStructuralElementToPrimeFacesTreeNode(List<IncludedStructuralElement> elements,
+            TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
         for (IncludedStructuralElement element : elements) {

@@ -131,7 +131,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         results.add(checkForStructuresWithoutMedia(workpiece, translations));
         results.add(checkForUnlinkedMedia(workpiece, translations));
 
-        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getStructure(),
+        for (IncludedStructuralElement includedStructuralElement : treeStream(workpiece.getRootElement(),
             IncludedStructuralElement::getChildren)
                 .collect(Collectors.toList())) {
             StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), null,
@@ -164,7 +164,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         boolean warning = false;
         Collection<String> messages = new HashSet<>();
 
-        Collection<String> structuresWithoutMedia = treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren)
+        Collection<String> structuresWithoutMedia = treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
                 .filter(structure -> structure.getViews().isEmpty())
                     .map(structure -> translations.get(MESSAGE_STRUCTURE_WITHOUT_MEDIA) + ' ' + structure)
                     .collect(Collectors.toSet());
@@ -173,7 +173,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             warning = true;
         }
 
-        if (treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren)
+        if (treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
                 .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
@@ -198,7 +198,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         KeySetView<MediaUnit, ?> unassignedMediaUnits = ConcurrentHashMap.newKeySet();
         unassignedMediaUnits.addAll(workpiece.getMediaUnits());
-        treeStream(workpiece.getStructure(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
+        treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren).flatMap(structure -> structure.getViews().stream())
                 .map(View::getMediaUnit)
                 .forEach(unassignedMediaUnits::remove);
         if (!unassignedMediaUnits.isEmpty()) {
