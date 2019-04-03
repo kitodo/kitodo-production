@@ -69,6 +69,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final AddDocStrucTypeDialog addDocStrucTypeDialog;
 
     /**
+     * Backing bean for the add MediaUnit dialog.
+     */
+    private final AddMediaUnitDialog addMediaUnitDialog;
+
+    /**
      * Backing bean for the comment panel.
      */
     private final CommentPanel commentPanel;
@@ -150,6 +155,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.paginationPanel = new PaginationPanel(this);
         this.commentPanel = new CommentPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
+        this.addMediaUnitDialog = new AddMediaUnitDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
     }
 
@@ -247,6 +253,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         commentPanel.show();
 
         addDocStrucTypeDialog.prepare();
+        addMediaUnitDialog.prepare();
         editPagesDialog.prepare();
 
         if (logger.isTraceEnabled()) {
@@ -356,6 +363,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return addDocStrucTypeDialog;
     }
 
+    public AddMediaUnitDialog getAddMediaUnitDialog() {
+        return addMediaUnitDialog;
+    }
+
     public CommentPanel getCommentPanel() {
         return commentPanel;
     }
@@ -460,6 +471,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preservePhysical();
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
-        // TODO addMediaUnitDialog.prepare();
+        addMediaUnitDialog.prepare();
     }
 }

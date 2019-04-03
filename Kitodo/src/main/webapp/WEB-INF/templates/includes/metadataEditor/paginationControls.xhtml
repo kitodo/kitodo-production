@@ -14,7 +14,8 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html">
 
     <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
@@ -54,6 +55,15 @@
                          disabled="#{readOnly}"
                          icon="fa fa-list-ol fa-sm"
                          iconPos="right"/>
+
+        <h:outputText value="Physical structure:"/>
+        <p:commandButton title="#{msgs.addMediaUnit}"
+                         onclick="PF('dialogAddMediaUnit').show()"
+                         styleClass="secondary #{readOnly ? 'disable' : ''}"
+                         disable="#{readOnly}"
+                         icon="fa fa-plus fa-sm"
+                         iconPos="right"
+                         value="#{msgs.addMediaUnit}"/>
     </ui:fragment>
 
 </ui:composition>
