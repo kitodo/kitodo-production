@@ -211,6 +211,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to delete the task.
+     *
+     * @return true if the current user has the authority to delete the task
+     */
+    public boolean hasAuthorityToDeleteTask() {
+        return hasAuthorityForClient("deleteTask");
+    }
+
+    /**
      * Check if the current user has the authority to delete the project.
      *
      * @return true if the current user has the authority to delete the project
