@@ -40,13 +40,13 @@ public class MetsServiceIT {
         assertEquals(183, workpiece.getMediaUnits().size());
 
         // all pages are linked to the root element
-        assertEquals(workpiece.getMediaUnits().size(), workpiece.getStructure().getViews().size());
+        assertEquals(workpiece.getMediaUnits().size(), workpiece.getRootElement().getViews().size());
 
         // root node has 16 children
-        assertEquals(16, workpiece.getStructure().getChildren().size());
+        assertEquals(16, workpiece.getRootElement().getChildren().size());
 
         // root node has 11 meta-data entries
-        assertEquals(11, workpiece.getStructure().getMetadata().size());
+        assertEquals(11, workpiece.getRootElement().getMetadata().size());
 
         // file URIs can be read
         assertEquals(new URI("images/ThomPhar_644901748_media/00000001.tif"),

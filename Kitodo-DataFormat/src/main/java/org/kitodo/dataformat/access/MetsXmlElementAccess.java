@@ -68,13 +68,14 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * of a {@code MediaUnit} resides in a {@link FLocatXmlElementAccess} in the data store.
  * 
  * <p>
- * The {@code Structure} is a tree structure that can be finely subdivided, e.g.
- * a book, in which the chapters, in it individual elements such as tables or
- * figures. Each outline level points to the {@code MediaUnit}s that belong to
- * it via {@link AreaXmlElementAccess}s. Currently, a {@code View} always contains exactly one
- * {@code MediaUnit} unit, here a simple expandability is provided, so that in a
- * future version excerpts from {@code MediaUnit}s can be described. Each
- * outline level can be described with any {@link MetadataXmlElementsAccess}.
+ * The {@code IncludedStructuralElement} is a tree structure that can be finely
+ * subdivided, e.g. a book, in which the chapters, in it individual elements
+ * such as tables or figures. Each outline level points to the
+ * {@code MediaUnit}s that belong to it via {@link AreaXmlElementAccess}s.
+ * Currently, a {@code View} always contains exactly one {@code MediaUnit} unit,
+ * here a simple expandability is provided, so that in a future version excerpts
+ * from {@code MediaUnit}s can be described. Each outline level can be described
+ * with any {@link MetadataXmlElementsAccess}.
  * 
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
@@ -142,7 +143,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 mediaUnitsMap.get(smLink.getFrom()).add(divIDsToMediaUnits.get(smLink.getTo()));
             }
         }
-        workpiece.setStructure(getStructMapsStreamByType(mets, "LOGICAL")
+        workpiece.setRootElement(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, mediaUnitsMap)).collect(Collectors.toList())
                 .iterator().next());
     }
@@ -242,7 +243,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getStructure()).toDiv(mediaUnitIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getRootElement()).toDiv(mediaUnitIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
         mets.setStructLink(createStructLink(smLinkData));

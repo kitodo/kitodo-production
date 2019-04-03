@@ -43,13 +43,13 @@ public class Workpiece {
     private MediaUnit mediaUnit = new MediaUnit();
 
     /**
-     * The logical structure.
+     * The logical included structural element.
      */
-    private Structure structure = new Structure();
+    private IncludedStructuralElement rootElement = new IncludedStructuralElement();
 
     /**
      * Returns the creation date of the workpiece.
-     * 
+     *
      * @return the creation date
      */
     public GregorianCalendar getCreationDate() {
@@ -58,7 +58,7 @@ public class Workpiece {
 
     /**
      * Sets the creation date of the workpiece.
-     * 
+     *
      * @param creationDate
      *            creation date to set
      */
@@ -68,7 +68,7 @@ public class Workpiece {
 
     /**
      * Returns the edit history.
-     * 
+     *
      * @return the edit history
      */
     public List<ProcessingNote> getEditHistory() {
@@ -77,7 +77,7 @@ public class Workpiece {
 
     /**
      * Returns the ID of the workpiece.
-     * 
+     *
      * @return the ID
      */
     public String getId() {
@@ -86,7 +86,7 @@ public class Workpiece {
 
     /**
      * Sets the ID of the workpiece.
-     * 
+     *
      * @param id
      *            ID to set
      */
@@ -96,7 +96,7 @@ public class Workpiece {
 
     /**
      * Returns the media unit of this workpiece.
-     * 
+     *
      * @return the media units
      */
     public MediaUnit getMediaUnit() {
@@ -105,7 +105,7 @@ public class Workpiece {
 
     /**
      * Returns the media units of this workpiece.
-     * 
+     *
      * @return the media units
      * @deprecated Use {@code getMediaUnit().getChildren()}.
      */
@@ -115,17 +115,17 @@ public class Workpiece {
     }
 
     /**
-     * Returns the root element of the structure.
-     * 
-     * @return root element of the structure
+     * Returns the root element of the included structural element.
+     *
+     * @return root element of the included structural element
      */
-    public Structure getStructure() {
-        return structure;
+    public IncludedStructuralElement getRootElement() {
+        return rootElement;
     }
 
     /**
      * Sets the media unit of the workpiece.
-     * 
+     *
      * @param mediaUnit
      *            media unit to set
      */
@@ -134,18 +134,18 @@ public class Workpiece {
     }
 
     /**
-     * Sets the structure of the workpiece.
-     * 
-     * @param structure
-     *            structure to set
+     * Sets the included structural element of the workpiece.
+     *
+     * @param rootElement
+     *            included structural element to set
      */
-    public void setStructure(Structure structure) {
-        this.structure = structure;
+    public void setRootElement(IncludedStructuralElement rootElement) {
+        this.rootElement = rootElement;
     }
 
     @Override
     public String toString() {
-        return id + ", " + structure;
+        return id + ", " + rootElement;
     }
 
     @Override

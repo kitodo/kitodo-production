@@ -59,7 +59,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
@@ -271,13 +271,13 @@ public class MetadataProcessor {
      * Add new metadata.
      */
     public void addMetadata() {
-        if (this.selectedTreeNode.getData() instanceof Structure) {
+        if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
             MetadataEntry metadataEntry = new MetadataEntry();
             metadataEntry.setDomain(MdSec.DMD_SEC);
             metadataEntry.setKey(this.selectedMetadataType);
             metadataEntry.setValue(this.selectedMetadataValue);
 
-            ((Structure) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
+            ((IncludedStructuralElement) this.selectedTreeNode.getData()).getMetadata().add(metadataEntry);
             this.selectedMetadataValue = "";
         } else {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
@@ -296,9 +296,9 @@ public class MetadataProcessor {
      *
      */
     public void delete() {
-        if (this.selectedTreeNode.getData() instanceof Structure) {
-            Structure structure = (Structure) this.selectedTreeNode.getData();
-            structure.getMetadata().remove(this.currentMetadata);
+        if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
+            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
+            includedStructuralElement.getMetadata().remove(this.currentMetadata);
         } else {
             Helper.setErrorMessage("Node does not contain structure element!");
         }
@@ -736,11 +736,12 @@ public class MetadataProcessor {
     public void deleteNode() {
         if (this.selectedTreeNode != null
                 && this.selectedTreeNode.getParent() != null
-                && this.selectedTreeNode.getData() instanceof Structure
-                && this.selectedTreeNode.getParent().getData() instanceof Structure) {
-            Structure parentStructure = (Structure) this.selectedTreeNode.getParent().getData();
-            Structure structure = (Structure) this.selectedTreeNode.getData();
-            parentStructure.getChildren().remove(structure);
+                && this.selectedTreeNode.getData() instanceof IncludedStructuralElement
+                && this.selectedTreeNode.getParent().getData() instanceof IncludedStructuralElement) {
+            IncludedStructuralElement parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
+                    .getParent().getData();
+            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
+            parentIncludedStructuralElement.getChildren().remove(includedStructuralElement);
         }
     }
 
@@ -773,44 +774,49 @@ public class MetadataProcessor {
     }
 
     /**
-     * Adds a single new Structure element to the current Structure tree.
+     * Adds a single new included structural element element to the current
+     * included structural element tree.
      */
     public void addSingleNodeWithPages() {
-        Structure selectedStructure = null;
-        Structure parentStructure;
+        IncludedStructuralElement selectedIncludedStructuralElement = null;
+        IncludedStructuralElement parentIncludedStructuralElement;
         if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)
                 || this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
-            if (this.selectedTreeNode.getData() instanceof Structure) {
-                parentStructure = (Structure) this.selectedTreeNode.getData();
+            if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
+                parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             } else {
                 Helper.setErrorMessage("Node does not contain structure element!");
                 return;
             }
         } else {
-            if (this.selectedTreeNode.getParent().getData() instanceof Structure
-                    && this.selectedTreeNode.getData() instanceof Structure) {
-                parentStructure = (Structure) this.selectedTreeNode.getParent().getData();
-                selectedStructure = (Structure) this.selectedTreeNode.getData();
+            if (this.selectedTreeNode.getParent().getData() instanceof IncludedStructuralElement
+                    && this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
+                parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getParent().getData();
+                selectedIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             } else {
                 Helper.setErrorMessage("Parent node does not contain structure element!");
                 return;
             }
         }
 
-        Structure newElement = new Structure();
+        IncludedStructuralElement newElement = new IncludedStructuralElement();
         newElement.setType(this.selectedStructureType);
         switch (this.positionOfNewDocStrucElement) {
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
-                parentStructure.getChildren().add(0, newElement);
+                parentIncludedStructuralElement.getChildren().add(0, newElement);
                 break;
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                parentStructure.getChildren().add(newElement);
+                parentIncludedStructuralElement.getChildren().add(newElement);
                 break;
             case BEFOR_CURRENT_ELEMENT:
-                parentStructure.getChildren().add(parentStructure.getChildren().indexOf(selectedStructure), newElement);
+                parentIncludedStructuralElement.getChildren().add(
+                    parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement),
+                    newElement);
                 break;
             case AFTER_CURRENT_ELEMENT:
-                parentStructure.getChildren().add(parentStructure.getChildren().indexOf(selectedStructure) + 1, newElement);
+                parentIncludedStructuralElement.getChildren().add(
+                    parentIncludedStructuralElement.getChildren().indexOf(selectedIncludedStructuralElement) + 1,
+                    newElement);
                 break;
             default:
                 Helper.setErrorMessage("\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
@@ -1654,9 +1660,11 @@ public class MetadataProcessor {
      */
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
-        Structure structure = this.gdzfile.getWorkpiece().getStructure();
-        List<Structure> children = Objects.nonNull(structure) ? structure.getChildren() : null;
-        TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getStructure(), root);
+        IncludedStructuralElement includedStructuralElement = this.gdzfile.getWorkpiece().getRootElement();
+        List<IncludedStructuralElement> children = Objects.nonNull(includedStructuralElement)
+                ? includedStructuralElement.getChildren()
+                : null;
+        TreeNode visibleRoot = new DefaultTreeNode(this.gdzfile.getWorkpiece().getRootElement(), root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
         } else {
@@ -1666,7 +1674,7 @@ public class MetadataProcessor {
         }
 
         if (children != null) {
-            TreeNode primeFacesTreeNode = convertStructureToPrimeFacesTreeNode(children, visibleRoot);
+            TreeNode primeFacesTreeNode = convertIncludedStructuralElementToPrimeFacesTreeNode(children, visibleRoot);
             if (Objects.nonNull(primeFacesTreeNode)) {
                 visibleRoot.getChildren().add(primeFacesTreeNode);
             }
@@ -1674,19 +1682,20 @@ public class MetadataProcessor {
         return setExpandingAll(root, true);
     }
 
-    private TreeNode convertStructureToPrimeFacesTreeNode(List<Structure> elements, TreeNode parentTreeNode) {
+    private TreeNode convertIncludedStructuralElementToPrimeFacesTreeNode(List<IncludedStructuralElement> elements,
+            TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
-        for (Structure element : elements) {
+        for (IncludedStructuralElement element : elements) {
 
             treeNode = new DefaultTreeNode(element, parentTreeNode);
             if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element)) {
                 treeNode.setSelected(true);
             }
-            List<Structure> children = element.getChildren();
+            List<IncludedStructuralElement> children = element.getChildren();
             Collection<View> pages = element.getViews();
             if (Objects.nonNull(children)) {
-                convertStructureToPrimeFacesTreeNode(children, treeNode);
+                convertIncludedStructuralElementToPrimeFacesTreeNode(children, treeNode);
             }
             if (Objects.nonNull(pages)) {
                 convertViewToPrimeFacesTreeNode(pages, treeNode);
@@ -2226,7 +2235,7 @@ public class MetadataProcessor {
             try (Stream<Path> imagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
                 logger.info("Creating thumbnails from {} to {}", fullsizePath, thumbnailPath);
                 Thumbnails.of(
-                    (File[]) imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
+                    imagePaths.filter(path -> path.toFile().isFile()).filter(path -> path.toFile().canRead())
                             .filter(path -> path.toString().endsWith(".png")).map(Path::toFile).toArray(File[]::new))
                         .size(60, 100).outputFormat("png")
                         .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
@@ -2620,7 +2629,7 @@ public class MetadataProcessor {
                     continue;
                 }
                 String author = "<i>" + parts[0] + "</i>";
-                String comment = String.join(":", (String[]) Arrays.copyOfRange(parts, 1, parts.length));
+                String comment = String.join(":", Arrays.copyOfRange(parts, 1, parts.length));
                 comments[i] = author + ":" + comment;
             }
             return comments;
@@ -2824,17 +2833,17 @@ public class MetadataProcessor {
         List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
                 ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
 
-        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof Structure)) {
+        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof IncludedStructuralElement)) {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
             return Collections.emptyList();
         }
 
-        Structure structure = (Structure) this.selectedTreeNode.getData();
+        IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
         StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
-                structure.getType(), "", priorityList);
+                includedStructuralElement.getType(), "", priorityList);
 
         if (itemType.equals(METADATA)) {
-            Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+            Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                     .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
             return structuralElementView.getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).stream()
                     .map(e -> new SelectItem(e.getId(), e.getLabel()))

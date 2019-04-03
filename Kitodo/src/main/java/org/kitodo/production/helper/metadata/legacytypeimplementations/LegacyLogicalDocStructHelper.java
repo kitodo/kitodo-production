@@ -35,16 +35,16 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 
 /**
- * Connects a legacy doc struct from the logical map to a structure. This is a
- * soldering class to keep legacy code operational which is about to be removed.
- * Do not use this class.
+ * Connects a legacy doc struct from the logical map to an included structural
+ * element. This is a soldering class to keep legacy code operational which is
+ * about to be removed. Do not use this class.
  */
 public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterface, BindingSaveInterface {
     private static final Logger logger = LogManager.getLogger(LegacyLogicalDocStructHelper.class);
@@ -52,9 +52,9 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     private static final MetsService metsService = ServiceManager.getMetsService();
 
     /**
-     * The media file accessed via this soldering class.
+     * The included structural element accessed via this soldering class.
      */
-    private Structure structure;
+    private IncludedStructuralElement includedStructuralElement;
 
     /**
      * The current ruleset.
@@ -76,13 +76,13 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
      */
     private LegacyLogicalDocStructHelper parent;
 
-    LegacyLogicalDocStructHelper(Structure structure, LegacyLogicalDocStructHelper parent,
+    LegacyLogicalDocStructHelper(IncludedStructuralElement includedStructuralElement, LegacyLogicalDocStructHelper parent,
             RulesetManagementInterface ruleset, List<LanguageRange> priorityList) {
-        this.structure = structure;
+        this.includedStructuralElement = includedStructuralElement;
         this.ruleset = ruleset;
         this.priorityList = priorityList;
         this.parent = parent;
-        this.divisionView = ruleset.getStructuralElementView(structure.getType(), "edit", priorityList);
+        this.divisionView = ruleset.getStructuralElementView(includedStructuralElement.getType(), "edit", priorityList);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public void addChild(LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
-        structure.getChildren().add(legacyLogicalDocStructHelperChild.structure);
+        includedStructuralElement.getChildren().add(legacyLogicalDocStructHelperChild.includedStructuralElement);
     }
 
     @Override
@@ -98,13 +98,13 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public void addChild(Integer index, LegacyDocStructHelperInterface child) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) child;
         legacyLogicalDocStructHelperChild.parent = this;
-        structure.getChildren().add(index, legacyLogicalDocStructHelperChild.structure);
+        includedStructuralElement.getChildren().add(index, legacyLogicalDocStructHelperChild.includedStructuralElement);
     }
 
     @Override
     @Deprecated
     public void addMetadata(LegacyMetadataHelper metadata) {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         Optional<MetadataViewInterface> optionalKeyView = divisionView
                 .getAddableMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList()).parallelStream()
@@ -115,7 +115,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
             MetadataEntry metadataEntry = new MetadataEntry();
             metadata.setBinding(this, metadataEntry, optionalDomain.orElse(Domain.DESCRIPTION));
             metadata.saveToBinding();
-            structure.getMetadata().add(metadataEntry);
+            includedStructuralElement.getMetadata().add(metadataEntry);
         } else {
             metadata.setBinding(this, null, Domain.METS_DIV);
             metadata.saveToBinding();
@@ -126,8 +126,8 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public void saveMetadata(LegacyMetadataHelper metadata) {
         if (Domain.METS_DIV.equals(metadata.getDomain())) {
             try {
-                structure.getClass().getMethod("set".concat(metadata.getMetadataType().getName()), String.class)
-                        .invoke(structure, metadata.getValue());
+                includedStructuralElement.getClass().getMethod("set".concat(metadata.getMetadataType().getName()), String.class)
+                        .invoke(includedStructuralElement, metadata.getValue());
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
@@ -144,14 +144,14 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
         View view = new View();
         LegacyInnerPhysicalDocStructHelper target = (LegacyInnerPhysicalDocStructHelper) docStruct;
         view.setMediaUnit(target.getMediaUnit());
-        structure.getViews().add(view);
+        includedStructuralElement.getViews().add(view);
         return new LegacyReferenceHelper(target);
     }
 
     @Override
     @Deprecated
     public void deleteUnusedPersonsAndMetadata() {
-        Iterator<Metadata> metadataIterator = structure.getMetadata().iterator();
+        Iterator<Metadata> metadataIterator = includedStructuralElement.getMetadata().iterator();
         while (metadataIterator.hasNext()) {
             Metadata metadata = metadataIterator.next();
             if (((MetadataEntry) metadata).getValue().isEmpty()) {
@@ -180,7 +180,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public List<LegacyMetadataTypeHelper> getAddableMetadataTypes() {
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         Collection<MetadataViewInterface> addableKeys = divisionView.getAddableMetadata(metadataEntriesMappedToKeyNames,
             Collections.emptyList());
@@ -195,7 +195,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyDocStructHelperInterface> getAllChildren() {
         List<LegacyDocStructHelperInterface> wrappedChildren = new ArrayList<>();
-        for (Structure child : structure.getChildren()) {
+        for (IncludedStructuralElement child : includedStructuralElement.getChildren()) {
             wrappedChildren.add(new LegacyLogicalDocStructHelper(child, this, ruleset, priorityList));
         }
         return wrappedChildren;
@@ -205,7 +205,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadata() {
         List<LegacyMetadataHelper> result = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
@@ -227,7 +227,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataHelper> getAllMetadataByType(LegacyMetadataTypeHelper metadataType) {
         List<LegacyMetadataHelper> result = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
@@ -252,7 +252,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public List<LegacyReferenceHelper> getAllReferences(String direction) {
         switch (direction) {
             case "to":
-                Collection<View> views = structure.getViews();
+                Collection<View> views = includedStructuralElement.getViews();
                 ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
                 for (View view : views) {
                     MediaUnit mediaUnit = view.getMediaUnit();
@@ -275,7 +275,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public Collection<LegacyReferenceHelper> getAllToReferences(String type) {
         switch (type) {
             case "logical_physical":
-                Collection<View> views = structure.getViews();
+                Collection<View> views = includedStructuralElement.getViews();
                 ArrayList<LegacyReferenceHelper> allReferences = new ArrayList<>(views.size());
                 for (View view : views) {
                     MediaUnit mediaUnit = view.getMediaUnit();
@@ -298,7 +298,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public List<LegacyMetadataTypeHelper> getDisplayMetadataTypes() {
         List<LegacyMetadataTypeHelper> result = new LinkedList<>();
-        Map<Metadata, String> metadataEntriesMappedToKeyNames = structure.getMetadata().parallelStream()
+        Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         List<MetadataViewWithValuesInterface<Metadata>> entryViews = divisionView
                 .getSortedVisibleMetadata(metadataEntriesMappedToKeyNames, Collections.emptyList());
@@ -361,7 +361,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     /**
      * This method is not part of the interface, but the JSF code digs in the
      * depths of the UGH and uses it on the guts.
-     * 
+     *
      * @return Method delegated to {@link #getDocStructType()}
      */
     @Deprecated
@@ -385,13 +385,13 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     public void removeChild(LegacyDocStructHelperInterface docStruct) {
         LegacyLogicalDocStructHelper legacyLogicalDocStructHelperChild = (LegacyLogicalDocStructHelper) docStruct;
         legacyLogicalDocStructHelperChild.parent = null;
-        structure.getChildren().remove(legacyLogicalDocStructHelperChild.structure);
+        includedStructuralElement.getChildren().remove(legacyLogicalDocStructHelperChild.includedStructuralElement);
     }
 
     @Override
     @Deprecated
     public void removeMetadata(LegacyMetadataHelper metaDatum) {
-        Iterator<Metadata> entries = structure.getMetadata().iterator();
+        Iterator<Metadata> entries = includedStructuralElement.getMetadata().iterator();
         String metadataTypeName = metaDatum.getMetadataType().getName();
         while (entries.hasNext()) {
             Metadata entry = entries.next();
@@ -407,7 +407,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Deprecated
     public void removeReferenceTo(LegacyDocStructHelperInterface target) {
         MediaUnit mediaUnit = ((LegacyInnerPhysicalDocStructHelper) target).getMediaUnit();
-        Iterator<View> viewIterator = structure.getViews().iterator();
+        Iterator<View> viewIterator = includedStructuralElement.getViews().iterator();
         while (viewIterator.hasNext()) {
             MediaUnit containedMediaUnit = viewIterator.next().getMediaUnit();
             if (containedMediaUnit.equals(mediaUnit)) {
