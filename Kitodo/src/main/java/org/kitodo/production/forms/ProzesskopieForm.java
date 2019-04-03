@@ -617,7 +617,7 @@ public class ProzesskopieForm implements Serializable {
                 insertImagePath();
             }
 
-            ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
+            ServiceManager.getProcessService().readMetadataFile(this.prozessKopie, false);
 
             startTaskScriptThreads();
         } catch (IOException e) {
@@ -938,7 +938,7 @@ public class ProzesskopieForm implements Serializable {
 
     /**
      * Adds a child node to a part of the logical structure tree.
-     * 
+     *
      * @param includedStructuralElement
      *            tree to add to
      * @param type

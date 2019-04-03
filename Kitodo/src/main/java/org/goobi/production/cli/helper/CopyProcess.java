@@ -267,7 +267,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         ServiceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
-        ServiceManager.getProcessService().readMetadataFile(this.prozessKopie);
+        ServiceManager.getProcessService().readMetadataFile(this.prozessKopie, false);
 
         /* damit die Sortierung stimmt nochmal einlesen */
         ServiceManager.getProcessService().refresh(this.prozessKopie);
@@ -448,7 +448,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     /**
      * Evaluate the token as field name.
-     * 
+     *
      * @param token
      *            as String
      * @param stringBuilder

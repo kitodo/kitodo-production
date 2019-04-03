@@ -449,7 +449,7 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         Process process = processService.getById(1);
-        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process)
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process, false)
                 .getDigitalDocument();
 
         String processTitle = process.getTitle();
@@ -479,7 +479,7 @@ public class ProcessServiceIT {
         Process process = processService.getById(1);
         LegacyPrefsHelper preferences = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(
-            new LegacyMetsModsDigitalDocumentHelper(((LegacyPrefsHelper) preferences).getRuleset()), process);
+            new LegacyMetsModsDigitalDocumentHelper(preferences.getRuleset()), process);
         boolean condition = fileService.fileExist(URI.create("1/template.xml"));
         assertTrue("It was not possible to write metadata as template file!", condition);
 

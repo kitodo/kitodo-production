@@ -263,7 +263,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = (Map<String, String>) filters;
+            Map<String, String> filterMap = filters;
             query.must(readFilters(filterMap));
         }
 
@@ -1266,9 +1266,16 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *
      * @param process
      *            object
+     * @param open
+     *            whether the locks on the read files shall be kept open. Use
+     *            {@code false} in case of a read-only operation; use
+     *            {@code true} in case the you want to save back to the same
+     *            file later. In the latter case, ensure to call
+     *            {@link LegacyMetsModsDigitalDocumentHelper#releaseAllLocks()}
+     *            manually.
      * @return filer format
      */
-    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process) throws IOException {
+    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process, boolean open) throws IOException {
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
 
         // check the format of the metadata - METS, XStream or RDF
@@ -1283,6 +1290,10 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
                 Helper.setErrorMessage("metadataCorrupt", logger, e);
             } else {
                 throw e;
+            }
+        } finally {
+            if (!open) {
+                ff.releaseAllLocks();
             }
         }
         return ff;
@@ -1660,7 +1671,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             fails
      */
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument(Process process) throws IOException {
-        return readMetadataFile(process).getDigitalDocument();
+        return readMetadataFile(process, false).getDigitalDocument();
     }
 
     /**

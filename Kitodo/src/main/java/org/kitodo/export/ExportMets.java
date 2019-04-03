@@ -66,7 +66,8 @@ public class ExportMets {
          */
         this.myPrefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
-        LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
+        LegacyMetsModsDigitalDocumentHelper gdzfile = ServiceManager.getProcessService().readMetadataFile(process,
+            false);
 
         if (ServiceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
@@ -116,7 +117,7 @@ public class ExportMets {
          * to a content repository, therefore no use of file service.
          */
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            ServiceManager.getMetsService().save(workpiece, out);
+            ServiceManager.getMetsService().print(workpiece, out);
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray())) {
                 StreamSource source = new StreamSource(byteArrayInputStream);
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {

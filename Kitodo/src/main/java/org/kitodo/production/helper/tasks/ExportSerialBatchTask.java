@@ -180,7 +180,7 @@ public class ExportSerialBatchTask extends EmptyTask {
      */
     private static LegacyMetsModsDigitalDocumentHelper buildExportDocument(Process process, Iterable<String> allPointers)
             throws IOException {
-        LegacyMetsModsDigitalDocumentHelper result = ServiceManager.getProcessService().readMetadataFile(process)
+        LegacyMetsModsDigitalDocumentHelper result = ServiceManager.getProcessService().readMetadataFile(process, false)
                 .getDigitalDocument();
         LegacyDocStructHelperInterface root = result.getLogicalDocStruct();
         String type = "Volume";

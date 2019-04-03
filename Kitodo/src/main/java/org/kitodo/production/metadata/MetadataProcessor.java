@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
@@ -235,10 +236,21 @@ public class MetadataProcessor {
         calculateMetadataAndImages();
         cleanupMetadata();
         if (storeMetadata()) {
+            gdzfile.releaseAllLocks();
             return referringView;
         } else {
             Helper.setMessage("XML could not be saved");
             return "";
+        }
+    }
+
+    /**
+     * If the user leaves the view in a different way, release all locks.
+     */
+    @PreDestroy
+    public void preDestroy() {
+        if (Objects.nonNull(gdzfile)) {
+            gdzfile.releaseAllLocks();
         }
     }
 
@@ -447,7 +459,7 @@ public class MetadataProcessor {
         /*
          * Dokument einlesen
          */
-        this.gdzfile = ServiceManager.getProcessService().readMetadataFile(this.process);
+        this.gdzfile = ServiceManager.getProcessService().readMetadataFile(this.process, true);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
         this.metaHelper = new MetadataHelper(this.myPrefs);

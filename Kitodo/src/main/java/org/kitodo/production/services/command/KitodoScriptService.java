@@ -154,13 +154,18 @@ public class KitodoScriptService {
 
     private void updateContentFiles(List<Process> processes) {
         for (Process process : processes) {
+            LegacyMetsModsDigitalDocumentHelper rdf = null;
             try {
-                LegacyMetsModsDigitalDocumentHelper rdf = ServiceManager.getProcessService().readMetadataFile(process);
+                rdf = ServiceManager.getProcessService().readMetadataFile(process, true);
                 rdf.getDigitalDocument().addAllContentFiles();
                 fileService.writeMetadataFile(rdf, process);
                 Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
+            } finally {
+                if (Objects.nonNull(rdf)) {
+                    rdf.releaseAllLocks();
+                }
             }
         }
         Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");

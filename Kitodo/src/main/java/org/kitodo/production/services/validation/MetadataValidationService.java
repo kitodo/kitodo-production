@@ -107,7 +107,7 @@ public class MetadataValidationService {
 
     /**
      * Loads the module for long-term archival validation.
-     * 
+     *
      * @return the loaded module
      */
     private MetadataValidationInterface getValidationModule() {
@@ -130,7 +130,7 @@ public class MetadataValidationService {
         LegacyPrefsHelper prefs = ServiceManager.getRulesetService().getPreferences(process.getRuleset());
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
-            gdzfile = ServiceManager.getProcessService().readMetadataFile(process);
+            gdzfile = ServiceManager.getProcessService().readMetadataFile(process, false);
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
@@ -167,7 +167,7 @@ public class MetadataValidationService {
 
     /**
      * Validates a workpiece based on a rule set.
-     * 
+     *
      * @param workpiece
      *            METS file
      * @param ruleset
@@ -188,7 +188,7 @@ public class MetadataValidationService {
 
     /**
      * Verifies that the rules for the identifier are met.
-     * 
+     *
      * @param workpiece
      *            METS file
      * @return the validation result
@@ -227,7 +227,7 @@ public class MetadataValidationService {
 
     /**
      * Returns the meta-data language for a user.
-     * 
+     *
      * @return the meta-data language
      */
     private List<LanguageRange> getMetadataLanguage() {
@@ -251,7 +251,7 @@ public class MetadataValidationService {
 
     /**
      * Merges several individual validation results into one validation result.
-     * 
+     *
      * @param results
      *            individual validation results
      * @return merged validation result

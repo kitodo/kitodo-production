@@ -29,6 +29,7 @@ import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.kitodo.production.services.dataformat.OpenWorkpiece;
 import org.kitodo.production.services.file.FileService;
 
 /**
@@ -75,7 +76,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     /**
      * The workpiece accessed via this soldering class.
      */
-    private Workpiece workpiece = new Workpiece();
+    private OpenWorkpiece openWorkpiece = new OpenWorkpiece();
 
     /**
      * The current ruleset.
@@ -93,7 +94,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper() {
         this.ruleset = rulesetManagementService.getRulesetManagement();
-        this.workpiece = new Workpiece();
+        this.openWorkpiece = new OpenWorkpiece();
 
         try {
             User user = new MetadataProcessor().getCurrentUser();
@@ -133,7 +134,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper(RulesetManagementInterface ruleset, Workpiece workpiece) {
         this(ruleset);
-        this.workpiece = workpiece;
+        this.openWorkpiece = new OpenWorkpiece();
     }
 
     /**
@@ -175,17 +176,18 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     @Deprecated
     public LegacyFileSetDocStructHelper getFileSet() {
-        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnits());
+        return new LegacyFileSetDocStructHelper(openWorkpiece.getWorkpiece().getMediaUnits());
     }
 
     @Deprecated
     public LegacyDocStructHelperInterface getLogicalDocStruct() {
-        return new LegacyLogicalDocStructHelper(workpiece.getRootElement(), null, ruleset, priorityList);
+        return new LegacyLogicalDocStructHelper(openWorkpiece.getWorkpiece().getRootElement(), null, ruleset,
+                priorityList);
     }
 
     @Deprecated
     public LegacyDocStructHelperInterface getPhysicalDocStruct() {
-        return new LegacyFileSetDocStructHelper(workpiece.getMediaUnits());
+        return new LegacyFileSetDocStructHelper(openWorkpiece.getWorkpiece().getMediaUnits());
     }
 
     /**
@@ -194,7 +196,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * @return the workpiece
      */
     public Workpiece getWorkpiece() {
-        return workpiece;
+        return openWorkpiece.getWorkpiece();
     }
 
     @Deprecated
@@ -214,12 +216,16 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
-        workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
+        openWorkpiece = ServiceManager.getMetsService().open(uri);
+    }
+
+    public void releaseAllLocks() {
+        openWorkpiece.close();
     }
 
     @Deprecated
     public void setDigitalDocument(LegacyMetsModsDigitalDocumentHelper metsKitodoDocument) {
-        this.workpiece = metsKitodoDocument.workpiece;
+        this.openWorkpiece = metsKitodoDocument.openWorkpiece;
     }
 
     @Deprecated
@@ -246,7 +252,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
-        ServiceManager.getMetsService().saveWorkpiece(workpiece, uri);
+        ServiceManager.getMetsService().saveAs(openWorkpiece, uri);
     }
 
     /**

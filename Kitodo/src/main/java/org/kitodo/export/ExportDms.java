@@ -110,7 +110,7 @@ public class ExportDms extends ExportMets {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, destination,
-                ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
+                ServiceManager.getProcessService().readMetadataFile(process, false).getDigitalDocument());
         } catch (IOException | RuntimeException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);

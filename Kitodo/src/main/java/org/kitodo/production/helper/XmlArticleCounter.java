@@ -45,7 +45,7 @@ public class XmlArticleCounter {
         // read document
         LegacyMetsModsDigitalDocumentHelper gdzfile;
         try {
-            gdzfile = ServiceManager.getProcessService().readMetadataFile(myProcess);
+            gdzfile = ServiceManager.getProcessService().readMetadataFile(myProcess, false);
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("xml error", logger, e);
             return -1;
