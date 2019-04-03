@@ -81,33 +81,46 @@ public class SearchResultFormIT {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
 
-        searchResultForm.filterListByProject(1000);
+        searchResultForm.setCurrentProjectFilter(1000);
+        searchResultForm.filterListByProject();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
+        searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.searchForProcessesBySearchQuery();
-        searchResultForm.filterListByProject(1);
+        searchResultForm.filterListByProject();
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
+        searchResultForm.setCurrentProjectFilter(null);
         searchResultForm.searchForProcessesBySearchQuery();
-        searchResultForm.filterListByProject(null);
+        searchResultForm.filterListByProject();
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(3, resultList.size());
 
     }
 
     @Test
-    public void testFilterByTask() {
+    public void testFilterByTaskAndStatus() {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
 
-        searchResultForm.filterListByTask("notExistent");
+        searchResultForm.setCurrentTaskFilter("notExistent");
+        searchResultForm.setCurrentTaskStatusFilter(0);
+        searchResultForm.filterListByTaskAndStatus();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
+        searchResultForm.setCurrentTaskFilter("Progress");
+        searchResultForm.setCurrentTaskStatusFilter(0);
         searchResultForm.searchForProcessesBySearchQuery();
-        searchResultForm.filterListByTask("Progress");
+        searchResultForm.filterListByTaskAndStatus();
+        resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(0, resultList.size());
+
+        searchResultForm.setCurrentTaskStatusFilter(2);
+        searchResultForm.searchForProcessesBySearchQuery();
+        searchResultForm.filterListByTaskAndStatus();
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(1, resultList.size());
 
@@ -131,6 +144,13 @@ public class SearchResultFormIT {
 
         searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentTaskFilter("TaskNotExistent");
+        searchResultForm.filterList();
+        resultList = searchResultForm.getFilteredList();
+        Assert.assertEquals(2, resultList.size());
+
+        searchResultForm.searchForProcessesBySearchQuery();
+        searchResultForm.setCurrentTaskFilter("TaskNotExistent");
+        searchResultForm.setCurrentTaskStatusFilter(0);
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
