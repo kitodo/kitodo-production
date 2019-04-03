@@ -13,10 +13,7 @@ package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 
@@ -26,8 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataProcessor;
@@ -117,7 +112,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Creates a new legacy METS MODS digital document helper with a ruleset.
-     * 
+     *
      * @param ruleset
      *            ruleset to set
      */
@@ -129,7 +124,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Creates a new legacy METS MODS digital document helper with a workpiece.
-     * 
+     *
      * @param ruleset
      *            ruleset to set
      * @param workpiece
@@ -173,28 +168,6 @@ public class LegacyMetsModsDigitalDocumentHelper {
         }
     }
 
-    /**
-     * Extracts the formation of the error message as it occurs during both
-     * reading and writing. In addition, the error is logged.
-     * 
-     * @param uri
-     *            URI to be read/written
-     * @param lockResult
-     *            Lock result that did not work
-     * @return The error message for the exception.
-     */
-    private String createLockErrorMessage(URI uri, LockResult lockResult) {
-        Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("Cannot lock ");
-        buffer.append(uri);
-        buffer.append(" because it is already locked by ");
-        buffer.append(String.join(" & ", conflictingUsers));
-        String message = buffer.toString();
-        logger.info(message);
-        return message;
-    }
-
     @Deprecated
     public LegacyMetsModsDigitalDocumentHelper getDigitalDocument() {
         return this;
@@ -217,7 +190,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
 
     /**
      * Returns the workpiece of the legacy METS/MODS digital document helper.
-     * 
+     *
      * @return the workpiece
      */
     public Workpiece getWorkpiece() {
@@ -241,17 +214,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
-
-        try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
-            if (lockResult.isSuccessful()) {
-                try (InputStream in = fileService.read(uri, lockResult)) {
-                    logger.info("Reading {}", uri.toString());
-                    workpiece = ServiceManager.getMetsService().load(in);
-                }
-            } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
-            }
-        }
+        workpiece = ServiceManager.getMetsService().load(uri);
     }
 
     @Deprecated
@@ -283,17 +246,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
-
-        try (LockResult lockResult = fileService.tryLock(uri, LockingMode.EXCLUSIVE)) {
-            if (lockResult.isSuccessful()) {
-                try (OutputStream out = fileService.write(uri, lockResult)) {
-                    logger.info("Saving {}", uri.toString());
-                    ServiceManager.getMetsService().save(workpiece, out);
-                }
-            } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
-            }
-        }
+        ServiceManager.getMetsService().save(workpiece, uri);
     }
 
     /**
@@ -302,7 +255,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
      * operation. The name was chosen deliberately short in order to keep the
      * calling code clear. This method must be implemented in every class
      * because it uses the logger tailored to the class.
-     * 
+     *
      * @param exception
      *            created {@code UnsupportedOperationException}
      * @return the exception
