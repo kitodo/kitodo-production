@@ -183,6 +183,6 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      *            selected item to set
      */
     public void setSelectedItem(String selectedItem) {
-        this.selectedItems = selectedItem.isEmpty() ? Collections.emptyList() : Arrays.asList(selectedItem);
+        this.selectedItems = selectedItem.isEmpty() ? Collections.emptyList() : Collections.singletonList(selectedItem);
     }
 }

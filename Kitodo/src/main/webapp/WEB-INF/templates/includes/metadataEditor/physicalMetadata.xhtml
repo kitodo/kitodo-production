@@ -50,7 +50,12 @@
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="blur"/>
                     </p:selectManyMenu>
-                    <p:outputLabel value="Not yet implemented: selectOneMenu" rendered="#{item.input eq 'oneMenu'}"/>
+                    <p:selectOneMenu value="#{item.selectedItem}"
+                                     readonly="#{not item.editable}"
+                                     rendered="#{item.input eq 'oneMenu'}">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
+                    </p:selectOneMenu>
                     <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
                     <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
 
