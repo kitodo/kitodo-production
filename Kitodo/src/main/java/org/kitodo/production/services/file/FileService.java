@@ -997,6 +997,9 @@ public class FileService {
      */
     private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
         MediaUnit result = new MediaUnit();
+        if (data.entrySet().size() > 0) {
+            result.setType("page");
+        }
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
@@ -1052,17 +1055,18 @@ public class FileService {
         for (int i = mediaUnits.size() - 1; i >= 0; i--) {
             MediaUnit mediaUnit = mediaUnits.get(i);
             String orderlabel = mediaUnit.getOrderlabel();
-            if (orderlabel == null) {
+            if (orderlabel == null || mediaUnit.getMediaFiles().isEmpty()) {
                 continue;
             }
             first = i + 1;
             value = orderlabel;
+            mediaUnits.get(i).setType("page");
             break;
         }
         Paginator paginator = new Paginator(value);
         if (first > 0) {
             paginator.next();
-            for (int i = first; i <= mediaUnits.size(); i++) {
+            for (int i = first; i < mediaUnits.size(); i++) {
                 mediaUnits.get(i).setOrderlabel(paginator.next());
             }
         }

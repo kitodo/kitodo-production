@@ -12,11 +12,13 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -24,8 +26,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -358,7 +361,7 @@ public class StructurePanel implements Serializable {
 
     void treePhysicalSelect() {
         /*
-         * The newly selected element has already been set in 'selectedLogicalNode' by
+         * The newly selected element has already been set in 'selectedPhysicalNode' by
          * JSF at this point.
          */
         try {
@@ -368,5 +371,53 @@ public class StructurePanel implements Serializable {
             Helper.setErrorMessage(e.getLocalizedMessage());
             selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
+    }
+
+    void updateNodeSelection(GalleryMediaContent galleryMediaContent) {
+        if (Objects.nonNull(previouslySelectedPhysicalNode)) {
+            previouslySelectedPhysicalNode.setSelected(false);
+        }
+        if (Objects.nonNull(selectedPhysicalNode)) {
+            selectedPhysicalNode.setSelected(false);
+        }
+        if (Objects.nonNull(physicalTree)) {
+            TreeNode selectedTreeNode = updateNodeSelectionRecursive(galleryMediaContent, physicalTree);
+            if (Objects.nonNull(selectedTreeNode)) {
+                setSelectedPhysicalNode(selectedTreeNode);
+            } else {
+                Helper.setErrorMessage("Unable to update Node selection in physical structure map!");
+            }
+        }
+    }
+
+    private TreeNode updateNodeSelectionRecursive(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
+        TreeNode matchingTreeNode = null;
+        for (TreeNode currentTreeNode : treeNode.getChildren()) {
+            if (currentTreeNode.getChildCount() < 1 && treeNodeMatchesGalleryMediaContent(galleryMediaContent, currentTreeNode)) {
+                currentTreeNode.setSelected(true);
+                matchingTreeNode = currentTreeNode;
+            } else {
+                currentTreeNode.setSelected(false);
+                matchingTreeNode = updateNodeSelectionRecursive(galleryMediaContent, currentTreeNode);
+            }
+            if (Objects.nonNull(matchingTreeNode)) {
+                break;
+            }
+        }
+        return matchingTreeNode;
+    }
+
+    private boolean treeNodeMatchesGalleryMediaContent(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
+        if (treeNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+            if (structureTreeNode.getDataObject() instanceof MediaUnit) {
+                MediaUnit mediaUnit = (MediaUnit) structureTreeNode.getDataObject();
+                if (mediaUnit.getMediaFiles().size() > 0) {
+                    Map<MediaVariant, URI> mediaVariants = mediaUnit.getMediaFiles();
+                    return mediaVariants.values().contains(galleryMediaContent.getPreviewUri());
+                }
+            }
+        }
+        return false;
     }
 }

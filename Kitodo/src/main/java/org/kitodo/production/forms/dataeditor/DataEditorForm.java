@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -472,5 +474,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         metadataPanel.preservePhysical();
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
         addMediaUnitDialog.prepare();
+        if (structurePanel.getSelectedMediaUnit().isPresent()) {
+            galleryPanel.updateSelection(structurePanel.getSelectedMediaUnit().get());
+        }
     }
 }

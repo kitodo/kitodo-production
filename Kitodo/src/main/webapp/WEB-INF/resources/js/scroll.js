@@ -69,7 +69,6 @@ function initialize() {
     checkScrollPosition();
 
     $(document).on('mouseenter.scrollGallery', '.scroll-button', function (e) {
-        console.log("event");
         if (e.target.id === "imagePreviewForm:scroll-up") {
             interval = window.setInterval(scrollUp, 100);
         } else {

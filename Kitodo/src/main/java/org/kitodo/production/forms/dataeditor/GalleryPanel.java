@@ -332,8 +332,27 @@ public class GalleryPanel {
         this.selectedMedia = selectedMedia;
     }
 
+    /**
+     * Update the selected TreeNode in the physical structure tree.
+     */
+    public void updateStructure(GalleryMediaContent galleryMediaContent) {
+        dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent);
+    }
+
     public void setSelectedStripe(GalleryStripe selectedStripe) {
         this.selectedStripe = selectedStripe;
+    }
+
+    void updateSelection(MediaUnit mediaUnit) {
+        if (mediaUnit.getMediaFiles().size() > 0) {
+            Map<MediaVariant, URI> mediaVariants = mediaUnit.getMediaFiles();
+            for (GalleryMediaContent galleryMediaContent : getMedias()) {
+                if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                    setSelectedMedia(galleryMediaContent);
+                    break;
+                }
+            }
+        }
     }
 
     void show() throws IOException {
