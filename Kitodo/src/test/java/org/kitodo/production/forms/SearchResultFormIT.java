@@ -21,6 +21,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultFormIT {
 
@@ -30,11 +31,14 @@ public class SearchResultFormIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     /**
      * Cleanup the database and stop elasticsearch.
-     * @throws Exception if elasticsearch could not been stopped.
+     * 
+     * @throws Exception
+     *             if elasticsearch could not been stopped.
      */
     @AfterClass
     public static void cleanDatabase() throws Exception {

@@ -18,6 +18,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -27,6 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -38,12 +41,17 @@ import org.kitodo.production.services.ServiceManager;
 public class ProjectServiceIT {
 
     private static final ProjectService projectService = ServiceManager.getProjectService();
+    private static final String firstProject = "First project";
+    private static final String projectNotFound = "Project was not found in index!";
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(projectService.findByTitle(firstProject, true))));
+
     }
 
     @AfterClass
@@ -56,16 +64,14 @@ public class ProjectServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProjects() {
-        await().untilAsserted(
-            () -> assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count()));
+    public void shouldCountAllProjects() throws DataException {
+        assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count());
     }
 
     @Test
-    public void shouldCountAllProjectsAccordingToQuery() {
-        QueryBuilder query = matchQuery("title", "First project").operator(Operator.AND);
-        await().untilAsserted(
-            () -> assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query)));
+    public void shouldCountAllProjectsAccordingToQuery() throws DataException {
+        QueryBuilder query = matchQuery("title", firstProject).operator(Operator.AND);
+        assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query));
     }
 
     @Test
@@ -75,29 +81,24 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindById() {
-        await().untilAsserted(() -> assertTrue("Project was not found in index!",
-            projectService.findById(1).getTitle().equals("First project")
-                    && projectService.findById(1).getId().equals(1)));
-        await().untilAsserted(
-            () -> assertTrue("Project was not found in index!", projectService.findById(1).isActive()));
-        await().untilAsserted(
-            () -> assertEquals("Project was not found in index!", 1, projectService.findById(1).getTemplates().size()));
+    public void shouldFindById() throws DataException {
+        assertTrue(projectNotFound,
+            projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1));
+        assertTrue(projectNotFound, projectService.findById(1).isActive());
+        assertEquals(projectNotFound, 1, projectService.findById(1).getTemplates().size());
 
-        await().untilAsserted(
-            () -> assertFalse("Project was not found in index!", projectService.findById(3).isActive()));
+        assertFalse(projectNotFound, projectService.findById(3).isActive());
     }
 
     @Test
-    public void shouldFindAllProjects() {
-        await().untilAsserted(
-            () -> assertEquals("Not all projects were found in index!", 3, projectService.findAll().size()));
+    public void shouldFindAllProjects() throws DataException {
+        assertEquals("Not all projects were found in index!", 3, projectService.findAll().size());
     }
 
     @Test
     public void shouldGetProject() throws Exception {
         Project project = projectService.getById(1);
-        boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
+        boolean condition = project.getTitle().equals(firstProject) && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
 
         assertEquals("Project was found but templates were not inserted!", 1, project.getTemplates().size());
@@ -145,15 +146,14 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindByTitle() {
-        await().untilAsserted(() -> assertEquals("Project was not found in index!", 1,
-            projectService.findByTitle("First project", true).size()));
+    public void shouldFindByTitle() throws DataException {
+        assertEquals(projectNotFound, 1, projectService.findByTitle(firstProject, true).size());
     }
 
     @Test
     public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DataException {
         Project project = new Project();
-        project.setTitle("First project");
+        project.setTitle(firstProject);
         exception.expect(DataException.class);
         projectService.save(project);
     }
