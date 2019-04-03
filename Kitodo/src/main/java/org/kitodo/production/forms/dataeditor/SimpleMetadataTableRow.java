@@ -19,7 +19,7 @@ import javax.faces.context.FacesContext;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 
 /**
  * Provides functions that are common to all input elements.
@@ -50,7 +50,7 @@ abstract class SimpleMetadataTableRow extends MetadataTableRow implements Serial
 
     protected Method getStructureFieldSetter(MetadataViewInterface field) throws NoSuchMetadataFieldException {
         String key = field.getId();
-        for (Method method : Structure.class.getDeclaredMethods()) {
+        for (Method method : IncludedStructuralElement.class.getDeclaredMethods()) {
             if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
                     && method.getName().substring(3).equalsIgnoreCase(key)) {
                 return method;

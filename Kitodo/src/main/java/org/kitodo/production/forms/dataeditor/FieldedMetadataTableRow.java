@@ -37,7 +37,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.production.helper.Helper;
 
 /**
@@ -83,7 +83,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     /**
      * The structure this panel is related to, if it isn’t a sub-panel.
      */
-    private Structure structure;
+    private IncludedStructuralElement structure;
 
     /**
      * Creates an empty meta-data group. This constructor is used to create the
@@ -105,7 +105,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * @param divisionView
      *            information about that structure from the rule set
      */
-    FieldedMetadataTableRow(MetadataPanel panel, Structure structure, StructuralElementViewInterface divisionView) {
+    FieldedMetadataTableRow(MetadataPanel panel, IncludedStructuralElement structure, StructuralElementViewInterface divisionView) {
 
         this(panel, null, structure, divisionView, structure.getMetadata());
     }
@@ -149,7 +149,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * @param metadata
      *            meta-data, may be empty but must be modifiable
      */
-    private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, Structure structure,
+    private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, IncludedStructuralElement structure,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
 
         super(panel, container, metadataView.getId());

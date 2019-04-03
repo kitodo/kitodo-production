@@ -52,8 +52,8 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     /**
      * Creates a new meta-data panel row with an on/off switch.
      *
-     * @param dataEditor
-     *            meta-data editor instance
+     * @param panel
+     *            MetadataPanel instance
      * @param container
      *            containing meta-data group
      * @param settings
@@ -86,7 +86,7 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
             entry.setKey(settings.getId());
             entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
             entry.setValue(value.get());
-            return Arrays.asList(entry);
+            return Collections.singletonList(entry);
         } else {
             return Collections.emptyList();
         }

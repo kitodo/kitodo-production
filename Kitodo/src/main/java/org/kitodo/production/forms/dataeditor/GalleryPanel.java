@@ -33,9 +33,9 @@ import javax.faces.event.PhaseId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -363,7 +363,7 @@ public class GalleryPanel {
             lockRequests.putAll(mediaContent.getRequiredLocks());
         }
 
-        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getStructure(), previewFolder));
+        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getRootElement(), previewFolder));
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
@@ -390,7 +390,7 @@ public class GalleryPanel {
         }
     }
 
-    private Map<URI, LockingMode> addStripesRecursive(Structure structure, Subfolder previewFolder) {
+    private Map<URI, LockingMode> addStripesRecursive(IncludedStructuralElement structure, Subfolder previewFolder) {
         GalleryStripe galleryStripe = new GalleryStripe(this, structure);
         Map<URI, LockingMode> lockRequests = new HashMap<>();
         for (View view : structure.getViews()) {
@@ -402,7 +402,7 @@ public class GalleryPanel {
             }
         }
         stripes.add(galleryStripe);
-        for (Structure child : structure.getChildren()) {
+        for (IncludedStructuralElement child : structure.getChildren()) {
             lockRequests.putAll(addStripesRecursive(child, previewFolder));
         }
         return lockRequests;

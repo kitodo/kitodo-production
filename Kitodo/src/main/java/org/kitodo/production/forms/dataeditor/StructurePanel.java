@@ -12,7 +12,6 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -60,7 +59,7 @@ public class StructurePanel implements Serializable {
      */
     private Boolean separateMedia = Boolean.FALSE;
 
-    private Structure structure;
+    private IncludedStructuralElement structure;
 
     /**
      * The logical structure tree of the edited document.
@@ -96,7 +95,7 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedStructure() {
-        Optional<Structure> selectedStructure = getSelectedStructure();
+        Optional<IncludedStructuralElement> selectedStructure = getSelectedStructure();
         if (!selectedStructure.isPresent()) {
             /*
              * No element is selected or the selected element is not a structure
@@ -104,12 +103,12 @@ public class StructurePanel implements Serializable {
              */
             return;
         }
-        LinkedList<Structure> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(), structure);
+        LinkedList<IncludedStructuralElement> ancestors = MetadataEditor.getAncestorsOfStructure(selectedStructure.get(), structure);
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;
         }
-        Structure parent = ancestors.getLast();
+        IncludedStructuralElement parent = ancestors.getLast();
         parent.getChildren().remove(selectedStructure.get());
         show();
     }
@@ -153,10 +152,10 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = selectedPhysicalNode;
     }
 
-    Optional<Structure> getSelectedStructure() {
+    Optional<IncludedStructuralElement> getSelectedStructure() {
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
-        return Optional.ofNullable(dataObject instanceof Structure ? (Structure) dataObject : null);
+        return Optional.ofNullable(dataObject instanceof IncludedStructuralElement ? (IncludedStructuralElement) dataObject : null);
     }
 
     Optional<MediaUnit> getSelectedMediaUnit() {
@@ -200,17 +199,17 @@ public class StructurePanel implements Serializable {
      * aren’t structures, {@code null} is returned to skip them on the level
      * above.
      */
-    private static Structure preserveRecursive(TreeNode treeNode) {
+    private static IncludedStructuralElement preserveRecursive(TreeNode treeNode) {
         StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof Structure)) {
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof IncludedStructuralElement)) {
             return null;
         }
-        Structure structure = (Structure) structureTreeNode.getDataObject();
+        IncludedStructuralElement structure = (IncludedStructuralElement) structureTreeNode.getDataObject();
 
-        List<Structure> childrenLive = structure.getChildren();
+        List<IncludedStructuralElement> childrenLive = structure.getChildren();
         childrenLive.clear();
         for (TreeNode child : treeNode.getChildren()) {
-            Structure maybeChildStructure = preserveRecursive(child);
+            IncludedStructuralElement maybeChildStructure = preserveRecursive(child);
             if (maybeChildStructure != null) {
                 childrenLive.add(maybeChildStructure);
             }
@@ -223,7 +222,7 @@ public class StructurePanel implements Serializable {
      * root element of the structure tree.
      */
     void show() {
-        this.structure = dataEditor.getWorkpiece().getStructure();
+        this.structure = dataEditor.getWorkpiece().getRootElement();
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
         this.logicalTree = result.getLeft().get(result.getLeft().size() - 1); // TODO size() - 1 might be dangerous
         if (separateMedia != null) {
@@ -253,7 +252,7 @@ public class StructurePanel implements Serializable {
         return Pair.of(Collections.singletonList(result), viewsShowingOnAChild);
     }
 
-    private Collection<View> buildStructureTreeRecursively(Structure structure, TreeNode result) {
+    private Collection<View> buildStructureTreeRecursively(IncludedStructuralElement structure, TreeNode result) {
 
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
             structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
@@ -268,7 +267,7 @@ public class StructurePanel implements Serializable {
         parent.setExpanded(true);
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
-        for (Structure child : structure.getChildren()) {
+        for (IncludedStructuralElement child : structure.getChildren()) {
             viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
         }
 

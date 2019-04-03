@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.Helper;
@@ -52,12 +52,12 @@ public class MetadataEditor {
      * @param metadataValue
      *            value of the first meta-data entry
      */
-    public static void addMultipleStructures(int number, String type, Workpiece workpiece, Structure structure,
+    public static void addMultipleStructures(int number, String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, String metadataKey, String metadataValue) {
 
         Paginator metadataValues = new Paginator(metadataValue);
         for (int i = 1; i < number; i++) {
-            Structure newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
+            IncludedStructuralElement newStructure = addStructure(type, workpiece, structure, position, Collections.emptyList());
             if (Objects.isNull(newStructure)) {
                 continue;
             }
@@ -86,9 +86,9 @@ public class MetadataEditor {
      *            views to be assigned to the structure
      * @return the newly created structure
      */
-    public static Structure addStructure(String type, Workpiece workpiece, Structure structure,
+    public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, List<View> viewsToAdd) {
-        LinkedList<Structure> parents = getAncestorsOfStructureRecursive(structure, workpiece.getStructure(), null);
+        LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructureRecursive(structure, workpiece.getRootElement(), null);
         if (parents.isEmpty()) {
             if ((position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
@@ -96,10 +96,10 @@ public class MetadataEditor {
                 return null;
             }
         }
-        Structure newStructure = new Structure();
+        IncludedStructuralElement newStructure = new IncludedStructuralElement();
         newStructure.setType(type);
-        LinkedList<Structure> structuresToAddViews = new LinkedList<>(parents);
-        List<Structure> siblings = parents.getLast().getChildren();
+        LinkedList<IncludedStructuralElement> structuresToAddViews = new LinkedList<>(parents);
+        List<IncludedStructuralElement> siblings = parents.getLast().getChildren();
         switch (position) {
             case AFTER_CURRENT_ELEMENT: {
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
@@ -123,7 +123,7 @@ public class MetadataEditor {
                 structuresToAddViews.removeLast();
                 newStructure.getChildren().add(structure);
                 if (parents.isEmpty()) {
-                    workpiece.setStructure(newStructure);
+                    workpiece.setRootElement(newStructure);
                 } else {
                     siblings.set(siblings.indexOf(structure), newStructure);
                 }
@@ -132,19 +132,19 @@ public class MetadataEditor {
             default:
                 throw new IllegalStateException("complete switch");
         }
-        for (Structure structuree : structuresToAddViews) {
+        for (IncludedStructuralElement structuree : structuresToAddViews) {
             structuree.getViews().addAll(viewsToAdd);
         }
         return newStructure;
     }
 
-    public static void assignViewsFromChildren(Structure structure) {
+    public static void assignViewsFromChildren(IncludedStructuralElement structure) {
         structure.getViews().addAll(getViewsFromChildrenRecursive(structure));
     }
 
-    private static Collection<View> getViewsFromChildrenRecursive(Structure structure) {
+    private static Collection<View> getViewsFromChildrenRecursive(IncludedStructuralElement structure) {
         List<View> result = new ArrayList<>(structure.getViews());
-        for (Structure child : structure.getChildren()) {
+        for (IncludedStructuralElement child : structure.getChildren()) {
             result.addAll(getViewsFromChildrenRecursive(child));
         }
         return result;
@@ -173,23 +173,24 @@ public class MetadataEditor {
      *            node to be searched recursively
      * @return the parent nodes (maybe empty)
      */
-    public static LinkedList<Structure> getAncestorsOfStructure(Structure searched, Structure position) {
+    public static LinkedList<IncludedStructuralElement> getAncestorsOfStructure(IncludedStructuralElement searched,
+                                                                                IncludedStructuralElement position) {
         return getAncestorsOfStructureRecursive(searched, position, null);
     }
 
-    private static LinkedList<Structure> getAncestorsOfStructureRecursive(Structure searched, Structure position,
-            Structure parent) {
+    private static LinkedList<IncludedStructuralElement> getAncestorsOfStructureRecursive(IncludedStructuralElement searched, IncludedStructuralElement position,
+                                                                                          IncludedStructuralElement parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
             }
-            LinkedList<Structure> result = new LinkedList<>();
+            LinkedList<IncludedStructuralElement> result = new LinkedList<>();
             result.add(parent);
             return result;
 
         }
-        for (Structure child : position.getChildren()) {
-            LinkedList<Structure> maybeFound = getAncestorsOfStructureRecursive(searched, child, position);
+        for (IncludedStructuralElement child : position.getChildren()) {
+            LinkedList<IncludedStructuralElement> maybeFound = getAncestorsOfStructureRecursive(searched, child, position);
             if (!maybeFound.isEmpty()) {
                 if (Objects.nonNull(parent)) {
                     maybeFound.addFirst(parent);
@@ -200,7 +201,7 @@ public class MetadataEditor {
         return new LinkedList<>();
     }
 
-    public static void moveView(View view, Structure from, Structure to) {
+    public static void moveView(View view, IncludedStructuralElement from, IncludedStructuralElement to) {
         from.getViews().remove(view);
         to.getViews().add(view);
     }

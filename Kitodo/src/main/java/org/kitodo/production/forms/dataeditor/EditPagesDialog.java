@@ -137,7 +137,7 @@ public class EditPagesDialog {
             View view = MetadataEditor.createUnrestrictedViewOn(mediaUnit);
             String label = Objects.isNull(mediaUnit.getOrderlabel()) ? Integer.toString(mediaUnit.getOrder())
                     : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
-            Integer id = Integer.valueOf(i);
+            Integer id = i;
             SelectItem selectItem = new SelectItem(id, label);
             selectPageItems.add(selectItem);
             boolean assigned = dataEditor.getSelectedStructure().isPresent()

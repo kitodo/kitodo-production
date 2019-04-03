@@ -21,7 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.production.helper.Helper;
 
 abstract class MetadataTableRow implements Serializable {
@@ -183,7 +183,7 @@ abstract class MetadataTableRow implements Serializable {
 
     /**
      * Returns the meta-data from this row, as far as it has to be stored in the
-     * collection obtainable from {@link Structure#getMetadata()}.
+     * collection obtainable from {@link IncludedStructuralElement#getMetadata()}.
      *
      * @return the meta-data from this row
      * @throws InvalidMetadataValueException
@@ -197,7 +197,7 @@ abstract class MetadataTableRow implements Serializable {
      * it to be called when saving the data.
      *
      * @return if data is to be written a pair of the setter of the
-     *         {@link Structure} and the value to set, else null
+     *         {@link IncludedStructuralElement} and the value to set, else null
      * @throws InvalidMetadataValueException
      *             if the meta-data form contains syntactically wrong input
      * @throws NoSuchMetadataFieldException

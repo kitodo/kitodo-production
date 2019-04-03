@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
@@ -49,7 +49,7 @@ public class AddDocStrucTypeDialog {
     private InsertionPosition docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
     private int elementsToAddSpinnerValue;
     private String inputMetaDataValueValue = "";
-    private LinkedList<Structure> parents;
+    private LinkedList<IncludedStructuralElement> parents;
     private List<SelectItem> selectAddableMetadataTypesItems;
     private String selectAddableMetadataTypesSelectedItem = "";
     private String selectFirstPageOnAddNodeSelectedItem;
@@ -178,7 +178,7 @@ public class AddDocStrucTypeDialog {
     void prepare() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
-                dataEditor.getWorkpiece().getStructure());
+                dataEditor.getWorkpiece().getRootElement());
 
             prepareDocStructPositionSelectionItems(parents.size() == 0);
             prepareDocStructAddTypeSelectionItemsForChildren();

@@ -32,7 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -408,7 +408,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return ruleset;
     }
 
-    Optional<Structure> getSelectedStructure() {
+    Optional<IncludedStructuralElement> getSelectedStructure() {
         return structurePanel.getSelectedStructure();
     }
 

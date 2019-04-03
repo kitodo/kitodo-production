@@ -22,7 +22,7 @@ import javax.faces.model.SelectItem;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.Structure;
+import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.production.helper.Helper;
 
 /**
@@ -162,7 +162,7 @@ public class MetadataPanel implements Serializable {
         return physicalMetadataTable.getRows();
     }
 
-    void showLogical(Optional<Structure> optionalStructure) {
+    void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
         if (!optionalStructure.isPresent()) {
             logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         } else {
