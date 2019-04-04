@@ -86,7 +86,6 @@ public class CommentForm extends BaseForm {
                 Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId() },
                         logger, e);
             }
-            setCorrectionComment(false);
         } else {
             comment.setType(CommentType.INFO);
         }
@@ -98,6 +97,7 @@ public class CommentForm extends BaseForm {
 
         if (isCorrectionComment()) {
             reportProblem(comment);
+            setCorrectionComment(false);
         }
         setCommentMessage("");
         setCorrectionTaskId("");
