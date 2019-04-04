@@ -22,6 +22,19 @@
         <f:viewAction action="#{TemplateForm.loadTemplate(id)}" />
     </f:metadata>
 
+    <!--@elvariable id="isCreateMode" type="boolean"-->
+    <ui:param name="isCreateMode"
+              value="#{TemplateForm.template.title eq '' and empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+    <!--@elvariable id="isDuplicateMode" type="boolean"-->
+    <ui:param name="isDuplicateMode"
+              value="#{TemplateForm.template.title eq '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToAddTemplate()}"/>
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{TemplateForm.template.title ne '' and not empty TemplateForm.template.docket and SecurityAccessController.hasAuthorityToEditTemplate()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isDuplicateMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewTemplate()}"/>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
@@ -29,12 +42,10 @@
         </script>
 
         <h3 id="headerText">
-            <h:outputText value="#{msgs.newTemplate}"
-                          rendered="#{TemplateForm.template.title eq '' and empty TemplateForm.template.docket}"/>
-            <h:outputText value="#{msgs.duplicateTemplate}"
-                          rendered="#{TemplateForm.template.title eq '' and not empty TemplateForm.template.docket}"/>
-            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})"
-                          rendered="#{TemplateForm.template.title ne '' and not empty TemplateForm.template.docket}"/>
+            <h:outputText value="#{msgs.newTemplate}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.duplicateTemplate}" rendered="#{isDuplicateMode}"/>
+            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewTemplate} (#{TemplateForm.template.title})" rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -65,7 +76,12 @@
                 <ui:include src="/WEB-INF/templates/includes/templateEdit/details.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty TemplateForm.template.title}">
-                <ui:include src="/WEB-INF/templates/includes/templateEdit/taskList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/templateEdit/taskList.xhtml">
+                    <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isDuplicateMode" value="#{isDuplicateMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -73,7 +89,10 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.projects}" url="projects.jsf"/>
-        <p:menuitem value="#{msgs.editTemplate}"/>
+        <p:menuitem value="#{msgs.newTemplate}" rendered="#{isCreateMode}"/>
+        <p:menuitem value="#{msgs.duplicateTemplate}" rendered="#{isDuplicateMode}"/>
+        <p:menuitem value="#{msgs.editTemplate}" rendered="#{isEditMode}"/>
+        <p:menuitem value="#{msgs.viewTemplate}" rendered="#{isViewMode}"/>
     </ui:define>
 
 </ui:composition>
