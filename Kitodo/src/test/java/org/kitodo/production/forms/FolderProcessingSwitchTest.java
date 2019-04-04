@@ -11,11 +11,9 @@
 
 package org.kitodo.production.forms;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +28,7 @@ public class FolderProcessingSwitchTest {
         folderToBeGenerated.setPath("folderToBeGenerated");
         FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folderToBeGenerated,
                 new ArrayList<>());
-        assertThat(folderProcessingSwitch.getLabel(), is(equalTo(("folderToBeGenerated"))));
+        assertEquals("folderToBeGenerated", folderProcessingSwitch.getLabel());
     }
 
     @Test
@@ -38,11 +36,11 @@ public class FolderProcessingSwitchTest {
         Folder folder = new Folder();
         List<Folder> activatedFolders = new ArrayList<>();
         FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folder, activatedFolders);
-        assertThat(folderProcessingSwitch.isValue(), is(equalTo((false))));
+        assertFalse(folderProcessingSwitch.isValue());
         activatedFolders.add(folder);
-        assertThat(folderProcessingSwitch.isValue(), is(equalTo((true))));
+        assertTrue(folderProcessingSwitch.isValue());
         activatedFolders.remove(folder);
-        assertThat(folderProcessingSwitch.isValue(), is(equalTo((false))));
+        assertFalse(folderProcessingSwitch.isValue());
     }
 
     @Test
@@ -50,10 +48,10 @@ public class FolderProcessingSwitchTest {
         Folder folder = new Folder();
         List<Folder> activatedFolders = new ArrayList<>();
         FolderProcessingSwitch folderProcessingSwitch = new FolderProcessingSwitch(folder, activatedFolders);
-        assertThat(activatedFolders, not(contains(folder)));
+        assertFalse(activatedFolders.contains(folder));
         folderProcessingSwitch.setValue(true);
-        assertThat(activatedFolders, contains(folder));
+        assertTrue(activatedFolders.contains(folder));
         folderProcessingSwitch.setValue(false);
-        assertThat(activatedFolders, not(contains(folder)));
+        assertFalse(activatedFolders.contains(folder));
     }
 }
