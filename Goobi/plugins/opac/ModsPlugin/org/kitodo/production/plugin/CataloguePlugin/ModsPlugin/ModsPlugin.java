@@ -331,6 +331,7 @@ public class ModsPlugin implements Plugin {
         // initialize common XPaths first
         try {
             modsXPath = XPath.newInstance("//mods:mods");
+            modsXPath.addNamespace("mods", "http://www.loc.gov/mods/v3");
             metsDivXPath = XPath.newInstance(".//mets:div");
             catalogIDDigitalXPath = XPath.newInstance(".//goobi:metadata[@name='CatalogIDDigital']");
             goobiXpath = XPath.newInstance(".//goobi:goobi");
@@ -752,7 +753,9 @@ public class ModsPlugin implements Plugin {
         }
 
         if (addChildren) {
-            structureMap = addChildDocumentsToStructMap(retrieveChildDocuments(documentID, timeout), metadataFile, structureMap);
+            if (getMaximumChildRecordsParameter(configuration.getTitle()) > 0) {
+                structureMap = addChildDocumentsToStructMap(retrieveChildDocuments(documentID, timeout), metadataFile, structureMap);
+            }
         }
 
         if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
