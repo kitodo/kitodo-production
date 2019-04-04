@@ -11,6 +11,10 @@
 
 package org.kitodo.production.helper;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import javax.faces.model.SelectItem;
 
@@ -34,11 +38,6 @@ import org.kitodo.production.services.data.DocketService;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.data.WorkflowService;
-
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class SelectItemListIT {
 
@@ -77,7 +76,7 @@ public class SelectItemListIT {
         assertEquals("Fourth item is not sorted correctly!", "Batch 4 (0 processes) [serial publication]",
             selectItems.get(3).getLabel());
 
-        assertThat("First item is not a Batch type!", selectItems.get(0).getValue(), instanceOf(Batch.class));
+        assertTrue("First item is not a Batch type!", selectItems.get(0).getValue() instanceof Batch);
     }
 
     @Test
@@ -94,7 +93,7 @@ public class SelectItemListIT {
         assertEquals("Fourth item is not sorted correctly!", "Removable client", selectItems.get(2).getLabel());
         assertEquals("Fifth item is not sorted correctly!", "Second client", selectItems.get(3).getLabel());
 
-        assertThat("Second item is not a Client type!", selectItems.get(1).getValue(), instanceOf(Client.class));
+        assertTrue("Second item is not a Client type!", selectItems.get(1).getValue() instanceof Client);
     }
 
     @Test
@@ -112,7 +111,7 @@ public class SelectItemListIT {
         assertEquals("Fourth item is not sorted correctly!", "tester", selectItems.get(3).getLabel());
         assertEquals("Fifth item is not sorted correctly!", "third", selectItems.get(4).getLabel());
 
-        assertThat("First item is not a Docket type!", selectItems.get(0).getValue(), instanceOf(Docket.class));
+        assertTrue("First item is not a Docket type!", selectItems.get(0).getValue() instanceof Docket);
     }
 
     @Test
@@ -124,7 +123,7 @@ public class SelectItemListIT {
 
         assertEquals("First item is not sorted correctly!", "LG", selectItems.get(0).getLabel());
 
-        assertThat("First item is not a LdapGroup type!", selectItems.get(0).getValue(), instanceOf(LdapGroup.class));
+        assertTrue("First item is not a LdapGroup type!", selectItems.get(0).getValue() instanceof LdapGroup);
     }
 
     @Test
@@ -135,7 +134,7 @@ public class SelectItemListIT {
 
         assertEquals("First item is not sorted correctly!", "First process", selectItems.get(0).getLabel());
 
-        assertThat("First item is not an Process type!", selectItems.get(0).getValue(), instanceOf(Process.class));
+        assertTrue("First item is not an Process type!", selectItems.get(0).getValue() instanceof Process);
     }
 
     @Test
@@ -151,7 +150,7 @@ public class SelectItemListIT {
         assertEquals("Second item is not sorted correctly!", "Inactive project", selectItems.get(1).getLabel());
         assertEquals("Third item is not sorted correctly!", "Second project", selectItems.get(2).getLabel());
 
-        assertThat("First item is not a Project type!", selectItems.get(0).getValue(), instanceOf(Project.class));
+        assertTrue("First item is not a Project type!", selectItems.get(0).getValue() instanceof Project);
     }
 
     @Test
@@ -168,7 +167,7 @@ public class SelectItemListIT {
         assertEquals("Third item is not sorted correctly!", "SUBBB", selectItems.get(2).getLabel());
         assertEquals("Fourth item is not sorted correctly!", "SUBHH", selectItems.get(3).getLabel());
 
-        assertThat("First item is not a Ruleset type!", selectItems.get(0).getValue(), instanceOf(Ruleset.class));
+        assertTrue("First item is not a Ruleset type!", selectItems.get(0).getValue() instanceof Ruleset);
     }
 
     @Test
@@ -184,6 +183,6 @@ public class SelectItemListIT {
         assertEquals("Second item is not sorted correctly!", "test", selectItems.get(1).getLabel());
         assertEquals("Second item is not sorted correctly!", "test", selectItems.get(2).getLabel());
 
-        assertThat("First item is not a Workflow type!", selectItems.get(0).getValue(), instanceOf(Workflow.class));
+        assertTrue("First item is not a Workflow type!", selectItems.get(0).getValue() instanceof Workflow);
     }
 }

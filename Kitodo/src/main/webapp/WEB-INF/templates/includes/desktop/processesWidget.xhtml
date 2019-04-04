@@ -51,6 +51,12 @@
                     <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
                     <f:param name="stayOnCurrentPage" value="processList"/>
                 </h:commandLink>
+                <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
+                               rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}">
+                    <h:outputText><i class="fa fa-download"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                    <!-- TODO: add separate message in case it already exists and alert -->
+                </p:commandLink>
                 <h:commandLink action="#{ProcessForm.exportMets}" id="exportMets" title="#{msgs.exportMets}"
                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>

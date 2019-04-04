@@ -14,15 +14,12 @@ package org.kitodo.dataeditor.ruleset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasValue;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -40,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.DatesSimpleMetadataViewInterface;
@@ -54,6 +52,12 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
  * Here, the ruleset management is put through its paces.
  */
 public class RulesetManagementIT {
+
+    private static final String BOOK = "book";
+    private static final String HELLO_WORLD = "Hello World!";
+    private static final String OPT = "opt1";
+    private static final String TEST = "test";
+
     /**
      * English as the only language. This is the default case we use all the
      * time, except for tests that explicitly refer to the language.
@@ -86,48 +90,46 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testAvailabilityOfPresets.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey"));
 
         MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
-        assertThat(booleanMvi.isComplex(), is(false));
-        assertThat(booleanMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(booleanMvi.isComplex());
+        assertTrue(booleanMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
-        assertThat(booleanSmvi.getBooleanDefaultValue(), is(true));
+        assertTrue(booleanSmvi.getBooleanDefaultValue());
 
         MetadataViewInterface dateMvi = mvwviList.get(1).getMetadata().get();
-        assertThat(dateMvi.isComplex(), is(false));
-        assertThat(dateMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(dateMvi.isComplex());
+        assertTrue(dateMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface dateSmvi = (SimpleMetadataViewInterface) dateMvi;
-        assertThat(dateSmvi.getDefaultValue(), is(equalTo("1993-09-01")));
+        assertEquals("1993-09-01", dateSmvi.getDefaultValue());
 
         MetadataViewInterface defaultStringMvi = mvwviList.get(2).getMetadata().get();
-        assertThat(defaultStringMvi.isComplex(), is(false));
-        assertThat(defaultStringMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(defaultStringMvi.isComplex());
+        assertTrue(defaultStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface defaultStringSmvi = (SimpleMetadataViewInterface) defaultStringMvi;
-        assertThat(defaultStringSmvi.getDefaultValue(), is(equalTo("Hello World!")));
+        assertEquals(HELLO_WORLD, defaultStringSmvi.getDefaultValue());
 
         MetadataViewInterface namespaceDefaultAnyURIMvi = mvwviList.get(3).getMetadata().get();
-        assertThat(namespaceDefaultAnyURIMvi.isComplex(), is(false));
-        assertThat(namespaceDefaultAnyURIMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(namespaceDefaultAnyURIMvi.isComplex());
+        assertTrue(namespaceDefaultAnyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceDefaultAnyURISmvi = (SimpleMetadataViewInterface) namespaceDefaultAnyURIMvi;
-        assertThat(namespaceDefaultAnyURISmvi.getDefaultValue(),
-            is(equalTo("http://test.example/non-existent-namespace/")));
+        assertEquals("http://test.example/non-existent-namespace/", namespaceDefaultAnyURISmvi.getDefaultValue());
 
         MetadataViewInterface namespaceStringMvi = mvwviList.get(4).getMetadata().get();
-        assertThat(namespaceStringMvi.isComplex(), is(false));
-        assertThat(namespaceStringMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(namespaceStringMvi.isComplex());
+        assertTrue(namespaceStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceStringSmvi = (SimpleMetadataViewInterface) namespaceStringMvi;
-        assertThat(namespaceStringSmvi.getDefaultValue(), is(equalTo("http://test.example/non-existent-namespace/")));
+        assertEquals("http://test.example/non-existent-namespace/", namespaceStringSmvi.getDefaultValue());
 
         MetadataViewInterface anyURIMvi = mvwviList.get(5).getMetadata().get();
-        assertThat(anyURIMvi.isComplex(), is(false));
-        assertThat(anyURIMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(anyURIMvi.isComplex());
+        assertTrue(anyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface anyURISmvi = (SimpleMetadataViewInterface) anyURIMvi;
-        assertThat(anyURISmvi.getDefaultValue(),
-            is(equalTo("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program")));
+        assertEquals("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program", anyURISmvi.getDefaultValue());
     }
 
     /**
@@ -138,15 +140,15 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testAvailabilityOfSubkeyViews.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
-            Arrays.asList("contributor"));
+            Collections.singletonList("contributor"));
 
         MetadataViewInterface contributorMvi = mvwviList.get(0).getMetadata().get();
-        assertThat(contributorMvi.getId(), is(equalTo("contributor")));
-        assertThat(contributorMvi.getLabel(), is(equalTo("Contributor ‹person›")));
-        assertThat(contributorMvi.isComplex(), is(true));
-        assertThat(contributorMvi, is(instanceOf(ComplexMetadataViewInterface.class)));
+        assertEquals("contributor", contributorMvi.getId());
+        assertEquals("Contributor ‹person›", contributorMvi.getLabel());
+        assertTrue(contributorMvi.isComplex());
+        assertTrue(contributorMvi instanceof ComplexMetadataViewInterface);
         ComplexMetadataViewInterface contributorCmvi = (ComplexMetadataViewInterface) contributorMvi;
 
         Collection<MetadataViewInterface> mvic = contributorCmvi.getAddableMetadata(Collections.emptyMap(),
@@ -159,8 +161,8 @@ public class RulesetManagementIT {
             }
             MetadataViewInterface mvi = mvici.next();
 
-            assertThat(mvi.isComplex(), is(false));
-            assertThat(mvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+            assertFalse(mvi.isComplex());
+            assertTrue(mvi instanceof SimpleMetadataViewInterface);
             SimpleMetadataViewInterface smvi = (SimpleMetadataViewInterface) mvi;
 
             /*
@@ -169,18 +171,18 @@ public class RulesetManagementIT {
              */
             switch (i) {
                 case 0:
-                    assertThat(smvi.getId(), is(equalTo("givenName")));
-                    assertThat(smvi.getLabel(), is(equalTo("Given name")));
+                    assertEquals("givenName", smvi.getId());
+                    assertEquals("Given name", smvi.getLabel());
                     break;
                 case 1:
-                    assertThat(smvi.getId(), is(equalTo("role")));
-                    assertThat(smvi.getLabel(), is(equalTo("Role")));
+                    assertEquals("role", smvi.getId());
+                    assertEquals("Role", smvi.getLabel());
                     assertThat(smvi.getSelectItems(), hasEntry("aut", "Author"));
                     assertThat(smvi.getSelectItems(), hasEntry("edt", "Editor"));
                     break;
                 case 2:
-                    assertThat(smvi.getId(), is(equalTo("surname")));
-                    assertThat(smvi.getLabel(), is(equalTo("Surname")));
+                    assertEquals("surname", smvi.getId());
+                    assertEquals("Surname", smvi.getLabel());
                     break;
                 default:
                     fail("Too many elements in the view!");
@@ -203,12 +205,11 @@ public class RulesetManagementIT {
         underTest.load(new File("src/test/resources/testCorrectReturnOfOptions.xml"));
 
         // 1. options are sorted as to their labels alphabetically
-
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Collections.emptyList());
 
-        StructuralElementViewInterface seviDe = underTest.getStructuralElementView("book", "",
+        StructuralElementViewInterface seviDe = underTest.getStructuralElementView(BOOK, "",
             LanguageRange.parse("de"));
         List<MetadataViewWithValuesInterface<Void>> mvwviListDe = seviDe
                 .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
@@ -221,7 +222,6 @@ public class RulesetManagementIT {
         // 2. The input elements that have a minimum occurrence greater than
         // zero will appear on the display by themselves, the others may be
         // added.
-
         assertThat(ids(mvwviList), contains("mandatoryMultiLineSingleSelection", "mandatoryOneLineSingleSelection",
             "mandatoryMultipleSelection"));
 
@@ -232,7 +232,6 @@ public class RulesetManagementIT {
             "optionalMultipleSelection"));
 
         // 3. The input types have been calculated correctly
-
         assertThat(
             mvwviList.stream().map(mvwvi -> ((SimpleMetadataViewInterface) mvwvi.getMetadata().get()).getInputType())
                     .collect(Collectors.toList()),
@@ -269,12 +268,12 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testCorrectValidationOfOptions.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
         SimpleMetadataViewInterface smvi = (SimpleMetadataViewInterface) mviColl.iterator().next();
-        assertThat(smvi.isValid("opt1"), is(true));
-        assertThat(smvi.isValid("Opt1"), is(false));
+        assertTrue(smvi.isValid(OPT));
+        assertFalse(smvi.isValid(StringUtils.capitalize(OPT)));
     }
 
     /**
@@ -285,74 +284,71 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testCorrectValidationOfRegularExpressions.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Void>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Arrays.asList("defaultStringKey", "anyURIKey", "booleanKey", "dateKey", "namespaceDefaultAnyURIKey",
                 "namespaceStringKey", "integerKey", "optionsKey"));
 
         MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
-        assertThat(booleanMvi.isComplex(), is(false));
-        assertThat(booleanMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(booleanMvi.isComplex());
+        assertTrue(booleanMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
-        assertThat(booleanSmvi.isValid(booleanSmvi.convertBoolean(true).get()), is(true));
-        assertThat(booleanSmvi.isValid(""), is(false));
-        assertThat(booleanSmvi.isValid("botch"), is(false));
+        assertTrue(booleanSmvi.isValid(booleanSmvi.convertBoolean(true).get()));
+        assertFalse(booleanSmvi.isValid(""));
+        assertFalse(booleanSmvi.isValid("botch"));
 
         MetadataViewInterface dateMvi = mvwviList.get(1).getMetadata().get();
-        assertThat(dateMvi.isComplex(), is(false));
-        assertThat(dateMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(dateMvi.isComplex());
+        assertTrue(dateMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface dateSmvi = (SimpleMetadataViewInterface) dateMvi;
-        assertThat(dateSmvi.isValid(""), is(false));
-        assertThat(dateSmvi.isValid("1803-05-12"), is(false));
-        assertThat(dateSmvi.isValid("1993-09-01"), is(true));
+        assertFalse(dateSmvi.isValid(""));
+        assertFalse(dateSmvi.isValid("1803-05-12"));
+        assertTrue(dateSmvi.isValid("1993-09-01"));
 
         MetadataViewInterface defaultStringMvi = mvwviList.get(2).getMetadata().get();
-        assertThat(defaultStringMvi.isComplex(), is(false));
-        assertThat(defaultStringMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(defaultStringMvi.isComplex());
+        assertTrue(defaultStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface defaultStringSmvi = (SimpleMetadataViewInterface) defaultStringMvi;
-        assertThat(defaultStringSmvi.isValid("Hello World!"), is(false));
-        assertThat(defaultStringSmvi.isValid("1234567X"), is(true));
+        assertFalse(defaultStringSmvi.isValid(HELLO_WORLD));
+        assertTrue(defaultStringSmvi.isValid("1234567X"));
 
         MetadataViewInterface integerMvi = mvwviList.get(3).getMetadata().get();
-        assertThat(integerMvi.isComplex(), is(false));
-        assertThat(integerMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(integerMvi.isComplex());
+        assertTrue(integerMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface integerSmvi = (SimpleMetadataViewInterface) integerMvi;
-        assertThat(integerSmvi.isValid("22"), is(false));
-        assertThat(integerSmvi.isValid("1748"), is(true));
+        assertFalse(integerSmvi.isValid("22"));
+        assertTrue(integerSmvi.isValid("1748"));
 
         MetadataViewInterface namespaceDefaultAnyURIMvi = mvwviList.get(4).getMetadata().get();
-        assertThat(namespaceDefaultAnyURIMvi.isComplex(), is(false));
-        assertThat(namespaceDefaultAnyURIMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(namespaceDefaultAnyURIMvi.isComplex());
+        assertTrue(namespaceDefaultAnyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceDefaultAnyURISmvi = (SimpleMetadataViewInterface) namespaceDefaultAnyURIMvi;
-        assertThat(namespaceDefaultAnyURISmvi
-                .isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"),
-            is(false));
-        assertThat(namespaceDefaultAnyURISmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"),
-            is(true));
+        assertFalse(namespaceDefaultAnyURISmvi
+                .isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"));
+        assertTrue(
+            namespaceDefaultAnyURISmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"));
 
         MetadataViewInterface namespaceStringMvi = mvwviList.get(5).getMetadata().get();
-        assertThat(namespaceStringMvi.isComplex(), is(false));
-        assertThat(namespaceStringMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(namespaceStringMvi.isComplex());
+        assertTrue(namespaceStringMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface namespaceStringSmvi = (SimpleMetadataViewInterface) namespaceStringMvi;
-        assertThat(
-            namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"),
-            is(false));
-        assertThat(namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"),
-            is(true));
+        assertFalse(
+            namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program"));
+        assertTrue(namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/Hello_World_program"));
 
         MetadataViewInterface optionsMvi = mvwviList.get(6).getMetadata().get();
-        assertThat(optionsMvi.isComplex(), is(false));
-        assertThat(optionsMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(optionsMvi.isComplex());
+        assertTrue(optionsMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface optionsSmvi = (SimpleMetadataViewInterface) optionsMvi;
-        assertThat(optionsSmvi.isValid("opt88"), is(false));
-        assertThat(optionsSmvi.isValid("opt2"), is(true));
+        assertFalse(optionsSmvi.isValid("opt88"));
+        assertTrue(optionsSmvi.isValid("opt2"));
 
         MetadataViewInterface anyURIMvi = mvwviList.get(7).getMetadata().get();
-        assertThat(anyURIMvi.isComplex(), is(false));
-        assertThat(anyURIMvi, is(instanceOf(SimpleMetadataViewInterface.class)));
+        assertFalse(anyURIMvi.isComplex());
+        assertTrue(anyURIMvi instanceof SimpleMetadataViewInterface);
         SimpleMetadataViewInterface anyURISmvi = (SimpleMetadataViewInterface) anyURIMvi;
-        assertThat(anyURISmvi.isValid("mailto:e-mail@example.org"), is(false));
-        assertThat(anyURISmvi.isValid("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"), is(true));
+        assertFalse(anyURISmvi.isValid("mailto:e-mail@example.org"));
+        assertTrue(anyURISmvi.isValid("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"));
     }
 
     /**
@@ -364,10 +360,9 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testDisplaySettingsWithAcquisitionStage.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "The acquisition stage", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "The acquisition stage", ENGL);
 
         // always showing
-
         List<MetadataViewWithValuesInterface<Void>> mvwviListAlwaysShowing = sevi
                 .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
         assertThat(
@@ -377,7 +372,6 @@ public class RulesetManagementIT {
                 "alwaysShowingTrueOtherchanges", "alwaysShowingTrueTrue", "multilineTrueOtherchanges"));
 
         // excluded
-
         Map<Object, String> metadataForExcluded = new HashMap<>();
         metadataForExcluded.put("exclude1", "excludedUnchangedTrue");
         metadataForExcluded.put("exclude2", "excludedTrueUnchanged");
@@ -386,50 +380,46 @@ public class RulesetManagementIT {
         metadataForExcluded.put("n#*703=]", "excludedTrueFalse");
         List<MetadataViewWithValuesInterface<Object>> mvwviListExcluded = sevi
                 .getSortedVisibleMetadata(metadataForExcluded, Collections.emptyList());
-        assertThat(mvwviListExcluded.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
+        assertTrue(mvwviListExcluded.stream().filter(mvwvi -> mvwvi.getMetadata().isPresent())
                 .map(mvwvi -> mvwvi.getMetadata().get().getId()).filter(keyId -> keyId.startsWith("excluded"))
-                .collect(Collectors.toList()),
-            contains("excludedTrueFalse"));
+                .collect(Collectors.toList()).contains("excludedTrueFalse"));
         assertThat(
             mvwviListExcluded.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
                     .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()),
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
         Collection<MetadataViewInterface> mviCollExcluded = sevi.getAddableMetadata(metadataForExcluded,
             Collections.emptyList());
-        assertThat(mviCollExcluded.stream().map(mvi -> mvi.getId()).filter(keyId -> keyId.startsWith("excluded"))
-                .collect(Collectors.toList()),
-            contains("excludedTrueFalse"));
+        assertTrue(mviCollExcluded.stream().map(mvi -> mvi.getId()).filter(keyId -> keyId.startsWith("excluded"))
+                .collect(Collectors.toList()).contains("excludedTrueFalse"));
 
         // editable
-
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Arrays.asList("editableUnchangedFalse", "editableFalseUnchanged", "editableFalseOtherchanges",
                 "editableFalseFalse", "editableFalseTrue", "multilineUnchangedTrue", "multilineTrueUnchanged",
                 "multilineTrueOtherchanges", "multilineTrueTrue", "multilineTrueFalse"));
 
         SimpleMetadataViewInterface editableUnchangedFalse = getSmvi(mvwviList, "editableUnchangedFalse");
-        assertThat(editableUnchangedFalse.isEditable(), is(false));
+        assertFalse(editableUnchangedFalse.isEditable());
         SimpleMetadataViewInterface editableFalseUnchanged = getSmvi(mvwviList, "editableFalseUnchanged");
-        assertThat(editableFalseUnchanged.isEditable(), is(false));
-        SimpleMetadataViewInterface editableFalseOtherchanges = getSmvi(mvwviList, "editableFalseOtherchanges");
-        assertThat(editableFalseOtherchanges.isEditable(), is(false));
+        assertFalse(editableFalseUnchanged.isEditable());
+        SimpleMetadataViewInterface editableFalseOtherChanges = getSmvi(mvwviList, "editableFalseOtherchanges");
+        assertFalse(editableFalseOtherChanges.isEditable());
         SimpleMetadataViewInterface editableFalseFalse = getSmvi(mvwviList, "editableFalseFalse");
-        assertThat(editableFalseFalse.isEditable(), is(false));
+        assertFalse(editableFalseFalse.isEditable());
         SimpleMetadataViewInterface editableFalseTrue = getSmvi(mvwviList, "editableFalseTrue");
-        assertThat(editableFalseTrue.isEditable(), is(true));
+        assertTrue(editableFalseTrue.isEditable());
 
         // multi-line
-
         SimpleMetadataViewInterface multilineUnchangedTrue = getSmvi(mvwviList, "multilineUnchangedTrue");
-        assertThat(multilineUnchangedTrue.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, multilineUnchangedTrue.getInputType());
         SimpleMetadataViewInterface multilineTrueUnchanged = getSmvi(mvwviList, "multilineTrueUnchanged");
-        assertThat(multilineTrueUnchanged.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, multilineTrueUnchanged.getInputType());
         SimpleMetadataViewInterface multilineTrueOtherchanges = getSmvi(mvwviList, "multilineTrueOtherchanges");
-        assertThat(multilineTrueOtherchanges.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, multilineTrueOtherchanges.getInputType());
         SimpleMetadataViewInterface multilineTrueTrue = getSmvi(mvwviList, "multilineTrueTrue");
-        assertThat(multilineTrueTrue.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, multilineTrueTrue.getInputType());
         SimpleMetadataViewInterface multilineTrueFalse = getSmvi(mvwviList, "multilineTrueFalse");
-        assertThat(multilineTrueFalse.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, multilineTrueFalse.getInputType());
     }
 
     /**
@@ -440,12 +430,11 @@ public class RulesetManagementIT {
     public void testDisplaySettingsWithoutAcquisitionStage() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testDisplaySettingsWithoutAcquisitionStage.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
         // 1. Without meta-data, and without additional fields being selected,
         // you should see exactly the fields that are always showing, minus
         // those that are excluded (excluded overrules always showing).
-
         List<MetadataViewWithValuesInterface<Void>> mvwviListNoMetadata = sevi
                 .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
         assertThat(ids(mvwviListNoMetadata),
@@ -453,7 +442,6 @@ public class RulesetManagementIT {
 
         // 2. All fields except those that are excluded should be allowed to be
         // added.
-
         Collection<MetadataViewInterface> mviCollNoMetadata = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
         assertThat(ids(mviCollNoMetadata), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline",
@@ -462,20 +450,18 @@ public class RulesetManagementIT {
         // 1a. In the nested meta-data field, the only value that should be
         // visible is the one marked as always showing. The field has to be
         // added first:
-
         List<MetadataViewWithValuesInterface<Void>> mvwviListNestedSettings = sevi
-                .getSortedVisibleMetadata(Collections.emptyMap(), Arrays.asList("testNestedSettings"));
+                .getSortedVisibleMetadata(Collections.emptyMap(), Collections.singletonList("testNestedSettings"));
         ComplexMetadataViewInterface nestedSettings = (ComplexMetadataViewInterface) mvwviListNestedSettings.stream()
                 .filter(mvwvi -> mvwvi.getMetadata().get().getId().equals("testNestedSettings")).findAny().get()
                 .getMetadata().get();
         List<MetadataViewWithValuesInterface<Void>> nestedMvwviList = nestedSettings
                 .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
-        assertThat(nestedMvwviList, hasSize(1));
-        assertThat(nestedMvwviList.get(0).getMetadata().get().getId(), is(equalTo("testAlwaysShowing")));
+        assertEquals(1, nestedMvwviList.size());
+        assertEquals("testAlwaysShowing", nestedMvwviList.get(0).getMetadata().get().getId());
 
         // 2a. Also with nested meta-data, all fields except those that are
         // excluded should be allowed to be added.
-
         Collection<MetadataViewInterface> nestedMviColl = nestedSettings.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
         assertThat(ids(nestedMviColl), containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
@@ -483,7 +469,6 @@ public class RulesetManagementIT {
         // 3. With meta-data, all fields should be visible except those that are
         // excluded. There should be an entry without a key in the list
         // containing the values of the excluded keys.
-
         Map<Object, String> metadata = new HashMap<>();
         metadata.put("udv-q@bC", "testAlwaysShowing");
         metadata.put("/F5Mu=/1", "testEditable");
@@ -507,7 +492,6 @@ public class RulesetManagementIT {
             containsInAnyOrder("exclude1", "exclude2", "exclude3", "exclude4"));
 
         // 3a. Also with nested meta-data, that should work that way.
-
         Map<Object, String> nestedMetadata = new HashMap<>();
         nestedMetadata.put("udv-q@bC", "testAlwaysShowing");
         nestedMetadata.put("/F5Mu=/1", "testEditable");
@@ -518,47 +502,44 @@ public class RulesetManagementIT {
                 .getSortedVisibleMetadata(nestedMetadata, Collections.emptyList());
         assertThat(ids(nestedMvwviListWithMetadata),
             containsInAnyOrder("testAlwaysShowing", "testEditable", "testMultiline"));
-        assertThat(nestedMvwviListWithMetadata.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
-                .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()),
-            contains("excluded"));
+        assertTrue(nestedMvwviListWithMetadata.stream().filter(mvwvi -> !mvwvi.getMetadata().isPresent())
+                .flatMap(mvwvi -> mvwvi.getValues().stream()).collect(Collectors.toList()).contains("excluded"));
 
         // 4. The property ‘multiline’ should manipulate the input type
-
         SimpleMetadataViewInterface testAlwaysShowing = getSmvi(mvwviListWithMetadata, "testAlwaysShowing");
-        assertThat(testAlwaysShowing.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, testAlwaysShowing.getInputType());
         SimpleMetadataViewInterface testEditable = getSmvi(mvwviListWithMetadata, "testEditable");
-        assertThat(testEditable.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, testEditable.getInputType());
         SimpleMetadataViewInterface testMultiline = getSmvi(mvwviListWithMetadata, "testMultiline");
-        assertThat(testMultiline.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, testMultiline.getInputType());
         SimpleMetadataViewInterface testAlwaysShowingEditable = getSmvi(mvwviListWithMetadata,
             "testAlwaysShowingEditable");
-        assertThat(testAlwaysShowingEditable.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, testAlwaysShowingEditable.getInputType());
         SimpleMetadataViewInterface testAlwaysShowingMultiline = getSmvi(mvwviListWithMetadata,
             "testAlwaysShowingMultiline");
-        assertThat(testAlwaysShowingMultiline.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, testAlwaysShowingMultiline.getInputType());
         SimpleMetadataViewInterface testEditableMultiline = getSmvi(mvwviListWithMetadata, "testEditableMultiline");
-        assertThat(testEditableMultiline.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, testEditableMultiline.getInputType());
 
         SimpleMetadataViewInterface nestedTestAlwaysShowing = getSmvi(nestedMvwviListWithMetadata, "testAlwaysShowing");
-        assertThat(nestedTestAlwaysShowing.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, nestedTestAlwaysShowing.getInputType());
         SimpleMetadataViewInterface nestedTestEditable = getSmvi(nestedMvwviListWithMetadata, "testEditable");
-        assertThat(nestedTestEditable.getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, nestedTestEditable.getInputType());
         SimpleMetadataViewInterface nestedTestMultiline = getSmvi(nestedMvwviListWithMetadata, "testMultiline");
-        assertThat(nestedTestMultiline.getInputType(), is(equalTo(InputType.MULTI_LINE_TEXT)));
+        assertEquals(InputType.MULTI_LINE_TEXT, nestedTestMultiline.getInputType());
 
         // 5. The property ‘editable’ should be reflected in the value of
         // isEditable()
+        assertTrue(testAlwaysShowing.isEditable());
+        assertFalse(testEditable.isEditable());
+        assertTrue(testMultiline.isEditable());
+        assertFalse(testAlwaysShowingEditable.isEditable());
+        assertTrue(testAlwaysShowingMultiline.isEditable());
+        assertFalse(testEditableMultiline.isEditable());
 
-        assertThat(testAlwaysShowing.isEditable(), is(true));
-        assertThat(testEditable.isEditable(), is(false));
-        assertThat(testMultiline.isEditable(), is(true));
-        assertThat(testAlwaysShowingEditable.isEditable(), is(false));
-        assertThat(testAlwaysShowingMultiline.isEditable(), is(true));
-        assertThat(testEditableMultiline.isEditable(), is(false));
-
-        assertThat(nestedTestAlwaysShowing.isEditable(), is(true));
-        assertThat(nestedTestEditable.isEditable(), is(false));
-        assertThat(nestedTestMultiline.isEditable(), is(true));
+        assertTrue(nestedTestAlwaysShowing.isEditable());
+        assertFalse(nestedTestEditable.isEditable());
+        assertTrue(nestedTestMultiline.isEditable());
     }
 
     /**
@@ -570,59 +551,56 @@ public class RulesetManagementIT {
     public void testDivisionsAreCorrectlyTranslated() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testDivisionsAreCorrectlyTranslated.xml"));
-        assertThat(underTest.getAcquisitionStages(), is(empty()));
+        assertTrue(underTest.getAcquisitionStages().isEmpty());
 
         // Here we test the translation, whether the expected language always
         // comes.
-
         Map<String, String> divisionsNoLanguage = underTest.getStructuralElements(Collections.emptyList());
-        assertThat(divisionsNoLanguage.entrySet(), hasSize(1));
-        assertThat(divisionsNoLanguage, hasKey("book"));
-        assertThat(divisionsNoLanguage, hasValue("Book"));
+        assertEquals(1, divisionsNoLanguage.entrySet().size());
+        assertTrue(divisionsNoLanguage.containsKey(BOOK));
+        assertTrue(divisionsNoLanguage.containsValue(StringUtils.capitalize(BOOK)));
 
         Map<String, String> divisionsDe = underTest
                 .getStructuralElements(LanguageRange.parse("de;q=1.0,cn;q=0.75,fr;q=0.5,ru;q=0.25"));
-        assertThat(divisionsDe.entrySet(), hasSize(1));
-        assertThat(divisionsDe, hasKey("book"));
-        assertThat(divisionsDe, hasValue("Buch"));
+        assertEquals(1, divisionsDe.entrySet().size());
+        assertTrue(divisionsDe.containsKey(BOOK));
+        assertTrue(divisionsDe.containsValue("Buch"));
 
         Map<String, String> divisionsDeDe = underTest
                 .getStructuralElements(LanguageRange.parse("de-DE;q=1.0,cn;q=0.75,fr;q=0.5,ru;q=0.25"));
-        assertThat(divisionsDeDe.entrySet(), hasSize(1));
-        assertThat(divisionsDeDe, hasKey("book"));
-        assertThat(divisionsDeDe, hasValue("Buch"));
+        assertEquals(1, divisionsDeDe.entrySet().size());
+        assertTrue(divisionsDeDe.containsKey(BOOK));
+        assertTrue(divisionsDeDe.containsValue("Buch"));
 
         Map<String, String> divisionsEn = underTest
                 .getStructuralElements(LanguageRange.parse("en;q=1.0,fr;q=0.75,de;q=0.5,cn;q=0.25"));
-        assertThat(divisionsEn.entrySet(), hasSize(1));
-        assertThat(divisionsEn, hasKey("book"));
-        assertThat(divisionsEn, hasValue("Book"));
+        assertEquals(1, divisionsEn.entrySet().size());
+        assertTrue(divisionsEn.containsKey(BOOK));
+        assertTrue(divisionsEn.containsValue(StringUtils.capitalize(BOOK)));
 
         Map<String, String> divisionsEnUs = underTest
                 .getStructuralElements(LanguageRange.parse("en-US;q=1.0,de;q=0.667,fr;q=0.333"));
-        assertThat(divisionsEnUs.entrySet(), hasSize(1));
-        assertThat(divisionsEnUs, hasKey("book"));
-        assertThat(divisionsEnUs, hasValue("Book"));
+        assertEquals(1, divisionsEnUs.entrySet().size());
+        assertTrue(divisionsEnUs.containsKey(BOOK));
+        assertTrue(divisionsEnUs.containsValue(StringUtils.capitalize(BOOK)));
 
         Map<String, String> divisionsCnRu = underTest.getStructuralElements(LanguageRange.parse("cn;q=1.0,ru;q=0.5"));
-        assertThat(divisionsCnRu.entrySet(), hasSize(1));
-        assertThat(divisionsCnRu, hasKey("book"));
-        assertThat(divisionsCnRu, hasValue("Book"));
+        assertEquals(1, divisionsCnRu.entrySet().size());
+        assertTrue(divisionsCnRu.containsKey(BOOK));
+        assertTrue(divisionsCnRu.containsValue(StringUtils.capitalize(BOOK)));
 
         // Now a first view on a book
-
-        StructuralElementViewInterface view = underTest.getStructuralElementView("book", "", ENGL);
-        assertThat(view.getAllowedSubstructuralElements().entrySet(), hasSize(1));
-        assertThat(view.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()), hasSize(5));
-        assertThat(view.isComplex(), is(true));
-        assertThat(view.isUndefined(), is(false));
+        StructuralElementViewInterface view = underTest.getStructuralElementView(BOOK, "", ENGL);
+        assertEquals(1, view.getAllowedSubstructuralElements().entrySet().size());
+        assertEquals(5, view.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertTrue(view.isComplex());
+        assertFalse(view.isUndefined());
 
         // Now a nonsense view
-
         StructuralElementViewInterface nonsenseView = underTest.getStructuralElementView("bosh", "", ENGL);
-        assertThat(nonsenseView.getAllowedSubstructuralElements().entrySet(), hasSize(1));
-        assertThat(nonsenseView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()), hasSize(5));
-        assertThat(nonsenseView.isUndefined(), is(true));
+        assertEquals(1, nonsenseView.getAllowedSubstructuralElements().entrySet().size());
+        assertEquals(5, nonsenseView.getAddableMetadata(Collections.emptyMap(), Collections.emptyList()).size());
+        assertTrue(nonsenseView.isUndefined());
     }
 
     /**
@@ -647,25 +625,24 @@ public class RulesetManagementIT {
                 "Month’s issues ‹newspaper›—limited test", "Day’s issues ‹newspaper›—limited test"));
 
         // It should always come the right children:
-
         StructuralElementViewInterface newspaperSevi = underTest.getStructuralElementView("newspaper", "", ENGL);
         Map<String, String> newspaperAse = newspaperSevi.getAllowedSubstructuralElements();
-        assertThat(newspaperAse.entrySet(), hasSize(1));
+        assertEquals(1, newspaperAse.entrySet().size());
         assertThat(newspaperAse, hasEntry("newspaperYear", "Year’s issues ‹newspaper›"));
 
         StructuralElementViewInterface yearSevi = underTest.getStructuralElementView("newspaperYear", "", ENGL);
         Map<String, String> yearAse = yearSevi.getAllowedSubstructuralElements();
-        assertThat(yearAse.entrySet(), hasSize(1));
+        assertEquals(1, yearAse.entrySet().size());
         assertThat(yearAse, hasEntry("newspaperMonth", "Month’s issues ‹newspaper›"));
 
         StructuralElementViewInterface monthSevi = underTest.getStructuralElementView("newspaperMonth", "", ENGL);
         Map<String, String> monthAse = monthSevi.getAllowedSubstructuralElements();
-        assertThat(monthAse.entrySet(), hasSize(1));
+        assertEquals(1, monthAse.entrySet().size());
         assertThat(monthAse, hasEntry("newspaperDay", "Day’s issues ‹newspaper›"));
 
         StructuralElementViewInterface daySevi = underTest.getStructuralElementView("newspaperDay", "", ENGL);
         Map<String, String> dayAse = daySevi.getAllowedSubstructuralElements();
-        assertThat(dayAse.entrySet(), hasSize(3));
+        assertEquals(3, dayAse.entrySet().size());
         assertThat(dayAse, hasEntry("newspaper", "Newspaper ‹complete edition›"));
         assertThat(dayAse, hasEntry("newspaperLimitedTest", "Newspaper ‹complete edition›—limited test"));
         assertThat(dayAse, hasEntry("newspaperIssue", "Issue ‹newspaper›"));
@@ -673,7 +650,7 @@ public class RulesetManagementIT {
         StructuralElementViewInterface newspaperLimitedTestSevi = underTest
                 .getStructuralElementView("newspaperDayLimitedTest", "", ENGL);
         Map<String, String> newspaperLimitedTestAse = newspaperLimitedTestSevi.getAllowedSubstructuralElements();
-        assertThat(newspaperLimitedTestAse.entrySet(), hasSize(1));
+        assertEquals(1, newspaperLimitedTestAse.entrySet().size());
         assertThat(newspaperLimitedTestAse, hasEntry("newspaperIssue", "Issue ‹newspaper›"));
     }
 
@@ -692,21 +669,21 @@ public class RulesetManagementIT {
         StructuralElementViewInterface yearSevi = underTest.getStructuralElementView("playtimeYear", "", ENGL);
         assertThat(yearSevi.getDatesSimpleMetadata(), is(not(Optional.empty())));
         DatesSimpleMetadataViewInterface yearDsmvi = yearSevi.getDatesSimpleMetadata().get();
-        assertThat(yearDsmvi.getId(), is(equalTo("ORDERLABEL")));
-        assertThat(yearDsmvi.getScheme(), is(equalTo("yyyy/yyyy")));
-        assertThat(yearDsmvi.getYearBegin(), is(equalTo(MonthDay.of(Month.AUGUST, 1))));
+        assertEquals("ORDERLABEL", yearDsmvi.getId());
+        assertEquals("yyyy/yyyy", yearDsmvi.getScheme());
+        assertEquals(MonthDay.of(Month.AUGUST, 1), yearDsmvi.getYearBegin());
 
         StructuralElementViewInterface monthSevi = underTest.getStructuralElementView("playtimeMonth", "", ENGL);
         assertThat(monthSevi.getDatesSimpleMetadata(), is(not(Optional.empty())));
         DatesSimpleMetadataViewInterface monthDsmvi = monthSevi.getDatesSimpleMetadata().get();
-        assertThat(monthDsmvi.getId(), is(equalTo("ORDERLABEL")));
-        assertThat(monthDsmvi.getScheme(), is(equalTo("yyyy-MM")));
+        assertEquals("ORDERLABEL", monthDsmvi.getId());
+        assertEquals("yyyy-MM", monthDsmvi.getScheme());
 
         StructuralElementViewInterface daySevi = underTest.getStructuralElementView("playtimeDay", "", ENGL);
         assertThat(daySevi.getDatesSimpleMetadata(), is(not(Optional.empty())));
         DatesSimpleMetadataViewInterface dayDsmvi = daySevi.getDatesSimpleMetadata().get();
-        assertThat(dayDsmvi.getId(), is(equalTo("ORDERLABEL")));
-        assertThat(dayDsmvi.getScheme(), is(equalTo("yyyy-MM-dd")));
+        assertEquals("ORDERLABEL", dayDsmvi.getId());
+        assertEquals("yyyy-MM-dd", dayDsmvi.getScheme());
     }
 
     /**
@@ -720,7 +697,7 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testFieldsWithMinOccursGreaterZeroAreAlwaysShown.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Collections.emptyList());
 
@@ -735,32 +712,32 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testKeysReturnTheSpecifiedDomain.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         Map<Object, String> metadata = new HashMap<>();
         metadata.put("....", "unspecifiedKey");
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(metadata, Arrays.asList(
             "description", "digitalProvenance", "noDomainSpecified", "rights", "source", "technical", "metsDiv"));
 
         SimpleMetadataViewInterface description = getSmvi(mvwviList, "description");
-        assertThat(description.getDomain().get(), is(equalTo(Domain.DESCRIPTION)));
+        assertEquals(Domain.DESCRIPTION, description.getDomain().get());
 
         SimpleMetadataViewInterface digitalProvenance = getSmvi(mvwviList, "digitalProvenance");
-        assertThat(digitalProvenance.getDomain().get(), is(equalTo(Domain.DIGITAL_PROVENANCE)));
+        assertEquals(Domain.DIGITAL_PROVENANCE, digitalProvenance.getDomain().get());
 
         SimpleMetadataViewInterface metsDiv = getSmvi(mvwviList, "metsDiv");
-        assertThat(metsDiv.getDomain().get(), is(equalTo(Domain.METS_DIV)));
+        assertEquals(Domain.METS_DIV, metsDiv.getDomain().get());
 
         SimpleMetadataViewInterface noDomainSpecified = getSmvi(mvwviList, "noDomainSpecified");
         assertThat(noDomainSpecified.getDomain(), is(Optional.empty()));
 
         SimpleMetadataViewInterface rights = getSmvi(mvwviList, "rights");
-        assertThat(rights.getDomain().get(), is(equalTo(Domain.RIGHTS)));
+        assertEquals(Domain.RIGHTS, rights.getDomain().get());
 
         SimpleMetadataViewInterface source = getSmvi(mvwviList, "source");
-        assertThat(source.getDomain().get(), is(equalTo(Domain.SOURCE)));
+        assertEquals(Domain.SOURCE, source.getDomain().get());
 
         SimpleMetadataViewInterface technical = getSmvi(mvwviList, "technical");
-        assertThat(technical.getDomain().get(), is(equalTo(Domain.TECHNICAL)));
+        assertEquals(Domain.TECHNICAL, technical.getDomain().get());
 
         SimpleMetadataViewInterface unspecifiedKey = getSmvi(mvwviList, "unspecifiedKey");
         assertThat(unspecifiedKey.getDomain(), is(Optional.empty()));
@@ -775,9 +752,9 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testRulesAreCorrectlyMerged.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
-            Arrays.asList("personContributor"));
+            Collections.singletonList("personContributor"));
         ComplexMetadataViewInterface personContributor = getCmvi(mvwviList, "personContributor");
         List<MetadataViewWithValuesInterface<Object>> visible = personContributor
                 .getSortedVisibleMetadata(Collections.emptyMap(), Collections.emptyList());
@@ -793,10 +770,10 @@ public class RulesetManagementIT {
     public void testRulesRemoveKeysWithZeroMaxOccurs() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testRulesRemoveKeysWithZeroMaxOccurs.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
-        assertThat(ids(mviColl), contains("keep"));
+        assertTrue(ids(mviColl).contains("keep"));
     }
 
     /**
@@ -807,17 +784,17 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testTheDisplayModeIsSetUsingTheCodomain.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Arrays.asList("defaultString", "anyURI", "boolean", "date", "integer", "namespace", "namespaceString"));
 
-        assertThat(getSmvi(mvwviList, "defaultString").getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
-        assertThat(getSmvi(mvwviList, "anyURI").getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
-        assertThat(getSmvi(mvwviList, "boolean").getInputType(), is(equalTo(InputType.BOOLEAN)));
-        assertThat(getSmvi(mvwviList, "date").getInputType(), is(equalTo(InputType.DATE)));
-        assertThat(getSmvi(mvwviList, "integer").getInputType(), is(equalTo(InputType.INTEGER)));
-        assertThat(getSmvi(mvwviList, "namespace").getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
-        assertThat(getSmvi(mvwviList, "namespaceString").getInputType(), is(equalTo(InputType.ONE_LINE_TEXT)));
+        assertEquals(InputType.ONE_LINE_TEXT, getSmvi(mvwviList, "defaultString").getInputType());
+        assertEquals(InputType.ONE_LINE_TEXT, getSmvi(mvwviList, "anyURI").getInputType());
+        assertEquals(InputType.BOOLEAN, getSmvi(mvwviList, "boolean").getInputType());
+        assertEquals(InputType.DATE, getSmvi(mvwviList, "date").getInputType());
+        assertEquals(InputType.INTEGER, getSmvi(mvwviList, "integer").getInputType());
+        assertEquals(InputType.ONE_LINE_TEXT, getSmvi(mvwviList, "namespace").getInputType());
+        assertEquals(InputType.ONE_LINE_TEXT, getSmvi(mvwviList, "namespaceString").getInputType());
     }
 
     /**
@@ -828,8 +805,8 @@ public class RulesetManagementIT {
     public void testUnspecifiedForbiddenRulesRestrictDivisions() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictDivisions.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
-        assertThat(sevi.getAllowedSubstructuralElements().keySet(), contains("chapter"));
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
+        assertTrue(sevi.getAllowedSubstructuralElements().keySet().contains("chapter"));
     }
 
     /**
@@ -840,10 +817,10 @@ public class RulesetManagementIT {
     public void testUnspecifiedForbiddenRulesRestrictKeys() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictKeys.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         Collection<MetadataViewInterface> mviColl = sevi.getAddableMetadata(Collections.emptyMap(),
             Collections.emptyList());
-        assertThat(ids(mviColl), contains("allowed"));
+        assertTrue(ids(mviColl).contains("allowed"));
     }
 
     /**
@@ -854,12 +831,12 @@ public class RulesetManagementIT {
     public void testUnspecifiedForbiddenRulesRestrictOptions() throws IOException {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictOptions.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
-            Arrays.asList("test"));
-        SimpleMetadataViewInterface test = getSmvi(mvwviList, "test");
-        assertThat(test.getSelectItems().keySet(), contains("opt1", "opt3", "opt5", "opt7"));
+            Collections.singletonList(TEST));
+        SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
+        assertThat(test.getSelectItems().keySet(), contains(OPT, "opt3", "opt5", "opt7"));
 
     }
 
@@ -872,19 +849,19 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(
             new File("src/test/resources/testUnspecifiedForbiddenRulesRestrictOptionsAlsoInTheValidation.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
 
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
-            Arrays.asList("test"));
-        SimpleMetadataViewInterface test = getSmvi(mvwviList, "test");
-        assertThat(test.isValid("opt1"), is(true));
-        assertThat(test.isValid("opt2"), is(false));
-        assertThat(test.isValid("opt3"), is(true));
-        assertThat(test.isValid("opt4"), is(false));
-        assertThat(test.isValid("opt5"), is(true));
-        assertThat(test.isValid("opt6"), is(false));
-        assertThat(test.isValid("opt7"), is(true));
-        assertThat(test.isValid("mischief"), is(false));
+            Collections.singletonList(TEST));
+        SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
+        assertTrue(test.isValid(OPT));
+        assertFalse(test.isValid("opt2"));
+        assertTrue(test.isValid("opt3"));
+        assertFalse(test.isValid("opt4"));
+        assertTrue(test.isValid("opt5"));
+        assertFalse(test.isValid("opt6"));
+        assertTrue(test.isValid("opt7"));
+        assertFalse(test.isValid("mischief"));
     }
 
     /**
@@ -903,7 +880,7 @@ public class RulesetManagementIT {
             "phonographicRecord", "cassette", "cd", "gramophoneRecord", "pianoRoll",
 
             // the rest in alphabetical order by its label
-            "article", "book", "box", "chalcography", "colorChart", "dvd", "frontCover", "film", "multiVolume",
+            "article", BOOK, "box", "chalcography", "colorChart", "dvd", "frontCover", "film", "multiVolume",
             "serial", "side", "videoTape", "wireRecording"));
     }
 
@@ -932,11 +909,11 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(
             new File("src/test/resources/testUnspecifiedUnrestrictedRulesSortOptionsWithoutRestrictingThem.xml"));
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
-            Arrays.asList("test"));
-        SimpleMetadataViewInterface test = getSmvi(mvwviList, "test");
-        assertThat(test.getSelectItems().keySet(), contains("opt4", "opt7", "opt1", "opt2", "opt3", "opt5", "opt6"));
+            Collections.singletonList(TEST));
+        SimpleMetadataViewInterface test = getSmvi(mvwviList, TEST);
+        assertThat(test.getSelectItems().keySet(), contains("opt4", "opt7", OPT, "opt2", "opt3", "opt5", "opt6"));
     }
 
     /**
@@ -947,62 +924,62 @@ public class RulesetManagementIT {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testValidationByCodomain.xml"));
 
-        StructuralElementViewInterface sevi = underTest.getStructuralElementView("book", "", ENGL);
+        StructuralElementViewInterface sevi = underTest.getStructuralElementView(BOOK, "", ENGL);
         List<MetadataViewWithValuesInterface<Object>> mvwviList = sevi.getSortedVisibleMetadata(Collections.emptyMap(),
             Arrays.asList("default", "defaultOpt", "anyUri", "boolean", "date", "integer", "namespaceDefault",
                 "namespaceString", "namespaceDefaultOpt", "namespaceStringOpt", "namespaceDefaultExternal",
                 "namespaceStringExternal"));
 
         SimpleMetadataViewInterface defaultMv = getSmvi(mvwviList, "default");
-        assertThat(defaultMv.isValid("Hello World!"), is(true));
+        assertTrue(defaultMv.isValid(HELLO_WORLD));
 
         SimpleMetadataViewInterface defaultOpt = getSmvi(mvwviList, "defaultOpt");
-        assertThat(defaultOpt.isValid("val1"), is(true));
-        assertThat(defaultOpt.isValid("val9"), is(false));
+        assertTrue(defaultOpt.isValid("val1"));
+        assertFalse(defaultOpt.isValid("val9"));
 
         SimpleMetadataViewInterface anyUri = getSmvi(mvwviList, "anyUri");
-        assertThat(anyUri.isValid("https://www.kitodo.org/software/kitodoproduction/"), is(true));
-        assertThat(anyUri.isValid("mailto:contact@kitodo.org"), is(true));
-        assertThat(anyUri.isValid("urn:nbn:de-9999-12345678X"), is(true));
-        assertThat(anyUri.isValid("Hello World!"), is(false));
+        assertTrue(anyUri.isValid("https://www.kitodo.org/software/kitodoproduction/"));
+        assertTrue(anyUri.isValid("mailto:contact@kitodo.org"));
+        assertTrue(anyUri.isValid("urn:nbn:de-9999-12345678X"));
+        assertFalse(anyUri.isValid(HELLO_WORLD));
 
         SimpleMetadataViewInterface booleanMv = getSmvi(mvwviList, "boolean");
-        assertThat(booleanMv.isValid("on"), is(true));
-        assertThat(booleanMv.isValid("Hello World!"), is(false));
+        assertTrue(booleanMv.isValid("on"));
+        assertFalse(booleanMv.isValid(HELLO_WORLD));
 
         SimpleMetadataViewInterface date = getSmvi(mvwviList, "date");
-        assertThat(date.isValid("1492-10-12"), is(true));
-        assertThat(date.isValid("1900-02-29"), is(false));
+        assertTrue(date.isValid("1492-10-12"));
+        assertFalse(date.isValid("1900-02-29"));
 
         SimpleMetadataViewInterface integer = getSmvi(mvwviList, "integer");
-        assertThat(integer.isValid("1234567"), is(true));
-        assertThat(integer.isValid("1 + 1i"), is(false));
+        assertTrue(integer.isValid("1234567"));
+        assertFalse(integer.isValid("1 + 1i"));
 
         SimpleMetadataViewInterface namespaceDefault = getSmvi(mvwviList, "namespaceDefault");
-        assertThat(namespaceDefault.isValid("http://test.example/testValidation/alice"), is(true));
-        assertThat(namespaceDefault.isValid("http://test.example/testValidation#bob"), is(false));
-        assertThat(namespaceDefault.isValid("https://www.wdrmaus.de/"), is(false));
+        assertTrue(namespaceDefault.isValid("http://test.example/testValidation/alice"));
+        assertFalse(namespaceDefault.isValid("http://test.example/testValidation#bob"));
+        assertFalse(namespaceDefault.isValid("https://www.wdrmaus.de/"));
 
         SimpleMetadataViewInterface namespaceString = getSmvi(mvwviList, "namespaceString");
-        assertThat(namespaceString.isValid("http://test.example/testValidation/alice"), is(true));
-        assertThat(namespaceString.isValid("{http://test.example/testValidation/}bob"), is(true));
-        assertThat(namespaceString.isValid("https://www.wdrmaus.de/"), is(false));
+        assertTrue(namespaceString.isValid("http://test.example/testValidation/alice"));
+        assertTrue(namespaceString.isValid("{http://test.example/testValidation/}bob"));
+        assertFalse(namespaceString.isValid("https://www.wdrmaus.de/"));
 
         SimpleMetadataViewInterface namespaceOpt = getSmvi(mvwviList, "namespaceDefaultOpt");
-        assertThat(namespaceOpt.isValid("http://test.example/testValidation/value1"), is(true));
-        assertThat(namespaceOpt.isValid("http://test.example/testValidation/value4"), is(false));
+        assertTrue(namespaceOpt.isValid("http://test.example/testValidation/value1"));
+        assertFalse(namespaceOpt.isValid("http://test.example/testValidation/value4"));
 
         SimpleMetadataViewInterface namespaceStrOpt = getSmvi(mvwviList, "namespaceStringOpt");
-        assertThat(namespaceStrOpt.isValid("http://test.example/testValidation/value1"), is(true));
-        assertThat(namespaceStrOpt.isValid("http://test.example/testValidation/value4"), is(false));
+        assertTrue(namespaceStrOpt.isValid("http://test.example/testValidation/value1"));
+        assertFalse(namespaceStrOpt.isValid("http://test.example/testValidation/value4"));
 
         SimpleMetadataViewInterface namespaceExt = getSmvi(mvwviList, "namespaceDefaultExternal");
-        assertThat(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"), is(true));
-        assertThat(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"), is(false));
+        assertTrue(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"));
+        assertFalse(namespaceExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"));
 
         SimpleMetadataViewInterface namespaceStrExt = getSmvi(mvwviList, "namespaceStringExternal");
-        assertThat(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"), is(true));
-        assertThat(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"), is(false));
+        assertTrue(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val1"));
+        assertFalse(namespaceStrExt.isValid("http://test.example/testValidationByCodomainNamespace#val4"));
     }
 
     /**
@@ -1043,14 +1020,13 @@ public class RulesetManagementIT {
      * Returns the IDs of the meta-data keys in a collection of meta-data view
      * interfaces.
      * 
-     * @param metadataViewWithValuesInterfaceList
+     * @param mviColl
      *            collection of meta-data view interfaces to return the IDs of
      *            the meta-data keys from
      * @return the IDs of the meta-data keys
      */
     private List<String> ids(Collection<MetadataViewInterface> mviColl) {
-        return mviColl.stream().map(metadataViewInterface -> metadataViewInterface.getId())
-                .collect(Collectors.toList());
+        return mviColl.stream().map(MetadataViewInterface::getId).collect(Collectors.toList());
     }
 
     /**

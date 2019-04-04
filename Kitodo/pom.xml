@@ -307,12 +307,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
             <version>5.5.1</version>
@@ -512,7 +506,7 @@
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
-            <version>9.0.0.4</version>
+            <version>${saxon.version}</version>
         </dependency>
         <dependency>
             <groupId>org.saxon</groupId>

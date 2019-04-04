@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
@@ -38,6 +40,7 @@ public class SearchResultForm extends BaseForm {
     private List<ProcessDTO> resultList;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
+    private Integer currentTaskStatusFilter;
 
     private String searchResultListPath = MessageFormat.format(REDIRECT_PATH, "searchResult");
 
@@ -73,14 +76,11 @@ public class SearchResultForm extends BaseForm {
 
     /**
      * Filters the searchResults by project.
-     *
-     * @param projectId
-     *            The project id to be filtered by
      */
-    void filterListByProject(Integer projectId) {
-        if (Objects.nonNull(projectId)) {
+    void filterListByProject() {
+        if (Objects.nonNull(currentProjectFilter)) {
             for (ProcessDTO result : new ArrayList<>(filteredList)) {
-                if (!result.getProject().getId().equals(projectId)) {
+                if (!result.getProject().getId().equals(currentProjectFilter)) {
                     filteredList.remove(result);
                 }
             }
@@ -88,16 +88,20 @@ public class SearchResultForm extends BaseForm {
     }
 
     /**
-     * Filters the searchResults by task.
-     *
-     * @param taskTitle
-     *            The title of the task to be filtered by
+     * Filters the searchResults by task and status.
      */
-    void filterListByTask(String taskTitle) {
-        if (Objects.nonNull(taskTitle) && !taskTitle.isEmpty()) {
+    void filterListByTaskAndStatus() {
+        if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
             for (ProcessDTO processDTO : new ArrayList<>(filteredList)) {
-                TaskDTO currentTask = ServiceManager.getProcessService().getCurrentTaskDTO(processDTO);
-                if (Objects.isNull(currentTask) || !currentTask.getTitle().equals(taskTitle)) {
+                boolean remove = true;
+                for (TaskDTO task : processDTO.getTasks()) {
+                    if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
+                            && task.getProcessingStatus().getValue().equals(currentTaskStatusFilter)) {
+                        remove = false;
+                        break;
+                    }
+                }
+                if (remove) {
                     filteredList.remove(processDTO);
                 }
 
@@ -111,8 +115,8 @@ public class SearchResultForm extends BaseForm {
     public void filterList() {
         refreshFilteredList();
 
-        filterListByProject(currentProjectFilter);
-        filterListByTask(currentTaskFilter);
+        filterListByProject();
+        filterListByTaskAndStatus();
     }
 
     /**
@@ -136,13 +140,19 @@ public class SearchResultForm extends BaseForm {
     public Collection<TaskDTO> getTasksForFiltering() {
         HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
         for (ProcessDTO processDTO : resultList) {
-            TaskDTO currentTask = ServiceManager.getProcessService().getCurrentTaskDTO(processDTO);
-            if (Objects.nonNull(currentTask)) {
+            for (TaskDTO currentTask : processDTO.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
-
         }
         return tasksForFiltering.values();
+    }
+
+    /**
+     * Get the values of taskStatus.
+     * @return a list of status
+     */
+    public Collection<TaskStatus> getTaskStatusForFiltering() {
+        return Arrays.asList(TaskStatus.values());
     }
 
     private void refreshFilteredList() {
@@ -167,6 +177,24 @@ public class SearchResultForm extends BaseForm {
      */
     public void setFilteredList(List<ProcessDTO> filteredList) {
         this.filteredList = filteredList;
+    }
+
+    /**
+     * Get currentTaskStatusFilter.
+     *
+     * @return value of currentTaskStatusFilter
+     */
+    public Integer getCurrentTaskStatusFilter() {
+        return currentTaskStatusFilter;
+    }
+
+    /**
+     * Set currentTaskStatusFilter.
+     *
+     * @param currentTaskStatusFilter as java.lang.Integer
+     */
+    public void setCurrentTaskStatusFilter(Integer currentTaskStatusFilter) {
+        this.currentTaskStatusFilter = currentTaskStatusFilter;
     }
 
     /**

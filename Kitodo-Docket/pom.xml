@@ -84,12 +84,12 @@
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
-            <version>9.0.0.4</version>
+            <version>${saxon.version}</version>
         </dependency>
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9-dom</artifactId>
-            <version>9.0.0.4</version>
+            <version>${saxon.version}</version>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
