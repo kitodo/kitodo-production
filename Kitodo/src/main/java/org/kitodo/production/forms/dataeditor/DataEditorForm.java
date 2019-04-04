@@ -356,6 +356,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         structurePanel.deleteSelectedStructure();
     }
 
+    public void deleteMediaUnit() {
+        structurePanel.deleteSelectedMediaUnit();
+    }
+
     @Override
     public String getAcquisitionStage() {
         return acquisitionStage;

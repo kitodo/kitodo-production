@@ -116,6 +116,21 @@ public class StructurePanel implements Serializable {
         show();
     }
 
+    void deleteSelectedMediaUnit() {
+        Optional<MediaUnit> selectedMediaUnit = getSelectedMediaUnit();
+        if (!selectedMediaUnit.isPresent()) {
+            return;
+        }
+        LinkedList<MediaUnit> ancestors = MetadataEditor.getAncestorsOfMediaUnit(selectedMediaUnit.get(), dataEditor.getWorkpiece().getMediaUnit());
+        if (ancestors.isEmpty()) {
+            // The selected element is the root node of the tree.
+            return;
+        }
+        MediaUnit parent = ancestors.getLast();
+        parent.getChildren().remove(selectedMediaUnit.get());
+        show();
+    }
+
     /**
      * Get selected logical TreeNode.
      *

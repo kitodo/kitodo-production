@@ -17,10 +17,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.TreeNode;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.Helper;
@@ -88,7 +90,7 @@ public class MetadataEditor {
      */
     public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, List<View> viewsToAdd) {
-        LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructureRecursive(structure, workpiece.getRootElement(), null);
+        LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
         if (parents.isEmpty()) {
             if ((position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
@@ -201,22 +203,40 @@ public class MetadataEditor {
      */
     public static LinkedList<IncludedStructuralElement> getAncestorsOfStructure(IncludedStructuralElement searched,
                                                                                 IncludedStructuralElement position) {
-        return getAncestorsOfStructureRecursive(searched, position, null);
+        return getAncestorsRecursive(searched, position, null)
+                .stream()
+                .map(treeNode -> (IncludedStructuralElement) treeNode)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private static LinkedList<IncludedStructuralElement> getAncestorsOfStructureRecursive(IncludedStructuralElement searched, IncludedStructuralElement position,
-                                                                                          IncludedStructuralElement parent) {
+    /**
+     * Determines the ancestors of a tree node.
+     *
+     * @param searched
+     *            node whose ancestor nodes are to be found
+     * @param position
+     *            node to be searched recursively
+     * @return the parent nodes (maybe empty)
+     */
+    public static LinkedList<MediaUnit> getAncestorsOfMediaUnit(MediaUnit searched, MediaUnit position) {
+        return getAncestorsRecursive(searched, position, null)
+                .stream()
+                .map(treeNode -> (MediaUnit) treeNode)
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    private static <T> LinkedList<TreeNode<T>> getAncestorsRecursive(TreeNode<T> searched, TreeNode<T> position, TreeNode<T> parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
             }
-            LinkedList<IncludedStructuralElement> result = new LinkedList<>();
+            LinkedList<TreeNode<T>> result = new LinkedList<>();
             result.add(parent);
             return result;
 
         }
-        for (IncludedStructuralElement child : position.getChildren()) {
-            LinkedList<IncludedStructuralElement> maybeFound = getAncestorsOfStructureRecursive(searched, child, position);
+        for (T child : position.getChildren()) {
+            LinkedList<TreeNode<T>> maybeFound = getAncestorsRecursive(searched, (TreeNode<T>)child, position);
             if (!maybeFound.isEmpty()) {
                 if (Objects.nonNull(parent)) {
                     maybeFound.addFirst(parent);

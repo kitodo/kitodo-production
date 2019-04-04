@@ -64,6 +64,15 @@
                          icon="fa fa-plus fa-sm"
                          iconPos="right"
                          value="#{msgs.addMediaUnit}"/>
+        <p:commandButton title="#{msgs.removeMediaUnit}"
+                         action="#{DataEditorForm.deleteMediaUnit()}"
+                         onclick="PF('loadingDialog').show()"
+                         oncomplete="PF('loadingDialog').hide()"
+                         update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"
+                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                         disabled="#{readOnly}"
+                         icon="fa fa-trash fa-sm"
+                         iconPos="right"/>
     </ui:fragment>
 
 </ui:composition>
