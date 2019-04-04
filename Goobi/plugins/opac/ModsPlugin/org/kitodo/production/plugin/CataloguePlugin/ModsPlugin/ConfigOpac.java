@@ -78,13 +78,24 @@ class ConfigOpac {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
         for (int i = 0; i <= countCatalogues; i++) {
+            String scheme = "http";
+            String path = "/sru?version=1.2";
             String title = conf.getString("catalogue(" + i + ")[@title]");
             if (title.equals(inTitle)) {
                 String description = conf.getString("catalogue(" + i + ").config[@description]");
                 String address = conf.getString("catalogue(" + i + ").config[@address]");
                 String opacType = conf.getString("catalogue(" + i + ").config[@opacType]", ModsPlugin.MODS_STRING);
 
-                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType);
+                if (conf.getString("catalogue(" + i + ").config[@scheme]") != null) {
+                    scheme = conf.getString("catalogue(" + i + ").config[@scheme]");
+                }
+
+                if (conf.getString("catalogue(" + i + ").config[@path]") != null) {
+                    path = conf.getString("catalogue(" + i + ").config[@path]");
+                }
+                path = path + "&";
+
+                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType, scheme, path);
                 return coc;
             }
         }

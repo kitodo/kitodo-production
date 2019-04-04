@@ -15,13 +15,17 @@ class ConfigOpacCatalogue {
     private String title = "";
     private String description = "";
     private String address = "";
+    private String scheme = "";
     private int port = 80;
     private String charset = "iso-8859-1";
+    private String path = "";
 
-    ConfigOpacCatalogue(String title, String desciption, String address, String opacType) {
+    ConfigOpacCatalogue(String title, String desciption, String address, String opacType, String scheme, String path) {
         this.title = title;
         this.description = desciption;
         this.address = address;
+        this.scheme = scheme;
+        this.path = path;
     }
 
     String getTitle() {
@@ -42,5 +46,13 @@ class ConfigOpacCatalogue {
 
     String getCharset() {
         return this.charset;
+    }
+
+    String getScheme() {
+        return scheme;
+    }
+
+    String getPath() {
+        return path;
     }
 }

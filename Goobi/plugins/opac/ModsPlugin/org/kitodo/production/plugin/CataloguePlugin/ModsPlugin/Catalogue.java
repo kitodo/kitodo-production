@@ -15,10 +15,14 @@ class Catalogue {
 
     private final String serverAddress;
     private final int port;
+    private final String scheme;
+    private final String path;
 
     Catalogue(ConfigOpacCatalogue coc) {
         this.serverAddress = coc.getAddress();
         this.port = coc.getPort();
+        this.scheme = coc.getScheme();
+        this.path = coc.getPath();
     }
 
     int getPort() {
@@ -27,5 +31,13 @@ class Catalogue {
 
     String getServerAddress() {
         return serverAddress;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getPath() {
+        return path;
     }
 }
