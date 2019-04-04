@@ -178,7 +178,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         if (treeStream(workpiece.getRootElement()).filter(IncludedStructuralElement.class::isInstance)
                 .map(IncludedStructuralElement.class::cast)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
+                .anyMatch(workpiece.getMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -442,9 +442,13 @@ public class MetadataValidation implements MetadataValidationInterface {
      * @return all nodes as stream
      */
     private static Stream<StructuralElement> treeStream(StructuralElement tree) {
-        return Stream.concat(Stream.of(tree),
-            tree instanceof IncludedStructuralElement
-                    ? ((IncludedStructuralElement) tree).getChildren().stream().flatMap(child -> treeStream(child))
-                    : Stream.empty());
+        List<StructuralElement> result = new ArrayList<>();
+        result.add(tree);
+        if (tree instanceof IncludedStructuralElement) {
+            for (StructuralElement child : ((IncludedStructuralElement) tree).getChildren()) {
+                result.addAll(treeStream(child).collect(Collectors.toList()));
+            }
+        }
+        return result.stream();
     }
 }
