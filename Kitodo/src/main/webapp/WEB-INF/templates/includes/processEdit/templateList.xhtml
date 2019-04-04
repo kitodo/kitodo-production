@@ -23,8 +23,7 @@
         <p:column headerText="#{msgs.value}">
             <h:outputText value="#{property.value}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}"
-                  styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn" rendered="#{isEditMode}">
             <p:commandLink id="editTemplateProperty"
                            title="#{msgs.edit}"
                            oncomplete="PF('editTemplateDialog').show()"
@@ -42,7 +41,7 @@
             </p:commandLink>
         </p:column>
     </p:dataTable>
-    <p:commandButton id="addTemplateProperty"
+    <p:commandButton id="addTemplateProperty" rendered="#{isEditMode}"
                      value="#{msgs.addTemplateProperty}"
                      actionListener="#{ProcessForm.createTemplateProperty}"
                      oncomplete="PF('editTemplateDialog').show()"

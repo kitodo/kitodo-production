@@ -21,7 +21,7 @@
                 <p:outputLabel for="title" value="#{msgs.processTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.processTitle}"
                              value="#{ProcessForm.newProcessTitle}"
-                             class="input"
+                             class="input" disabled="#{isViewMode}"
                              required="#{empty param['editForm:saveButtonToggler'] and
                                          empty param['editForm:tabs:addTemplateProperty'] and
                                          empty param['editForm:tabs:addWorkpieceProperty'] and
@@ -33,6 +33,7 @@
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
                 <p:selectOneMenu id="project" value="#{ProcessForm.process.project}" converter="#{projectConverter}"
+                                 disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
@@ -47,6 +48,7 @@
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{ProcessForm.process.ruleset}" converter="#{rulesetConverter}"
+                                 disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
@@ -59,6 +61,7 @@
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
                 <p:selectOneMenu id="docket" value="#{ProcessForm.process.docket}" converter="#{docketConverter}"
+                                 disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and

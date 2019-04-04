@@ -23,6 +23,13 @@
         <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{ProcessForm.process.id ne null and SecurityAccessController.hasAuthorityToEditProcess()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode" value="#{not isEditMode and SecurityAccessController.hasAuthorityToViewProcess()}"/>
+
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
@@ -57,19 +64,34 @@
     <ui:define name="pageTabView">
         <p:tabView id="processTabView" cache="false">
             <p:tab title="#{msgs.processDetails}" id="details">
-                <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
             <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessForm.process.title}">
-                <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
             <p:tab title="#{msgs.templateProperties}" id="processTemplates">
-                <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
             <p:tab title="#{msgs.workpieceProperties}" id="workpieces">
-                <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
             <p:tab title="#{msgs.properties}" id="properties">
-                <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
             </p:tab>
         </p:tabView>
     </ui:define>
