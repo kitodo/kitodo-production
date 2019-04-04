@@ -21,7 +21,7 @@
         <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
         <!-- Logical Tree -->
-        <p:tree id="docStruct"
+        <p:tree id="logicalTree"
                 value="#{DataEditorForm.structurePanel.logicalTree}"
                 disabled="#{readOnly}"
                 var="logicalNode"
@@ -45,6 +45,20 @@
                 <h:outputText value=" ⚠️" rendered="#{logicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
         </p:tree>
+        <p:contextMenu for="logicalTree">
+            <p:menuitem value="#{msgs.addIncludedStructuralElement}"
+                        icon="fa fa-plus fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        onclick="PF('dialogAddDocStrucType').show()"
+                        update="dialogAddDocStrucTypeForm"/>
+            <p:menuitem value="#{msgs.removeIncludedStructuralElement}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        action="#{DataEditorForm.deleteButtonClick()}"
+                        update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+        </p:contextMenu>
 
         <!-- Physical Tree -->
         <p:tree id="physicalTree"
@@ -71,6 +85,19 @@
                 <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>
         </p:tree>
+        <p:contextMenu for="physicalTree">
+            <p:menuitem value="#{msgs.addMediaUnit}"
+                        icon="fa fa-plus fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        onclick="PF('dialogAddMediaUnit').show()"/>
+            <p:menuitem value="#{msgs.removeMediaUnit}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        action="#{DataEditorForm.deleteMediaUnit()}"
+                        update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"/>
+        </p:contextMenu>
 
     </p:panel>
 </ui:composition>

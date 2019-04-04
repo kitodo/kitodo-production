@@ -21,31 +21,12 @@
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
     <ui:fragment id="actionButtons">
-        <p:commandButton id="newButton"
-                         title="#{msgs.newElement}"
-                         onclick="PF('dialogAddDocStrucType').show();"
-                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                         disabled="#{readOnly}"
-                         icon="fa fa-plus fa-sm"
-                         iconPos="right">
-            <p:ajax update="dialogAddDocStrucTypeForm"/>
-        </p:commandButton>
         <p:commandButton id="linkButton"
                          title="#{msgs.link}"
                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                          disabled="#{readOnly}"
                          icon="fa fa-link fa-sm"
                          onclick="PF('dialogEditPages').show();"
-                         iconPos="right"/>
-        <p:commandButton id="deleteButton"
-                         title="#{msgs.delete}"
-                         action="#{DataEditorForm.deleteButtonClick()}"
-                         onclick="PF('loadingDialog').show();"
-                         oncomplete="PF('loadingDialog').hide();"
-                         update="structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
-                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                         disabled="#{readOnly}"
-                         icon="fa fa-trash fa-sm"
                          iconPos="right"/>
         <p:commandButton id="pagingButton"
                          value="#{msgs.pagination}"
@@ -54,24 +35,6 @@
                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
                          disabled="#{readOnly}"
                          icon="fa fa-list-ol fa-sm"
-                         iconPos="right"/>
-
-        <h:outputText value="Physical structure:"/>
-        <p:commandButton title="#{msgs.addMediaUnit}"
-                         onclick="PF('dialogAddMediaUnit').show()"
-                         styleClass="secondary #{readOnly ? 'disable' : ''}"
-                         disable="#{readOnly}"
-                         icon="fa fa-plus fa-sm"
-                         iconPos="right"
-                         value="#{msgs.addMediaUnit}"/>
-        <p:commandButton title="#{msgs.removeMediaUnit}"
-                         action="#{DataEditorForm.deleteMediaUnit()}"
-                         onclick="PF('loadingDialog').show()"
-                         oncomplete="PF('loadingDialog').hide()"
-                         update="structureTreeForm,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,galleryWrapperPanel"
-                         styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                         disabled="#{readOnly}"
-                         icon="fa fa-trash fa-sm"
                          iconPos="right"/>
     </ui:fragment>
 
