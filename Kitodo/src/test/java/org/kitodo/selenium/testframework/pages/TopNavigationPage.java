@@ -17,13 +17,18 @@ import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class TopNavigationPage extends Page<TopNavigationPage> {
+
+    private static final Logger logger = LogManager.getLogger(TopNavigationPage.class);
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -101,10 +106,21 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
         await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
-        hoverWebElement(userMenuButton);
-        hoverWebElement(logoutButton);
+        int attempt = 0;
+        while (attempt < 3) {
+            try {
+                hoverWebElement(dashboardMenuButton);
+                hoverWebElement(userMenuButton);
+                hoverWebElement(logoutButton);
+                clickButtonAndWaitForRedirect(logoutButton, Pages.getLoginPage().getUrl());
+                attempt++;
+                return;
+            } catch (TimeoutException e) {
+                logger.error("Clicking on button with id " + logoutButton.getAttribute("id")
+                        + " was not successful. Retrying now.");
+            }
+        }
 
-        clickButtonAndWaitForRedirect(logoutButton, Pages.getLoginPage().getUrl());
     }
 
     public String getSessionClient() throws InterruptedException {
