@@ -227,8 +227,8 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProjects() {
-        return SelectItemList.getProjects(ServiceManager.getProjectService().getAllForSelectedClient());
+    public List<Project> getProjects() {
+        return ServiceManager.getProjectService().getAllForSelectedClient();
     }
 
     /**
