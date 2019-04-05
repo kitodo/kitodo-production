@@ -109,7 +109,7 @@ public class Ruleset {
      */
     public Optional<Division> getDivision(String id) {
         Optional<Division> optionalDivision = declaration.getDivisions().parallelStream()
-                .filter(division -> id.equals(division.getId())).findFirst();
+                .filter(division -> division.getId().equals(id)).findFirst();
         if (optionalDivision.isPresent()) {
             return optionalDivision;
         } else {
@@ -164,7 +164,7 @@ public class Ruleset {
 
     /**
      * This will allow a key to come out of the ruleset.
-     * 
+     *
      * @param keyId
      *            Identifier of the key
      * @return a key, if any
@@ -175,7 +175,7 @@ public class Ruleset {
 
     /**
      * So you can get the restriction on a key, if there is one.
-     * 
+     *
      * @param keyId
      *            key for which the restriction is to be given
      * @return the restriction on a key, if any
