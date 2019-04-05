@@ -30,10 +30,10 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
+public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {
 
     private static DocketService instance = null;
 
@@ -41,7 +41,8 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      * Constructor with Searcher and Indexer assigning.
      */
     private DocketService() {
-        super(new DocketDAO(), new DocketType(), new Indexer<>(Docket.class), new Searcher(Docket.class));
+        super(new DocketDAO(), new DocketType(), new Indexer<>(Docket.class), new Searcher(Docket.class),
+                DocketTypeField.CLIENT_ID.getKey());
     }
 
     /**

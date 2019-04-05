@@ -102,11 +102,11 @@ public class VariableReplacer {
         // replace paths and files
         try {
             // TIFF writer scripts will have a path without an end slash
-            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
             String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process.getId(),
                 this.process.getTitle(), this.process.getProcessBaseUri()));
             String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
             String origPath = replaceSlashAndSeparator(processService.getImagesOriginDirectory(false, this.process));
+            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
             String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process, false));
             String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
             String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));

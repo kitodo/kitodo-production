@@ -122,11 +122,11 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.ClientSearchService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
-public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
+public class ProcessService extends ClientSearchService<Process, ProcessDTO, ProcessDAO> {
 
     private final MetadataLock msp = new MetadataLock();
     private final FileService fileService = ServiceManager.getFileService();
@@ -154,7 +154,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * Constructor with Searcher and Indexer assigning.
      */
     private ProcessService() {
-        super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class));
+        super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class),
+                ProcessTypeField.PROJECT_CLIENT_ID.getKey());
     }
 
     /**

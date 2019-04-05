@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.process.field.AdditionalField;
@@ -39,6 +40,7 @@ public class ProcessValidatorIT {
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     @AfterClass

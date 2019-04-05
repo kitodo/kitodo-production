@@ -22,6 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -33,6 +35,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -40,6 +43,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -55,12 +59,17 @@ public class ProcessServiceIT {
     private static FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
+    private static final String firstProcess = "First process";
+    private static final String processNotFound = "Process was not found in index!";
+
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
+        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        await().untilTrue(new AtomicBoolean(Objects.nonNull(processService.findByTitle(firstProcess))));
     }
 
     @AfterClass
@@ -74,16 +83,15 @@ public class ProcessServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProcesses() {
-        await().untilAsserted(
-            () -> assertEquals("Processes were not counted correctly!", Long.valueOf(3), processService.count()));
+    public void shouldCountAllProcesses() throws DataException {
+        assertEquals("Processes were not counted correctly!", Long.valueOf(3), processService.count());
     }
 
     @Test
-    public void shouldCountProcessesAccordingToQuery() {
-        QueryBuilder query = matchQuery("title", "First Process").operator(Operator.AND);
-        await().untilAsserted(() -> assertEquals("Process was not found!", processService.count(query),
-            processService.findNumberOfProcessesWithTitle("First Process")));
+    public void shouldCountProcessesAccordingToQuery() throws DataException {
+        QueryBuilder query = matchQuery("title", firstProcess).operator(Operator.AND);
+        assertEquals("Process was not found!", processService.count(query),
+            processService.findNumberOfProcessesWithTitle(firstProcess));
     }
 
     @Test
@@ -95,7 +103,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
-        boolean condition = process.getTitle().equals("First process") && process.getWikiField().equals("field");
+        boolean condition = process.getTitle().equals(firstProcess) && process.getWikiField().equals("field");
         assertTrue("Process was not found in database!", condition);
 
         assertEquals("Process was found but tasks were not inserted!", 5, process.getTasks().size());
@@ -137,106 +145,94 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindById() {
+    public void shouldFindById() throws DataException {
         Integer expected = 1;
-        await().untilAsserted(
-            () -> assertEquals("Process was not found in index!", expected, processService.findById(1).getId()));
+        assertEquals(processNotFound, expected, processService.findById(1).getId());
     }
 
     @Test
-    public void shouldFindByTitle() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
-            processService.findByTitle("First process", true).size()));
+    public void shouldFindByTitle() throws DataException {
+        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess, true).size());
     }
 
     @Test
-    public void shouldFindByMetadata() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
-                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size()));
+    public void shouldFindByMetadata() throws DataException {
+        assertEquals(processNotFound, 1,
+            processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
     @Test
-    public void shouldFindByMetadataContent() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
-                processService.findByMetadataContent("Proc").size()));
+    public void shouldFindByMetadataContent() throws DataException {
+        assertEquals(processNotFound, 1, processService.findByMetadataContent("Proc").size());
     }
 
     @Test
-    public void shouldNotFindByMetadataContent() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 0,
-                processService.findByMetadataContent("Nope").size()));
+    public void shouldNotFindByMetadataContent() throws DataException {
+        assertEquals(processNotFound, 0, processService.findByMetadataContent("Nope").size());
     }
 
     @Test
-    public void shouldNotFindByMetadata() {
-        await().untilAsserted(() -> assertEquals("Process was found in index!", 0,
-                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size()));
+    public void shouldNotFindByMetadata() throws DataException {
+        assertEquals("Process was found in index!", 0,
+            processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
     }
 
     @Test
-    public void shouldFindByBatchId() {
-        await().untilAsserted(
-            () -> assertEquals("Process was not found in index!", 1, processService.findByBatchId(1).size()));
+    public void shouldFindByBatchId() throws DataException {
+        assertEquals(processNotFound, 1, processService.findByBatchId(1).size());
     }
 
     @Test
-    public void shouldNotFindByBatchId() {
-        await().untilAsserted(
-            () -> assertEquals("Some processes were found in index!", 0, processService.findByBatchId(2).size()));
+    public void shouldNotFindByBatchId() throws DataException {
+        assertEquals("Some processes were found in index!", 0, processService.findByBatchId(2).size());
     }
 
     @Test
-    public void shouldFindByBatchTitle() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
-            processService.findByBatchTitle("First batch").size()));
+    public void shouldFindByBatchTitle() throws DataException {
+        assertEquals(processNotFound, 1, processService.findByBatchTitle("First batch").size());
     }
 
     @Test
-    public void shouldNotFindByBatchTitle() {
-        await().untilAsserted(
-            () -> assertEquals("Process was found in index!", 0, processService.findByBatchTitle("Some batch").size()));
+    public void shouldNotFindByBatchTitle() throws DataException {
+        assertEquals("Process was found in index!", 0, processService.findByBatchTitle("Some batch").size());
     }
 
     @Test
-    public void shouldFindByProjectId() {
-        await().untilAsserted(
-            () -> assertEquals("Process was not found in index!", 2, processService.findByProjectId(1, true).size()));
+    public void shouldFindByProjectId() throws DataException {
+        assertEquals(processNotFound, 2, processService.findByProjectId(1, true).size());
     }
 
     @Test
-    public void shouldNotFindByProjectId() {
-        await().untilAsserted(() -> assertEquals("Some processes were found in index!", 0,
-            processService.findByProjectId(3, true).size()));
+    public void shouldNotFindByProjectId() throws DataException {
+        assertEquals("Some processes were found in index!", 0, processService.findByProjectId(3, true).size());
     }
 
     @Test
-    public void shouldFindByProjectTitle() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 2,
-            processService.findByProjectTitle("First project").size()));
+    public void shouldFindByProjectTitle() throws DataException {
+        assertEquals(processNotFound, 2, processService.findByProjectTitle("First project").size());
     }
 
     @Test
-    public void shouldNotFindByProjectTitle() {
-        await().untilAsserted(() -> assertEquals("Process was found in index!", 0,
-            processService.findByProjectTitle("Some project").size()));
+    public void shouldNotFindByProjectTitle() throws DataException {
+        assertEquals("Process was found in index!", 0, processService.findByProjectTitle("Some project").size());
     }
 
     @Test
-    public void shouldFindManyByProperty() {
-        await().untilAsserted(() -> assertEquals("Processes were not found in index!", 2,
-            processService.findByProcessProperty("Korrektur notwendig", null, true).size()));
+    public void shouldFindManyByProperty() throws DataException {
+        assertEquals("Processes were not found in index!", 2,
+            processService.findByProcessProperty("Korrektur notwendig", null, true).size());
     }
 
     @Test
-    public void shouldFindOneByProperty() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
-            processService.findByProcessProperty("Process Property", "first value", true).size()));
+    public void shouldFindOneByProperty() throws DataException {
+        assertEquals(processNotFound, 1,
+            processService.findByProcessProperty("Process Property", "first value", true).size());
     }
 
     @Test
-    public void shouldNotFindByProperty() {
-        await().untilAsserted(() -> assertEquals("Process was not found in index!", 0,
-            processService.findByProcessProperty("firstTemplate title", "first value", true).size()));
+    public void shouldNotFindByProperty() throws DataException {
+        assertEquals(processNotFound, 0,
+            processService.findByProcessProperty("firstTemplate title", "first value", true).size());
     }
 
     @Test
@@ -281,7 +277,7 @@ public class ProcessServiceIT {
         fileService.createDirectory(URI.create("1"), "images");
         URI directory = fileService.createDirectory(URI.create("1/images"), "First__process_tif");
         fileService.createResource(directory, "test.jpg");
-        boolean condition = processService.checkIfTifDirectoryExists(1, "First process", null);
+        boolean condition = processService.checkIfTifDirectoryExists(1, firstProcess, null);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
         condition = processService.checkIfTifDirectoryExists(2, "Second process", null);
@@ -453,7 +449,8 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         Process process = processService.getById(1);
-        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
+        LegacyMetsModsDigitalDocumentHelper digitalDocument = processService.readMetadataFile(process)
+                .getDigitalDocument();
 
         String processTitle = process.getTitle();
         String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
@@ -468,7 +465,8 @@ public class ProcessServiceIT {
 
         Process process = processService.getById(1);
         LegacyMetsModsDigitalDocumentHelper fileFormat = processService.readMetadataAsTemplateFile(process);
-        assertTrue("Read template file has incorrect file format!", fileFormat instanceof LegacyMetsModsDigitalDocumentHelper);
+        assertTrue("Read template file has incorrect file format!",
+            fileFormat instanceof LegacyMetsModsDigitalDocumentHelper);
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
         assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
 
