@@ -17,7 +17,7 @@
 
     <p:panel>
         <p:commandButton
-                value="#{msgs.unlocked}"
+                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
                 icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
                 iconPos="right"
                 styleClass="callto"

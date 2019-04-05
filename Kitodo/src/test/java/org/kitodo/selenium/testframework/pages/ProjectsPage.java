@@ -12,9 +12,11 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.getCellsOfRow;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -176,8 +178,18 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return getTableDataByColumn(projectsTable, 1);
     }
 
+    public List<String> getProjectsActiveStates() {
+        List<WebElement> rowsOfTable = getRowsOfTable(projectsTable);
+        List<String> styleClasses = new ArrayList<>();
+        for (WebElement row : rowsOfTable) {
+            styleClasses.add(getCellsOfRow(row).get(3).findElement(By.tagName("i")).getAttribute("class"));
+        }
+        return styleClasses;
+    }
+
     /**
-     * Returns a list of all template titles which were displayed on workflows page.
+     * Returns a list of all template titles which were displayed on workflows
+     * page.
      *
      * @return list of template titles
      */
@@ -187,7 +199,8 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
-     * Returns a list of all workflow titles which were displayed on workflows page.
+     * Returns a list of all workflow titles which were displayed on workflows
+     * page.
      *
      * @return list of workflow titles
      */
@@ -207,7 +220,8 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
-     * Returns a list of all ruleset titles which were displayed on rulesets page.
+     * Returns a list of all ruleset titles which were displayed on rulesets
+     * page.
      *
      * @return list of ruleset titles
      */
@@ -377,20 +391,16 @@ public class ProjectsPage extends Page<ProjectsPage> {
      * Remove docket from corresponding list on project page.
      */
     public void deleteDocket() throws Exception {
-        deleteElement("Docket",
-                MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
-                TabIndex.DOCKETS.getIndex(),
-                projectsTabView);
+        deleteElement("Docket", MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
+            TabIndex.DOCKETS.getIndex(), projectsTabView);
     }
 
     /**
      * Remove ruleset from corresponding list on project page.
      */
     public void deleteRuleset() throws Exception {
-        deleteElement("Ruleset",
-                MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
-                TabIndex.RULESETS.getIndex(),
-                projectsTabView);
+        deleteElement("Ruleset", MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
+            TabIndex.RULESETS.getIndex(), projectsTabView);
     }
 
     /**
@@ -410,11 +420,13 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return this;
 
     }
+
     /**
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).
      *
-     * @param index of tab to be clicked
+     * @param index
+     *            of tab to be clicked
      */
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, projectsTabView);
