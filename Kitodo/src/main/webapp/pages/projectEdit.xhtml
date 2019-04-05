@@ -75,11 +75,6 @@
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
             </p:tab>
         </p:tabView>
-        <ui:fragment rendered="#{not empty ProjectForm.project.title}">
-            <script>
-                $(document).ready(function() { disableGlobally('#{msgs.locked}');});
-            </script>
-        </ui:fragment>
     </ui:define>
 
     <ui:define name="breadcrumbs">

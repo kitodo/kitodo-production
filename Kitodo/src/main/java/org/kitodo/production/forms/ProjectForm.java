@@ -53,6 +53,7 @@ public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
+    private boolean locked = true;
 
     /**
      * Initialize the list of displayed list columns.
@@ -173,6 +174,7 @@ public class ProjectForm extends BaseForm {
      */
     public String newProject() {
         this.project = new Project();
+        this.locked = false;
         this.project.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return projectEditPath;
     }
@@ -354,6 +356,21 @@ public class ProjectForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return this.stayOnCurrentPage;
+    }
+
+    /**
+     * Switch the lock status of the form
+     */
+    public void switchLock(){
+        locked = !locked;
+    }
+
+    /**
+     * Gets the locked status of the form.
+     * @return te value of locked
+     */
+    public boolean isLocked(){
+        return locked;
     }
 
     /**
