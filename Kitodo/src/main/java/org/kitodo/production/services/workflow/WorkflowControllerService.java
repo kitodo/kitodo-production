@@ -574,7 +574,7 @@ public class WorkflowControllerService {
 
         List<Task> allConcurrentTasks = new ArrayList<>();
         for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus().getValue() < 2
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus().getValue() < 3
                     && !tempTask.getId().equals(task.getId())) {
                 if (blocksOtherTasks) {
                     if (tempTask.isConcurrent()) {
@@ -603,7 +603,9 @@ public class WorkflowControllerService {
      */
     private void activateConcurrentTasks(List<Task> concurrentTasks) throws DataException, IOException {
         for (Task concurrentTask : concurrentTasks) {
-            activateTask(concurrentTask);
+            if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
+                activateTask(concurrentTask);
+            }
         }
     }
 
