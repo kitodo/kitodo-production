@@ -342,7 +342,7 @@ public class EmptyTask extends Thread implements INameableTask {
      *
      * @return whether the stop button shall show
      */
-    public boolean isStopable() {
+    public boolean isStoppable() {
         return getTaskState().equals(TaskState.WORKING);
     }
 
