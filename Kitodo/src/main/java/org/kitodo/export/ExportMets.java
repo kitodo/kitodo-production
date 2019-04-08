@@ -117,7 +117,7 @@ public class ExportMets {
          * to a content repository, therefore no use of file service.
          */
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            ServiceManager.getMetsService().print(workpiece, out);
+            ServiceManager.getMetsService().write(workpiece, out);
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray())) {
                 StreamSource source = new StreamSource(byteArrayInputStream);
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {

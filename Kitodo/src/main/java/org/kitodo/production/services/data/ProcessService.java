@@ -1266,7 +1266,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *
      * @param process
      *            object
-     * @param open
+     * @param keepOpen
      *            whether the locks on the read files shall be kept open. Use
      *            {@code false} in case of a read-only operation; use
      *            {@code true} in case the you want to save back to the same
@@ -1275,7 +1275,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *            manually.
      * @return filer format
      */
-    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process, boolean open) throws IOException {
+    public LegacyMetsModsDigitalDocumentHelper readMetadataFile(Process process, boolean keepOpen) throws IOException {
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
 
         // check the format of the metadata - METS, XStream or RDF
@@ -1292,7 +1292,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
                 throw e;
             }
         } finally {
-            if (!open) {
+            if (!keepOpen) {
                 ff.releaseAllLocks();
             }
         }

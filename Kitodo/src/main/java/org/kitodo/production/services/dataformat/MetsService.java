@@ -81,7 +81,7 @@ public class MetsService {
         }
     }
 
-    public void print(Workpiece workpiece, OutputStream out) throws IOException {
+    public void write(Workpiece workpiece, OutputStream out) throws IOException {
         metsXmlElementAccess.save(workpiece, out);
     }
 
@@ -102,7 +102,7 @@ public class MetsService {
         URI uri = openWorkpiece.getUri();
         try (OutputStream out = ServiceManager.getFileService().write(uri, openWorkpiece.getLockResult())) {
             logger.info("Saving {}", uri.toString());
-            metsXmlElementAccess.save(openWorkpiece.getWorkpiece(), out);
+            write(openWorkpiece.getWorkpiece(), out);
         }
     }
 
@@ -139,7 +139,7 @@ public class MetsService {
             }
             try (OutputStream out = ServiceManager.getFileService().write(uri, lockResult)) {
                 logger.info("Saving {}", uri.toString());
-                metsXmlElementAccess.save(openWorkpiece.getWorkpiece(), out);
+                write(openWorkpiece.getWorkpiece(), out);
             }
             lockResult.close(openWorkpiece.getUri());
             openWorkpiece.setUri(uri);
