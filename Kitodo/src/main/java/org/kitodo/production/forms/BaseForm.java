@@ -36,7 +36,8 @@ public class BaseForm implements Serializable {
     protected LazyDTOModel lazyDTOModel = null;
     private static final String REDIRECT_PARAMETER = "faces-redirect=true";
     private static final String TEMPLATE_ROOT = "/pages/";
-    private int activeTabId = 0;
+    private int activeTabIndex = 0;
+    private int editActiveTabIndex = 0;
     private boolean saveDisabled = true;
 
     // error messages
@@ -88,8 +89,8 @@ public class BaseForm implements Serializable {
      * Set overlay for return null.
      * 
      * @param stayOnCurrentPage
-     *            overlay for return null which ensures staying on the same
-     *            page where it was called
+     *            overlay for return null which ensures staying on the same page
+     *            where it was called
      */
     public void setStayOnCurrentPage(String stayOnCurrentPage) {
         this.stayOnCurrentPage = stayOnCurrentPage;
@@ -148,7 +149,7 @@ public class BaseForm implements Serializable {
      * @return index of active tab
      */
     public int getActiveTabIndex() {
-        return activeTabId;
+        return activeTabIndex;
     }
 
     /**
@@ -158,7 +159,26 @@ public class BaseForm implements Serializable {
      *            index of active tab
      */
     public void setActiveTabIndex(int id) {
-        this.activeTabId = id;
+        this.activeTabIndex = id;
+    }
+
+    /**
+     * Get index of active tab for edit pages.
+     *
+     * @return index of active tab for edit pages
+     */
+    public int getEditActiveTabIndex() {
+        return editActiveTabIndex;
+    }
+
+    /**
+     * Set index of active tab for edit pages.
+     *
+     * @param editActiveTabIndex
+     *            index of active tab for edit pages as int
+     */
+    public void setEditActiveTabIndex(int editActiveTabIndex) {
+        this.editActiveTabIndex = editActiveTabIndex;
     }
 
     /**
@@ -170,6 +190,17 @@ public class BaseForm implements Serializable {
      */
     public void onTabChange(TabChangeEvent event) {
         setActiveTabIndex(event.getComponent().getChildren().indexOf(event.getTab()));
+    }
+
+    /**
+     * Updates the active tab index whenever the TabChangeEvent is fired.
+     *
+     * @param event
+     *            TabChangeEvent is fired when the user changes the tab in the
+     *            current tab view
+     */
+    public void onEditTabChange(TabChangeEvent event) {
+        setEditActiveTabIndex(event.getComponent().getChildren().indexOf(event.getTab()));
     }
 
     /**
