@@ -43,7 +43,7 @@ import org.kitodo.production.services.ServiceManager;
 @SessionScoped
 public class DocketForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
-    private Docket myDocket = new Docket();
+    private Docket docket = new Docket();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
     private final String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -72,8 +72,8 @@ public class DocketForm extends BaseForm {
      * @return the navigation String
      */
     public String newDocket() {
-        this.myDocket = new Docket();
-        this.myDocket.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.docket = new Docket();
+        this.docket.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return docketEditPath;
     }
 
@@ -84,12 +84,12 @@ public class DocketForm extends BaseForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(ParameterCore.DIR_XSLT))) {
+            if (hasValidRulesetFilePath(docket, ConfigCore.getParameter(ParameterCore.DIR_XSLT))) {
                 if (existsDocketWithSameName()) {
                     Helper.setErrorMessage("docketTitleDuplicated");
                     return this.stayOnCurrentPage;
                 }
-                ServiceManager.getDocketService().save(myDocket);
+                ServiceManager.getDocketService().save(docket);
                 return docketListPath;
             } else {
                 Helper.setErrorMessage("docketNotFound");
@@ -111,10 +111,10 @@ public class DocketForm extends BaseForm {
      */
     public void delete() {
         try {
-            if (hasAssignedProcessesOrTemplates(this.myDocket.getId())) {
+            if (hasAssignedProcessesOrTemplates(this.docket.getId())) {
                 Helper.setErrorMessage("docketInUse");
             } else {
-                ServiceManager.getDocketService().remove(this.myDocket);
+                ServiceManager.getDocketService().remove(this.docket);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger,
@@ -123,13 +123,13 @@ public class DocketForm extends BaseForm {
     }
 
     private boolean existsDocketWithSameName() {
-        List<Docket> dockets = ServiceManager.getDocketService().getByTitle(this.myDocket.getTitle());
+        List<Docket> dockets = ServiceManager.getDocketService().getByTitle(this.docket.getTitle());
         if (dockets.isEmpty()) {
             return false;
         } else {
-            if (Objects.nonNull(this.myDocket.getId())) {
+            if (Objects.nonNull(this.docket.getId())) {
                 if (dockets.size() == 1) {
-                    return !dockets.get(0).getId().equals(this.myDocket.getId());
+                    return !dockets.get(0).getId().equals(this.docket.getId());
                 } else {
                     return true;
                 }
@@ -153,7 +153,7 @@ public class DocketForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setMyDocket(ServiceManager.getDocketService().getById(id));
+                setDocket(ServiceManager.getDocketService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -167,8 +167,8 @@ public class DocketForm extends BaseForm {
      *
      * @return Docket object
      */
-    public Docket getMyDocket() {
-        return this.myDocket;
+    public Docket getDocket() {
+        return this.docket;
     }
 
     /**
@@ -179,15 +179,15 @@ public class DocketForm extends BaseForm {
      */
     public void setDocketById(int docketID) {
         try {
-            setMyDocket(ServiceManager.getDocketService().getById(docketID));
+            setDocket(ServiceManager.getDocketService().getById(docketID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.DOCKET.getTranslationSingular(), docketID }, logger, e);
         }
     }
 
-    public void setMyDocket(Docket docket) {
-        this.myDocket = docket;
+    public void setDocket(Docket docket) {
+        this.docket = docket;
     }
 
     /**
