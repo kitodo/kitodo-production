@@ -348,6 +348,7 @@ public class ProjectForm extends BaseForm {
                 if (template.getId().equals(templateId)) {
                     this.project.getTemplates().remove(template);
                     template.getProjects().remove(this.project);
+                    break;
                 }
             }
         } catch (NumberFormatException e) {

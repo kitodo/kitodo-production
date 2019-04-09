@@ -200,6 +200,7 @@ public class UserForm extends BaseForm {
             for (Role role : this.userObject.getRoles()) {
                 if (role.getId().equals(roleId)) {
                     this.userObject.getRoles().remove(role);
+                    break;
                 }
             }
         } catch (NumberFormatException e) {
@@ -242,6 +243,7 @@ public class UserForm extends BaseForm {
             for (Client client : this.userObject.getClients()) {
                 if (client.getId().equals(clientId)) {
                     this.userObject.getClients().remove(client);
+                    break;
                 }
             }
         } catch (NumberFormatException e) {
@@ -284,6 +286,7 @@ public class UserForm extends BaseForm {
             for (Project project : this.userObject.getProjects()) {
                 if (project.getId().equals(projectId)) {
                     this.userObject.getProjects().remove(project);
+                    break;
                 }
             }
         } catch (NumberFormatException e) {
