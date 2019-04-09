@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
@@ -32,6 +36,14 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     @FindBy(id = PROJECT_TAB_VIEW + ":band")
     private WebElement volumeAmountInput;
 
+    @SuppressWarnings("unused")
+    @FindBy(className = "ui-chkbox-box")
+    private WebElement projectActiveCheckbox;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "editForm:projectTabView:detailLockedButton")
+    private WebElement detailLockedButton;
+
     public ProjectEditPage() {
         super("pages/projectEdit.jsf");
     }
@@ -42,6 +54,7 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     }
 
     public ProjectEditPage insertProjectData(Project project) {
+        titleInput.clear();
         titleInput.sendKeys(project.getTitle());
         pagesAmountInput.clear();
         pagesAmountInput.sendKeys(project.getNumberOfPages().toString());
@@ -53,5 +66,34 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
+    }
+
+    public void changeTitle(String newTitle) throws InterruptedException {
+        if (!areElementsEnabled()) {
+            detailLockedButton.click();
+            await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> titleInput.isEnabled());
+        }
+        titleInput.clear();
+        titleInput.sendKeys(newTitle);
+        pagesAmountInput.click();
+    }
+
+    public boolean areElementsEnabled() {
+        return titleInput.isEnabled() && pagesAmountInput.isEnabled() && volumeAmountInput.isEnabled();
+    }
+
+    public ProjectEditPage toggleProjectActiveCheckbox() throws InterruptedException {
+        if (!areElementsEnabled()) {
+            detailLockedButton.click();
+            await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> titleInput.isEnabled());
+        }
+        projectActiveCheckbox.click();
+        Thread.sleep(2000);
+        detailLockedButton.click();
+        await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> !titleInput.isEnabled());
+        return this;
     }
 }

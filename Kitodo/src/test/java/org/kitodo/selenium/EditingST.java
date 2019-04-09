@@ -31,6 +31,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
@@ -90,9 +91,29 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editProjectTest() throws Exception {
-        projectsPage.editProject();
+        final String newProjectTitle = "newTitle";
+
+        ProjectEditPage projectEditPage = projectsPage.editProject();
         assertEquals("Header for edit project is incorrect", "Projekt bearbeiten (First project)",
-            Pages.getProjectEditPage().getHeaderText());
+                Pages.getProjectEditPage().getHeaderText());
+
+        assertFalse(projectEditPage.areElementsEnabled());
+
+        projectEditPage.changeTitle(newProjectTitle);
+        projectEditPage.save();
+        projectsPage.editProject();
+        projectEditPage.toggleProjectActiveCheckbox();
+        projectEditPage.save();
+        boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(newProjectTitle);
+        assertTrue("Title was not changed", projectAvailable);
+        List<String> projectsActiveStates = projectsPage.getProjectsActiveStates();
+        assertTrue(projectsActiveStates.contains("fa fa-minus-square-o fa-lg checkbox-unchecked"));
+
+        projectEditPage = projectsPage.editProject();
+        projectEditPage.toggleProjectActiveCheckbox().save();
+        projectsActiveStates = projectsPage.getProjectsActiveStates();
+        assertFalse(projectsActiveStates.contains("fa fa-minus-square-o fa-lg checkbox-unchecked"));
+
     }
 
     @Test

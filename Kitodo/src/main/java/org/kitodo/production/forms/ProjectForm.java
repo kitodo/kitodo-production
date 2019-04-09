@@ -53,6 +53,7 @@ public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
+    private boolean locked = true;
 
     /**
      * Initialize the list of displayed list columns.
@@ -74,8 +75,10 @@ public class ProjectForm extends BaseForm {
         // Lists of selected list columns
         selectedColumns = new ArrayList<>();
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("project"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template"));
-        selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
+        selectedColumns
+                .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("template"));
+        selectedColumns
+                .addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("workflow"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("docket"));
         selectedColumns.addAll(ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("ruleset"));
     }
@@ -84,9 +87,9 @@ public class ProjectForm extends BaseForm {
      * The folder currently under edit in the pop-up dialog.
      */
     /*
-     * This is a hack. The clean solution would be to have an inner class bean for
-     * the data table row an dialog, but this approach was introduced decades ago
-     * and has been maintained until today.
+     * This is a hack. The clean solution would be to have an inner class bean
+     * for the data table row an dialog, but this approach was introduced
+     * decades ago and has been maintained until today.
      */
     private Folder myFolder;
     private Project baseProject;
@@ -105,14 +108,14 @@ public class ProjectForm extends BaseForm {
     private String projectEditReferer = DEFAULT_LINK;
 
     /**
-     * Cash for the list of possible MIME types. So that the list does not have to
-     * be read from file several times for one page load.
+     * Cash for the list of possible MIME types. So that the list does not have
+     * to be read from file several times for one page load.
      */
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Empty default constructor that also sets the LazyDTOModel instance of
+     * this bean.
      */
     public ProjectForm() {
         super();
@@ -173,6 +176,7 @@ public class ProjectForm extends BaseForm {
      */
     public String newProject() {
         this.project = new Project();
+        this.locked = false;
         this.project.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return projectEditPath;
     }
@@ -183,11 +187,12 @@ public class ProjectForm extends BaseForm {
      * @param itemId
      *            ID of the project to duplicate
      * @return page address; either redirect to the edit project page or return
-     *         'null' if the project could not be retrieved, which will prompt JSF
-     *         to remain on the same page and reuse the bean.
+     *         'null' if the project could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
      */
     public String duplicate(Integer itemId) {
         setCopyTemplates(true);
+        this.locked = false;
         try {
             this.baseProject = ServiceManager.getProjectService().getById(itemId);
             this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
@@ -200,7 +205,8 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Saves current project if title is not empty and redirects to projects page.
+     * Saves current project if title is not empty and redirects to projects
+     * page.
      *
      * @return page or null
      */
@@ -258,7 +264,8 @@ public class ProjectForm extends BaseForm {
             }
             ServiceManager.getProjectService().remove(this.project);
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
+                e);
         }
     }
 
@@ -296,9 +303,10 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Return list of templates assignable to this project. Templates are assignable
-     * when they are not assigned already to this project and they belong to the
-     * same client as the project and user which edits this project.
+     * Return list of templates assignable to this project. Templates are
+     * assignable when they are not assigned already to this project and they
+     * belong to the same client as the project and user which edits this
+     * project.
      *
      * @return list of assignable templates
      */
@@ -357,6 +365,22 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
+     * Switch the lock status of the form.
+     */
+    public void switchLock() {
+        locked = !locked;
+    }
+
+    /**
+     * Gets the locked status of the form.
+     * 
+     * @return te value of locked
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
+    /**
      * Get project.
      *
      * @return Project object
@@ -368,13 +392,13 @@ public class ProjectForm extends BaseForm {
     /**
      * Set my project.
      *
-     * @param inProjekt
+     * @param project
      *            Project object
      */
-    public void setProject(Project inProjekt) {
+    public void setProject(Project project) {
         // has to be called if a page back move was done
         this.cancel();
-        this.project = inProjekt;
+        this.project = project;
     }
 
     /**
@@ -386,6 +410,7 @@ public class ProjectForm extends BaseForm {
     public void setProjectById(int projectID) {
         try {
             setProject(ServiceManager.getProjectService().getById(projectID));
+            this.locked = true;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
@@ -476,8 +501,8 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Returns the folder to use as source for generation of derived resources of
-     * this project.
+     * Returns the folder to use as source for generation of derived resources
+     * of this project.
      *
      * @return the source folder for generation
      */
@@ -487,8 +512,8 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Sets the folder to use as source for generation of derived resources of this
-     * project.
+     * Sets the folder to use as source for generation of derived resources of
+     * this project.
      *
      * @param generatorSource
      *            source folder for generation to set
@@ -547,6 +572,7 @@ public class ProjectForm extends BaseForm {
         try {
             if (!Objects.equals(id, 0)) {
                 setProject(ServiceManager.getProjectService().getById(id));
+                this.locked = true;
             }
             setSaveDisabled(true);
         } catch (DAOException e) {

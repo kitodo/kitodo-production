@@ -18,12 +18,13 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:panel>
         <p:commandButton
-                value="#{msgs.unlocked}"
-                icon="fa fa-unlock fa-lg"
+                value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
+                icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
                 iconPos="right"
                 styleClass="callto"
                 id="templateLockedButton"
-                onclick="enableOrDisable(this,'#{msgs.locked}','#{msgs.unlocked}')">
+                update="editForm"
+                action="#{ProjectForm.switchLock()}">
         </p:commandButton>
     </p:panel>
 
@@ -35,6 +36,7 @@
 
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
             <p:commandLink id="deleteTemplate"
+                           disabled="#{ProjectForm.locked}"
                            action="#{ProjectForm.deleteTemplate}"
                            title="#{msgs.deleteTemplate}"
                            immediate="true"
@@ -48,6 +50,7 @@
 
     <p:commandButton onclick="PF('addTemplateDialog').show()"
                      id="addTemplateButton"
+                     disabled="#{ProjectForm.locked}"
                      value="#{msgs.addTemplate}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
