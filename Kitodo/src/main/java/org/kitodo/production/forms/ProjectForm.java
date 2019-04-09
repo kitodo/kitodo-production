@@ -192,6 +192,7 @@ public class ProjectForm extends BaseForm {
      */
     public String duplicate(Integer itemId) {
         setCopyTemplates(true);
+        this.locked = false;
         try {
             this.baseProject = ServiceManager.getProjectService().getById(itemId);
             this.project = ServiceManager.getProjectService().duplicateProject(baseProject);
@@ -391,13 +392,13 @@ public class ProjectForm extends BaseForm {
     /**
      * Set my project.
      *
-     * @param inProjekt
+     * @param project
      *            Project object
      */
-    public void setProject(Project inProjekt) {
+    public void setProject(Project project) {
         // has to be called if a page back move was done
         this.cancel();
-        this.project = inProjekt;
+        this.project = project;
     }
 
     /**
@@ -409,6 +410,7 @@ public class ProjectForm extends BaseForm {
     public void setProjectById(int projectID) {
         try {
             setProject(ServiceManager.getProjectService().getById(projectID));
+            this.locked=true;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
@@ -570,6 +572,7 @@ public class ProjectForm extends BaseForm {
         try {
             if (!Objects.equals(id, 0)) {
                 setProject(ServiceManager.getProjectService().getById(id));
+                this.locked=true;
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
