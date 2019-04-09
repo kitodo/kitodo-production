@@ -34,7 +34,7 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{not isViewMode and SecurityAccessController.hasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
+        <p:column rendered="#{not isViewMode and SecurityAccessController.hasAuthorityToEditTask()}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskTemplateEdit" id="editTask" title="#{msgs.detailsDesSchritts}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditTask()}">

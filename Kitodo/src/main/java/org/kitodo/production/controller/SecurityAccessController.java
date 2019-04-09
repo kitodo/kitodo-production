@@ -221,6 +221,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to delete the tak.
+     *
+     * @return true if the current user has the authority to delete the task
+     */
+    public boolean hasAuthorityToDeleteTask() {
+        return securityAccessService.hasAuthorityToDeleteTask();
+    }
+
+    /**
      * Check if the current user has the authority to delete the project.
      *
      * @return true if the current user has the authority to delete the project

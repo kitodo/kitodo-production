@@ -69,17 +69,16 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{isEditMode and SecurityAccessController.hasAnyAuthorityGlobalOrForClient('editTask, deleteTask')}"
+        <p:column rendered="#{isEditMode and SecurityAccessController.hasAnyAuthorityForClient('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
-            <h:link outcome="taskEdit" id="editTask"
-                    rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
+            <h:link outcome="taskEdit" id="editTask" rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <f:param name="referer" value="processEdit?id=#{item.process.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
-                           rendered="#{SecurityAccessController.hasAuthorityForClient('deleteTask')}"
+                           rendered="#{SecurityAccessController.hasAuthorityToDeleteTask()}"
                            title="#{msgs.delete}"
                            action="#{ProcessForm.removeTask}"
                            immediate="true"
