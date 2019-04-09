@@ -410,7 +410,7 @@ public class ProjectForm extends BaseForm {
     public void setProjectById(int projectID) {
         try {
             setProject(ServiceManager.getProjectService().getById(projectID));
-            this.locked=true;
+            this.locked = true;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
@@ -572,7 +572,7 @@ public class ProjectForm extends BaseForm {
         try {
             if (!Objects.equals(id, 0)) {
                 setProject(ServiceManager.getProjectService().getById(id));
-                this.locked=true;
+                this.locked = true;
             }
             setSaveDisabled(true);
         } catch (DAOException e) {

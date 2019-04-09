@@ -76,6 +76,7 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         }
         titleInput.clear();
         titleInput.sendKeys(newTitle);
+        pagesAmountInput.click();
     }
 
     public boolean areElementsEnabled() {

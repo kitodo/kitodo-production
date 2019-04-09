@@ -100,6 +100,8 @@ public class EditingST extends BaseTestSelenium {
         assertFalse(projectEditPage.areElementsEnabled());
 
         projectEditPage.changeTitle(newProjectTitle);
+        projectEditPage.save();
+        projectsPage.editProject();
         projectEditPage.toggleProjectActiveCheckbox();
         projectEditPage.save();
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(newProjectTitle);
