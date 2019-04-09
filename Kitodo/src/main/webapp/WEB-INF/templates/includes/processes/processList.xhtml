@@ -18,7 +18,10 @@
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
-        <p:dataTable id="processesTable" var="process" value="#{ProcessForm.lazyDTOModel}"
+        <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO-->
+        <p:dataTable id="processesTable"
+                     var="process"
+                     value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}" lazy="true" paginator="true"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"

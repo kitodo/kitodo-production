@@ -15,15 +15,20 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable id="taskTable" var="item" value="#{CurrentTaskForm.lazyDTOModel}" lazy="true" paginator="true"
+    <p:dataTable id="taskTable"
+                 var="item"
+                 value="#{CurrentTaskForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
         <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
 
-        <p:column style="width: 16px;">
+        <p:column style="width: var(--default-full-size);">
             <p:rowToggler/>
         </p:column>
 
@@ -32,8 +37,16 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
+        <!-- columns for tasks that have been configured in kitodo config file! -->
+        <p:columns value="#{CurrentTaskForm.getTaskCustomColumnNames()}"
+                   var="taskColumn"
+                   headerText="#{fn:replace(taskColumn, 'task.', '')}"
+                   rendered="#{CurrentTaskForm.showColumn(taskColumn)}">
+            <h:outputText value="#{CurrentTaskForm.getTaskProcessPropertyValue(item, fn:replace(taskColumn, 'task.', ''))}"/>
+        </p:columns>
+
         <p:column headerText="#{msgs.process}"
-                  rendered="#{CurrentTaskForm.showColumn( 'task.process')}">
+                  rendered="#{CurrentTaskForm.showColumn('task.process')}">
             <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
                     rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
                 <i class="fa fa-pencil-square-o fa-lg"/>
@@ -60,6 +73,16 @@
             <h:outputText value="!" rendered="#{item.priority == 1}"/>
             <h:outputText value="!!" rendered="#{item.priority == 2}"/>
             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.priority}"
+                  rendered="#{CurrentTaskForm.showColumn('task.priority')}">
+            <h:outputText value="#{item.priority}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.duration} (#{msgs.days}, #{msgs.hours})"
+                  rendered="#{CurrentTaskForm.showColumn('task.processduration')}">
+            <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
         </p:column>
 
         <p:column headerText="#{msgs.actions}">

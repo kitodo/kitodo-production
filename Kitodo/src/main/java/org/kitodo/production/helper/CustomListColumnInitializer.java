@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,43 +35,59 @@ import org.kitodo.production.services.ServiceManager;
 public class CustomListColumnInitializer {
 
     private static final String PROCESS_PREFIX = "process.";
+    private static final String TASK_PREFIX = "task.";
     private static final Logger logger = LogManager.getLogger(CustomListColumnInitializer.class);
     private static String[] processProperties;
+    private static String[] taskCustomColumns;
 
     /**
-     * Load process properties from Kitodo configuration file and save them as custom list columns to
+     * Load custom columns from Kitodo configuration file and save them as custom list columns to
      * database during application startup.
      *
      * @param context ServletContext
      */
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         try {
-            processProperties = Arrays.stream(ConfigCore.getParameter(ParameterCore.PROCESS_PROPERTIES).split(","))
-                    .filter(name -> !name.trim().isEmpty())
-                    .map(name -> PROCESS_PREFIX + name.trim())
-                    .toArray(String[]::new);
+            processProperties = loadCustomColumnsFromConfigurationFile(ParameterCore.PROCESS_PROPERTIES, PROCESS_PREFIX);
+        } catch (NoSuchElementException e) {
+            logger.error("Configuration key '"
+                    + ParameterCore.PROCESS_PROPERTIES.toString()
+                    + "' not found in configuration => unable to load process list custom columns!");
+            processProperties = new String[0];
+        }
+        try {
+            taskCustomColumns = loadCustomColumnsFromConfigurationFile(ParameterCore.TASK_CUSTOM_COLUMNS, TASK_PREFIX);
+        } catch (NoSuchElementException e) {
+            logger.error("Configuration key '"
+                    + ParameterCore.TASK_CUSTOM_COLUMNS.toString()
+                    + "' not found in configuration => unable to load current task list custom columns!");
+            taskCustomColumns = new String[0];
+        }
 
-            ServiceManager.getListColumnService().removeProcessCustomListColumns(Arrays.asList(processProperties));
+        try {
+            ArrayList<String> customColumnList = new ArrayList<>();
+            customColumnList.addAll(Arrays.asList(processProperties));
+            customColumnList.addAll(Arrays.asList(taskCustomColumns));
+            String[] customColumns = customColumnList.toArray(new String[0]);
+
+            ServiceManager.getListColumnService().removeCustomListColumns(Arrays.asList(customColumns));
 
             List<String> availableColumnNames = ServiceManager.getListColumnService().getAllCustomListColumns().stream()
                     .map(ListColumn::getTitle)
                     .collect(Collectors.toList());
-            logger.info("Loading process property names from configuration file...");
-            for (String ppn : processProperties) {
-                if (!ppn.trim().isEmpty() && !availableColumnNames.contains(ppn)) {
-                    ListColumn processPropertyColumn = new ListColumn(ppn, true);
-                    ServiceManager.getListColumnService().saveToDatabase(processPropertyColumn);
-                    logger.info("Process property '" + ppn + "' successfully saved to database as custom list column!");
+            logger.info("Loading custom column names from configuration file...");
+            for (String ccn : customColumnList) {
+                if (!ccn.trim().isEmpty() && !availableColumnNames.contains(ccn)) {
+                    ListColumn customColumn = new ListColumn(ccn, true);
+                    ServiceManager.getListColumnService().saveToDatabase(customColumn);
+                    logger.info("Custom column '" + ccn + "' successfully saved to database as custom list column!");
                 } else {
-                    logger.info("Process property '" + ppn + "' already saved to database as custom list column!");
+                    logger.info("Custom column '" + ccn + "' already saved to database as custom list column!");
                 }
             }
         } catch (DAOException e) {
-            logger.error("Unable to save process property names from Kitodo configuration file as custom list columns to database!");
-        } catch (NoSuchElementException e) {
-            logger.error("Configuration key '"
-                    + ParameterCore.PROCESS_PROPERTIES.toString()
-                    + "' not found in configuration => unable to process properties as custom columns!");
+            logger.error("Unable to update custom list columns in database!");
+
         }
     }
 
@@ -81,5 +98,21 @@ public class CustomListColumnInitializer {
      */
     public String[] getProcessProperties() {
         return processProperties;
+    }
+
+    /**
+     * Get names of custom task columns configured in kitodo_config.properties as custom columns for the task list
+     *
+     * @return array of custom task columns
+     */
+    public String[] getTaskCustomColumns() {
+        return taskCustomColumns;
+    }
+
+    private String[] loadCustomColumnsFromConfigurationFile(ParameterCore configurationKey, String prefix) {
+        return Arrays.stream(ConfigCore.getParameter(configurationKey).split(","))
+                .filter(name -> !name.trim().isEmpty())
+                .map(name -> prefix + name.trim())
+                .toArray(String[]::new);
     }
 }

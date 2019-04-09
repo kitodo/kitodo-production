@@ -626,6 +626,11 @@ public enum ParameterCore implements ParameterInterface {
      */
     DEFAULT_CLIENT_ID(new Parameter<>("defaultClientId", 0)),
 
+    /**
+     * Task custom columns to display in current tasks list.
+     */
+    TASK_CUSTOM_COLUMNS(new Parameter<>("taskProcessPropertyColumns")),
+
     /*
      * ActiveMQ web services
      */
