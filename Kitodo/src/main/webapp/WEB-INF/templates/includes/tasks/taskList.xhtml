@@ -26,7 +26,7 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
-        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();"/>
 
         <p:column style="width: var(--default-full-size);">
             <p:rowToggler/>
@@ -94,13 +94,13 @@
                     <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
-                <h:link outcome="/pages/currentTasksEdit"
-                        onclick="#{CommentForm.setProcessId(item.process.id)}"
-                        rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
-                        title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
+                <h:commandLink action="#{CurrentTaskForm.editTask}"
+                               actionListener="#{CommentForm.setProcessId(item.process.id)}"
+                               rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.loggedUser.id and item.batchStep and !item.batchAvailable)}"
+                               title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
                     <i class="fa fa-bell"/>
-                    <f:param name="id" value="#{item.id}"/>
-                </h:link>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}"/>
+                </h:commandLink>
                 <!-- already assigned task (different user) -->
                 <h:commandLink action="#{CurrentTaskForm.editTask}" id="view2"
                                actionListener="#{CommentForm.setProcessId(item.process.id)}"
@@ -187,7 +187,8 @@
                                              style="margin-right:20px"/>
                 </h:panelGrid>
 
-                <h:commandLink id="applyFilter" update="tasksTabView:taskTable" style="margin-left:24px" title="#{msgs.apply}">
+                <h:commandLink id="applyFilter" update="tasksTabView:taskTable" style="margin-left:24px"
+                               title="#{msgs.apply}">
                     <h:outputText value="#{msgs.apply}"/>
                 </h:commandLink>
             </h:form>
