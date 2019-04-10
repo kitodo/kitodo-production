@@ -167,6 +167,8 @@ public class GoobiScript {
                 contentOnly = false;
             }
             deleteProcess(inProzesse, contentOnly);
+        } if (this.myParameters.get("action").equals("rewriteProcessMetadata")) {
+            rewriteProcessMetadata(inProzesse);
         } else {
             Helper.setFehlerMeldung(
                     "goobiScriptfield",
@@ -262,6 +264,30 @@ public class GoobiScript {
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Cannot delete metadata directory", e);
+        }
+    }
+
+    private void rewriteProcessMetadata(List<Prozess> processes) {
+        for (Prozess process : processes) {
+            String currentProcessTitle = null;
+            try {
+                currentProcessTitle = process.getTitel();
+                Fileformat gdzfile = process.readMetadataFile();
+                process.writeMetadataFile(gdzfile);
+                Helper.setMeldung("rewriteOk", currentProcessTitle);
+            } catch (Exception e) {
+                StringBuilder message = new StringBuilder(127);
+                if (currentProcessTitle != null) {
+                    message.append(currentProcessTitle);
+                    message.append(": ");
+                }
+                message.append(e.getClass().getSimpleName());
+                if (e.getMessage() != null) {
+                    message.append(": ");
+                    message.append(e.getMessage());
+                }
+                Helper.setFehlerMeldung("rewriteError", message.toString());
+            }
         }
     }
 
