@@ -43,6 +43,10 @@
                       rendered="#{ProcessForm.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
+            <p:column headerText="#{msgs.duration}"
+                      rendered="#{ProcessForm.showColumn('process.duration')}">
+                <h:outputText value="#{ProcessForm.getProcessDuration(process)}"/>
+            </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->
             <p:columns value="#{ProcessForm.getProcessPropertyNames()}"
                        var="propertyName"

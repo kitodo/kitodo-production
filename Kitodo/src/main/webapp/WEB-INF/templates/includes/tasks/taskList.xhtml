@@ -80,8 +80,8 @@
             <h:outputText value="#{item.priority}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.duration} (#{msgs.days}, #{msgs.hours})"
-                  rendered="#{CurrentTaskForm.showColumn('task.processduration')}">
+        <p:column headerText="#{msgs.duration} (#{msgs.process})"
+                  rendered="#{CurrentTaskForm.showColumn('task.duration')}">
             <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
         </p:column>
 

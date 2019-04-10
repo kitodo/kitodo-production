@@ -175,6 +175,16 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
+     * Calculate and return age of given process as a String.
+     *
+     * @param processDTO ProcessDTO object whose duration/age is calculated
+     * @return process age of given process
+     */
+    public static String getProcessDuration(ProcessDTO processDTO) {
+        return ProcessService.getProcessDuration(processDTO);
+    }
+
+    /**
      * Save process and redirect to list view.
      *
      * @return url to list view

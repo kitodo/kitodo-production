@@ -34,6 +34,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -2362,5 +2366,19 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
             }
         }
         return "";
+    }
+
+    /**
+     * Calculate and return duration/age of given process as a String.
+     *
+     * @param process ProcessDTO object for which duration/age is calculated
+     * @return process age of given process
+     */
+    public static String getProcessDuration(ProcessDTO process) {
+        String creationDateTimeString = process.getCreationDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
+        Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
+        return String.format("%sd; %sh", duration.toDays(), duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
     }
 }

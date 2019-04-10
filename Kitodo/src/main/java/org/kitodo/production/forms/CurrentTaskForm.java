@@ -985,10 +985,6 @@ public class CurrentTaskForm extends BaseForm {
      * @return process age of given tasks process
      */
     public String getProcessDuration(TaskDTO task) {
-        String creationDateTimeString = task.getProcess().getCreationDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
-        Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
-        return String.format("%sd; %sh", duration.toDays(), duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
+        return ProcessService.getProcessDuration(task.getProcess());
     }
 }

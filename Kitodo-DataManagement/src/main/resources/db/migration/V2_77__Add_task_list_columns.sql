@@ -10,4 +10,5 @@
 --
 
 INSERT INTO listColumn (title) VALUES ('task.priority');
-INSERT INTO listColumn (title) VALUES ('task.processduration');
+INSERT INTO listColumn (title) VALUES ('task.duration');
+INSERT INTO listColumn (title) VALUES ('process.duration');

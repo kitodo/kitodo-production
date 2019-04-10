@@ -77,12 +77,14 @@ public class CustomListColumnInitializer {
                     .collect(Collectors.toList());
             logger.info("Loading custom column names from configuration file...");
             for (String ccn : customColumnList) {
-                if (!ccn.trim().isEmpty() && !availableColumnNames.contains(ccn)) {
-                    ListColumn customColumn = new ListColumn(ccn, true);
-                    ServiceManager.getListColumnService().saveToDatabase(customColumn);
-                    logger.info("Custom column '" + ccn + "' successfully saved to database as custom list column!");
-                } else {
-                    logger.info("Custom column '" + ccn + "' already saved to database as custom list column!");
+                if (!ccn.trim().isEmpty()) {
+                    if (availableColumnNames.contains(ccn)) {
+                        logger.info("Custom column '" + ccn + "' already saved to database as custom list column!");
+                    } else {
+                        ListColumn customColumn = new ListColumn(ccn, true);
+                        ServiceManager.getListColumnService().saveToDatabase(customColumn);
+                        logger.info("Custom column '" + ccn + "' successfully saved to database as custom list column!");
+                    }
                 }
             }
         } catch (DAOException e) {
