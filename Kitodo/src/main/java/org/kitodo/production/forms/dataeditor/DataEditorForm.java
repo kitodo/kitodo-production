@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
@@ -218,7 +220,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
         locks = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
         if (!locks.isSuccessful()) {
-            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", locks.getConflicts().get(mainFileUri)));
+            Collection<String> conflicts = locks.getConflicts().get(mainFileUri);
+            if (Objects.isNull(conflicts)) {
+                conflicts = Arrays.asList("");
+            }
+            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", conflicts));
             return locks.isSuccessful();
         }
 
