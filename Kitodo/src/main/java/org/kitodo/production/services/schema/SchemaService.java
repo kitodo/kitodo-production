@@ -91,7 +91,7 @@ public class SchemaService {
         entry.setKey(key);
         entry.setDomain(domain);
         entry.setValue(value);
-        workpiece.getRootElement().getMetadata().add(entry);
+        workpiece.getStructure().getMetadata().add(entry);
     }
 
     private void addVirtualFileGroupsToMetsMods(Workpiece workpiece, Process process) {

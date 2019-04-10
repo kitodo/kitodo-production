@@ -33,8 +33,8 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -51,7 +51,7 @@ import org.kitodo.dataformat.metskitodo.Mets;
  * structure can be subdivided into arbitrary finely granular
  * {@link #substructures}. It can be described by {@link #metadata}.
  */
-public class DivXmlElementAccess extends IncludedStructuralElement {
+public class DivXmlElementAccess extends Structure {
     /**
      * The qualified name of the Kitodo meta-data format, needed to assemble the
      * meta-data entries in METS using JAXB.
@@ -77,16 +77,15 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * Creates a new DivXmlElementAccess for an existing structure.
      */
-    DivXmlElementAccess(IncludedStructuralElement includedStructuralElement) {
-        super(includedStructuralElement);
-        metsReferrerId = includedStructuralElement instanceof DivXmlElementAccess
-                ? ((DivXmlElementAccess) includedStructuralElement).metsReferrerId
+    DivXmlElementAccess(Structure structure) {
+        super(structure);
+        metsReferrerId = structure instanceof DivXmlElementAccess ? ((DivXmlElementAccess) structure).metsReferrerId
                 : UUID.randomUUID().toString();
     }
 
     /**
      * Constructor to read a structure from METS.
-     *
+     * 
      * @param div
      *            METS {@code <div>} element from which the structure is to be
      *            built
@@ -125,11 +124,11 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * Determines from a METS data structure of which type is a meta-data
      * section.
-     *
+     * 
      * <p>
      * Implementation note: This method would be a good candidate for
      * parallelization.
-     *
+     * 
      * @param mets
      *            METS data structure that determines what type of meta-data
      *            section is
@@ -155,7 +154,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
 
     /**
      * Reads a meta-data section and adds the meta-data to the structure.
-     *
+     * 
      * @param mdSecType
      *            type of meta-data section
      * @param mdSec
@@ -185,7 +184,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
 
     /**
      * Creates a METS {@code <div>} element from this structure.
-     *
+     * 
      * @param mediaUnitIDs
      *            the assigned identifier for each media unit so that the link
      *            pairs of the struct link section can be formed later
@@ -219,8 +218,8 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
             mets.getAmdSec().add(admSec);
         }
 
-        for (IncludedStructuralElement subincludedStructuralElement : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(subincludedStructuralElement).toDiv(mediaUnitIDs, smLinkData, mets));
+        for (Structure substructure : super.getChildren()) {
+            div.getDiv().add(new DivXmlElementAccess(substructure).toDiv(mediaUnitIDs, smLinkData, mets));
         }
         return div;
     }
@@ -228,7 +227,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * Creates a meta-data section of the specified domain of the Kitodo type
      * and returns it with its connection to the METS if there is data for it.
-     *
+     * 
      * @param domain
      *            Domain for which a metadata section is to be generated
      * @return a metadata section, if there is data for it
@@ -261,7 +260,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
     /**
      * Generates an {@code <amdSec>} if administrative meta-data exists on this
      * structure.
-     *
+     * 
      * @param div
      *            div where ADMID references must be added to the generated
      *            meta-data sections
@@ -284,7 +283,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
      * Adds a meta-data section to an administrative meta-data section, if there
      * is one. This function deduplicates fourfold existing function for four
      * different meta-data sections.
-     *
+     * 
      * @param optionalMdSec
      *            perhaps existing meta-data section to be added if it exists
      * @param mdSecType
