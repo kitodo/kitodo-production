@@ -960,7 +960,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return array of task custom column names
      */
     public String[] getTaskCustomColumnNames() {
-        return initializer.getTaskCustomColumns();
+        return initializer.getTaskProcessProperties();
     }
 
     /**
