@@ -14,16 +14,12 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
