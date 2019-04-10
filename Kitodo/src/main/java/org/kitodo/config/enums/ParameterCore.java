@@ -621,6 +621,11 @@ public enum ParameterCore implements ParameterInterface {
      */
     PROCESS_PROPERTIES(new Parameter<>("processPropertyColumns")),
 
+    /**
+     * Default client parameter to be returned if no session client could be determined by user service.
+     */
+    DEFAULT_CLIENT_ID(new Parameter<>("defaultClientId", 0)),
+
     /*
      * ActiveMQ web services
      */
