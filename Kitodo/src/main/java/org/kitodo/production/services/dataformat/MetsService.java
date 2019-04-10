@@ -63,7 +63,7 @@ public class MetsService {
      * @throws IOException
      *             if reading is not working (disk broken, ...)
      */
-    public Workpiece load(URI uri) throws IOException {
+    public Workpiece loadWorkpiece(URI uri) throws IOException {
         try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, LockingMode.EXCLUSIVE)) {
             if (lockResult.isSuccessful()) {
                 try (InputStream inputStream = ServiceManager.getFileService().read(uri, lockResult)) {
@@ -88,12 +88,12 @@ public class MetsService {
      *             if writing does not work (partition full, or is generally not
      *             supported, ...)
      */
-    public void save(Workpiece workpiece, URI uri) throws IOException {
+    public void saveWorkpiece(Workpiece workpiece, URI uri) throws IOException {
         try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, LockingMode.EXCLUSIVE)) {
             if (lockResult.isSuccessful()) {
                 try (OutputStream outputStream = ServiceManager.getFileService().write(uri, lockResult)) {
                     logger.info("Saving {}", uri.toString());
-                    metsXmlElementAccess.save(workpiece, outputStream);
+                    save(workpiece, outputStream);
                 }
             } else {
                 throw new IOException(createLockErrorMessage(uri, lockResult));

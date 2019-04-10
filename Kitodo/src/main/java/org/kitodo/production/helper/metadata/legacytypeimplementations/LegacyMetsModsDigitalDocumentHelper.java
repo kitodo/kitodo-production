@@ -214,7 +214,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
-        workpiece = ServiceManager.getMetsService().load(uri);
+        workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
     }
 
     @Deprecated
@@ -246,7 +246,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void write(String filename) throws IOException {
         URI uri = new File(filename).toURI();
-        ServiceManager.getMetsService().save(workpiece, uri);
+        ServiceManager.getMetsService().saveWorkpiece(workpiece, uri);
     }
 
     /**
