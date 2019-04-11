@@ -66,7 +66,7 @@ public class ImageManagement implements ImageManagementInterface {
             throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
         }
         if (dpi <= 0) {
-            throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
+            throw new IllegalArgumentException("dpi must be > 0, but was " + dpi);
         }
 
         return summarize("dpiChangedImage-", RAW_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToDpi(dpi),
@@ -84,15 +84,7 @@ public class ImageManagement implements ImageManagementInterface {
     public boolean createDerivative(URI sourceUri, double factor, URI resultUri, ImageFileFormat format)
             throws IOException {
 
-        if (!new File(sourceUri).exists()) {
-            throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
-        }
-        if (Double.isNaN(factor)) {
-            throw new IllegalArgumentException("factor must be a number, but was " + Double.toString(factor));
-        }
-        if (factor <= 0.0) {
-            throw new IllegalArgumentException("factor must be > 0.0, but was " + Double.toString(factor));
-        }
+        validateParameters(sourceUri, factor);
         if (resultUri == null) {
             throw new NullPointerException("resultUri must not be null");
         }
@@ -114,15 +106,7 @@ public class ImageManagement implements ImageManagementInterface {
     @Override
     public Image getScaledWebImage(URI sourceUri, double factor) throws IOException {
 
-        if (!new File(sourceUri).exists()) {
-            throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
-        }
-        if (Double.isNaN(factor)) {
-            throw new IllegalArgumentException("factor must be a number, but was " + Double.toString(factor));
-        }
-        if (factor <= 0.0) {
-            throw new IllegalArgumentException("factor must be > 0.0, but was " + Double.toString(factor));
-        }
+        validateParameters(sourceUri, factor);
 
         return summarize("scaledWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resize(factor),
             "Generating scaled web image from {} as {}, factor {}%", 100 * factor);
@@ -141,7 +125,7 @@ public class ImageManagement implements ImageManagementInterface {
             throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
         }
         if (width <= 0) {
-            throw new IllegalArgumentException("width must be > 0, but was " + Integer.toString(width));
+            throw new IllegalArgumentException("width must be > 0, but was " + width);
         }
 
         return summarize("sizedWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToWidth(width),
@@ -196,6 +180,18 @@ public class ImageManagement implements ImageManagementInterface {
             } catch (IOException e) {
                 logger.warn("Couldn’t delete {}", tempFile, e);
             }
+        }
+    }
+
+    private void validateParameters(URI sourceUri, double factor) throws FileNotFoundException {
+        if (!new File(sourceUri).exists()) {
+            throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
+        }
+        if (Double.isNaN(factor)) {
+            throw new IllegalArgumentException("factor must be a number, but was " + factor);
+        }
+        if (factor <= 0.0) {
+            throw new IllegalArgumentException("factor must be > 0.0, but was " + factor);
         }
     }
 }
