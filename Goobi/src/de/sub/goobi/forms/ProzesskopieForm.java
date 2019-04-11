@@ -2198,7 +2198,7 @@ public class ProzesskopieForm {
                 logger.error(e.getLocalizedMessage());
             }
         } else {
-            System.err.println("Uploaded file is null!");
+            logger.error("Uploaded file is null!")
         }
     }
 

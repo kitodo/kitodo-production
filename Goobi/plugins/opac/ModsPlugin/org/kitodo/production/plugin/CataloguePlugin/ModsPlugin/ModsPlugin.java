@@ -876,7 +876,7 @@ public class ModsPlugin implements Plugin {
                 }
 
             } catch (JDOMException | IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
         return documentHierarchy;
