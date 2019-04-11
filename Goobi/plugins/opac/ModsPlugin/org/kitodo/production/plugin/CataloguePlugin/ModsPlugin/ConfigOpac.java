@@ -80,6 +80,7 @@ class ConfigOpac {
         for (int i = 0; i <= countCatalogues; i++) {
             String scheme = "http";
             String path = "/sru?version=1.2";
+            int port = 80;
             String title = conf.getString("catalogue(" + i + ")[@title]");
             if (title.equals(inTitle)) {
                 String description = conf.getString("catalogue(" + i + ").config[@description]");
@@ -90,12 +91,16 @@ class ConfigOpac {
                     scheme = conf.getString("catalogue(" + i + ").config[@scheme]");
                 }
 
+                if (conf.getString("catalogue(" + i + ").config[@port]") != null) {
+                    port = Integer.parseInt(conf.getString("catalogue(" + i + ").config[@port]"));
+                }
+
                 if (conf.getString("catalogue(" + i + ").config[@path]") != null) {
                     path = conf.getString("catalogue(" + i + ").config[@path]");
                 }
                 path = path + "&";
 
-                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType, scheme, path);
+                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, opacType, scheme, path, port);
                 return coc;
             }
         }
