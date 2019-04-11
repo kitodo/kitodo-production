@@ -69,14 +69,14 @@
         <fileUpload>false</fileUpload>
     </catalogue>
     <catalogue title="adis">
-        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <mappingFile>adis2kitodo.xsl</mappingFile>
         <!-- aDis SRU interface not yet available! -->
-        <config address="aDis.info" description="adis Katalog"/>
-        <!--
+        <config scheme="https" port="443" path="/path" address="aDis.info" description="adis Katalog"/>
+
         <identifierParameter value="SATZNR" />
         <parentElement xpath="//mods:mods/mods:relatedItem[@type='host']" />
-        <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
-        -->
+        <recordElement xpath="//srw:searchRetrieveResponse/srw:record" />
+
         <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
         <!-- aDis SRU interface supports only single search field (for ID, here called "Satznummer") -->
         <searchFields>
