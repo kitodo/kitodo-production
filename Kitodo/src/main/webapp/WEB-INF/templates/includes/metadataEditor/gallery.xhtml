@@ -20,7 +20,6 @@
     <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
 
         <h:form id="imagePreviewForm" style="height: 100%;">
-            <!-- FIXME: updating the image in OpenLayers does not work! -->
             <h:panelGroup id="imageData"
                           a:data-image="#{DataEditorForm.galleryPanel.selectedMedia.mediaViewData}"/>
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.selectedMedia.mediaViewData}" style="display: none;"/>
@@ -83,7 +82,8 @@
                                     value="#{stripe.medias}"
                                     binding="#{structuredThumbnail}">
                             <p:panel id="structuredPagePanel">
-                                <p:commandLink update="structureTreeForm @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                                               update="structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                         class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
@@ -98,10 +98,12 @@
                                     <f:setPropertyActionListener value="#{stripe}" target="#{DataEditorForm.galleryPanel.selectedStripe}"/>
                                 </p:commandLink>
                             </p:panel>
-                            <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
+                            <p:draggable id="structuredPagesDraggable"
+                                         for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
                                          revert="true" stack=".ui-panel"/>
                         </p:dataList>
-                        <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
+                        <p:droppable id="structuredPagesDroppable"
+                                     for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}" update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
                         </p:droppable>
                     </p:dataList>

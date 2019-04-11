@@ -11,18 +11,19 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.faces.model.SelectItem;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
-
-import javax.faces.model.SelectItem;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map.Entry;
 
 public class AddMediaUnitDialog {
     private static final Logger logger = LogManager.getLogger(AddDocStrucTypeDialog.class);
@@ -38,7 +39,7 @@ public class AddMediaUnitDialog {
      * Constructor.
      * @param dataEditor Instance of DataEditorForm where this instance of AddMediaUnitDialog was created.
      */
-    public AddMediaUnitDialog(DataEditorForm dataEditor) {
+    AddMediaUnitDialog(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
@@ -49,7 +50,6 @@ public class AddMediaUnitDialog {
         try {
             if (dataEditor.getSelectedMediaUnit().isPresent()) {
                 MetadataEditor.addMediaUnit(selectedType,
-                        dataEditor.getWorkpiece(),
                         dataEditor.getSelectedMediaUnit().get(),
                         selectedPosition);
                 dataEditor.refreshStructurePanel();

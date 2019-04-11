@@ -144,12 +144,11 @@ public class MetadataEditor {
      * Create a new MediaUnit and insert it into the passed workpiece. The position of insertion
      * is determined by the passed parent and position.
      * @param type type of new MediaUnit
-     * @param workpiece workpiece to which the new MediaUnit should be added
      * @param parent parent of the new MediaUnit
      * @param position position relative to the parent element
      */
-    public static void addMediaUnit(String type, Workpiece workpiece, MediaUnit parent,
-                                         InsertionPosition position) {
+    public static void addMediaUnit(String type, MediaUnit parent,
+                                    InsertionPosition position) {
         MediaUnit newMediaUnit = new MediaUnit();
         newMediaUnit.setType(type);
         switch (position) {

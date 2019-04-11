@@ -346,10 +346,27 @@ public class GalleryPanel {
     void updateSelection(MediaUnit mediaUnit) {
         if (mediaUnit.getMediaFiles().size() > 0) {
             Map<MediaVariant, URI> mediaVariants = mediaUnit.getMediaFiles();
-            for (GalleryMediaContent galleryMediaContent : getMedias()) {
-                if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
-                    setSelectedMedia(galleryMediaContent);
-                    break;
+
+            // Update structured view
+            if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
+                for (GalleryStripe galleryStripe : getStripes()) {
+                    for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
+                        if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                            setSelectedMedia(galleryMediaContent);
+                            setSelectedStripe(galleryStripe);
+                            break;
+                        }
+                    }
+                }
+
+            }
+            // Update unstructured view
+            else {
+                for (GalleryMediaContent galleryMediaContent : getMedias()) {
+                    if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                        setSelectedMedia(galleryMediaContent);
+                        break;
+                    }
                 }
             }
         }

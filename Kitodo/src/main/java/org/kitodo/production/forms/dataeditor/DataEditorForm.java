@@ -18,11 +18,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +33,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
-import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.filemanagement.LockResult;
 import org.kitodo.api.filemanagement.LockingMode;
@@ -65,7 +63,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * A filter on the rule set depending on the workflow step. So far this is
      * not configurable anywhere and is therefore on “edit”.
      */
-    private String acquisitionStage = "edit";
+    private String acquisitionStage;
 
     /**
      * Backing bean for the add doc struc type dialog.
@@ -147,8 +145,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private Workpiece workpiece;
 
-    private boolean showPagination = false;
-
     /**
      * Public constructor.
      */
@@ -161,6 +157,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMediaUnitDialog = new AddMediaUnitDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
+        acquisitionStage = "edit";
     }
 
     /**
@@ -186,7 +183,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.user = ServiceManager.getUserService().getCurrentUser();
 
             ruleset = openRulesetFile(process.getTemplate().getRuleset().getFile());
-            if (!openMetsFile("meta.xml")) {
+            if (!openMetsFile()) {
                 return referringView;
             }
             init();
@@ -200,8 +197,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     /**
      * Opens the METS file.
      *
-     * @param fileName
-     *            file name to open
      * @return whether successful. False, if the file cannot be locked.
      * @throws URISyntaxException
      *             if the file URI cannot be built (due to invalid characters in
@@ -209,20 +204,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private boolean openMetsFile(String fileName) throws URISyntaxException, IOException {
+    private boolean openMetsFile() throws URISyntaxException, IOException {
         final long begin = System.nanoTime();
         URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
         String workDirectoryPath = workPathUri.getPath();
         mainFileUri = new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
-                workPathUri.getPort(), workDirectoryPath.endsWith("/") ? workDirectoryPath.concat(fileName)
-                        : workDirectoryPath + '/' + fileName,
+                workPathUri.getPort(), workDirectoryPath.endsWith("/") ? workDirectoryPath.concat("meta.xml")
+                        : workDirectoryPath + '/' + "meta.xml",
                 workPathUri.getQuery(), null);
 
         locks = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
         if (!locks.isSuccessful()) {
             Collection<String> conflicts = locks.getConflicts().get(mainFileUri);
             if (Objects.isNull(conflicts)) {
-                conflicts = Arrays.asList("");
+                conflicts = Collections.singletonList("");
             }
             Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", conflicts));
             return locks.isSuccessful();
@@ -445,25 +440,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     Workpiece getWorkpiece() {
         return workpiece;
-    }
-
-    /**
-     * Get showPagination.
-     *
-     * @return value of showPagination
-     */
-    public boolean isShowPagination() {
-        return showPagination;
-    }
-
-    /**
-     * Set showPagination.
-     *
-     * @param showPagination
-     *            as boolean
-     */
-    public void setShowPagination(boolean showPagination) {
-        this.showPagination = showPagination;
     }
 
     void refreshStructurePanel() {
