@@ -362,7 +362,7 @@ public class GalleryPanel {
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
-        Folder mediaViewSettings = project.getPreview();
+        Folder mediaViewSettings = project.getMediaView();
         mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, mediaUnits) : null;
 
         medias = new ArrayList<>(mediaUnits.size());
