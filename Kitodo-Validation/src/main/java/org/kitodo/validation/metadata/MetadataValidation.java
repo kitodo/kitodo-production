@@ -165,7 +165,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         if (treeStream(workpiece.getRootElement(), IncludedStructuralElement::getChildren)
                 .flatMap(structure -> structure.getViews().stream()).map(View::getMediaUnit)
-                .filter(workpiece.getMediaUnits()::contains).findAny().isPresent()) {
+                .anyMatch(workpiece.getMediaUnits()::contains)) {
             messages.add(translations.get(MESSAGE_MEDIA_MISSING));
             error = true;
         }
@@ -230,7 +230,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
             if (count == 0 && (min == 1 && max == 1)) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_MISSING),
-                    Arrays.asList(location + metadataView.getLabel())));
+                        Collections.singletonList(location + metadataView.getLabel())));
                 warning = true;
             } else if (count < min) {
                 messages.add(MessageFormat.format(translations.get(MESSAGE_VALUE_TOO_RARE),

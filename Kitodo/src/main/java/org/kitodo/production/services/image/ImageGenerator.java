@@ -119,7 +119,7 @@ public class ImageGenerator implements Runnable {
 
     /**
      * Appends the element to the list of elements to be generated.
-     * 
+     *
      * @param canonical
      *            the canonical part of the file name
      * @param sourceURI
@@ -204,7 +204,9 @@ public class ImageGenerator implements Runnable {
 
         try (OutputStream outputStream = fileService.write(destinationImage)) {
             Image image = retrieveJavaImage(sourceImage, imageProperties);
-            ImageIO.write((RenderedImage) image, fileFormat.getFormatName().get(), outputStream);
+            if (fileFormat.getFormatName().isPresent()) {
+                ImageIO.write((RenderedImage) image, fileFormat.getFormatName().get(), outputStream);
+            }
         }
     }
 
@@ -261,7 +263,7 @@ public class ImageGenerator implements Runnable {
         boolean isGettingScaledWebImage = imageProperties.getImageScale().isPresent();
         boolean isGettingSizedWebImage = imageProperties.getImageSize().isPresent();
 
-        if (isCreatingDerivative) {
+        if (isCreatingDerivative && destinationImage.getFileFormat().getImageFileFormat().isPresent()) {
             createDerivative(sourceImage, imageProperties, destinationImage.getFileFormat().getImageFileFormat().get(),
                 destinationImage.getUri(canonical));
         } else if (isChangingDpi || isGettingScaledWebImage || isGettingSizedWebImage) {

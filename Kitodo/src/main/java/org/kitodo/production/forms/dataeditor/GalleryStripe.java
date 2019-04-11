@@ -68,7 +68,7 @@ public class GalleryStripe {
      *            structure whose label is to return
      * @return the label
      */
-    private final String getLabel(GalleryPanel panel, IncludedStructuralElement structure) {
+    private String getLabel(GalleryPanel panel, IncludedStructuralElement structure) {
         RulesetManagementInterface ruleset = panel.getRuleset();
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(structure.getType(),
             panel.getAcquisitionStage(), panel.getPriorityList());

@@ -13,8 +13,8 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,7 +77,7 @@ abstract class MetadataTableRow implements Serializable {
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
-        Helper.getTranslation("dataEditor.copy", Arrays.asList(Integer.toString(panel.getClipboard().size())));
+        Helper.getTranslation("dataEditor.copy", Collections.singletonList(Integer.toString(panel.getClipboard().size())));
     }
 
     /**

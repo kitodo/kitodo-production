@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +161,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     /**
      * The method for building the meta-data table.
      */
-    private final void createMetadataTable() {
+    private void createMetadataTable() {
         // the existing meta-data is passed to the rule set, which sorts it
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
@@ -195,7 +194,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      *            available meta-data
      * @return meta-data with labels, if any
      */
-    private final Collection<Metadata> addLabels(Collection<Metadata> metadata) {
+    private Collection<Metadata> addLabels(Collection<Metadata> metadata) {
         Collection<Metadata> displayMetadata = metadata;
         if (Objects.nonNull(structure)) {
             displayMetadata = new ArrayList<>(metadata);
@@ -225,8 +224,8 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      *            data for that group, must contain at most one element
      * @return a sub-panel for JSF to render
      */
-    private final FieldedMetadataTableRow createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
-            Collection<Metadata> values) {
+    private FieldedMetadataTableRow createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
+                                                             Collection<Metadata> values) {
 
         Collection<Metadata> value;
         switch (values.size()) {
@@ -261,8 +260,8 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      *            the value(s) to be displayed
      * @return a backing bean for the row
      */
-    private final MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
-            Collection<Metadata> values) {
+    private MetadataTableRow createMetadataEntryEdit(SimpleMetadataViewInterface simpleMetadataView,
+                                                     Collection<Metadata> values) {
         switch (simpleMetadataView.getInputType()) {
             case MULTIPLE_SELECTION:
             case MULTI_LINE_SINGLE_SELECTION:
@@ -289,7 +288,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * @return a collection of simple meta-data entries
      */
     @SuppressWarnings({"unchecked", "rawtypes" })
-    private final Collection<MetadataEntry> simpleValues(Collection<Metadata> values) {
+    private Collection<MetadataEntry> simpleValues(Collection<Metadata> values) {
         Optional<Metadata> fault = values.parallelStream().filter(entry -> !(entry instanceof MetadataEntry)).findAny();
         if (fault.isPresent()) {
             throw new IllegalStateException("Got complex meta-data entry with key \"" + fault.get().getKey()
@@ -306,7 +305,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      *            values obtained
      * @return the only entry or null
      */
-    private final MetadataEntry oneSimpleValue(Collection<Metadata> values) {
+    private MetadataEntry oneSimpleValue(Collection<Metadata> values) {
         switch (values.size()) {
             case 0:
                 return null;
@@ -337,7 +336,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      *
      * @return the addable meta-data elements
      */
-    public List<SelectItem> getAddableMetadata() {
+    List<SelectItem> getAddableMetadata() {
         Map<Metadata, String> metadataWithKeys = addLabels(metadata).parallelStream()
                 .collect(Collectors.toMap(Function.identity(), Metadata::getKey));
         return metadataView.getAddableMetadata(metadataWithKeys, additionallySelectedFields).stream()
@@ -373,7 +372,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
             throw new IllegalStateException("never happening exception");
         }
         result.setGroup(metadata instanceof List ? (List<Metadata>) metadata : new ArrayList<>(metadata));
-        return Arrays.asList(result);
+        return Collections.singletonList(result);
     }
 
     public List<MetadataTableRow> getRows() {
@@ -431,7 +430,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * This method is triggered when the user clicks the insert meta-data
      * button.
      */
-    public void pasteClick() {
+    void pasteClick() {
         try {
             Collection<Metadata> clipboard = panel.getClipboard();
             preserve();

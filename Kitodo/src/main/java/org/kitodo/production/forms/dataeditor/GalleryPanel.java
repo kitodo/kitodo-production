@@ -399,7 +399,7 @@ public class GalleryPanel {
             lockRequests.putAll(mediaContent.getRequiredLocks());
         }
 
-        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getRootElement(), previewFolder));
+        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getRootElement()));
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
@@ -426,7 +426,7 @@ public class GalleryPanel {
         }
     }
 
-    private Map<URI, LockingMode> addStripesRecursive(IncludedStructuralElement structure, Subfolder previewFolder) {
+    private Map<URI, LockingMode> addStripesRecursive(IncludedStructuralElement structure) {
         GalleryStripe galleryStripe = new GalleryStripe(this, structure);
         Map<URI, LockingMode> lockRequests = new HashMap<>();
         for (View view : structure.getViews()) {
@@ -439,7 +439,7 @@ public class GalleryPanel {
         }
         stripes.add(galleryStripe);
         for (IncludedStructuralElement child : structure.getChildren()) {
-            lockRequests.putAll(addStripesRecursive(child, previewFolder));
+            lockRequests.putAll(addStripesRecursive(child));
         }
         return lockRequests;
     }

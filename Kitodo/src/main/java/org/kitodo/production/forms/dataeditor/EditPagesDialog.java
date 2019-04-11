@@ -141,8 +141,7 @@ public class EditPagesDialog {
             SelectItem selectItem = new SelectItem(id, label);
             selectPageItems.add(selectItem);
             boolean assigned = dataEditor.getSelectedStructure().isPresent()
-                    ? dataEditor.getSelectedStructure().get().getViews().contains(view)
-                    : false;
+                    && dataEditor.getSelectedStructure().get().getViews().contains(view);
             (assigned ? paginationSubSelectionItems : paginationSelectionItems).add(selectItem);
             (assigned ? assigneds : unassigneds).add(id);
         }

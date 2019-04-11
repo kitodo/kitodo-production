@@ -45,6 +45,11 @@ public class PaginationPanel {
     private List<SelectItem> selectPaginationScopeItems;
     private Boolean selectPaginationScopeSelectedItem = Boolean.TRUE;
 
+    /**
+     * Constructor.
+     *
+     * @param dataEditor DataEditorForm instance
+     */
     public PaginationPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
         preparePaginationTypeSelectItems();

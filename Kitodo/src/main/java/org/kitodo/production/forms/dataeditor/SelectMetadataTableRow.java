@@ -50,7 +50,7 @@ public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Se
      *            items as map key to label
      * @return list of select item objects
      */
-    private static final List<SelectItem> toItems(Map<String, String> selectItems) {
+    private static List<SelectItem> toItems(Map<String, String> selectItems) {
         ArrayList<SelectItem> result = new ArrayList<>(selectItems.entrySet().size());
         for (Entry<String, String> entry : selectItems.entrySet()) {
             result.add(new SelectItem(entry.getKey(), entry.getValue()));

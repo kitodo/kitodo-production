@@ -77,8 +77,6 @@ abstract class SimpleMetadataTableRow extends MetadataTableRow implements Serial
     /**
      * Returns if the value of the field validates. If not, the field cannot be
      * saved.
-     *
-     * @return if the value validates
      */
     public abstract void validatorQuery(FacesContext context, UIComponent component, Object value);
 }

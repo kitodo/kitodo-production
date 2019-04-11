@@ -121,7 +121,8 @@ public class StructurePanel implements Serializable {
         if (!selectedMediaUnit.isPresent()) {
             return;
         }
-        LinkedList<MediaUnit> ancestors = MetadataEditor.getAncestorsOfMediaUnit(selectedMediaUnit.get(), dataEditor.getWorkpiece().getMediaUnit());
+        LinkedList<MediaUnit> ancestors = MetadataEditor.getAncestorsOfMediaUnit(selectedMediaUnit.get(),
+                dataEditor.getWorkpiece().getMediaUnit());
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;

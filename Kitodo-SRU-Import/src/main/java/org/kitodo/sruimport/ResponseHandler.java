@@ -22,8 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.kitodo.api.externaldatamanagement.Record;
@@ -36,8 +34,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 class ResponseHandler {
-
-    private static final Logger logger = LogManager.getLogger(ResponseHandler.class);
 
     private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private static XMLOutputter xmlOutputter = new XMLOutputter();
@@ -81,7 +77,7 @@ class ResponseHandler {
      * @param response HttpResponse that is transformed into a Document
      * @return Document into which given HttpResponse has been transformed
      */
-    public static Document transformResponseToDocument(HttpResponse response) {
+    static Document transformResponseToDocument(HttpResponse response) {
         HttpEntity entity = response.getEntity();
         if (Objects.nonNull(entity)) {
             try {
@@ -123,18 +119,18 @@ class ResponseHandler {
     }
 
     private static String getRecordID(Element record) {
-        Element recordIdentifier = getXmlElement(record, MODS_NAMESPACE, RECORD_ID_TAG);
+        Element recordIdentifier = getXmlElement(record, RECORD_ID_TAG);
         return recordIdentifier.getTextContent().trim();
     }
 
     private static String getRecordTitle(Element record) {
-        Element modsElement = getXmlElement(record, MODS_NAMESPACE, MODS_TAG);
-        Element recordTitle = getXmlElement(modsElement, MODS_NAMESPACE, RECORD_TITLE_TAG);
+        Element modsElement = getXmlElement(record, MODS_TAG);
+        Element recordTitle = getXmlElement(modsElement, RECORD_TITLE_TAG);
         return recordTitle.getTextContent().trim();
     }
 
-    private static Element getXmlElement(Element parentNode, String nameSpace, String elementTag) {
-        NodeList nodeList = parentNode.getElementsByTagNameNS(nameSpace, elementTag);
+    private static Element getXmlElement(Element parentNode, String elementTag) {
+        NodeList nodeList = parentNode.getElementsByTagNameNS(ResponseHandler.MODS_NAMESPACE, elementTag);
         return (Element) nodeList.item(0);
     }
 }

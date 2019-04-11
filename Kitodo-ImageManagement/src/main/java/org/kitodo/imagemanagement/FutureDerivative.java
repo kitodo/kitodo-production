@@ -149,10 +149,10 @@ class FutureDerivative {
      */
     FutureDerivative resize(double percent) {
         if (Double.isNaN(percent)) {
-            throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
+            throw new IllegalArgumentException("percent must be a number, but was " + percent);
         }
         if (percent <= 0.0) {
-            throw new IllegalArgumentException("percent must be > 0.0, but was " + Double.toString(percent));
+            throw new IllegalArgumentException("percent must be > 0.0, but was " + percent);
         }
         String percentValue = Double.toString(100 * percent).concat("%");
         operations.add(Pair.of(OPTION_RESIZE, percentValue));
@@ -168,7 +168,7 @@ class FutureDerivative {
      */
     FutureDerivative resizeToDpi(int dpi) {
         if (dpi <= 0) {
-            throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
+            throw new IllegalArgumentException("dpi must be > 0, but was " + dpi);
         }
         operations.add(Pair.of(OPTION_RESAMPLE, Integer.toString(dpi)));
         return this;
@@ -183,7 +183,7 @@ class FutureDerivative {
      */
     FutureDerivative resizeToWidth(int pixelWidth) {
         if (pixelWidth <= 0) {
-            throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
+            throw new IllegalArgumentException("pixelWidth must be > 0, but was " + pixelWidth);
         }
         operations.add(Pair.of(OPTION_RESIZE, Integer.toString(pixelWidth)));
         return this;

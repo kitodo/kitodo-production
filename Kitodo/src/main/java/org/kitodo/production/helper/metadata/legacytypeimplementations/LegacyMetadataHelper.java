@@ -95,7 +95,7 @@ public class LegacyMetadataHelper {
      * automatically save itself if its value is subsequently changed. In fact,
      * the value may be, aside from the value of a meta-data entry, the value of
      * a field of the container, which makes the matter a bit unwieldy.
-     * 
+     *
      * @param bsi
      *            thee binding save interface via which the meta-data can
      *            automatically save itself afterwards
@@ -130,6 +130,11 @@ public class LegacyMetadataHelper {
         throw andLog(new UnsupportedOperationException("Not yet implemented"));
     }
 
+    /**
+     * Set string value.
+     *
+     * @param value String value
+     */
     @Deprecated
     public void setStringValue(String value) {
         this.value = value;
@@ -144,7 +149,7 @@ public class LegacyMetadataHelper {
      * operation. The name was chosen deliberately short in order to keep the
      * calling code clear. This method must be implemented in every class
      * because it uses the logger tailored to the class.
-     * 
+     *
      * @param exception
      *            created {@code UnsupportedOperationException}
      * @return the exception

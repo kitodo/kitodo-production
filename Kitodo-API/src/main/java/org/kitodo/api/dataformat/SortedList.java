@@ -12,7 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -80,7 +80,7 @@ class SortedList<T> extends ArrayList<T> {
      * number is not affected.
      */
     private void sort() {
-        Collections.sort(this, (one, another) -> orderGetter.apply(one).compareTo(orderGetter.apply(another)));
+        this.sort(Comparator.comparing(one -> orderGetter.apply(one)));
     }
 
     @Override
