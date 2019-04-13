@@ -284,7 +284,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ruleset = null;
             process = null;
             user = null;
-            return referringView;
+            return referringView + "?faces-redirect=true";
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
@@ -345,7 +345,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             close();
-            return referringView;
+            return referringView + "?faces-redirect=true";
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
