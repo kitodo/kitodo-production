@@ -713,6 +713,9 @@
                         }
                     }
                 },
+                "clientForTask": {
+                    "type": "long"
+                },
                 "templateForTask": {
                     "properties": {
                         "id": {
