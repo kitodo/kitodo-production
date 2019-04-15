@@ -135,6 +135,7 @@ public class UserForm extends BaseForm {
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
+            Helper.setErrorMessage("loginNotValid", new Object[] {login });
             return this.stayOnCurrentPage;
         }
 

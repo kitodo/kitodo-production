@@ -58,7 +58,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
-    private static final String LOGIN_NOT_VALID = "loginNotValid";
     private static final String CLIENT_ID = "clientId";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private static final int DEFAULT_CLIENT_ID =
@@ -266,7 +265,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(login);
         if (!matcher.matches()) {
-            Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
             return false;
         }
 
@@ -306,7 +304,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         String notAllowedLogin;
         while ((notAllowedLogin = reader.readLine()) != null) {
             if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {
-                Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
                 return true;
             }
         }
