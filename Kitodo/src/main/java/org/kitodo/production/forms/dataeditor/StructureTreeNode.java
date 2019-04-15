@@ -54,16 +54,6 @@ public class StructureTreeNode implements Serializable {
      * TODO add javaDoc.
      *
      * @param event
-     *            TreeDragDropEvent triggered by logical node being dropped
-     */
-    public void treeElementDragDrop(TreeDragDropEvent event) {
-
-    }
-
-    /**
-     * TODO add javaDoc.
-     *
-     * @param event
      *            NodeSelectEvent triggered by logical node being selected
      */
     public void treeLogicalSelect(NodeSelectEvent event) {

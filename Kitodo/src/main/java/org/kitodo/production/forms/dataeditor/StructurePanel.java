@@ -32,6 +32,7 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -435,5 +436,62 @@ public class StructurePanel implements Serializable {
             }
         }
         return false;
+    }
+
+    /**
+     * Callback function triggered on TreeDragDropEvent. Checks whether performed drag'n'drop action is allowed
+     * considering ruleset restrictions on structure hierarchy. In case some ruleset rules were violated by the action
+     * displays a corresponding error message to the user and reverts tree to prior state.
+     *
+     * @param event TreeDragDropEvent
+     *              event triggering this callback function
+     */
+    public void onDragDrop(TreeDragDropEvent event) {
+
+        TreeNode dragTreeNode = event.getDragNode();
+        TreeNode dropTreeNode = event.getDropNode();
+
+        Object dragNodeObject = dragTreeNode.getData();
+        Object dropNodeObject = dropTreeNode.getData();
+
+        if (!(dragNodeObject instanceof StructureTreeNode) || !(dropNodeObject instanceof StructureTreeNode)) {
+            Helper.setErrorMessage("Unable to move structure element!");
+            return;
+        }
+        StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
+        StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
+
+        if (!(dropNode.getDataObject() instanceof IncludedStructuralElement)
+                || !(dragNode.getDataObject() instanceof IncludedStructuralElement)) {
+            Helper.setErrorMessage("Unable to move structure element!");
+            return;
+        }
+
+        IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
+        IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
+
+        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+
+        LinkedList<IncludedStructuralElement> dragParents;
+        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
+            dragParents = MetadataEditor.getAncestorsOfStructure(dragStructure, dataEditor.getWorkpiece().getRootElement());
+            if (!dragParents.isEmpty()) {
+                IncludedStructuralElement parentStructure = dragParents.get(dragParents.size() - 1);
+                if (parentStructure.getChildren().contains(dragStructure)) {
+                    preserve();
+                    return;
+                } else {
+                    Helper.setErrorMessage("Parents of structure " + dragStructure.getType()
+                            + " do not contain structure!");
+                }
+            } else {
+                Helper.setErrorMessage("No parents of structure " + dragStructure.getType() + " found!");
+            }
+        } else {
+            Helper.setErrorMessage("Structure of type '" + dragStructure.getType()
+                    + "' NOT allowed as child of structure of type '" + dropStructure.getType() + "'! ");
+        }
+        show();
     }
 }

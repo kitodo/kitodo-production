@@ -34,9 +34,9 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{logicalNode.treeLogicalSelect}"
-                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+                    update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
             <p:ajax event="dragdrop"
-                    listener="#{logicalNode.treeElementDragDrop}"
+                    listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
             <p:treeNode expandedIcon="ui-icon-document"
                         collapsedIcon="ui-icon-document">
@@ -76,9 +76,9 @@
                 dragdropScope="physicalTree">
             <p:ajax event="select"
                     listener="#{physicalNode.treePhysicalSelect}"
-                    update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm"/>
+                    update="structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm"/>
             <p:ajax event="dragdrop"
-                    listener="#{physicalNode.treeElementDragDrop}"
+                    listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
             <p:treeNode expandedIcon="ui-icon-document"
                         collapsedIcon="ui-icon-document">

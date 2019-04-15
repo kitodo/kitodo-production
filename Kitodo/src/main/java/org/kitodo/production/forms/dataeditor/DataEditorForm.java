@@ -13,7 +13,6 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
@@ -205,7 +204,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      *             if filesystem I/O fails
      */
     private boolean openMetsFile() throws URISyntaxException, IOException {
-        final long begin = System.nanoTime();
         URI workPathUri = ServiceManager.getFileService().getProcessBaseUriForExistingProcess(process);
         String workDirectoryPath = workPathUri.getPath();
         mainFileUri = new URI(workPathUri.getScheme(), workPathUri.getUserInfo(), workPathUri.getHost(),
@@ -223,12 +221,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             return locks.isSuccessful();
         }
 
-        try (InputStream in = ServiceManager.getFileService().read(mainFileUri, locks)) {
-            workpiece = ServiceManager.getMetsService().load(in);
-        }
-        if (logger.isTraceEnabled()) {
-            logger.trace("Reading METS took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
-        }
+        workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         ServiceManager.getFileService().searchForMedia(process, workpiece);
         return true;
     }
@@ -275,7 +268,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         try {
             locks.close();
             locks = null;
-
             commentPanel.clear();
             metadataPanel.clear();
             structurePanel.clear();
@@ -284,7 +276,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ruleset = null;
             process = null;
             user = null;
-            return referringView + "?faces-redirect=true";
+            if (referringView.contains("?")) {
+                return referringView + "&faces-redirect=true";
+            } else {
+                return referringView + "?faces-redirect=true";
+            }
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
@@ -344,8 +340,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, locks)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
-            close();
-            return referringView + "?faces-redirect=true";
+            return close();
         } catch (Exception e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;

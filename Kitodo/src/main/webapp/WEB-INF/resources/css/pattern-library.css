@@ -589,6 +589,10 @@ tbody.ui-widget-content {
     border: 0px;
 }
 
+.ui-treenode .ui-state-hover {
+    background: var(--light-blue);
+}
+
 .ui-datatable tr.ui-widget-content:hover,
 .ui-treetable tr.ui-widget-content:hover {
     background: var(--trans-blue);
