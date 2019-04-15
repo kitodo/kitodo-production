@@ -91,17 +91,17 @@ public class TasksPage extends Page<TasksPage> {
         takeTaskLink.click();
     }
 
-    public void editOwnedTask(int id) throws Exception {
+    public void editOwnedTask(String taskTitle, String processTitle) throws Exception {
         if (isNotAt()) {
             goTo();
         }
-        setEditTaskLink(id);
+        setEditTaskLink(taskTitle, processTitle);
         editTaskLink.click();
     }
 
-    private void setEditTaskLink(int id) {
-        editTaskLink = Browser.getDriver()
-                .findElementByXPath("//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=" + id + "']");
+    private void setEditTaskLink(String taskTitle, String processTitle) {
+        int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
+        editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:editOwnTask");
     }
 
     private void setTakeTaskLink(String taskTitle, String processTitle) {

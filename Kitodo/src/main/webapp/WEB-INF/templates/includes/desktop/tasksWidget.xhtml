@@ -59,7 +59,7 @@
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
-                <h:commandLink action="#{CurrentTaskForm.editTask}"
+                <h:commandLink id="editOwnTask" action="#{CurrentTaskForm.editTask}"
                                actionListener="#{CommentForm.setProcessId(task.process.id)}"
                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
@@ -68,7 +68,7 @@
                     <f:param name="id" value="#{task.id}"/>
                 </h:commandLink>
                 <!-- already assigned task (different user) -->
-                <h:commandLink action="#{CurrentTaskForm.editTask}" id="view2"
+                <h:commandLink id="editOtherTask" action="#{CurrentTaskForm.editTask}"
                                actionListener="#{CommentForm.setProcessId(task.process.id)}"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
