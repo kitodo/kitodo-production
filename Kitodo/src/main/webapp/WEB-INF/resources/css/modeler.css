@@ -869,14 +869,17 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   background-color: #f8f8f8;
 }
 /* line 71, styles/modeler_custom.less */
-.workflow-editor-hidden {
+.workflow-editor-hidden,
+.bpp-properties-header,
+div[data-entry=id],
+.hidden {
   position: absolute;
   height: 1px;
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
 }
-/* line 79, styles/modeler_custom.less */
+/* line 81, styles/modeler_custom.less */
 .bpp-textfield input,
 .bpp-properties-panel [contenteditable] {
   padding-right: 20px !important;
