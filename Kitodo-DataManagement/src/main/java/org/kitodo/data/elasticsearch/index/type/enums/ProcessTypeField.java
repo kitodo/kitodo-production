@@ -32,6 +32,7 @@ public enum ProcessTypeField implements TypeInterface {
     DOCKET("docket"),
     RULESET("ruleset"),
     BATCHES("batches"),
+    COMMENTS("comments"),
     TASKS("tasks"),
     PROPERTIES("properties"),
     TEMPLATES("templates"),

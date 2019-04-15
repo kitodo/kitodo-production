@@ -25,6 +25,7 @@ import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -106,6 +107,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             jsonObject.put(BatchTypeField.TYPE.getKey(), type);
         } else if (property instanceof BaseTemplateBean) {
             jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
+        } else if (property instanceof Comment) {
+            jsonObject.put("message", preventNull(((Comment) property).getMessage()));
         } else if (property instanceof Project) {
             Project project = (Project) property;
             jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));

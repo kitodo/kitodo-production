@@ -47,6 +47,7 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.RULESET.getKey(), getId(process.getRuleset()));
         jsonObject.put(ProcessTypeField.DOCKET.getKey(), getId(process.getDocket()));
         jsonObject.put(ProcessTypeField.BATCHES.getKey(), addObjectRelation(process.getBatches(), true));
+        jsonObject.put(ProcessTypeField.COMMENTS.getKey(), addObjectRelation(process.getComments()));
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), addObjectRelation(process.getProperties(), true));
         jsonObject.put(ProcessTypeField.TEMPLATES.getKey(), addObjectRelation(process.getTemplates()));
