@@ -35,6 +35,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.CommentTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
@@ -108,7 +109,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         } else if (property instanceof BaseTemplateBean) {
             jsonObject.put(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
         } else if (property instanceof Comment) {
-            jsonObject.put("message", preventNull(((Comment) property).getMessage()));
+            jsonObject.put(CommentTypeField.MESSAGE.getKey(), preventNull(((Comment) property).getMessage()));
         } else if (property instanceof Project) {
             Project project = (Project) property;
             jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
