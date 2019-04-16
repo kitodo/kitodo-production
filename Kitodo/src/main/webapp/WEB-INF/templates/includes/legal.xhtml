@@ -35,13 +35,15 @@
             </h:panelGroup>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
-                <p:commandButton id="closeImprint"
-                                 value="#{msgs.close}"
-                                 icon="fa fa-times fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 styleClass="secondary right"
-                                 onclick="PF('imprintDialog').hide();"/>
+                <h:form id="closeImprintForm">
+                    <p:commandButton id="closeImprint"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     immediate="true"
+                                     styleClass="secondary right"
+                                     onclick="PF('imprintDialog').hide();"/>
+                </h:form>
             </h:panelGroup>
         </p:dialog>
         <p:dialog id="dataPrivacyDialog"
@@ -61,13 +63,15 @@
             </h:panelGroup>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
-                <p:commandButton id="closeDataPrivacy"
-                                 value="#{msgs.close}"
-                                 icon="fa fa-times fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 styleClass="secondary right"
-                                 onclick="PF('dataPrivacyDialog').hide();"/>
+                <h:form id="closeDataPrivacyForm">
+                    <p:commandButton id="closeDataPrivacy"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     immediate="true"
+                                     styleClass="secondary right"
+                                     onclick="PF('dataPrivacyDialog').hide();"/>
+                </h:form>
             </h:panelGroup>
         </p:dialog>
         <p:dialog id="termsOfUseDialog"
@@ -87,13 +91,15 @@
             </h:panelGroup>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
-                <p:commandButton id="closeTerms"
-                                 value="#{msgs.close}"
-                                 icon="fa fa-times fa-lg"
-                                 iconPos="right"
-                                 immediate="true"
-                                 styleClass="secondary right"
-                                 onclick="PF('termsOfUseDialog').hide();"/>
+                <h:form id="closeTermsOfUseForm">
+                    <p:commandButton id="closeTerms"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     immediate="true"
+                                     styleClass="secondary right"
+                                     onclick="PF('termsOfUseDialog').hide();"/>
+                </h:form>
             </h:panelGroup>
         </p:dialog>
     </f:view>
