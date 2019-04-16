@@ -92,7 +92,8 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @param project
      *            object
      */
-    private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, DataException, IOException {
+    private void manageProcessesDependenciesForIndex(Project project)
+            throws CustomResponseException, DataException, IOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (Process process : project.getProcesses()) {
                 ServiceManager.getProcessService().removeFromIndex(process, false);
@@ -110,7 +111,8 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @param project
      *            object
      */
-    private void manageTemplatesDependenciesForIndex(Project project) throws CustomResponseException, DataException, IOException {
+    private void manageTemplatesDependenciesForIndex(Project project)
+            throws CustomResponseException, DataException, IOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (Template template : project.getTemplates()) {
                 template.getProjects().remove(project);
@@ -254,8 +256,9 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
         boolean digitalCollectionsXmlExists = KitodoConfigFile.DIGITAL_COLLECTIONS.exists();
 
-        return Objects.nonNull(project.getTitle()) && Objects.nonNull(project.template) && project.getFileFormatDmsExport() != null
-                && Objects.nonNull(project.getFileFormatInternal()) && digitalCollectionsXmlExists && projectsXmlExists;
+        return Objects.nonNull(project.getTitle()) && Objects.nonNull(project.template)
+                && project.getFileFormatDmsExport() != null && Objects.nonNull(project.getFileFormatInternal())
+                && digitalCollectionsXmlExists && projectsXmlExists;
     }
 
     /**
@@ -322,7 +325,12 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         return duplicatedProject;
     }
 
-    private QueryBuilder getProjectsForCurrentUserQuery() {
+    /**
+     * Get query for finding projects for current user.
+     * 
+     * @return query for finding projects for current user
+     */
+    public QueryBuilder getProjectsForCurrentUserQuery() {
         int currentUserId = ServiceManager.getUserService().getAuthenticatedUser().getId();
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
 
