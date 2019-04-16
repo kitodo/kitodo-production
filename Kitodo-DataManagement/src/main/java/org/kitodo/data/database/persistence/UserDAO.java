@@ -14,6 +14,7 @@ package org.kitodo.data.database.persistence;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -71,10 +72,15 @@ public class UserDAO extends BaseDAO<User> {
      */
     public Long countUsersWithExactlyTheSameLogin(Integer id, String login) throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
+        if (Objects.nonNull(id)) {
+            parameters.put("id", id);
+            parameters.put("login", login);
+            return count("SELECT COUNT(*) FROM User WHERE id != :id AND login = :login",
+                    parameters);
+        }
+
         parameters.put("login", login);
-        return count("SELECT COUNT(*) FROM User WHERE id != :id AND login = :login",
-                parameters);
+        return count("SELECT COUNT(*) FROM User WHERE login = :login", parameters);
     }
 
     /**
