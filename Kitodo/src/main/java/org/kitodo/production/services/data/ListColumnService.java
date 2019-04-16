@@ -174,7 +174,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
      *
      * @param excludeList String array containing the names of custom columns that are not removed
      */
-    public void removeProcessCustomListColumns(List<String> excludeList) throws DAOException {
+    public void removeCustomListColumns(List<String> excludeList) throws DAOException {
         // don't remove columns whose titles are in the given excludeList
         List<ListColumn> customColumns = dao.getAllCustom().stream()
                 .filter(column -> !excludeList.contains(column.getTitle()))
