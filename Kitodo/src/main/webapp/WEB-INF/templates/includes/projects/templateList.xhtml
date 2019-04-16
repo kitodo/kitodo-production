@@ -80,7 +80,7 @@
 
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="4" columnClasses="label, value" id="templateDetailTable">
+                <p:panelGrid columns="2" columnClasses="label, value" id="templateDetailTable">
                     <h:outputText value="#{msgs.workflow}:"/>
                     <h:outputText value="#{item.workflow.title}"/>
 
@@ -92,23 +92,23 @@
 
                     <h:outputText value="#{msgs.projects}:"/>
                     <h:form id="createProcessForm">
-                        <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
-                            <p:repeat value="#{item.projects}" var="project" id="projects">
+                        <p:repeat value="#{item.projects}" var="project" id="projects">
+                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
                                 <h:outputText value="#{project.title} "/>
 
-                                <h:commandLink action="#{ProzesskopieForm.prepare(item.id,project.id)}" id="createProcess"
-                                               title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}"
-                                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                </h:commandLink>
+                                <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                    <h:commandLink action="#{ProzesskopieForm.prepare(item.id,project.id)}" id="createProcess"
+                                                   title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                    </h:commandLink>
 
-                                <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
-                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}"
-                                               rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                                    <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                </h:commandLink>
-                            </p:repeat>
-                        </p:panelGrid>
+                                    <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
+                                                   title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                    </h:commandLink>
+                                </h:outputText>
+                            </p:panelGrid>
+                        </p:repeat>
                     </h:form>
                 </p:panelGrid>
 
