@@ -137,7 +137,7 @@ public class TemplateForm extends TemplateBaseForm {
                     logger, e);
                 return this.stayOnCurrentPage;
             } catch (WorkflowException e) {
-                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle() },
+                Helper.setErrorMessage("errorDiagramTask", new Object[] {this.template.getWorkflow().getTitle(), e.getMessage() },
                     logger, e);
                 return this.stayOnCurrentPage;
             }
