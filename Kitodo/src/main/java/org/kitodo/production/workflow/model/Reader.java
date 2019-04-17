@@ -154,11 +154,15 @@ public class Reader {
         } else if (node instanceof Gateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
             if (nextNodes.count() == 1) {
-                iterateOverNodes(nextNodes.singleResult(), ordering);
+                if (node.getPreviousNodes().count() > 1) {
+                    iterateOverNodes(nextNodes.singleResult(), ordering);
+                } else {
+                    throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGatewayOneTask"));
+                }
             } else if (nextNodes.count() > 1) {
                 addParallelTasksBranch(nextNodes.list(), ordering);
             } else {
-                throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGateway"));
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGatewayNoTask"));
             }
         }
     }
