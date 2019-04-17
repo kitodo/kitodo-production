@@ -12,6 +12,8 @@
 package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
@@ -20,6 +22,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -35,6 +38,8 @@ public class ClientForm extends BaseForm {
 
     private final String clientListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private final String clientEditPath = MessageFormat.format(REDIRECT_PATH, "clientEdit");
+    private Client clientToCopyRoles;
+    private List<Role> rolesForClient;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -52,7 +57,11 @@ public class ClientForm extends BaseForm {
      */
     public String save() {
         try {
+            for (Role role : rolesForClient) {
+                ServiceManager.getRoleService().saveToDatabase(role);
+            }
             ServiceManager.getClientService().saveToDatabase(this.client);
+            rolesForClient=null;
             return clientListPath;
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
@@ -67,6 +76,7 @@ public class ClientForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
+                rolesForClient=null;
                 this.client = ServiceManager.getClientService().getById(id);
             }
             setSaveDisabled(true);
@@ -82,6 +92,7 @@ public class ClientForm extends BaseForm {
      * @return page address
      */
     public String newClient() {
+        rolesForClient = null;
         this.client = new Client();
         this.client.setListColumns(ServiceManager.getListColumnService().getAllStandardListColumns());
         return clientEditPath;
@@ -130,5 +141,75 @@ public class ClientForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * Gets all roles for a Client.
+     * 
+     * @return a list of roles
+     */
+    public List<Role> getRolesForClient() {
+        if (Objects.isNull(rolesForClient) && Objects.nonNull(client) && Objects.nonNull(client.getId()) ) {
+            rolesForClient = ServiceManager.getRoleService().getAllRolesByClientId(client.getId());
+        }
+        return rolesForClient;
+    }
+
+    /**
+     * Get clientToCopyRoles.
+     *
+     * @return value of clientToCopyRoles
+     */
+    public Client getClientToCopyRoles() {
+        return clientToCopyRoles;
+    }
+
+    /**
+     * Set clientToCopyRoles.
+     *
+     * @param clientToCopyRoles
+     *            as org.kitodo.data.database.beans.Client
+     */
+    public void setClientToCopyRoles(Client clientToCopyRoles) {
+        this.clientToCopyRoles = clientToCopyRoles;
+    }
+
+    /**
+     * Copies all roles from a chosen client to the current client.
+     */
+    public void copyRolesToClient() {
+        List<Role> allRolesToCopy = ServiceManager.getRoleService().getAllRolesByClientId(clientToCopyRoles.getId());
+        for (Role role : allRolesToCopy) {
+            Role newRole = new Role();
+            newRole.setTitle(role.getTitle());
+            newRole.setClient(client);
+            newRole.setAuthorities(newRole.getAuthorities());
+            rolesForClient.add(newRole);
+        }
+    }
+
+    /**
+     * Removes a givon role from a client.
+     * 
+     * @param roleToRemove
+     *            role to remove.
+     */
+    public void deleteRoleFromClient(Role roleToRemove) {
+        for (Role role : new ArrayList<>(rolesForClient)) {
+            if (role.getTitle().equalsIgnoreCase(roleToRemove.getTitle())) {
+                rolesForClient.remove(role);
+            }
+        }
+    }
+
+    /**
+     * Get all clients where roles can be copied from.
+     * @return a list of possible clients.
+     * @throws DAOException when Database connection fails.
+     */
+    public List<Client> getPossibleClientsForCopying() throws DAOException {
+        List<Client> allClients = ServiceManager.getClientService().getAll();
+        allClients.remove(client);
+        return allClients;
     }
 }
