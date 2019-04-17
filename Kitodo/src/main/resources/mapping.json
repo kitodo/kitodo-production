@@ -343,6 +343,22 @@
                         }
                     }
                 },
+                "comments": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "message": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
                 "meta": {
                     "dynamic": "false",
                     "type": "object",

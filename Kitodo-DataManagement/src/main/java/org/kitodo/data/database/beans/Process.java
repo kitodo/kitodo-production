@@ -83,6 +83,9 @@ public class Process extends BaseTemplateBean {
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST)
+    private List<Comment> comments;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
@@ -361,6 +364,28 @@ public class Process extends BaseTemplateBean {
             this.batches.clear();
             this.batches.addAll(batches);
         }
+    }
+
+    /**
+     * Get comments.
+     *
+     * @return value of comments
+     */
+    public List<Comment> getComments() {
+        initialize(new ProcessDAO(), this.comments);
+        if (Objects.isNull(this.comments)) {
+            this.comments = new ArrayList<>();
+        }
+        return this.comments;
+    }
+
+    /**
+     * Set comments.
+     *
+     * @param comments as List of Comment objects
+     */
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     /**
