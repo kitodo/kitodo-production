@@ -104,7 +104,7 @@ public class Reader {
 
         StartEvent startEvent = modelInstance.getModelElementsByType(StartEvent.class).iterator().next();
         if (startEvent.getOutgoing().iterator().hasNext()) {
-            iterateOverNodes(startEvent.getOutgoing().iterator().next().getTarget(), 1);
+            iterateOverNodes(startEvent.getOutgoing().iterator().next().getTarget());
         }
     }
 
@@ -136,8 +136,8 @@ public class Reader {
      * @param node
      *            for current iteration call
      */
-    private void iterateOverNodes(FlowNode node, int ordering) throws WorkflowException {
-        iterateOverNodes(node, ordering, "");
+    private void iterateOverNodes(FlowNode node) throws WorkflowException {
+        iterateOverNodes(node, 1);
     }
 
     /**
@@ -145,18 +145,18 @@ public class Reader {
      *
      * @param node
      *            for current iteration call
-     * @param workflowCondition
-     *            given from exclusive gateway
+     * @param ordering
+     *            of task
      */
-    private void iterateOverNodes(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+    private void iterateOverNodes(FlowNode node, int ordering) throws WorkflowException {
         if (node instanceof Task) {
-            addTask(node, ordering, workflowCondition);
+            addTask(node, ordering);
         } else if (node instanceof Gateway) {
             Query<FlowNode> nextNodes = node.getSucceedingNodes();
             if (nextNodes.count() == 1) {
-                iterateOverNodes(nextNodes.singleResult(), ordering, workflowCondition);
+                iterateOverNodes(nextNodes.singleResult(), ordering);
             } else if (nextNodes.count() > 1) {
-                addParallelTasksBranch(nextNodes.list(), ordering, workflowCondition);
+                addParallelTasksBranch(nextNodes.list(), ordering);
             } else {
                 throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelGateway"));
             }
@@ -169,18 +169,17 @@ public class Reader {
      *
      * @param nodes
      *            nodes of parallel gateway
-     * @param workflowCondition
-     *            workflow condition is carried over from previous states
+     * @param ordering
+     *            of task
      */
-    private void addParallelTasksBranch(List<FlowNode> nodes, int ordering, String workflowCondition)
-            throws WorkflowException {
+    private void addParallelTasksBranch(List<FlowNode> nodes, int ordering) throws WorkflowException {
         for (FlowNode node : nodes) {
             if (isBranchInvalid(node)) {
                 throw new WorkflowException(Helper.getTranslation("workflowExceptionParallelBranch",
                     Collections.singletonList(node.getName())));
             }
 
-            iterateOverNodes(node, ordering, workflowCondition);
+            iterateOverNodes(node, ordering);
         }
     }
 
@@ -202,10 +201,8 @@ public class Reader {
      *            for task
      * @param ordering
      *            for task
-     * @param workflowCondition
-     *            for task
      */
-    private void addTask(FlowNode node, int ordering, String workflowCondition) throws WorkflowException {
+    private void addTask(FlowNode node, int ordering) throws WorkflowException {
         Query<FlowNode> nextNodes = node.getSucceedingNodes();
         int nextNodesSize = nextNodes.count();
 
@@ -217,7 +214,7 @@ public class Reader {
             } else {
                 tasks.put((Task) node, new TaskInfo(ordering, false));
                 ordering++;
-                iterateOverNodes(nextNode, ordering, workflowCondition);
+                iterateOverNodes(nextNode, ordering);
             }
         } else if (nextNodesSize == 0) {
             tasks.put((Task) node, new TaskInfo(ordering, true));
