@@ -336,7 +336,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         try {
             metadataPanel.preserveLogical();
             metadataPanel.preservePhysical();
-            structurePanel.preserve();
+            structurePanel.preserveLogical();
+            structurePanel.preservePhysical();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, locks)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }

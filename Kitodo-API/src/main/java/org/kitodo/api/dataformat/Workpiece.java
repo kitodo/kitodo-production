@@ -13,8 +13,10 @@ package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The administrative structure of the product of an element that passes through
@@ -172,5 +174,43 @@ public class Workpiece {
             }
         }
         return false;
+    }
+
+    /**
+     * Convenience function to return all media units of type 'page'.
+     *
+     * @return list of all media units with type 'page'.
+     */
+    public List<MediaUnit> getAllMediaUnits() {
+        return getAllMediaUnits("page");
+    }
+
+    /**
+     * Recursively search for all media units with given type.
+     *
+     * @param type
+     *          type of media units to be returned.
+     * @return list of all media units with given type
+     */
+    public List<MediaUnit> getAllMediaUnits(String type) {
+        List<MediaUnit> mediaUnits = new LinkedList<>(mediaUnit.getChildren());
+        for (MediaUnit mediaUnit : mediaUnit.getChildren()) {
+            if (Objects.nonNull(mediaUnit)) {
+                mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
+            }
+        }
+        return mediaUnits.stream().filter(m -> m.getType().equals(type)).collect(Collectors.toList());
+    }
+
+    private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {
+        for (MediaUnit mediaUnit : parent.getChildren()) {
+            if (Objects.nonNull(mediaUnit)) {
+                mediaUnits.add(mediaUnit);
+                if (!mediaUnit.getChildren().isEmpty()) {
+                    mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
+                }
+            }
+        }
+        return mediaUnits;
     }
 }

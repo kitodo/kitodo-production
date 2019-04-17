@@ -895,7 +895,7 @@ public class FileService {
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getMediaUnits(), canonicals);
+        addNewURIsToExistingMediaUnits(mediaToAdd, workpiece.getAllMediaUnits(), canonicals);
         for (String canonical : canonicals) {
             mediaToAdd.remove(canonical);
         }
@@ -922,7 +922,7 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
+        for (MediaUnit mediaUnit : workpiece.getAllMediaUnits()) {
             String unitCanonical = "";
             for (Entry<MediaVariant, URI> entry : mediaUnit.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());

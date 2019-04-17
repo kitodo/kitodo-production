@@ -34,7 +34,7 @@
                 dragdropScope="logicalTree">
             <p:ajax event="select"
                     listener="#{logicalNode.treeLogicalSelect}"
-                    update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
+                    update="structureTreeForm:logicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>
@@ -76,7 +76,7 @@
                 dragdropScope="physicalTree">
             <p:ajax event="select"
                     listener="#{physicalNode.treePhysicalSelect}"
-                    update="structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm"/>
+                    update="structureTreeForm:physicalTree,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,@(.thumbnail),dialogEditPages,addMetadataForm,imagePreviewForm:olWrapper"/>
             <p:ajax event="dragdrop"
                     listener="#{DataEditorForm.structurePanel.onDragDrop}"
                     update="structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataAccordion:physicalMetadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel,dialogEditPages,addMetadataForm"/>

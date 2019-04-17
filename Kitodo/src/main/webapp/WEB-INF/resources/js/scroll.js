@@ -46,7 +46,11 @@ function atTop(scrollableContent) {
 }
 
 function atBottom(scrollableContent) {
-    return scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight;
+    if (scrollableContent.length) {
+        return scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight;
+    } else {
+        return true;
+    }
 }
 
 function disableUpButton() {

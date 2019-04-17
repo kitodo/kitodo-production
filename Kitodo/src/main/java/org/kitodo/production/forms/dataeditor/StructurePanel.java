@@ -207,7 +207,7 @@ public class StructurePanel implements Serializable {
      * the structure tree in their given order. The live structure of the
      * workpiece which is stored in the root element of the structure tree.
      */
-    void preserve() {
+    void preserveLogical() {
         if (!logicalTree.getChildren().isEmpty()) {
             preserveRecursive(logicalTree.getChildren().get(0));
         }
@@ -230,11 +230,35 @@ public class StructurePanel implements Serializable {
         childrenLive.clear();
         for (TreeNode child : treeNode.getChildren()) {
             IncludedStructuralElement maybeChildStructure = preserveRecursive(child);
-            if (maybeChildStructure != null) {
+            if (Objects.nonNull(maybeChildStructure)) {
                 childrenLive.add(maybeChildStructure);
             }
         }
         return structure;
+    }
+
+    void preservePhysical() {
+        if (!physicalTree.getChildren().isEmpty()) {
+            preservePhyiscalRecursive(physicalTree.getChildren().get(0));
+        }
+    }
+
+    private static MediaUnit preservePhyiscalRecursive(TreeNode treeNode) {
+        StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+        if (Objects.isNull(structureTreeNode) || !(structureTreeNode.getDataObject() instanceof MediaUnit)) {
+            return null;
+        }
+        MediaUnit mediaUnit = (MediaUnit) structureTreeNode.getDataObject();
+
+        List<MediaUnit> childrenLive = mediaUnit.getChildren();
+        childrenLive.clear();
+        for (TreeNode child : treeNode.getChildren()) {
+            MediaUnit possibleChildMediaUnit = preservePhyiscalRecursive(child);
+            if (Objects.nonNull(possibleChildMediaUnit)) {
+                childrenLive.add(possibleChildMediaUnit);
+            }
+        }
+        return mediaUnit;
     }
 
     /**
@@ -461,15 +485,19 @@ public class StructurePanel implements Serializable {
         StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
         StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
 
-        if (!(dropNode.getDataObject() instanceof IncludedStructuralElement)
-                || !(dragNode.getDataObject() instanceof IncludedStructuralElement)) {
+        if (dropNode.getDataObject() instanceof IncludedStructuralElement
+                && dragNode.getDataObject() instanceof IncludedStructuralElement) {
+            checkLogicalDragnDrop((IncludedStructuralElement) dragNode.getDataObject(),
+                    (IncludedStructuralElement) dropNode.getDataObject());
+        } else if ((dropNode.getDataObject()) instanceof MediaUnit && dropNode.getDataObject() instanceof MediaUnit) {
+            checkPhysicalDragnDrop((MediaUnit) dragNode.getDataObject(), (MediaUnit) dropNode.getDataObject());
+        } else {
             Helper.setErrorMessage("Unable to move structure element!");
-            return;
         }
+    }
 
-        IncludedStructuralElement dropStructure = (IncludedStructuralElement) dropNode.getDataObject();
-        IncludedStructuralElement dragStructure = (IncludedStructuralElement) dragNode.getDataObject();
-
+    private void checkLogicalDragnDrop(IncludedStructuralElement dragStructure,
+                                       IncludedStructuralElement dropStructure) {
         StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
@@ -479,7 +507,7 @@ public class StructurePanel implements Serializable {
             if (!dragParents.isEmpty()) {
                 IncludedStructuralElement parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    preserve();
+                    preserveLogical();
                     return;
                 } else {
                     Helper.setErrorMessage("Parents of structure " + dragStructure.getType()
@@ -491,6 +519,32 @@ public class StructurePanel implements Serializable {
         } else {
             Helper.setErrorMessage("Structure of type '" + dragStructure.getType()
                     + "' NOT allowed as child of structure of type '" + dropStructure.getType() + "'! ");
+        }
+        show();
+    }
+
+    private void checkPhysicalDragnDrop(MediaUnit dragUnit, MediaUnit dropUnit) {
+        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                dropUnit.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+
+        LinkedList<MediaUnit> dragParents;
+        if (divisionView.getAllowedSubstructuralElements().containsKey(dragUnit.getType())) {
+            dragParents = MetadataEditor.getAncestorsOfMediaUnit(dragUnit, dataEditor.getWorkpiece().getMediaUnit());
+            if (!dragParents.isEmpty()) {
+                MediaUnit parentUnit = dragParents.get(dragParents.size() - 1);
+                if (parentUnit.getChildren().contains(dragUnit)) {
+                    preservePhysical();
+                    return;
+                } else {
+                    Helper.setErrorMessage("Parents of media unit " + dragUnit.getType() + " do not contain media "
+                            + "unit!");
+                }
+            } else {
+                Helper.setErrorMessage("No parents of media unit " + dragUnit.getType() + " found!");
+            }
+        } else {
+            Helper.setErrorMessage("Media unit of type '" + dragUnit.getType()
+                    + "' NOT allowed as child of media unit of type '" + dropUnit.getType() + "!");
         }
         show();
     }

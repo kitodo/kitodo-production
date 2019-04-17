@@ -13,8 +13,9 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
 
+import org.kitodo.api.dataformat.IncludedStructuralElement;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.primefaces.event.NodeSelectEvent;
-import org.primefaces.event.TreeDragDropEvent;
 
 public class StructureTreeNode implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,21 @@ public class StructureTreeNode implements Serializable {
 
     public boolean isUndefined() {
         return undefined;
+    }
+
+    /**
+     * Return label of dataObject if dataObject is instance of MediaUnit or IncludedStructuralElement.
+     *
+     * @return label
+     */
+    public String getOrderLabel() {
+        if (this.dataObject instanceof MediaUnit) {
+            return ((MediaUnit) this.dataObject).getOrderlabel();
+        } else if (this.dataObject instanceof IncludedStructuralElement) {
+            return ((IncludedStructuralElement) this.dataObject).getOrderlabel();
+        } else {
+            return "";
+        }
     }
 
     /**

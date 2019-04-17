@@ -375,7 +375,7 @@ public class GalleryPanel {
     void show() throws IOException {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, mediaUnits) : null;
