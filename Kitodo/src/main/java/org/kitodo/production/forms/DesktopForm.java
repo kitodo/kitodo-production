@@ -46,8 +46,18 @@ public class DesktopForm extends BaseForm {
      *
      * @return array containing values of ObjectType enum
      */
-    public ObjectType[] getObjectTypes() {
-        return ObjectType.values();
+    public List<ObjectType> getObjectTypes() {
+        ArrayList<ObjectType> objectTypes = new ArrayList<>();
+        objectTypes.add(ObjectType.TASK);
+        objectTypes.add(ObjectType.USER);
+        objectTypes.add(ObjectType.PROCESS);
+        objectTypes.add(ObjectType.DOCKET);
+        objectTypes.add(ObjectType.PROJECT);
+        objectTypes.add(ObjectType.RULESET);
+        objectTypes.add(ObjectType.TEMPLATE);
+        objectTypes.add(ObjectType.ROLE);
+        objectTypes.add(ObjectType.WORKFLOW);
+        return objectTypes;
     }
 
     /**
@@ -111,42 +121,24 @@ public class DesktopForm extends BaseForm {
     public long getNumberOfElements(ObjectType objectType) {
         try {
             switch (objectType) {
-                case NONE:
-                    return 0L;
                 case TASK:
-                    return ServiceManager.getTaskService().count();
-                case AUTHORITY:
-                    return ServiceManager.getAuthorityService().countDatabaseRows();
+                    return ServiceManager.getTaskService().countResults(null);
                 case USER:
-                    return ServiceManager.getUserService().countDatabaseRows();
-                case FOLDER:
-                    return ServiceManager.getFolderService().countDatabaseRows();
-                case LDAP_GROUP:
-                    return ServiceManager.getLdapGroupService().countDatabaseRows();
-                case LDAP_SERVER:
-                    return ServiceManager.getLdapServerService().countDatabaseRows();
-                case BATCH:
-                    return ServiceManager.getBatchService().count();
-                case CLIENT:
-                    return ServiceManager.getClientService().countDatabaseRows();
+                    return ServiceManager.getUserService().countResults(null);
                 case DOCKET:
-                    return ServiceManager.getDocketService().count();
-                case FILTER:
-                    return ServiceManager.getFilterService().count();
+                    return ServiceManager.getDocketService().countResults(null);
                 case PROCESS:
-                    return ServiceManager.getProcessService().count();
+                    return ServiceManager.getProcessService().countResults(null);
                 case PROJECT:
-                    return ServiceManager.getProjectService().count();
+                    return ServiceManager.getProjectService().countResults(null);
                 case RULESET:
-                    return ServiceManager.getRulesetService().count();
-                case PROPERTY:
-                    return ServiceManager.getPropertyService().count();
+                    return ServiceManager.getRulesetService().countResults(null);
                 case TEMPLATE:
-                    return ServiceManager.getTemplateService().count();
+                    return ServiceManager.getTemplateService().countResults(null);
                 case ROLE:
-                    return ServiceManager.getRoleService().countDatabaseRows();
+                    return ServiceManager.getRoleService().countResults(null);
                 case WORKFLOW:
-                    return ServiceManager.getWorkflowService().count();
+                    return ServiceManager.getWorkflowService().countResults(null);
                 default:
                     return 0L;
             }
