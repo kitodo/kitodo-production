@@ -113,7 +113,7 @@ public class JaxbXmlUtils {
                 if (object instanceof JAXBElement) {
                     JAXBElement jaxbElement = (JAXBElement) object;
                     if (type.isInstance(jaxbElement.getValue())) {
-                        return (type.cast(jaxbElement.getValue()));
+                        return type.cast(jaxbElement.getValue());
                     }
                 }
             }

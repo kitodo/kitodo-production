@@ -584,7 +584,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
             String ownMetsPointerURL, LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleSet) {
         for (int i = 0; i < issues.size(); i++) {
-            if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
+            if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL)) {
                 insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
             }
         }

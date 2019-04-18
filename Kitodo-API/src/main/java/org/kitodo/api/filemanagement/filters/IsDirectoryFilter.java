@@ -21,6 +21,6 @@ public class IsDirectoryFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {
-        return (new File(dir, name).isDirectory());
+        return new File(dir, name).isDirectory();
     }
 }

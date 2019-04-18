@@ -64,7 +64,7 @@ public class BatchHelper {
         if (Objects.nonNull(processProperty.getTitle())) {
             boolean match = false;
             for (Property processPe : process.getProperties()) {
-                if (Objects.nonNull(processPe.getTitle()) && (processProperty.getTitle().equals(processPe.getTitle()))) {
+                if (Objects.nonNull(processPe.getTitle()) && processProperty.getTitle().equals(processPe.getTitle())) {
                     processPe.setValue(processProperty.getValue());
                     match = true;
                     break;

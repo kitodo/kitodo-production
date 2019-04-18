@@ -545,9 +545,9 @@ public class ExportXmlLog {
      * @return boolean
      */
     private boolean isNonOpenStateAndHasRegularUser(Task task) {
-        return (!TaskStatus.OPEN.equals(task.getProcessingStatus())) && (Objects.nonNull(task.getProcessingUser()))
-                && (task.getProcessingUser().getId() != 0)
-                && (Objects.nonNull(ServiceManager.getUserService().getFullName(task.getProcessingUser())));
+        return !TaskStatus.OPEN.equals(task.getProcessingStatus()) && Objects.nonNull(task.getProcessingUser())
+                && task.getProcessingUser().getId() != 0
+                && Objects.nonNull(ServiceManager.getUserService().getFullName(task.getProcessingUser()));
     }
 
 }

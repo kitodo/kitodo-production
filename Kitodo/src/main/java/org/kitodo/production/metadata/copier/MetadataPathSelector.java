@@ -344,7 +344,7 @@ public class MetadataPathSelector extends MetadataSelector {
         }
         if (index != null) {
             int compare = (int) index;
-            return (childIndex == compare || (compare == Integer.MAX_VALUE && childIndex == lastChildIndex));
+            return childIndex == compare || (compare == Integer.MAX_VALUE && childIndex == lastChildIndex);
         }
         return false;
     }

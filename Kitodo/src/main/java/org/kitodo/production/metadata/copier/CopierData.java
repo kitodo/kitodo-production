@@ -126,7 +126,7 @@ public class CopierData {
      * @return the required ruleset.
      */
     public LegacyPrefsHelper getPreferences() {
-        return ServiceManager.getRulesetService().getPreferences((process).getRuleset());
+        return ServiceManager.getRulesetService().getPreferences(process.getRuleset());
     }
 
     /**
@@ -135,7 +135,7 @@ public class CopierData {
      * @return the process title
      */
     public String getProcessTitle() {
-        return (process).getTitle();
+        return process.getTitle();
 
     }
 

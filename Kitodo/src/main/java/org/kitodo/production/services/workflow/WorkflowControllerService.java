@@ -344,7 +344,7 @@ public class WorkflowControllerService {
      * @return true or false
      */
     public boolean isCorrectionTask(Task task) {
-        return (task.getPriority() == 10);
+        return task.getPriority() == 10;
     }
 
     /**
@@ -411,8 +411,8 @@ public class WorkflowControllerService {
         // tasks which was executed at the moment of correction reporting
         List<Property> properties = currentTask.getProcess().getProperties();
         for (Property property : properties) {
-            if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
-                    && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
+            if (property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
+                    && property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())) {
                 int id = Integer
                         .parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
                             property.getValue().indexOf(" CorrectionTask: ")));

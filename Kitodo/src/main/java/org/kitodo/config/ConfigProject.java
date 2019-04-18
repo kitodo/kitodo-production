@@ -187,7 +187,7 @@ public class ConfigProject {
             additionalField.setIsDocType(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isdoctype]"));
             additionalField.setIsNotDoctype(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isnotdoctype]"));
             // attributes added 30.3.09
-            String test = (getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initStart]"));
+            String test = getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initStart]");
             additionalField.setInitStart(test);
 
             additionalField.setInitEnd(getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initEnd]"));
