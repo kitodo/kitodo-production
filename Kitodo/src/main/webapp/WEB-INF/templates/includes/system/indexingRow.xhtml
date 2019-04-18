@@ -23,7 +23,7 @@
                                  rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
-                                 action="#{indexingForm.startIndexing(objectType)}"
+                                 action="#{indexingForm.callIndexing(objectType)}"
                                  styleClass="indexing-button"
                                  disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.countDatabaseObjects[objectType] lt 1)}"/>
             </td>
@@ -32,7 +32,7 @@
                                  rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
-                                 action="#{indexingForm.startIndexingRemaining(objectType)}"
+                                 action="#{indexingForm.callIndexingRemaining(objectType)}"
                                  styleClass="indexing-button"
                                  disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.countDatabaseObjects[objectType] lt 1)}"/>
             </td>

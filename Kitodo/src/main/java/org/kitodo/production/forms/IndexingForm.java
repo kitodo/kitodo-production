@@ -113,6 +113,7 @@ public class IndexingForm {
 
     private IndexWorker currentIndexWorker;
 
+    private String indexingStartedUser = "";
     private LocalDateTime indexingStartedTime = null;
 
     private Thread indexerThread = null;
@@ -137,6 +138,15 @@ public class IndexingForm {
                 indexedObjects.put(objectType, countDatabaseObjects.get(objectType));
             }
         }
+    }
+
+    /**
+     * Get user which started indexing.
+     *
+     * @return user which started indexing
+     */
+    public String getIndexingStartedUser() {
+        return indexingStartedUser;
     }
 
     /**
@@ -226,14 +236,9 @@ public class IndexingForm {
      * @param type
      *            type objects that get indexed
      */
-    public void startIndexing(ObjectType type) {
-        if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            for (IndexWorker worker : indexWorkerList) {
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type);
-            }
-        }
+    public void callIndexing(ObjectType type) {
+        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
+        startIndexing(type);
     }
 
     /**
@@ -242,51 +247,16 @@ public class IndexingForm {
      * @param type
      *            type objects that get indexed
      */
-    public void startIndexingRemaining(ObjectType type) {
-        if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            for (IndexWorker worker : indexWorkerList) {
-                worker.setIndexAllObjects(false);
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type);
-            }
-        }
-    }
-
-    private void runIndexing(IndexWorker worker, ObjectType type) {
-        currentState = IndexStates.NO_STATE;
-        int attempts = 0;
-        while (attempts < 10) {
-            try {
-                if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
-                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                        indexingStartedTime = LocalDateTime.now();
-                        currentIndexState = type;
-                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
-                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
-                    }
-                    indexerThread = new Thread(worker);
-                    indexerThread.setDaemon(true);
-                    indexerThread.start();
-                    indexerThread.join();
-                    break;
-                } else {
-                    logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
-                            + currentIndexState + "'");
-                    Thread.sleep(pause);
-                    attempts++;
-                }
-            } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
-            }
-        }
+    public void callIndexingRemaining(ObjectType type) {
+        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
+        startIndexingRemaining(type);
     }
 
     /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
+        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         IndexAllThread indexAllThread = new IndexAllThread();
         indexAllThread.start();
     }
@@ -697,6 +667,69 @@ public class IndexingForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return 0;
+    }
+
+    /**
+     * Index all objects of given type 'objectType'.
+     *
+     * @param type
+     *            type objects that get indexed
+     */
+    private void startIndexing(ObjectType type) {
+        if (countDatabaseObjects.get(type) > 0) {
+            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
+            for (IndexWorker worker : indexWorkerList) {
+                currentIndexWorker = worker;
+                runIndexing(currentIndexWorker, type);
+            }
+        }
+    }
+
+    /**
+     * Index all objects of given type 'objectType'.
+     *
+     * @param type
+     *            type objects that get indexed
+     */
+    private void startIndexingRemaining(ObjectType type) {
+        if (countDatabaseObjects.get(type) > 0) {
+            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
+            for (IndexWorker worker : indexWorkerList) {
+                worker.setIndexAllObjects(false);
+                currentIndexWorker = worker;
+                runIndexing(currentIndexWorker, type);
+            }
+        }
+    }
+
+    private void runIndexing(IndexWorker worker, ObjectType type) {
+        currentState = IndexStates.NO_STATE;
+        int attempts = 0;
+        while (attempts < 10) {
+            try {
+                if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
+                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
+                        indexingStartedTime = LocalDateTime.now();
+                        currentIndexState = type;
+                        objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
+                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
+                    }
+                    indexerThread = new Thread(worker);
+                    indexerThread.setDaemon(true);
+                    indexerThread.start();
+                    indexerThread.join();
+                    break;
+                } else {
+                    logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
+                            + currentIndexState + "'");
+                    Thread.sleep(pause);
+                    attempts++;
+                }
+            } catch (InterruptedException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     class IndexAllThread extends Thread {
