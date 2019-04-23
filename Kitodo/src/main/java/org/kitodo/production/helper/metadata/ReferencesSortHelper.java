@@ -34,7 +34,7 @@ class ReferencesSortHelper implements Comparator<LegacyReferenceHelper> {
     @Override
     public int compare(LegacyReferenceHelper firstObject, LegacyReferenceHelper secondObject) {
         Integer firstPage = 0;
-        Integer secondPage = 0;
+        int secondPage = 0;
         final LegacyMetadataTypeHelper mdt = prefs.getMetadataTypeByName("physPageNumber");
         List<? extends LegacyMetadataHelper> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
         if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {

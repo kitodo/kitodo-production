@@ -126,7 +126,7 @@ public class LegacyPrefsHelper {
                 List<MetadataViewWithValuesInterface<Void>> entryViews = divisionView
                         .getSortedVisibleMetadata(Collections.emptyMap(), Arrays.asList(identifier));
                 MetadataViewInterface resultKeyView = entryViews.parallelStream()
-                        .map(entryView -> entryView.getMetadata()).filter(Optional::isPresent).map(Optional::get)
+                        .map(MetadataViewWithValuesInterface::getMetadata).filter(Optional::isPresent).map(Optional::get)
                         .filter(keyView -> keyView.getId().equals(identifier)).findFirst()
                         .orElseThrow(IllegalStateException::new);
                 return new LegacyMetadataTypeHelper(resultKeyView);

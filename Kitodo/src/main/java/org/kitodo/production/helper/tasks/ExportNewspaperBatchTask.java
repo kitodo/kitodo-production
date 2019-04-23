@@ -300,7 +300,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         for (LegacyMetadataTypeHelper metadataType : metadataTypeInterfaces) {
             if (metaDataTypeName.equals(metadataType.getName())) {
                 return Integer
-                        .parseInt(new HashSet<LegacyMetadataHelper>(structureTypeName.getAllMetadataByType(metadataType))
+                        .parseInt(new HashSet<>(structureTypeName.getAllMetadataByType(metadataType))
                                 .iterator().next().getValue());
             }
         }

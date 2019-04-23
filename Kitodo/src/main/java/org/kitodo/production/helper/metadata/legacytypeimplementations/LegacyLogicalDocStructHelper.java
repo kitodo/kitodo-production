@@ -151,13 +151,7 @@ public class LegacyLogicalDocStructHelper implements LegacyDocStructHelperInterf
     @Override
     @Deprecated
     public void deleteUnusedPersonsAndMetadata() {
-        Iterator<Metadata> metadataIterator = includedStructuralElement.getMetadata().iterator();
-        while (metadataIterator.hasNext()) {
-            Metadata metadata = metadataIterator.next();
-            if (((MetadataEntry) metadata).getValue().isEmpty()) {
-                metadataIterator.remove();
-            }
-        }
+        includedStructuralElement.getMetadata().removeIf(metadata -> ((MetadataEntry) metadata).getValue().isEmpty());
     }
 
     private MdSec domainToMdSec(Domain domain) {
