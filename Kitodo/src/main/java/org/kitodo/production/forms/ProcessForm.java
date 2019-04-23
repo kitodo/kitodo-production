@@ -19,9 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -49,7 +47,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -74,7 +71,6 @@ public class ProcessForm extends TemplateBaseForm {
     private Property templateProperty;
     private Property workpieceProperty;
     private String kitodoScript;
-    private Map<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
     private String selectedXslt = "";
     private boolean showClosedProcesses = false;
@@ -106,22 +102,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public ProcessForm() {
         super();
-        this.anzeigeAnpassen = new HashMap<>();
-        this.anzeigeAnpassen.put("lockings", false);
-        this.anzeigeAnpassen.put("swappedOut", false);
-        this.anzeigeAnpassen.put("selectionBoxes", false);
-        this.anzeigeAnpassen.put("processId", false);
-        this.anzeigeAnpassen.put("batchId", false);
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProcessService()));
-        /*
-         * Vorgangsdatum generell anzeigen?
-         */
-        User user = getUser();
-        if (Objects.nonNull(user)) {
-            this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
-        } else {
-            this.anzeigeAnpassen.put("processDate", false);
-        }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     }
 
@@ -910,14 +891,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setKitodoScript(String kitodoScript) {
         this.kitodoScript = kitodoScript;
-    }
-
-    public Map<String, Boolean> getAnzeigeAnpassen() {
-        return this.anzeigeAnpassen;
-    }
-
-    public void setAnzeigeAnpassen(Map<String, Boolean> anzeigeAnpassen) {
-        this.anzeigeAnpassen = anzeigeAnpassen;
     }
 
     public String getNewProcessTitle() {
