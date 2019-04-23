@@ -90,7 +90,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
             try {
                 setRowCount(toIntExact(searchService.countResults(filters)));
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filters);
-                logger.info(entities.size() + " entities loaded!");
+                logger.info("{} entities loaded!", entities.size());
                 return entities;
             } catch (DAOException | DataException e) {
                 logger.error(e.getMessage(), e);

@@ -63,7 +63,7 @@ public class JobCreation {
         logger.trace("mets filename is {}", metsFilename);
         Process process = null;
         if (!ProcessValidator.isProcessTitleAvailable(processTitle)) {
-            logger.error("cannot create process, process title '" + processTitle + "' is already in use");
+            logger.error("cannot create process, process title '{}' is already in use", processTitle);
             // removing all data
             removeImages(metsFilename);
             try {
@@ -98,7 +98,7 @@ public class JobCreation {
                     new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
             }
         } else {
-            logger.error("title " + processTitle + "is invalid");
+            logger.error("title {} is invalid", processTitle);
         }
         return process;
     }

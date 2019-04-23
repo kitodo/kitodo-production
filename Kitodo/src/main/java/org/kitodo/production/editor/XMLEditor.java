@@ -135,7 +135,7 @@ public class XMLEditor implements Serializable {
      * 'configurationFile'.
      */
     public void saveXMLConfiguration() {
-        logger.info("Saving configuration to file " + currentConfigurationFile);
+        logger.info("Saving configuration to file {}", currentConfigurationFile);
         try {
             Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
             TransformerFactory transformerFactory = TransformerFactory.newInstance();

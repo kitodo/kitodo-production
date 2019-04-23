@@ -48,7 +48,7 @@ public class ResponseListener implements ActionListener<BulkResponse> {
     @Override
     public void onFailure(Exception e) {
         // TODO: add error handling
-        logger.error("I got failure for type '" + this.type + "' with size " + batchSize + "!");
+        logger.error("I got failure for type '{}' with size {}!", this.type, this.batchSize);
         logger.error(e.getMessage(), e);
     }
 
