@@ -49,7 +49,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -63,6 +62,7 @@ import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -130,7 +130,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @PostConstruct
     public void init() {
-
         columns = new ArrayList<>();
 
         SelectItemGroup processColumnGroup;
@@ -152,7 +151,6 @@ public class ProcessForm extends TemplateBaseForm {
 
         selectedColumns =
                 ServiceManager.getListColumnService().getSelectedListColumnsForListAndClient("process");
-
     }
 
     /**
@@ -577,22 +575,23 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void exportDMSForAll() {
-        exportDMSForProcesses(lazyDTOModel.getEntities());
+        //TODO: find a way to pass filters
+        exportDMSForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
     }
 
     private void exportDMSForProcesses(List<ProcessDTO> processes) {
         ExportDms export = new ExportDms();
-        for (ProcessDTO process : processes) {
+        for (ProcessDTO processToExport : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(processToExport.getId());
                 export.startExport(processBean);
                 Helper.setMessage(EXPORT_FINISHED);
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }
         }
     }
@@ -657,9 +656,8 @@ public class ProcessForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeForPage() {
         WebDav webDav = new WebDav();
-        //TODO: lazyDTOModel.getEntities() - is not a page - how to get exactly this what is on the page?
-        for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
-            download(webDav, process);
+        for (ProcessDTO processForWebDav : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
+            download(webDav, processForWebDav);
         }
         Helper.setMessage("createdInUserHome");
     }
@@ -670,7 +668,7 @@ public class ProcessForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeForAll() {
         WebDav webDav = new WebDav();
-        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
+        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null)) {
             download(webDav, processDTO);
         }
         Helper.setMessage("createdInUserHomeAll");
@@ -714,18 +712,18 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForAll() {
-        setTaskStatusUpForProcesses(lazyDTOModel.getEntities());
+        setTaskStatusUpForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
     }
 
     private void setTaskStatusUpForProcesses(List<ProcessDTO> processes) {
-        for (ProcessDTO process : processes) {
+        for (ProcessDTO processForStatus : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(processForStatus.getId());
                 workflowControllerService.setTasksStatusUp(processBean);
                 ServiceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
-                    new Object[] {Helper.getTranslation("up"), process.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
         }
     }
@@ -750,18 +748,18 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForAll() {
-        setTaskStatusDownForProcesses(lazyDTOModel.getEntities());
+        setTaskStatusDownForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
     }
 
     private void setTaskStatusDownForProcesses(List<ProcessDTO> processes) {
-        for (ProcessDTO process : processes) {
+        for (ProcessDTO processForStatus : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(process.getId());
+                Process processBean = ServiceManager.getProcessService().getById(processForStatus.getId());
                 workflowControllerService.setTasksStatusDown(processBean);
                 ServiceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
-                    new Object[] {Helper.getTranslation("down"), process.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }
         }
     }
