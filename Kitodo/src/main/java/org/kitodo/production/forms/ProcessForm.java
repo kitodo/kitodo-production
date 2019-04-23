@@ -76,7 +76,6 @@ public class ProcessForm extends TemplateBaseForm {
     private String kitodoScript;
     private Map<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
-    private String selectedXslt = "";
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private List<Property> properties;
@@ -940,38 +939,6 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);
         }
-    }
-
-    /**
-     * Get XSLT list.
-     *
-     * @return list of Strings
-     */
-    public List<URI> getXsltList() {
-        List<URI> answer = new ArrayList<>();
-        try {
-            URI folder = fileService.createDirectory(null, "xsltFolder");
-            if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
-                List<URI> files = fileService.getSubUris(folder);
-
-                for (URI uri : files) {
-                    if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {
-                        answer.add(uri);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return answer;
-    }
-
-    public void setSelectedXslt(String select) {
-        this.selectedXslt = select;
-    }
-
-    public String getSelectedXslt() {
-        return this.selectedXslt;
     }
 
     /**
