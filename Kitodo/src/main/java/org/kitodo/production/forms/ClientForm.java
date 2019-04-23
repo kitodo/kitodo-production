@@ -57,11 +57,11 @@ public class ClientForm extends BaseForm {
      */
     public String save() {
         try {
+            ServiceManager.getClientService().saveToDatabase(this.client);
             for (Role role : rolesForClient) {
                 ServiceManager.getRoleService().saveToDatabase(role);
             }
-            ServiceManager.getClientService().saveToDatabase(this.client);
-            rolesForClient=null;
+            rolesForClient = null;
             return clientListPath;
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
@@ -76,7 +76,7 @@ public class ClientForm extends BaseForm {
     public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                rolesForClient=null;
+                rolesForClient = null;
                 this.client = ServiceManager.getClientService().getById(id);
             }
             setSaveDisabled(true);
@@ -149,8 +149,12 @@ public class ClientForm extends BaseForm {
      * @return a list of roles
      */
     public List<Role> getRolesForClient() {
-        if (Objects.isNull(rolesForClient) && Objects.nonNull(client) && Objects.nonNull(client.getId()) ) {
-            rolesForClient = ServiceManager.getRoleService().getAllRolesByClientId(client.getId());
+        if (Objects.isNull(rolesForClient)) {
+            if (Objects.nonNull(client) && Objects.nonNull(client.getId())) {
+                rolesForClient = ServiceManager.getRoleService().getAllRolesByClientId(client.getId());
+            } else {
+                rolesForClient = new ArrayList<>();
+            }
         }
         return rolesForClient;
     }
@@ -195,11 +199,7 @@ public class ClientForm extends BaseForm {
      *            role to remove.
      */
     public void deleteRoleFromClient(Role roleToRemove) {
-        for (Role role : new ArrayList<>(rolesForClient)) {
-            if (role.getTitle().equalsIgnoreCase(roleToRemove.getTitle())) {
-                rolesForClient.remove(role);
-            }
-        }
+        rolesForClient.remove(roleToRemove);
     }
 
     /**

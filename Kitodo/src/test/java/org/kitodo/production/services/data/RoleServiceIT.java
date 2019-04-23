@@ -146,14 +146,6 @@ public class RoleServiceIT {
     }
 
     @Test
-    public void shouldNotSaveRoleWithAlreadyExistingTitle() throws Exception {
-        Role role = new Role();
-        role.setTitle("Admin");
-        exception.expect(DAOException.class);
-        roleService.saveToDatabase(role);
-    }
-
-    @Test
     public void shouldSaveAndRemoveAuthorizationForRole() throws Exception {
         Role role = roleService.getById(1);
         List<Authority> authorities = role.getAuthorities();
