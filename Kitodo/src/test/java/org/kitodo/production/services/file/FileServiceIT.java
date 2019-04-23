@@ -16,34 +16,19 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.TreeDeleter;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 
 public class FileServiceIT {
-
-    private static final FileVisitor<Path> DELETE_TREE = new SimpleFileVisitor<Path>() {
-        @Override
-        public FileVisitResult visitFile(Path child, BasicFileAttributes unused) throws IOException {
-            Files.delete(child);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path theDirectory, IOException e) throws IOException {
-            Files.delete(theDirectory);
-            return FileVisitResult.CONTINUE;
-        }
-    };
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -82,12 +67,12 @@ public class FileServiceIT {
 
     @Test
     public void testCreateDirectories() throws IOException {
-        Path testBaseDirectoryPath = Paths.get("src/test/resources");
+        Path testBaseDirectoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XML_CONFIG));
 
         // delete existing directories so that directories are actually created
         Path firstDirectoryOfTestPath = testBaseDirectoryPath.resolve("several");
         if (Files.isDirectory(firstDirectoryOfTestPath)) {
-            Files.walkFileTree(firstDirectoryOfTestPath, DELETE_TREE);
+            TreeDeleter.deltree(firstDirectoryOfTestPath);
         }
 
         String testBaseDirectoryURI = testBaseDirectoryPath.toUri().toString();
@@ -96,17 +81,17 @@ public class FileServiceIT {
         assertTrue(Files.isDirectory(firstDirectoryOfTestPath.resolve("directories/can/be/created/at/once")));
 
         // clean up
-        Files.walkFileTree(firstDirectoryOfTestPath, DELETE_TREE);
+        TreeDeleter.deltree(firstDirectoryOfTestPath);
     }
 
     @Test
     public void testCreateDirectoriesWithTrailingSlash() throws IOException {
-        Path testBaseDirectoryPath = Paths.get("src/test/resources");
+        Path testBaseDirectoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XML_CONFIG));
 
         // delete existing directories so that directories are actually created
         Path firstDirectoryOfTestPath = testBaseDirectoryPath.resolve("several");
         if (Files.isDirectory(firstDirectoryOfTestPath)) {
-            Files.walkFileTree(firstDirectoryOfTestPath, DELETE_TREE);
+            TreeDeleter.deltree(firstDirectoryOfTestPath);
         }
 
         String testBaseDirectoryURI = testBaseDirectoryPath.toUri().toString();
@@ -115,6 +100,6 @@ public class FileServiceIT {
         assertTrue(Files.isDirectory(firstDirectoryOfTestPath.resolve("directories/can/be/created/with/trailing")));
 
         // clean up
-        Files.walkFileTree(firstDirectoryOfTestPath, DELETE_TREE);
+        TreeDeleter.deltree(firstDirectoryOfTestPath);
     }
 }

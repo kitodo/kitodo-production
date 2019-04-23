@@ -339,6 +339,10 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        String target = targetDirectory.toString();
+        if (!target.endsWith("/")) {
+            targetDirectory = URI.create(target.concat("/"));
+        }
         fileManagementModule.copy(sourceDirectory, targetDirectory);
     }
 
