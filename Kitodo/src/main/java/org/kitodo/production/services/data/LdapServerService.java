@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -538,12 +537,12 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             if (Objects.isNull(digester)) {
                 hash = LdapUser.lmHash(newPassword);
             } else {
-                hash = digester.digest(newPassword.getBytes("UnicodeLittleUnmarked"));
+                hash = digester.digest(newPassword.getBytes(StandardCharsets.UTF_16LE));
             }
             return new BasicAttribute(identifier, LdapUser.toHexString(hash));
             // TODO: Don't catch super class exception, make sure that
             // the password isn't logged here
-        } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
                 | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
             logger.error(e.getMessage(), e);
             return null;
