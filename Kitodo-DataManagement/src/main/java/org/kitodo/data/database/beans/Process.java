@@ -64,6 +64,9 @@ public class Process extends BaseTemplateBean {
     @Column(name = "processBaseUri")
     private URI processBaseUri;
 
+    @Column(name = "ordering")
+    private Integer ordering;
+
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
@@ -80,8 +83,18 @@ public class Process extends BaseTemplateBean {
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_process_template_id"))
     private Template template;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
+    private Process parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Process> children;
+
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
+
+    @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST)
+    private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
@@ -125,6 +138,7 @@ public class Process extends BaseTemplateBean {
         this.properties = new ArrayList<>();
         this.workpieces = new ArrayList<>();
         this.templates = new ArrayList<>();
+        this.children = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.inChoiceListShown = false;
         this.creationDate = new Date();
@@ -229,6 +243,24 @@ public class Process extends BaseTemplateBean {
         this.processBaseUri = processBaseUri;
     }
 
+    /**
+     * Get ordering.
+     *
+     * @return value of ordering
+     */
+    public Integer getOrdering() {
+        return ordering;
+    }
+
+    /**
+     * Set ordering.
+     *
+     * @param ordering as java.lang.Integer
+     */
+    public void setOrdering(Integer ordering) {
+        this.ordering = ordering;
+    }
+
     public Project getProject() {
         return this.project;
     }
@@ -269,6 +301,46 @@ public class Process extends BaseTemplateBean {
      */
     public void setTemplate(Template template) {
         this.template = template;
+    }
+
+    /**
+     * Get parent.
+     *
+     * @return value of parent
+     */
+    public Process getParent() {
+        return parent;
+    }
+
+    /**
+     * Set parent.
+     *
+     * @param parent as org.kitodo.data.database.beans.Process
+     */
+    public void setParent(Process parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Get children.
+     *
+     * @return value of children
+     */
+    public List<Process> getChildren() {
+        initialize(new ProcessDAO(), this.children);
+        if (Objects.isNull(this.children)) {
+            this.children = new ArrayList<>();
+        }
+        return this.children;
+    }
+
+    /**
+     * Set children.
+     *
+     * @param children as List of Process objects
+     */
+    public void setChildren(List<Process> children) {
+        this.children = children;
     }
 
     /**
@@ -361,6 +433,28 @@ public class Process extends BaseTemplateBean {
             this.batches.clear();
             this.batches.addAll(batches);
         }
+    }
+
+    /**
+     * Get comments.
+     *
+     * @return value of comments
+     */
+    public List<Comment> getComments() {
+        initialize(new ProcessDAO(), this.comments);
+        if (Objects.isNull(this.comments)) {
+            this.comments = new ArrayList<>();
+        }
+        return this.comments;
+    }
+
+    /**
+     * Set comments.
+     *
+     * @param comments as List of Comment objects
+     */
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     /**

@@ -31,9 +31,11 @@
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.tasks}</h3>
-                            <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
-                                    <p:ajax update="taskTable"/>
-                            </p:commandButton>
+                            <h:form id="reloadTasksForm">
+                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                        <p:ajax update="taskTable"/>
+                                </p:commandButton>
+                            </h:form>
                             <p:button id="allTasks" value="#{msgs.allTasks}"
                                       outcome="tasks"
                                       icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
@@ -46,9 +48,11 @@
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.processes}</h3>
-                            <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
-                                    <p:ajax update="processTable"/>
-                            </p:commandButton>
+                            <h:form id="reloadProcessesForm">
+                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                        <p:ajax update="processTable"/>
+                                </p:commandButton>
+                            </h:form>
                             <p:button id="allProcesses" value="#{msgs.allProcesses}"
                                       outcome="processes"
                                       icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
@@ -61,9 +65,11 @@
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.projects}</h3>
-                            <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
-                                <p:ajax update="projectTable"/>
-                            </p:commandButton>
+                            <h:form id="reloadProjectsForm">
+                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                    <p:ajax update="projectTable"/>
+                                </p:commandButton>
+                            </h:form>
                             <p:button id="allProjects" value="#{msgs.allProjects}"
                                       outcome="projects"
                                       icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
@@ -75,9 +81,11 @@
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.databaseStatistic}</h3>
-                            <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
-                                <p:ajax update="statisticsTable"/>
-                            </p:commandButton>
+                            <h:form id="reloadDatabaseStatisticsForm">
+                                <p:commandButton icon="fa fa-repeat fa-lg" styleClass="plain">
+                                    <p:ajax update="statisticsTable"/>
+                                </p:commandButton>
+                            </h:form>
                         </div>
                     </div>
                     <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>

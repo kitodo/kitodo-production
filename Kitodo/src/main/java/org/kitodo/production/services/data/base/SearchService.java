@@ -53,6 +53,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -618,6 +619,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         List<Integer> ids = getRelatedPropertyForDTO(jsonObject, key);
         if (ids.isEmpty()) {
             return new ArrayList<>();
+        }
+        if (service instanceof ProjectService) {
+            BoolQueryBuilder query = new BoolQueryBuilder();
+            query.must(createSetQueryForIds(ids));
+            query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
+            return service.findByQuery(query, true);
         }
         return service.findByQuery(createSetQueryForIds(ids), true);
     }

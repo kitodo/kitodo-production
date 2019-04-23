@@ -33,6 +33,9 @@
                 <f:param name="ID" value="#{item.id}"/>
             </p:commandLink>
         </p:column>
+        <p:column headerText="#{msgs.client}">
+                <h:outputText value="#{item.client.name}"/>
+        </p:column>
     </p:dataTable>
     <p:commandButton onclick="PF('addProjectDialog').show()"
                      id="addProjectButton"

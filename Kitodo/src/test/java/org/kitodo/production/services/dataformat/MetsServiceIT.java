@@ -14,8 +14,6 @@ package org.kitodo.production.services.dataformat;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -23,6 +21,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.services.ServiceManager;
 
 public class MetsServiceIT {
 
@@ -31,10 +30,8 @@ public class MetsServiceIT {
      */
     @Test
     public void testReadXML() throws Exception {
-        Workpiece workpiece;
-        try (InputStream in = new FileInputStream(new File("../Kitodo-DataFormat/src/test/resources/meta.xml"))) {
-            workpiece = MetsService.getInstance().load(in);
-        }
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(new File("../Kitodo-DataFormat/src/test/resources/meta.xml").toURI());
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getMediaUnits().size());

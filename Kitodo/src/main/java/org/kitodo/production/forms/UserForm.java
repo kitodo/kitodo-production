@@ -122,7 +122,6 @@ public class UserForm extends BaseForm {
         this.userObject.setLogin("");
         this.userObject.setLdapLogin("");
         this.userObject.setPassword("");
-        setPasswordToEncrypt("");
         return userEditPath;
     }
 
@@ -135,6 +134,7 @@ public class UserForm extends BaseForm {
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
+            Helper.setErrorMessage("loginNotValid", new Object[] {login });
             return this.stayOnCurrentPage;
         }
 
@@ -455,6 +455,7 @@ public class UserForm extends BaseForm {
             return new LinkedList<>();
         }
     }
+
     /**
      * Gets password.
      *

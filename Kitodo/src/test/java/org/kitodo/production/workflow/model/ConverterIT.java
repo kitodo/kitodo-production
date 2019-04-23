@@ -36,10 +36,10 @@ public class ConverterIT {
     }
 
     @Test
-    public void shouldConvertConditionalWorkflowToTaskList() throws Exception {
+    public void shouldValidateConditionalWorkflowTaskList() throws Exception {
         Converter converter = new Converter("gateway-test1");
 
-        List<Task> tasks = converter.convertWorkflowToTaskList();
+        List<Task> tasks = converter.validateWorkflowTaskList();
         assertEquals("Process definition - workflow was read incorrectly!", 5, tasks.size());
 
         tasks.sort(Comparator.comparingInt(Task::getOrdering).thenComparing(Task::getWorkflowId));

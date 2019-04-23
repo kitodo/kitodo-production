@@ -30,6 +30,8 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
 
     private static RoleService instance = null;
 
+    private static final String CLIENT_ID = "clientId";
+
     /**
      * Constructor.
      */
@@ -64,7 +66,8 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
             return countDatabaseRows();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return countDatabaseRows();
+            return countDatabaseRows("SELECT COUNT(*) FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+                    Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
         }
         return 0L;
     }
@@ -72,7 +75,7 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
     @Override
     public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+            Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -84,7 +87,7 @@ public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
                             + getSort(sortField, sortOrder),
-                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()), first,
+                Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()), first,
                 pageSize);
         }
         return new ArrayList<>();

@@ -58,9 +58,10 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
-    private static final String LOGIN_NOT_VALID = "loginNotValid";
     private static final String CLIENT_ID = "clientId";
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private static final int DEFAULT_CLIENT_ID =
+            ConfigCore.getIntParameterOrDefaultValue(ParameterCore.DEFAULT_CLIENT_ID);
 
     /**
      * Constructor.
@@ -205,7 +206,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     /**
      * Gets the session client of the current authenticated user.
-     * 
+     *
      * @return The client object or null if no session client is set or no user is
      *         authenticated.
      */
@@ -226,7 +227,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         if (Objects.nonNull(getSessionClientOfAuthenticatedUser())) {
             return getSessionClientOfAuthenticatedUser().getId();
         }
-        return 0;
+        return DEFAULT_CLIENT_ID;
     }
 
     /**
@@ -254,7 +255,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     /**
      * Check validity of given login.
-     * 
+     *
      * @param login
      *            to validation
      * @return true or false
@@ -264,7 +265,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(login);
         if (!matcher.matches()) {
-            Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
             return false;
         }
 
@@ -304,7 +304,6 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
         String notAllowedLogin;
         while ((notAllowedLogin = reader.readLine()) != null) {
             if (notAllowedLogin.length() > 0 && login.equalsIgnoreCase(notAllowedLogin)) {
-                Helper.setErrorMessage(LOGIN_NOT_VALID, new Object[] {login });
                 return true;
             }
         }
@@ -470,7 +469,7 @@ public class UserService extends SearchDatabaseService<User, UserDAO> implements
 
     /**
      * Changes the password for given User object.
-     * 
+     *
      * @param user
      *            The User object.
      * @param newPassword

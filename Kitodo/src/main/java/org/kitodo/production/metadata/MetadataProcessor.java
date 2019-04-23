@@ -59,6 +59,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Structure;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -2163,6 +2164,23 @@ public class MetadataProcessor {
     public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
         for (String page : Arrays.stream(allPages).filter(Objects::nonNull).collect(Collectors.toList())) {
             int physicalPageNumber = getPhysicalPageNumber(docStruct);
+            if (page.startsWith(String.valueOf(physicalPageNumber))) {
+                return getLogicalPageNumberOfPaginatedImage(page);
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Gets the logical page number from a paginated docstruct.
+     *
+     * @param mediaUnit
+     *            the MediaUnit object
+     * @return The logical page number.
+     */
+    public String getLogicalPageNumber(MediaUnit mediaUnit) {
+        for (String page : Arrays.stream(allPages).filter(Objects::nonNull).collect(Collectors.toList())) {
+            int physicalPageNumber = mediaUnit.getOrder();
             if (page.startsWith(String.valueOf(physicalPageNumber))) {
                 return getLogicalPageNumberOfPaginatedImage(page);
             }

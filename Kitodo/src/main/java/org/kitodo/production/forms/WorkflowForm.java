@@ -51,6 +51,7 @@ import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
 
 @Named("WorkflowForm")
@@ -204,6 +205,9 @@ public class WorkflowForm extends BaseForm {
 
             Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             reader.validateWorkflowTasks();
+
+            Converter converter = new Converter(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
+            converter.validateWorkflowTaskList();
 
             saveFile(svgDiagramURI, svgDiagram);
             saveFile(xmlDiagramURI, xmlDiagram);

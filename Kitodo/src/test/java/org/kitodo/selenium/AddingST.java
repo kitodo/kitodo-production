@@ -137,6 +137,7 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
 
+    @Ignore("selenium test can't assign role to the tasks")
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();

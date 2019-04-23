@@ -64,40 +64,40 @@ public class Converter {
     }
 
     /**
-     * Convert BPMN process (workflow) to list of Task beans.
+     * Convert BPMN process (workflow) to template stored in database.
+     */
+    public void convertWorkflowToTemplate(Template template) throws DAOException, WorkflowException {
+        List<org.kitodo.data.database.beans.Task> validatedTasks = validateWorkflowTaskList();
+
+        for (org.kitodo.data.database.beans.Task validatedTask : validatedTasks) {
+            if (Objects.nonNull(validatedTask.getWorkflowCondition())) {
+                ServiceManager.getWorkflowConditionService().saveToDatabase(validatedTask.getWorkflowCondition());
+            }
+            validatedTask.setTemplate(template);
+            template.getTasks().add(validatedTask);
+        }
+    }
+
+    /**
+     * Validate BPMN process (workflow) list of Task beans.
      *
      * @return list of Task objects
      */
-    public List<org.kitodo.data.database.beans.Task> convertWorkflowToTaskList()
-            throws DAOException, WorkflowException {
+    public List<org.kitodo.data.database.beans.Task> validateWorkflowTaskList() throws WorkflowException {
         reader.readWorkflowTasks();
 
         Map<Task, TaskInfo> tasks = reader.getTasks();
 
         List<org.kitodo.data.database.beans.Task> taskBeans = new ArrayList<>();
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
-            taskBeans.add(getTask(entry.getKey(), entry.getValue()));
+            try {
+                taskBeans.add(getTask(entry.getKey(), entry.getValue()));
+            } catch (DAOException e) {
+                throw new WorkflowException(Helper.getTranslation("workflowExceptionNotFoundRole"));
+            }
         }
 
         return taskBeans;
-    }
-
-    /**
-     * Convert BPMN process (workflow) to template stored in database.
-     */
-    public void convertWorkflowToTemplate(Template template) throws DAOException, WorkflowException {
-        reader.readWorkflowTasks();
-
-        Map<Task, TaskInfo> tasks = reader.getTasks();
-
-        for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
-            org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
-            if (Objects.nonNull(task.getWorkflowCondition())) {
-                ServiceManager.getWorkflowConditionService().saveToDatabase(task.getWorkflowCondition());
-            }
-            task.setTemplate(template);
-            template.getTasks().add(task);
-        }
     }
 
     private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo)

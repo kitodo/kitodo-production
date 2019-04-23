@@ -53,6 +53,7 @@ public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project project;
+    private List<Template> deletedTemples = new ArrayList<>();
     private boolean locked = true;
 
     /**
@@ -221,7 +222,7 @@ public class ProjectForm extends BaseForm {
             try {
                 addFirstUserToNewProject();
 
-                ServiceManager.getProjectService().save(this.project);
+                ServiceManager.getProjectService().saveToDatabase(this.project);
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
                         template.getProjects().add(this.project);
@@ -231,8 +232,14 @@ public class ProjectForm extends BaseForm {
                 }
 
                 for (Template template : this.project.getTemplates()) {
-                    ServiceManager.getTemplateService().save(template);
+                    ServiceManager.getTemplateService().saveToDatabase(template);
                 }
+                for (Template template : this.deletedTemples) {
+                    ServiceManager.getTemplateService().saveToDatabase(template);
+                }
+                this.deletedTemples = new ArrayList<>();
+
+                ServiceManager.getProjectService().save(this.project);
 
                 return projectListPath;
             } catch (DAOException | DataException e) {
@@ -243,12 +250,12 @@ public class ProjectForm extends BaseForm {
         }
     }
 
-    private void addFirstUserToNewProject() throws DAOException, DataException {
+    private void addFirstUserToNewProject() throws DAOException {
         if (this.project.getUsers().isEmpty()) {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
-            ServiceManager.getProjectService().save(this.project);
+            ServiceManager.getProjectService().saveToDatabase(this.project);
             ServiceManager.getUserService().saveToDatabase(user);
         }
     }
@@ -356,6 +363,7 @@ public class ProjectForm extends BaseForm {
                 if (template.getId().equals(templateId)) {
                     this.project.getTemplates().remove(template);
                     template.getProjects().remove(this.project);
+                    this.deletedTemples.add(template);
                     break;
                 }
             }

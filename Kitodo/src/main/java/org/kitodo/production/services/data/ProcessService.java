@@ -34,6 +34,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -509,7 +513,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         }
         return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), false);
     }
-    
+
     /**
      * Find processes by id of project.
      *
@@ -1451,7 +1455,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     /**
      * Generate result as PDF.
-     * 
+     *
      * @param filter
      *            for generating search results
      */
@@ -1496,7 +1500,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
 
     /**
      * Generate result set.
-     * 
+     *
      * @param filter
      *            for generating search results
      */
@@ -1518,7 +1522,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     /**
      * Good explanation how it should be implemented:
      * https://stackoverflow.com/a/9394237/2701807.
-     * 
+     *
      * @param facesContext
      *            context
      * @param file
@@ -2346,5 +2350,35 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public List<Process> getActiveProcesses() {
         return dao.getActiveProcesses();
+    }
+
+    /**
+     * Retrieve and return process property value of property with given name 'propertyName' from given ProcessDTO
+     * 'process'.
+     * @param process the ProcessDTO object from which the property value is retrieved
+     * @param propertyName name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName', empty String otherwise
+     */
+    public static String getPropertyValue(ProcessDTO process, String propertyName) {
+        for (PropertyDTO property : process.getProperties()) {
+            if (property.getTitle().equals(propertyName)) {
+                return property.getValue();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Calculate and return duration/age of given process as a String.
+     *
+     * @param process ProcessDTO object for which duration/age is calculated
+     * @return process age of given process
+     */
+    public static String getProcessDuration(ProcessDTO process) {
+        String creationDateTimeString = process.getCreationDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
+        Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
+        return String.format("%sd; %sh", duration.toDays(), duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
     }
 }

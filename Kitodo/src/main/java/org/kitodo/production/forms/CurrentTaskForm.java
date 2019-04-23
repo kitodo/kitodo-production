@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +46,7 @@ import org.kitodo.export.TiffHeader;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
@@ -53,6 +55,7 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
@@ -86,6 +89,9 @@ public class CurrentTaskForm extends BaseForm {
     private final String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
+
+    @Inject
+    private CustomListColumnInitializer initializer;
 
     /**
      * Constructor.
@@ -292,7 +298,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Unlock the current task's process.
-     * 
+     *
      * @return stay on the current page
      */
     public String releaseLock() {
@@ -472,7 +478,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Action that creates images.
-     * 
+     *
      * @param mode
      *            which function should be executed
      * @param messageKey
@@ -661,7 +667,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Check if it should show only open tasks.
-     * 
+     *
      * @return boolean
      */
     public boolean isOnlyOpenTasks() {
@@ -681,7 +687,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Check if it should show only own tasks.
-     * 
+     *
      * @return boolean
      */
     public boolean isOnlyOwnTasks() {
@@ -701,7 +707,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Check if it should show also automatic tasks.
-     * 
+     *
      * @return boolean
      */
     public boolean isShowAutomaticTasks() {
@@ -712,7 +718,7 @@ public class CurrentTaskForm extends BaseForm {
      * Using this helper variable, JSF can check if there is content to generate in
      * the current task. In this case, corresponding action links are rendered,
      * otherwise not.
-     * 
+     *
      * @return whether action links should be displayed
      */
     public boolean isShowingGenerationActions() {
@@ -733,7 +739,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Check if it should hide correction tasks.
-     * 
+     *
      * @return boolean
      */
     public boolean isHideCorrectionTasks() {
@@ -947,5 +953,34 @@ public class CurrentTaskForm extends BaseForm {
 
     private int getTaskIdForPath() {
         return Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId();
+    }
+
+    /**
+     * Return array of task custom column names.
+     * @return array of task custom column names
+     */
+    public String[] getTaskCustomColumnNames() {
+        return initializer.getTaskProcessProperties();
+    }
+
+    /**
+     * Retrieve and return process property value of property with given name 'propertyName' from process of given
+     * TaskDTO 'task'.
+     * @param task the TaskDTO object from which the property value is retrieved
+     * @param propertyName name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName', empty String otherwise
+     */
+    public static String getTaskProcessPropertyValue(TaskDTO task, String propertyName) {
+        return ProcessService.getPropertyValue(task.getProcess(), propertyName);
+    }
+
+    /**
+     * Calculate and return age of given tasks process as a String.
+     *
+     * @param task TaskDTO object whose process is used
+     * @return process age of given tasks process
+     */
+    public String getProcessDuration(TaskDTO task) {
+        return ProcessService.getProcessDuration(task.getProcess());
     }
 }

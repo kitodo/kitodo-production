@@ -60,6 +60,7 @@ import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
@@ -170,12 +171,17 @@ public class ProcessForm extends TemplateBaseForm {
      * @return property value if process has property with name 'propertyName', empty String otherwise
      */
     public static String getPropertyValue(ProcessDTO process, String propertyName) {
-        for (PropertyDTO property : process.getProperties()) {
-            if (property.getTitle().equals(propertyName)) {
-                return property.getValue();
-            }
-        }
-        return "";
+        return ProcessService.getPropertyValue(process, propertyName);
+    }
+
+    /**
+     * Calculate and return age of given process as a String.
+     *
+     * @param processDTO ProcessDTO object whose duration/age is calculated
+     * @return process age of given process
+     */
+    public static String getProcessDuration(ProcessDTO processDTO) {
+        return ProcessService.getProcessDuration(processDTO);
     }
 
     /**

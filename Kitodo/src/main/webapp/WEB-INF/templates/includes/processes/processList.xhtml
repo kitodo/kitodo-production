@@ -18,7 +18,10 @@
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
-        <p:dataTable id="processesTable" var="process" value="#{ProcessForm.lazyDTOModel}"
+        <!--@elvariable id="process" type="org.kitodo.production.dto.ProcessDTO-->
+        <p:dataTable id="processesTable"
+                     var="process"
+                     value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}" lazy="true" paginator="true"
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -39,6 +42,10 @@
             <p:column headerText="#{msgs.project}"
                       rendered="#{ProcessForm.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"/>
+            </p:column>
+            <p:column headerText="#{msgs.duration}"
+                      rendered="#{ProcessForm.showColumn('process.duration')}">
+                <h:outputText value="#{ProcessForm.getProcessDuration(process)}"/>
             </p:column>
             <!-- columns for process properties that have been configured in kitodo config file! -->
             <p:columns value="#{ProcessForm.getProcessPropertyNames()}"

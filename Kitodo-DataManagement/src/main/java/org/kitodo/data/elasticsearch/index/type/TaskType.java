@@ -13,6 +13,7 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -57,9 +58,17 @@ public class TaskType extends BaseType<Task> {
         }
         jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
         jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
+        jsonObject.put(TaskTypeField.CLIENT_ID.getKey(), getClientId(task));
         jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), getId(task.getTemplate()));
         jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), getTitle(task.getTemplate()));
         jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
         return jsonObject;
+    }
+
+    private int getClientId(Task task) {
+        if (Objects.nonNull(task.getProcess()) && Objects.nonNull(task.getProcess().getProject())) {
+            return getId(task.getProcess().getProject().getClient());
+        }
+        return 0;
     }
 }
