@@ -70,8 +70,8 @@ public class TaskServiceIT {
 
     @Test
     public void shouldFindTask() {
-        await().untilAsserted(() -> assertTrue("Task was not found in index!",
-            taskService.findById(1).getTitle().equals("Finished") && taskService.findById(1).getPriority().equals(1)));
+        await().untilAsserted(() -> assertEquals("Task was not found in index!", "Finished",
+            taskService.findById(1).getTitle()));
     }
 
     @Test
@@ -83,8 +83,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetTask() throws Exception {
         Task task = taskService.getById(1);
-        boolean condition = task.getTitle().equals("Finished") && task.getPriority().equals(1);
-        assertTrue("Task was not found in database!", condition);
+        assertEquals("Task was not found in database!", "Finished", task.getTitle());
     }
 
     @Test
@@ -193,7 +192,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetCorrectionStep() throws Exception {
         Task task = taskService.getById(8);
-        boolean result = ServiceManager.getWorkflowControllerService().isCorrectionTask(task);
+        boolean result = task.isCorrection();
         assertTrue("Task is not correction task!", result);
     }
 

@@ -133,7 +133,7 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (hideCorrectionTasks) {
-            query.must(getQueryForPriority(10));
+            query.must(createSimpleQuery(TaskTypeField.CORRECTION.getKey(), false, true));
         }
 
         if (!showAutomaticTasks) {
@@ -259,7 +259,6 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setId(getIdFromJSONObject(jsonObject));
         taskDTO.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
-        taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(jsonObject));
         taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
         int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
@@ -270,6 +269,7 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setProcessingTime(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
         taskDTO.setProcessingBegin(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
         taskDTO.setProcessingEnd(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+        taskDTO.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
         taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
         taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
@@ -681,17 +681,6 @@ public class TaskService extends ClientSearchService<Task, TaskDTO, TaskDAO> {
      */
     private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
         return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
-    }
-
-    /**
-     * Get query for priority.
-     *
-     * @param priority
-     *            priority as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForPriority(int priority) {
-        return createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true);
     }
 
     /**

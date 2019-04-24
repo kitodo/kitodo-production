@@ -26,7 +26,6 @@ public class TaskDTO extends BaseDTO {
 
     private String title;
     private String localizedTitle;
-    private Integer priority;
     private Integer ordering;
     private TaskStatus processingStatus;
     private String processingStatusTitle;
@@ -40,6 +39,7 @@ public class TaskDTO extends BaseDTO {
     private TemplateDTO template;
     private List<RoleDTO> roles = new ArrayList<>();
     private int rolesSize;
+    private boolean correction;
     private boolean typeAutomatic;
     private boolean typeMetadata;
     private boolean typeImagesRead;
@@ -84,25 +84,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setLocalizedTitle(String localizedTitle) {
         this.localizedTitle = localizedTitle;
-    }
-
-    /**
-     * Get priority as Integer.
-     * 
-     * @return priority as Integer
-     */
-    public Integer getPriority() {
-        return this.priority;
-    }
-
-    /**
-     * Set priority as Integer.
-     * 
-     * @param priority
-     *            as Integer
-     */
-    public void setPriority(Integer priority) {
-        this.priority = priority;
     }
 
     /**
@@ -350,6 +331,24 @@ public class TaskDTO extends BaseDTO {
      */
     public void setRolesSize(int rolesSize) {
         this.rolesSize = rolesSize;
+    }
+
+    /**
+     * Get correction.
+     *
+     * @return value of correction
+     */
+    public boolean isCorrection() {
+        return correction;
+    }
+
+    /**
+     * Set correction.
+     *
+     * @param correction as boolean
+     */
+    public void setCorrection(boolean correction) {
+        this.correction = correction;
     }
 
     /**

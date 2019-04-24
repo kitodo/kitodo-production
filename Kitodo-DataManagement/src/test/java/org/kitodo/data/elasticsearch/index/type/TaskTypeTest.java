@@ -70,7 +70,6 @@ public class TaskTypeTest {
         Task firstTask = new Task();
         firstTask.setId(1);
         firstTask.setTitle("Testing");
-        firstTask.setPriority(1);
         firstTask.setOrdering(1);
         firstTask.setProcessingStatus(TaskStatus.DONE);
         firstTask.setEditType(TaskEditType.MANUAL_SINGLE);
@@ -92,7 +91,6 @@ public class TaskTypeTest {
         Task secondTask = new Task();
         secondTask.setId(2);
         secondTask.setTitle("Rendering");
-        secondTask.setPriority(2);
         secondTask.setOrdering(2);
         secondTask.setProcessingStatus(TaskStatus.INWORK);
         localDate = new LocalDate(2017, 2, 17);
@@ -121,7 +119,6 @@ public class TaskTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing", TaskTypeField.TITLE.getStringValue(actual));
         assertEquals("Key ordering doesn't match to given value!", 1, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key priority doesn't match to given value!", 1, TaskTypeField.PRIORITY.getIntValue(actual));
         assertEquals("Key editType doesn't match to given value!", 1, TaskTypeField.EDIT_TYPE.getIntValue(actual));
         assertEquals("Key processingStatus doesn't match to given value!", 3,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
@@ -142,6 +139,8 @@ public class TaskTypeTest {
         assertEquals("Key homeDirectory doesn't match to given value!", "1",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
         assertTrue("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
+        assertFalse("Key correction doesn't match to given value!",
+                TaskTypeField.CORRECTION.getBooleanValue(actual));
         assertFalse("Key typeAutomatic doesn't match to given value!",
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertTrue("Key typeMetadata doesn't match to given value!",
@@ -175,7 +174,6 @@ public class TaskTypeTest {
         assertEquals("Key title doesn't match to given value!", "Rendering",
             TaskTypeField.TITLE.getStringValue(actual));
         assertEquals("Key ordering doesn't match to given value!", 2, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key priority doesn't match to given value!", 2, TaskTypeField.PRIORITY.getIntValue(actual));
         assertEquals("Key editType doesn't match to given value!", 0, TaskTypeField.EDIT_TYPE.getIntValue(actual));
         assertEquals("Key processingStatus doesn't match to given value!", 2,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
@@ -196,6 +194,8 @@ public class TaskTypeTest {
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
         assertFalse("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
+        assertFalse("Key correction doesn't match to given value!",
+                TaskTypeField.CORRECTION.getBooleanValue(actual));
         assertFalse("Key typeAutomatic doesn't match to given value!",
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertFalse("Key typeMetadata doesn't match to given value!",
@@ -229,7 +229,6 @@ public class TaskTypeTest {
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             TaskTypeField.TITLE.getStringValue(actual));
         assertEquals("Key ordering doesn't match to given value!", 0, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key priority doesn't match to given value!", 0, TaskTypeField.PRIORITY.getIntValue(actual));
         assertEquals("Key editType doesn't match to given value!", 0, TaskTypeField.EDIT_TYPE.getIntValue(actual));
         assertEquals("Key processingStatus doesn't match to given value!", 1,
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
@@ -244,6 +243,8 @@ public class TaskTypeTest {
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
         assertFalse("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
+        assertFalse("Key correction doesn't match to given value!",
+                TaskTypeField.CORRECTION.getBooleanValue(actual));
         assertFalse("Key typeAutomatic doesn't match to given value!",
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertFalse("Key typeMetadata doesn't match to given value!",

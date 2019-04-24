@@ -32,7 +32,6 @@ public class TaskType extends BaseType<Task> {
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
-        jsonObject.put(TaskTypeField.PRIORITY.getKey(), task.getPriority());
         jsonObject.put(TaskTypeField.ORDERING.getKey(), task.getOrdering());
         jsonObject.put(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus);
         jsonObject.put(TaskTypeField.EDIT_TYPE.getKey(), editType);
@@ -40,6 +39,7 @@ public class TaskType extends BaseType<Task> {
         jsonObject.put(TaskTypeField.PROCESSING_BEGIN.getKey(), getFormattedDate(task.getProcessingBegin()));
         jsonObject.put(TaskTypeField.PROCESSING_END.getKey(), getFormattedDate(task.getProcessingEnd()));
         jsonObject.put(TaskTypeField.HOME_DIRECTORY.getKey(), preventNull(String.valueOf(task.getHomeDirectory())));
+        jsonObject.put(TaskTypeField.CORRECTION.getKey(), task.isCorrection());
         jsonObject.put(TaskTypeField.TYPE_METADATA.getKey(), task.isTypeMetadata());
         jsonObject.put(TaskTypeField.TYPE_AUTOMATIC.getKey(), task.isTypeAutomatic());
         jsonObject.put(TaskTypeField.TYPE_IMAGES_READ.getKey(), task.isTypeImagesRead());

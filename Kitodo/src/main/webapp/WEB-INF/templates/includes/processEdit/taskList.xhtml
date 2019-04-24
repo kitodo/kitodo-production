@@ -98,8 +98,8 @@
                     <h:outputText value="#{msgs.processTitle}: "/>
                     <h:outputText value="#{item.process.title}"/>
 
-                    <h:outputText value="#{msgs.priority}: "/>
-                    <h:outputText value="#{item.priority}"/>
+                    <h:outputText value="#{msgs.correction}: "/>
+                    <h:outputText value="#{item.correction}"/>
 
                     <h:outputText value="#{msgs.processingBegin}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{ProcessForm.getFormattedDate(item.processingBegin)}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>

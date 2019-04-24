@@ -42,9 +42,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "priority")
-    private Integer priority;
-
     @Column(name = "ordering")
     private Integer ordering;
 
@@ -73,6 +70,9 @@ public class Task extends BaseIndexedBean {
 
     @Column(name = "last")
     private boolean last = false;
+
+    @Column(name = "correction")
+    private boolean correction = false;
 
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
@@ -170,7 +170,6 @@ public class Task extends BaseIndexedBean {
     public Task() {
         this.title = "";
         this.roles = new ArrayList<>();
-        this.priority = 0;
         this.ordering = 0;
     }
 
@@ -183,7 +182,6 @@ public class Task extends BaseIndexedBean {
     public Task(Task templateTask) {
         this.title = templateTask.getTitle();
         this.ordering = templateTask.getOrdering();
-        this.priority = templateTask.getPriority();
         this.typeAutomatic = templateTask.isTypeAutomatic();
         this.scriptName = templateTask.getScriptName();
         this.scriptPath = templateTask.getScriptPath();
@@ -215,14 +213,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getPriority() {
-        return this.priority;
-    }
-
-    public void setPriority(Integer priority) {
-        this.priority = priority;
     }
 
     public Integer getOrdering() {
@@ -339,6 +329,24 @@ public class Task extends BaseIndexedBean {
      */
     public void setLast(boolean last) {
         this.last = last;
+    }
+
+    /**
+     * Get correction.
+     *
+     * @return value of correction
+     */
+    public boolean isCorrection() {
+        return correction;
+    }
+
+    /**
+     * Set correction.
+     *
+     * @param correction as boolean
+     */
+    public void setCorrection(boolean correction) {
+        this.correction = correction;
     }
 
     public User getProcessingUser() {

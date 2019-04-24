@@ -156,7 +156,7 @@
 
                     <!-- Pass to next station for corrective purpose-->
                     <h:panelGroup
-                            rendered="#{task.priority>9 and CurrentTaskForm.sizeOfNextStepsForProblemSolution > 0}">
+                            rendered="#{task.correction and CurrentTaskForm.sizeOfNextStepsForProblemSolution > 0}">
                         <span class="toggle" data-for="toggle-2">
                             <h:outputText>
                                 <i class="fa fa-arrow-left"/> #{msgs.sendSolutionMessageNextTask}

@@ -107,7 +107,6 @@ public class Converter {
         task.setWorkflowId(kitodoTask.getWorkflowId());
         task.setTitle(kitodoTask.getTitle());
         task.setOrdering(taskInfo.getOrdering());
-        task.setPriority(kitodoTask.getPriority());
         task.setEditType(TaskEditType.getTypeFromValue(kitodoTask.getEditType()));
         task.setProcessingStatus(TaskStatus.getStatusFromValue(kitodoTask.getProcessingStatus()));
         task.setConcurrent(kitodoTask.isConcurrent());

@@ -322,7 +322,7 @@ public class WorkflowControllerService {
         task.setProcessingStatus(TaskStatus.OPEN);
         taskService.replaceProcessingUser(task, null);
         // if we have a correction task here then never remove startdate
-        if (isCorrectionTask(task)) {
+        if (task.isCorrection()) {
             task.setProcessingBegin(null);
         }
         task.setEditType(TaskEditType.MANUAL_SINGLE);
@@ -334,27 +334,6 @@ public class WorkflowControllerService {
         metadataLock.setFree(task.getProcess().getId());
 
         updateProcessSortHelperStatus(task.getProcess());
-    }
-
-    /**
-     * Priority equal 10 means correction task.
-     *
-     * @param task
-     *            Task object
-     * @return true or false
-     */
-    public boolean isCorrectionTask(Task task) {
-        return task.getPriority() == 10;
-    }
-
-    /**
-     * Set Priority equal 10 means correction task.
-     *
-     * @param task
-     *            Task object
-     */
-    public void setCorrectionTask(Task task) {
-        task.setPriority(10);
     }
 
     /**
@@ -375,7 +354,7 @@ public class WorkflowControllerService {
 
         Task correctionTask = taskService.getById(getProblem().getId());
         correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        setCorrectionTask(correctionTask);
+        correctionTask.setCorrection(true);
         correctionTask.setProcessingEnd(null);
 
         Property processProperty = prepareProblemMessageProperty(date, currentTask, correctionTask);
@@ -493,7 +472,7 @@ public class WorkflowControllerService {
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatus(TaskStatus.LOCKED);
-            setCorrectionTask(taskInBetween);
+            taskInBetween.setCorrection(true);
             taskInBetween.setProcessingEnd(null);
             taskService.save(taskInBetween);
         }
@@ -506,14 +485,14 @@ public class WorkflowControllerService {
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatus(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
-            taskInBetween.setPriority(0);
+            taskInBetween.setCorrection(false);
             taskService.save(taskInBetween);
         }
     }
 
     private void openTaskForProcessing(Task correctionTask) throws DataException {
         correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        setCorrectionTask(correctionTask);
+        correctionTask.setCorrection(true);
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
         taskService.save(correctionTask);
