@@ -16,7 +16,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -81,44 +80,20 @@ import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.process.field.AdditionalField;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.omnifaces.util.Ajax;
 import org.primefaces.context.RequestContext;
 
 @Named("ProzesskopieForm")
 @SessionScoped
-public class ProzesskopieForm implements Serializable {
+public class ProzesskopieForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final long serialVersionUID = -4512865679353743L;
-    protected static final String ERROR_READ = "errorReading";
     private static final String OPAC_CONFIG = "configurationOPAC";
     private static final String BOUND_BOOK = "boundbook";
     private static final String FIRST_CHILD = "firstchild";
     private static final String LIST_OF_CREATORS = "ListOfCreators";
-    private static final String STAY_ON_CURRENT_PAGE = null;
-    private transient MetsService metsService = ServiceManager.getMetsService();
 
-    private int activeTabId = 0;
-
-    /**
-     * Get activeTabId.
-     *
-     * @return value of activeTabId
-     */
-    public int getActiveTabId() {
-        return activeTabId;
-    }
-
-    /**
-     * Set activeTabId.
-     *
-     * @param activeTabId
-     *            as int
-     */
-    public void setActiveTabId(int activeTabId) {
-        this.activeTabId = activeTabId;
-    }
 
     private static final String DIRECTORY_SUFFIX = ConfigCore
             .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
@@ -156,8 +131,6 @@ public class ProzesskopieForm implements Serializable {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
-    private List<String> workflowConditions = new ArrayList<>();
-    private static final String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
@@ -210,7 +183,7 @@ public class ProzesskopieForm implements Serializable {
         if (prepareProcess(templateId, projectId)) {
             return processFromTemplatePath;
         }
-        return STAY_ON_CURRENT_PAGE;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -299,7 +272,7 @@ public class ProzesskopieForm implements Serializable {
                 Helper.setErrorMessage("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC " + opacKatalog }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {"OPAC " + opacKatalog }, logger, e);
         }
     }
 
@@ -388,7 +361,7 @@ public class ProzesskopieForm implements Serializable {
         fillFieldsFromMetadataFile();
         applyCopyingRules(new CopierData(rdf, this.template));
         atstsl = TitleGenerator.createAtstsl(hit.getTitle(), hit.getAuthors());
-        setActiveTabId(0);
+        setEditActiveTabIndex(0);
     }
 
     /**
@@ -469,7 +442,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             this.rdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {"template-metadata" }, logger, e);
         }
 
         removeCollectionsForChildren(this.rdf, this.prozessKopie);
@@ -535,7 +508,7 @@ public class ProzesskopieForm implements Serializable {
             return processListPath;
         }
 
-        return STAY_ON_CURRENT_PAGE;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -932,7 +905,7 @@ public class ProzesskopieForm implements Serializable {
                 this.rdf = new LegacyMetsModsDigitalDocumentHelper(ruleset, workpiece);
             }
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
     }
 
@@ -1046,18 +1019,6 @@ public class ProzesskopieForm implements Serializable {
      */
     public Template getTemplate() {
         return template;
-    }
-
-    /**
-     * The function getProzessVorlageTitel() returns some kind of identifier for
-     * this ProzesskopieForm. The title of the process template that a process
-     * will be created from can be considered with some reason to be some good
-     * identifier for the ProzesskopieForm, too.
-     *
-     * @return a human-readable identifier for this object
-     */
-    public String getProzessVorlageTitel() {
-        return this.template.getTitle();
     }
 
     /**
@@ -1189,7 +1150,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1203,7 +1164,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1373,7 +1334,7 @@ public class ProzesskopieForm implements Serializable {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return false;
         }
     }
@@ -1386,24 +1347,5 @@ public class ProzesskopieForm implements Serializable {
      */
     public LegacyMetsModsDigitalDocumentHelper getFileformat() {
         return rdf;
-    }
-
-    /**
-     * Get workflow conditions.
-     *
-     * @return value of workflowConditions
-     */
-    public List<String> getWorkflowConditions() {
-        return workflowConditions;
-    }
-
-    /**
-     * Set workflow conditions.
-     *
-     * @param workflowConditions
-     *            as List of Strings
-     */
-    public void setWorkflowConditions(List<String> workflowConditions) {
-        this.workflowConditions = workflowConditions;
     }
 }

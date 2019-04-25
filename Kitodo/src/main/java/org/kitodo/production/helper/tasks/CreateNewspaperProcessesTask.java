@@ -127,7 +127,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            a granularity level at which batches shall be created
      */
     public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
-        super(pattern.getProzessVorlageTitel());
+        super(pattern.getTemplate().getTitle());
         this.pattern = pattern;
         this.processes = new ArrayList<>(course.getNumberOfProcesses());
         this.description = CourseToGerman.asReadableText(course);

@@ -42,7 +42,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processFromTemplateTabView" activeIndex="#{ProzesskopieForm.activeTabId}">
+        <p:tabView id="processFromTemplateTabView" activeIndex="#{ProzesskopieForm.editActiveTabIndex}">
             <p:tab id="importTab" title="#{msgs.queryOPAC}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processImport.xhtml" />
             </p:tab>
