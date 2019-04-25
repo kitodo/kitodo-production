@@ -263,7 +263,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = (Map<String, String>) filters;
+            Map<String, String> filterMap = filters;
             query.must(readFilters(filterMap));
         }
 
@@ -1662,8 +1662,24 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Filter and sort after creation date list of process properties for correction
-     * and solution messages.
+     * Returns the type of the top element of the root element, and thus the
+     * type of the workpiece of the process.
+     *
+     * @param process
+     *            process whose root type is to be determined
+     * @return the type of root element of the root element of the workpiece
+     * @throws IOException
+     *             if the file cannot be read (for example, because the file was
+     *             not found)
+     */
+    public String getBaseType(Process process) throws IOException {
+        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+        return ServiceManager.getMetsService().getBaseType(metadataFilePath);
+    }
+
+    /**
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
      *
      * @return list of ProcessProperty objects
      */

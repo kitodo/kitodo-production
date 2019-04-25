@@ -55,6 +55,21 @@ public class MetsService {
     }
 
     /**
+     * Returns the type of the top element of the root element, and thus the
+     * type of the workpiece.
+     *
+     * @param uri
+     *            Address of the METS file of the workpiece
+     * @return the type of root element of the root element of the workpiece
+     * @throws IOException
+     *             if the file cannot be read (for example, because the file was
+     *             not found)
+     */
+    public String getBaseType(URI uri) throws IOException {
+        return loadWorkpiece(uri, LockingMode.IMMUTABLE_READ).getRootElement().getType();
+    }
+
+    /**
      * Function for loading METS files from URI.
      *
      * @param uri
@@ -64,7 +79,22 @@ public class MetsService {
      *             if reading is not working (disk broken, ...)
      */
     public Workpiece loadWorkpiece(URI uri) throws IOException {
-        try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, LockingMode.EXCLUSIVE)) {
+        return loadWorkpiece(uri, LockingMode.EXCLUSIVE);
+    }
+
+    /**
+     * Function for loading METS files from URI.
+     *
+     * @param uri
+     *            address of the file to be loaded
+     * @param lockingMode
+     *            how to lock the METS file
+     * @return loaded file
+     * @throws IOException
+     *             if reading is not working (disk broken, ...)
+     */
+    public Workpiece loadWorkpiece(URI uri, LockingMode lockingMode) throws IOException {
+        try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, lockingMode)) {
             if (lockResult.isSuccessful()) {
                 try (InputStream inputStream = ServiceManager.getFileService().read(uri, lockResult)) {
                     logger.info("Reading {}", uri.toString());
