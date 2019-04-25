@@ -82,15 +82,7 @@ public class DigitalCollection {
         for (Element project : projects) {
             // collect default collections
             if (project.getName().equals(DEFAULT)) {
-                List<Element> myCols = project.getChildren("DigitalCollection");
-                for (Element digitalCollection : myCols) {
-                    Attribute defaultCollection = digitalCollection.getAttribute(DEFAULT);
-                    if (Objects.nonNull(defaultCollection)
-                            && defaultCollection.getValue().equalsIgnoreCase("true")) {
-                        digitalCollections.add(digitalCollection.getText());
-                    }
-                    defaultCollections.add(digitalCollection.getText());
-                }
+                prepareDigitalCollections(project, defaultCollections);
             } else {
                 iterateOverAllProjects(project, projectBean);
             }
@@ -120,16 +112,21 @@ public class DigitalCollection {
         for (Element projectName : projectNames) {
             // all all collections to list
             if (projectName.getText().equalsIgnoreCase(projectBean.getTitle())) {
-                List<Element> myCols = project.getChildren("DigitalCollection");
-                for (Element digitalCollection : myCols) {
-                    Attribute defaultCollection = digitalCollection.getAttribute(DEFAULT);
-                    if (Objects.nonNull(defaultCollection)
-                            && defaultCollection.getValue().equalsIgnoreCase("true")) {
-                        digitalCollections.add(digitalCollection.getText());
-                    }
-                    possibleDigitalCollection.add(digitalCollection.getText());
-                }
+                prepareDigitalCollections(project, possibleDigitalCollection);
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void prepareDigitalCollections(Element project, List<String> possibleDigitalCollections) {
+        List<Element> myCols = project.getChildren("DigitalCollection");
+        for (Element digitalCollection : myCols) {
+            Attribute defaultCollection = digitalCollection.getAttribute(DEFAULT);
+            if (Objects.nonNull(defaultCollection)
+                    && defaultCollection.getValue().equalsIgnoreCase("true")) {
+                digitalCollections.add(digitalCollection.getText());
+            }
+            possibleDigitalCollections.add(digitalCollection.getText());
         }
     }
 }
