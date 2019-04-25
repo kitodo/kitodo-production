@@ -526,7 +526,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             String value = cell.getStringCellValue();
             if (value.trim().matches(PPN_PATTERN) && value.length() > 6) {
                 // remove date and time from list
-                logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+                logger.debug("matched: {} in row {} cell {}", value, j + 1, i);
                 // found numbers and character 'X' as last sign
                 record.setId(value.trim());
                 record.setData(value.trim());

@@ -97,7 +97,7 @@ public class FileService {
                 throw new IOException(message);
             }
         } else {
-            logger.info("Metadata directory: " + directoryName + " already existed! No new directory was created");
+            logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         }
         return URI.create(parentFolderUri.getPath() + '/' + directoryName);
     }

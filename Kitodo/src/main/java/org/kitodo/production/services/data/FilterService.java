@@ -645,7 +645,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 }
                 break;
             case UNKNOWN:
-                logger.info("Filter '" + filter + "' is not known!\n");
+                logger.info("Filter '{}' is not known!", filter);
                 break;
             default:
                 break;
@@ -654,8 +654,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     private void logError(String filter) {
-        logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
-                + "' caused an error\n");
+        logger.error("filter part '{}' in '{}' caused an error", filter.substring(filter.indexOf(':') + 1), filter);
     }
 
     /**

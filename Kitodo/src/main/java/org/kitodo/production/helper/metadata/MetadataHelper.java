@@ -122,9 +122,8 @@ public class MetadataHelper {
             if (Objects.nonNull(dst)) {
                 newTypes.add(dst);
             } else {
-                Helper.setMessage("Regelsatz-Fehler: ", " DocstructType " + tempTitle + " nicht definiert");
-                logger.error(
-                        "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitle + " nicht definiert");
+                Helper.setMessage("Rulset Error: ", " DocstructType " + tempTitle + " not defined");
+                logger.error("Rulset Error: DocstructType {} not defined", tempTitle);
             }
         }
 

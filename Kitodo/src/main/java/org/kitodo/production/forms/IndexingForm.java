@@ -720,8 +720,8 @@ public class IndexingForm {
                     indexerThread.join();
                     break;
                 } else {
-                    logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
-                            + currentIndexState + "'");
+                    logger.debug("Cannot start '{}' indexing while a different indexing process running: '{}'", type,
+                        this.currentIndexState);
                     Thread.sleep(pause);
                     attempts++;
                 }

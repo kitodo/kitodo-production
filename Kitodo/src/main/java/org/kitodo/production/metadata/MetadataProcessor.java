@@ -199,8 +199,7 @@ public class MetadataProcessor {
     private int numberOfConvertedImages = 0;
     private int numberOfImagesToAdd = 0;
     private List<String> metadataEditorComponents = Arrays.asList("structureTreeForm:structureWrapperPanel",
-        "paginationForm:paginationWrapperPanel", "metadataWrapperPanel", "commentWrapperPanel",
-        "galleryWrapperPanel");
+        "paginationForm:paginationWrapperPanel", "metadataWrapperPanel", "commentWrapperPanel", "galleryWrapperPanel");
     private String referringView = "desktop";
     private RulesetManagementInterface rulesetManagement;
     private String selectedStructureType;
@@ -298,7 +297,8 @@ public class MetadataProcessor {
      */
     public void delete() {
         if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
-            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
+            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
+                    .getData();
             includedStructuralElement.getMetadata().remove(this.currentMetadata);
         } else {
             Helper.setErrorMessage("Node does not contain structure element!");
@@ -411,7 +411,8 @@ public class MetadataProcessor {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
             this.process = ServiceManager.getProcessService().getById(id);
             this.rulesetManagement = ServiceManager.getRulesetManagementService().getRulesetManagement();
-            rulesetManagement.load(new File(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile()));
+            rulesetManagement.load(
+                new File(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + this.process.getRuleset().getFile()));
         } catch (NumberFormatException | DAOException e) {
             Helper.setErrorMessage("error while loading process data" + e.getMessage(), logger, e);
         } catch (IOException e) {
@@ -735,13 +736,13 @@ public class MetadataProcessor {
      * Delete selected tree node.
      */
     public void deleteNode() {
-        if (this.selectedTreeNode != null
-                && this.selectedTreeNode.getParent() != null
+        if (this.selectedTreeNode != null && this.selectedTreeNode.getParent() != null
                 && this.selectedTreeNode.getData() instanceof IncludedStructuralElement
                 && this.selectedTreeNode.getParent().getData() instanceof IncludedStructuralElement) {
             IncludedStructuralElement parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
                     .getParent().getData();
-            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
+            IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
+                    .getData();
             parentIncludedStructuralElement.getChildren().remove(includedStructuralElement);
         }
     }
@@ -782,7 +783,8 @@ public class MetadataProcessor {
         IncludedStructuralElement selectedIncludedStructuralElement = null;
         IncludedStructuralElement parentIncludedStructuralElement;
         if (this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)
-                || this.positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+                || this.positionOfNewDocStrucElement
+                        .equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
             if (this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
                 parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             } else {
@@ -792,7 +794,8 @@ public class MetadataProcessor {
         } else {
             if (this.selectedTreeNode.getParent().getData() instanceof IncludedStructuralElement
                     && this.selectedTreeNode.getData() instanceof IncludedStructuralElement) {
-                parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getParent().getData();
+                parentIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getParent()
+                        .getData();
                 selectedIncludedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
             } else {
                 Helper.setErrorMessage("Parent node does not contain structure element!");
@@ -820,7 +823,8 @@ public class MetadataProcessor {
                     newElement);
                 break;
             default:
-                Helper.setErrorMessage("\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
+                Helper.setErrorMessage(
+                    "\"" + this.positionOfNewDocStrucElement.getLabel() + "\" is not a valid position");
                 break;
         }
     }
@@ -983,7 +987,8 @@ public class MetadataProcessor {
         zaehler = 0;
         LegacyMetadataTypeHelper mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         for (LegacyDocStructHelperInterface mySeitenDocStruct : meineListe) {
-            List<? extends LegacyMetadataHelper> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
+            List<? extends LegacyMetadataHelper> mySeitenDocStructMetadaten = mySeitenDocStruct
+                    .getAllMetadataByType(mdt);
             for (LegacyMetadataHelper page : mySeitenDocStructMetadaten) {
                 this.allPagesNew[zaehler] = new MetadataImpl(page, zaehler, this.myPrefs, this.process);
                 this.allPages[zaehler] = determineMetadata(page.getDocStruct(), "physPageNumber").trim() + ": "
@@ -1187,7 +1192,8 @@ public class MetadataProcessor {
         logger.trace("dataList");
         List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
-        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION) && dataList.isEmpty()) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION)
+                && dataList.isEmpty()) {
             createPagination();
             dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         }
@@ -1525,7 +1531,8 @@ public class MetadataProcessor {
     /**
      * Set selectedMetadataValue.
      *
-     * @param selectedMetadataValue as java.lang.String
+     * @param selectedMetadataValue
+     *            as java.lang.String
      */
     public void setSelectedMetadataValue(String selectedMetadataValue) {
         this.selectedMetadataValue = selectedMetadataValue;
@@ -1711,7 +1718,8 @@ public class MetadataProcessor {
         for (View element : elements) {
 
             treeNode = new DefaultTreeNode(element.getMediaUnit(), parentTreeNode);
-            if (this.selectedTreeNode != null && Objects.equals(this.selectedTreeNode.getData(), element.getMediaUnit())) {
+            if (this.selectedTreeNode != null
+                    && Objects.equals(this.selectedTreeNode.getData(), element.getMediaUnit())) {
                 treeNode.setSelected(true);
             }
         }
@@ -1736,9 +1744,11 @@ public class MetadataProcessor {
         int dropIndex = event.getDropIndex();
         if (event.getDropNode().getData().equals("root")) {
             Helper.setErrorMessage("Only one root element allowed");
-        } else  {
-            LegacyDocStructHelperInterface dropDocStruct = (LegacyDocStructHelperInterface) event.getDropNode().getData();
-            LegacyDocStructHelperInterface dragDocStruct = (LegacyDocStructHelperInterface) event.getDragNode().getData();
+        } else {
+            LegacyDocStructHelperInterface dropDocStruct = (LegacyDocStructHelperInterface) event.getDropNode()
+                    .getData();
+            LegacyDocStructHelperInterface dragDocStruct = (LegacyDocStructHelperInterface) event.getDragNode()
+                    .getData();
 
             if (Objects.equals(dragDocStruct.getDocStructType().getName(), "page")) {
                 String pyhsicalPageNumber = String.valueOf(getPhysicalPageNumber(dragDocStruct));
@@ -1862,8 +1872,8 @@ public class MetadataProcessor {
         }
     }
 
-    private void removeReferenceToSelectedPages(List<Integer> selectedPages, List<LegacyDocStructHelperInterface> allPages)
-            throws IOException {
+    private void removeReferenceToSelectedPages(List<Integer> selectedPages,
+            List<LegacyDocStructHelperInterface> allPages) throws IOException {
         for (Integer pageIndex : selectedPages) {
             LegacyDocStructHelperInterface pageToRemove = allPages.get(pageIndex);
             String imageName = pageToRemove.getImageName();
@@ -2049,7 +2059,8 @@ public class MetadataProcessor {
     /**
      * Set selectedStructureType.
      *
-     * @param selectedStructureType as java.lang.String
+     * @param selectedStructureType
+     *            as java.lang.String
      */
     public void setSelectedStructureType(String selectedStructureType) {
         this.selectedStructureType = selectedStructureType;
@@ -2067,7 +2078,8 @@ public class MetadataProcessor {
     /**
      * Set selectedMetadataType.
      *
-     * @param selectedMetadataType as java.lang.String
+     * @param selectedMetadataType
+     *            as java.lang.String
      */
     public void setSelectedMetadataType(String selectedMetadataType) {
         this.selectedMetadataType = selectedMetadataType;
@@ -2512,8 +2524,9 @@ public class MetadataProcessor {
                     return errorMessage;
                 }
             default:
-                logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is "
-                        + allMetadata.size() + " (1 expected)!");
+                logger.error(
+                    "WARNING: number of 'physPageNumber' metadata values in given page doc struct is {} (1 expected)!",
+                    allMetadata.size());
                 return errorMessage;
         }
     }
@@ -2581,11 +2594,11 @@ public class MetadataProcessor {
         } else if (FilenameUtils.getPath(imagePath).endsWith(THUMBNAIL_FOLDER_NAME + "/")) {
             filePath = thumbnailPath + imageName;
         } else {
-            logger.error("ERROR: Image path '" + imagePath + "' is invalid!");
+            logger.error("ERROR: Image path '{}' is invalid!", imagePath);
             return false;
         }
-        File image = new File(filePath);
-        return image.canRead();
+        File imageFile = new File(filePath);
+        return imageFile.canRead();
     }
 
     /**
@@ -2601,8 +2614,8 @@ public class MetadataProcessor {
             thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
                     + THUMBNAIL_FOLDER_NAME + File.separator;
         } else {
-            logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator
-                    + "' resulted in an empty array!");
+            logger.error("ERROR: splitting '{}' at '{}' resulted in an empty array!", this.currentTifFolder,
+                    File.separator);
         }
     }
 
@@ -2811,7 +2824,9 @@ public class MetadataProcessor {
 
     /**
      * Get translation for name of metadata.
-     * @param inputString key of the metadata to translate
+     * 
+     * @param inputString
+     *            key of the metadata to translate
      * @return translated label as String
      */
     public String getMetadataTranslation(String inputString) {
@@ -2822,7 +2837,9 @@ public class MetadataProcessor {
 
     /**
      * Get translation for name of logical structure element.
-     * @param inputString key of logical structure element to translate
+     * 
+     * @param inputString
+     *            key of logical structure element to translate
      * @return translated label as String
      */
     public String getDocStructTranslation(String inputString) {
@@ -2833,6 +2850,7 @@ public class MetadataProcessor {
 
     /**
      * Get structure types that may be added at the selected position.
+     * 
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedStructureTypes() {
@@ -2841,6 +2859,7 @@ public class MetadataProcessor {
 
     /**
      * Get metadata types that may be added to the selected logical element.
+     * 
      * @return List of SelectItems
      */
     public List<SelectItem> getAllowedMetadata() {
@@ -2848,17 +2867,19 @@ public class MetadataProcessor {
     }
 
     private List<SelectItem> getAllowedItems(String itemType) {
-        List<Locale.LanguageRange> priorityList = Locale.LanguageRange.parse(
-                ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
+        List<Locale.LanguageRange> priorityList = Locale.LanguageRange
+                .parse(ServiceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
 
-        if (Objects.isNull(this.selectedTreeNode) || !(this.selectedTreeNode.getData() instanceof IncludedStructuralElement)) {
+        if (Objects.isNull(this.selectedTreeNode)
+                || !(this.selectedTreeNode.getData() instanceof IncludedStructuralElement)) {
             Helper.setErrorMessage("TreeNode data does not contain structure element!");
             return Collections.emptyList();
         }
 
-        IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode.getData();
-        StructuralElementViewInterface structuralElementView = rulesetManagement.getStructuralElementView(
-                includedStructuralElement.getType(), "", priorityList);
+        IncludedStructuralElement includedStructuralElement = (IncludedStructuralElement) this.selectedTreeNode
+                .getData();
+        StructuralElementViewInterface structuralElementView = rulesetManagement
+                .getStructuralElementView(includedStructuralElement.getType(), "", priorityList);
 
         if (itemType.equals(METADATA)) {
             Map<Metadata, String> metadataEntriesMappedToKeyNames = includedStructuralElement.getMetadata().parallelStream()
