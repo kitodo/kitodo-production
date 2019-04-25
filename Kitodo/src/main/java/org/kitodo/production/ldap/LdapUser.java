@@ -11,7 +11,6 @@
 
 package org.kitodo.production.ldap;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -107,12 +106,8 @@ public class LdapUser implements DirContext {
                 logger.error(e.getMessage(), e);
             }
             /* NTLM */
-            try {
-                byte[] hmm = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
-                this.attributes.put("sambaNTPassword", toHexString(hmm));
-            } catch (UnsupportedEncodingException e) {
-                logger.error(e.getMessage(), e);
-            }
+            byte[] hmm = digester.digest(inPassword.getBytes(StandardCharsets.UTF_16LE));
+            this.attributes.put("sambaNTPassword", toHexString(hmm));
 
             /*
              * Encryption of password und Base64-Enconding
