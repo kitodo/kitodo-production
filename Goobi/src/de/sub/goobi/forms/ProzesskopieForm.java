@@ -2192,7 +2192,6 @@ public class ProzesskopieForm {
      * Upload a file via file upload dialog and validate that it contains valid MODS XML.
      */
     public void uploadFile() {
-        String xsltPath = ConfigMain.getParameter("xsltFolder") + "mods2kitodo.xsl";
         String xsdPath = new Helper().getGoobiConfigDirectory() + "mods.xsd";
         if (this.uploadedFile != null) {
             try (InputStream inputStream = this.uploadedFile.getInputStream()) {
