@@ -211,6 +211,6 @@ public class MapMessageObjectReader {
      */
     public boolean hasField(String string) throws JMSException {
         String result = ticket.getString(string);
-        return (Objects.nonNull(result) && !result.isEmpty());
+        return Objects.nonNull(result) && !result.isEmpty();
     }
 }

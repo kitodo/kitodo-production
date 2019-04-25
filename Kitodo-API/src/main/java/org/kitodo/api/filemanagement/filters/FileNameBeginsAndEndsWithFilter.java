@@ -43,6 +43,6 @@ public class FileNameBeginsAndEndsWithFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {
-        return (name.endsWith(end) && name.startsWith(begin));
+        return name.endsWith(end) && name.startsWith(begin);
     }
 }

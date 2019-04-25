@@ -43,6 +43,6 @@ public class FileNameEndsAndDoesNotBeginWithFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {
-        return (name.endsWith(end) && !name.startsWith(notBegin));
+        return name.endsWith(end) && !name.startsWith(notBegin);
     }
 }

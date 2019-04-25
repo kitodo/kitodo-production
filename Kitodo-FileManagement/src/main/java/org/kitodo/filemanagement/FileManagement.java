@@ -178,7 +178,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI rename(URI uri, String newName) throws IOException {
-        if ((uri == null) || (newName == null)) {
+        if (Objects.isNull(uri) || Objects.isNull(newName)) {
             return null;
         }
 
@@ -393,7 +393,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createProcessLocation(String processId) throws IOException {
-        File processRootDirectory = new File((KitodoConfig.getKitodoDataDirectory() + File.separator + processId));
+        File processRootDirectory = new File(KitodoConfig.getKitodoDataDirectory() + File.separator + processId);
         if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }

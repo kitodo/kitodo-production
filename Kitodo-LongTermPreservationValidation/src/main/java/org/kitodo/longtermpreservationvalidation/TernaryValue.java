@@ -80,8 +80,8 @@ enum TernaryValue {
             case RepInfo.TRUE:
                 return TernaryValue.TRUE;
             default:
-                throw new IllegalArgumentException(("The argument must be in the range " + RepInfo.UNDETERMINED + " to "
-                        + RepInfo.TRUE + ", but was " + repInfo) + '.');
+                throw new IllegalArgumentException("The argument must be in the range " + RepInfo.UNDETERMINED + " to "
+                        + RepInfo.TRUE + ", but was " + repInfo + '.');
         }
     }
 }

@@ -130,8 +130,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             jsonObject.put(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
         } else if (property instanceof Property) {
             Property processProperty = (Property) property;
-            jsonObject.put(PropertyTypeField.TITLE.getKey(), preventNull((processProperty.getTitle())));
-            jsonObject.put(PropertyTypeField.VALUE.getKey(), preventNull((processProperty.getValue())));
+            jsonObject.put(PropertyTypeField.TITLE.getKey(), preventNull(processProperty.getTitle()));
+            jsonObject.put(PropertyTypeField.VALUE.getKey(), preventNull(processProperty.getValue()));
         }
     }
 

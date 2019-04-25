@@ -141,7 +141,7 @@ public class WebDav implements Serializable {
                     return;
                 }
                 destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-                fileService.deleteSymLink((destination));
+                fileService.deleteSymLink(destination);
             }
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);

@@ -177,6 +177,6 @@ public class RomanNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return format(value, uppercase) + (increment != null ? (" (" + increment + ")") : " (default)");
+        return format(value, uppercase) + (increment != null ? " (" + increment + ")" : " (default)");
     }
 }

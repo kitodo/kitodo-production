@@ -260,7 +260,7 @@ public class MetadataHelper {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (InputStreamReader input = new InputStreamReader(ServiceManager.getFileService().read((file)),
+        try (InputStreamReader input = new InputStreamReader(ServiceManager.getFileService().read(file),
                 StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input)) {
             char[] buffer = new char[200];
             while (bufRead.read(buffer) >= 0) {

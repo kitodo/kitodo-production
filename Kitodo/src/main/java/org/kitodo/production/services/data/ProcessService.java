@@ -1243,7 +1243,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         results.put(OPEN, open);
         results.put(LOCKED, locked);
 
-        if ((open + inProcessing + closed + locked) == 0) {
+        if (open + inProcessing + closed + locked == 0) {
             results.put(LOCKED, 1);
         }
 

@@ -276,7 +276,7 @@ public class MassImportForm extends BaseForm {
 
     private boolean testForData() {
         return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records)
-                && (Objects.isNull(this.importFile)) && this.selectedFilenames.isEmpty());
+                && Objects.isNull(this.importFile) && this.selectedFilenames.isEmpty());
     }
 
     private List<Record> generateRecordList() {

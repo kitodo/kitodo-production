@@ -291,7 +291,7 @@ public class IndexingForm {
      *         progress or not
      */
     public boolean indexingInProgress() {
-        return (!Objects.equals(this.currentIndexState, ObjectType.NONE) || indexingAll);
+        return !Objects.equals(this.currentIndexState, ObjectType.NONE) || indexingAll;
     }
 
     /**

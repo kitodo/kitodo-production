@@ -543,7 +543,7 @@ public class FileService {
         // ff.write(getMetadataFilePath());
         ff.write(temporaryMetadataFileName);
         File temporaryMetadataFile = new File(temporaryMetadataFileName);
-        boolean backupCondition = temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+        boolean backupCondition = temporaryMetadataFile.exists() && temporaryMetadataFile.length() > 0;
         if (backupCondition) {
             createBackupFile(process);
             renameFile(Paths.get(temporaryMetadataFileName).toUri(), metadataFileUri.getRawPath());

@@ -75,7 +75,7 @@ public enum PropertyType {
      */
     public static PropertyType getById(int id) {
         for (PropertyType p : PropertyType.values()) {
-            if (p.getId() == (id)) {
+            if (p.getId() == id) {
                 return p;
             }
         }

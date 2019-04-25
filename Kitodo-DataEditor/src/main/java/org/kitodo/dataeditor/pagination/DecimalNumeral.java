@@ -70,6 +70,6 @@ public class DecimalNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return String.format(digits, value) + (increment != null ? (" (" + increment + ")") : " (default)");
+        return String.format(digits, value) + (increment != null ? " (" + increment + ")" : " (default)");
     }
 }

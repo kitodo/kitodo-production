@@ -109,7 +109,7 @@ public class Paginator {
             sequence = addSquareBracketsToEachInSequence(sequence);
         }
 
-        if ((paginationMode == Mode.PAGES) || (paginationMode == Mode.COLUMNS)) {
+        if (paginationMode == Mode.PAGES || paginationMode == Mode.COLUMNS) {
             return sequence;
         }
 
@@ -126,7 +126,7 @@ public class Paginator {
             return sequence;
         }
 
-        if ((paginationMode == Mode.RECTOVERSO) || (paginationMode == Mode.RECTOVERSO_FOLIATION)) {
+        if (paginationMode == Mode.RECTOVERSO || paginationMode == Mode.RECTOVERSO_FOLIATION) {
             sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
         }
 
@@ -161,7 +161,7 @@ public class Paginator {
     }
 
     private List scrunchSequence(List sequence) {
-        List<Object> scrunchedSequence = new ArrayList<>((sequence.size() / 2));
+        List<Object> scrunchedSequence = new ArrayList<>(sequence.size() / 2);
         String prev = "";
         boolean scrunch = false;
         for (Object o : sequence) {
