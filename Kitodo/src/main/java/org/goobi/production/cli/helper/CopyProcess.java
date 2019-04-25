@@ -54,8 +54,6 @@ public class CopyProcess extends ProzesskopieForm {
     private URI metadataFile;
     private String naviFirstPage;
     private Process processForChoice;
-    // TODO: check use of atstsl. Why is it never modified?
-    private static final String atstsl = "";
 
     /**
      * Prepare import object.
@@ -460,7 +458,7 @@ public class CopyProcess extends ProzesskopieForm {
             String value = additionalField.getValue();
             if (("ATS".equals(title) || "TSL".equals(title)) && additionalField.showDependingOnDoctype()
                     && StringUtils.isEmpty(value)) {
-                additionalField.setValue(CopyProcess.atstsl);
+                additionalField.setValue("");
                 value = additionalField.getValue();
             }
 
