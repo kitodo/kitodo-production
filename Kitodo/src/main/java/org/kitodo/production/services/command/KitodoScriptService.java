@@ -73,7 +73,7 @@ public class KitodoScriptService {
         // pass the appropriate method with the correct parameters
         if (Objects.isNull(this.parameters.get("action"))) {
             Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
-                " - possible: 'action:swapsteps, action:adduser, action:addrole, "
+                " - possible: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                         + "action:importFromFileSystem'");
             return;
@@ -144,7 +144,7 @@ public class KitodoScriptService {
                 break;
             default:
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addrole, "
+                    " - use: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
                 return false;
