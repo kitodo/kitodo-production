@@ -34,6 +34,8 @@ import org.kitodo.production.dto.BaseDTO;
 public abstract class TitleSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
         extends SearchService<T, S, V> {
 
+    private static final String TITLE = "title";
+
     /**
      * Constructor necessary to use searcher in child classes.
      *
@@ -86,7 +88,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      * @return query
      */
     public QueryBuilder getQueryTitle(String title, boolean contains) {
-        return createSimpleQuery("title", title, contains, Operator.AND);
+        return createSimpleQuery(TITLE, title, contains, Operator.AND);
     }
 
     /**
@@ -97,7 +99,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      * @return query
      */
     private QueryBuilder getWildcardQueryTitle(String title) {
-        return createSimpleWildcardQuery("title", title);
+        return createSimpleWildcardQuery(TITLE, title);
     }
 
     /**
@@ -108,6 +110,6 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      * @return sort as String
      */
     public SortBuilder sortByTitle(SortOrder sortOrder) {
-        return SortBuilders.fieldSort("title").order(sortOrder);
+        return SortBuilders.fieldSort(TITLE).order(sortOrder);
     }
 }
