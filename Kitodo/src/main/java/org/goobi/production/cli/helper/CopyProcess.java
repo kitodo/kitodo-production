@@ -243,20 +243,16 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io) throws IOException {
+    public Process createProcess(ImportObject io) throws DataException, IOException {
         addProperties(io);
         updateTasks(this.prozessKopie);
 
         if (!io.getBatches().isEmpty()) {
             this.prozessKopie.getBatches().addAll(io.getBatches());
         }
-        try {
-            ServiceManager.getProcessService().save(this.prozessKopie);
-            ServiceManager.getProcessService().refresh(this.prozessKopie);
-        } catch (DataException e) {
-            logger.error("errorSaving", new Object[] {Helper.getTranslation("process") }, e);
-            return this.prozessKopie;
-        }
+
+        ServiceManager.getProcessService().save(this.prozessKopie);
+        ServiceManager.getProcessService().refresh(this.prozessKopie);
 
         /*
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage

@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
@@ -94,6 +95,8 @@ public class JobCreation {
             } catch (IOException e) {
                 Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
             } catch (DAOException e) {
+                Helper.setErrorMessage(e.getMessage(), logger, e);
+            } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving",
                     new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
             }

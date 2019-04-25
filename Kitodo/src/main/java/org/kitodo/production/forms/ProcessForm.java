@@ -49,7 +49,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.CustomListColumnInitializer;

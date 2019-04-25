@@ -59,7 +59,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return loaded data
      */
     public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DAOException, DataException;
+            throws DataException;
 
     /**
      * Method saves object to database.

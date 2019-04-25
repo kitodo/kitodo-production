@@ -178,7 +178,7 @@ public class LdapUser implements DirContext {
             String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
         result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}",
             String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-        logger.debug("Replace instring: {} - {} - {}", inString, inUser);
+        logger.debug("Replace instring: {} - {} - {}", inString, inUser, inUidNumber);
         logger.debug("Replace outstring: {}", result);
         return result;
     }

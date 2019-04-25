@@ -1303,8 +1303,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         LegacyMetsModsDigitalDocumentHelper ff;
         switch (type) {
             case "metsmods":
-                ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
-                break;
             case "mets":
                 ff = new LegacyMetsModsDigitalDocumentHelper(prefs.getRuleset());
                 break;

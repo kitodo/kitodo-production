@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
  * certain meta-data and children a permitted or forbidden.
  */
 public interface LegacyDocStructHelperInterface {
-    static final Logger logger = LogManager.getLogger(LegacyDocStructHelperInterface.class);
+    Logger logger = LogManager.getLogger(LegacyDocStructHelperInterface.class);
 
     /**
      * Adds another {@code DocStruct} as a child to this instance. The new child

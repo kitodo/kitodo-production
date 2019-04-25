@@ -114,7 +114,7 @@ public class UserForm extends BaseForm {
      */
     public String newUser() {
         this.userObject = new User();
-        List clients = new ArrayList();
+        List<Client> clients = new ArrayList<>();
         clients.add(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         this.userObject.setClients(clients);
         this.userObject.setName("");
