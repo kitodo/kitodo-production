@@ -42,7 +42,7 @@
         <h:outputText value="#{msgs.catalogue}" style="display:inline" />
         <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px"
                          onchange="submit();">
-            <si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+            <si:selectItems value="#{ProzesskopieForm.configuredOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
         </h:selectOneMenu>
     </h:column>
 

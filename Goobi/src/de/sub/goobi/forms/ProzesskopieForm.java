@@ -267,6 +267,7 @@ public class ProzesskopieForm {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
+    private List<String> configuredOpacCatalogues = new ArrayList<String>();
     private String institution = "-";
     private List<String> possibleDigitalCollection;
     private Prozess prozessVorlage = new Prozess();
@@ -338,7 +339,11 @@ public class ProzesskopieForm {
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
+            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue[@default=true]");
+        }
+
+        for (String catalogue : cp.getParamList("createNewProcess.opac.catalogue")) {
+            this.configuredOpacCatalogues.add(catalogue);
         }
 
         /*
@@ -1495,6 +1500,21 @@ public class ProzesskopieForm {
         if (isSingleChoiceCollection()) {
             this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
         }
+    }
+
+    public List<String> getConfiguredOpacCatalogues() {
+
+        LinkedList<String> existingCatalogues = new LinkedList<String>();
+
+        for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+            for (String catalogue : plugin.getSupportedCatalogues()) {
+                if (!existingCatalogues.contains(catalogue) && this.configuredOpacCatalogues.contains(catalogue)) {
+                    existingCatalogues.add(catalogue);
+                }
+            }
+        }
+        checkFileUpload();
+        return existingCatalogues;
     }
 
     /**
