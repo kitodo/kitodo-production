@@ -312,26 +312,21 @@ public class ExportXmlLog {
         template.setAttribute("originalID", String.valueOf(process.getId()));
 
         List<Element> templateProperties = new ArrayList<>();
-        for (Property prop : process.getTemplates()) {
-            Element property = new Element(PROPERTY, xmlns);
-            property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
-            if (Objects.nonNull(prop.getValue())) {
-                property.setAttribute(VALUE, replacer(prop.getValue()));
-            } else {
-                property.setAttribute(VALUE, "");
-            }
+        for (Property property : process.getTemplates()) {
+            Element propertyElement = preparePropertyElement(xmlns, property);
 
             Element label = new Element(LABEL, xmlns);
-            label.setText(prop.getTitle());
-            property.addContent(label);
-            templateProperties.add(property);
-            if (prop.getTitle().equals("Signatur")) {
+            label.setText(property.getTitle());
+            propertyElement.addContent(label);
+            templateProperties.add(propertyElement);
+
+            if (property.getTitle().equals("Signatur")) {
                 Element secondProperty = new Element(PROPERTY, xmlns);
-                secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
-                if (Objects.nonNull(prop.getValue())) {
-                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
+                secondProperty.setAttribute(PROPERTY_IDENTIFIER, property.getTitle() + "Encoded");
+                if (Objects.nonNull(property.getValue())) {
+                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(property.getValue()));
                     Element secondLabel = new Element(LABEL, xmlns);
-                    secondLabel.setText(prop.getTitle());
+                    secondLabel.setText(property.getTitle());
                     secondProperty.addContent(secondLabel);
                     templateProperties.add(secondProperty);
                 }
@@ -348,21 +343,25 @@ public class ExportXmlLog {
     private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
         List<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
-            Element propertyElement = new Element(PROPERTY, xmlns);
-            propertyElement.setAttribute(PROPERTY_IDENTIFIER, property.getTitle());
-            if (Objects.nonNull(property.getValue())) {
-                propertyElement.setAttribute(VALUE, replacer(property.getValue()));
-            } else {
-                propertyElement.setAttribute(VALUE, "");
-            }
+            Element propertyElement = preparePropertyElement(xmlns, property);
 
             Element label = new Element(LABEL, xmlns);
-
             label.setText(property.getTitle());
             propertyElement.addContent(label);
             preparedProperties.add(propertyElement);
         }
         return preparedProperties;
+    }
+
+    private Element preparePropertyElement(Namespace xmlns, Property property) {
+        Element propertyElement = new Element(PROPERTY, xmlns);
+        propertyElement.setAttribute(PROPERTY_IDENTIFIER, property.getTitle());
+        if (Objects.nonNull(property.getValue())) {
+            propertyElement.setAttribute(VALUE, replacer(property.getValue()));
+        } else {
+            propertyElement.setAttribute(VALUE, "");
+        }
+        return propertyElement;
     }
 
     private void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
