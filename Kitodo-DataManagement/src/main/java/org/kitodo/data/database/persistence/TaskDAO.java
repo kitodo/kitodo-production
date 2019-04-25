@@ -57,10 +57,6 @@ public class TaskDAO extends BaseDAO<Task> {
         updateObject(task);
     }
 
-    public Task load(int id) throws DAOException {
-        return loadObject(Task.class, id);
-    }
-
     /**
      * Get current tasks with exact title for batch with exact id.
      *
