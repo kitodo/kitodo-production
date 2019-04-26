@@ -14,4 +14,4 @@
 --
 
 ALTER TABLE comment
-CHANGE `message` `message` LONGTEXT;
+CHANGE message message LONGTEXT;
