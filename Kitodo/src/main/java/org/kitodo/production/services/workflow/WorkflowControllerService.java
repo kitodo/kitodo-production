@@ -612,7 +612,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException {
+    public void activateNextTasks(List<Task> allHigherTasks) throws DataException, IOException {
         int ordering = 0;
         boolean matched = false;
         for (Task higherTask : allHigherTasks) {
