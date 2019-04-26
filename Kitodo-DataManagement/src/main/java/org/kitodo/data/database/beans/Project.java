@@ -53,7 +53,6 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 @Entity
 @Table(name = "project")
 public class Project extends BaseIndexedBean implements Comparable<Project> {
-    private static final long serialVersionUID = -8543713331407761617L;
 
     /**
      * The constant ANCHOR_SEPARATOR holds the character U+00A6

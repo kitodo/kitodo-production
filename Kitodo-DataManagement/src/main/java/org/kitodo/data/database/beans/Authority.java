@@ -27,8 +27,6 @@ import org.kitodo.data.database.persistence.AuthorityDAO;
 @Table(name = "authority")
 public class Authority extends BaseBean {
 
-    private static final long serialVersionUID = -5187947220333987498L;
-
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
@@ -37,7 +35,7 @@ public class Authority extends BaseBean {
 
     /**
      * The constructor for setting title and assignables.
-     * 
+     *
      * @param title
      *            The title.
      */

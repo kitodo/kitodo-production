@@ -16,8 +16,6 @@ package org.kitodo.production.dto;
  */
 public class RulesetDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333341L;
-
     private String file;
     private String title;
     private Boolean orderMetadataByRuleset = false;
@@ -64,7 +62,7 @@ public class RulesetDTO extends BaseDTO {
 
     /**
      * Check if order metadata by ruleset.
-     * 
+     *
      * @return true or false
      */
     public boolean isOrderMetadataByRuleset() {
@@ -73,7 +71,7 @@ public class RulesetDTO extends BaseDTO {
 
     /**
      * Set order metadata by ruleset.
-     * 
+     *
      * @param orderMetadataByRuleset
      *            true or false
      */

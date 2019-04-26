@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class WorkflowConditionDAO extends BaseDAO<WorkflowCondition> {
 
-    private static final long serialVersionUID = 4984545426562271217L;
-
     @Override
     public WorkflowCondition getById(Integer id) throws DAOException {
         WorkflowCondition result = retrieveObject(WorkflowCondition.class, id);

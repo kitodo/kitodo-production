@@ -48,7 +48,6 @@ public class Helper implements Observer, Serializable {
 
     private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
-    private static final long serialVersionUID = -7449236652821237059L;
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> errorMessages = null;
     private static String compoundMessage;
@@ -477,7 +476,7 @@ public class Helper implements Observer, Serializable {
 
     /**
      * Generate random string.
-     * 
+     *
      * @param length
      *            of random string to be created
      * @return random string

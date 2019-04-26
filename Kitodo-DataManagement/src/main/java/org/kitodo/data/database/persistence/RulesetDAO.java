@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class RulesetDAO extends BaseDAO<Ruleset> {
 
-    private static final long serialVersionUID = 1913256950316879121L;
-
     @Override
     public Ruleset getById(Integer id) throws DAOException {
         Ruleset result = retrieveObject(Ruleset.class, id);

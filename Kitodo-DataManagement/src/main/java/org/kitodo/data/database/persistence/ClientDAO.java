@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class ClientDAO extends BaseDAO<Client> {
 
-    private static final long serialVersionUID = 4987176626562649317L;
-
     @Override
     public Client getById(Integer id) throws DAOException {
         Client result = retrieveObject(Client.class, id);

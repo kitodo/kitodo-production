@@ -16,15 +16,13 @@ package org.kitodo.production.dto;
  */
 public class PropertyDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333339L;
-
     private String title;
     private String value;
     private String creationDate;
 
     /**
      * Get title.
-     * 
+     *
      * @return title as String
      */
     public String getTitle() {
@@ -33,7 +31,7 @@ public class PropertyDTO extends BaseDTO {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */
@@ -43,7 +41,7 @@ public class PropertyDTO extends BaseDTO {
 
     /**
      * Get value.
-     * 
+     *
      * @return value as String
      */
     public String getValue() {
@@ -52,7 +50,7 @@ public class PropertyDTO extends BaseDTO {
 
     /**
      * Set value.
-     * 
+     *
      * @param value
      *            as String
      */
@@ -62,7 +60,7 @@ public class PropertyDTO extends BaseDTO {
 
     /**
      * Get creation date as String.
-     * 
+     *
      * @return creation date as String.
      */
     public String getCreationDate() {
@@ -71,7 +69,7 @@ public class PropertyDTO extends BaseDTO {
 
     /**
      * Set creation date as String.
-     * 
+     *
      * @param creationDate
      *            as String
      */

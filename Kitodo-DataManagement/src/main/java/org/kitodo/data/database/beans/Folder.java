@@ -69,7 +69,6 @@ public class Folder extends BaseBean {
      */
     private static final List<String> DFG_VIEWER_FILEGRPS = Arrays.asList("DEFAULT", "MIN", "MAX", "THUMBS",
         "DOWNLOAD");
-    private static final long serialVersionUID = -627255829641460322L;
 
     /**
      * Whether the folder is copied to the hotfolder during DMS import.

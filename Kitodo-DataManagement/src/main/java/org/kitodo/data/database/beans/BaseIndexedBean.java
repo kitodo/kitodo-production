@@ -24,8 +24,6 @@ import org.kitodo.data.database.enums.IndexAction;
 @MappedSuperclass
 public abstract class BaseIndexedBean extends BaseBean {
 
-    private static final long serialVersionUID = 1L;
-
     @Column(name = "indexAction")
     @Enumerated(EnumType.STRING)
     private IndexAction indexAction;

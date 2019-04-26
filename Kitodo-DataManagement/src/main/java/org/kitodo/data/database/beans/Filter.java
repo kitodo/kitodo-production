@@ -28,8 +28,6 @@ import javax.persistence.Table;
 @Table(name = "filter")
 public class Filter extends BaseIndexedBean {
 
-    private static final long serialVersionUID = -5187937660333984868L;
-
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
 

@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class ProcessDAO extends BaseDAO<Process> {
 
-    private static final long serialVersionUID = 3538712266212954394L;
-
     @Override
     public Process getById(Integer id) throws DAOException {
         Process result = retrieveObject(Process.class, id);

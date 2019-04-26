@@ -12,7 +12,6 @@
 package org.kitodo.exceptions;
 
 public class WorkflowException extends Exception {
-    private static final long serialVersionUID = 3252153198832124340L;
 
     public WorkflowException(String message) {
         super(message);

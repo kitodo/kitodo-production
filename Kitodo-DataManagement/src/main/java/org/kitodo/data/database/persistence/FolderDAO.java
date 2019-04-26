@@ -17,7 +17,6 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class FolderDAO extends BaseDAO<Folder> {
-    private static final long serialVersionUID = -5506252462891480484L;
 
     @Override
     public Folder getById(Integer id) throws DAOException {

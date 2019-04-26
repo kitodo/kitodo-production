@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class DocketDAO extends BaseDAO<Docket> {
 
-    private static final long serialVersionUID = 1913256950316879121L;
-
     @Override
     public Docket getById(Integer id) throws DAOException {
         Docket result = retrieveObject(Docket.class, id);

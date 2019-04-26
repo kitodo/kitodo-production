@@ -29,7 +29,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("AuthorityForm")
 @SessionScoped
 public class AuthorityForm extends BaseForm {
-    private static final long serialVersionUID = 3541160917458068675L;
     private static final Logger logger = LogManager.getLogger(AuthorityForm.class);
     private Authority authority = new Authority();
     private String title;

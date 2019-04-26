@@ -16,8 +16,6 @@ package org.kitodo.data.exceptions;
  */
 public class DataException extends Exception {
 
-    private static final long serialVersionUID = 1987853363232807999L;
-
     public DataException(Exception e) {
         super(e);
     }

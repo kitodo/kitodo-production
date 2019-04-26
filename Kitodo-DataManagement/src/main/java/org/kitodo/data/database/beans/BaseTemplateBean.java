@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 @MappedSuperclass
 public abstract class BaseTemplateBean extends BaseIndexedBean {
 
-    private static final long serialVersionUID = 1L;
-
     @Column(name = "title")
     protected String title;
 

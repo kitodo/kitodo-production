@@ -19,11 +19,10 @@ import org.kitodo.data.database.exceptions.DAOException;
 /**
  * The class BatchDAO provides for to create, restore, update and delete
  * {@link org.kitodo.data.database.beans.Batch} objects by Hibernate.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class BatchDAO extends BaseDAO<Batch> {
-    private static final long serialVersionUID = 1L;
 
     @Override
     public Batch getById(Integer id) throws DAOException {

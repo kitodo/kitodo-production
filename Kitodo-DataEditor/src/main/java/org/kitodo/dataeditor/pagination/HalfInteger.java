@@ -12,7 +12,6 @@
 package org.kitodo.dataeditor.pagination;
 
 public class HalfInteger extends Number {
-    private static final long serialVersionUID = 1L;
     private final boolean halfAboveValue;
     private final int value;
 

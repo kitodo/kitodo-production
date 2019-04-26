@@ -42,7 +42,6 @@ public class WebDav implements Serializable {
 
     private final FileService fileService = ServiceManager.getFileService();
     private final UserService userService = ServiceManager.getUserService();
-    private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger logger = LogManager.getLogger(WebDav.class);
     private static final String ERROR_UPLOADING = "errorUploading";
 

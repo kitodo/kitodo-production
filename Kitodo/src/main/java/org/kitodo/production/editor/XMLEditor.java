@@ -52,7 +52,6 @@ import org.xml.sax.SAXParseException;
 public class XMLEditor implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(XMLEditor.class);
-    private static final long serialVersionUID = 4204501980337055803L;
     private KitodoConfigFile configurationFile;
     private String currentConfigurationFile = "";
     private String xmlConfigurationString = "";

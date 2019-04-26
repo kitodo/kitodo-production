@@ -23,7 +23,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable {
-    private static final long serialVersionUID = 7732045664713555233L;
     private User loggedUser;
     private boolean alreadyLoggedIn = false;
     private boolean firstVisit = true;
@@ -48,7 +47,7 @@ public class LoginForm implements Serializable {
 
     /**
      * Check if user is already logged im.
-     * 
+     *
      * @return true or false
      */
     public boolean isAlreadyLoggedIn() {

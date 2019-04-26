@@ -29,7 +29,6 @@ import org.kitodo.data.database.persistence.LdapGroupDAO;
 @Entity
 @Table(name = "ldapGroup")
 public class LdapGroup extends BaseBean {
-    private static final long serialVersionUID = -1657514909731889712L;
 
     @Column(name = "title")
     private String title;

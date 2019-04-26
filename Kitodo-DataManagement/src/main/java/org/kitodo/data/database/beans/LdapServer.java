@@ -30,8 +30,6 @@ import org.kitodo.data.database.persistence.LdapServerDAO;
 @Table(name = "ldapServer")
 public class LdapServer extends BaseBean {
 
-    private static final long serialVersionUID = -1657514909496728712L;
-
     @Column(name = "title")
     private String title;
 

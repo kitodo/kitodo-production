@@ -52,7 +52,6 @@ import org.kitodo.production.services.data.UserService;
 @Named("UserForm")
 @SessionScoped
 public class UserForm extends BaseForm {
-    private static final long serialVersionUID = -3635859455444639614L;
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
@@ -73,7 +72,7 @@ public class UserForm extends BaseForm {
     /**
      * Default constructor with inject login form that also sets the LazyDTOModel
      * instance of this bean.
-     * 
+     *
      * @param loginForm
      *            is used for update logged user in case updated user is currently
      *            logged user
@@ -398,7 +397,7 @@ public class UserForm extends BaseForm {
 
     /**
      * Get map of supported metadata languages.
-     * 
+     *
      * @return map of supported metadata languages
      */
     public Map<String, String> getMetadataLanguages() {
@@ -477,7 +476,7 @@ public class UserForm extends BaseForm {
 
     /**
      * Check and return whether given UserDTO 'user' is logged in.
-     * 
+     *
      * @param user
      *            UserDTO to check
      * @return whether given UserDTO is checked in

@@ -29,7 +29,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("ClientForm")
 @SessionScoped
 public class ClientForm extends BaseForm {
-    private static final long serialVersionUID = -445707351975817243L;
     private Client client;
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
 

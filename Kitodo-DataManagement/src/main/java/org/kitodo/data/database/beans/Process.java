@@ -44,8 +44,6 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 @Table(name = "process")
 public class Process extends BaseTemplateBean {
 
-    private static final long serialVersionUID = -6503348094655786275L;
-
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
 

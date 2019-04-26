@@ -20,8 +20,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class TemplateDAO extends BaseDAO<Template> {
 
-    private static final long serialVersionUID = 3538712266212954394L;
-
     @Override
     public Template getById(Integer id) throws DAOException {
         Template result = retrieveObject(Template.class, id);

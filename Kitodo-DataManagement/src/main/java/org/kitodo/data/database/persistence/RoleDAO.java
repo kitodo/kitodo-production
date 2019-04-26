@@ -22,8 +22,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class RoleDAO extends BaseDAO<Role> {
 
-    private static final long serialVersionUID = 4987176626562271217L;
-
     @Override
     public Role getById(Integer id) throws DAOException {
         Role result = retrieveObject(Role.class, id);

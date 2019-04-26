@@ -66,7 +66,6 @@ import org.kitodo.production.workflow.Solution;
 @Named("CurrentTaskForm")
 @SessionScoped
 public class CurrentTaskForm extends BaseForm {
-    private static final long serialVersionUID = 5841566727939692509L;
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();

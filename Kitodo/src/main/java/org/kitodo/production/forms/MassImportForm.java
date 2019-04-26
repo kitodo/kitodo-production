@@ -63,7 +63,6 @@ import org.primefaces.model.UploadedFile;
 @SessionScoped
 public class MassImportForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
-    private static final long serialVersionUID = -4225927414279404442L;
     private Template template;
     private Project project;
     private List<Process> processes;

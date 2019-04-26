@@ -30,8 +30,6 @@ import org.kitodo.data.database.persistence.BaseDAO;
 @MappedSuperclass
 public abstract class BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

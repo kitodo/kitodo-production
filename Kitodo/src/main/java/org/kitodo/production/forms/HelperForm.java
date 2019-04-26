@@ -33,7 +33,6 @@ import org.kitodo.production.version.KitodoVersion;
 @Named("HelperForm")
 @SessionScoped
 public class HelperForm implements Serializable {
-    private static final long serialVersionUID = -5872893771807845586L;
 
     public String getVersion() {
         return KitodoVersion.getBuildVersion();

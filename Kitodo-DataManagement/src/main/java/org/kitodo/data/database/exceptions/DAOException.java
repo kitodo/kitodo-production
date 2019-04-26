@@ -12,7 +12,6 @@
 package org.kitodo.data.database.exceptions;
 
 public class DAOException extends Exception {
-    private static final long serialVersionUID = 3174737519370361577L;
 
     public DAOException(Exception e) {
         super(e);
