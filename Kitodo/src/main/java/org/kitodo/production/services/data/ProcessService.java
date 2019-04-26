@@ -12,7 +12,9 @@
 package org.kitodo.production.services.data;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -67,8 +69,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -507,7 +512,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         BoolQueryBuilder query = new BoolQueryBuilder();
         for (String searchField : METADATA_SEARCH_FIELDS) {
             BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".name", searchField).operator(Operator.AND));
+            pairQuery.mustNot(matchQuery(METADATA_SEARCH_KEY + ".name", "").operator(Operator.AND));
             pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent).operator(Operator.AND));
             query.should(pairQuery);
         }
@@ -536,6 +541,32 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      */
     public List<ProcessDTO> findByTitle(String title) throws DataException {
         return convertJSONObjectsToDTOs(findByTitle(title, true), true);
+    }
+
+    /**
+     * Finds processes by searchQuery for a number of fields.
+     * 
+     * @param searchQuery
+     *            the query word or phrase
+     * @return a List of found ProcessDTOs
+     * @throws DataException
+     *             when accessing the elasticsearch server fails
+     */
+    public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
+        NestedQueryBuilder nestedQuery = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery), ScoreMode.Total);
+        MultiMatchQueryBuilder multiMatchQuery = multiMatchQuery(searchQuery,
+                ProcessTypeField.TITLE.getKey(),
+                ProcessTypeField.PROJECT_TITLE.getKey(),
+                ProcessTypeField.COMMENTS.getKey(),
+                ProcessTypeField.WIKI_FIELD.getKey(),
+                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
+
+        QueryBuilder wildcardQuery = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchQuery);
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.should(nestedQuery);
+        boolQuery.should(multiMatchQuery);
+        boolQuery.should(wildcardQuery);
+        return findByQuery(boolQuery, false);
     }
 
     /**

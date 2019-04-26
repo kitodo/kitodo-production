@@ -58,10 +58,8 @@ public class SearchResultForm extends BaseForm {
                 results = processService.findByTitle(searchQuery);
                 results.addAll(processService.findByProjectTitle(searchQuery));
             } else {
-                results = processService.findDTOsByTitleWithWildcard(searchQuery);
-                results.addAll(processService.findByProjectTitleWithWildcard(searchQuery));
+                results = processService.findByAnything(searchQuery);
             }
-            results.addAll(processService.findByMetadataContent(searchQuery));
             for (ProcessDTO processDTO : results) {
                 resultHash.put(processDTO.getId(), processDTO);
             }
