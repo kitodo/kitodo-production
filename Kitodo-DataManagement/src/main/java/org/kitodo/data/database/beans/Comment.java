@@ -30,7 +30,7 @@ public class Comment extends BaseBean {
     /**
      * The field message holds the comment message.
      */
-    @Column(name = "message")
+    @Column(name = "message", columnDefinition = "longtext")
     private String message;
 
     /**
