@@ -24,22 +24,16 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -200,24 +194,6 @@ public class FileService {
     }
 
     /**
-     * Writes to a file at a given URI.
-     *
-     * @param uri
-     *            the uri to write to
-     * @param access
-     *            the result of a successful lock operation that authorizes the
-     *            opening of the stream
-     * @return an output stream to the file at the given URI or null
-     * @throws AccessDeniedException
-     *             if the user does not have sufficient authorization
-     * @throws IOException
-     *             if write fails
-     */
-    public OutputStream write(URI uri, LockResult access) throws IOException {
-        return fileManagementModule.write(uri, access);
-    }
-
-    /**
      * Gets and returns the name of the user whose context the code is currently
      * running in, to request or assume meta-data locks for that user. The name
      * of the user is returned, or “System”, if the code is running in the
@@ -244,24 +220,6 @@ public class FileService {
      */
     public InputStream read(URI uri) throws IOException {
         return fileManagementModule.read(uri);
-    }
-
-    /**
-     * Reads a file at a given URI.
-     *
-     * @param uri
-     *            the URI to read from
-     * @param access
-     *            the result of a successful lock operation that authorizes the
-     *            opening of the stream
-     * @return an InputStream to read from or null
-     * @throws AccessDeniedException
-     *             if the user does not have sufficient authorization
-     * @throws IOException
-     *             if read fails
-     */
-    public InputStream read(URI uri, LockResult access) throws IOException {
-        return fileManagementModule.read(uri, access);
     }
 
     /**
@@ -957,59 +915,5 @@ public class FileService {
         } else {
             throw new IOException("No dummy image found in resources!");
         }
-    }
-
-    /**
-     * Attempts to get a lock on a file.
-     * 
-     * @param uri
-     *            URIs of the file to be locked
-     * @param lockingMode
-     *            type of lock to request
-     * 
-     * @return An object that manages allocated locks or provides information
-     *         about conflict originators in case of error.
-     * @throws IOException
-     *             if the file does not exist or if an error occurs in disk
-     *             access, e.g. because the write permission for the directory
-     *             is missing
-     */
-    public LockResult tryLock(URI uri, LockingMode lockingMode) throws IOException {
-        return tryLock(Collections.singletonList(uri), lockingMode);
-    }
-
-    /**
-     * Attempts to get locks on one or more files.
-     * 
-     * @param uris
-     *            URIs of the files to be locked
-     * @param lockingMode
-     *            type of lock to request (for all URIs the same)
-     * 
-     * @return An object that manages allocated locks or provides information
-     *         about conflict originators in case of error.
-     * @throws IOException
-     *             if the file does not exist or if an error occurs in disk
-     *             access, e.g. because the write permission for the directory
-     *             is missing
-     */
-    public LockResult tryLock(Collection<URI> uris, LockingMode lockingMode) throws IOException {
-        return tryLock(uris.parallelStream().collect(Collectors.toMap(Function.identity(), all -> lockingMode)));
-    }
-
-    /**
-     * Attempts to get locks on one or more files.
-     * 
-     * @param requests
-     *            the locks to request
-     * @return An object that manages allocated locks or provides information
-     *         about conflict originators in case of error.
-     * @throws IOException
-     *             if the file does not exist or if an error occurs in disk
-     *             access, e.g. because the write permission for the directory
-     *             is missing
-     */
-    public LockResult tryLock(Map<URI, LockingMode> requests) throws IOException {
-        return fileManagementModule.tryLock(getCurrentLockingUser(), requests);
     }
 }
