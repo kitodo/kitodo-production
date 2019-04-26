@@ -32,7 +32,7 @@ import org.kitodo.data.database.persistence.RoleDAO;
 public class Role extends BaseBean implements Comparable<Role> {
     private static final long serialVersionUID = -5924845694417474352L;
 
-    @Column(name = "title", nullable = false, unique = true)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @ManyToMany(mappedBy = "roles", cascade = CascadeType.PERSIST)
@@ -185,7 +185,7 @@ public class Role extends BaseBean implements Comparable<Role> {
 
         if (object instanceof Role) {
             Role role = (Role) object;
-            return Objects.equals(this.getId(), role.getId());
+            return Objects.equals(this.getId(), role.getId()) && Objects.equals(this.getTitle() , role.getTitle());
         }
 
         return false;

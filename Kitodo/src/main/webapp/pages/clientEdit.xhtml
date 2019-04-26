@@ -75,6 +75,38 @@
                                          required="true"/>
                         </div>
                     </p:row>
+                    <p:row>
+                        <div>
+                            <p:dataTable id="clientRoleDatatable" var="role" value="#{ClientForm.getRolesForClient()}">
+                                <p:column id="titleColumn"
+                                          headerText="#{msgs.roles}">
+                                    <h:outputText value="#{role.title}"/>
+                                </p:column>
+                                <p:column styleClass="actionsColumn">
+                                    <p:commandLink id="deleteFromClient"
+                                                   action="#{ClientForm.deleteRoleFromClient(role)}"
+                                                   title="#{msgs.clientDeleteFrom}"
+                                                   rendered="#{role.id==null}"
+                                                   immediate="true"
+                                                   oncomplete="toggleSave()"
+                                                   update="@form">
+                                        <i class="fa fa-trash-o fa-lg"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <div rendered="#{isEditMode || isCreateMode}">
+                            <p:selectOneMenu id="clientToCopyRoles" converter="#{clientConverter}" value="#{ClientForm.clientToCopyRoles}"  >
+                                <f:selectItem value="#{null}" itemLabel="#{msgs.clientSelect}"/>
+                                <f:selectItems value="#{ClientForm.possibleClientsForCopying}" var="client" itemValue="#{client}" itemLabel="#{client.name}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton id="copyRolesToClient"
+                                             update="editForm:clientsTabView:clientRoleDatatable"
+                                             oncomplete="toggleSave()"
+                                             action="#{ClientForm.copyRolesToClient()}"
+                                             value="#{msgs.copyRolesToClient}"/>
+                        </div>
+                    </p:row>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>
