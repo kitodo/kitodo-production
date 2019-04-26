@@ -209,7 +209,7 @@ public class ImportForm implements Serializable {
         this.prozesskopieForm.setAdditionalFields(actualFields);
 
         Ajax.update("editForm");
-        this.prozesskopieForm.setActiveTabId(2);
+        this.prozesskopieForm.setEditActiveTabIndex(2);
     }
 
     private List<AdditionalField> insertFieldValues(List<AdditionalField> additionalFields, NodeList nodes) {

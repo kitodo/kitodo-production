@@ -125,7 +125,7 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromMetadataFile(this.myRdf);
             fillFieldsFromConfig();
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {"Opac-Ergebnisses" }, logger, e);
         }
     }
 
@@ -208,7 +208,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = ServiceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {"Template-Metadaten" }, logger, e);
         }
 
         removeCollectionsForChildren(this.myRdf, this.prozessKopie);
