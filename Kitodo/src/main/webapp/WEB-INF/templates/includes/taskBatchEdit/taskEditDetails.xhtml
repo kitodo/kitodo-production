@@ -78,13 +78,11 @@
                                 </tr>
                                 <tr>
                                     <td width="150">
-                                        <h:outputText value="#{msgs.priority}:"/>
+                                        <h:outputText value="#{msgs.correction}:"/>
                                     </td>
                                     <td>
-                                        <h:outputText value="#{CurrentTaskForm.batchHelper.currentStep.priority}"
-                                                      rendered="#{CurrentTaskForm.batchHelper.currentStep.priority!=10}"/>
                                         <h:outputText value="#{msgs.correction}"
-                                                      rendered="#{CurrentTaskForm.batchHelper.currentStep.priority==10}"/>
+                                                      rendered="#{CurrentTaskForm.batchHelper.currentStep.correction}"/>
                                     </td>
                                 </tr>
                                 <tr>

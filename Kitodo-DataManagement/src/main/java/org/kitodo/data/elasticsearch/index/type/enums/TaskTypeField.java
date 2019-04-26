@@ -15,7 +15,6 @@ public enum TaskTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    PRIORITY("priority"),
     ORDERING("ordering"),
     EDIT_TYPE("editType"),
     PROCESSING_STATUS("processingStatus"),
@@ -27,6 +26,7 @@ public enum TaskTypeField implements TypeInterface {
     PROCESSING_USER_NAME("processingUser.name"),
     PROCESSING_USER_SURNAME("processingUser.surname"),
     HOME_DIRECTORY("homeDirectory"),
+    CORRECTION("correction"),
     TYPE_METADATA("typeMetadata"),
     TYPE_AUTOMATIC("typeAutomatic"),
     TYPE_IMAGES_READ("typeImagesRead"),

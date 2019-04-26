@@ -368,7 +368,7 @@ public class WorkflowControllerServiceIT {
 
         assertTrue(
             "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not a correction task!",
-            workflowService.isCorrectionTask(correctionTask));
+            correctionTask.isCorrection());
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {

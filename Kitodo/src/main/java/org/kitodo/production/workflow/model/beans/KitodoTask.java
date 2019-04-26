@@ -19,7 +19,6 @@ public class KitodoTask {
 
     private String workflowId;
     private String title;
-    private Integer priority;
     private Integer editType;
     private Integer processingStatus;
     private boolean concurrent;
@@ -47,7 +46,6 @@ public class KitodoTask {
     public KitodoTask(Task task) {
         this.workflowId = task.getId();
         this.title = task.getName();
-        this.priority = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "priority"));
         this.editType = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "editType"));
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.concurrent = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "concurrent"));
@@ -95,25 +93,6 @@ public class KitodoTask {
      */
     public String getTitle() {
         return title;
-    }
-
-    /**
-     * Get priority.
-     *
-     * @return value of priority
-     */
-    public Integer getPriority() {
-        return priority;
-    }
-
-    /**
-     * Set priority.
-     *
-     * @param priority
-     *            as Integer
-     */
-    public void setPriority(Integer priority) {
-        this.priority = priority;
     }
 
     /**

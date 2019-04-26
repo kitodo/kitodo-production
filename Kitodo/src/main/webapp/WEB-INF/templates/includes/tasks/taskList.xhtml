@@ -70,14 +70,11 @@
                             #{item.processingStatus.title == 'statusOpen' ? 'var(--light-orange)' : ''}
                             #{item.processingStatus.title == 'statusLocked' ? 'var(--orange)' : ''};"
             />
-            <h:outputText value="!" rendered="#{item.priority == 1}"/>
-            <h:outputText value="!!" rendered="#{item.priority == 2}"/>
-            <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.priority}"
-                  rendered="#{CurrentTaskForm.showColumn('task.priority')}">
-            <h:outputText value="#{item.priority}"/>
+        <p:column headerText="#{msgs.correction}"
+                  rendered="#{CurrentTaskForm.showColumn('task.correction')}">
+            <h:outputText value="#{item.correction}"/>
         </p:column>
 
         <p:column headerText="#{msgs.duration} (#{msgs.process})"
@@ -138,8 +135,8 @@
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
                 <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
-                    <h:outputText value="#{msgs.priority}:"/>
-                    <h:outputText value="#{item.priority}"/>
+                    <h:outputText value="#{msgs.correction}:"/>
+                    <h:outputText value="#{item.correction}"/>
 
                     <h:outputText value="#{msgs.processingBegin}:"/>
                     <h:outputText value="#{item.processingBegin}"/>

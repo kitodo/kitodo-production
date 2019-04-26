@@ -25,9 +25,8 @@
         <p:column headerText="#{msgs.order}">
             <h:outputText value="#{item.ordering}"/>
         </p:column>
-        <p:column headerText="#{msgs.priority}">
-            <h:outputText value="#{item.priority}" rendered="#{item.priority!=10}"/>
-            <h:outputText value="#{msgs.correction}" rendered="#{item.priority==10}"/>
+        <p:column headerText="#{msgs.correction}">
+            <h:outputText value="#{msgs.correction}" rendered="#{item.correction}"/>
         </p:column>
         <p:column headerText="#{msgs.status}">
             <h:outputText value="#{item.processingStatus.title}"/>

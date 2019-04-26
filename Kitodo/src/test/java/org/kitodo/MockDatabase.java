@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -215,10 +217,14 @@ public class MockDatabase {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
-            String mapping = IOUtils.toString(inputStream, "UTF-8");
-            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
-                JsonObject jsonObject = jsonReader.readObject();
-                return jsonObject.toString();
+            if (Objects.nonNull(inputStream)) {
+                String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+                try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
+                    JsonObject jsonObject = jsonReader.readObject();
+                    return jsonObject.toString();
+                }
+            } else {
+                return "";
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -951,7 +957,7 @@ public class MockDatabase {
     private static List<Task> getTasks() {
         Task firstTask = new Task();
         firstTask.setTitle("Finished");
-        firstTask.setPriority(1);
+        firstTask.setCorrection(false);
         firstTask.setOrdering(1);
         firstTask.setEditType(TaskEditType.ADMIN);
         LocalDate localDate = new LocalDate(2016, 8, 20);
@@ -977,7 +983,7 @@ public class MockDatabase {
         Task thirdTask = new Task();
         thirdTask.setTitle("Progress");
         thirdTask.setOrdering(3);
-        thirdTask.setPriority(10);
+        thirdTask.setCorrection(true);
         thirdTask.setEditType(TaskEditType.MANUAL_SINGLE);
         thirdTask.setTypeImagesWrite(true);
         localDate = new LocalDate(2017, 1, 25);
@@ -987,14 +993,14 @@ public class MockDatabase {
         Task fourthTask = new Task();
         fourthTask.setTitle("Open");
         fourthTask.setOrdering(4);
-        fourthTask.setPriority(10);
+        fourthTask.setCorrection(true);
         fourthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         fourthTask.setProcessingStatus(TaskStatus.OPEN);
 
         Task fifthTask = new Task();
         fifthTask.setTitle("Locked");
         fifthTask.setOrdering(5);
-        fifthTask.setPriority(10);
+        fifthTask.setCorrection(true);
         fifthTask.setEditType(TaskEditType.MANUAL_SINGLE);
         fifthTask.setTypeImagesWrite(true);
         fifthTask.setProcessingStatus(TaskStatus.LOCKED);

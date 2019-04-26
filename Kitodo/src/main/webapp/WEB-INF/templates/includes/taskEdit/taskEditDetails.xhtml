@@ -18,14 +18,6 @@
     <p:panelGrid columns="2" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="priority" value="#{msgs.priority}"/>
-                <p:inputText id="priority" value="#{ProcessForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
-                    <p:ajax event="blur"/>
-                </p:inputText>
-            </div>
-        </p:row>
-        <p:row>
-            <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
                 <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatus}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
