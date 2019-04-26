@@ -854,9 +854,8 @@ public class MetadataProcessor {
         ArrayList<LegacyDocStructHelperInterface> createdElements = new ArrayList<>(quantity);
 
         for (int i = 0; i < quantity; i++) {
-
             LegacyDocStructHelperInterface createdElement = digitalDocument.createDocStruct(docStructType);
-            if (docStructType != null && value != null && metadataType != null) {
+            if (Objects.nonNull(value) && Objects.nonNull(metadataType)) {
                 throw new UnsupportedOperationException("Dead code pending removal");
             }
             createdElements.add(createdElement);
