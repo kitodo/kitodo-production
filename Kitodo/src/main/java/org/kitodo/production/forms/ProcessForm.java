@@ -70,7 +70,9 @@ public class ProcessForm extends TemplateBaseForm {
     private Task task = new Task();
     private Property templateProperty;
     private Property workpieceProperty;
-    private String kitodoScript;
+    private String kitodoScriptSelection;
+    private String kitodoScriptPage;
+    private String kitodoScriptAll;
     private String newProcessTitle;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
@@ -106,7 +108,8 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Initialize SelectItems used for configuring displayed columns in process list.
+     * Initialize SelectItems used for configuring displayed columns in process
+     * list.
      */
     @PostConstruct
     public void init() {
@@ -114,8 +117,8 @@ public class ProcessForm extends TemplateBaseForm {
 
         SelectItemGroup processColumnGroup;
         try {
-            processColumnGroup =
-                    ServiceManager.getListColumnService().getListColumnsForListAsSelectItemGroup("process");
+            processColumnGroup = ServiceManager.getListColumnService()
+                    .getListColumnsForListAsSelectItemGroup("process");
             columns.add(processColumnGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
@@ -125,8 +128,7 @@ public class ProcessForm extends TemplateBaseForm {
         customColumns = new ArrayList<>();
         SelectItemGroup customColumnGroup = new SelectItemGroup(Helper.getTranslation("process"));
         customColumnGroup.setSelectItems(ServiceManager.getListColumnService().getAllCustomListColumns().stream()
-                .map(listColumn -> new SelectItem(listColumn, listColumn.getTitle()))
-                .toArray(SelectItem[]::new));
+                .map(listColumn -> new SelectItem(listColumn, listColumn.getTitle())).toArray(SelectItem[]::new));
         customColumns.add(customColumnGroup);
 
         selectedColumns =
@@ -134,7 +136,9 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Return list of process properties configured as custom list columns in kitodo configuration.
+     * Return list of process properties configured as custom list columns in kitodo
+     * configuration.
+     * 
      * @return list of process property names
      */
     public String[] getProcessPropertyNames() {
@@ -142,11 +146,15 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Retrieve and return process property value of property with given name 'propertyName' from given ProcessDTO
-     * 'process'.
-     * @param process the ProcessDTO object from which the property value is retrieved
-     * @param propertyName name of the property for the property value is retrieved
-     * @return property value if process has property with name 'propertyName', empty String otherwise
+     * Retrieve and return process property value of property with given name
+     * 'propertyName' from given ProcessDTO 'process'.
+     * 
+     * @param process
+     *            the ProcessDTO object from which the property value is retrieved
+     * @param propertyName
+     *            name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName',
+     *         empty String otherwise
      */
     public static String getPropertyValue(ProcessDTO process, String propertyName) {
         return ProcessService.getPropertyValue(process, propertyName);
@@ -155,7 +163,8 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Calculate and return age of given process as a String.
      *
-     * @param processDTO ProcessDTO object whose duration/age is calculated
+     * @param processDTO
+     *            ProcessDTO object whose duration/age is calculated
      * @return process age of given process
      */
     public static String getProcessDuration(ProcessDTO processDTO) {
@@ -266,7 +275,7 @@ public class ProcessForm extends TemplateBaseForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx});
+            Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());
@@ -334,7 +343,7 @@ public class ProcessForm extends TemplateBaseForm {
             if (dir.isDirectory()) {
                 renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
                 if (!renamed) {
-                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName()});
+                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
                 }
             }
         }
@@ -493,7 +502,7 @@ public class ProcessForm extends TemplateBaseForm {
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
+                new Object[] {ObjectType.ROLE.getTranslationSingular(), roleId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -663,8 +672,8 @@ public class ProcessForm extends TemplateBaseForm {
                 Helper.setMessage(
                     Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
-                    ServiceManager.getUserService()
-                            .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
+                    ServiceManager.getUserService().getFullName(
+                        ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
                 webDav.downloadToHome(processForDownload, true);
             }
         } catch (DAOException e) {
@@ -848,8 +857,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Execute Kitodo script for hits list.
      */
     @SuppressWarnings("unchecked")
-    public void executeKitodoScriptHits() {
-        executeKitodoScriptForProcesses(lazyDTOModel.getEntities());
+    public void executeKitodoScriptAll() {
+        executeKitodoScriptForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null), this.kitodoScriptAll);
     }
 
     /**
@@ -857,37 +866,80 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void executeKitodoScriptPage() {
-        executeKitodoScriptForProcesses(lazyDTOModel.getEntities());
+        executeKitodoScriptForProcesses(lazyDTOModel.getEntities(), this.kitodoScriptPage);
     }
 
     /**
      * Execute Kitodo script for selected processes.
      */
     public void executeKitodoScriptSelection() {
-        executeKitodoScriptForProcesses(this.selectedProcesses);
+        executeKitodoScriptForProcesses(this.selectedProcesses, this.kitodoScriptSelection);
     }
 
-    private void executeKitodoScriptForProcesses(List<ProcessDTO> processes) {
-        KitodoScriptService gs = new KitodoScriptService();
+    private void executeKitodoScriptForProcesses(List<ProcessDTO> processes, String kitodoScript) {
+        KitodoScriptService service = new KitodoScriptService();
         try {
-            gs.execute(ServiceManager.getProcessService().convertDtosToBeans(processes), this.kitodoScript);
+            service.execute(ServiceManager.getProcessService().convertDtosToBeans(processes), kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
-    public String getKitodoScript() {
-        return this.kitodoScript;
+    /**
+     * Get kitodo script for selected results.
+     * 
+     * @return kitodo script for selected results
+     */
+    public String getKitodoScriptSelection() {
+        return this.kitodoScriptSelection;
     }
 
     /**
-     * Setter for kitodoScript.
+     * Set kitodo script for selected results.
      *
-     * @param kitodoScript
+     * @param kitodoScriptSelection
      *            the kitodoScript
      */
-    public void setKitodoScript(String kitodoScript) {
-        this.kitodoScript = kitodoScript;
+    public void setKitodoScriptSelection(String kitodoScriptSelection) {
+        this.kitodoScriptSelection = kitodoScriptSelection;
+    }
+
+    /**
+     * Get kitodo script for all results.
+     * 
+     * @return kitodo script for all results
+     */
+    public String getKitodoScriptPage() {
+        return this.kitodoScriptPage;
+    }
+
+    /**
+     * Set kitodo script for page results.
+     *
+     * @param kitodoScriptPage
+     *            the kitodoScript
+     */
+    public void setKitodoScriptPage(String kitodoScriptPage) {
+        this.kitodoScriptPage = kitodoScriptPage;
+    }
+
+    /**
+     * Get kitodo script for all results.
+     * 
+     * @return kitodo script for all results
+     */
+    public String getKitodoScriptAll() {
+        return this.kitodoScriptAll;
+    }
+
+    /**
+     * Set kitodo script for all results.
+     *
+     * @param kitodoScriptAll
+     *            the kitodoScript
+     */
+    public void setKitodoScriptAll(String kitodoScriptAll) {
+        this.kitodoScriptAll = kitodoScriptAll;
     }
 
     public String getNewProcessTitle() {
@@ -941,15 +993,15 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             ServiceManager.getProcessService().generateResult(this.filter);
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_CREATING, new Object[]{Helper.getTranslation("resultSet")}, logger, e);
+            Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
         }
     }
 
     /**
      * Return whether closed processes should be displayed or not.
      *
-     * @return parameter controlling whether closed processes should be displayed
-     *         or not
+     * @return parameter controlling whether closed processes should be displayed or
+     *         not
      */
     public boolean isShowClosedProcesses() {
         return this.showClosedProcesses;
@@ -1169,7 +1221,7 @@ public class ProcessForm extends TemplateBaseForm {
     // TODO: is it really a case that title is empty?
     private void removePropertiesWithEmptyTitle(List<Property> properties) {
         for (Property processProperty : properties) {
-            if (Objects.isNull(processProperty.getTitle()) ||  processProperty.getTitle().isEmpty()) {
+            if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
                 processProperty.getProcesses().clear();
                 this.process.getProperties().remove(processProperty);
             }

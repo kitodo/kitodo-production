@@ -136,87 +136,232 @@
             </p:column>
         </p:dataTable>
 
-        <br/><br/>
-        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForSelected}</h4>
-        <br/>
-        <p:commandLink id="processingStatusUpSelection" action="#{ProcessForm.setTaskStatusUpForSelection}"
-                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="processingStatusDownSelection" action="#{ProcessForm.setTaskStatusDownForSelection}"
-                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="downloadSelection" action="#{ProcessForm.downloadToHomeForSelection}"
-                       title="#{msgs.linkHomeDirectory}">
-            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <h:commandLink action="#{ProcessForm.exportDMSForSelection}" id="exportDmsSelection" title="#{msgs.exportDMS}">
-            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
-        </h:commandLink>
+        <p:panelGrid columns="3" id="possibleActions">
+            <p:row>
+                <h4>#{msgs.possibleActions} #{msgs.possibleActionsForSelected}</h4>
+                <br/>
+                <p:commandLink id="processingStatusUpSelection" action="#{ProcessForm.setTaskStatusUpForSelection}"
+                               title="#{msgs.processingStatusUp}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="processingStatusDownSelection" action="#{ProcessForm.setTaskStatusDownForSelection}"
+                               title="#{msgs.processingStatusDown}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:panelGrid columns="1" id="selectionScriptField">
+                    <p:toolbar>
+                        <f:facet name="left">
+                            <p:commandButton value="addUser"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:addUser &quot;steptitle:TITLE_STEP&quot; username:USER_NAME'"/>
+                            <p:commandButton value="addRole"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:addRole &quot;steptitle:TITLE_STEP&quot; group:GROUP_NAME'"/>
+                            <p:commandButton value="deleteTiffHeaderFile"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:deleteTiffHeaderFile'"/>
+                            <p:commandButton value="importFromFileSystem"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
+                            <p:commandButton value="setRuleset"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:setRuleset &quot;ruleset:TITLE_RULESET&quot;'"/>
+                            <p:commandButton value="setStepStatus"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:setStepStatus &quot;steptitle:TITLE_STEP&quot; status:NUMBER_0_TO_3'"/>
+                            <p:commandButton value="addShellScriptToStep"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:addShellScriptToStep &quot;steptitle:TITLE_STEP&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;'"/>
+                            <p:commandButton value="setTaskProperty"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:setTaskProperty &quot;steptitle:TITLE_STEP&quot; property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
+                            <p:commandButton value="tiffWriter"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:tiffWriter'"/>
+                            <p:commandButton value="exportDms"
+                                             update="processesTabView:processesForm:selectionScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:selectionScriptFieldTextArea').value='action:exportDms exportImages:false'"/>
+                        </f:facet>
+                    </p:toolbar>
 
-        <br/><br/>
-        <!--TODO: at the moment it does it for all -->
-        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForPage}</h4>
-        <br/>
-        <p:commandLink id="processingStatusUpPage" action="#{ProcessForm.setTaskStatusUpForPage}"
-                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="processingStatusDownPage" action="#{ProcessForm.setTaskStatusDownForPage}"
-                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="downloadPage" action="#{ProcessForm.downloadToHomeForPage}"
-                       title="#{msgs.linkHomeDirectory}">
-            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <h:commandLink action="#{ProcessForm.exportDMSForPage}" id="exportDmsPage" title="#{msgs.exportDMS}">
-            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
-        </h:commandLink>
+                    <p:inputTextarea id="selectionScriptFieldTextArea" style="width:450px;height:100px"
+                                     value="#{ProcessForm.kitodoScriptSelection}"/>
+                </p:panelGrid>
 
-        <br/><br/>
-        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForAll}</h4>
-        <br/>
-        <p:commandLink id="processingStatusUpAll" action="#{ProcessForm.setTaskStatusUpForAll}"
-                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="processingStatusDownAll" action="#{ProcessForm.setTaskStatusDownForAll}"
-                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
-            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="downloadAll" action="#{ProcessForm.downloadToHomeForAll}" title="#{msgs.linkHomeDirectory}">
-            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="uploadAll" action="#{ProcessForm.uploadFromHomeForAll}"
-                       title="#{msgs.deleteLinkHomeDirectory}">
-            <h:outputText><i class="fa fa-upload"/> #{msgs.deleteLinkHomeDirectory}</h:outputText>
-            <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
-            <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
-                       icon="ui-icon-alert"/>
-        </p:commandLink>
-        <br/>
-        <h:commandLink action="#{ProcessForm.exportDMSForAll}" id="exportDmsAll" title="#{msgs.exportDMS}">
-            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
-        </h:commandLink>
-        <br/>
-        <p:commandLink id="createExcel" action="#{ProcessForm.generateResult}" title="#{msgs.createExcel}" ajax="false">
-            <h:outputText><i class="fa fa-file-excel-o"/> #{msgs.createExcel}</h:outputText>
-        </p:commandLink>
-        <br/>
-        <p:commandLink id="createPdf" action="#{ProcessForm.generateResultAsPdf}" title="#{msgs.createPdf}"
-                       ajax="false">
-            <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
-        </p:commandLink>
+                <p:commandLink id="executeScriptSelection" action="#{ProcessForm.executeKitodoScriptSelection}"
+                               title="#{msgs.executeKitodoScript}">
+                    <h:outputText><i class="fa fa-cogs"/> #{msgs.executeKitodoScript}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="downloadSelection" action="#{ProcessForm.downloadToHomeForSelection}"
+                               title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <h:commandLink action="#{ProcessForm.exportDMSForSelection}" id="exportDmsSelection"
+                               title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+                </h:commandLink>
+            </p:row>
+            <p:row>
+                <h4>#{msgs.possibleActions} #{msgs.possibleActionsForPage}</h4>
+                <br/>
+                <p:commandLink id="processingStatusUpPage" action="#{ProcessForm.setTaskStatusUpForPage}"
+                               title="#{msgs.processingStatusUp}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="processingStatusDownPage" action="#{ProcessForm.setTaskStatusDownForPage}"
+                               title="#{msgs.processingStatusDown}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:panelGrid columns="1" id="pageScriptField">
+                    <p:toolbar>
+                        <f:facet name="left">
+                            <p:commandButton value="addUser"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:addUser &quot;steptitle:TITLE_STEP&quot; username:USER_NAME'"/>
+                            <p:commandButton value="addRole"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:addRole &quot;steptitle:TITLE_STEP&quot; group:GROUP_NAME'"/>
+                            <p:commandButton value="deleteTiffHeaderFile"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:deleteTiffHeaderFile'"/>
+                            <p:commandButton value="importFromFileSystem"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
+                            <p:commandButton value="setRuleset"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:setRuleset &quot;ruleset:TITLE_RULESET&quot;'"/>
+                            <p:commandButton value="setStepStatus"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:setStepStatus &quot;steptitle:TITLE_STEP&quot; status:NUMBER_0_TO_3'"/>
+                            <p:commandButton value="addShellScriptToStep"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:addShellScriptToStep &quot;steptitle:TITLE_STEP&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;'"/>
+                            <p:commandButton value="setTaskProperty"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:setTaskProperty &quot;steptitle:TITLE_STEP&quot; property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
+                            <p:commandButton value="tiffWriter"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:tiffWriter'"/>
+                            <p:commandButton value="exportDms"
+                                             update="processesTabView:processesForm:pageScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:pageScriptFieldTextArea').value='action:exportDms exportImages:false'"/>
+                        </f:facet>
+                    </p:toolbar>
+
+                    <p:inputTextarea id="pageScriptFieldTextArea" style="width:450px;height:100px"
+                                     value="#{ProcessForm.kitodoScriptPage}"/>
+                </p:panelGrid>
+                <p:commandLink id="executeScriptPage" action="#{ProcessForm.executeKitodoScriptPage}"
+                               title="#{msgs.executeKitodoScript}">
+                    <h:outputText><i class="fa fa-cogs"/> #{msgs.executeKitodoScript}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="downloadPage" action="#{ProcessForm.downloadToHomeForPage}"
+                               title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <h:commandLink action="#{ProcessForm.exportDMSForPage}" id="exportDmsPage" title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+                </h:commandLink>
+            </p:row>
+            <p:row>
+                <h4>#{msgs.possibleActions} #{msgs.possibleActionsForAll}</h4>
+                <br/>
+                <p:commandLink id="processingStatusUpAll" action="#{ProcessForm.setTaskStatusUpForAll}"
+                               title="#{msgs.processingStatusUp}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="processingStatusDownAll" action="#{ProcessForm.setTaskStatusDownForAll}"
+                               title="#{msgs.processingStatusDown}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:panelGrid columns="1" id="allScriptField">
+                    <p:toolbar>
+                        <f:facet name="left">
+                            <p:commandButton value="addUser"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:addUser &quot;steptitle:TITLE_STEP&quot; username:USER_NAME'"/>
+                            <p:commandButton value="addRole"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:addRole &quot;steptitle:TITLE_STEP&quot; group:GROUP_NAME'"/>
+                            <p:commandButton value="deleteTiffHeaderFile"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:deleteTiffHeaderFile'"/>
+                            <p:commandButton value="importFromFileSystem"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
+                            <p:commandButton value="setRuleset"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:setRuleset &quot;ruleset:TITLE_RULESET&quot;'"/>
+                            <p:commandButton value="setStepStatus"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:setStepStatus &quot;steptitle:TITLE_STEP&quot; status:NUMBER_0_TO_3'"/>
+                            <p:commandButton value="addShellScriptToStep"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:addShellScriptToStep &quot;steptitle:TITLE_STEP&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;'"/>
+                            <p:commandButton value="setTaskProperty"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:setTaskProperty &quot;steptitle:TITLE_STEP&quot; property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
+                            <p:commandButton value="tiffWriter"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:tiffWriter'"/>
+                            <p:commandButton value="exportDms"
+                                             update="processesTabView:processesForm:allScriptFieldTextArea"
+                                             onclick="document.getElementById('processesTabView:processesForm:allScriptFieldTextArea').value='action:exportDms exportImages:false'"/>
+                        </f:facet>
+                    </p:toolbar>
+
+                    <p:inputTextarea id="allScriptFieldTextArea" style="width:450px;height:100px"
+                                     value="#{ProcessForm.kitodoScriptAll}"/>
+                </p:panelGrid>
+
+                <p:commandLink id="executeScriptAll" action="#{ProcessForm.executeKitodoScriptAll}"
+                               title="#{msgs.executeKitodoScript}">
+                    <h:outputText><i class="fa fa-cogs"/> #{msgs.executeKitodoScript}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="downloadAll" action="#{ProcessForm.downloadToHomeForAll}"
+                               title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="uploadAll" action="#{ProcessForm.uploadFromHomeForAll}"
+                               title="#{msgs.deleteLinkHomeDirectory}">
+                    <h:outputText><i class="fa fa-upload"/> #{msgs.deleteLinkHomeDirectory}</h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+                <br/>
+                <h:commandLink action="#{ProcessForm.exportDMSForAll}" id="exportDmsAll" title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+                </h:commandLink>
+                <br/>
+                <p:commandLink id="createExcel" action="#{ProcessForm.generateResult}" title="#{msgs.createExcel}"
+                               ajax="false">
+                    <h:outputText><i class="fa fa-file-excel-o"/> #{msgs.createExcel}</h:outputText>
+                </p:commandLink>
+                <br/>
+                <p:commandLink id="createPdf" action="#{ProcessForm.generateResultAsPdf}" title="#{msgs.createPdf}"
+                               ajax="false">
+                    <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
+                </p:commandLink>
+            </p:row>
+        </p:panelGrid>
     </h:form>
 </ui:composition>
