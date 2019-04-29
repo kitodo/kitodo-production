@@ -14,7 +14,6 @@ package org.kitodo.production.services.data;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
-import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -73,7 +72,6 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -533,7 +531,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             when accessing the elasticsearch server fails
      */
     public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
-        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery), ScoreMode.Total);
+        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
                 ProcessTypeField.TITLE.getKey(),
                 ProcessTypeField.PROJECT_TITLE.getKey(),
@@ -541,11 +539,16 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
                 ProcessTypeField.WIKI_FIELD.getKey(),
                 ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
 
-        QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchQuery);
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.should(nestedQueryForMetadataContent);
         boolQuery.should(multiMatchQueryForProcessFields);
-        boolQuery.should(wildcardQueryForProcessTitle);
+
+        if (!searchQuery.contains(" ")) {
+            QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(),
+                searchQuery);
+            boolQuery.should(wildcardQueryForProcessTitle);
+        }
+
         return findByQuery(boolQuery, false);
     }
 
