@@ -54,12 +54,7 @@ public class SearchResultForm extends BaseForm {
         HashMap<Integer, ProcessDTO> resultHash = new HashMap<>();
         List<ProcessDTO> results;
         try {
-            if (searchQuery.contains(" ")) {
-                results = processService.findByTitle(searchQuery);
-                results.addAll(processService.findByProjectTitle(searchQuery));
-            } else {
-                results = processService.findByAnything(searchQuery);
-            }
+            results = processService.findByAnything(searchQuery);
             for (ProcessDTO processDTO : results) {
                 resultHash.put(processDTO.getId(), processDTO);
             }

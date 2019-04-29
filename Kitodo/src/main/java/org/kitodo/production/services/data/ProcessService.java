@@ -553,19 +553,19 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             when accessing the elasticsearch server fails
      */
     public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
-        NestedQueryBuilder nestedQuery = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery), ScoreMode.Total);
-        MultiMatchQueryBuilder multiMatchQuery = multiMatchQuery(searchQuery,
+        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery), ScoreMode.Total);
+        MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
                 ProcessTypeField.TITLE.getKey(),
                 ProcessTypeField.PROJECT_TITLE.getKey(),
                 ProcessTypeField.COMMENTS.getKey(),
                 ProcessTypeField.WIKI_FIELD.getKey(),
                 ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
 
-        QueryBuilder wildcardQuery = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchQuery);
+        QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchQuery);
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.should(nestedQuery);
-        boolQuery.should(multiMatchQuery);
-        boolQuery.should(wildcardQuery);
+        boolQuery.should(nestedQueryForMetadataContent);
+        boolQuery.should(multiMatchQueryForProcessFields);
+        boolQuery.should(wildcardQueryForProcessTitle);
         return findByQuery(boolQuery, false);
     }
 
