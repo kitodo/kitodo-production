@@ -108,10 +108,14 @@ public class FileService {
         }
         String path = pathToCreate.toString();
         int lastSlash = path.lastIndexOf('/');
-        URI before = URI.create(path.substring(0, lastSlash));
-        String after = path.substring(lastSlash + 1);
-        createDirectories(before);
-        createDirectory(before, after);
+        if (lastSlash <= 0) {
+            createDirectory(null, path);
+        } else {
+            URI before = URI.create(path.substring(0, lastSlash));
+            String after = path.substring(lastSlash + 1);
+            createDirectories(before);
+            createDirectory(before, after);
+        }
     }
 
     /**
