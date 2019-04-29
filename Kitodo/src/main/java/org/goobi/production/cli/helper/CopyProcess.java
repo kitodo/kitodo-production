@@ -67,6 +67,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             ServiceManager.getTemplateService().checkForUnreachableTasks(this.template.getTasks());
         } catch (ProcessGenerationException e) {
+            logger.error(e.getMessage(), e);
             return "";
         }
 
