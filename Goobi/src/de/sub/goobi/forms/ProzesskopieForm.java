@@ -342,6 +342,7 @@ public class ProzesskopieForm {
             this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue[@default=true]");
         }
 
+        this.configuredOpacCatalogues = new ArrayList<String>();
         for (String catalogue : cp.getParamList("createNewProcess.opac.catalogue")) {
             this.configuredOpacCatalogues.add(catalogue);
         }
@@ -1502,6 +1503,10 @@ public class ProzesskopieForm {
         }
     }
 
+    /**
+     * The function getConfiguredOpacCatalogues() returns a list of configured and supported catalogues
+     * @return list of configured catalogue names for given project
+     */
     public List<String> getConfiguredOpacCatalogues() {
 
         LinkedList<String> existingCatalogues = new LinkedList<String>();
