@@ -100,7 +100,8 @@
                                          revert="true" stack=".ui-panel"/>
                         </p:dataList>
                         <p:droppable id="structuredPagesDroppable"
-                                     for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
+                                     for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
+                                     hoverStyleClass="media-stripe-hover">
                             <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}" update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
                         </p:droppable>
                     </p:dataList>
