@@ -16,8 +16,6 @@ package org.kitodo.production.dto;
  */
 public class DocketDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333335L;
-
     private String file;
     private String title;
     private Boolean active = true;
@@ -25,7 +23,7 @@ public class DocketDTO extends BaseDTO {
 
     /**
      * Get file.
-     * 
+     *
      * @return file as String
      */
     public String getFile() {
@@ -34,7 +32,7 @@ public class DocketDTO extends BaseDTO {
 
     /**
      * Set file.
-     * 
+     *
      * @param file
      *            as String
      */
@@ -53,7 +51,7 @@ public class DocketDTO extends BaseDTO {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */

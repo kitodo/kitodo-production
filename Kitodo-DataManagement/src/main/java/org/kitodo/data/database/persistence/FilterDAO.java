@@ -21,8 +21,6 @@ import org.kitodo.data.database.exceptions.DAOException;
  */
 public class FilterDAO extends BaseDAO<Filter> {
 
-    private static final long serialVersionUID = 234210246673032251L;
-
     @Override
     public Filter getById(Integer id) throws DAOException {
         Filter result = retrieveObject(Filter.class, id);

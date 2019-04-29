@@ -25,8 +25,6 @@ import org.kitodo.data.database.enums.WorkflowConditionType;
 @Table(name = "workflowCondition")
 public class WorkflowCondition extends BaseBean {
 
-    private static final long serialVersionUID = -5187947220333984868L;
-
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private WorkflowConditionType type;
@@ -39,7 +37,7 @@ public class WorkflowCondition extends BaseBean {
 
     /**
      * Public constructor.
-     * 
+     *
      * @param type
      *            of workflow condition
      * @param value

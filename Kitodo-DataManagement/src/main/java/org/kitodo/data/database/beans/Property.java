@@ -30,7 +30,6 @@ import org.kitodo.data.database.persistence.PropertyDAO;
 @Entity
 @Table(name = "property")
 public class Property extends BaseIndexedBean implements Comparable<Property> {
-    private static final long serialVersionUID = -2356566712752716107L;
 
     @Column(name = "title")
     private String title;
@@ -71,7 +70,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Get title.
-     * 
+     *
      * @return title as String
      */
     public String getTitle() {
@@ -80,7 +79,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */
@@ -90,7 +89,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Get value.
-     * 
+     *
      * @return value as String
      */
     public String getValue() {
@@ -99,7 +98,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set value.
-     * 
+     *
      * @param value
      *            as String
      */
@@ -109,7 +108,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Get choice.
-     * 
+     *
      * @return choice as String
      */
     public String getChoice() {
@@ -118,7 +117,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set choice.
-     * 
+     *
      * @param choice
      *            as String
      */
@@ -140,7 +139,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set obligatory.
-     * 
+     *
      * @param obligatory
      *            as Boolean
      */
@@ -150,7 +149,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Get creation date.
-     * 
+     *
      * @return creation date as Date
      */
     public Date getCreationDate() {
@@ -159,7 +158,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set creation date.
-     * 
+     *
      * @param creationDate
      *            as Date
      */
@@ -204,7 +203,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set processes.
-     * 
+     *
      * @param processes
      *            as List
      */
@@ -227,7 +226,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set templates.
-     * 
+     *
      * @param templates
      *            as List of Process objects
      */
@@ -250,7 +249,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Set workpieces.
-     * 
+     *
      * @param workpieces
      *            as List of Process objects
      */
@@ -260,7 +259,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     /**
      * Compare property to other property object.
-     * 
+     *
      * @param property
      *            object
      * @return int

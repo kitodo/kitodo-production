@@ -42,7 +42,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("DocketForm")
 @SessionScoped
 public class DocketForm extends BaseForm {
-    private static final long serialVersionUID = -445707928042517243L;
     private Docket docket = new Docket();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
@@ -55,7 +54,7 @@ public class DocketForm extends BaseForm {
     /**
      * Default constructor with inject project form that also sets the LazyDTOModel
      * instance of this bean.
-     * 
+     *
      * @param projectForm
      *            managed bean
      */

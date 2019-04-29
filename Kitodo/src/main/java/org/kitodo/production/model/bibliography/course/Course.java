@@ -40,7 +40,6 @@ import org.w3c.dom.Node;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Course extends ArrayList<Block> {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Attribute <code>date="…"</code> used in the XML representation of a

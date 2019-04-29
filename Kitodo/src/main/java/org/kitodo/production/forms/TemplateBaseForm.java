@@ -25,7 +25,6 @@ import org.kitodo.production.services.data.base.SearchDatabaseService;
 
 class TemplateBaseForm extends BaseForm {
 
-    private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
 
     void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {

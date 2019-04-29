@@ -22,7 +22,6 @@ import java.util.function.Function;
  * A list that is enforces the order of its members.
  */
 class SortedList<T> extends ArrayList<T> {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Possibility to get an order number for T.
@@ -31,7 +30,7 @@ class SortedList<T> extends ArrayList<T> {
 
     /**
      * Constructor for a sorted list.
-     * 
+     *
      * @param orderGetter
      *            possibility to get the order number for an element
      */

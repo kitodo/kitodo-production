@@ -21,7 +21,6 @@ import org.kitodo.config.enums.ParameterCore;
  * Bean für die Sperrung der Metadaten.
  */
 public class MetadataLock implements Serializable {
-    private static final long serialVersionUID = -8248209179063050307L;
     private static HashMap<Integer, HashMap<String, String>> locks = new HashMap<>();
     private static final String USER = "Benutzer";
     private static final String LIFE_SIGN = "Lebenszeichen";

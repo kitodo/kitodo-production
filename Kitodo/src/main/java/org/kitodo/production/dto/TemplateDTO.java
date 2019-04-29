@@ -20,8 +20,6 @@ import org.kitodo.production.services.ServiceManager;
 
 public class TemplateDTO extends BaseTemplateDTO {
 
-    private static final long serialVersionUID = 5187947220333333343L;
-
     private boolean active;
     private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;

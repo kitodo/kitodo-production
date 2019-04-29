@@ -29,7 +29,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("LdapGroupForm")
 @SessionScoped
 public class LdapGroupForm extends BaseForm {
-    private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
     private static final Logger logger = LogManager.getLogger(LdapGroupForm.class);
     private static final String LDAP_GROUP = "ldapGroup";
@@ -50,7 +49,7 @@ public class LdapGroupForm extends BaseForm {
 
     /**
      * Gets all ldap groups.
-     * 
+     *
      * @return list of LdapGroup objects.
      */
     public List<LdapGroup> getLdapGroups() {

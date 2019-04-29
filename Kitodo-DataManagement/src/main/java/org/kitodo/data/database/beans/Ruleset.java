@@ -23,7 +23,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ruleset")
 public class Ruleset extends BaseIndexedBean {
-    private static final long serialVersionUID = -6663371963274685060L;
 
     @Column(name = "title")
     private String title;
@@ -59,7 +58,7 @@ public class Ruleset extends BaseIndexedBean {
 
     /**
      * Check if metadata should be ordered by ruleset.
-     * 
+     *
      * @return true or false
      */
     public boolean isOrderMetadataByRuleset() {
@@ -71,7 +70,7 @@ public class Ruleset extends BaseIndexedBean {
 
     /**
      * Set if metadata should be ordered by ruleset.
-     * 
+     *
      * @param orderMetadataByRuleset
      *            true or false
      */

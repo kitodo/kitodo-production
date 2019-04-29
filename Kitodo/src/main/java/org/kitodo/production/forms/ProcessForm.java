@@ -66,7 +66,6 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 @Named("ProcessForm")
 @SessionScoped
 public class ProcessForm extends TemplateBaseForm {
-    private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();

@@ -34,7 +34,6 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
-    private static final long serialVersionUID = 8782111495680176505L;
     private transient SearchDatabaseService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();

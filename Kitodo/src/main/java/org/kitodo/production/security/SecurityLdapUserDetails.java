@@ -19,8 +19,6 @@ import org.springframework.security.ldap.userdetails.LdapUserDetails;
  */
 public class SecurityLdapUserDetails extends SecurityUserDetails implements LdapUserDetails {
 
-    private static final long serialVersionUID = 2955619497162715796L;
-
     private String dn;
 
     SecurityLdapUserDetails(final User user) {

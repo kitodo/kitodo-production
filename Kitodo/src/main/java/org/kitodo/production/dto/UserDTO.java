@@ -19,8 +19,6 @@ import java.util.List;
  */
 public class UserDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333344L;
-
     private String login;
     private String name;
     private String surname;
@@ -40,7 +38,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get login.
-     * 
+     *
      * @return login as String
      */
     public String getLogin() {
@@ -59,7 +57,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get name.
-     * 
+     *
      * @return first name as String
      */
     public String getName() {
@@ -68,7 +66,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set name.
-     * 
+     *
      * @param name
      *            as String
      */
@@ -78,7 +76,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get surname.
-     * 
+     *
      * @return surname as String
      */
     public String getSurname() {
@@ -87,7 +85,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set surname.
-     * 
+     *
      * @param surname
      *            as String
      */
@@ -116,7 +114,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get location.
-     * 
+     *
      * @return location as String
      */
     public String getLocation() {
@@ -125,7 +123,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set location.
-     * 
+     *
      * @param location
      *            as String
      */
@@ -135,7 +133,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get LDAP login.
-     * 
+     *
      * @return LDAP login as String
      */
     public String getLdapLogin() {
@@ -144,7 +142,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set LDAP login.
-     * 
+     *
      * @param ldapLogin
      *            as String
      */
@@ -163,7 +161,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set information if user is active.
-     * 
+     *
      * @param active
      *            as boolean
      */
@@ -173,7 +171,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get list of filters.
-     * 
+     *
      * @return list of filters as FilterDTO
      */
     public List<FilterDTO> getFilters() {
@@ -182,7 +180,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set list of filters.
-     * 
+     *
      * @param filters
      *            list of filters as FilterDTO
      */
@@ -201,7 +199,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set size of filters.
-     * 
+     *
      * @param filtersSize
      *            as Integer
      */
@@ -239,7 +237,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set size of roles.
-     * 
+     *
      * @param rolesSize
      *            as Integer
      */
@@ -285,7 +283,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Get list of projects.
-     * 
+     *
      * @return list of projects as ProjectDTO
      */
     public List<ProjectDTO> getProjects() {
@@ -294,7 +292,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set list of projects.
-     * 
+     *
      * @param projects
      *            list of projects as ProjectDTO
      */
@@ -314,7 +312,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set size of project list.
-     * 
+     *
      * @param projectsSize
      *            size of project list as Integer
      */
@@ -333,7 +331,7 @@ public class UserDTO extends BaseDTO {
 
     /**
      * Set list of processing tasks.
-     * 
+     *
      * @param processingTasks
      *            list of processing tasks as TaskDTO
      */

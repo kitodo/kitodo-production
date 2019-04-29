@@ -93,7 +93,6 @@ public enum PaginatorType {
      */
     private static final Map<Integer, PaginatorType> codeMap = new HashMap<Integer, PaginatorType>(
             (int) Math.ceil(values().length / .75)) {
-        private static final long serialVersionUID = 1L;
         {
             for (PaginatorType member : PaginatorType.values()) {
                 put(member.code, member);

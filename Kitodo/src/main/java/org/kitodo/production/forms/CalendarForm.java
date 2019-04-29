@@ -57,7 +57,6 @@ import org.xml.sax.SAXException;
 @Named("CalendarForm")
 @SessionScoped
 public class CalendarForm implements Serializable {
-    private static final long serialVersionUID = -1267629887357681855L;
     private static final String BLOCK = "calendar.block.";
     private static final String BLOCK_NEGATIVE = BLOCK + "negative";
     private static final String UPLOAD_ERROR = "calendar.upload.error";

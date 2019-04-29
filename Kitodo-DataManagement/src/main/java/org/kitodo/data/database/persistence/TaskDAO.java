@@ -20,7 +20,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class TaskDAO extends BaseDAO<Task> {
 
-    private static final long serialVersionUID = -2368830124391080142L;
     private static final String KEY_PROCESS_ID = "processId";
 
     @Override
@@ -77,7 +76,7 @@ public class TaskDAO extends BaseDAO<Task> {
 
     /**
      * Get all tasks between two given ordering of tasks for given process id.
-     * 
+     *
      * @param orderingMax
      *            as Integer
      * @param orderingMin
@@ -98,7 +97,7 @@ public class TaskDAO extends BaseDAO<Task> {
 
     /**
      * Get next tasks for problem solution for given process id.
-     * 
+     *
      * @param ordering
      *            of Task for which it searches next ones as Integer
      * @param processId
@@ -115,7 +114,7 @@ public class TaskDAO extends BaseDAO<Task> {
 
     /**
      * Get previous tasks for problem solution for given process id.
-     * 
+     *
      * @param ordering
      *            of Task for which it searches previous ones as Integer
      * @param processId

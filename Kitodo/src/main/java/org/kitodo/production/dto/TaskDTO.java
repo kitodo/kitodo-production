@@ -22,8 +22,6 @@ import org.kitodo.data.database.enums.TaskStatus;
  */
 public class TaskDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333342L;
-
     private String title;
     private String localizedTitle;
     private Integer ordering;
@@ -88,7 +86,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get ordering as Integer.
-     * 
+     *
      * @return ordering as Integer
      */
     public Integer getOrdering() {
@@ -97,7 +95,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set ordering as Integer.
-     * 
+     *
      * @param ordering
      *            as Integer
      */
@@ -107,7 +105,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get processing status as TaskStatus object.
-     * 
+     *
      * @return processing status as TaskStatus object
      */
     public TaskStatus getProcessingStatus() {
@@ -116,7 +114,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set processing status as TaskStatus object.
-     * 
+     *
      * @param processingStatus
      *            as TaskStatus object
      */
@@ -183,7 +181,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get processing user as UserDTO.
-     * 
+     *
      * @return processing user as UserDTO
      */
     public UserDTO getProcessingUser() {
@@ -192,7 +190,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set processing user as UserDTO.
-     * 
+     *
      * @param processingUser
      *            as UserDTO
      */
@@ -202,7 +200,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get processing time as String.
-     * 
+     *
      * @return processing time as String
      */
     public String getProcessingTime() {
@@ -211,7 +209,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set processing time as String.
-     * 
+     *
      * @param processingTime
      *            as String
      */
@@ -221,7 +219,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get processing begin time as String.
-     * 
+     *
      * @return processing begin time as String
      */
     public String getProcessingBegin() {
@@ -230,7 +228,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set processing begin time as String.
-     * 
+     *
      * @param processingBegin
      *            as String
      */
@@ -240,7 +238,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get processing end time as String.
-     * 
+     *
      * @return processing end time as String
      */
     public String getProcessingEnd() {
@@ -249,7 +247,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set processing end time as String.
-     * 
+     *
      * @param processingEnd
      *            as String
      */
@@ -259,7 +257,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get process as ProcessDTO.
-     * 
+     *
      * @return process as ProcessDTO
      */
     public ProcessDTO getProcess() {
@@ -268,7 +266,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Set process as ProcessDTO.
-     * 
+     *
      * @param process
      *            as ProcessDTO
      */
@@ -429,7 +427,7 @@ public class TaskDTO extends BaseDTO {
 
     /**
      * Get information if task is batch(step).
-     * 
+     *
      * @return true or false
      */
     public boolean isBatchStep() {
@@ -439,7 +437,7 @@ public class TaskDTO extends BaseDTO {
     /**
      * Set information if batch is available for task - there is more than one task
      * with the same title assigned to the batch.).
-     * 
+     *
      * @param batchAvailable
      *            as boolean
      */

@@ -88,7 +88,6 @@ import org.primefaces.context.RequestContext;
 @SessionScoped
 public class ProzesskopieForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
-    private static final long serialVersionUID = -4512865679353743L;
     private static final String OPAC_CONFIG = "configurationOPAC";
     private static final String BOUND_BOOK = "boundbook";
     private static final String FIRST_CHILD = "firstchild";
@@ -911,7 +910,7 @@ public class ProzesskopieForm extends BaseForm {
 
     /**
      * Adds a child node to a part of the logical structure tree.
-     * 
+     *
      * @param includedStructuralElement
      *            tree to add to
      * @param type

@@ -42,7 +42,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("RulesetForm")
 @SessionScoped
 public class RulesetForm extends BaseForm {
-    private static final long serialVersionUID = -445707928042517243L;
     private Ruleset ruleset;
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
 
@@ -55,7 +54,7 @@ public class RulesetForm extends BaseForm {
     /**
      * Default constructor with inject project form that also sets the LazyDTOModel
      * instance of this bean.
-     * 
+     *
      * @param projectForm
      *            managed bean
      */

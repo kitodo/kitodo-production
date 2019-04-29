@@ -17,7 +17,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class ProjectDAO extends BaseDAO<Project> {
-    private static final long serialVersionUID = -9050627256118458325L;
 
     @Override
     public Project getById(Integer id) throws DAOException {

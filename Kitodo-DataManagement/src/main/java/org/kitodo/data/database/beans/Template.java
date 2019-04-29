@@ -33,8 +33,6 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 @Table(name = "template")
 public class Template extends BaseTemplateBean {
 
-    private static final long serialVersionUID = -6503346767655786275L;
-
     @Column(name = "active")
     private Boolean active = true;
 

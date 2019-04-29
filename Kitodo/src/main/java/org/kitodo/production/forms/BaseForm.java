@@ -29,7 +29,6 @@ import org.primefaces.event.TabChangeEvent;
 
 public class BaseForm implements Serializable {
 
-    private static final long serialVersionUID = 2950419497162710096L;
     String stayOnCurrentPage = null;
     protected String filter = "";
     protected User user;
@@ -78,7 +77,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Get overlay for return null.
-     * 
+     *
      * @return to current page
      */
     public String getStayOnCurrentPage() {
@@ -87,7 +86,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Set overlay for return null.
-     * 
+     *
      * @param stayOnCurrentPage
      *            overlay for return null which ensures staying on the same page
      *            where it was called
@@ -224,7 +223,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Get list of configurable columns.
-     * 
+     *
      * @return list of configurable columns
      */
     public List<SelectItem> getColumns() {
@@ -233,7 +232,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Set list of configurable columns.
-     * 
+     *
      * @param columns
      *            list of columns
      */
@@ -243,7 +242,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Get list of selected columns.
-     * 
+     *
      * @return list of selected columns
      */
     public List<ListColumn> getSelectedColumns() {
@@ -252,7 +251,7 @@ public class BaseForm implements Serializable {
 
     /**
      * Set list of selected columns.
-     * 
+     *
      * @param columns
      *            list of selected columns
      */
@@ -263,7 +262,7 @@ public class BaseForm implements Serializable {
     /**
      * Checks whether the column with the provided name 'columnName' should be shown
      * be displayed in the corresponding list view or not.
-     * 
+     *
      * @param columnName
      *            name of the column
      * @return true, if column should be displayed; false if column should be hidden

@@ -50,8 +50,6 @@ import org.kitodo.production.services.ServiceManager;
 @SessionScoped
 public class BatchForm extends BaseForm {
 
-    private static final long serialVersionUID = 8234897225425856549L;
-
     private static final Logger logger = LogManager.getLogger(BatchForm.class);
 
     private List<Process> currentProcesses;
@@ -197,7 +195,7 @@ public class BatchForm extends BaseForm {
 
     /**
      * Get batch title.
-     * 
+     *
      * @return batch title as String
      */
     public String getBatchTitle() {
@@ -206,7 +204,7 @@ public class BatchForm extends BaseForm {
 
     /**
      * Set batch title.
-     * 
+     *
      * @param batchTitle
      *            as String
      */

@@ -19,8 +19,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class AuthorityDAO extends BaseDAO<Authority> {
 
-    private static final long serialVersionUID = 4987176626562271217L;
-
     @Override
     public Authority getById(Integer id) throws DAOException {
         Authority result = retrieveObject(Authority.class, id);

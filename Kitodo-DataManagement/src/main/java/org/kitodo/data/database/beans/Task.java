@@ -37,7 +37,6 @@ import org.kitodo.data.database.persistence.TaskDAO;
 @Entity
 @Table(name = "task")
 public class Task extends BaseIndexedBean {
-    private static final long serialVersionUID = 6831844584239811846L;
 
     @Column(name = "title")
     private String title;

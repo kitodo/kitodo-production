@@ -19,8 +19,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class WorkflowDAO extends BaseDAO<Workflow> {
 
-    private static final long serialVersionUID = 1913256950316879121L;
-
     @Override
     public Workflow getById(Integer id) throws DAOException {
         Workflow result = retrieveObject(Workflow.class, id);
@@ -54,7 +52,7 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     /**
      * Get available workflows - available means that workflow has status active and is
      * assigned to client with given id.
-     * 
+     *
      * @param clientId
      *            id of client to which searched workflows should be assigned
      * @return list of available Workflow objects

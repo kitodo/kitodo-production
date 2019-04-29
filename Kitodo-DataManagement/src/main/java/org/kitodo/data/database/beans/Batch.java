@@ -41,7 +41,6 @@ import org.kitodo.data.database.persistence.BatchDAO;
 @Entity
 @Table(name = "batch")
 public class Batch extends BaseIndexedBean {
-    private static final long serialVersionUID = -5187947220333984868L;
 
     /**
      * The field title holds the batch title. Using titles for batches is

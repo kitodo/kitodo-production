@@ -31,7 +31,6 @@ import org.kitodo.data.database.persistence.UserDAO;
 @Entity
 @Table(name = "user")
 public class User extends BaseBean {
-    private static final long serialVersionUID = -7482853955996650586L;
 
     @Column(name = "name")
     private String name;
@@ -266,7 +265,7 @@ public class User extends BaseBean {
 
     /**
      * Set roles.
-     * 
+     *
      * @param roles
      *            list of Role objects
      */

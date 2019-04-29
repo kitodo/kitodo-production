@@ -47,7 +47,6 @@ import org.kitodo.production.workflow.model.Converter;
 @SessionScoped
 public class TemplateForm extends TemplateBaseForm {
 
-    private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
     private Template template;
     private List<Project> assignedProjects = new ArrayList<>();
@@ -251,7 +250,7 @@ public class TemplateForm extends TemplateBaseForm {
 
     /**
      * Check if user is not assigned to the project. Used for disabling projects.
-     * 
+     *
      * @param project
      *            for check
      * @return false if user is assigned to this project, otherwise true
@@ -393,7 +392,7 @@ public class TemplateForm extends TemplateBaseForm {
 
     /**
      * Convert the stream of folders to a list of switch objects.
-     * 
+     *
      * @param folders
      *            folders for which generation or validation can be switched on
      *            or off

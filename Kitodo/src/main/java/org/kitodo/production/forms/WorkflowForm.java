@@ -58,7 +58,6 @@ import org.kitodo.production.workflow.model.Reader;
 @SessionScoped
 public class WorkflowForm extends BaseForm {
 
-    private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
     private transient FileService fileService = ServiceManager.getFileService();
@@ -367,7 +366,7 @@ public class WorkflowForm extends BaseForm {
 
     /**
      * Set role idd.
-     * 
+     *
      * @param roleId
      *            as Integer.
      */

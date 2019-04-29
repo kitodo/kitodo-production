@@ -18,8 +18,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class PropertyDAO extends BaseDAO<Property> {
 
-    private static final long serialVersionUID = 834210846673022251L;
-
     @Override
     public Property getById(Integer id) throws DAOException {
         Property result = retrieveObject(Property.class, id);

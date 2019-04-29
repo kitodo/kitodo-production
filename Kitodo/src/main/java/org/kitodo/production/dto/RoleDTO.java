@@ -19,8 +19,6 @@ import java.util.List;
  */
 public class RoleDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333340L;
-
     private String title;
     private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
@@ -28,7 +26,7 @@ public class RoleDTO extends BaseDTO {
 
     /**
      * Get title.
-     * 
+     *
      * @return title as String
      */
     public String getTitle() {
@@ -37,7 +35,7 @@ public class RoleDTO extends BaseDTO {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */
@@ -66,7 +64,7 @@ public class RoleDTO extends BaseDTO {
 
     /**
      * Get size of users.
-     * 
+     *
      * @return size of users as Integer
      */
     public Integer getUsersSize() {
@@ -75,7 +73,7 @@ public class RoleDTO extends BaseDTO {
 
     /**
      * Set size of users.
-     * 
+     *
      * @param usersSize
      *            as Integer
      */

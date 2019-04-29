@@ -22,7 +22,6 @@ import org.kitodo.production.services.ServiceManager;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 
-    private static final long serialVersionUID = -1124724462982810327L;
     private SortType sortType;
 
     @Override

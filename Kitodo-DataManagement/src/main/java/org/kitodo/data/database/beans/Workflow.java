@@ -32,7 +32,6 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 @Entity
 @Table(name = "workflow")
 public class Workflow extends BaseIndexedBean {
-    private static final long serialVersionUID = 6831844584235763486L;
 
     @Column(name = "title")
     private String title;
@@ -56,7 +55,7 @@ public class Workflow extends BaseIndexedBean {
 
     /**
      * Public constructor.
-     * 
+     *
      * @param title
      *            of workflow
      */

@@ -19,15 +19,13 @@ import java.util.List;
  */
 public class BatchDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 5187947220333333333L;
-
     private String title;
     private String type;
     private List<ProcessDTO> processes = new ArrayList<>();
 
     /**
      * Get title.
-     * 
+     *
      * @return title as String
      */
     public String getTitle() {
@@ -36,7 +34,7 @@ public class BatchDTO extends BaseDTO {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */
@@ -46,7 +44,7 @@ public class BatchDTO extends BaseDTO {
 
     /**
      * Get type.
-     * 
+     *
      * @return type as String
      */
     public String getType() {
@@ -55,7 +53,7 @@ public class BatchDTO extends BaseDTO {
 
     /**
      * Set type.
-     * 
+     *
      * @param type
      *            as String
      */
@@ -65,7 +63,7 @@ public class BatchDTO extends BaseDTO {
 
     /**
      * Get processes.
-     * 
+     *
      * @return List of processes as ProcessDTO
      */
     public List<ProcessDTO> getProcesses() {
@@ -74,7 +72,7 @@ public class BatchDTO extends BaseDTO {
 
     /**
      * Set processes.
-     * 
+     *
      * @param processes
      *            as List of processes as ProcessDTO
      */

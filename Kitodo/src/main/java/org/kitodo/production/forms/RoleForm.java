@@ -37,7 +37,6 @@ import org.primefaces.model.DualListModel;
 @Named("RoleForm")
 @SessionScoped
 public class RoleForm extends BaseForm {
-    private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(RoleForm.class);
     private Role role = new Role();
 

@@ -30,8 +30,6 @@ import org.kitodo.data.database.persistence.ClientDAO;
 @Table(name = "client")
 public class Client extends BaseBean {
 
-    private static final long serialVersionUID = -5538496170333987498L;
-
     @Column(name = "name")
     private String name;
 

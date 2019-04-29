@@ -20,8 +20,6 @@ import java.util.Objects;
  */
 public class ProcessDTO extends BaseTemplateDTO {
 
-    private static final long serialVersionUID = 5187947220333333337L;
-
     private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
@@ -62,7 +60,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get list of batches.
-     * 
+     *
      * @return list of batches as BatchDTO
      */
     public List<BatchDTO> getBatches() {
@@ -81,7 +79,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get list of properties.
-     * 
+     *
      * @return list of properties as PropertyDTO
      */
     public List<PropertyDTO> getProperties() {
@@ -93,7 +91,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set list of properties.
-     * 
+     *
      * @param properties
      *            list of properties as PropertyDTO
      */
@@ -103,7 +101,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get blocked user.
-     * 
+     *
      * @return blocked user as UserDTO
      */
     public UserDTO getBlockedUser() {
@@ -112,7 +110,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set blocked user.
-     * 
+     *
      * @param blockedUser
      *            as UserDTO
      */
@@ -122,7 +120,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get list of sorted correction and solution messages.
-     * 
+     *
      * @return list of sorted correction and solution messages as PropertyDTO
      */
     public List<PropertyDTO> getSortedCorrectionSolutionMessages() {
@@ -131,7 +129,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set list of sorted correction and solution messages.
-     * 
+     *
      * @param sortedCorrectionSolutionMessages
      *            as PropertyDTO
      */
@@ -141,7 +139,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get progress of closed tasks.
-     * 
+     *
      * @return progress of closed tasks as Integer
      */
     public Integer getProgressClosed() {
@@ -150,7 +148,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set progress of closed tasks.
-     * 
+     *
      * @param progressClosed
      *            as Integer
      */
@@ -160,7 +158,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get progress of processed tasks.
-     * 
+     *
      * @return progress of processed tasks as Integer
      */
     public Integer getProgressInProcessing() {
@@ -169,7 +167,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set progress of processed tasks.
-     * 
+     *
      * @param progressInProcessing
      *            as Integer
      */
@@ -179,7 +177,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get progress of locked tasks.
-     * 
+     *
      * @return progress of locked tasks as Integer
      */
     public Integer getProgressLocked() {
@@ -188,7 +186,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set progress of locked tasks.
-     * 
+     *
      * @param progressLocked
      *            as Integer
      */
@@ -217,7 +215,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get progress of open tasks.
-     * 
+     *
      * @return progress of open tasks as Integer
      */
     public Integer getProgressOpen() {
@@ -226,7 +224,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set progress of open tasks.
-     * 
+     *
      * @param progressOpen
      *            as Integer
      */
@@ -236,7 +234,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get process base URI as String.
-     * 
+     *
      * @return process base URI as String.
      */
     public String getProcessBaseUri() {
@@ -245,7 +243,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set process base URI as String.
-     * 
+     *
      * @param processBaseUri
      *            as String
      */
@@ -255,7 +253,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get batch id(label) as String.
-     * 
+     *
      * @return batch id(label) as String.
      */
     public String getBatchID() {
@@ -264,7 +262,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set batch id(label) as String.
-     * 
+     *
      * @param batchID
      *            as String
      */
@@ -274,7 +272,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get sort helper for articles.
-     * 
+     *
      * @return sort helper for articles as Integer
      */
     public Integer getSortHelperArticles() {
@@ -283,7 +281,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set sort helper for articles.
-     * 
+     *
      * @param sortHelperArticles
      *            as Integer
      */
@@ -293,7 +291,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get sort helper for document structure.
-     * 
+     *
      * @return sort helper for document structure as Integer
      */
     public Integer getSortHelperDocstructs() {
@@ -302,7 +300,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set sort helper for document structure.
-     * 
+     *
      * @param sortHelperDocstructs
      *            as Integer
      */
@@ -312,7 +310,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get sort helper for images.
-     * 
+     *
      * @return sort helper for images as Integer
      */
     public Integer getSortHelperImages() {
@@ -321,7 +319,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set sort helper for images.
-     * 
+     *
      * @param sortHelperImages
      *            as Integer
      */
@@ -331,7 +329,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get sort helper for metadata.
-     * 
+     *
      * @return sort helper for metadata as Integer
      */
     public Integer getSortHelperMetadata() {
@@ -340,7 +338,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set sort helper for metadata.
-     * 
+     *
      * @param sortHelperMetadata
      *            as Integer
      */
@@ -350,7 +348,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get information if tif directory exists.
-     * 
+     *
      * @return true or false
      */
     public boolean isTifDirectoryExists() {
@@ -359,7 +357,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set information if tif directory exists.
-     * 
+     *
      * @param tifDirectoryExists
      *            as boolean
      */
@@ -369,7 +367,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Get information if image folder is in use.
-     * 
+     *
      * @return true or false
      */
     public boolean isImageFolderInUse() {
@@ -378,7 +376,7 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     /**
      * Set information if image folder is in use.
-     * 
+     *
      * @param imageFolderInUse
      *            as boolean
      */

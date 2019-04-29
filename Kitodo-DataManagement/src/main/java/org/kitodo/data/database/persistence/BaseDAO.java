@@ -30,7 +30,6 @@ import org.kitodo.data.database.exceptions.DAOException;
  */
 public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
-    private static final long serialVersionUID = 4676125965631365912L;
     private static final Object lockObject = new Object();
 
     /**
@@ -124,7 +123,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     /**
      * Refresh given bean object.
-     * 
+     *
      * @param baseBean
      *            bean to refresh
      */
@@ -264,7 +263,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     /**
      * Initialize child list of objects for given base bean.
-     * 
+     *
      * @param object
      *            for update
      * @param list

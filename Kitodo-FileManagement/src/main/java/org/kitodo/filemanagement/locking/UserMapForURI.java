@@ -22,6 +22,4 @@ import org.apache.commons.lang3.tuple.Pair;
  * issued for that user and how many locks the user has just opened on that URI.
  */
 class UserMapForURI extends HashMap<String, Pair<URI, AtomicInteger>> {
-    private static final long serialVersionUID = 1L;
-
 }

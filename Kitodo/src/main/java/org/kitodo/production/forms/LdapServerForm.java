@@ -31,7 +31,6 @@ import org.kitodo.production.services.ServiceManager;
 @SessionScoped
 public class LdapServerForm extends BaseForm {
 
-    private static final long serialVersionUID = 2390900243176826176L;
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
     private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
     private final String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");

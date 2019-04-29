@@ -48,7 +48,6 @@ import org.kitodo.production.services.ServiceManager;
 public class LanguageForm implements Serializable {
 
     private static final String SESSION_LOCALE_FIELD_ID = "lang";
-    private static final long serialVersionUID = -8766724454080390450L;
     private static final Logger logger = LogManager.getLogger(LanguageForm.class);
 
     /**
