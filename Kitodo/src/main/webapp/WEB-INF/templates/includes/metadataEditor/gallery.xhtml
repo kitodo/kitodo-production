@@ -96,15 +96,59 @@
                                 </p:commandLink>
                             </p:panel>
                             <p:draggable id="structuredPagesDraggable"
+                                         scope="assignedPagesDroppable"
                                          for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
                                          revert="true" stack=".ui-panel"/>
                         </p:dataList>
                         <p:droppable id="structuredPagesDroppable"
+                                     scope="assignedPagesDroppable"
                                      for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList"
                                      hoverStyleClass="media-stripe-hover">
-                            <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}" update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
+                            <p:ajax listener="#{DataEditorForm.galleryPanel.onPageDrop}"
+                                    update="imagePreviewForm, structureTreeForm:structureWrapperPanel"/>
                         </p:droppable>
                     </p:dataList>
+
+                    <!-- Unassigned pages -->
+                    <h:outputText value="Unassigned pages"
+                                  styleClass="gallery-stripe-header"
+                                  style="font-weight: bold;"/>
+                    <h:panelGroup id="unassignedPages"
+                                  layout="block">
+                        <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
+                        <p:dataList id ="unassignedPagesList"
+                                    styleClass="structureElementDataList"
+                                    value="#{DataEditorForm.galleryPanel.medias}"
+                                    binding="#{currentMedia}"
+                                    var="media">
+                            <h:panelGroup id="unassignedPagePanel">
+                                <p:commandLink id="updateSelectedUnassignedPageLink"
+                                               action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
+                                               update="structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                    <h:panelGroup layout="block"
+                                                  styleClass="thumbnail-container">
+                                        <p:outputPanel deferred="true"
+                                                       deferredMode="visible">
+                                            <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                            styleClass="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
+                                                            rendered="#{media.showingInPreview and (DataEditorForm.galleryPanel.getLogicalStructureOfMedia(media) eq null)}">
+                                                <f:param name="id"
+                                                         value="#{media.id}"/>
+                                            </p:graphicImage>
+                                        </p:outputPanel>
+                                    </h:panelGroup>
+                                    <f:setPropertyActionListener value="#{media}" target="#{DataEditorForm.galleryPanel.selectedMedia}"/>
+                                </p:commandLink>
+                            </h:panelGroup>
+                            <p:draggable id="unassignedPagesDraggable"
+                                         for="imagePreviewForm:unassignedPagesList:#{currentMedia.rowIndex}:unassignedPagePanel"
+                                         revert="true"
+                                         scope="assignedPagesDroppable"
+                                         stack=".ui-panel"/>
+                        </p:dataList>
+                    </h:panelGroup>
+
                 </p:fieldset>
             </ui:fragment>
 

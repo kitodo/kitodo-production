@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -60,6 +61,9 @@ public class GalleryPanel {
 
     private static final Pattern DROP_STRIPE = Pattern
             .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList");
+
+    private static final Pattern UNASSIGNED_IMAGE = Pattern
+            .compile("imagePreviewForm:unassignedPagesList:(\\d+):unassignedPagePanel");
 
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
@@ -270,6 +274,7 @@ public class GalleryPanel {
      */
     public void onPageDrop(DragDropEvent event) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
+        Matcher dragUnassignedPageMatcher = UNASSIGNED_IMAGE.matcher(event.getDragId());
         Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
         if (dragStripeImageMatcher.matches() && dropStripeMatcher.matches()) {
             int fromStripeIndex = Integer.parseInt(dragStripeImageMatcher.group(1));
@@ -290,6 +295,21 @@ public class GalleryPanel {
             for (View fromStripeView : fromStripe.getStructure().getViews()) {
                 fromStripe.getMedias().add(createGalleryMediaContent(fromStripeView));
             }
+            toStripe.getMedias().clear();
+            for (View toStripeView : toStripe.getStructure().getViews()) {
+                toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
+            }
+            return;
+        } else if (dropStripeMatcher.matches() && dragUnassignedPageMatcher.matches()) {
+            int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
+            int fromMediaIndex = Integer.parseInt(dragUnassignedPageMatcher.group(1));
+            GalleryMediaContent mediaContent = medias.stream()
+                    .filter(c -> (Objects.isNull(getLogicalStructureOfMedia(c))))
+                    .collect(Collectors.toList()).get(fromMediaIndex);
+            GalleryStripe toStripe = stripes.get(toStripeIndex);
+            toStripe.getStructure().getViews().add(mediaContent.getView());
+
+            // update stripe
             toStripe.getMedias().clear();
             for (View toStripeView : toStripe.getStructure().getViews()) {
                 toStripe.getMedias().add(createGalleryMediaContent(toStripeView));
@@ -349,16 +369,26 @@ public class GalleryPanel {
 
             // Update structured view
             if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
+                boolean stripeUpdated = false;
                 for (GalleryStripe galleryStripe : getStripes()) {
                     for (GalleryMediaContent galleryMediaContent : galleryStripe.getMedias()) {
                         if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
                             setSelectedMedia(galleryMediaContent);
                             setSelectedStripe(galleryStripe);
+                            stripeUpdated = true;
                             break;
                         }
                     }
                 }
-
+                // if no stripe was updated, we need to update the medias not assigned to any stripe!
+                if (!stripeUpdated) {
+                    for (GalleryMediaContent galleryMediaContent : getMedias()) {
+                        if (mediaVariants.values().contains(galleryMediaContent.getPreviewUri())) {
+                            setSelectedMedia(galleryMediaContent);
+                            break;
+                        }
+                    }
+                }
             }
             // Update unstructured view
             else {
@@ -451,5 +481,16 @@ public class GalleryPanel {
         String canonical = Objects.nonNull(previewUri) ? previewFolder.getCanonical(previewUri) : null;
         return new GalleryMediaContent(this, view, canonical, mediaUnit.getOrder(),
                 mediaUnit.getOrderlabel(), previewUri, mediaViewUri);
+    }
+
+    public GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
+        for (GalleryStripe galleryStripe : stripes) {
+            for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
+                if (galleryMediaContent.getId().equals(mediaContent.getId())) {
+                    return galleryStripe;
+                }
+            }
+        }
+        return null;
     }
 }

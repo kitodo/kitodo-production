@@ -1642,6 +1642,7 @@ Column content
     background: transparent;
 }
 
+.gallery-stripe-header,
 #imagePreviewForm\:structuredPages dt.ui-datalist-item > span {
     display: block;
     background-color: var(--focused-blue);
@@ -1670,6 +1671,10 @@ Column content
 
 #imagePreviewForm\:structuredPages .ui-widget-content {
     color: var(--pure-white);
+}
+
+#imagePreviewForm\:unassignedPagesList .ui-datalist-item {
+    display: inline;
 }
 
 /*----------------------------------------------------------------------
