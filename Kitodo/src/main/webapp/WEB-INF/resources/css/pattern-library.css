@@ -124,7 +124,7 @@ input.ui-state-error {
 
 .ui-button.secondary,
 .ui-widget-content .ui-button.secondary,
-.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label  {
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
     background: var(--pure-white);
     border: solid 1px var(--light-blue);
     color: var(--light-blue);
@@ -558,7 +558,7 @@ tr.ui-widget-content:not(:first-child) {
 }
 
 tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
-div.row-expansion-wrapper tr.ui-widget-content{
+div.row-expansion-wrapper tr.ui-widget-content {
     border: 0 !important;
 }
 
@@ -879,12 +879,12 @@ Popup dialogs
 }
 
 .ui-tabs,
-.ui-tabs.ui-tabs-top>.ui-tabs-nav,
+.ui-tabs.ui-tabs-top > .ui-tabs-nav,
 .ui-tabmenu .ui-tabmenu-nav {
     padding: 0;
 }
 
-.ui-tabs.ui-tabs-top>.ui-tabs-nav li,
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
     top: 0px;
     margin-right: .7em;
@@ -959,7 +959,7 @@ Popup dialogs
     opacity: 1;
     color: var(--pure-white);
     border: none;
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.5);
 }
 
 .ui-growl-item .ui-growl-icon-close[style] {
@@ -1008,8 +1008,8 @@ Popup dialogs
 }
 
 .alignTop45wide {
-     vertical-align: top;
-     width: 45%
+    vertical-align: top;
+    width: 45%
 }
 
 .buttonColumn {
