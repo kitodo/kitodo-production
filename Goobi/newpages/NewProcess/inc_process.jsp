@@ -52,8 +52,8 @@
     <h:panelGroup rendered="true">
         <h:column>
             <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
-                <f:selectItem itemValue="opac" itemLabel="OPAC search" />
-                <f:selectItem itemValue="file" itemLabel="File upload" itemDisabled="#{!ProzesskopieForm.fileUploadAvailable}"/>
+                <f:selectItem itemValue="opac" itemLabel="#{msgs.OpacSearch}" />
+                <f:selectItem itemValue="file" itemLabel="#{msgs.FileUpload}" itemDisabled="#{!ProzesskopieForm.fileUploadAvailable}"/>
             </h:selectOneRadio>
         </h:column>
     </h:panelGroup>
