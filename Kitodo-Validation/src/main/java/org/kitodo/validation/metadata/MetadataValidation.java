@@ -51,8 +51,6 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
 import org.kitodo.api.filemanagement.FileManagementInterface;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
@@ -101,17 +99,9 @@ public class MetadataValidation implements MetadataValidationInterface {
             List<LanguageRange> metadataLanguage, Map<String, String> translations) {
         try {
             FileManagementInterface fileManagement = getFileManagement();
-            Map<URI, LockingMode> requests = new HashMap<>(2);
-            requests.put(metsFileUri, LockingMode.IMMUTABLE_READ);
             Workpiece workpiece;
-            try (LockResult lockResult = fileManagement.tryLock(lockingUser, requests)) {
-                if (lockResult.isSuccessful()) {
-                    try (InputStream in = fileManagement.read(metsFileUri, lockResult)) {
-                        workpiece = createMetsXmlElementAccess().read(in);
-                    }
-                } else {
-                    throw new IOException(createLockErrorMessage(metsFileUri, lockResult));
-                }
+            try (InputStream inputStream = fileManagement.read(metsFileUri)) {
+                workpiece = createMetsXmlElementAccess().read(inputStream);
             }
             RulesetManagementInterface ruleset = getRulesetManagement();
             ruleset.load(new File(rulesetFileUri.getPath()));
@@ -407,28 +397,6 @@ public class MetadataValidation implements MetadataValidationInterface {
         }
 
         return new ValidationResult(error ? State.ERROR : warning ? State.WARNING : State.SUCCESS, messages);
-    }
-
-    /**
-     * Extracts the formation of the error message as it occurs during both
-     * reading and writing. In addition, the error is logged.
-     *
-     * @param uri
-     *            URI to be read/written
-     * @param lockResult
-     *            Lock result that did not work
-     * @return The error message for the exception.
-     */
-    private static String createLockErrorMessage(URI uri, LockResult lockResult) {
-        Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("Cannot lock ");
-        buffer.append(uri);
-        buffer.append(" because it is already locked by ");
-        buffer.append(String.join(" & ", conflictingUsers));
-        String message = buffer.toString();
-        logger.info(message);
-        return message;
     }
 
     /**

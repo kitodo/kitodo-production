@@ -15,15 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -66,20 +63,7 @@ public class MetsService {
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        return loadWorkpiece(uri, LockingMode.IMMUTABLE_READ).getRootElement().getType();
-    }
-
-    /**
-     * Function for loading METS files from URI.
-     *
-     * @param uri
-     *            address of the file to be loaded
-     * @return loaded file
-     * @throws IOException
-     *             if reading is not working (disk broken, ...)
-     */
-    public Workpiece loadWorkpiece(URI uri) throws IOException {
-        return loadWorkpiece(uri, LockingMode.EXCLUSIVE);
+        return loadWorkpiece(uri).getRootElement().getType();
     }
 
     /**
@@ -93,16 +77,10 @@ public class MetsService {
      * @throws IOException
      *             if reading is not working (disk broken, ...)
      */
-    public Workpiece loadWorkpiece(URI uri, LockingMode lockingMode) throws IOException {
-        try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, lockingMode)) {
-            if (lockResult.isSuccessful()) {
-                try (InputStream inputStream = ServiceManager.getFileService().read(uri, lockResult)) {
-                    logger.info("Reading {}", uri.toString());
-                    return metsXmlElementAccess.read(inputStream);
-                }
-            } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
-            }
+    public Workpiece loadWorkpiece(URI uri) throws IOException {
+        try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
+            logger.info("Reading {}", uri.toString());
+            return metsXmlElementAccess.read(inputStream);
         }
     }
 
@@ -119,41 +97,13 @@ public class MetsService {
      *             supported, ...)
      */
     public void saveWorkpiece(Workpiece workpiece, URI uri) throws IOException {
-        try (LockResult lockResult = ServiceManager.getFileService().tryLock(uri, LockingMode.EXCLUSIVE)) {
-            if (lockResult.isSuccessful()) {
-                try (OutputStream outputStream = ServiceManager.getFileService().write(uri, lockResult)) {
-                    logger.info("Saving {}", uri.toString());
-                    save(workpiece, outputStream);
-                }
-            } else {
-                throw new IOException(createLockErrorMessage(uri, lockResult));
-            }
+        try (OutputStream outputStream = ServiceManager.getFileService().write(uri)) {
+            logger.info("Saving {}", uri.toString());
+            save(workpiece, outputStream);
         }
     }
 
     public void save(Workpiece workpiece, OutputStream outputStream) throws IOException {
         metsXmlElementAccess.save(workpiece, outputStream);
-    }
-
-    /**
-     * Extracts the formation of the error message as it occurs during both
-     * reading and writing. In addition, the error is logged.
-     *
-     * @param uri
-     *            URI to be read/written
-     * @param lockResult
-     *            Lock result that did not work
-     * @return The error message for the exception.
-     */
-    private String createLockErrorMessage(URI uri, LockResult lockResult) {
-        Collection<String> conflictingUsers = lockResult.getConflicts().get(uri);
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("Cannot lock ");
-        buffer.append(uri);
-        buffer.append(" because it is already locked by ");
-        buffer.append(String.join(" & ", conflictingUsers));
-        String message = buffer.toString();
-        logger.info(message);
-        return message;
     }
 }

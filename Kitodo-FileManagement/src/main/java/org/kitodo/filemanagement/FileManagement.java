@@ -13,22 +13,18 @@ package org.kitodo.filemanagement;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,14 +32,10 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterFileManagement;
-import org.kitodo.filemanagement.locking.GrantedAccess;
-import org.kitodo.filemanagement.locking.LockManagement;
 
 public class FileManagement implements FileManagementInterface {
 
@@ -80,37 +72,16 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    @Deprecated
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, true);
-        return LockManagement.getInstance().reportGrant(uri, new FileOutputStream(new File(uri)), permissions);
-    }
-
-    @Override
-    public OutputStream write(URI uri, LockResult permissions) throws IOException {
-        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        LockManagement lockManagement = LockManagement.getInstance();
-        lockManagement.checkPermission(permissions, uri, true);
-        return lockManagement.reportGrant(uri, new FileOutputStream(new File(uri)), permissions);
+        return Files.newOutputStream(Paths.get(uri));
     }
 
     @Override
     @Deprecated
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        URL url = uri.toURL();
-        LockResult permissions = getASelfReleasingExclusiveSystemLock(uri, false);
-        return LockManagement.getInstance().reportGrant(uri, url.openStream(), permissions);
-    }
-
-    @Override
-    public InputStream read(URI uri, LockResult permissions) throws IOException {
-        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        LockManagement lockManagement = LockManagement.getInstance();
-        uri = lockManagement.checkPermission(permissions, uri, false);
-        URL url = uri.toURL();
-        return lockManagement.reportGrant(uri, url.openStream(), permissions);
+        return uri.toURL().openStream();
     }
 
     @Override
@@ -458,7 +429,7 @@ public class FileManagement implements FileManagementInterface {
 
     /**
      * Remove possible white spaces from process titles.
-     * 
+     *
      * @param title
      *            process title
      * @return encoded process title
@@ -568,43 +539,5 @@ public class FileManagement implements FileManagementInterface {
     public File getFile(URI uri) {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri);
-    }
-
-    /**
-     * Gets a self-releasing exclusive lock with the meaningless username
-     * “System”. This lock is used to facilitate simplified read and write
-     * accesses. It should be abolished at times.
-     * 
-     * @param uri
-     *            URI to lock
-     * @param write
-     *            whether write access is required
-     * @return the lock object
-     * @throws IOException
-     *             if the file does not exist or if an error occurs in disk
-     *             access, e.g. because the write permission for the directory
-     *             is missing
-     * @deprecated This method creates an exclusive lock with a username that is
-     *             not meaningful. In addition, an exclusive lock is always
-     *             requested, which is not always mandatory. Therefore this
-     *             method should not be used anymore. To create a lock, use
-     *             {@link #tryLock(String, Map)} with the actual username. To
-     *             read or write a file using this lock, use
-     *             {@link #read(URI, LockingResult)} or
-     *             {@link #write(URI, LockingResult)}.
-     */
-    @Deprecated
-    private LockResult getASelfReleasingExclusiveSystemLock(URI uri, boolean write) throws IOException {
-        Map<URI, LockingMode> request = new TreeMap<>();
-        request.put(uri, LockingMode.EXCLUSIVE);
-        LockResult lockingResult = tryLock(SYSTEM_USER, request);
-        LockManagement.getInstance().checkPermission(lockingResult, uri, write);
-        ((GrantedAccess) lockingResult).setSelfClosing();
-        return lockingResult;
-    }
-
-    @Override
-    public LockResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException {
-        return LockManagement.getInstance().tryLock(user, null, requests);
     }
 }
