@@ -53,4 +53,17 @@ public class CommentDAO extends BaseDAO<Comment> {
         return getByQuery("FROM Comment WHERE process_id = :processId ORDER BY id ASC",
                 Collections.singletonMap("processId", process.getId()));
     }
+
+    /**
+     * Save list of comments.
+     *
+     * @param list
+     *            of commenss
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying saveList()
+     *             procedure failure.
+     */
+    public void saveList(List<Comment> list) throws DAOException {
+        storeList(list);
+    }
 }

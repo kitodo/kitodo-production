@@ -26,7 +26,7 @@
                                        styleClass="#{(item.corrected) ? 'correction solved' : 'correction'}"
                                        rendered="#{item.type eq 'ERROR'}"/>
 
-                        <h:outputText value="#{item.author.name} #{item.author.surname}: #{item.message}"
+                        <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}: #{item.message}"
                                       escape="false"
                                       style="width:100%;"/>
                         <p:commandButton
@@ -42,7 +42,8 @@
             </p:panelGrid>
 
             <p:commandButton id="newButton"
-                             onclick="PF('newCommentDialog').show()"
+                             action="#{CommentForm.newComment()}"
+                             oncomplete="PF('newCommentDialog').show()"
                              icon="fa fa-comment fa-lg"
                              styleClass="secondary"
                              title="#{msgs.newElement}"

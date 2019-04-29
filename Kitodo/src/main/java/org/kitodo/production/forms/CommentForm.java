@@ -45,6 +45,11 @@ public class CommentForm extends BaseForm {
 
 
     public List<Comment> getAllComments() {
+        try {
+            setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
+        }
         WikiFieldHelper.transformWikiFieldToComment(this.process);
         return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
     }
@@ -77,15 +82,16 @@ public class CommentForm extends BaseForm {
         comment.setCreationDate(new Date());
         comment.setProcess(this.process);
         if (isCorrectionComment()) {
+            try {
+                comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
+            } catch (NumberFormatException | DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId() },
+                        logger, e);
+                return;
+            }
             comment.setType(CommentType.ERROR);
             comment.setCorrected(Boolean.FALSE);
             comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(this.process));
-            try {
-                comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId() },
-                        logger, e);
-            }
         } else {
             comment.setType(CommentType.INFO);
         }
@@ -94,19 +100,16 @@ public class CommentForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", logger, e);
         }
-
         if (isCorrectionComment()) {
             reportProblem(comment);
-            setCorrectionComment(false);
         }
-        setCommentMessage("");
-        setCorrectionTaskId("");
+        newComment();
     }
 
     /**
      * Add a new comment to all batch processes.
      */
-    public void addCommentToAll() {
+    public void addCommentToAllBatchProcesses() {
         for (Task task : this.batchHelper.getSteps()) {
             this.process = task.getProcess();
             addComment();
@@ -123,7 +126,6 @@ public class CommentForm extends BaseForm {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
         refreshProcess(this.process);
-        setCorrectionComment(false);
     }
 
     /**
@@ -190,7 +192,7 @@ public class CommentForm extends BaseForm {
     /**
      * Solve the problem to all batch processes.
      */
-    public void solveProblemForAll(Comment comment) {
+    public void solveProblemForAllBatchProcesses(Comment comment) {
         for (Task task : batchHelper.getSteps()) {
             for (Comment processComment : ServiceManager.getCommentService().getAllCommentsByProcess(task.getProcess())) {
                 if (!processComment.isCorrected()
@@ -253,11 +255,6 @@ public class CommentForm extends BaseForm {
      */
     public void setProcessId(String processId) {
         this.processId = processId;
-        try {
-            setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
-        }
     }
 
     /**
@@ -277,5 +274,18 @@ public class CommentForm extends BaseForm {
     public void setBatchHelper(BatchTaskHelper batchHelper) {
         this.batchHelper = batchHelper;
         setProcess(this.batchHelper.getCurrentStep().getProcess());
+    }
+
+    /**
+     * Set default comment.
+     */
+    public void newComment() {
+        if (getSizeOfPreviousStepsForProblemReporting() > 0) {
+            setCorrectionTaskId(getPreviousStepsForProblemReporting().get(0).getId().toString());
+        } else {
+            setCorrectionTaskId("");
+        }
+        setCommentMessage("");
+        setCorrectionComment(false);
     }
 }

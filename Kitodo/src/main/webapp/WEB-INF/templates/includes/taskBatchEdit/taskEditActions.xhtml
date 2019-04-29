@@ -90,7 +90,7 @@
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action131"
-                                                           action="#{CommentForm.addCommentToAll()}"
+                                                           action="#{CommentForm.addCommentToAllBatchProcesses()}"
                                                            actionListener="#{CommentForm.setCorrectionComment(true)}"
                                                            title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
@@ -142,7 +142,7 @@
                                                                  update="@form"
                                                                  styleClass="secondary right"
                                                                  immediate="true"
-                                                                 action="#{CommentForm.solveProblemForAll(item)}"
+                                                                 action="#{CommentForm.solveProblemForAllBatchProcesses(item)}"
                                                                  onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                                 </p:commandButton>
                                             </p:column>
