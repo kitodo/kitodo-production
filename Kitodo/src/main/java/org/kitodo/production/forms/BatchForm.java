@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,8 +30,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
+import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.UnreachableCodeException;
@@ -291,6 +294,20 @@ public class BatchForm extends BaseForm {
         }
     }
 
+    private void addCommentsToBatchProcesses (String message) throws DAOException {
+        List<Comment> commentList = new ArrayList<>();
+        for (Process p : this.selectedProcesses) {
+            Comment comment = new Comment ();
+            comment.setProcess(p);
+            comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
+            comment.setMessage(message);
+            comment.setType(CommentType.INFO);
+            comment.setCreationDate(new Date());
+            commentList.add(comment);
+        }
+        ServiceManager.getCommentService().saveList(commentList);
+    }
+
     /**
      * Add processes to Batch.
      */
@@ -304,10 +321,7 @@ public class BatchForm extends BaseForm {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
                 ServiceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
-                    for (Process p : this.selectedProcesses) {
-                        ServiceManager.getProcessService().addToWikiField(
-                            Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(selectedBatch)), p);
-                    }
+                    addCommentsToBatchProcesses(Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(selectedBatch)));
                     ServiceManager.getProcessService().saveList(this.selectedProcesses);
                 }
             }
@@ -331,10 +345,7 @@ public class BatchForm extends BaseForm {
             selectedBatch.getProcesses().removeAll(this.selectedProcesses);
             ServiceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
-                for (Process p : this.selectedProcesses) {
-                    ServiceManager.getProcessService().addToWikiField(
-                        Helper.getTranslation("removeFromBatch", ServiceManager.getBatchService().getLabel(selectedBatch)), p);
-                }
+                addCommentsToBatchProcesses(Helper.getTranslation("removeFromBatch", ServiceManager.getBatchService().getLabel(selectedBatch)));
                 ServiceManager.getProcessService().saveList(this.selectedProcesses);
             }
         }
@@ -395,10 +406,7 @@ public class BatchForm extends BaseForm {
 
             ServiceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
-                for (Process p : selectedProcesses) {
-                    ServiceManager.getProcessService().addToWikiField(
-                        Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(batch)), p);
-                }
+                addCommentsToBatchProcesses(Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(batch)));
                 ServiceManager.getProcessService().saveList(selectedProcesses);
             }
         }

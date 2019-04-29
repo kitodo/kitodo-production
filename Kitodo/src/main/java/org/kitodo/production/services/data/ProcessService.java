@@ -116,7 +116,6 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
-import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyContentFileHelper;
@@ -1573,83 +1572,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private DocketInterface initialiseDocketModule() {
         KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         return loader.loadModule();
-    }
-
-    /**
-     * Sets new value for wiki field.
-     *
-     * @param wikiField
-     *            string
-     * @param process
-     *            object
-     */
-    public void setWikiField(String wikiField, Process process) {
-        process.setWikiField(wikiField);
-    }
-
-    /**
-     * The addMessageToWikiField() method is a helper method which composes the new
-     * wiki field using a StringBuilder. The message is encoded using HTML entities
-     * to prevent certain characters from playing merry havoc when the message box
-     * shall be rendered in a browser later.
-     *
-     * @param message
-     *            the message to append
-     */
-    public Process addToWikiField(String message, Process process) {
-        StringBuilder composer = new StringBuilder();
-        if (Objects.nonNull(process.getWikiField()) && !process.getWikiField().isEmpty()) {
-            composer.append(process.getWikiField());
-            composer.append("\r\n");
-        }
-        composer.append("<p>");
-        composer.append(StringEscapeUtils.escapeHtml(message));
-        composer.append("</p>");
-        process.setWikiField(composer.toString());
-
-        return process;
-    }
-
-    /**
-     * The method addToWikiField() adds a message with a given level to the wiki
-     * field of the process. Four level strings will be recognized and result in
-     * different colors:
-     *
-     * <dl>
-     * <dt><code>debug</code></dt>
-     * <dd>gray</dd>
-     * <dt><code>error</code></dt>
-     * <dd>red</dd>
-     * <dt><code>user</code></dt>
-     * <dd>green</dd>
-     * <dt><code>warn</code></dt>
-     * <dd>orange</dd>
-     * <dt><i>any other value</i></dt>
-     * <dd>blue</dd>
-     * </dl>
-     *
-     * @param level
-     *            message colour, one of: "debug", "error", "info", "user" or
-     *            "warn"; any other value defaults to "info"
-     * @param message
-     *            text
-     */
-    public String addToWikiField(String level, String message, Process process) {
-        return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), level, message);
-    }
-
-    /**
-     * The method addToWikiField() adds a message signed by the given user to the
-     * wiki field of the process.
-     *
-     * @param user
-     *            to sign the message with
-     * @param message
-     *            to print
-     */
-    public void addToWikiField(User user, String message, Process process) {
-        String text = message + " (" + user.getSurname() + ")";
-        addToWikiField("user", text, process);
     }
 
     /**
