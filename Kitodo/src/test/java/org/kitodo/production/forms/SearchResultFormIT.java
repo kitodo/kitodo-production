@@ -84,6 +84,12 @@ public class SearchResultFormIT {
         resultList = searchResultForm.getFilteredList();
 
         Assert.assertEquals(2, resultList.size());
+
+        searchResultForm.setSearchQuery("problem");
+        searchResultForm.searchForProcessesBySearchQuery();
+        resultList = searchResultForm.getFilteredList();
+
+        Assert.assertEquals(1, resultList.size());
     }
 
     @Test

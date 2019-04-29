@@ -541,16 +541,6 @@ public class MockDatabase {
         thirdProcess.setTitle("DBConnectionTest");
         thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
-
-        Process fourthProcess = new Process();
-        fourthProcess.setTitle("Process for different client");
-        fourthProcess.setWikiField("correct fourth process");
-        localDate = new LocalDate(2017, 3, 10);
-        fourthProcess.setCreationDate(localDate.toDate());
-        fourthProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        fourthProcess.setProject(ServiceManager.getProjectService().getById(3));
-        fourthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getProcessService().save(fourthProcess);
     }
 
     private static void insertTemplates() throws DAOException, DataException {

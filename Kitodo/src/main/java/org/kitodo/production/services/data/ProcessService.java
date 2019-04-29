@@ -531,7 +531,8 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      *             when accessing the elasticsearch server fails
      */
     public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
-        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY, matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
+        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY,
+            matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
                 ProcessTypeField.TITLE.getKey(),
                 ProcessTypeField.PROJECT_TITLE.getKey(),

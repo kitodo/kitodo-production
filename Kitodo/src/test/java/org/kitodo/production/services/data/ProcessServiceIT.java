@@ -84,7 +84,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountAllProcesses() throws DataException {
-        assertEquals("Processes were not counted correctly!", Long.valueOf(4), processService.count());
+        assertEquals("Processes were not counted correctly!", Long.valueOf(3), processService.count());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.countDatabaseRows();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(4), amount);
+        assertEquals("Processes were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
@@ -112,13 +112,13 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetAllProcesses() throws Exception {
         List<Process> processes = processService.getAll();
-        assertEquals("Not all processes were found in database!", 4, processes.size());
+        assertEquals("Not all processes were found in database!", 3, processes.size());
     }
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
         List<Process> processes = processService.getAll(1, 10);
-        assertEquals("Not all processes were found in database!", 3, processes.size());
+        assertEquals("Not all processes were found in database!", 2, processes.size());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.getById(5);
+        Process foundProcess = processService.getById(4);
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
@@ -136,12 +136,12 @@ public class ProcessServiceIT {
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.getById(6);
+        foundProcess = processService.getById(5);
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(6);
+        processService.remove(5);
         exception.expect(DAOException.class);
-        processService.getById(6);
+        processService.getById(5);
     }
 
     @Test
@@ -173,18 +173,8 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldNotFindByMetadataContent() throws DataException {
+    public void shouldNotFindByAnything() throws DataException {
         assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
-    }
-
-    @Test
-    public void shouldFindByMetadataContentForCorrectClient() throws DataException, DAOException {
-        assertEquals(processNotFound, 0, processService.findByAnything("Forth").size());
-
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 2);
-        assertEquals(processNotFound, 1, processService.findByAnything("Forth").size());
-
-        SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
     @Test
