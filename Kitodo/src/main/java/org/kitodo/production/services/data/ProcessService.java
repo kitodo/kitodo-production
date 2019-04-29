@@ -156,8 +156,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
-    private static final List<String> METADATA_SEARCH_FIELDS = Arrays.asList(ConfigCore
-            .getStringArrayParameter(ParameterCore.METADATA_SEARCH_FIELDS));
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -502,24 +500,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Find processes by metadata in configured fields.
-     *
-     * @param metadataContent
-     *            The string, which should be found in metadata
-     * @return A List of found ProcessDTOs
-     */
-    public List<ProcessDTO> findByMetadataContent(String metadataContent) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        for (String searchField : METADATA_SEARCH_FIELDS) {
-            BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-            pairQuery.mustNot(matchQuery(METADATA_SEARCH_KEY + ".name", "").operator(Operator.AND));
-            pairQuery.must(matchQuery(METADATA_SEARCH_KEY + ".content", metadataContent).operator(Operator.AND));
-            query.should(pairQuery);
-        }
-        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), false);
-    }
-
-    /**
      * Find processes by id of project.
      *
      * @param id
@@ -567,18 +547,6 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         boolQuery.should(multiMatchQueryForProcessFields);
         boolQuery.should(wildcardQueryForProcessTitle);
         return findByQuery(boolQuery, false);
-    }
-
-    /**
-     * Find processes by title with wildcard.
-     *
-     * @param title
-     *            the title
-     * @return a list of processes
-     * @throws DataException when there is an error on conversion
-     */
-    public List<ProcessDTO> findDTOsByTitleWithWildcard(String title) throws DataException {
-        return convertJSONObjectsToDTOs(super.findByTitleWithWildcard(title), false);
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {

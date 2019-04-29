@@ -162,19 +162,19 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldNotFindByMetadata() throws DataException {
+        assertEquals("Process was found in index!", 0,
+                processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
+    }
+
+    @Test
     public void shouldFindByMetadataContent() throws DataException {
-        assertEquals(processNotFound, 1, processService.findByMetadataContent("Proc").size());
+        assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
     }
 
     @Test
     public void shouldNotFindByMetadataContent() throws DataException {
-        assertEquals(processNotFound, 0, processService.findByMetadataContent("Nope").size());
-    }
-
-    @Test
-    public void shouldNotFindByMetadata() throws DataException {
-        assertEquals("Process was found in index!", 0,
-            processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
+        assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
     }
 
     @Test
