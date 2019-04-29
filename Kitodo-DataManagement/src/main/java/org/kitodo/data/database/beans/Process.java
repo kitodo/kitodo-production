@@ -85,6 +85,9 @@ public class Process extends BaseTemplateBean {
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
+    @Column(name = "position")
+    private String position;
+
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> children;
 
@@ -317,6 +320,25 @@ public class Process extends BaseTemplateBean {
      */
     public void setParent(Process parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Get position.
+     *
+     * @return value of position
+     */
+    public String getPosition() {
+        return position;
+    }
+
+    /**
+     * Set position.
+     *
+     * @param position
+     *            as String
+     */
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     /**
