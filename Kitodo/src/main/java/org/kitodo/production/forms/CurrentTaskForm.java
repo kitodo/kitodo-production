@@ -16,9 +16,7 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -78,7 +76,6 @@ public class CurrentTaskForm extends BaseForm {
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
-    private Map<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
     private String addToWikiField = "";
     private String doneDirectoryName;
@@ -98,21 +95,6 @@ public class CurrentTaskForm extends BaseForm {
     public CurrentTaskForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTaskService()));
-        this.anzeigeAnpassen = new HashMap<>();
-        this.anzeigeAnpassen.put("lockings", false);
-        this.anzeigeAnpassen.put("selectionBoxes", false);
-        this.anzeigeAnpassen.put("processId", false);
-        this.anzeigeAnpassen.put("modules", false);
-        this.anzeigeAnpassen.put("batchId", false);
-        /*
-         * Vorgangsdatum generell anzeigen?
-         */
-        User user = getUser();
-        if (Objects.nonNull(user)) {
-            this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
-        } else {
-            this.anzeigeAnpassen.put("processDate", false);
-        }
         doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     }
 
@@ -754,14 +736,6 @@ public class CurrentTaskForm extends BaseForm {
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
         this.hideCorrectionTasks = hideCorrectionTasks;
         ServiceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
-    }
-
-    public Map<String, Boolean> getAnzeigeAnpassen() {
-        return this.anzeigeAnpassen;
-    }
-
-    public void setAnzeigeAnpassen(Map<String, Boolean> anzeigeAnpassen) {
-        this.anzeigeAnpassen = anzeigeAnpassen;
     }
 
     /**
