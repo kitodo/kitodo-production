@@ -91,6 +91,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
 
+    @Column(name = "typeExportable")
+    private boolean typeExportable = false;
+
     @Column(name = "scriptName")
     private String scriptName;
 
@@ -500,6 +503,14 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeAcceptClose(boolean typeAcceptClose) {
         this.typeAcceptClose = typeAcceptClose;
+    }
+
+    public boolean isTypeExportable() {
+        return this.typeExportable;
+    }
+
+    public void setTypeExportable(boolean typeExportable) {
+        this.typeExportable = typeExportable;
     }
 
     public boolean isTypeAutomatic() {
