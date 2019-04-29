@@ -287,7 +287,7 @@ public class GranularityForm {
      * @return the number of processes that will be created
      */
     public int getNumberOfProcesses() {
-        if (Objects.isNull(course.getNumberOfProcesses()) && Objects.nonNull(granularity)) {
+        if (Objects.nonNull(granularity)) {
             course.splitInto(granularity);
         }
         return course.getNumberOfProcesses();
