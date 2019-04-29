@@ -35,8 +35,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.config.ConfigCore;
@@ -88,11 +86,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Backing bean for the gallery panel.
      */
     private final GalleryPanel galleryPanel;
-
-    /**
-     * All file system locks that the user is currently holding.
-     */
-    private LockResult locks;
 
     /**
      * The path to the main file, to save it later.
@@ -173,9 +166,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String open(int id, String referringView) {
         try {
-            if (Objects.nonNull(locks)) {
-                locks.close();
-            }
             this.referringView = referringView;
             Helper.getRequestParameter("referringView");
             this.process = ServiceManager.getProcessService().getById(id);
@@ -210,16 +200,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 workPathUri.getPort(), workDirectoryPath.endsWith("/") ? workDirectoryPath.concat("meta.xml")
                         : workDirectoryPath + '/' + "meta.xml",
                 workPathUri.getQuery(), null);
-
-        locks = ServiceManager.getFileService().tryLock(mainFileUri, LockingMode.EXCLUSIVE);
-        if (!locks.isSuccessful()) {
-            Collection<String> conflicts = locks.getConflicts().get(mainFileUri);
-            if (Objects.isNull(conflicts)) {
-                conflicts = Collections.singletonList("");
-            }
-            Helper.setErrorMessage("cannotObtainLock", String.join(" ; ", conflicts));
-            return locks.isSuccessful();
-        }
 
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         ServiceManager.getFileService().searchForMedia(process, workpiece);
@@ -266,8 +246,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String close() {
         try {
-            locks.close();
-            locks = null;
             commentPanel.clear();
             metadataPanel.clear();
             structurePanel.clear();
@@ -293,13 +271,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     @Override
     protected void finalize() throws Throwable {
-        if (locks != null) {
-            try {
-                locks.close();
-            } catch (Throwable any) {
-                /* make sure finalize() can run through */
-            }
-        }
         super.finalize();
     }
 
@@ -338,7 +309,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             metadataPanel.preservePhysical();
             structurePanel.preserveLogical();
             structurePanel.preservePhysical();
-            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri, locks)) {
+            try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             return close();
@@ -380,10 +351,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     public GalleryPanel getGalleryPanel() {
         return galleryPanel;
-    }
-
-    LockResult getLocks() {
-        return this.locks;
     }
 
     public MetadataPanel getMetadataPanel() {

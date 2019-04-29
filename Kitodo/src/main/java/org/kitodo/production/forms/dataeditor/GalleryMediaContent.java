@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -25,7 +24,6 @@ import javax.faces.event.PhaseId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -120,27 +118,6 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Returns the locks necessary to access the images.
-     *
-     * <p>
-     * Note: We use an upgradeable read lock here, even if the upgrade is not
-     * intended. The background to this is that an immutable read lock would
-     * need to create read copies in the background, which is unnecessary.
-     *
-     * @return the locks necessary to access the images
-     */
-    Map<URI, LockingMode> getRequiredLocks() {
-        Map<URI, LockingMode> result = new HashMap<>(3);
-        if (Objects.nonNull(previewUri)) {
-            result.put(previewUri, LockingMode.UPGRADEABLE_READ);
-        }
-        if (Objects.nonNull(mediaViewUri)) {
-            result.put(mediaViewUri, LockingMode.UPGRADEABLE_READ);
-        }
-        return result;
-    }
-
-    /**
      * Returns the order number of the medium (to be displayed to the user).
      *
      * @return the order number
@@ -228,7 +205,7 @@ public class GalleryMediaContent {
          * that after transferring the data.
          */
         try {
-            InputStream previewData = ServiceManager.getFileService().read(uri, panel.getLocks());
+            InputStream previewData = ServiceManager.getFileService().read(uri);
             return new DefaultStreamedContent(previewData, mimeType);
         } catch (Exception e) {
             logger.catching(e);

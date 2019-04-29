@@ -38,8 +38,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
-import org.kitodo.api.filemanagement.LockResult;
-import org.kitodo.api.filemanagement.LockingMode;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -110,10 +108,6 @@ public class GalleryPanel {
         // like method isAccessGranted(String imagePath) in
         // MetadataProcessor:2643?
         return false;
-    }
-
-    LockResult getLocks() {
-        return dataEditor.getLocks();
     }
 
     /**
@@ -417,7 +411,6 @@ public class GalleryPanel {
         previewImageResolver = new HashMap<>();
 
         previewFolder = new Subfolder(process, project.getPreview());
-        Map<URI, LockingMode> lockRequests = new HashMap<>();
         for (MediaUnit mediaUnit : mediaUnits) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setMediaUnit(mediaUnit);
@@ -426,18 +419,12 @@ public class GalleryPanel {
             if (mediaContent.isShowingInPreview()) {
                 previewImageResolver.put(mediaContent.getId(), mediaContent);
             }
-            lockRequests.putAll(mediaContent.getRequiredLocks());
         }
 
-        lockRequests.putAll(addStripesRecursive(dataEditor.getWorkpiece().getRootElement()));
+        addStripesRecursive(dataEditor.getWorkpiece().getRootElement());
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
-        }
-
-        Map<URI, Collection<String>> conflicts = dataEditor.getLocks().tryLock(lockRequests);
-        if (!conflicts.isEmpty()) {
-            throw new LockingConflictsException(conflicts);
         }
     }
 
@@ -456,22 +443,19 @@ public class GalleryPanel {
         }
     }
 
-    private Map<URI, LockingMode> addStripesRecursive(IncludedStructuralElement structure) {
+    private void addStripesRecursive(IncludedStructuralElement structure) {
         GalleryStripe galleryStripe = new GalleryStripe(this, structure);
-        Map<URI, LockingMode> lockRequests = new HashMap<>();
         for (View view : structure.getViews()) {
             GalleryMediaContent mediaContent = createGalleryMediaContent(view);
             galleryStripe.getMedias().add(mediaContent);
-            lockRequests.putAll(mediaContent.getRequiredLocks());
             if (mediaContent.isShowingInPreview()) {
                 previewImageResolver.put(mediaContent.getId(), mediaContent);
             }
         }
         stripes.add(galleryStripe);
         for (IncludedStructuralElement child : structure.getChildren()) {
-            lockRequests.putAll(addStripesRecursive(child));
+            addStripesRecursive(child);
         }
-        return lockRequests;
     }
 
     private GalleryMediaContent createGalleryMediaContent(View view) {
