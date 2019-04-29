@@ -20,6 +20,7 @@ SET SQL_SAFE_UPDATES = 0;
 -- 3. Update correction column with data from priority column
 --
 UPDATE task SET correction = 1 WHERE priority = 10;
+UPDATE task SET correction = 0 WHERE priority <> 10;
 
 -- 4. Switch on safe updates
 --
