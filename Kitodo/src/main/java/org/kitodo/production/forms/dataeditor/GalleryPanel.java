@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -195,19 +194,15 @@ public class GalleryPanel {
      * @return a Primefaces object that handles the output of media data
      */
     public StreamedContent getPreviewData() {
-        try {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
-                String id = context.getExternalContext().getRequestParameterMap().get("id");
-                GalleryMediaContent mediaContent = previewImageResolver.get(id);
-                if (Objects.nonNull(mediaContent)) {
-                    logger.trace("Serving image request {}", id);
-                    return mediaContent.getPreviewData();
-                }
-                logger.debug("Cannot serve image request, id = {}", id);
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
+            String id = context.getExternalContext().getRequestParameterMap().get("id");
+            GalleryMediaContent mediaContent = previewImageResolver.get(id);
+            if (Objects.nonNull(mediaContent)) {
+                logger.trace("Serving image request {}", id);
+                return mediaContent.getPreviewData();
             }
-        } catch (Exception e) {
-            logger.catching(e);
+            logger.debug("Cannot serve image request, id = {}", id);
         }
         return new DefaultStreamedContent();
     }
@@ -298,7 +293,7 @@ public class GalleryPanel {
             int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
             int fromMediaIndex = Integer.parseInt(dragUnassignedPageMatcher.group(1));
             GalleryMediaContent mediaContent = medias.stream()
-                    .filter(c -> (Objects.isNull(getLogicalStructureOfMedia(c))))
+                    .filter(c -> Objects.isNull(getLogicalStructureOfMedia(c)))
                     .collect(Collectors.toList()).get(fromMediaIndex);
             GalleryStripe toStripe = stripes.get(toStripeIndex);
             toStripe.getStructure().getViews().add(mediaContent.getView());
@@ -467,6 +462,15 @@ public class GalleryPanel {
                 mediaUnit.getOrderlabel(), previewUri, mediaViewUri);
     }
 
+    /**
+     * Return the GalleryStripe instance representing the logical structure element to which the Media represented
+     * by the given GalleryMediaContent instance is assigned. Return null, if Media is not assigned to any logical
+     * structure element.
+     *
+     * @param galleryMediaContent
+     *          Media
+     * @return GalleryStripe representing the logical structure element to which the Media is assigned
+     */
     public GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
         for (GalleryStripe galleryStripe : stripes) {
             for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {

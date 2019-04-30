@@ -394,7 +394,7 @@ public class StructurePanel implements Serializable {
         try {
             dataEditor.switchStructure();
             previouslySelectedLogicalNode = selectedLogicalNode;
-        } catch (Exception e) {
+        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             selectedLogicalNode = previouslySelectedLogicalNode;
         }
@@ -408,7 +408,7 @@ public class StructurePanel implements Serializable {
         try {
             dataEditor.switchMediaUnit();
             previouslySelectedPhysicalNode = selectedPhysicalNode;
-        } catch (Exception e) {
+        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
             selectedPhysicalNode = previouslySelectedPhysicalNode;
         }
@@ -530,7 +530,9 @@ public class StructurePanel implements Serializable {
         LinkedList<MediaUnit> dragParents;
         if (divisionView.getAllowedSubstructuralElements().containsKey(dragUnit.getType())) {
             dragParents = MetadataEditor.getAncestorsOfMediaUnit(dragUnit, dataEditor.getWorkpiece().getMediaUnit());
-            if (!dragParents.isEmpty()) {
+            if (dragParents.isEmpty()) {
+                Helper.setErrorMessage("No parents of media unit " + dragUnit.getType() + " found!");
+            } else {
                 MediaUnit parentUnit = dragParents.get(dragParents.size() - 1);
                 if (parentUnit.getChildren().contains(dragUnit)) {
                     preservePhysical();
@@ -539,8 +541,6 @@ public class StructurePanel implements Serializable {
                     Helper.setErrorMessage("Parents of media unit " + dragUnit.getType() + " do not contain media "
                             + "unit!");
                 }
-            } else {
-                Helper.setErrorMessage("No parents of media unit " + dragUnit.getType() + " found!");
             }
         } else {
             Helper.setErrorMessage("Media unit of type '" + dragUnit.getType()

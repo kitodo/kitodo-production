@@ -96,13 +96,13 @@ public class MetadataPanel implements Serializable {
                         }
                     } else if (row instanceof BooleanMetadataTableRow) {
                         BooleanMetadataTableRow booleanInput = (BooleanMetadataTableRow) row;
-                        if (!booleanInput.isOn()) {
-                            booleanInput.setOn(!addMetadataValue.isEmpty());
+                        if (!booleanInput.isActive()) {
+                            booleanInput.setActive(!addMetadataValue.isEmpty());
                         }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
     }
@@ -163,23 +163,23 @@ public class MetadataPanel implements Serializable {
     }
 
     void showLogical(Optional<IncludedStructuralElement> optionalStructure) {
-        if (!optionalStructure.isPresent()) {
-            logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
-        } else {
+        if (optionalStructure.isPresent()) {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+                    optionalStructure.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
             logicalMetadataTable = new FieldedMetadataTableRow(this, optionalStructure.get(), divisionView);
+        } else {
+            logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         }
 
     }
 
     void showPhysical(Optional<MediaUnit> optionalMediaUnit) {
-        if (!optionalMediaUnit.isPresent()) {
-            physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
-        } else {
+        if (optionalMediaUnit.isPresent()) {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
-                optionalMediaUnit.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
+                    optionalMediaUnit.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
             physicalMetadataTable = new FieldedMetadataTableRow(this, optionalMediaUnit.get().getMetadata(), divisionView);
+        } else {
+            physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
         }
 
     }

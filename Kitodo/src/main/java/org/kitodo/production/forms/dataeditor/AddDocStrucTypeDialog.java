@@ -11,7 +11,11 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.kitodo.production.metadata.InsertionPosition.AFTER_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.BEFOR_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT;
 import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT;
+import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,16 +73,12 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     public void addMultiDocStrucSubmitBtnClick() {
-        try {
-            if (dataEditor.getSelectedStructure().isPresent()) {
-                MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
-                    dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
-                    docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
-                    inputMetaDataValueValue);
-                dataEditor.refreshStructurePanel();
-            }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
+                dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
+                docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
+                inputMetaDataValueValue);
+            dataEditor.refreshStructurePanel();
         }
     }
 
@@ -87,14 +87,10 @@ public class AddDocStrucTypeDialog {
      * submit btn command button.
      */
     public void addSingleDocStrucSubmitBtnClick() {
-        try {
-            if (dataEditor.getSelectedStructure().isPresent()) {
-                MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(),
-                    dataEditor.getSelectedStructure().get(), docStructPositionSelectionSelectedItem, getViewsToAdd());
-                dataEditor.refreshStructurePanel();
-            }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            MetadataEditor.addStructure(docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(),
+                dataEditor.getSelectedStructure().get(), docStructPositionSelectionSelectedItem, getViewsToAdd());
+            dataEditor.refreshStructurePanel();
         }
     }
 
@@ -236,16 +232,16 @@ public class AddDocStrucTypeDialog {
     private void prepareDocStructPositionSelectionItems(boolean rootNode) {
         docStructPositionSelectionItems = new ArrayList<>();
         if (!rootNode) {
-            docStructPositionSelectionItems.add(new SelectItem(InsertionPosition.BEFOR_CURRENT_ELEMENT,
+            docStructPositionSelectionItems.add(new SelectItem(BEFOR_CURRENT_ELEMENT,
                     Helper.getTranslation("vorDasAktuelleElement")));
-            docStructPositionSelectionItems.add(new SelectItem(InsertionPosition.AFTER_CURRENT_ELEMENT,
+            docStructPositionSelectionItems.add(new SelectItem(AFTER_CURRENT_ELEMENT,
                     Helper.getTranslation("hinterDasAktuelleElement")));
         }
-        docStructPositionSelectionItems.add(new SelectItem(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT,
+        docStructPositionSelectionItems.add(new SelectItem(FIRST_CHILD_OF_CURRENT_ELEMENT,
                 Helper.getTranslation("alsErstesKindDesAktuellenElements")));
-        docStructPositionSelectionItems.add(new SelectItem(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT,
+        docStructPositionSelectionItems.add(new SelectItem(LAST_CHILD_OF_CURRENT_ELEMENT,
                 Helper.getTranslation("alsLetztesKindDesAktuellenElements")));
-        docStructPositionSelectionItems.add(new SelectItem(InsertionPosition.PARENT_OF_CURRENT_ELEMENT,
+        docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
                 Helper.getTranslation("alsElternteilDesAktuellenElements")));
     }
 

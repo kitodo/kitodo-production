@@ -12,10 +12,10 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -207,7 +207,7 @@ public class GalleryMediaContent {
         try {
             InputStream previewData = ServiceManager.getFileService().read(uri);
             return new DefaultStreamedContent(previewData, mimeType);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
                     + e.getClass().getSimpleName() + ": " + e.getMessage() + "</p>" + System.lineSeparator() + "</html>"

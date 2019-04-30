@@ -187,7 +187,7 @@ public class Paginator implements Iterator<String> {
         }
         if (firstFragment == null) { // static text only
             valueFull = 0;
-        } else if (firstFragment == lastFragment) { // only one counting element
+        } else if (firstFragment.equals(lastFragment)) { // only one counting element
             valueFull = firstFragment.getInitialValue();
             if (firstFragment.getIncrement() == null) {
                 firstFragment.setIncrement(new HalfInteger(1, false));

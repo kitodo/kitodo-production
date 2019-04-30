@@ -871,12 +871,12 @@ public class MetadataProcessor {
                         newChildren.addAll(createdElements);
                     }
                     for (LegacyDocStructHelperInterface child : childrenBefore) {
-                        if (child == docStruct && insertionPosition
+                        if (child.equals(docStruct) && insertionPosition
                                 .equals(InsertionPosition.BEFOR_CURRENT_ELEMENT)) {
                             newChildren.addAll(createdElements);
                         }
                         newChildren.add(child);
-                        if (child == docStruct && insertionPosition
+                        if (child.equals(docStruct) && insertionPosition
                                 .equals(InsertionPosition.AFTER_CURRENT_ELEMENT)) {
                             newChildren.addAll(createdElements);
                         }

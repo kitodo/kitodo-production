@@ -91,12 +91,11 @@ public class MetadataEditor {
     public static IncludedStructuralElement addStructure(String type, Workpiece workpiece, IncludedStructuralElement structure,
             InsertionPosition position, List<View> viewsToAdd) {
         LinkedList<IncludedStructuralElement> parents = getAncestorsOfStructure(structure, workpiece.getRootElement());
-        if (parents.isEmpty()) {
-            if ((position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
+        if (parents.isEmpty()
+                && (position.equals(InsertionPosition.AFTER_CURRENT_ELEMENT)
                     || position.equals(InsertionPosition.BEFOR_CURRENT_ELEMENT))) {
-                Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
-                return null;
-            }
+            Helper.setErrorMessage("No parent found for currently selected structure to which new structure can be appended!");
+            return null;
         }
         IncludedStructuralElement newStructure = new IncludedStructuralElement();
         newStructure.setType(type);
@@ -246,8 +245,8 @@ public class MetadataEditor {
         return new LinkedList<>();
     }
 
-    public static void moveView(View view, IncludedStructuralElement from, IncludedStructuralElement to) {
-        from.getViews().remove(view);
-        to.getViews().add(view);
+    public static void moveView(View view, IncludedStructuralElement fromElement, IncludedStructuralElement toElement) {
+        fromElement.getViews().remove(view);
+        toElement.getViews().add(view);
     }
 }

@@ -713,7 +713,7 @@ public class FileService {
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        URI processBaseUri = process.getProcessBaseUri();
+        //URI processBaseUri = process.getProcessBaseUri();
         if (/* Objects.isNull(processBaseUri) && */ Objects.nonNull(process.getId())) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
         }
@@ -937,7 +937,7 @@ public class FileService {
                     mediaUnit.getMediaFiles().put(entry.getKey(), mediaFile);
                 }
                 String fileCanonical = subfolder.getCanonical(mediaFile);
-                if (unitCanonical.equals("")) {
+                if ("".equals(unitCanonical)) {
                     unitCanonical = fileCanonical;
                 } else if (unitCanonical.equals(fileCanonical)) {
                     continue;
@@ -946,7 +946,7 @@ public class FileService {
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
-            if (mediaUnit.getMediaFiles().size() > 0 && unitCanonical.equals("")) {
+            if (mediaUnit.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
                 throw new IllegalArgumentException("Missing canonical file name part in media unit " + mediaUnit);
             }
             canonicals.add(unitCanonical);
@@ -1051,6 +1051,7 @@ public class FileService {
                 break;
             default:
                 value = " - ";
+                break;
         }
         for (int i = mediaUnits.size() - 1; i >= 0; i--) {
             MediaUnit mediaUnit = mediaUnits.get(i);

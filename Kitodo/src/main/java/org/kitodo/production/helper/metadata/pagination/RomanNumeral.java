@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper.metadata.pagination;
 
+import java.util.Objects;
+
 /**
  * A roman numeral as part of a pagination sequence.
  */
@@ -24,13 +26,13 @@ public class RomanNumeral implements Fragment {
     /**
      * These are the numerical values of the letters used for roman numerals.
      */
-    private static final int I = 1;
-    private static final int V = 5;
-    private static final int X = 10;
-    private static final int L = 50;
-    private static final int C = 100;
-    private static final int D = 500;
-    private static final int M = 1000;
+    private static final int NUMERAL_I = 1;
+    private static final int NUMERAL_V = 5;
+    private static final int NUMERAL_X = 10;
+    private static final int NUMERAL_L = 50;
+    private static final int NUMERAL_C = 100;
+    private static final int NUMERAL_D = 500;
+    private static final int NUMERAL_M = 1000;
 
     /**
      * These are the string constants that represent the ones of the roman numeral.
@@ -45,17 +47,18 @@ public class RomanNumeral implements Fragment {
     /**
      * Returns the Roman numeral for the value as string.
      *
-     * @param value
+     * @param inputValue
      *            value to format
      * @param uppercase
      *            if true, the Roman numeral is upper case, otherwise lower case
      * @return Roman numeral for the value
      */
-    public static String format(int value, boolean uppercase) {
+    public static String format(int inputValue, boolean uppercase) {
+        int value = inputValue;
         StringBuilder result = new StringBuilder();
         while (value >= 1000) {
             result.append(uppercase ? 'M' : 'm');
-            value -= M;
+            value -= NUMERAL_M;
         }
         result.append(HUNDREDS[value / 100]);
         value %= 100;
@@ -84,48 +87,48 @@ public class RomanNumeral implements Fragment {
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
                 case 'c':
-                    if (result >= D) {
-                        result -= C;
+                    if (result >= NUMERAL_D) {
+                        result -= NUMERAL_C;
                     } else {
-                        result += C;
+                        result += NUMERAL_C;
                     }
                     break;
                 case 'd':
-                    if (result >= M) {
-                        result -= D;
+                    if (result >= NUMERAL_M) {
+                        result -= NUMERAL_D;
                     } else {
-                        result += D;
+                        result += NUMERAL_D;
                     }
                     break;
                 case 'i':
-                    if (result >= V) {
-                        result -= I;
+                    if (result >= NUMERAL_V) {
+                        result -= NUMERAL_I;
                     } else {
-                        result += I;
+                        result += NUMERAL_I;
                     }
                     break;
                 case 'l':
-                    if (result >= C) {
-                        result -= L;
+                    if (result >= NUMERAL_C) {
+                        result -= NUMERAL_L;
                     } else {
-                        result += L;
+                        result += NUMERAL_L;
                     }
                     break;
                 case 'm':
-                    result += M;
+                    result += NUMERAL_M;
                     break;
                 case 'v':
-                    if (result >= X) {
-                        result -= V;
+                    if (result >= NUMERAL_X) {
+                        result -= NUMERAL_V;
                     } else {
-                        result += V;
+                        result += NUMERAL_V;
                     }
                     break;
                 case 'x':
-                    if (result >= L) {
-                        result -= X;
+                    if (result >= NUMERAL_L) {
+                        result -= NUMERAL_X;
                     } else {
-                        result += X;
+                        result += NUMERAL_X;
                     }
                     break;
                 default:
@@ -177,6 +180,6 @@ public class RomanNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return format(value, uppercase) + (increment != null ? " (" + increment + ")" : " (default)");
+        return format(value, uppercase) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
     }
 }

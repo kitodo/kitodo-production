@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper.metadata.pagination;
 
+import java.util.Objects;
+
 /**
  * A decimal numeral as part of a pagination sequence.
  */
@@ -70,6 +72,6 @@ public class DecimalNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return String.format(digits, value) + (increment != null ? " (" + increment + ")" : " (default)");
+        return String.format(digits, value) + (Objects.nonNull(increment) ? " (" + increment + ")" : " (default)");
     }
 }

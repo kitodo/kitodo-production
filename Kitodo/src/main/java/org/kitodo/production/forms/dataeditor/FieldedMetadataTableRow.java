@@ -437,7 +437,7 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
             metadata.addAll(clipboard);
             clipboard.clear();
             createMetadataTable();
-        } catch (Exception e) {
+        } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
     }

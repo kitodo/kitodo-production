@@ -42,7 +42,7 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     /**
      * Whether the switch is on or off.
      */
-    private boolean on;
+    private boolean active;
 
     /**
      * An additional description text to be printed with the switch.
@@ -65,7 +65,7 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
             SimpleMetadataViewInterface settings, MetadataEntry data) {
 
         super(panel, container, settings);
-        this.on = Objects.nonNull(data);
+        this.active = Objects.nonNull(data);
         Iterator<Entry<String, String>> selectItems = settings.getSelectItems().entrySet().iterator();
         this.optionLabel = selectItems.hasNext() ? selectItems.next().getValue() : "";
     }
@@ -78,9 +78,9 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     @Override
     public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
         if (!isValid()) {
-            throw new InvalidMetadataValueException(label, settings.convertBoolean(on).orElse(""));
+            throw new InvalidMetadataValueException(label, settings.convertBoolean(active).orElse(""));
         }
-        Optional<String> value = settings.convertBoolean(on);
+        Optional<String> value = settings.convertBoolean(active);
         if (value.isPresent()) {
             MetadataEntry entry = new MetadataEntry();
             entry.setKey(settings.getId());
@@ -105,9 +105,9 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             if (!isValid()) {
-                throw new InvalidMetadataValueException(label, settings.convertBoolean(on).orElse(""));
+                throw new InvalidMetadataValueException(label, settings.convertBoolean(active).orElse(""));
             }
-            return Pair.of(super.getStructureFieldSetter(settings), settings.convertBoolean(on).orElse(null));
+            return Pair.of(super.getStructureFieldSetter(settings), settings.convertBoolean(active).orElse(null));
         } else {
             return null;
         }
@@ -118,18 +118,18 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
      *
      * @return whether the switch is on
      */
-    public boolean isOn() {
-        return on;
+    public boolean isActive() {
+        return active;
     }
 
     private boolean isValid() {
-        Optional<String> value = settings.convertBoolean(on);
+        Optional<String> value = settings.convertBoolean(active);
         return !value.isPresent() || settings.isValid(value.get());
     }
 
     @Override
     public void validatorQuery(FacesContext context, UIComponent component, Object value) {
-        if ((value instanceof Boolean) && (Boolean) value) {
+        if (value instanceof Boolean && (Boolean) value) {
             String stringValue = settings.convertBoolean((Boolean) value).orElseThrow(IllegalStateException::new);
             if (!settings.isValid(stringValue)) {
                 String message = Helper.getTranslation("dataEditor.invalidMetadataValue",
@@ -144,10 +144,10 @@ public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements S
     /**
      * Setter if the user changes the switch.
      *
-     * @param on
+     * @param active
      *            whether the switch is on
      */
-    public void setOn(boolean on) {
-        this.on = on;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

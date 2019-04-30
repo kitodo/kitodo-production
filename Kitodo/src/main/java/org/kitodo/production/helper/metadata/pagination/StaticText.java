@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper.metadata.pagination;
 
+import java.util.Objects;
+
 /**
  * A static piece of text as part of a pagination sequence. The text may either
  * appear on the front, back, or both sides of a sheet.
@@ -63,8 +65,8 @@ public class StaticText implements Fragment {
 
     @Override
     public String toString() {
-        return '"' + value + "\" (" + (increment != null ? increment : "default") + (page != null ? ", " + page : "")
-                + ")";
+        return '"' + value + "\" (" + (Objects.nonNull(increment) ? increment : "default") + (page != null ? ", "
+                + page : "") + ")";
     }
 
 }

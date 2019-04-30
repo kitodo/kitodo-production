@@ -17,11 +17,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +38,8 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -176,7 +175,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 return referringView;
             }
             init();
-        } catch (Exception e) {
+        } catch (IOException | URISyntaxException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return referringView;
         }
@@ -239,29 +238,23 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Releases the locks and clears all remaining content from the data editor
-     * form.
+     * Clears all remaining content from the data editor form.
      *
      * @return the referring view, to return there
      */
     public String close() {
-        try {
-            commentPanel.clear();
-            metadataPanel.clear();
-            structurePanel.clear();
-            workpiece = null;
-            mainFileUri = null;
-            ruleset = null;
-            process = null;
-            user = null;
-            if (referringView.contains("?")) {
-                return referringView + "&faces-redirect=true";
-            } else {
-                return referringView + "?faces-redirect=true";
-            }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
+        commentPanel.clear();
+        metadataPanel.clear();
+        structurePanel.clear();
+        workpiece = null;
+        mainFileUri = null;
+        ruleset = null;
+        process = null;
+        user = null;
+        if (referringView.contains("?")) {
+            return referringView + "&faces-redirect=true";
+        } else {
+            return referringView + "?faces-redirect=true";
         }
     }
 
@@ -282,18 +275,18 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece,
                 ruleset);
             State state = validationResult.getState();
-            if (!State.ERROR.equals(state)) {
-                Helper.setMessage("dataEditor.validation.state.".concat(state.toString().toLowerCase()));
-                for (String message : validationResult.getResultMessages()) {
-                    Helper.setMessage(message);
-                }
-            } else {
+            if (State.ERROR.equals(state)) {
                 Helper.setErrorMessage("dataEditor.validation.state.error");
                 for (String message : validationResult.getResultMessages()) {
                     Helper.setErrorMessage(message);
                 }
+            } else {
+                Helper.setMessage("dataEditor.validation.state.".concat(state.toString().toLowerCase()));
+                for (String message : validationResult.getResultMessages()) {
+                    Helper.setMessage(message);
+                }
             }
-        } catch (Exception e) {
+        } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -313,11 +306,10 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             return close();
-        } catch (Exception e) {
+        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-
     }
 
     public void deleteButtonClick() {

@@ -14,6 +14,7 @@ package org.kitodo.production.helper;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -68,7 +69,7 @@ public class StringComparator implements Comparator<String> {
         private Tokenizer(String input, boolean caseInsensitive) {
             this.input = input;
             position = SYMBOL;
-            stringLength = input != null ? input.length() : -1;
+            stringLength = Objects.nonNull(input) ? input.length() : -1;
             insert = NONE;
             this.caseInsensitive = caseInsensitive;
         }
@@ -104,10 +105,7 @@ public class StringComparator implements Comparator<String> {
                 return new int[] { SYMBOL, codePoint };
             }
             short type = TYPES[codePoint];
-            if (type != 1) {
-                insert = INSERTS[codePoint];
-                return new int[] { type, BASES[codePoint] };
-            } else {
+            if (type == 1) {
                 int value = BASES[codePoint];
                 int leadingZeroes = value == 0 ? 1 : 0;
                 while (position < stringLength && TYPES[codePoint = currentCodePoint()] == 1) {
@@ -118,6 +116,9 @@ public class StringComparator implements Comparator<String> {
                     position++;
                 }
                 return new int[] { 1, value, leadingZeroes };
+            } else {
+                insert = INSERTS[codePoint];
+                return new int[] { type, BASES[codePoint] };
             }
         }
     }
