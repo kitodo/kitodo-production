@@ -69,6 +69,9 @@ public class TaskType extends BaseType<Task> {
         if (Objects.nonNull(task.getProcess()) && Objects.nonNull(task.getProcess().getProject())) {
             return getId(task.getProcess().getProject().getClient());
         }
+        if (Objects.nonNull(task.getTemplate()) && Objects.nonNull(task.getTemplate().getClient())) {
+            return getId(task.getTemplate().getClient());
+        }
         return 0;
     }
 }
