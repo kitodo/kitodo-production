@@ -67,15 +67,17 @@ public class WikiFieldHelper {
                 String oldComments = comments[0];
                 oldComments = "<messages>" + oldComments + "</messages>";
                 Document document = convertStringToDocument(oldComments);
-                transformOldForamtWikifieldToComments(document, process);
+                transformOldFormatWikifieldToComments(document, process);
             }
             List<String> list = new ArrayList<>(Arrays.asList(comments));
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
-            transformNewForamtWikifieldToComments(comments, process);
+            transformNewFormatWikifieldToComments(comments, process);
             try {
                 deleteProcessCorrectionProperties(process);
-            } catch (DataException | DAOException e) {
+                process.setWikiField("");
+                ServiceManager.getProcessService().save(process);
+            } catch (DataException e) {
                 throw new DataException(e);
             }
         }
@@ -178,7 +180,7 @@ public class WikiFieldHelper {
         <p>Orange K  Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla </p>
         <p>Red K Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla</p>
     */
-    private static void transformNewForamtWikifieldToComments(String[] messages, Process process) {
+    private static void transformNewFormatWikifieldToComments(String[] messages, Process process) {
         List<Comment> newComments = new ArrayList<>();
         for (String message : messages) {
             String lang = getMessageLanguage(message);
@@ -237,7 +239,7 @@ public class WikiFieldHelper {
         <font color="#006600">Jun 17, 2016 10:36:43 AM: bla bla (Admin, test)</font><br/>
         <font color="#0033CC">Jun 17, 2016 10:40:43 AM: bla bla (Admin, test)</font>
     */
-    private static void transformOldForamtWikifieldToComments(Document document, Process process) {
+    private static void transformOldFormatWikifieldToComments(Document document, Process process) {
         Element root = document.getDocumentElement();
         NodeList nodeList = root.getElementsByTagName("font");
         List<Comment> commentList = new ArrayList<>();
@@ -345,17 +347,16 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static void deleteProcessCorrectionProperties(Process process) throws DataException, DAOException {
+    private static void deleteProcessCorrectionProperties(Process process) throws DataException {
         List<Property> properties = process.getProperties();
         for (Property property : properties) {
             if (property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
                     || property.getTitle().equals(Helper.getTranslation("correctionPerformed"))) {
-                Integer propertyId = property.getId();
                 property.getProcesses().clear();
                 process.getProperties().remove(property);
-                process.setWikiField("");
+                Integer propertyId = property.getId();
                 ServiceManager.getProcessService().save(process);
-                ServiceManager.getPropertyService().removeFromDatabase(propertyId);
+                ServiceManager.getPropertyService().remove(propertyId);
             }
         }
     }

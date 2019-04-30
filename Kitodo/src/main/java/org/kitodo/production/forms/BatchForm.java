@@ -296,9 +296,9 @@ public class BatchForm extends BaseForm {
 
     private void addCommentsToBatchProcesses (String message) throws DAOException {
         List<Comment> commentList = new ArrayList<>();
-        for (Process p : this.selectedProcesses) {
+        for (Process process : this.selectedProcesses) {
             Comment comment = new Comment ();
-            comment.setProcess(p);
+            comment.setProcess(process);
             comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
             comment.setMessage(message);
             comment.setType(CommentType.INFO);

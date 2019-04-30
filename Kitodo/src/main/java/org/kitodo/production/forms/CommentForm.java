@@ -44,16 +44,21 @@ public class CommentForm extends BaseForm {
     private BatchTaskHelper batchHelper;
 
 
+    /**
+     * Get all process Comments.
+     *
+     * @return List of Comments.
+     */
     public List<Comment> getAllComments() {
         try {
             setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
+            Helper.setErrorMessage("Unable to find process with ID " + this.processId, logger, e);
         }
         try {
             WikiFieldHelper.transformWikiFieldToComment(this.process);
         } catch (DataException e) {
-            Helper.setErrorMessage("Specific message for transforming messages", logger, e);
+            Helper.setErrorMessage("Error in conversion of Wiki field to comments: ", logger, e);
         }
         return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
     }
