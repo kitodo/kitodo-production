@@ -45,7 +45,6 @@ import org.kitodo.production.helper.Helper;
  * label of the meta-data panel is not used.
  */
 public class FieldedMetadataTableRow extends MetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * An empty meta-data group for the empty meta-data panel showing. The empty

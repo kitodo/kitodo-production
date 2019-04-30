@@ -17,7 +17,6 @@ import javax.faces.model.SelectItem;
  * Backing bean for a JSF select item with an image.
  */
 public class IllustratedSelectItem extends SelectItem {
-    private static final long serialVersionUID = 1L;
 
     private String image;
 

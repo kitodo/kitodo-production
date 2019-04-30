@@ -37,7 +37,6 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 public class StructurePanel implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private DataEditorForm dataEditor;
 

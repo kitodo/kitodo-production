@@ -29,7 +29,6 @@ import org.kitodo.production.helper.Helper;
  * Backing bean for the meta-data panel of the meta-data editor.
  */
 public class MetadataPanel implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private String addMetadataKeySelectedItem = "";
 

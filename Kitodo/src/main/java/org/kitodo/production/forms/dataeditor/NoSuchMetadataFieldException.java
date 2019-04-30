@@ -16,7 +16,6 @@ import java.util.Arrays;
 import org.kitodo.production.helper.Helper;
 
 public class NoSuchMetadataFieldException extends NoSuchFieldException {
-    private static final long serialVersionUID = 1L;
 
     /**
      * The ID string on the non-existing field.

@@ -46,7 +46,6 @@ import org.kitodo.production.services.ServiceManager;
 @Named("DataEditorForm")
 @SessionScoped
 public class DataEditorForm implements RulesetSetupInterface, Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Indicates to JSF to navigate to the web page containing the meta-data

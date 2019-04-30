@@ -21,7 +21,6 @@ import org.kitodo.production.helper.Helper;
  * An error message that can be thrown if a meta-data value is invalid.
  */
 public class InvalidMetadataValueException extends InvalidAttributeValueException {
-    private static final long serialVersionUID = 1L;
 
     /**
      * An identifier for the key whose value is incorrect.
@@ -35,7 +34,7 @@ public class InvalidMetadataValueException extends InvalidAttributeValueExceptio
 
     /**
      * Creates a new invalid meta-data value exception.
-     * 
+     *
      * @param key
      *            the (translated) key whose value is incorrect
      * @param value

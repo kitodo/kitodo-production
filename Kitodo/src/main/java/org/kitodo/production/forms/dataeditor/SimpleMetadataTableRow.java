@@ -25,7 +25,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
  * Provides functions that are common to all input elements.
  */
 abstract class SimpleMetadataTableRow extends MetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Container to store the ruleset settings.

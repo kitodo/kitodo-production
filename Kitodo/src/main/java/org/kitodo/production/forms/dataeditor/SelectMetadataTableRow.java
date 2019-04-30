@@ -40,7 +40,6 @@ import org.kitodo.production.helper.Helper;
  * The meta-data input is some kind of select input.
  */
 public class SelectMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Converts the select items map to the select items type required by JSF to

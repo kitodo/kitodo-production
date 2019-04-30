@@ -18,7 +18,6 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.primefaces.event.NodeSelectEvent;
 
 public class StructureTreeNode implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private final Object dataObject;
     private final String label;

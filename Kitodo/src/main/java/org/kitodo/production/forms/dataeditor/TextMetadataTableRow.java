@@ -31,7 +31,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.production.helper.Helper;
 
 public class TextMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private String value;
 

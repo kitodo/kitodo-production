@@ -25,7 +25,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.production.helper.Helper;
 
 abstract class MetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Describes the relationship between the domain in the rule set and the

@@ -37,7 +37,6 @@ import org.kitodo.production.helper.Helper;
  * A row on the meta-data panel that contains an on/off switch.
  */
 public class BooleanMetadataTableRow extends SimpleMetadataTableRow implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * Whether the switch is on or off.
