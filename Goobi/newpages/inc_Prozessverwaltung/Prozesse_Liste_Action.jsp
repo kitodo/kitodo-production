@@ -221,6 +221,8 @@
                                             onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:false'" />
                                         <h:outputText styleClass="goobiScriptLink" value="copyData"
                                             onclick="document.getElementById('goobiScriptfield').value='action:copyData <rule(s)>'" />
+                                        <h:outputText styleClass="goobiScriptLink" value="rewriteProcessMetadata"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:rewriteProcessMetadata'" />
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
