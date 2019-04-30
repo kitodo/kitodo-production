@@ -124,7 +124,7 @@ input.ui-state-error {
 
 .ui-button.secondary,
 .ui-widget-content .ui-button.secondary,
-.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label  {
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
     background: var(--pure-white);
     border: solid 1px var(--light-blue);
     color: var(--light-blue);
@@ -227,9 +227,13 @@ a.plain.ui-state-hover,
 }
 
 a.plain.ui-state-disabled,
-.ui-button.ui-state-disabled {
+.ui-button.ui-state-disabled,
+.ui-commandlink:disabled,
+.ui-commandlink.disabled,
+.ui-commandlink.ui-state-disabled {
     color: var(--medium-gray);
     cursor: default;
+    opacity: initial;
 }
 
 .ui-state-default,
@@ -440,36 +444,37 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-chkbox-icon {
     border: 1px solid var(--blue);
     border-radius: 3px;
-    background-color: white !important;
 }
 
 .switch.ui-chkbox .ui-chkbox-icon {
-    width: 80%;
-    height: 40%;
-    position: relative;
-    left: 10%;
-    top: 30%;
-    background: none;
-    border: 0px;
+    border: solid 2px var(--pure-white);
     border-radius: 25px;
+    box-sizing: border-box;
+    height: 40%;
+    left: 15%;
+    position: relative;
+    top: 30%;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    width: 70%;
 }
 
 .switch.ui-chkbox .ui-chkbox-icon:after {
-  position: relative;
-  display: block;
-  content: "";
-  width: calc(50% - 4px);
-  height: calc(100% - 4px);
-  left: 2px;
-  top: 2px;
-  background: var(--orange);
-  border-radius: 50%;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
+    background: var(--orange);
+    border: solid 2px var(--pure-white);
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: "";
+    display: block;
+    height: 16px;
+    left: -2px;
+    position: absolute;
+    top: -2px;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    width: 16px;
 }
 
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active,
@@ -477,23 +482,41 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background: var(--green);
 }
 
+.switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
+    background: var(--pure-white);
+}
+
 .switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
-  left: calc(50% + 2px);
-  background: var(--green);
+    background: var(--green);
+    left: calc(100% - 16px + 2px);
 }
 
 .switch.ui-chkbox .ui-chkbox-box.disabled,
 .switch.ui-chkbox .ui-chkbox-box.ui-state-disabled,
 .switch.ui-chkbox .ui-chkbox-box.disabled .ui-chkbox-icon:after,
 .switch.ui-chkbox .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
-    background: var(--medium-gray);
+    background: var(--cloudy-gray);
+    border-color: var(--medium-gray);
     cursor: default;
+    opacity: initial;
+}
+
+.switch.ui-chkbox .ui-chkbox-box.disabled .ui-chkbox-icon,
+.switch.ui-chkbox .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
+    background: transparent;
+    border-color: var(--medium-gray);
 }
 
 .ui-selectcheckboxmenu-panel,
 .ui-selectcheckboxmenu-items-wrapper,
 .ui-selectcheckboxmenu-items {
     background-color: var(--light-gray);
+}
+
+.ui-inputfield.ui-state-disabled,
+.ui-inputfield.ui-state-disabled::placeholder,
+.ui-selectonemenu.ui-state-disabled {
+    opacity: initial;
 }
 
 .ui-inputfield.ui-state-disabled,
@@ -535,7 +558,7 @@ tr.ui-widget-content:not(:first-child) {
 }
 
 tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
-div.row-expansion-wrapper tr.ui-widget-content{
+div.row-expansion-wrapper tr.ui-widget-content {
     border: 0 !important;
 }
 
@@ -856,12 +879,12 @@ Popup dialogs
 }
 
 .ui-tabs,
-.ui-tabs.ui-tabs-top>.ui-tabs-nav,
+.ui-tabs.ui-tabs-top > .ui-tabs-nav,
 .ui-tabmenu .ui-tabmenu-nav {
     padding: 0;
 }
 
-.ui-tabs.ui-tabs-top>.ui-tabs-nav li,
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
     top: 0px;
     margin-right: .7em;
@@ -936,7 +959,7 @@ Popup dialogs
     opacity: 1;
     color: var(--pure-white);
     border: none;
-    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.5);
 }
 
 .ui-growl-item .ui-growl-icon-close[style] {
@@ -985,8 +1008,8 @@ Popup dialogs
 }
 
 .alignTop45wide {
-     vertical-align: top;
-     width: 45%
+    vertical-align: top;
+    width: 45%
 }
 
 .buttonColumn {
