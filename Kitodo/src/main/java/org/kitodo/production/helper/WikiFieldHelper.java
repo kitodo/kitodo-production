@@ -56,7 +56,7 @@ public class WikiFieldHelper {
      *
      * @param process process as object.
      */
-    public static void transformWikiFieldToComment(Process process) {
+    public static void transformWikiFieldToComment(Process process) throws DataException {
         String wikiField = process.getWikiField();
         wikiField = wikiField.replaceAll("Ã¼", "ue");
         wikiField = wikiField.replaceAll("&uuml;", "ue");
@@ -73,7 +73,11 @@ public class WikiFieldHelper {
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
             transformNewForamtWikifieldToComments(comments, process);
-            deleteProcessCorrectionProperties(process);
+            try {
+                deleteProcessCorrectionProperties(process);
+            } catch (DataException | DAOException e) {
+                throw new DataException(e);
+            }
         }
     }
 
@@ -341,25 +345,18 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static void deleteProcessCorrectionProperties(Process process) {
+    private static void deleteProcessCorrectionProperties(Process process) throws DataException, DAOException {
         List<Property> properties = process.getProperties();
         for (Property property : properties) {
             if (property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
                     || property.getTitle().equals(Helper.getTranslation("correctionPerformed"))) {
+                Integer propertyId = property.getId();
                 property.getProcesses().clear();
                 process.getProperties().remove(property);
-                try {
-                    ServiceManager.getPropertyService().removeFromDatabase(property);
-                } catch (DAOException e) {
-                    Helper.setErrorMessage("Removing error", logger, e);
-                }
+                process.setWikiField("");
+                ServiceManager.getProcessService().save(process);
+                ServiceManager.getPropertyService().removeFromDatabase(propertyId);
             }
-        }
-        try {
-            process.setWikiField("");
-            ServiceManager.getProcessService().save(process);
-        } catch (DataException e) {
-            Helper.setErrorMessage("Saving error", logger, e);
         }
     }
 }
