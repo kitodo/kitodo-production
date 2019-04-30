@@ -104,6 +104,8 @@ Header
 ----------------------------------------------------------------------*/
 
 header {
+    height: var(--input-height);
+    margin-bottom: var(--default-full-size);
     z-index: 3;
     position: relative;
 }
@@ -115,11 +117,13 @@ body.first-visit #portal-header {
 
 #portal-header .wrapper {
     display: block;
+    height: 100%;
     width: 100%;
 }
 
 #portal-header section {
     display: inline-block;
+    height: 100%;
     vertical-align: top;
 }
 
@@ -176,6 +180,8 @@ body.first-visit #portal-header {
 
 #portal-search button {
     display: table-cell;
+    float: right;
+    margin: 0;
     width: 50px;
     padding: 9px 0px;
     text-align: center;
@@ -207,8 +213,20 @@ body.first-visit #portal-header {
     right: 30px;
 }
 
+#header-nav {
+    height: 100%;
+}
+
 #header-nav > ul {
+    height: 100%;
     width: 100%;
+}
+
+#header-nav > ul::before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
 }
 
 #header-nav > ul > li {
@@ -217,7 +235,8 @@ body.first-visit #portal-header {
     display: inline-block;
     line-height: 1;
     position: relative;
-    margin: 15px 0px 15px 30px;
+    margin: 0 0 0 var(--default-full-size);
+    vertical-align: middle;
 }
 
 #header-nav > ul > li > a {
@@ -519,7 +538,7 @@ Breadcrumb menu
     width: unset;
 }
 
-.breadcrumb-menu a.ui-menuitem-link {
+.breadcrumb-menu ul li a.ui-menuitem-link {
     margin-top: 0;
     color: var(--pure-white);
     text-decoration: none;
@@ -603,6 +622,7 @@ section#content-section {
     flex-wrap: wrap;
     height: inherit;
     justify-content: center;
+    margin-top: calc(var(--default-half-size) * -1);
 }
 
 #desktopGrid > .ui-panel {
@@ -1890,7 +1910,7 @@ min 700px
     }
 
     #portal-header .wrapper {
-        display: table;
+        height: 100%;
     }
 
     #search-form\:search-field {
