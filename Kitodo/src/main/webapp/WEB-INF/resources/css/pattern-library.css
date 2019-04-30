@@ -263,6 +263,10 @@ button .ui-icon,
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.ui-button-icon-only.plain {
+    width: 1em;
+}
+
 .ui-button.dialog {
     float: right;
     margin-left: 16px;

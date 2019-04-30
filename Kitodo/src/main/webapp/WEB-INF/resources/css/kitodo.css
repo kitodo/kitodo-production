@@ -704,7 +704,7 @@ section#content-section {
 .content-header .ui-panel-content > button,
 .ui-selectbooleanbutton {
     float: right;
-    margin-left: 20px;
+    margin-left: var(--default-full-size);
 }
 
 .content-wrapper {
