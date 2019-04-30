@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -72,50 +71,22 @@ public class FileServiceIT {
 
     @Test
     public void testCreateDirectories() throws IOException {
-        Path testBaseDirectoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XML_CONFIG));
-
-        // delete existing directories so that directories are actually created
-        Path firstDirectoryOfTestPath = testBaseDirectoryPath.resolve(SEVERAL);
-        if (Files.isDirectory(firstDirectoryOfTestPath)) {
-            TreeDeleter.deltree(firstDirectoryOfTestPath);
-        }
-
-        String testBaseDirectoryURI = testBaseDirectoryPath.toUri().toString();
-        String createDirectories = "several/directories/can/be/created/at/once";
-        new FileService().createDirectories(URI.create(testBaseDirectoryURI + createDirectories));
-        assertTrue(Files.isDirectory(firstDirectoryOfTestPath.resolve("directories/can/be/created/at/once")));
-
-        // clean up
-        TreeDeleter.deltree(firstDirectoryOfTestPath);
+        ServiceManager.getFileService().createDirectories(URI.create("several/directories/can/be/created/at/once"));
+        assertTrue(ServiceManager.getFileService().isDirectory(URI.create(SEVERAL)));
+        cleanUp();
     }
 
     @Test
     public void testCreateDirectoriesWithTrailingSlash() throws IOException {
-        Path testBaseDirectoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XML_CONFIG));
-
-        // delete existing directories so that directories are actually created
-        Path firstDirectoryOfTestPath = testBaseDirectoryPath.resolve(SEVERAL);
-        if (Files.isDirectory(firstDirectoryOfTestPath)) {
-            TreeDeleter.deltree(firstDirectoryOfTestPath);
-        }
-
-        String testBaseDirectoryURI = testBaseDirectoryPath.toUri().toString();
-        String createDirectories = "several/directories/can/be/created/with/trailing/";
-        new FileService().createDirectories(URI.create(testBaseDirectoryURI + createDirectories));
-        assertTrue(Files.isDirectory(firstDirectoryOfTestPath.resolve("directories/can/be/created/with/trailing")));
-
-        // clean up
-        TreeDeleter.deltree(firstDirectoryOfTestPath);
+        ServiceManager.getFileService()
+                .createDirectories(URI.create("several/directories/can/be/created/with/trailing/"));
+        assertTrue(ServiceManager.getFileService().isDirectory(URI.create(SEVERAL)));
+        cleanUp();
     }
 
-    @Test
-    public void testCreateDirectoriesWithNonExistingRoot() throws IOException {
-        FileService fileService = ServiceManager.getFileService();
-        String createDirectories = "several/directories/can/be/created/with/trailing/";
-        fileService.createDirectories(URI.create(createDirectories));
-        assertTrue(fileService.isDirectory(URI.create(SEVERAL)));
-
-        // clean up
-        TreeDeleter.deltree(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_PROCESSES), SEVERAL));
+    private void cleanUp() throws IOException {
+        Path testBaseDirectoryPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_PROCESSES));
+        Path firstDirectoryOfTestPath = testBaseDirectoryPath.resolve(SEVERAL);
+        TreeDeleter.deltree(firstDirectoryOfTestPath);
     }
 }
