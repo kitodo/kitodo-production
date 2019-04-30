@@ -118,7 +118,7 @@
                         <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                         <p:dataList id ="unassignedPagesList"
                                     styleClass="structureElementDataList"
-                                    value="#{DataEditorForm.galleryPanel.medias}"
+                                    value="#{DataEditorForm.galleryPanel.unassignedMedias}"
                                     binding="#{currentMedia}"
                                     var="media">
                             <h:panelGroup id="unassignedPagePanel">
@@ -132,7 +132,7 @@
                                             <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                             styleClass="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"
-                                                            rendered="#{media.showingInPreview and (DataEditorForm.galleryPanel.getLogicalStructureOfMedia(media) eq null)}">
+                                                            rendered="#{media.showingInPreview}">
                                                 <f:param name="id"
                                                          value="#{media.id}"/>
                                             </p:graphicImage>

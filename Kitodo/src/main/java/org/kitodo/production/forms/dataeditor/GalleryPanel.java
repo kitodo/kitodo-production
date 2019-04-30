@@ -292,9 +292,7 @@ public class GalleryPanel {
         } else if (dropStripeMatcher.matches() && dragUnassignedPageMatcher.matches()) {
             int toStripeIndex = Integer.parseInt(dropStripeMatcher.group(1));
             int fromMediaIndex = Integer.parseInt(dragUnassignedPageMatcher.group(1));
-            GalleryMediaContent mediaContent = medias.stream()
-                    .filter(c -> Objects.isNull(getLogicalStructureOfMedia(c)))
-                    .collect(Collectors.toList()).get(fromMediaIndex);
+            GalleryMediaContent mediaContent = getUnassignedMedias().get(fromMediaIndex);
             GalleryStripe toStripe = stripes.get(toStripeIndex);
             toStripe.getStructure().getViews().add(mediaContent.getView());
 
@@ -480,5 +478,16 @@ public class GalleryPanel {
             }
         }
         return null;
+    }
+
+    /**
+     * Return list of all medias that are not assigned to a logical structure element.
+     *
+     * @return list of medias not assigned to a logical structure element
+     */
+    public List<GalleryMediaContent> getUnassignedMedias() {
+        return medias.stream()
+                .filter(c -> Objects.isNull(getLogicalStructureOfMedia(c)))
+                .collect(Collectors.toList());
     }
 }
