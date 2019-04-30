@@ -25,7 +25,6 @@ import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -96,7 +95,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
         this.workpiece = new Workpiece();
 
         try {
-            User user = new MetadataProcessor().getCurrentUser();
+            User user = ServiceManager.getUserService().getAuthenticatedUser();
             String metadataLanguage = user != null ? user.getMetadataLanguage()
                     : Helper.getRequestParameter("Accept-Language");
             this.priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");

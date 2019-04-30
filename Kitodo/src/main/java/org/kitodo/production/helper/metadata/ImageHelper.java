@@ -38,6 +38,7 @@ import java.util.Optional;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -54,7 +55,6 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMet
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyRomanNumeralHelper;
-import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -446,7 +446,7 @@ public class ImageHelper {
         if (pagesList != null) {
             for (LegacyDocStructHelperInterface page : pagesList) {
                 String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + MetadataProcessor.getFileExtension(fileName), "");
+                String fileNamePrefix = fileName.replace("." + FilenameUtils.getExtension(fileName), "");
                 for (URI currentImage : dataList) {
                     String currentFileName = fileService.getFileName(currentImage);
                     if (currentFileName.equals(fileNamePrefix)) {
