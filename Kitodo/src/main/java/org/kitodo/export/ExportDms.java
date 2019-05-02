@@ -14,10 +14,11 @@ package org.kitodo.export;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
@@ -25,12 +26,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.metadata.ImageHelper;
+import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -40,6 +42,7 @@ import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.helper.tasks.TaskSitter;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
+import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 
@@ -47,9 +50,7 @@ public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
     private String atsPpnBand;
     private boolean exportWithImages = true;
-    private boolean exportFullText = true;
     private final FileService fileService = ServiceManager.getFileService();
-    private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
 
@@ -68,7 +69,6 @@ public class ExportDms extends ExportMets {
     }
 
     public void setExportFullText(boolean exportFullText) {
-        this.exportFullText = exportFullText;
     }
 
     /**
@@ -205,9 +205,17 @@ public class ExportDms extends ExportMets {
     private boolean exportImagesAndMetsToDestinationUri(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile,
             URI destination, URI userHome) throws IOException {
 
-        boolean downloadImages = downloadImages(process, userHome, destination);
-        if (!downloadImages) {
-            return false;
+        if (exportWithImages) {
+            try {
+                directoryDownload(process, destination);
+            } catch (IOException | InterruptedException | RuntimeException e) {
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setException(e);
+                } else {
+                    Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
+                }
+                return false;
+            }
         }
 
         /*
@@ -304,26 +312,6 @@ public class ExportDms extends ExportMets {
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
             return null;
-        }
-    }
-
-    private boolean downloadImages(Process process, URI userHome, URI destinationDirectory) {
-        try {
-            if (this.exportWithImages) {
-                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-                fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-            } else if (this.exportFullText) {
-                fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
-            }
-            directoryDownload(process, destinationDirectory);
-            return true;
-        } catch (IOException | InterruptedException | RuntimeException e) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setException(e);
-            } else {
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
-            }
-            return false;
         }
     }
 
@@ -455,73 +443,6 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Download full text.
-     *
-     * @param process
-     *            object
-     * @param userHome
-     *            File
-     * @param atsPpnBand
-     *            String
-     * @param ordnerEndung
-     *            String
-     */
-    public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException {
-
-        downloadSources(process, userHome, atsPpnBand);
-        downloadOCR(process, userHome, atsPpnBand);
-
-        if (Objects.nonNull(exportDmsTask)) {
-            exportDmsTask.setWorkDetail(null);
-        }
-    }
-
-    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI sources = fileService.getSourceDirectory(process);
-        if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
-            URI destination = userHome.resolve(atsPpnBand + "_src");
-            if (!fileService.fileExist(destination)) {
-                fileService.createDirectory(userHome, atsPpnBand + "_src");
-            }
-            List<URI> files = fileService.getSubUris(sources);
-            copyFiles(files, destination);
-        }
-    }
-
-    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI ocr = fileService.getOcrDirectory(process);
-        if (fileService.fileExist(ocr)) {
-            List<URI> folder = fileService.getSubUris(ocr);
-            for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()
-                        && fileService.getFileName(dir).contains("_")) {
-                    String suffix = fileService.getFileName(dir)
-                            .substring(fileService.getFileName(dir).lastIndexOf('_'));
-                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
-                    if (!fileService.fileExist(destination)) {
-                        fileService.createDirectory(userHome, atsPpnBand + suffix);
-                    }
-                    List<URI> files = fileService.getSubUris(dir);
-                    copyFiles(files, destination);
-                }
-            }
-        }
-    }
-
-    private void copyFiles(List<URI> files, URI destination) throws IOException {
-        for (URI file : files) {
-            if (fileService.isFile(file)) {
-                if (Objects.nonNull(exportDmsTask)) {
-                    exportDmsTask.setWorkDetail(fileService.getFileName(file));
-                }
-                URI target = destination.resolve(fileService.getFileName(file));
-                fileService.copyFile(file, target);
-            }
-        }
-    }
-
-    /**
      * Download image.
      *
      * @param process
@@ -562,28 +483,8 @@ public class ExportDms extends ExportMets {
                 }
             }
 
-            copyTifFilesForProcess(tifOrdner, zielTif);
-
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setWorkDetail(null);
-            }
-        }
-    }
-
-    private void copyTifFilesForProcess(URI tifSourceDirectory, URI tifDestinationDirectory)
-            throws IOException, InterruptedException {
-        List<URI> files = fileService.getSubUris(ImageHelper.dataFilter, tifSourceDirectory);
-        for (int i = 0; i < files.size(); i++) {
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
-            }
-
-            fileService.copyFile(files.get(i), tifDestinationDirectory);
-            if (Objects.nonNull(exportDmsTask)) {
-                exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
-                if (exportDmsTask.isInterrupted()) {
-                    throw new InterruptedException();
-                }
             }
         }
     }
@@ -598,26 +499,40 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Starts copying all directories configured in kitodo_config.properties
-     * parameter "processDirs" to export folder.
+     * Starts copying all directories configured as export folder.
      *
      * @param process
      *            object
      * @param destination
      *            the destination directory
+     * @throws InterruptedException
+     *             if the user clicked stop on the thread running the export DMS
+     *             task
      *
      */
-    private void directoryDownload(Process process, URI destination) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = Helper.getNormalizedTitle(process.getTitle());
+    private void directoryDownload(Process process, URI destination) throws IOException, InterruptedException {
+        Collection<Subfolder> processDirs = process.getProject().getFolders().parallelStream()
+                .filter(Folder::isCopyFolder).map(folder -> new Subfolder(process, folder))
+                .collect(Collectors.toList());
+        VariableReplacer variableReplacer = new VariableReplacer(null, null, process, null);
 
-        for (String processDir : processDirs) {
-            URI srcDir = ServiceManager.getProcessService().getProcessDataDirectory(process)
-                    .resolve(processDir.replace("(processtitle)", normalizedTitle));
-            URI dstDir = destination.resolve(processDir.replace("(processtitle)", normalizedTitle));
+        for (Subfolder processDir : processDirs) {
+            URI dstDir = destination.resolve(variableReplacer.replace(processDir.getFolder().getRelativePath()));
+            fileService.createDirectories(dstDir);
 
-            if (fileService.isDirectory(srcDir)) {
-                fileService.copyDirectory(srcDir, dstDir);
+            Collection<URI> srcs = processDir.listContents().values();
+            int progress = 0;
+            for (URI src : srcs) {
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setWorkDetail(fileService.getFileName(src));
+                }
+                fileService.copyFileToDirectory(src, dstDir);
+                if (Objects.nonNull(exportDmsTask)) {
+                    exportDmsTask.setProgress((int) ((progress++ + 1) * 98d / processDirs.size() / srcs.size() + 1));
+                    if (exportDmsTask.isInterrupted()) {
+                        throw new InterruptedException();
+                    }
+                }
             }
         }
     }

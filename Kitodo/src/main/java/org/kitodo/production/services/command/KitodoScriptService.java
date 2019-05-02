@@ -112,17 +112,12 @@ public class KitodoScriptService {
                 setRuleset(processes);
                 break;
             case "exportDms":
-                exportDms(processes, this.parameters.get("exportImages"), true);
-                break;
             case "export":
-                exportDms(processes, this.parameters.get("exportImages"),
-                    Boolean.valueOf(this.parameters.get("exportOcr")));
+                exportDms(processes, this.parameters.get("exportImages"));
                 break;
             case "doit":
-                exportDms(processes, String.valueOf(Boolean.FALSE), false);
-                break;
             case "doit2":
-                exportDms(processes, String.valueOf(Boolean.FALSE), true);
+                exportDms(processes, String.valueOf(Boolean.FALSE));
                 break;
             case "runscript":
                 String taskName = this.parameters.get("stepname");
@@ -491,14 +486,11 @@ public class KitodoScriptService {
         Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
     }
 
-    private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
+    private void exportDms(List<Process> processes, String exportImages) {
         boolean withoutImages = Objects.nonNull(exportImages) && exportImages.equalsIgnoreCase("false");
         for (Process process : processes) {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
-                if (withoutImages) {
-                    dms.setExportFullText(exportFulltext);
-                }
                 dms.startExport(process);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);

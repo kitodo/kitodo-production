@@ -803,7 +803,7 @@ public class MockDatabase {
         Folder fourthFolder = new Folder();
         fourthFolder.setFileGroup("FULLTEXT");
         fourthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
-        fourthFolder.setMimeType("text/xml");
+        fourthFolder.setMimeType("application/alto+xml");
         fourthFolder.setPath("ocr/alto");
         fourthFolder.setCopyFolder(true);
         fourthFolder.setCreateFolder(true);

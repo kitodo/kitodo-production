@@ -60,7 +60,7 @@ public class ExportMetsIT {
         exportUri = ConfigCore.getUriParameter(ParameterCore.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
-        fileService.copyFileToDirectory(URI.create("testmetaNewFormat.xml"), URI.create(metadataDirectory + "/meta.xml"));
+        fileService.copyFile(URI.create("testmetaNewFormat.xml"), URI.create(metadataDirectory + "/meta.xml"));
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         FileLoader.createConfigProjectsFile();
 
