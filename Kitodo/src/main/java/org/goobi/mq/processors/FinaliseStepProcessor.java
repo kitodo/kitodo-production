@@ -67,7 +67,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
         if (ticket.hasField("message")) {
-            Comment comment = new Comment ();
+            Comment comment = new Comment();
             comment.setProcess(dialog.getCurrentTask().getProcess());
             comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
             comment.setMessage(ticket.getString("message"));

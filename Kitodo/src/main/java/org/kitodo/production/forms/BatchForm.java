@@ -294,10 +294,10 @@ public class BatchForm extends BaseForm {
         }
     }
 
-    private void addCommentsToBatchProcesses (String message) throws DAOException {
+    private void addCommentsToBatchProcesses(String message) throws DAOException {
         List<Comment> commentList = new ArrayList<>();
         for (Process process : this.selectedProcesses) {
-            Comment comment = new Comment ();
+            Comment comment = new Comment();
             comment.setProcess(process);
             comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
             comment.setMessage(message);
@@ -321,7 +321,8 @@ public class BatchForm extends BaseForm {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
                 ServiceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
-                    addCommentsToBatchProcesses(Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(selectedBatch)));
+                    addCommentsToBatchProcesses(Helper.getTranslation("addToBatch",
+                            ServiceManager.getBatchService().getLabel(selectedBatch)));
                     ServiceManager.getProcessService().saveList(this.selectedProcesses);
                 }
             }
@@ -345,7 +346,8 @@ public class BatchForm extends BaseForm {
             selectedBatch.getProcesses().removeAll(this.selectedProcesses);
             ServiceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
-                addCommentsToBatchProcesses(Helper.getTranslation("removeFromBatch", ServiceManager.getBatchService().getLabel(selectedBatch)));
+                addCommentsToBatchProcesses(Helper.getTranslation("removeFromBatch",
+                        ServiceManager.getBatchService().getLabel(selectedBatch)));
                 ServiceManager.getProcessService().saveList(this.selectedProcesses);
             }
         }

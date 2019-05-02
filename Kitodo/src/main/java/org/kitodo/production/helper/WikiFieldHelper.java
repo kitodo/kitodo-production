@@ -73,13 +73,9 @@ public class WikiFieldHelper {
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
             transformNewFormatWikifieldToComments(comments, process);
-            try {
-                deleteProcessCorrectionProperties(process);
-                process.setWikiField("");
-                ServiceManager.getProcessService().save(process);
-            } catch (DataException e) {
-                throw new DataException(e);
-            }
+            deleteProcessCorrectionProperties(process);
+            process.setWikiField("");
+            ServiceManager.getProcessService().save(process);
         }
     }
 
@@ -134,9 +130,9 @@ public class WikiFieldHelper {
             return null;
         }
         String authorName = parts[0];
-        if (lang.equals("de")) {
+        if ("de".equals(lang)) {
             authorName = authorName.split(CORRECTION_FOR_TASK_DE)[0];
-        } else if (lang.equals("en")) {
+        } else if ("en".equals(lang)) {
             authorName = authorName.split(CORRECTION_FOR_TASK_EN)[0];
         }
         if (authorName.contains("Red K ")) {
@@ -154,9 +150,9 @@ public class WikiFieldHelper {
             return null;
         }
         String correctionTaskName = parts[0];
-        if (lang.equals("en")) {
+        if ("en".equals(lang)) {
             correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_EN)[1];
-        } else if (lang.equals("de")) {
+        } else if ("de".equals(lang)) {
             correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_DE)[1];
         }
         for (Task task : process.getTasks()) {
@@ -301,7 +297,6 @@ public class WikiFieldHelper {
             document = documentBuilder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
         } catch (ParserConfigurationException | IOException | SAXException e) {
             logger.error("could not parse XML string '" + xmlString + "'!");
-            e.printStackTrace();
         }
         return document;
     }
@@ -312,27 +307,27 @@ public class WikiFieldHelper {
         try {
             return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("could not parse date '" + date + "'!");
         }
         return null;
     }
 
     private static String getOldComment(String message, String language) {
         String comment;
-        if (language.equals("de")) {
-            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_DE)) + 1, message.lastIndexOf("("));
-        } else if (language.equals("en")) {
-            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1, message.lastIndexOf("("));
+        if ("de".equals(language)) {
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_DE)) + 1, message.lastIndexOf('('));
+        } else if ("en".equals(language)) {
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1, message.lastIndexOf('('));
         } else {
             int index = message.indexOf("PM:") > 0 ? message.indexOf("PM:") : message.indexOf("AM:");
-            comment = message.substring(index + 3, message.lastIndexOf("("));
+            comment = message.substring(index + 3, message.lastIndexOf('('));
         }
         return comment;
     }
 
     private static Task getOldCorrectionTask(String message, Process process, String language) {
         String correctionTaskName;
-        if (language.equals("de")) {
+        if ("de".equals(language)) {
             int index = message.indexOf(CORRECTION_FOR_TASK_DE);
             correctionTaskName = message.substring(index + 23, message.indexOf(':', index));
         } else {
