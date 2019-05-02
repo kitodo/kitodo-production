@@ -104,6 +104,8 @@ Header
 ----------------------------------------------------------------------*/
 
 header {
+    height: var(--input-height);
+    margin-bottom: var(--default-full-size);
     z-index: 3;
     position: relative;
 }
@@ -115,11 +117,13 @@ body.first-visit #portal-header {
 
 #portal-header .wrapper {
     display: block;
+    height: 100%;
     width: 100%;
 }
 
 #portal-header section {
     display: inline-block;
+    height: 100%;
     vertical-align: top;
 }
 
@@ -175,16 +179,18 @@ body.first-visit #portal-header {
 }
 
 #portal-search button {
-    display: table-cell;
-    width: 50px;
-    padding: 9px 0px;
-    text-align: center;
     background: transparent;
-    border: 0px none;
+    border: 0 none;
     color: var(--pure-white);
     cursor: pointer;
-    font-weight: 600;
+    display: table-cell;
+    float: right;
     font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+    padding: 9px 0;
+    text-align: center;
+    width: 50px;
 }
 
 #portal-search form:hover,
@@ -207,17 +213,30 @@ body.first-visit #portal-header {
     right: 30px;
 }
 
+#header-nav {
+    height: 100%;
+}
+
 #header-nav > ul {
+    height: 100%;
     width: 100%;
 }
 
+#header-nav > ul::before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
 #header-nav > ul > li {
-    list-style: none;
     color: var(--pure-white);
     display: inline-block;
     line-height: 1;
+    list-style: none;
+    margin: 0 0 0 var(--default-full-size);
     position: relative;
-    margin: 15px 0px 15px 30px;
+    vertical-align: middle;
 }
 
 #header-nav > ul > li > a {
@@ -519,11 +538,11 @@ Breadcrumb menu
     width: unset;
 }
 
-.breadcrumb-menu a.ui-menuitem-link {
-    margin-top: 0;
+.breadcrumb-menu ul li a.ui-menuitem-link {
     color: var(--pure-white);
-    text-decoration: none;
     font-size: small;
+    margin-top: 0;
+    text-decoration: none;
     transition: color .5s, background-color .5s;
 }
 
@@ -603,6 +622,7 @@ section#content-section {
     flex-wrap: wrap;
     height: inherit;
     justify-content: center;
+    margin-top: calc(var(--default-half-size) * -1);
 }
 
 #desktopGrid > .ui-panel {
@@ -684,7 +704,7 @@ section#content-section {
 .content-header .ui-panel-content > button,
 .ui-selectbooleanbutton {
     float: right;
-    margin-left: 20px;
+    margin-left: var(--default-full-size);
 }
 
 .content-wrapper {
@@ -1890,7 +1910,7 @@ min 700px
     }
 
     #portal-header .wrapper {
-        display: table;
+        height: 100%;
     }
 
     #search-form\:search-field {
