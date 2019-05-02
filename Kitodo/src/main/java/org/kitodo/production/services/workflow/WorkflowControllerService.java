@@ -597,7 +597,11 @@ public class WorkflowControllerService {
      *            object
      */
     private void updateProcessSortHelperStatus(Process process) throws DataException {
-        ServiceManager.getProcessService().refresh(process);
+        try {
+            process = ServiceManager.getProcessService().getById(process.getId());
+        } catch (DAOException e) {
+            logger.error("Refreshing of process not possible: " + e.getMessage(), e);
+        }
         String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
         process.setSortHelperStatus(value);
         ServiceManager.getProcessService().save(process);
