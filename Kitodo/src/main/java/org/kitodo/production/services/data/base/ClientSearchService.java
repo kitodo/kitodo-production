@@ -28,6 +28,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.services.ServiceManager;
 
@@ -112,5 +113,10 @@ public abstract class ClientSearchService<T extends BaseIndexedBean, S extends B
     @Override
     protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
         return queryForClient(super.createSimpleWildcardQuery(key, value));
+    }
+
+    @Override
+    public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
+        return super.findByQuery(queryForClient(query), related);
     }
 }
