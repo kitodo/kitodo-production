@@ -312,6 +312,7 @@ public class WorkflowControllerService {
         Task correctionTask = comment.getCorrectionTask();
         correctionTask.setProcessingStatus(TaskStatus.OPEN);
         correctionTask.setProcessingEnd(null);
+        correctionTask.setCorrection(true);
         taskService.save(correctionTask);
 
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);

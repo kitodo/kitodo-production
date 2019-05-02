@@ -73,7 +73,7 @@ public class WikiFieldHelper {
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
             transformNewFormatWikifieldToComments(comments, process);
-            deleteProcessCorrectionProperties(process);
+            //TODO: deleteProcessCorrectionProperties 
             process.setWikiField("");
             ServiceManager.getProcessService().save(process);
         }
@@ -194,7 +194,7 @@ public class WikiFieldHelper {
                         comment.setCorrectionTask(getCorrectionTask(correctionRequiredProperty));
                         deleteProperty(process, correctionRequiredProperty);
                     } catch (DAOException | DataException | ParseException e) {
-                        Helper.setErrorMessage("PropertyError", logger, e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             } else if (message.contains("Orange K")) {
@@ -207,7 +207,7 @@ public class WikiFieldHelper {
                         comment.setCorrectionDate(getCreationDate(correctionPerformed));
                         deleteProperty(process, correctionPerformed);
                     } catch (ParseException | DAOException | DataException e) {
-                        Helper.setErrorMessage("Deleting error", logger, e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
                 comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(process));
@@ -271,7 +271,7 @@ public class WikiFieldHelper {
         try {
             ServiceManager.getCommentService().saveList(commentList);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Saving error", logger, e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -340,19 +340,5 @@ public class WikiFieldHelper {
             }
         }
         return null;
-    }
-
-    private static void deleteProcessCorrectionProperties(Process process) throws DataException {
-        List<Property> properties = process.getProperties();
-        for (Property property : properties) {
-            if (property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
-                    || property.getTitle().equals(Helper.getTranslation("correctionPerformed"))) {
-                property.getProcesses().clear();
-                process.getProperties().remove(property);
-                Integer propertyId = property.getId();
-                ServiceManager.getProcessService().save(process);
-                ServiceManager.getPropertyService().remove(propertyId);
-            }
-        }
     }
 }
