@@ -98,7 +98,7 @@ public class SearchForm {
     /**
      * Initialise drop down list of master piece property titles.
      */
-    protected void initMasterpiecePropertyTitles() {
+    private void initMasterpiecePropertyTitles() {
         List<String> workpiecePropertiesTitlesDistinct = new ArrayList<>();
         try {
             workpiecePropertiesTitlesDistinct = ServiceManager.getPropertyService()
@@ -112,8 +112,8 @@ public class SearchForm {
     /**
      * Initialise drop down list of projects.
      */
-    protected void initProjects() {
-        List<Project> projectsSortedByTitle  = ServiceManager.getProjectService().getAllProjectsSortedByTitle();
+    private void initProjects() {
+        List<Project> projectsSortedByTitle = ServiceManager.getProjectService().getAllProjectsSortedByTitle();
 
         for (Project projectSortedByTitle : projectsSortedByTitle) {
             this.projects.add(projectSortedByTitle.getTitle());
@@ -123,7 +123,7 @@ public class SearchForm {
     /**
      * Initialise drop down list of process property titles.
      */
-    protected void initProcessPropertyTitles() {
+    private void initProcessPropertyTitles() {
         List<String> processPropertiesTitlesDistinct = new ArrayList<>();
         try {
             processPropertiesTitlesDistinct = ServiceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
@@ -136,14 +136,14 @@ public class SearchForm {
     /**
      * Initialise drop down list of step status.
      */
-    protected void initStepStatus() {
+    private void initStepStatus() {
         this.stepstatus.addAll(Arrays.asList(TaskStatus.values()));
     }
 
     /**
      * Initialise drop down list of task titles.
      */
-    protected void initStepTitles() {
+    private void initStepTitles() {
         List<String> taskTitles = new ArrayList<>();
         try {
             taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
@@ -156,7 +156,7 @@ public class SearchForm {
     /**
      * Initialise drop down list of template property titles.
      */
-    protected void initTemplatePropertyTitles() {
+    private void initTemplatePropertyTitles() {
         List<String> templatePropertiesTitlesDistinct = new ArrayList<>();
         try {
             templatePropertiesTitlesDistinct = ServiceManager.getPropertyService()
@@ -170,7 +170,7 @@ public class SearchForm {
     /**
      * Initialise drop down list of user list.
      */
-    protected void initUserList() {
+    private void initUserList() {
         try {
             this.user.addAll(ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
         } catch (RuntimeException e) {
@@ -393,7 +393,7 @@ public class SearchForm {
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
 
-        processForm.filter = search;
+        processForm.changeFilter(search);
         return processForm.processListPath;
     }
 
