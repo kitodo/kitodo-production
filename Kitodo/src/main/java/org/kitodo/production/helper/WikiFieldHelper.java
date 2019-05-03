@@ -80,9 +80,10 @@ public class WikiFieldHelper {
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
             transformNewFormatWikifieldToComments(comments, process);
-            process = deleteProcessCorrectionProperties(process);
-            process.setWikiField("");
-            ServiceManager.getProcessService().save(process);
+            Process processWithoutProperties = deleteProcessCorrectionProperties(process);
+            processWithoutProperties.setWikiField("");
+            ServiceManager.getProcessService().save(processWithoutProperties);
+            return processWithoutProperties;
         }
         return process;
     }
@@ -355,8 +356,8 @@ public class WikiFieldHelper {
 
         for (Property property : properties) {
             String title = property.getTitle();
-            if (title.equals("Korrektur notwendig") || title.equals("Correction required")
-                    || title.equals("Korrektur durchgef\\u00FChrt") || title.equals("Correction performed")) {
+            if ("Korrektur notwendig".equals(title) || "Correction required".equals(title)
+                    || "Korrektur durchgef\\u00FChrt".equals(title) || "Correction performed".equals(title)) {
                 property.getProcesses().remove(process);
                 try {
                     ServiceManager.getPropertyService().removeFromIndex(property, true);
@@ -366,7 +367,7 @@ public class WikiFieldHelper {
                 process.getProperties().remove(property);
                 ServiceManager.getProcessService().save(process);
                 ServiceManager.getPropertyService().remove(property);
-                process = ServiceManager.getProcessService().getById(process.getId());
+                return ServiceManager.getProcessService().getById(process.getId());
             }
         }
 
