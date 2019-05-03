@@ -113,13 +113,16 @@ public class ProcessServiceIT {
         processService.save(process);
 
         Process foundProcess = processService.getById(process.getId());
+        Process foundParent = foundProcess.getParent();
 
         assertEquals("Child process was not found in database!", "Child", foundProcess.getTitle());
-        assertEquals("Parent process was not assigned to child!", "Parent", foundProcess.getParent().getTitle());
+        assertEquals("Parent process was not assigned to child!", "Parent", foundParent.getTitle());
 
-        Integer parentId = foundProcess.getParent().getId();
+        foundParent.getChildren().clear();
+        foundProcess.setParent(null);
 
-        processService.remove(parentId);
+        processService.remove(foundProcess);
+        processService.remove(foundParent.getId());
     }
 
     @Test
