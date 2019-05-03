@@ -21,6 +21,7 @@ import java.util.Set;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.persistence.BaseDAO;
@@ -118,5 +119,15 @@ public abstract class ClientSearchService<T extends BaseIndexedBean, S extends B
     @Override
     public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
         return super.findByQuery(queryForClient(query), related);
+    }
+
+    @Override
+    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, boolean related) throws DataException {
+        return super.findByQuery(queryForClient(query), sort, related);
+    }
+
+    @Override
+    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, Integer offset, Integer size, boolean related) throws DataException {
+        return super.findByQuery(queryForClient(query), sort, offset, size, related);
     }
 }

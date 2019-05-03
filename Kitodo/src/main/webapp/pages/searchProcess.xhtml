@@ -19,7 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.extendedSearch}</h3>
-        <p:commandButton id="absenden"
+        <p:commandButton id="submitSearch"
                          value="#{msgs.searchForVolume}"
                          action="#{SearchForm.filter}"
                          icon="fa fa-search"
@@ -56,7 +56,7 @@
                                 <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu></p:column>
                         <p:column colspan="2">
-                            <p:selectOneMenu value="#{SearchForm.project}">
+                            <p:selectOneMenu id="processProject" value="#{SearchForm.project}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems id="pcid11" value="#{SearchForm.projects}"
                                                var="project" itemLabel="#{project}"
@@ -135,13 +135,13 @@
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{SearchForm.status}">
+                            <p:selectOneMenu id="taskStatus" value="#{SearchForm.status}">
                                 <f:selectItems value="#{SearchForm.stepstatus}" var="stepstatus"
                                                itemLabel="#{stepstatus.title}" itemValue="#{stepstatus.searchString}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{SearchForm.stepname}">
+                            <p:selectOneMenu id="taskName" value="#{SearchForm.stepname}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.stepTitles}" var="stepTitles" itemLabel="#{stepTitles}"
                                                itemValue="#{stepTitles}"/>
@@ -168,7 +168,7 @@
                     <p:row>
                         <p:column><p:outputLabel value="#{msgs.id}"/></p:column>
                         <p:column colspan="3">
-                            <p:inputText value="#{SearchForm.idin}"
+                            <p:inputText id="processID" value="#{SearchForm.idin}"
                                          styleClass="extended-search-input-field"/>
                         </p:column>
                     </p:row>

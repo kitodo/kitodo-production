@@ -63,6 +63,7 @@ public class EditingST extends BaseTestSelenium {
         }
     }
 
+    @Ignore("Save of process is pending in -saving-")
     @Test
     public void editProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);

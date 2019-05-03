@@ -522,7 +522,6 @@ public class MockDatabase {
         firstProcess.setProject(projectOne);
         firstProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         firstProcess.setTemplate(template);
-        firstProcess.setSortHelperStatus("100000000");
         ServiceManager.getProcessService().save(firstProcess);
 
         Process secondProcess = new Process();
@@ -539,6 +538,7 @@ public class MockDatabase {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
+        thirdProcess.setSortHelperStatus("100000000");
         thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
     }
@@ -706,6 +706,7 @@ public class MockDatabase {
     private static void insertProjects() throws Exception {
         User firstUser = ServiceManager.getUserService().getById(1);
         User secondUser = ServiceManager.getUserService().getById(2);
+        User sixthUser = ServiceManager.getUserService().getById(6);
 
         Client client = ServiceManager.getClientService().getById(1);
 
@@ -723,6 +724,7 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
+        firstProject.getUsers().add(sixthUser);
         firstProject.setClient(client);
         ServiceManager.getProjectService().save(firstProject);
 
@@ -763,8 +765,10 @@ public class MockDatabase {
 
         secondUser.getProjects().add(thirdProject);
         thirdUser.getProjects().add(thirdProject);
+        sixthUser.getProjects().add(firstProject);
         ServiceManager.getUserService().saveToDatabase(secondUser);
         ServiceManager.getUserService().saveToDatabase(thirdUser);
+        ServiceManager.getUserService().saveToDatabase(sixthUser);
     }
 
     private static void insertFolders() throws DAOException, DataException {

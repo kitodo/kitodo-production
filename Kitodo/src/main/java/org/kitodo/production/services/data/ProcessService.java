@@ -265,30 +265,41 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      * Creates and returns a query to retrieve processes for which the currently
      * logged in user is eligible.
      *
-     * @param filters
-     *            map of applicable filters
      * @return query to retrieve processes for which the user eligible
      */
-    @SuppressWarnings("unchecked")
+    public BoolQueryBuilder createUserProcessesQuery() throws DataException {
+        return createUserProcessesQuery(null);
+    }
+
     private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = filters;
-            query.must(readFilters(filterMap));
+            query.must(readFilters(filters));
         }
-
-        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
+        query.must(createUserProjectQuery());
 
         if (!this.showClosedProcesses) {
-            query.must(getQuerySortHelperStatus(false));
+            query.mustNot(getQuerySortHelperStatus(true));
         }
 
         if (!this.showInactiveProjects) {
-            query.must(getQueryProjectActive(true));
+            query.mustNot(getQueryProjectActive(false));
         }
         return query;
     }
+
+    private QueryBuilder createUserProjectQuery() {
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+
+        if (Objects.nonNull(currentUser)) {
+            List<Project> projects = currentUser.getProjects();
+            return createSetQueryForBeans(ProcessTypeField.PROJECT_ID.getKey(), projects, true);
+        }
+
+        return null;
+    }
+
 
     /**
      * Method saves or removes batches, tasks and project related to modified

@@ -11,6 +11,14 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.Helper;
@@ -20,14 +28,6 @@ import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
-
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
-import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProcessesPage extends Page<ProcessesPage> {
 
@@ -62,6 +62,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement downloadLogLink;
 
     private WebElement editMetadataLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "search")
+    private WebElement searchForProcessesButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_FORM + ":createExcel")
@@ -281,5 +285,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
      */
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, processesTabView);
+    }
+
+    public void navigateToExtendedSearch() throws IllegalAccessException, InstantiationException {
+        clickButtonAndWaitForRedirect(searchForProcessesButton, Pages.getExtendedSearchPage().getUrl());
     }
 }
