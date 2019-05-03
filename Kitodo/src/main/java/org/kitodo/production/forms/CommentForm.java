@@ -53,7 +53,8 @@ public class CommentForm extends BaseForm {
         try {
             setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + this.processId, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.processId }, logger, e);
         }
         try {
             WikiFieldHelper.transformWikiFieldToComment(this.process);
@@ -107,7 +108,7 @@ public class CommentForm extends BaseForm {
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
         if (isCorrectionComment()) {
             reportProblem(comment);
@@ -241,9 +242,9 @@ public class CommentForm extends BaseForm {
                 ServiceManager.getProcessService().refresh(process);
                 setProcess(ServiceManager.getProcessService().getById(process.getId()));
             }
-
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.processId }, logger, e);
         }
     }
 

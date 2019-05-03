@@ -20,7 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -54,7 +56,8 @@ public class WikiFieldHelper {
     /**
      * transform wiki field to Comment objects.
      *
-     * @param process process as object.
+     * @param process
+     *            process as object.
      */
     public static void transformWikiFieldToComment(Process process) throws DataException {
         String wikiField = process.getWikiField();
@@ -84,8 +87,7 @@ public class WikiFieldHelper {
         for (Property property : properties) {
             String translation = Helper.getTranslation("correctionNecessary");
             String msg = getWikiFieldMessage(message);
-            if (property.getTitle().equals(translation)
-                    && property.getValue().contains(msg)) {
+            if (property.getTitle().equals(translation) && property.getValue().contains(msg)) {
                 return property;
             }
         }
@@ -95,8 +97,9 @@ public class WikiFieldHelper {
     private static Property getCorrectionPerformedProperty(Process process, String message, String language) {
         List<Property> properties = process.getProperties();
         for (Property property : properties) {
-            if (property.getTitle().equals(Helper.getTranslation("correctionPerformed"))
-                    && property.getValue().endsWith(getWikiFieldCorrectionTask(message, process, language).getTitle())) {
+            Task task = getWikiFieldCorrectionTask(message, process, language);
+            if (Objects.nonNull(task) && property.getTitle().equals(Helper.getTranslation("correctionPerformed"))
+                    && property.getValue().endsWith(task.getTitle())) {
                 return property;
             }
         }
@@ -104,15 +107,15 @@ public class WikiFieldHelper {
     }
 
     private static Task getCorrectionTask(Property property) throws DAOException {
-        int correctionTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf(" CorrectionTask: ") + 17,
-                property.getValue().indexOf(')')));
+        int correctionTaskId = Integer.parseInt(property.getValue()
+                .substring(property.getValue().indexOf(" CorrectionTask: ") + 17, property.getValue().indexOf(')')));
         return ServiceManager.getTaskService().getById(correctionTaskId);
 
     }
 
     private static Task getCurrentTask(Property property) throws DAOException {
-        int currentTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
-                property.getValue().indexOf(" CorrectionTask: ")));
+        int currentTaskId = Integer.parseInt(property.getValue().substring(
+            property.getValue().indexOf("(CurrentTask: ") + 14, property.getValue().indexOf(" CorrectionTask: ")));
         return ServiceManager.getTaskService().getById(currentTaskId);
     }
 
@@ -142,7 +145,6 @@ public class WikiFieldHelper {
         }
         return getUserByFullName(authorName);
     }
-
 
     private static Task getWikiFieldCorrectionTask(String message, Process process, String lang) {
         String[] parts = message.split(":");
@@ -276,13 +278,14 @@ public class WikiFieldHelper {
     }
 
     /*
-        fullName = surname, name
+     * fullName = surname, name
      */
     private static User getUserByFullName(String fullName) {
-        String surname = fullName.split(",")[0].trim();
-        String name = fullName.split(",")[1].trim();
-        List<User> userList = ServiceManager.getUserService().getByQuery("FROM User WHERE name ='" + name
-                + "' AND surname = '" + surname + "'");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("surname", fullName.split(",")[0].trim());
+        parameters.put("name", fullName.split(",")[1].trim());
+        List<User> userList = ServiceManager.getUserService()
+                .getByQuery("FROM User WHERE name = :name AND surname = :surname", parameters);
         if (userList.isEmpty()) {
             return null;
         }
@@ -294,9 +297,10 @@ public class WikiFieldHelper {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            document = documentBuilder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
+            document = documentBuilder
+                    .parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            logger.error("could not parse XML string '" + xmlString + "'!");
+            logger.error(e.getMessage() + " Could not parse XML string '" + xmlString + "'!", e);
         }
         return document;
     }
@@ -315,9 +319,11 @@ public class WikiFieldHelper {
     private static String getOldComment(String message, String language) {
         String comment;
         if ("de".equals(language)) {
-            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_DE)) + 1, message.lastIndexOf('('));
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_DE)) + 1,
+                message.lastIndexOf('('));
         } else if ("en".equals(language)) {
-            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1, message.lastIndexOf('('));
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1,
+                message.lastIndexOf('('));
         } else {
             int index = message.indexOf("PM:") > 0 ? message.indexOf("PM:") : message.indexOf("AM:");
             comment = message.substring(index + 3, message.lastIndexOf('('));
