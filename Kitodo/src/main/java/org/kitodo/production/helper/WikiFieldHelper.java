@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -315,12 +316,13 @@ public class WikiFieldHelper {
     }
 
     private static Date getCreationDateOld(String message) {
-        int index = message.indexOf("PM") > 0 ? message.indexOf("PM") : message.indexOf("AM");
+        int index = message.contains("PM") ? message.indexOf("PM") : message.indexOf("AM");
         String date = message.substring(0, index + 2);
         try {
-            return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).parse(date);
+            DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm:ss a", Locale.ENGLISH);
+            return dateFormat.parse(date);
         } catch (ParseException e) {
-            logger.error("could not parse date '" + date + "'!");
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
@@ -334,7 +336,7 @@ public class WikiFieldHelper {
             comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1,
                 message.lastIndexOf('('));
         } else {
-            int index = message.indexOf("PM:") > 0 ? message.indexOf("PM:") : message.indexOf("AM:");
+            int index = message.contains("PM:") ? message.indexOf("PM:") : message.indexOf("AM:");
             comment = message.substring(index + 3, message.lastIndexOf('('));
         }
         return comment;
