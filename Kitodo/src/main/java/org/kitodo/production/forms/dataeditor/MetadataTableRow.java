@@ -202,9 +202,8 @@ abstract class MetadataTableRow implements Serializable {
      * @throws NoSuchMetadataFieldException
      *             if the field configured in the rule set does not exist
      */
-    Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        return null;
-    }
+    abstract Pair<Method, Object> getStructureFieldValue()
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException;
 
     /**
      * Returns if the field is not defined by the rule set. The front-end should

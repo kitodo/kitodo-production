@@ -110,14 +110,13 @@ public enum PaginatorMode {
     /**
      * Map for the look-up of codes.
      */
-    private static final Map<Integer, PaginatorMode> codeMap = new HashMap<Integer, PaginatorMode>(
-            (int) Math.ceil(values().length / .75)) {
-        {
-            for (PaginatorMode member : PaginatorMode.values()) {
-                put(member.code, member);
-            }
+    private static final Map<Integer, PaginatorMode> codeMap = new HashMap<>(
+            (int) Math.ceil(values().length / .75));
+    static {
+        for (PaginatorMode member : PaginatorMode.values()) {
+            codeMap.put(member.code, member);
         }
-    };
+    }
 
     /**
      * Returns the enum constant of this type with the specified code.

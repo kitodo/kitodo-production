@@ -63,18 +63,19 @@ public enum PaginatorType {
      */
     ROMAN(2) {
         @Override
-        public String format(PaginatorMode mode, String value, boolean fictitious, String separator) {
-            int a;
+        public String format(PaginatorMode mode, String valueString, boolean fictitious, String separator) {
+            int value;
             try {
-                a = RomanNumeral.parseInt(value);
+                value = RomanNumeral.parseInt(valueString);
             } catch (NumberFormatException b) {
                 try {
-                    a = Integer.parseInt(value);
+                    value = Integer.parseInt(valueString);
                 } catch (NumberFormatException unused) {
                     throw b;
                 }
             }
-            return mode.format(RomanNumeral.format(a, true), RomanNumeral.format(a + 1, true), fictitious, separator);
+            return mode.format(RomanNumeral.format(value, true), RomanNumeral.format(value + 1, true), fictitious,
+                separator);
         }
     },
 
@@ -91,14 +92,13 @@ public enum PaginatorType {
     /**
      * Map for the look-up of codes.
      */
-    private static final Map<Integer, PaginatorType> codeMap = new HashMap<Integer, PaginatorType>(
-            (int) Math.ceil(values().length / .75)) {
-        {
-            for (PaginatorType member : PaginatorType.values()) {
-                put(member.code, member);
-            }
+    private static final Map<Integer, PaginatorType> codeMap = new HashMap<>(
+            (int) Math.ceil(values().length / .75));
+    static {
+        for (PaginatorType member : PaginatorType.values()) {
+            codeMap.put(member.code, member);
         }
-    };
+    }
 
     /**
      * Returns the enum constant of this type with the specified code.

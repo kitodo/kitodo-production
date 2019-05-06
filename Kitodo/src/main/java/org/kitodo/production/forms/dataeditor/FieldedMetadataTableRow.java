@@ -379,6 +379,11 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     @Override
+    Pair<Method, Object> getStructureFieldValue() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        return null;
+    }
+
+    @Override
     public boolean isUndefined() {
         return metadataView.isUndefined();
     }

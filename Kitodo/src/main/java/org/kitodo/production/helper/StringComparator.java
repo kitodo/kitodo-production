@@ -32,7 +32,7 @@ public class StringComparator implements Comparator<String> {
      * group detection. I.e., the String "Grüße166.txt" will be tokenized to
      * ['G', 'r', 'u', 'e', 's', 's', 'e', 166, '.', 't', 'x', 't', -1, -1, …].
      */
-    private class Tokenizer {
+    private static class Tokenizer {
         /**
          * Whether to compare case-insensitive.
          */
@@ -66,7 +66,7 @@ public class StringComparator implements Comparator<String> {
          *            String to tokenize
          * @param caseInsensitive whether to compare case-insensitive
          */
-        private Tokenizer(String input, boolean caseInsensitive) {
+        Tokenizer(String input, boolean caseInsensitive) {
             this.input = input;
             position = SYMBOL;
             stringLength = Objects.nonNull(input) ? input.length() : -1;
@@ -108,7 +108,8 @@ public class StringComparator implements Comparator<String> {
             if (type == 1) {
                 int value = BASES[codePoint];
                 int leadingZeroes = value == 0 ? 1 : 0;
-                while (position < stringLength && TYPES[codePoint = currentCodePoint()] == 1) {
+                while (position < stringLength && TYPES[currentCodePoint()] == 1) {
+                    codePoint = currentCodePoint();
                     value = 10 * value + BASES[codePoint];
                     if (value == 0) {
                         leadingZeroes++;
@@ -266,7 +267,7 @@ public class StringComparator implements Comparator<String> {
      * @return a TreeSet sorted by a StringComparator instance
      */
     public static <V> TreeMap<String, V> asSortedMap(Map<String, V> elements) {
-        TreeMap<String, V> result = new TreeMap<String, V>(new StringComparator());
+        TreeMap<String, V> result = new TreeMap<>(new StringComparator());
         result.putAll(elements);
         return result;
     }
@@ -280,7 +281,7 @@ public class StringComparator implements Comparator<String> {
      * @return a TreeSet sorted by a StringComparator instance
      */
     public static TreeSet<String> asSortedSet(Collection<String> elements) {
-        TreeSet<String> result = new TreeSet<String>(new StringComparator());
+        TreeSet<String> result = new TreeSet<>(new StringComparator());
         result.addAll(elements);
         return result;
     }
@@ -289,13 +290,13 @@ public class StringComparator implements Comparator<String> {
      * Returns the canonical version of a String, that is exactly the internal
      * form used to compare the two strings.
      *
-     * @param s
+     * @param inputString
      *            String to convert
      * @return the canonical version of the String.
      */
-    public static String getCanonical(String s) {
-        StringBuilder result = new StringBuilder((int) (1.15 * s.length()));
-        Tokenizer tokenizer = new StringComparator().new Tokenizer(s, false);
+    public static String getCanonical(String inputString) {
+        StringBuilder result = new StringBuilder((int) (1.15 * inputString.length()));
+        Tokenizer tokenizer = new Tokenizer(inputString, false);
         int[] token = tokenizer.next();
         while (token[0] != END) {
             if (token[0] == NUMERAL) {

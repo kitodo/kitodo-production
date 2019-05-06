@@ -54,10 +54,9 @@ public class AddMediaUnitDialog {
                         selectedPosition);
                 dataEditor.refreshStructurePanel();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-
     }
 
     void prepare() {

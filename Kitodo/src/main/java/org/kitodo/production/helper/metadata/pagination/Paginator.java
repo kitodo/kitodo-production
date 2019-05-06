@@ -82,8 +82,8 @@ public class Paginator implements Iterator<String> {
                 }
                 page = codePointClass.equals(PaginatorState.HALF_INTEGER);
             } else if (paginatorState.equals(codePointClass) || paginatorState.equals(PaginatorState.EMPTY)
-                    || (paginatorState.equals(PaginatorState.TEXT) && codePointClass.equals(PaginatorState.SYMBOL))
-                    || (paginatorState.equals(PaginatorState.SYMBOL) && codePointClass.equals(PaginatorState.TEXT))) {
+                    || paginatorState.equals(PaginatorState.TEXT) && codePointClass.equals(PaginatorState.SYMBOL)
+                    || paginatorState.equals(PaginatorState.SYMBOL) && codePointClass.equals(PaginatorState.TEXT)) {
                 /*
                  * If the stringBuilder is empty or contains the same sort of content as the
                  * current input, just write it to the stringBuilder. If the stringBuilder
@@ -93,12 +93,12 @@ public class Paginator implements Iterator<String> {
                 stringBuilder.appendCodePoint(codePoint);
                 paginatorState = codePointClass;
 
-            } else if ((paginatorState.equals(PaginatorState.TEXT)
+            } else if (paginatorState.equals(PaginatorState.TEXT)
                     && (codePointClass.equals(PaginatorState.LOWERCASE_ROMAN)
-                            || codePointClass.equals(PaginatorState.UPPERCASE_ROMAN)))
-                    || ((paginatorState.equals(PaginatorState.LOWERCASE_ROMAN)
+                            || codePointClass.equals(PaginatorState.UPPERCASE_ROMAN))
+                    || (paginatorState.equals(PaginatorState.LOWERCASE_ROMAN)
                             || paginatorState.equals(PaginatorState.UPPERCASE_ROMAN))
-                            && codePointClass.equals(PaginatorState.TEXT))) {
+                            && codePointClass.equals(PaginatorState.TEXT)) {
                 /*
                  * If we got text, and the content of the stringBuilder is a Roman numeral, or
                  * the other way round, we can still write to the stringBuilder, but the result
@@ -168,7 +168,7 @@ public class Paginator implements Iterator<String> {
     }
 
     /**
-     * Initialises missing increments, finds the initial value and, optional, a
+     * Initializes missing increments, finds the initial value and, optional, a
      * reverse operation mode.
      */
     private void initializeIncrements(boolean aHalf) {
@@ -192,97 +192,88 @@ public class Paginator implements Iterator<String> {
             if (firstFragment.getIncrement() == null) {
                 firstFragment.setIncrement(new HalfInteger(1, false));
             }
-        } else if (firstFragment.getInitialValue() <= lastFragment
-                .getInitialValue()) { /*
-                                       * more than one counting element in left-to-right order
-                                       */
-            valueFull = firstFragment.getInitialValue();
-            Fragment previousFragment = null;
-            int howMany = 0;
-            for (Fragment fragment : fragments) {
-                if (fragment.getInitialValue() == null) {
-                    continue;
-                }
-
-                if (previousFragment != null && previousFragment.getIncrement() == null) {
-                    previousFragment.setIncrement(
-                        new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
-                }
-
-                previousFragment = fragment;
-                howMany++;
-            }
-            if (lastFragment.getIncrement() == null) {
-                lastFragment.setIncrement(new HalfInteger(
-                        (lastFragment.getInitialValue() - firstFragment.getInitialValue()) / (howMany - 1), false));
-            }
-
-        } else { // more than one counting element in right-to-left order
-            this.operateReverse = true;
-            valueFull = lastFragment.getInitialValue();
-            Fragment previousFragment = null;
-            int howMany = 0;
-            for (Iterator<Fragment> iterator = fragments.descendingIterator(); iterator.hasNext();) {
-                Fragment fragment = iterator.next();
-
-                if (fragment.getInitialValue() == null) {
-                    continue;
-                }
-
-                if (previousFragment != null && previousFragment.getIncrement() == null) {
-                    previousFragment.setIncrement(
-                        new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
-                }
-                previousFragment = fragment;
-                howMany++;
-            }
-            if (firstFragment.getIncrement() == null) {
-                firstFragment.setIncrement(new HalfInteger(
-                        (firstFragment.getInitialValue() - lastFragment.getInitialValue()) / (howMany - 1), false));
-            }
-
+        } else if (firstFragment.getInitialValue() <= lastFragment.getInitialValue()) {
+            valueFull = initializeLeftToRightMode(firstFragment, lastFragment);
+        } else {
+            valueFull = initializeRightToLeftMode(firstFragment, lastFragment);
         }
         value = new HalfInteger(valueFull, aHalf);
     }
 
+    /**
+     * More than one counting element in left-to-right order.
+     */
+    private int initializeLeftToRightMode(Fragment firstFragment, Fragment lastFragment) {
+        int valueFull;
+        valueFull = firstFragment.getInitialValue();
+        Fragment previousFragment = null;
+        int howMany = 0;
+        for (Fragment fragment : fragments) {
+            if (fragment.getInitialValue() == null) {
+                continue;
+            }
+
+            if (previousFragment != null && previousFragment.getIncrement() == null) {
+                previousFragment.setIncrement(
+                    new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
+            }
+
+            previousFragment = fragment;
+            howMany++;
+        }
+        if (lastFragment.getIncrement() == null) {
+            lastFragment.setIncrement(new HalfInteger(
+                    (lastFragment.getInitialValue() - firstFragment.getInitialValue()) / (howMany - 1), false));
+        }
+        return valueFull;
+    }
+
+    /**
+     * More than one counting element in right-to-left order.
+     */
+    private int initializeRightToLeftMode(Fragment firstFragment, Fragment lastFragment) {
+        int valueFull;
+        this.operateReverse = true;
+        valueFull = lastFragment.getInitialValue();
+        Fragment previousFragment = null;
+        int howMany = 0;
+        for (Iterator<Fragment> iterator = fragments.descendingIterator(); iterator.hasNext();) {
+            Fragment fragment = iterator.next();
+
+            if (fragment.getInitialValue() == null) {
+                continue;
+            }
+
+            if (previousFragment != null && previousFragment.getIncrement() == null) {
+                previousFragment.setIncrement(
+                    new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
+            }
+            previousFragment = fragment;
+            howMany++;
+        }
+        if (firstFragment.getIncrement() == null) {
+            firstFragment.setIncrement(new HalfInteger(
+                    (firstFragment.getInitialValue() - lastFragment.getInitialValue()) / (howMany - 1), false));
+        }
+        return valueFull;
+    }
+
     private static PaginatorState codePointClassOf(int codePoint) {
         switch (codePoint) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
+            case '0': case '1': case '2': case '3': case '4': case '5':
+            case '6': case '7': case '8': case '9':
                 return PaginatorState.DECIMAL;
-            case 'C':
-            case 'D':
-            case 'I':
-            case 'L':
-            case 'M':
-            case 'V':
+            case 'C': case 'D': case 'I': case 'L': case 'M': case 'V':
             case 'X':
                 return PaginatorState.UPPERCASE_ROMAN;
             case '`':
                 return PaginatorState.TEXT_ESCAPE_TRANSITION;
-            case 'c':
-            case 'd':
-            case 'i':
-            case 'l':
-            case 'm':
-            case 'v':
+            case 'c': case 'd': case 'i': case 'l': case 'm': case 'v':
             case 'x':
                 return PaginatorState.LOWERCASE_ROMAN;
             case '¡':
                 return PaginatorState.FULL_INTEGER;
-            case '°':
-            case '²':
-            case '³':
-            case '¹':
-            case '½':
+            case '°': case '²': case '³': case '¹': case '½':
                 return PaginatorState.INCREMENT;
             case '¿':
                 return PaginatorState.HALF_INTEGER;

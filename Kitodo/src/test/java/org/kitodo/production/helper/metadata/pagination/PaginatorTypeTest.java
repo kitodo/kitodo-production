@@ -17,6 +17,7 @@ import org.junit.Test;
 
 public class PaginatorTypeTest {
 
+    private static final String UPPERCASE_ROMAN_SEVEN = "VII";
     private static final boolean UNUSED_BOOLEAN = false;
     private static final PaginatorMode UNUSED_PAGINATOR_MODE = null;
     private static final String UNUSED_STRING = null;
@@ -41,7 +42,8 @@ public class PaginatorTypeTest {
 
     @Test
     public void testArabicFormatColumnsFictiousFromUppercaseRoman() {
-        assertEquals("[7²]", PaginatorType.ARABIC.format(PaginatorMode.COLUMNS, "VII", true, UNUSED_STRING));
+        assertEquals("[7²]",
+            PaginatorType.ARABIC.format(PaginatorMode.COLUMNS, UPPERCASE_ROMAN_SEVEN, true, UNUSED_STRING));
     }
 
     @Test
@@ -101,7 +103,8 @@ public class PaginatorTypeTest {
 
     @Test
     public void testArabicFormatFoliationFictiousFromUppercaseRoman() {
-        assertEquals("[7½]", PaginatorType.ARABIC.format(PaginatorMode.FOLIATION, "VII", true, UNUSED_STRING));
+        assertEquals("[7½]",
+            PaginatorType.ARABIC.format(PaginatorMode.FOLIATION, UPPERCASE_ROMAN_SEVEN, true, UNUSED_STRING));
     }
 
     @Test
@@ -401,17 +404,19 @@ public class PaginatorTypeTest {
 
     @Test
     public void testRomanFormatPagesFromArabic() {
-        assertEquals("VII", PaginatorType.ROMAN.format(PaginatorMode.PAGES, "7", false, UNUSED_STRING));
+        assertEquals(UPPERCASE_ROMAN_SEVEN, PaginatorType.ROMAN.format(PaginatorMode.PAGES, "7", false, UNUSED_STRING));
     }
 
     @Test
     public void testRomanFormatPagesFromLowercaseRoman() {
-        assertEquals("VII", PaginatorType.ROMAN.format(PaginatorMode.PAGES, "vii", false, UNUSED_STRING));
+        assertEquals(UPPERCASE_ROMAN_SEVEN,
+            PaginatorType.ROMAN.format(PaginatorMode.PAGES, "vii", false, UNUSED_STRING));
     }
 
     @Test
     public void testRomanFormatPagesFromUppercaseRoman() {
-        assertEquals("VII", PaginatorType.ROMAN.format(PaginatorMode.PAGES, "VII", false, UNUSED_STRING));
+        assertEquals(UPPERCASE_ROMAN_SEVEN,
+            PaginatorType.ROMAN.format(PaginatorMode.PAGES, UPPERCASE_ROMAN_SEVEN, false, UNUSED_STRING));
     }
 
     @Test
@@ -550,33 +555,32 @@ public class PaginatorTypeTest {
     }
 
     @Test
-    public void testValueOf1() {
+    public void testValueOfOne() {
         assertEquals(PaginatorType.ARABIC, PaginatorType.valueOf(1));
     }
 
     @Test
-    public void testValueOf2() {
+    public void testValueOfTwo() {
         assertEquals(PaginatorType.ROMAN, PaginatorType.valueOf(2));
     }
 
     @Test
-    public void testValueOf3() {
+    public void testValueOfThree() {
         assertEquals(PaginatorType.UNCOUNTED, PaginatorType.valueOf(3));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testValueOf42() {
+    public void testValueOfFourtytwo() {
         PaginatorType.valueOf(42);
     }
 
     @Test
-    public void testValueOf6() {
+    public void testValueOfSix() {
         assertEquals(PaginatorType.FREETEXT, PaginatorType.valueOf(6));
     }
 
     @Test
-    public void testValueOf99() {
+    public void testValueOfNinetynine() {
         assertEquals(PaginatorType.ADVANCED, PaginatorType.valueOf(99));
     }
 }
-

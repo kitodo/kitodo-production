@@ -203,14 +203,15 @@ public class Workpiece {
     }
 
     private List<MediaUnit> getAllMediaUnitsRecursive(MediaUnit parent, List<MediaUnit> mediaUnits) {
+        List<MediaUnit> result = mediaUnits;
         for (MediaUnit mediaUnit : parent.getChildren()) {
             if (Objects.nonNull(mediaUnit)) {
-                mediaUnits.add(mediaUnit);
+                result.add(mediaUnit);
                 if (!mediaUnit.getChildren().isEmpty()) {
-                    mediaUnits = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
+                    result = getAllMediaUnitsRecursive(mediaUnit, mediaUnits);
                 }
             }
         }
-        return mediaUnits;
+        return result;
     }
 }

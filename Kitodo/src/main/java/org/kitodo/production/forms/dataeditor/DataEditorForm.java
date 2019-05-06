@@ -258,15 +258,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Ensures that all locks are released when the user leaves the meta-data
-     * editor in an unusual way.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
-
-    /**
      * Validate the structure and metadata.
      */
     public void validate() {
