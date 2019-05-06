@@ -517,6 +517,12 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     background-color: var(--light-gray);
 }
 
+.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
+    min-width: 200px;
+    overflow: initial;
+    overflow-y: scroll;
+}
+
 .ui-inputfield.ui-state-disabled,
 .ui-inputfield.ui-state-disabled::placeholder,
 .ui-selectonemenu.ui-state-disabled {
