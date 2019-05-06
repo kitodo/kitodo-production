@@ -33,6 +33,8 @@
                              value="#{UserForm.roles}"
                              lazy="true"
                              paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                              rows="#{LoginForm.loggedUser.tableSize}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{msgs.role}">

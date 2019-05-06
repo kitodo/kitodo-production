@@ -20,7 +20,8 @@
     <ui:fragment rendered="#{BatchForm.batchHelper != null}">
         <p:dataTable id="processesTable" var="process" value="#{BatchForm.batchHelper.processes}"
                      lazy="true" paginator="true" rows="#{LoginForm.loggedUser.tableSize}"
-                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
             <p:column id="titleColumn" headerText="#{msgs.processes}" filterBy="#{process.title}">
                 <h:outputText value="#{process.title}"/>

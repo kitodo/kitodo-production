@@ -24,7 +24,8 @@
                      value="#{ProcessForm.lazyDTOModel}"
                      selection="#{ProcessForm.selectedProcesses}" lazy="true" paginator="true"
                      rows="#{LoginForm.loggedUser.tableSize}"
-                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                      paginatorPosition="bottom">
             <p:column styleClass="checkboxListColumn" selectionMode="multiple"/>
             <p:column id="titleColumn"

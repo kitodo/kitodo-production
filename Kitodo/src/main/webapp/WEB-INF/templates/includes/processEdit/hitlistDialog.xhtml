@@ -30,7 +30,9 @@
                          var="hit"
                          rows="#{LoginForm.loggedUser.tableSize}"
                          paginatorPosition="bottom"
-                         paginator="true">
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="#{msgs.currentPageReportTemplate}">
                 <p:column headerText="#{msgs.hits}">
                     <p:commandLink id="selectRecord"
                                    value="#{hit.title}"
