@@ -1162,4 +1162,22 @@ public class FileService {
             throw new IOException("No dummy image found in resources!");
         }
     }
+
+    /**
+     * Concatenate two given Strings representing a directory and a filename and return the result. A file separator
+     * is added between both Strings if 'directory' does not already end with a separator character.
+     *
+     * @param directory
+     *          directory path
+     * @param filename
+     *          filename
+     * @return directory concatenated with filename
+     */
+    public static String concat(String directory, String filename) {
+        if (directory.endsWith("/")) {
+            return directory + filename;
+        } else {
+            return directory + "/" + filename;
+        }
+    }
 }

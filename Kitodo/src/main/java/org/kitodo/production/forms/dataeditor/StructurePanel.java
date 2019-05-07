@@ -317,7 +317,9 @@ public class StructurePanel implements Serializable {
         if (Boolean.FALSE.equals(separateMedia)) {
             String page = Helper.getTranslation("page").concat(" ");
             for (View view : structure.getViews()) {
-                if (!viewsShowingOnAChild.contains(view)) {
+                if (!viewsShowingOnAChild.contains(view)
+                        && Objects.nonNull(view.getMediaUnit())
+                        && Objects.nonNull(view.getMediaUnit().getOrderlabel())) {
                     new DefaultTreeNode(new StructureTreeNode(this, page.concat(view.getMediaUnit().getOrderlabel()),
                             false, false, view), parent).setExpanded(true);
                     viewsShowingOnAChild.add(view);

@@ -24,7 +24,6 @@ import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.enums.ImportType;
@@ -35,10 +34,11 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
+import org.kitodo.production.services.file.FileService;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
- * 
+ *
  * @author Based on preceding works from authors not named
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -229,7 +229,7 @@ public class PluginLoader {
      */
     private static PluginManagerUtil getPluginLoader(PluginType type) {
         PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-        String path = FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_PLUGINS), type.getName());
+        String path = FileService.concat(ConfigCore.getParameter(ParameterCore.DIR_PLUGINS), type.getName());
         pluginManager.addPluginsFrom(new File(path).toURI());
         return new PluginManagerUtil(pluginManager);
     }

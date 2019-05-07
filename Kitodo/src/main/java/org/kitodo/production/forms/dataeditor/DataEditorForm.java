@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -42,6 +41,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.file.FileService;
 
 @Named("DataEditorForm")
 @SessionScoped
@@ -209,7 +209,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         String metadataLanguage = user.getMetadataLanguage();
         priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File(FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName)));
+        ruleset.load(new File(FileService.concat(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName)));
         if (logger.isTraceEnabled()) {
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
