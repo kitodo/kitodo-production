@@ -18,16 +18,12 @@ import java.util.Map.Entry;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
 
 public class AddMediaUnitDialog {
-    private static final Logger logger = LogManager.getLogger(AddDocStrucTypeDialog.class);
-
     private final DataEditorForm dataEditor;
     private List<SelectItem> possiblePositions;
     private List<SelectItem> possibleTypes;
@@ -47,15 +43,13 @@ public class AddMediaUnitDialog {
      * Add a new MediaUnit.
      */
     public void addMediaUnit() {
-        try {
-            if (dataEditor.getSelectedMediaUnit().isPresent()) {
-                MetadataEditor.addMediaUnit(selectedType,
-                        dataEditor.getSelectedMediaUnit().get(),
-                        selectedPosition);
-                dataEditor.refreshStructurePanel();
-            }
-        } catch (RuntimeException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (dataEditor.getSelectedMediaUnit().isPresent()) {
+            MetadataEditor.addMediaUnit(selectedType,
+                    dataEditor.getSelectedMediaUnit().get(),
+                    selectedPosition);
+            dataEditor.refreshStructurePanel();
+        } else {
+            Helper.setErrorMessage("No media unit selected!");
         }
     }
 
