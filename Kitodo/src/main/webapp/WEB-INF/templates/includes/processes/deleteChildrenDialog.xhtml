@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog class="client-select-dialog"
+              id="deleteChildrenDialog"
+              widgetVar="deleteChildrenDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              resizable="false"
+              closable="false">
+        <p><h:outputFormat value="#{msgs['processChildren']}">
+            <f:param value="#{ProcessForm.process.children.size()}" />
+        </h:outputFormat></p>
+        <p:panelGrid>
+            <p:row>
+                <p:commandButton id="deleteChildrenButton"
+                                 action="#{ProcessForm.deleteWithChildren}"
+                                 onstart="PF('deleteChildrenDialog').hide();"
+                                 update="@all"
+                                 styleClass="primary right"
+                                 value="#{msgs.yes}"
+                                 icon="fa fa-check"
+                                 iconPos="right"/>
+                <p:commandButton id="preserveChildrenButton"
+                                 action="#{ProcessForm.deleteWithoutChildren}"
+                                 onstart="PF('deleteChildrenDialog').hide();"
+                                 update="@all"
+                                 styleClass="secondary right"
+                                 value="#{msgs.no}"
+                                 icon="fa fa-close"
+                                 iconPos="right"/>
+                <p:commandButton value="#{msgs.cancel}"
+                                 immediate="true"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right"
+                                 onclick="PF('deleteChildrenDialog').hide();"/>
+            </p:row>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>
