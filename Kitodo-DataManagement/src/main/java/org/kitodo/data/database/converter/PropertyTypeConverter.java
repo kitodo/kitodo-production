@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.converter;
 
+import java.util.Objects;
+
 import javax.persistence.AttributeConverter;
 
 import org.kitodo.data.database.enums.PropertyType;
@@ -19,11 +21,17 @@ public class PropertyTypeConverter implements AttributeConverter<PropertyType, I
 
     @Override
     public Integer convertToDatabaseColumn(PropertyType propertyType) {
-        return propertyType.getId();
+        if (Objects.nonNull(propertyType)) {
+            return propertyType.getId();
+        }
+        return PropertyType.UNKNOWN.getId();
     }
 
     @Override
-    public PropertyType convertToEntityAttribute(Integer propertyTypValue) {
-        return PropertyType.getById(propertyTypValue);
+    public PropertyType convertToEntityAttribute(Integer propertyTypeValue) {
+        if (Objects.nonNull(propertyTypeValue)) {
+            return PropertyType.getById(propertyTypeValue);
+        }
+        return PropertyType.UNKNOWN;
     }
 }

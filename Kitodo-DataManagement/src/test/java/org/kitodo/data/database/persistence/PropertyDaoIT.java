@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.enums.IndexAction;
+import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class PropertyDaoIT {
@@ -30,7 +31,7 @@ public class PropertyDaoIT {
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
-        List<Property> properties = getAuthorities();
+        List<Property> properties = getProperties();
 
         PropertyDAO propertyDAO = new PropertyDAO();
         propertyDAO.save(properties.get(0));
@@ -39,7 +40,10 @@ public class PropertyDaoIT {
 
         assertEquals("Objects were not saved or not found!", 3, propertyDAO.getAll().size());
         assertEquals("Objects were not saved or not found!", 2, propertyDAO.getAll(1,2).size());
-        assertEquals("Object was not saved or not found!", "first_property", propertyDAO.getById(1).getTitle());
+
+        Property foundProperty = propertyDAO.getById(1);
+        assertEquals("Object was not saved or not found!", "first_property", foundProperty.getTitle());
+        assertEquals("Object's type was not converted!", PropertyType.UNKNOWN, foundProperty.getDataType());
 
         propertyDAO.remove(1);
         propertyDAO.remove(properties.get(1));
@@ -50,9 +54,10 @@ public class PropertyDaoIT {
         propertyDAO.getById(1);
     }
 
-    private List<Property> getAuthorities() {
+    private List<Property> getProperties() {
         Property firstProperty = new Property();
         firstProperty.setTitle("first_property");
+        firstProperty.setDataType(null);
         firstProperty.setIndexAction(IndexAction.DONE);
 
         Property secondProperty = new Property();
