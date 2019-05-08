@@ -47,6 +47,9 @@ public class Process extends BaseTemplateBean {
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
 
+    @Column(name = "exportable")
+    private boolean exportable;
+
     @Column(name = "sortHelperArticles")
     private Integer sortHelperArticles;
 
@@ -156,6 +159,25 @@ public class Process extends BaseTemplateBean {
 
     public void setSortHelperImages(Integer sortHelperImages) {
         this.sortHelperImages = sortHelperImages;
+    }
+
+    /**
+     * Returns whether this process is exportable.
+     *
+     * @return whether this process is exportable
+     */
+    public boolean isExportable() {
+        return exportable;
+    }
+
+    /**
+     * Sets whether this process is exportable.
+     *
+     * @param exportable
+     *            whether this process is exportable
+     */
+    public void setExportable(boolean exportable) {
+        this.exportable = exportable;
     }
 
     /**

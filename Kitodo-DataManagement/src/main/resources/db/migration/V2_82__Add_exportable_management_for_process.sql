@@ -9,6 +9,10 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
--- 1. Add column for typeSetExportableToTrue to task table
+-- 1. Add column for exportable to process table
 --
-ALTER TABLE task ADD typeSetExportableToTrue TINYINT(1) DEFAULT 0;
+ALTER TABLE process ADD exportable TINYINT(1) NOT NULL DEFAULT 0;
+
+-- 2. Add column for typeSetExportableToTrue to task table
+--
+ALTER TABLE task ADD typeSetExportableToTrue TINYINT(1) NOT NULL DEFAULT 0;
