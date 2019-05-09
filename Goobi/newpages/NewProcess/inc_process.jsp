@@ -46,9 +46,6 @@
         </h:selectOneMenu>
     </h:column>
 
-    <%-- TODO: hide choices if selected OPAC does not support file upload! --%>
-    <%-- FIXME --%>
-    <%-- <h:panelGroup rendered="#{ProzesskopieForm.fileUploadAvailable}"> --%>
     <h:panelGroup rendered="true">
         <h:column>
             <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
