@@ -163,8 +163,8 @@
                     <p:row>
                         <p:commandButton id="setSessionClientButton"
                                          action="#{SessionClientController.setSelectedClientAsSessionClient}"
-                                         onstart="PF('selectClientDialog').hide(); PF('loadingDialog').show();"
-                                         oncomplete="PF('loadingDialog').hide();"
+                                         onstart="PF('selectClientDialog').hide(); $('#loadingScreen').show();"
+                                         oncomplete="$('#loadingScreen').hide();"
                                          disabled="#{not SessionClientController.areClientsAvailableForUser()}"
                                          update="@all"
                                          styleClass="primary right"

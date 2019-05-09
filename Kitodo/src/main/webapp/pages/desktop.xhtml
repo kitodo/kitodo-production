@@ -98,7 +98,7 @@
                         <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
                     </div>
                 </p:panel>
-                <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
             </div>
         </ui:fragment>
     </ui:define>
