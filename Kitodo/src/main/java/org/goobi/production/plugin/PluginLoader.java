@@ -12,6 +12,7 @@
 package org.goobi.production.plugin;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +35,6 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
-import org.kitodo.production.services.file.FileService;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
@@ -229,7 +229,7 @@ public class PluginLoader {
      */
     private static PluginManagerUtil getPluginLoader(PluginType type) {
         PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-        String path = FileService.concat(ConfigCore.getParameter(ParameterCore.DIR_PLUGINS), type.getName());
+        String path = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_PLUGINS), type.getName()).toString();
         pluginManager.addPluginsFrom(new File(path).toURI());
         return new PluginManagerUtil(pluginManager);
     }

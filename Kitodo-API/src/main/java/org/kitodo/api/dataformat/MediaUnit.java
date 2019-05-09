@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.Metadata;
 
-public class MediaUnit implements TreeNode<MediaUnit> {
+public class MediaUnit implements Parent<MediaUnit> {
     /**
      * The subordinate media units of this media unit, which form the media unit
      * tree. The order of the substructures is subordinate media units by the

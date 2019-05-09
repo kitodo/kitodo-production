@@ -713,8 +713,8 @@ public class FileService {
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        //URI processBaseUri = process.getProcessBaseUri();
-        if (/* Objects.isNull(processBaseUri) && */ Objects.nonNull(process.getId())) {
+        URI processBaseUri = process.getProcessBaseUri();
+        if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
         }
         return process.getProcessBaseUri();
@@ -1022,13 +1022,13 @@ public class FileService {
      * Renumbers the order of the media units.
      */
     private void renumberMediaUnits(Workpiece workpiece) {
-        int mininum = 1;
+        int minimum = 1;
         for (MediaUnit mediaUnit : workpiece.getMediaUnits()) {
-            if (mediaUnit.getOrder() > mininum) {
-                mininum = mediaUnit.getOrder() + 1;
+            if (mediaUnit.getOrder() > minimum) {
+                minimum = mediaUnit.getOrder() + 1;
             } else {
-                mediaUnit.setOrder(mininum);
-                mininum++;
+                mediaUnit.setOrder(minimum);
+                minimum++;
             }
         }
     }
@@ -1160,24 +1160,6 @@ public class FileService {
             return dummyImage.toURI();
         } else {
             throw new IOException("No dummy image found in resources!");
-        }
-    }
-
-    /**
-     * Concatenate two given Strings representing a directory and a filename and return the result. A file separator
-     * is added between both Strings if 'directory' does not already end with a separator character.
-     *
-     * @param directory
-     *          directory path
-     * @param filename
-     *          filename
-     * @return directory concatenated with filename
-     */
-    public static String concat(String directory, String filename) {
-        if (directory.endsWith("/")) {
-            return directory + filename;
-        } else {
-            return directory + "/" + filename;
         }
     }
 }

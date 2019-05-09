@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
-import org.kitodo.api.dataformat.TreeNode;
+import org.kitodo.api.dataformat.Parent;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.helper.Helper;
@@ -203,7 +203,7 @@ public class MetadataEditor {
                                                                                 IncludedStructuralElement position) {
         return getAncestorsRecursive(searched, position, null)
                 .stream()
-                .map(treeNode -> (IncludedStructuralElement) treeNode)
+                .map(parent -> (IncludedStructuralElement) parent)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -219,22 +219,22 @@ public class MetadataEditor {
     public static LinkedList<MediaUnit> getAncestorsOfMediaUnit(MediaUnit searched, MediaUnit position) {
         return getAncestorsRecursive(searched, position, null)
                 .stream()
-                .map(treeNode -> (MediaUnit) treeNode)
+                .map(parent -> (MediaUnit) parent)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private static <T> LinkedList<TreeNode<T>> getAncestorsRecursive(TreeNode<T> searched, TreeNode<T> position, TreeNode<T> parent) {
+    private static <T> LinkedList<Parent<T>> getAncestorsRecursive(Parent<T> searched, Parent<T> position, Parent<T> parent) {
         if (position.equals(searched)) {
             if (Objects.isNull(parent)) {
                 return new LinkedList<>();
             }
-            LinkedList<TreeNode<T>> result = new LinkedList<>();
+            LinkedList<Parent<T>> result = new LinkedList<>();
             result.add(parent);
             return result;
 
         }
         for (T child : position.getChildren()) {
-            LinkedList<TreeNode<T>> maybeFound = getAncestorsRecursive(searched, (TreeNode<T>)child, position);
+            LinkedList<Parent<T>> maybeFound = getAncestorsRecursive(searched, (Parent<T>)child, position);
             if (!maybeFound.isEmpty()) {
                 if (Objects.nonNull(parent)) {
                     maybeFound.addFirst(parent);

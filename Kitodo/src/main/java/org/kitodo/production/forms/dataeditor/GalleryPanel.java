@@ -11,7 +11,6 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,6 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.primefaces.event.DragDropEvent;
@@ -66,7 +64,6 @@ public class GalleryPanel {
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
     private MediaVariant mediaViewVariant;
-    private int pageIndex;
     private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
     private MediaVariant previewVariant;
     private GalleryMediaContent selectedMedia;
@@ -94,47 +91,6 @@ public class GalleryPanel {
     }
 
     /**
-     * Checks and returns whether access is granted to the image with the given
-     * filepath "imagePath".
-     *
-     * @param imagePath
-     *            the filepath of the image for which access rights are checked
-     * @return true if access is granted and false otherwise
-     */
-    public boolean getImageAccessible(String imagePath) {
-        // TODO implement
-        // like method isAccessGranted(String imagePath) in
-        // MetadataProcessor:2643?
-        return false;
-    }
-
-    /**
-     * Get list of all pages allocated to the passed logical element.
-     *
-     * @param logicalElement
-     *            // TODO add param description
-     * @return List of all allocated pages
-     */
-    public List<LegacyDocStructHelperInterface> getLogicalElementPageList(
-            LegacyDocStructHelperInterface logicalElement) {
-        // TODO implement
-        // get list of all pages allocated to the logicalElement
-        return new ArrayList<>();
-    }
-
-    /**
-     * Get the logical page number for a paginated docstruct.
-     *
-     * @param docStruct
-     *            The DocStruct object
-     * @return The logical page number
-     */
-    public String getLogicalPageNumber(LegacyDocStructHelperInterface docStruct) {
-        // TODO implement
-        return "";
-    }
-
-    /**
      * Get the list of image file paths for the current process.
      *
      * @return List of fullsize PNG images
@@ -145,45 +101,6 @@ public class GalleryPanel {
 
     String getMediaViewMimeType() {
         return mediaViewVariant.getMimeType();
-    }
-
-    /**
-     * Get file path to png image for passed LegacyDocStructHelperInterface
-     * 'page' representing a single scanned image.
-     *
-     * @param page
-     *            LegacyDocStructHelperInterface for which the corresponding png
-     *            image file path is returned
-     * @return File path to the png image
-     */
-    public String getPageImageFilePath(LegacyDocStructHelperInterface page) {
-        // TODO implement
-        // like getPageImageFilePath(LegacyDocStructHelperInterface
-        // pageDocStruct) in MetadataProcessor:2560?
-        return "";
-    }
-
-    /**
-     * Get pageIndex.
-     *
-     * @return value of pageIndex
-     */
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    /**
-     * Get the physical page number for the passed
-     * LegacyDocStructHelperInterface 'page'.
-     *
-     * @param page
-     *            LegacyDocStructHelperInterface which physical page number is
-     *            returned
-     * @return physical page number
-     */
-    public int getPhysicalPageNumber(LegacyDocStructHelperInterface page) {
-        // TODO implement
-        return 0;
     }
 
     /**
@@ -241,20 +158,6 @@ public class GalleryPanel {
     }
 
     /**
-     * Get the path to the thumbnail for the with the passed image path.
-     *
-     * @param imagePath
-     *            Path to the fullsize PNG image
-     * @return Path to the thumnail PNG image
-     */
-    public String getThumbnail(String imagePath) {
-        File imageFile = new File(imagePath);
-        String filename = imageFile.getName();
-        return imagePath.replace("FULLSIZE_FOLDER_NAME", "THUMBNAIL_FOLDER_NAME").replace(filename,
-            "thumbnail." + filename);
-    }
-
-    /**
      * Handle event of page being dragged and dropped.
      *
      * @param event
@@ -303,8 +206,6 @@ public class GalleryPanel {
             return;
         }
 
-        // TODO: add more drag'n'drop events here
-
         logger.debug("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
     }
 
@@ -316,16 +217,6 @@ public class GalleryPanel {
      */
     public void setGalleryViewMode(String galleryViewMode) {
         this.galleryViewMode = GalleryViewMode.valueOf(galleryViewMode.toUpperCase());
-    }
-
-    /**
-     * Set pageIndex.
-     *
-     * @param pageIndex
-     *            as int
-     */
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
     }
 
     /**

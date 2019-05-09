@@ -66,7 +66,7 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * TODO add javaDoc.
+     * Callback function triggered when a node is selected in the logical structure tree.
      *
      * @param event
      *            NodeSelectEvent triggered by logical node being selected
@@ -76,7 +76,7 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * TODO add javaDoc.
+     * Callback function triggered when a node is selected in the physical structure tree.
      *
      * @param event
      *            NodeSelectEvent triggered by logical node being selected

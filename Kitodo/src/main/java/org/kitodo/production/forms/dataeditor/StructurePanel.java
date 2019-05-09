@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -274,10 +273,7 @@ public class StructurePanel implements Serializable {
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
         this.logicalTree = result.getLeft().get(result.getLeft().size() - 1); // TODO size() - 1 might be dangerous
         if (separateMedia != null) {
-            Set<MediaUnit> mediaUnitsShowingOnTheStructureTree = result.getRight().parallelStream()
-                    .map(View::getMediaUnit).collect(Collectors.toSet());
-            this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit(),
-                mediaUnitsShowingOnTheStructureTree);
+            this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
         }
         this.selectedLogicalNode = logicalTree.getChildren().get(0);
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
@@ -339,44 +335,12 @@ public class StructurePanel implements Serializable {
      *
      * @param mediaRoot
      *            root of media units to show on the tree
-     * @param mediaUnitsShowingOnTheStructureTree
-     *            media units already showing on the structure tree. In mixed
-     *            mode, only media units not yet linked anywhere will show in
-     *            the second tree as unlinked media.
-     *
      * @return the media tree
      */
-    private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot,
-            Collection<MediaUnit> mediaUnitsShowingOnTheStructureTree) {
+    private DefaultTreeNode buildMediaTree(MediaUnit mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
         rootTreeNode.setExpanded(true);
-
-        /*
-         * Creating the tree node by handing over the parent node automatically
-         * appends it to the parent as a child. That's the logic of the JSF
-         * framework. So you do not have to add the result anywhere.
-         */
-        /*DefaultTreeNode mediaTreeRoot = new DefaultTreeNode(new StructureTreeNode(this,
-                Helper.getTranslation(separateMedia ? "dataEditor.mediaTree" : "dataEditor.unlinkedMediaTree"), false,
-                false, mediaRoot.getChildren()), rootTreeNode);
-        mediaTreeRoot.setExpanded(true);
-        */
-
         buildMediaTreeRecursively(mediaRoot, rootTreeNode);
-
-        /*
-        String page = Helper.getTranslation("page").concat(" ");
-        boolean isEmpty = true;
-        for (MediaUnit mediaUnit : mediaUnits) {
-            if (Boolean.TRUE.equals(separateMedia) || !mediaUnitsShowingOnTheStructureTree.contains(mediaUnit)) {
-                new DefaultTreeNode(
-                        new StructureTreeNode(this, page.concat(mediaUnit.getOrderlabel()), false, false, mediaUnit),
-                        mediaTreeRoot).setExpanded(true);
-                isEmpty = false;
-            }
-        }
-        return !isEmpty ? rootTreeNode : null;
-        */
         return rootTreeNode;
     }
 

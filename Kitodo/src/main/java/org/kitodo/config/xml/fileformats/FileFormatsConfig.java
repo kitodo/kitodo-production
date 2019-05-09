@@ -12,6 +12,7 @@
 package org.kitodo.config.xml.fileformats;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.config.KitodoConfig;
-import org.kitodo.production.services.file.FileService;
 
 /**
  * A {@code kitodo_fileFormats.xml} config file. This class corresponds to the
@@ -40,8 +40,7 @@ import org.kitodo.production.services.file.FileService;
 public class FileFormatsConfig {
 
     private static final File CONFIG_FILE = new File(
-            FileService.concat(KitodoConfig.getKitodoConfigDirectory(),
-                    "kitodo_fileFormats.xml"));
+            Paths.get(KitodoConfig.getKitodoConfigDirectory(), "kitodo_fileFormats.xml").toString());
 
     @XmlElement(required = true)
     protected List<FileFormat> fileFormat;

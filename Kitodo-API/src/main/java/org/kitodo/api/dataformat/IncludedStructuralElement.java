@@ -25,7 +25,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
  * finely granular {@link #subincludedStructuralElements}. It can be described
  * by {@link #metadata}.
  */
-public class IncludedStructuralElement implements TreeNode<IncludedStructuralElement> {
+public class IncludedStructuralElement implements Parent<IncludedStructuralElement> {
     /**
      * The label for this included structural element. The label is displayed in
      * the graphical representation of the included structural element tree for
