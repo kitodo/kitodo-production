@@ -356,13 +356,13 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    void treeLogicalSelect() {
+    void treeLogicalSelect(Object treeNodeData) {
         /*
          * The newly selected element has already been set in 'selectedLogicalNode' by
          * JSF at this point.
          */
         try {
-            dataEditor.switchStructure();
+            dataEditor.switchStructure(treeNodeData);
             previouslySelectedLogicalNode = selectedLogicalNode;
         } catch (NoSuchMetadataFieldException | InvalidMetadataValueException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
@@ -389,7 +389,7 @@ public class StructurePanel implements Serializable {
         this.updatePhysicalNodeSelection(galleryMediaContent);
     }
 
-    private void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
         if (this.separateMedia) {
             if (Objects.nonNull(previouslySelectedPhysicalNode)) {
                 previouslySelectedPhysicalNode.setSelected(false);
@@ -408,7 +408,7 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void updateLogicalNodeSelection(GalleryMediaContent galleryMediaContent) {
+    void updateLogicalNodeSelection(GalleryMediaContent galleryMediaContent) {
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
             previouslySelectedLogicalNode.setSelected(false);
         }

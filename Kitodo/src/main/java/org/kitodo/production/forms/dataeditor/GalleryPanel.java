@@ -380,4 +380,13 @@ public class GalleryPanel {
                 .filter(c -> Objects.isNull(getLogicalStructureOfMedia(c)))
                 .collect(Collectors.toList());
     }
+
+    GalleryMediaContent getGalleryMediaContent(View view) {
+        for (GalleryMediaContent galleryMediaContent : this.medias) {
+            if (galleryMediaContent.getView().getMediaUnit().equals(view.getMediaUnit())) {
+                return galleryMediaContent;
+            }
+        }
+        return null;
+    }
 }

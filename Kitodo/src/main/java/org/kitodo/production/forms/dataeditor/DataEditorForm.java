@@ -18,8 +18,10 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
@@ -216,7 +219,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return ruleset;
     }
 
-    private void init() throws IOException {
+    private void init() {
         final long begin = System.nanoTime();
 
         structurePanel.show();
@@ -393,10 +396,32 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.process = process;
     }
 
-    void switchStructure() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    void switchStructure(Object treeNodeData) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         metadataPanel.preserveLogical();
         metadataPanel.showLogical(structurePanel.getSelectedStructure());
         addDocStrucTypeDialog.prepare();
+        if (Objects.nonNull(treeNodeData) && treeNodeData instanceof  StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNodeData;
+            if (Objects.nonNull(structureTreeNode.getDataObject())) {
+                if (structureTreeNode.getDataObject() instanceof IncludedStructuralElement
+                        && structurePanel.getSelectedStructure().isPresent()) {
+                    // Logical structure element selected
+                    IncludedStructuralElement structuralElement = structurePanel.getSelectedStructure().get();
+                    if (!structuralElement.getViews().isEmpty()) {
+                        ArrayList<View> views = new ArrayList<>(structuralElement.getViews());
+                        if (Objects.nonNull(views.get(0))) {
+                            View firstView = views.get(0);
+                            updatePhysicalStructureTree(firstView);
+                            updateGallery(firstView);
+                        }
+                    }
+                } else if (structureTreeNode.getDataObject() instanceof View) {
+                    // Page selected in logical tree
+                    updateGallery((View) structureTreeNode.getDataObject());
+                    // no need to update physical tree because pages can only be clicked in logical tree if physical tree is hidden!
+                }
+            }
+        }
     }
 
     void switchMediaUnit() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
@@ -404,7 +429,29 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         metadataPanel.showPhysical(structurePanel.getSelectedMediaUnit());
         addMediaUnitDialog.prepare();
         if (structurePanel.getSelectedMediaUnit().isPresent()) {
+            // update gallery
             galleryPanel.updateSelection(structurePanel.getSelectedMediaUnit().get());
+            // update logical tree
+            for (GalleryMediaContent galleryMediaContent : galleryPanel.getMedias()) {
+                if (structurePanel.getSelectedMediaUnit().get().getMediaFiles().values().contains(galleryMediaContent.getPreviewUri())) {
+                    structurePanel.updateLogicalNodeSelection(galleryMediaContent);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void updatePhysicalStructureTree(View view) {
+        GalleryMediaContent galleryMediaContent = this.galleryPanel.getGalleryMediaContent(view);
+        if (Objects.nonNull(galleryMediaContent)) {
+            structurePanel.updatePhysicalNodeSelection(galleryMediaContent);
+        }
+    }
+
+    private void updateGallery(View view) {
+        MediaUnit mediaUnit = view.getMediaUnit();
+        if (Objects.nonNull(mediaUnit)) {
+            galleryPanel.updateSelection(mediaUnit);
         }
     }
 }

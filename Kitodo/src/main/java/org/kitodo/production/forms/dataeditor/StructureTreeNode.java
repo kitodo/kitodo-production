@@ -72,7 +72,7 @@ public class StructureTreeNode implements Serializable {
      *            NodeSelectEvent triggered by logical node being selected
      */
     public void treeLogicalSelect(NodeSelectEvent event) {
-        structurePanel.treeLogicalSelect();
+        structurePanel.treeLogicalSelect(event.getTreeNode().getData());
     }
 
     /**
