@@ -110,6 +110,12 @@ import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 import org.apache.commons.configuration.SubnodeConfiguration;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.*;
+import org.xml.sax.SAXException;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ProzesskopieForm {
     private static final Logger logger = Logger.getLogger(ProzesskopieForm.class);
@@ -2201,7 +2207,12 @@ public class ProzesskopieForm {
         if (this.uploadedFile != null) {
             try (InputStream inputStream = this.uploadedFile.getInputStream()) {
                 String xmlString = IOUtils.toString(inputStream);
-                if (XMLUtils.validateXML(xmlString, xsdPath)) {
+                SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+                File schemaLocation = new File(xsdPath);
+                try {
+                    Schema schema = factory.newSchema(schemaLocation);
+                    Validator validator = schema.newValidator();
+                    validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
                     Helper.setMeldung("Successfully validated given XML file '" + this.uploadedFile.getName() + "'!");
                     clearValues();
                     readProjectConfigs();
@@ -2211,10 +2222,11 @@ public class ProzesskopieForm {
                         Helper.setMeldung("Plugin found for catalog '" + opacKatalog + "': " + importCatalogue.getTitle(Locale.ENGLISH));
                         importHit(importCatalogue.getHit(xmlString, -1, -1));
                     }
-                } else {
-                    Helper.setFehlerMeldung("ERROR: given file '" + this.uploadedFile.getName() + "' does not contain valid MODS XML!");
-                }
 
+                }
+                catch (SAXException ex) {
+                    Helper.setFehlerMeldung("ERROR: given file '" + this.uploadedFile.getName() + "' does not contain valid MODS XML! " + ex.getMessage());
+                }
             } catch (IOException e) {
                 logger.error(e.getLocalizedMessage());
             } catch (PreferencesException e) {
