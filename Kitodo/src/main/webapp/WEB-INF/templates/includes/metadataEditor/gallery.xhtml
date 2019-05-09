@@ -80,7 +80,7 @@
                                     binding="#{structuredThumbnail}">
                             <p:panel id="structuredPagePanel">
                                 <p:commandLink action="#{DataEditorForm.galleryPanel.updateStructure(media)}"
-                                               update="structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
+                                               update="structureTreeForm:logicalTree structureTreeForm:physicalTree @this @(.active.thumbnail) imagePreviewForm:olWrapper">
                                     <h:panelGroup class="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                         class="thumbnail #{DataEditorForm.galleryPanel.selectedMedia eq media ? 'active' : ''}"

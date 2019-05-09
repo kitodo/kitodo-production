@@ -64,8 +64,10 @@
 
         <!-- Physical Tree -->
         <h:panelGroup layout="block" style="background-color: var(--cloudy-gray);"
+                      rendered="#{DataEditorForm.structurePanel.separateMedia}"
                       styleClass="ui-widget-content columnHeadingWrapper">#{msgs.physical} #{msgs.pageStructure}</h:panelGroup>
         <p:tree id="physicalTree"
+                rendered="#{DataEditorForm.structurePanel.separateMedia}"
                 value="#{DataEditorForm.structurePanel.physicalTree}"
                 disabled="#{readOnly}"
                 var="physicalNode"

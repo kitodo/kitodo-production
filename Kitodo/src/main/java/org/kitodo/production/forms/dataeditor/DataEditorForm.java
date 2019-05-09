@@ -288,10 +288,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public String save() {
         try {
-            metadataPanel.preserveLogical();
-            metadataPanel.preservePhysical();
-            structurePanel.preserveLogical();
-            structurePanel.preservePhysical();
+            metadataPanel.preserve();
+            structurePanel.preserve();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }

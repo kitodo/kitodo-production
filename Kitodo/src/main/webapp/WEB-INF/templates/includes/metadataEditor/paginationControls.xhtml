@@ -14,13 +14,15 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui"
-        xmlns:h="http://java.sun.com/jsf/html">
+        xmlns:p="http://primefaces.org/ui">
 
     <!--@elvariable id="readOnly" type="boolean"-->
     <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
 
     <ui:fragment id="actionButtons">
+        <p:remoteCommand name="showStructure"
+                         update="structureTreeForm:structureWrapperPanel"
+                         action="#{DataEditorForm.structurePanel.show()}"/>
         <p:commandButton id="linkButton"
                          title="#{msgs.link}"
                          styleClass="secondary #{readOnly ? 'disabled' : ''}"
@@ -36,6 +38,13 @@
                          disabled="#{readOnly}"
                          icon="fa fa-list-ol fa-sm"
                          iconPos="right"/>
+        <p:selectBooleanCheckbox id="separateMediaSwitch"
+                                 styleClass="switch"
+                                 immediate="true"
+                                 title="#{msgs.physical} #{msgs.structureData}"
+                                 value="#{DataEditorForm.structurePanel.separateMedia}">
+            <p:ajax oncomplete="showStructure()"/>
+        </p:selectBooleanCheckbox>
     </ui:fragment>
 
 </ui:composition>

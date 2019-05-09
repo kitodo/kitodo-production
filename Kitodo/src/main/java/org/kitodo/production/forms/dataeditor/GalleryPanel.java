@@ -12,7 +12,6 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -389,7 +388,7 @@ public class GalleryPanel {
         }
     }
 
-    void show() throws IOException {
+    void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
         List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getAllMediaUnits();
@@ -469,7 +468,7 @@ public class GalleryPanel {
      *          Media
      * @return GalleryStripe representing the logical structure element to which the Media is assigned
      */
-    public GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
+    GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
         for (GalleryStripe galleryStripe : stripes) {
             for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
                 if (galleryMediaContent.getId().equals(mediaContent.getId())) {
