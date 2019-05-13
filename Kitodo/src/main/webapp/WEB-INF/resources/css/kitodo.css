@@ -706,6 +706,18 @@ section#content-section {
     margin-left: var(--default-full-size);
 }
 
+#desktopGrid .content-body {
+    height: calc(100% - 68px);
+}
+
+#desktopGrid .content-body .ui-datatable {
+    height: 100%;
+}
+
+#desktopGrid .content-body .ui-datatable-scrollable-body {
+    height: calc(100% - 37px);
+}
+
 .content-wrapper {
     padding: .7em;
 }

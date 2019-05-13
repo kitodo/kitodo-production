@@ -9,21 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-$(window).on("load resize", function() {
+function setScrollbarLayout() {
     $("main").height(window.innerHeight - ($("footer").outerHeight(true) + $("header").outerHeight(true)));
 
-    // update widget heights
     const widgetTables = $("#taskTable, #processTable, #projectTable, #statisticsTable");
-    const widgetHeight = widgetTables.parent().outerHeight();
-    const headerHeight = widgetTables.prev(".content-header").outerHeight();
-    widgetTables.height(widgetHeight - headerHeight);
-
     const tableBodies = $("#desktopGrid .ui-datatable-scrollable-body");
-
-    // update table heights
-    const tableHeight = tableBodies.parent().outerHeight();
-    const tableHeaderHeight = tableBodies.prev(".ui-widget-header").outerHeight();
-    tableBodies.height(tableHeight - tableHeaderHeight);
 
     // add right padding to header for scrollbars
     const headerBoxes = $("#desktopGrid .ui-datatable-scrollable-header-box");
@@ -31,4 +21,6 @@ $(window).on("load resize", function() {
         let scrollBarWidth = widgetTables.eq(i).outerWidth(true) - tableBodies.eq(i).find("table[role='grid']").outerWidth(true);
         headerBoxes.eq(i).css("padding-right", scrollBarWidth + "px");
     }
-});
+}
+
+$(window).on("load resize", setScrollbarLayout);
