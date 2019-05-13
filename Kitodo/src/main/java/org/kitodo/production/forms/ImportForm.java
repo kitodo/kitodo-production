@@ -138,11 +138,15 @@ public class ImportForm implements Serializable {
      * @return list of search fields
      */
     public List<String> getSearchFields() {
-        try {
-            return ServiceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage());
+        if (this.selectedCatalog.isEmpty()) {
             return new LinkedList<>();
+        } else {
+            try {
+                return ServiceManager.getImportService().getAvailableSearchFields(this.selectedCatalog);
+            } catch (IllegalArgumentException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage());
+                return new LinkedList<>();
+            }
         }
     }
 
