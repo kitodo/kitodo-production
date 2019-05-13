@@ -101,6 +101,31 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldSaveProcess() throws Exception {
+        Process parent = new Process();
+        parent.setTitle("Parent");
+
+        Process process = new Process();
+        process.setTitle("Child");
+        process.setParent(parent);
+        parent.getChildren().add(process);
+
+        processService.save(process);
+
+        Process foundProcess = processService.getById(process.getId());
+        Process foundParent = foundProcess.getParent();
+
+        assertEquals("Child process was not found in database!", "Child", foundProcess.getTitle());
+        assertEquals("Parent process was not assigned to child!", "Parent", foundParent.getTitle());
+
+        foundParent.getChildren().clear();
+        foundProcess.setParent(null);
+
+        processService.remove(foundProcess);
+        processService.remove(foundParent.getId());
+    }
+
+    @Test
     public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
         boolean condition = process.getTitle().equals(firstProcess) && process.getWikiField().equals("field");

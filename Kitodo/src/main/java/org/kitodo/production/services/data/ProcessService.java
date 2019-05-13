@@ -205,6 +205,14 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     @Override
+    public void save(Process process) throws DataException {
+        if (Objects.nonNull(process.getParent())) {
+            save(process.getParent());
+        }
+        super.save(process);
+    }
+
+    @Override
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
         process.setMetadata(getMetadataForIndex(process));
