@@ -584,6 +584,7 @@ public class WorkflowControllerService {
     private void verifyTask(Task task) {
         // if it is an automatic task with script
         if (task.isTypeAutomatic()) {
+            task.setProcessingStatus(TaskStatus.INWORK);
             automaticTasks.add(task);
         } else if (task.isTypeAcceptClose()) {
             tasksToFinish.add(task);
