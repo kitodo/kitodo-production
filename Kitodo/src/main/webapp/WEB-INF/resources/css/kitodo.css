@@ -184,7 +184,6 @@ body.first-visit #portal-header {
     color: var(--pure-white);
     cursor: pointer;
     display: table-cell;
-    float: right;
     font-size: 17px;
     font-weight: 600;
     margin: 0;
