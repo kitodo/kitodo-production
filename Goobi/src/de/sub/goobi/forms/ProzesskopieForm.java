@@ -344,13 +344,14 @@ public class ProzesskopieForm {
                 .getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-        if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue[@default=true]");
-        }
 
         this.configuredOpacCatalogues = new ArrayList<String>();
         for (String catalogue : cp.getParamList("createNewProcess.opac.catalogue")) {
             this.configuredOpacCatalogues.add(catalogue);
+        }
+
+        if (this.opacKatalog.equals("")) {
+            this.opacKatalog = this.configuredOpacCatalogues.get(0);
         }
 
         /*
