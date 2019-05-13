@@ -220,7 +220,6 @@ public class FileService {
      * @throws AccessDeniedException
      *             always, because no user cannot have obtained any sufficient
      *             authorization
-     * @deprecated Use {@link #writeAsCurrentUser(URI)} instead.
      */
     public OutputStream write(URI uri) throws IOException {
         return fileManagementModule.write(uri);
@@ -249,7 +248,6 @@ public class FileService {
      * @throws AccessDeniedException
      *             always, because no user cannot have obtained any sufficient
      *             authorization
-     * @deprecated Use {@link #readAsCurrentUser(URI)} instead.
      */
     public InputStream read(URI uri) throws IOException {
         return fileManagementModule.read(uri);
