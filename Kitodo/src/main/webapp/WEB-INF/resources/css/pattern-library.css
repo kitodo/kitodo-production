@@ -325,6 +325,27 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     color: var(--pure-white);
 }
 
+.ui-menu-overlay {
+    min-width: 250px;
+    padding: var(--default-full-size);
+    width: auto;
+}
+
+.ui-menu-overlay .ui-menuitem .ui-menuitem-link {
+    border: none;
+    white-space: nowrap;
+}
+
+.ui-menu-overlay .ui-menuitem-text {
+    float: initial;
+    margin-left: var(--default-half-size);
+    white-space: nowrap;
+}
+
+.ui-menu-overlay .ui-menuitem-link:hover {
+    background: inherit;
+}
+
 .ui-inputfield,
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield,
 .ui-picklist-list-wrapper,
