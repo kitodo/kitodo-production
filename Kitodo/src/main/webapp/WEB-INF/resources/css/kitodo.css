@@ -1066,7 +1066,6 @@ main i.fa {
 
 .configure-columns-button {
     display: inline-block !important;
-    margin-right: 16px;
 }
 
 .configure-columns-button .ui-selectcheckboxmenu-label::after {
