@@ -162,6 +162,23 @@ public class BaseForm implements Serializable {
     }
 
     /**
+     * Set index of active tab. Use this method when setting active tab from templates.
+     * @param tabIndex
+     *            index of active tab as string.
+     *            String is used instead of int to allow a differentiation between a call specifying no index
+     *            and a call specifying index 0.
+     */
+    public void setActiveTabIndexFromTemplate(String tabIndex) {
+        if (Objects.nonNull(tabIndex) && !tabIndex.isEmpty()) {
+            try {
+                this.activeTabIndex = Integer.parseInt(tabIndex);
+            } catch (NumberFormatException e) {
+                this.activeTabIndex = 0;
+            }
+        }
+    }
+
+    /**
      * Get index of active tab for edit pages.
      *
      * @return index of active tab for edit pages

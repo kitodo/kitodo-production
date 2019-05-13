@@ -37,7 +37,7 @@
 
                         <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
                             <li class="nav-pic-text">
-                                <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes">
+                                <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes?tabIndex=0">
                                     <i class="fa fa-clipboard fa-lg"/>
                                 </h:link>
                             </li>
@@ -45,7 +45,7 @@
 
                         <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProjectPage()}">
                             <li class="nav-pic-text">
-                                <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects">
+                                <h:link value="#{msgs.projects}" id="linkProjects" outcome="projects?tabIndex=0">
                                     <i class="fa fa-archive fa-lg"/>
                                 </h:link>
                             </li>
@@ -53,7 +53,7 @@
 
                         <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewUserPage()}">
                             <li class="nav-pic-text">
-                                <h:link value="#{msgs.user}" id="linkUsers" outcome="users">
+                                <h:link value="#{msgs.user}" id="linkUsers" outcome="users?tabIndex=0">
                                     <i class="fa fa-user fa-lg"/>
                                 </h:link>
                             </li>
