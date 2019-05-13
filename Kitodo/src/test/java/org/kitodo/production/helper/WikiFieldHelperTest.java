@@ -38,11 +38,10 @@ public class WikiFieldHelperTest {
 
     @Test
     public void shouldTransformWikiFieldToComment() throws DAOException, DataException {
-
         Process process = ServiceManager.getProcessService().getById(1);
         process.setWikiField("<font color=\"#FF0000\">Oct 10, 2016 8:42:55 AM: Korrektur fÃ¼r Schritt Scans kopieren: Bitte Korrekturen "
                 + "vornehmen. (Kowalski, Jan)</font><p>Admin, test: test1</p>");
-        WikiFieldHelper.transformWikiFieldToComment(process);
+        process = WikiFieldHelper.transformWikiFieldToComment(process);
         int found = ServiceManager.getCommentService().getAllCommentsByProcess(process).size();
         assertEquals("Not all comments in wiki field are converted", 2, found);
         assertEquals("Wiki field is not correctly converted", "", process.getWikiField());

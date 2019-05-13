@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.w3c.dom.Document;
@@ -52,11 +53,17 @@ public class WikiFieldHelper {
     private static final String CORRECTION_FOR_TASK_EN = "Correction for step";
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private WikiFieldHelper() {
+    }
+
+    /**
      * transform wiki field to Comment objects.
      *
      * @param process process as object.
      */
-    public static void transformWikiFieldToComment(Process process) throws DataException {
+    public static Process transformWikiFieldToComment(Process process) throws DAOException, DataException {
         String wikiField = process.getWikiField();
         wikiField = wikiField.replaceAll("Ã¼", "ue");
         wikiField = wikiField.replaceAll("&uuml;", "ue");
@@ -73,10 +80,12 @@ public class WikiFieldHelper {
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
             transformNewFormatWikifieldToComments(comments, process);
-            //TODO: deleteProcessCorrectionProperties 
-            process.setWikiField("");
-            ServiceManager.getProcessService().save(process);
+            Process processWithoutProperties = deleteProcessCorrectionProperties(process);
+            processWithoutProperties.setWikiField("");
+            ServiceManager.getProcessService().save(processWithoutProperties);
+            return processWithoutProperties;
         }
+        return process;
     }
 
     private static Property getCorrectionRequiredProperty(Process process, String message) {
@@ -340,5 +349,28 @@ public class WikiFieldHelper {
             }
         }
         return null;
+    }
+
+    private static Process deleteProcessCorrectionProperties(Process process) throws DAOException, DataException {
+        List<Property> properties = new ArrayList<>(process.getProperties());
+
+        for (Property property : properties) {
+            String title = property.getTitle();
+            if ("Korrektur notwendig".equals(title) || "Correction required".equals(title)
+                    || "Korrektur durchgef\\u00FChrt".equals(title) || "Correction performed".equals(title)) {
+                property.getProcesses().remove(process);
+                try {
+                    ServiceManager.getPropertyService().removeFromIndex(property, true);
+                } catch (CustomResponseException | IOException e) {
+                    throw new DataException(e);
+                }
+                process.getProperties().remove(property);
+                ServiceManager.getProcessService().save(process);
+                ServiceManager.getPropertyService().remove(property);
+                return ServiceManager.getProcessService().getById(process.getId());
+            }
+        }
+
+        return process;
     }
 }

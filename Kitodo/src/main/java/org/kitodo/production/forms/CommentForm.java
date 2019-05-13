@@ -56,8 +56,8 @@ public class CommentForm extends BaseForm {
             Helper.setErrorMessage("Unable to find process with ID " + this.processId, logger, e);
         }
         try {
-            WikiFieldHelper.transformWikiFieldToComment(this.process);
-        } catch (DataException e) {
+            this.process = WikiFieldHelper.transformWikiFieldToComment(this.process);
+        } catch (DAOException | DataException e) {
             Helper.setErrorMessage("Error in conversion of Wiki field to comments: ", logger, e);
         }
         return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
