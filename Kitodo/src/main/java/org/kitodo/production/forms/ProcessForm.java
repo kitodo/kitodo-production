@@ -84,7 +84,7 @@ public class ProcessForm extends TemplateBaseForm {
     private String doneDirectoryName;
     private static final String ERROR_CREATING = "errorCreating";
     private static final String EXPORT_FINISHED = "exportFinished";
-    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private List selectedProcesses = new ArrayList<>();
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
@@ -628,9 +628,10 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Download to home for selected processes.
      */
+    @SuppressWarnings("unchecked")
     public void downloadToHomeForSelection() {
         WebDav myDav = new WebDav();
-        for (ProcessDTO processDTO : this.selectedProcesses) {
+        for (ProcessDTO processDTO : (List<ProcessDTO>) getSelectedProcesses()) {
             download(myDav, processDTO);
         }
         // TODO: fix message
@@ -690,8 +691,9 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Set up processing status selection.
      */
+    @SuppressWarnings("unchecked")
     public void setTaskStatusUpForSelection() {
-        setTaskStatusUpForProcesses(this.selectedProcesses);
+        setTaskStatusUpForProcesses(getSelectedProcesses());
     }
 
     /**
@@ -726,8 +728,9 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Set down processing status selection.
      */
+    @SuppressWarnings("unchecked")
     public void setTaskStatusDownForSelection() {
-        setTaskStatusDownForProcesses(this.selectedProcesses);
+        setTaskStatusDownForProcesses(getSelectedProcesses());
     }
 
     /**
@@ -856,7 +859,8 @@ public class ProcessForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void executeKitodoScriptAll() {
-        executeKitodoScriptForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null), this.kitodoScriptAll);
+        executeKitodoScriptForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null),
+            this.kitodoScriptAll);
     }
 
     /**
@@ -870,8 +874,9 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Execute Kitodo script for selected processes.
      */
+    @SuppressWarnings("unchecked")
     public void executeKitodoScriptSelection() {
-        executeKitodoScriptForProcesses(this.selectedProcesses, this.kitodoScriptSelection);
+        executeKitodoScriptForProcesses(getSelectedProcesses(), this.kitodoScriptSelection);
     }
 
     private void executeKitodoScriptForProcesses(List<ProcessDTO> processes, String kitodoScript) {
@@ -1219,9 +1224,8 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Method being used as viewAction for process edit form. If the given
-     * parameter 'id' is '0', the form for creating a new process will be
-     * displayed.
+     * Method being used as viewAction for process edit form. If the given parameter
+     * 'id' is '0', the form for creating a new process will be displayed.
      *
      * @param id
      *            ID of the process to load
@@ -1254,11 +1258,32 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns selected processDTO.
+     * Returns selected processDTO. This method should return ProcessDTO objects,
+     * but for some unkown reason it returns Process beans out of nowhere.
      *
      * @return The list of processDTO.
      */
-    public List<ProcessDTO> getSelectedProcesses() {
+    @SuppressWarnings("unchecked")
+    public List getSelectedProcesses() {
+        if (!this.selectedProcesses.isEmpty()) {
+            if (this.selectedProcesses.get(0) instanceof ProcessDTO) {
+                return this.selectedProcesses;
+            } else if (this.selectedProcesses.get(0) instanceof Process) {
+                List<Process> magicSelectedProcesses = new ArrayList<>(this.selectedProcesses);
+                this.selectedProcesses.clear();
+                for (Process magicSelectedProcess : magicSelectedProcesses) {
+                    try {
+                        this.selectedProcesses
+                                .add(ServiceManager.getProcessService().findById(magicSelectedProcess.getId()));
+                    } catch (DataException e) {
+                        Helper.setErrorMessage(ERROR_LOADING_ONE,
+                            new Object[] {ObjectType.PROCESS.getTranslationSingular(), magicSelectedProcess.getId() },
+                            logger, e);
+                    }
+                }
+
+            }
+        }
         return selectedProcesses;
     }
 
@@ -1268,7 +1293,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param selectedProcesses
      *            The list of ProcessDTOs.
      */
-    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
+    public void setSelectedProcesses(List selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
     }
 
