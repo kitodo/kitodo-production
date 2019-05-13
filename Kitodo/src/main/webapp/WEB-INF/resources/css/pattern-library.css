@@ -644,19 +644,26 @@ tr.ui-widget-content,
 }
 
 .ui-paginator-prev::before {
-    content: '\f048';
+    content: '\f060';
 }
 
 .ui-paginator-next::before {
-    content: '\f051';
+    content: '\f061';
 }
 
 .ui-paginator-last::before {
     content: '\f050';
 }
 
-.ui-paginator {
-    padding: 6px 0 !important;
+.ui-datatable .ui-paginator {
+    height: 36px;
+    line-height: 36px;
+    padding: 1em var(--default-full-size);
+    text-align: right;
+}
+
+.ui-datatable .ui-paginator a:hover {
+    text-decoration: none;
 }
 
 .ui-paginator .ui-state-default {
