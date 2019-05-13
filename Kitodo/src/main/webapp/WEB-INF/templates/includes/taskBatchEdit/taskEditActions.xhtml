@@ -20,6 +20,7 @@
 >
     <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
 
+        <f:viewAction action="#{CommentForm.setBatchHelper(CurrentTaskForm.batchHelper)}"/>
         <h:form id="actionForm">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -36,7 +37,7 @@
                                 <h:commandLink id="action3" action="#{CurrentTaskForm.batchHelper.executeScript}"
                                                title="#{script}">
                                     <f:setPropertyActionListener target="#{CurrentTaskForm.batchHelper.script}"
-                                                            value="#{script}"/>
+                                                                 value="#{script}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute action"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.scriptExecute}: #{script}"/>
@@ -68,25 +69,29 @@
                                     <h:panelGrid columns="2" style="margin-left:40px;" id="grid3" rowClasses="top"
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
                                         <h:outputText value="#{msgs.backToTask}"/>
-                                        <h:selectOneMenu style="width:350px"
-                                                         value="#{CurrentTaskForm.batchHelper.problemTask}">
-                                            <f:selectItems
-                                                    value="#{CurrentTaskForm.batchHelper.previousStepsForProblemReporting}"/>
+                                        <h:selectOneMenu id="stepSelection"
+                                                         value="#{CommentForm.correctionTaskId}">
+                                            <f:selectItems value="#{CommentForm.previousStepsForProblemReporting}"
+                                                           var="step" itemLabel="#{step.titleWithUserName}"
+                                                           itemValue="#{step.id}"/>
+                                            <p:ajax event="change"/>
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.remark}"/>
                                         <h:inputTextarea style="width:350px;height:80px"
-                                                         value="#{CurrentTaskForm.batchHelper.problem.message}"/>
+                                                         value="#{CommentForm.commentMessage}"/>
                                         <h:outputText value=""/>
                                         <h:panelGroup>
                                             <h:commandLink id="action130"
-                                                           action="#{CurrentTaskForm.batchHelper.reportProblemForSingle}"
+                                                           actionListener="#{CommentForm.setCorrectionComment(true)}"
+                                                           action="#{CommentForm.addComment()}"
                                                            title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSend}"/>
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action131"
-                                                           action="#{CurrentTaskForm.batchHelper.reportProblemForAll}"
+                                                           action="#{CommentForm.addCommentToAllBatchProcesses()}"
+                                                           actionListener="#{CommentForm.setCorrectionComment(true)}"
                                                            title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSendAllTasks}"/>
@@ -111,31 +116,37 @@
 
                                     <h:panelGrid columns="2" style="margin-left:40px;" rowClasses="top" id="grid1"
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
-                                        <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
-                                        <h:selectOneMenu style="width:350px" id="select1"
-                                                         value="#{CurrentTaskForm.batchHelper.solutionTask}">
-                                            <f:selectItems
-                                                    value="#{CurrentTaskForm.batchHelper.nextStepsForProblemSolution}"/>
-                                        </h:selectOneMenu>
-                                        <h:outputText value="#{msgs.remark}"/>
-                                        <h:inputTextarea style="width:350px;height:80px" id="input1"
-                                                         value="#{CurrentTaskForm.batchHelper.solution.message}"/>
-                                        <h:outputText value=""/>
-                                        <h:panelGroup>
-                                            <h:commandLink id="action140"
-                                                           action="#{CurrentTaskForm.batchHelper.solveProblemForSingle}"
-                                                           title="#{msgs.sendSolutionMessage}"
-                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
-                                                <h:outputText value="#{msgs.sendSolutionMessageForSingle}"/>
-                                            </h:commandLink>
-                                            <h:outputText value=" | "/>
-                                            <h:commandLink id="action141"
-                                                           action="#{CurrentTaskForm.batchHelper.solveProblemForAll}"
-                                                           title="#{msgs.sendSolutionMessage}"
-                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
-                                                <h:outputText value="#{msgs.sendSolutionMessageForAll}"/>
-                                            </h:commandLink>
-                                        </h:panelGroup>
+                                        <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}"
+                                                     var="item">
+                                            <p:column style="width: 100%;">
+                                                <p:outputLabel value="#{msgs.correctionK}"
+                                                               styleClass="#{(item.corrected) ? 'correction solved' : 'correction'}"
+                                                               rendered="#{item.type eq 'ERROR'}"/>
+
+                                                <h:outputText
+                                                        value="#{item.author.name} #{item.author.surname}: #{item.message}"
+                                                        escape="false"
+                                                        style="width:100%;"/>
+                                                <p:commandButton id="action140"
+                                                                 value="#{msgs.sendSolutionMessageForSingle}"
+                                                                 rendered="#{(item.type eq 'ERROR') and (!item.corrected)}"
+                                                                 update="@form"
+                                                                 styleClass="secondary right"
+                                                                 immediate="true"
+                                                                 action="#{CommentForm.solveProblem(item)}"
+                                                                 onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
+                                                </p:commandButton>
+                                                <p:commandButton id="action141"
+                                                                 value="#{msgs.sendSolutionMessageForAll}"
+                                                                 rendered="#{(item.type eq 'ERROR') and (!item.corrected)}"
+                                                                 update="@form"
+                                                                 styleClass="secondary right"
+                                                                 immediate="true"
+                                                                 action="#{CommentForm.solveProblemForAllBatchProcesses(item)}"
+                                                                 onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
                                     </h:panelGrid>
                                 </div>
                             </h:panelGroup>
@@ -155,7 +166,8 @@
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.closeTask}"/>
-                                <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}" icon="ui-icon-alert"/>
+                                <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}"
+                                           icon="ui-icon-alert"/>
                             </p:commandLink>
 
                         </h:panelGrid>

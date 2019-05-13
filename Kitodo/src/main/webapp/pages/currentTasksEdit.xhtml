@@ -34,24 +34,13 @@
                 <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/taskBoxActivities.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.messages}">
-                <h:form id="addToWikiForm">
-                    <p:panel style="width:800px">
-                        <div style="border: 1px solid lightgray;min-height: 100px;">
-                            <h:outputText escape="false" value="#{CurrentTaskForm.wikiField}" />
-                        </div>
-                        <br/>
-                        <p:inputText id="addToTextArea" value="#{CurrentTaskForm.addToWikiField}" class="input" />
-                        <p:panel styleClass="content-header">
-                            <p:commandButton id="addMessage" value="#{msgs.messageAdd}"
-                                             action="#{CurrentTaskForm.addToWikiField}" ajax="false"
-                                             styleClass="callto"/>
-                        </p:panel>
-                    </p:panel>
-                </h:form>
+                <ui:include src="/WEB-INF/templates/includes/comments/comments.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>
-
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
+    </ui:define>
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf"/>
         <p:menuitem value="#{msgs.tasks}" url="tasks.jsf"/>

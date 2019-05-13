@@ -51,7 +51,6 @@ import net.coobird.thumbnailator.name.Rename;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
@@ -77,7 +76,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.HelperComparator;
 import org.kitodo.production.helper.XmlArticleCounter;
 import org.kitodo.production.helper.XmlArticleCounter.CountType;
-import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -95,7 +93,6 @@ import org.kitodo.production.metadata.elements.selectable.Separator;
 import org.kitodo.production.metadata.pagination.Paginator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
-import org.kitodo.production.workflow.Problem;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -144,16 +141,9 @@ public class MetadataProcessor {
     private MetadataImpl selectedMetadata;
     private String currentRepresentativePage = "";
     private boolean showPagination = false;
-
-    private boolean showNewComment = false;
-    private boolean correctionComment = false;
-    private String addToWikiField;
     protected User user;
-    private Problem problem = new Problem();
-
     private String viewMode = "list";
     private String currentImage = "";
-
     private String paginationValue;
     // Spalten auf einem Image,
     // 3=nur jede zweite Seite hat
@@ -2103,14 +2093,6 @@ public class MetadataProcessor {
         this.showPagination = showPagination;
     }
 
-    public boolean isShowNewComment() {
-        return showNewComment;
-    }
-
-    public void setShowNewComment(boolean showNewComment) {
-        this.showNewComment = showNewComment;
-    }
-
     public String getViewMode() {
         return viewMode;
     }
@@ -2637,180 +2619,9 @@ public class MetadataProcessor {
         return this.user;
     }
 
-    /**
-     * Get wiki field.
-     *
-     * @return values for wiki field
-     */
-    public String[] getWikiField() {
-        refreshProcess(this.process);
-        String wiki = getProcess().getWikiField();
-        if (!wiki.isEmpty()) {
-            wiki = wiki.replace("</p>", "");
-            String[] comments = wiki.split("<p>");
-            if (comments[0].isEmpty()) {
-                List<String> list = new ArrayList<>(Arrays.asList(comments));
-                list.remove(list.get(0));
-                comments = list.toArray(new String[0]);
-            }
-            for (int i = 0; i < comments.length; i++) {
-                String[] parts = comments[i].split(":");
-                if (parts.length < 2) {
-                    continue;
-                }
-                String author = "<i>" + parts[0] + "</i>";
-                String comment = String.join(":", Arrays.copyOfRange(parts, 1, parts.length));
-                comments[i] = author + ":" + comment;
-            }
-            return comments;
-        }
-        return ArrayUtils.EMPTY_STRING_ARRAY;
-    }
-
-    /**
-     * Get add to wiki field.
-     *
-     * @return values for add to wiki field
-     */
-    public String getAddToWikiField() {
-        return this.addToWikiField;
-    }
-
-    /**
-     * Set add to wiki field.
-     *
-     * @param addToWikiField
-     *            String
-     */
-    public void setAddToWikiField(String addToWikiField) {
-        this.addToWikiField = addToWikiField;
-    }
-
-    /**
-     * Add to wiki field.
-     */
-    public void addToWikiField() {
-        if (addToWikiField != null && addToWikiField.length() > 0) {
-            String comment = ServiceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
-            ServiceManager.getProcessService().addToWikiField(comment, this.process);
-            this.addToWikiField = "";
-            try {
-                ServiceManager.getProcessService().save(process);
-                refreshProcess(process);
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
-            }
-        }
-        setShowNewComment(false);
-    }
-
-    /**
-     * Get correction comment.
-     *
-     * @return value of correction comment
-     */
-    public boolean isCorrectionComment() {
-        return correctionComment;
-    }
 
     public void setProcess(Process process) {
         this.process = process;
-    }
-
-    /**
-     * Set correction comment.
-     *
-     * @param correctionComment
-     *            as boolean
-     */
-    public void setCorrectionComment(boolean correctionComment) {
-        this.correctionComment = correctionComment;
-    }
-
-    /**
-     * Get problem.
-     *
-     * @return Problem object
-     */
-    public Problem getProblem() {
-        return problem;
-    }
-
-    /**
-     * Set problem.
-     *
-     * @param problem
-     *            object
-     */
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-    }
-
-    /**
-     * Correction message to previous Tasks.
-     */
-    public List<Task> getPreviousStepsForProblemReporting() {
-        refreshProcess(this.process);
-        return ServiceManager.getTaskService().getPreviousTasksForProblemReporting(
-            ServiceManager.getProcessService().getCurrentTask(this.process).getOrdering(), this.process.getId());
-    }
-
-    public int getSizeOfPreviousStepsForProblemReporting() {
-        return getPreviousStepsForProblemReporting().size();
-    }
-
-    /**
-     * Report the problem.
-     *
-     *
-     */
-    public void reportProblem() {
-        List<Task> taskList = new ArrayList<>();
-        taskList.add(ServiceManager.getProcessService().getCurrentTask(this.process));
-        BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
-        batchStepHelper.setProblem(getProblem());
-        batchStepHelper.reportProblemForSingle();
-        refreshProcess(this.process);
-        setShowNewComment(false);
-        setCorrectionComment(false);
-        setProblem(new Problem());
-    }
-
-    /**
-     * Solve the problem.
-     */
-    public void solveProblem(String comment) {
-        BatchTaskHelper batchStepHelper = new BatchTaskHelper();
-        batchStepHelper.solveProblemForSingle(ServiceManager.getProcessService().getCurrentTask(this.process));
-        refreshProcess(this.process);
-        String wikiField = getProcess().getWikiField();
-        String updatedComment = comment.replace("<i>", "").replace("</i>", "").trim();
-        wikiField = wikiField.replace(updatedComment, updatedComment.replace("Red K", "Orange K "));
-        ServiceManager.getProcessService().setWikiField(wikiField, this.process);
-        try {
-            ServiceManager.getProcessService().save(process);
-        } catch (DataException e) {
-            Helper.setErrorMessage("correctionSolveProblem", logger, e);
-        }
-        refreshProcess(this.process);
-    }
-
-    /**
-     * refresh the process in the session.
-     *
-     * @param process
-     *            Object process to refresh
-     */
-    public void refreshProcess(Process process) {
-        try {
-            if (process.getId() != 0) {
-                ServiceManager.getProcessService().refresh(process);
-                setProcess(ServiceManager.getProcessService().getById(process.getId()));
-            }
-
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
-        }
     }
 
     public void setReferringView(String referringView) {

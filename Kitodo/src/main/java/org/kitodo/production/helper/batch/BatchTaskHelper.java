@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.model.SelectItem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -29,25 +27,18 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.workflow.Problem;
-import org.kitodo.production.workflow.Solution;
 
 public class BatchTaskHelper extends BatchHelper {
     private List<Task> steps;
     private static final Logger logger = LogManager.getLogger(BatchTaskHelper.class);
     private Task currentStep;
-    private Problem problem = new Problem();
-    private Solution solution = new Solution();
     private String processName = "";
-    private String addToWikiField = "";
     private String script;
     private final WebDav myDav = new WebDav();
     private List<String> processNameList = new ArrayList<>();
@@ -68,9 +59,6 @@ public class BatchTaskHelper extends BatchHelper {
             this.processName = this.currentStep.getProcess().getTitle();
             loadProcessProperties(this.currentStep);
         }
-    }
-
-    public BatchTaskHelper() {
     }
 
     public List<Task> getSteps() {
@@ -122,206 +110,6 @@ public class BatchTaskHelper extends BatchHelper {
         Process process = task.getProcess();
         ServiceManager.getProcessService().refresh(process);
         this.properties = process.getProperties();
-    }
-
-    private void saveStep() throws DataException, DAOException {
-        Process process = ServiceManager.getProcessService().getById(this.currentStep.getProcess().getId());
-        validateProperties(process);
-        ServiceManager.getProcessService().save(process);
-    }
-
-    /**
-     * Error management for single.
-     */
-    public void reportProblemForSingle() {
-        reportProblem();
-        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
-    }
-
-    /**
-     * Error management for all.
-     */
-    // TODO: when method will be used should only execute, return value must be given in Form class
-    public void reportProblemForAll() {
-        for (Task task : this.steps) {
-            this.currentStep = task;
-            reportProblem();
-        }
-        setProblem(ServiceManager.getWorkflowControllerService().getProblem());
-    }
-
-    private void reportProblem() {
-        this.myDav.uploadFromHome(this.currentStep.getProcess());
-        ServiceManager.getWorkflowControllerService().setProblem(getProblem());
-        try {
-            ServiceManager.getWorkflowControllerService().reportProblem(this.currentStep);
-            saveStep();
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage("correctionReportProblem", logger, e);
-        }
-    }
-
-    /**
-     * Get previous tasks for problem reporting.
-     *
-     * @return list of selected items
-     */
-    public List<SelectItem> getPreviousStepsForProblemReporting() {
-        List<SelectItem> answer = new ArrayList<>();
-        List<Task> previousTasksForProblemReporting = ServiceManager.getTaskService()
-                .getPreviousTasksForProblemReporting(this.currentStep.getOrdering(),
-                    this.currentStep.getProcess().getId());
-        for (Task task : previousTasksForProblemReporting) {
-            answer.add(new SelectItem(task.getTitle(), ServiceManager.getTaskService().getTitleWithUserName(task)));
-        }
-        return answer;
-    }
-
-    /**
-     * Get next tasks for problem solution.
-     *
-     * @return list of selected items
-     */
-    public List<SelectItem> getNextStepsForProblemSolution() {
-        List<SelectItem> answer = new ArrayList<>();
-        List<Task> nextTasksForProblemSolution = ServiceManager.getTaskService()
-                .getNextTasksForProblemSolution(this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
-        for (Task task : nextTasksForProblemSolution) {
-            answer.add(new SelectItem(task.getTitle(), ServiceManager.getTaskService().getTitleWithUserName(task)));
-        }
-        return answer;
-    }
-
-    /**
-     * Solve problem for single.
-     */
-    public void solveProblemForSingle(Task currentStep) {
-        this.currentStep = currentStep;
-        try {
-            ServiceManager.getWorkflowControllerService().solveProblem(this.currentStep);
-            saveStep();
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage("correctionSolveProblem", logger, e);
-        }
-    }
-
-    /**
-     * Solve problem for all.
-     *
-     * @return String
-     */
-    public String solveProblemForAll() {
-        for (Task task : this.steps) {
-            this.currentStep = task;
-            ServiceManager.getWorkflowControllerService().setSolution(getSolution());
-            try {
-                ServiceManager.getWorkflowControllerService().solveProblem(this.currentStep);
-                saveStep();
-            } catch (DAOException | DataException e) {
-                Helper.setErrorMessage("correctionSolveProblem", logger, e);
-            }
-        }
-        setSolution(ServiceManager.getWorkflowControllerService().getSolution());
-
-        return "";
-    }
-
-    /**
-     * Get problem.
-     *
-     * @return Problem object
-     */
-    public Problem getProblem() {
-        return problem;
-    }
-
-    /**
-     * Set problem.
-     *
-     * @param problem
-     *            object
-     */
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-    }
-
-    /**
-     * Get solution.
-     *
-     * @return Solution object
-     */
-    public Solution getSolution() {
-        return solution;
-    }
-
-    /**
-     * Set solution.
-     *
-     * @param solution
-     *            object
-     */
-    public void setSolution(Solution solution) {
-        this.solution = solution;
-    }
-
-    /**
-     * sets new value for wiki field.
-     *
-     * @param inString
-     *            input String
-     */
-    public void setWikiField(String inString) {
-        this.currentStep.getProcess().setWikiField(inString);
-    }
-
-    public String getWikiField() {
-        return this.currentStep.getProcess().getWikiField();
-    }
-
-    public String getAddToWikiField() {
-        return this.addToWikiField;
-    }
-
-    public void setAddToWikiField(String addToWikiField) {
-        this.addToWikiField = addToWikiField;
-    }
-
-    /**
-     * Add to wiki field.
-     */
-    public void addToWikiField() {
-        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
-            User user = ServiceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
-            this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
-                this.currentStep.getProcess().getWikiField(), "user", message));
-            this.addToWikiField = "";
-            try {
-                ServiceManager.getProcessService().save(this.currentStep.getProcess());
-            } catch (DataException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    /**
-     * Add to wiki field for all.
-     */
-    public void addToWikiFieldForAll() {
-        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
-            User user = ServiceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
-            for (Task task : this.steps) {
-                task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
-                    task.getProcess().getWikiField(), "user", message));
-                try {
-                    ServiceManager.getProcessService().save(task.getProcess());
-                } catch (DataException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            this.addToWikiField = "";
-        }
     }
 
     public String getScript() {

@@ -69,7 +69,16 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
         return countDatabaseRows();
     }
 
-    public List<Comment> getAllCommentsByProcess(Process process) throws DAOException {
-        return dao.getAllByProcess(process, 1, 10);
+    public List<Comment> getAllCommentsByProcess(Process process) {
+        return dao.getAllByProcess(process);
+    }
+
+    /**
+     * Save list of comments to database.
+     *
+     * @param list of comments
+     */
+    public void saveList(List<Comment> list) throws DAOException {
+        dao.saveList(list);
     }
 }

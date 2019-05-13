@@ -533,14 +533,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldAddToWikiField() throws Exception {
-        Process process = processService.getById(1);
-        process.setWikiField(process.getWikiField() + "<p>test</p>");
-        Process actual = processService.addToWikiField("test", process);
-        assertEquals("Processes have different wikiField values!", process, actual);
-    }
-
-    @Test
     public void shouldGetDigitalDocument() throws Exception {
         FileLoader.createMetadataFile();
 

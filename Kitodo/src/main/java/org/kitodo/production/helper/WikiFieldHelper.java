@@ -11,102 +11,334 @@
 
 package org.kitodo.production.helper;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.ServiceManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class WikiFieldHelper {
 
     private static final Logger logger = LogManager.getLogger(WikiFieldHelper.class);
 
-    private static final String TAG_ERROR = "<font color=\"#FF0000\">";
-    private static final String TAG_WARN = "<font color=\"#FF6600\">";
-    private static final String TAG_INFO = "<font color=\"#0033CC\">";
-    private static final String TAG_DEBUG = "<font color=\"#CCCCCC\">";
-    private static final String TAG_USER = "<font color=\"#006600\">";
-    private static final String TAG_END = "</font>";
-
-    private static final String BREAK = "<br/>";
-
-    private WikiFieldHelper() {
-
-    }
+    private static final String CORRECTION_FOR_TASK_DE = "Korrektur fuer Schritt";
+    private static final String CORRECTION_FOR_TASK_EN = "Correction for step";
 
     /**
-     * Get wiki messages.
+     * transform wiki field to Comment objects.
      *
-     * @param process
-     *            Process object
-     * @param currentWikiFieldContent
-     *            String
-     * @param type
-     *            String
-     * @param value
-     *            String
-     * @return String
+     * @param process process as object.
      */
-    public static String getWikiMessage(Process process, String currentWikiFieldContent, String type, String value) {
-        StringBuilder message = new StringBuilder();
-        if (Objects.nonNull(currentWikiFieldContent) && !currentWikiFieldContent.isEmpty()) {
-            message.append(currentWikiFieldContent);
-            message.append(BREAK);
+    public static void transformWikiFieldToComment(Process process) throws DataException {
+        String wikiField = process.getWikiField();
+        wikiField = wikiField.replaceAll("Ã¼", "ue");
+        wikiField = wikiField.replaceAll("&uuml;", "ue");
+        if (!wikiField.isEmpty()) {
+            wikiField = wikiField.replace("</p>", "");
+            String[] comments = wikiField.split("<p>");
+            if (!comments[0].isEmpty()) {
+                String oldComments = comments[0];
+                oldComments = "<messages>" + oldComments + "</messages>";
+                Document document = convertStringToDocument(oldComments);
+                transformOldFormatWikifieldToComments(document, process);
+            }
+            List<String> list = new ArrayList<>(Arrays.asList(comments));
+            list.remove(list.get(0));
+            comments = list.toArray(new String[0]);
+            transformNewFormatWikifieldToComments(comments, process);
+            //TODO: deleteProcessCorrectionProperties 
+            process.setWikiField("");
+            ServiceManager.getProcessService().save(process);
         }
-
-        message.append(addMatchingTagMessage(type));
-
-        String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
-        String processName = "";
-        if (Objects.nonNull(process)) {
-            processName = "processname: " + process.getTitle() + ", message: ";
-        }
-        logger.info("{} {} {}", timestamp, processName, value);
-        message.append(timestamp);
-        message.append(": ");
-        message.append(value);
-        message.append(TAG_END);
-        return message.toString();
     }
 
-    /**
-     * Get wiki messages.
-     *
-     * @param currentWikiFieldContent
-     *            String
-     * @param type
-     *            String
-     * @param value
-     *            String
-     * @return String
-     */
-    public static String getWikiMessage(String currentWikiFieldContent, String type, String value) {
-        return WikiFieldHelper.getWikiMessage(null, currentWikiFieldContent, type, value);
+    private static Property getCorrectionRequiredProperty(Process process, String message) {
+        List<Property> properties = process.getProperties();
+        for (Property property : properties) {
+            String translation = Helper.getTranslation("correctionNecessary");
+            String msg = getWikiFieldMessage(message);
+            if (property.getTitle().equals(translation)
+                    && property.getValue().contains(msg)) {
+                return property;
+            }
+        }
+        return null;
     }
 
-    private static String addMatchingTagMessage(String type) {
-        String message;
-
-        switch (type) {
-            case "error":
-                message = TAG_ERROR;
-                break;
-            case "debug":
-                message = TAG_DEBUG;
-                break;
-            case "user":
-                message = TAG_USER;
-                break;
-            case "warn":
-                message = TAG_WARN;
-                break;
-            default:
-                message = TAG_INFO;
-                break;
+    private static Property getCorrectionPerformedProperty(Process process, String message, String language) {
+        List<Property> properties = process.getProperties();
+        for (Property property : properties) {
+            if (property.getTitle().equals(Helper.getTranslation("correctionPerformed"))
+                    && property.getValue().endsWith(getWikiFieldCorrectionTask(message, process, language).getTitle())) {
+                return property;
+            }
         }
+        return null;
+    }
 
-        return message;
+    private static Task getCorrectionTask(Property property) throws DAOException {
+        int correctionTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf(" CorrectionTask: ") + 17,
+                property.getValue().indexOf(')')));
+        return ServiceManager.getTaskService().getById(correctionTaskId);
+
+    }
+
+    private static Task getCurrentTask(Property property) throws DAOException {
+        int currentTaskId = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14,
+                property.getValue().indexOf(" CorrectionTask: ")));
+        return ServiceManager.getTaskService().getById(currentTaskId);
+    }
+
+    private static Date getCreationDate(Property property) throws ParseException {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(property.getValue().substring(1, 20));
+    }
+
+    private static String getWikiFieldMessage(String message) {
+        return message.substring(message.indexOf(':') + 1).trim();
+    }
+
+    private static User getWikiFieldAuthor(String message, String lang) {
+        String[] parts = message.split(":");
+        if (parts.length < 2) {
+            return null;
+        }
+        String authorName = parts[0];
+        if ("de".equals(lang)) {
+            authorName = authorName.split(CORRECTION_FOR_TASK_DE)[0];
+        } else if ("en".equals(lang)) {
+            authorName = authorName.split(CORRECTION_FOR_TASK_EN)[0];
+        }
+        if (authorName.contains("Red K ")) {
+            authorName = authorName.replace("Red K ", "");
+        } else if (authorName.contains("Orange K ")) {
+            authorName = authorName.replace("Orange K ", "");
+        }
+        return getUserByFullName(authorName);
+    }
+
+
+    private static Task getWikiFieldCorrectionTask(String message, Process process, String lang) {
+        String[] parts = message.split(":");
+        if (parts.length < 2) {
+            return null;
+        }
+        String correctionTaskName = parts[0];
+        if ("en".equals(lang)) {
+            correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_EN)[1];
+        } else if ("de".equals(lang)) {
+            correctionTaskName = correctionTaskName.split(CORRECTION_FOR_TASK_DE)[1];
+        }
+        for (Task task : process.getTasks()) {
+            if (task.getTitle().equals(correctionTaskName.trim())) {
+                return task;
+            }
+        }
+        return null;
+    }
+
+    private static void deleteProperty(Process process, Property property) throws DAOException, DataException {
+        property.getProcesses().clear();
+        process.getProperties().remove(property);
+        ServiceManager.getProcessService().save(process);
+        ServiceManager.getPropertyService().removeFromDatabase(property);
+    }
+
+    /*
+        Example of wiki Field's new format:
+        <p>Admin, test: bla bla</p>
+        <p>Orange K  Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla </p>
+        <p>Red K Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla</p>
+    */
+    private static void transformNewFormatWikifieldToComments(String[] messages, Process process) {
+        List<Comment> newComments = new ArrayList<>();
+        for (String message : messages) {
+            String lang = getMessageLanguage(message);
+            Comment comment = new Comment();
+            comment.setProcess(process);
+            comment.setMessage(getWikiFieldMessage(message));
+            comment.setAuthor(getWikiFieldAuthor(message, lang));
+            if (message.contains("Red K")) {
+                comment.setType(CommentType.ERROR);
+                Property correctionRequiredProperty = getCorrectionRequiredProperty(process, message);
+                if (Objects.nonNull(correctionRequiredProperty)) {
+                    try {
+                        comment.setCreationDate(getCreationDate(correctionRequiredProperty));
+                        comment.setCurrentTask(getCurrentTask(correctionRequiredProperty));
+                        comment.setCorrectionTask(getCorrectionTask(correctionRequiredProperty));
+                        deleteProperty(process, correctionRequiredProperty);
+                    } catch (DAOException | DataException | ParseException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            } else if (message.contains("Orange K")) {
+                comment.setType(CommentType.ERROR);
+                comment.setCorrected(Boolean.TRUE);
+                Property correctionPerformed = getCorrectionPerformedProperty(process, message, lang);
+                if (Objects.nonNull(correctionPerformed)) {
+                    comment.setCreationDate(correctionPerformed.getCreationDate());
+                    try {
+                        comment.setCorrectionDate(getCreationDate(correctionPerformed));
+                        deleteProperty(process, correctionPerformed);
+                    } catch (ParseException | DAOException | DataException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+                comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(process));
+                comment.setCorrectionTask(getWikiFieldCorrectionTask(message, process, lang));
+            } else {
+                comment.setType(CommentType.INFO);
+            }
+            newComments.add(comment);
+        }
+        saveComments(newComments);
+    }
+
+    private static String getMessageLanguage(String message) {
+        if (message.contains(CORRECTION_FOR_TASK_EN)) {
+            return "en";
+        } else if (message.contains(CORRECTION_FOR_TASK_DE)) {
+            return "de";
+        }
+        return "";
+    }
+
+    /*
+        Example of wiki Field's very old format (#FF0000:Correction comment, #006600: is corrected, #0033CC: Info comment):
+        <font color="#FF0000">Jun 16, 2016 1:12:58 PM: Korrektur fÃ¼r Schritt Scannen: bla bla bla.. (Admin, test)</font><br/>
+        <font color="#006600">Jun 17, 2016 10:36:43 AM: bla bla (Admin, test)</font><br/>
+        <font color="#0033CC">Jun 17, 2016 10:40:43 AM: bla bla (Admin, test)</font>
+    */
+    private static void transformOldFormatWikifieldToComments(Document document, Process process) {
+        Element root = document.getDocumentElement();
+        NodeList nodeList = root.getElementsByTagName("font");
+        List<Comment> commentList = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element element = (Element) nodeList.item(i);
+            String color = element.getAttribute("color");
+            if (Objects.equals(color, "#FF0000") || Objects.equals(color, "#0033CC")) {
+                Comment comment = new Comment();
+                comment.setProcess(process);
+                String message = element.getTextContent();
+                String lang = getMessageLanguage(message);
+                comment.setCreationDate(getCreationDateOld(message));
+                comment.setMessage(getOldComment(message, lang));
+                String authorName = message.substring(message.lastIndexOf('(') + 1, message.lastIndexOf(')'));
+                comment.setAuthor(getUserByFullName(authorName));
+                if (Objects.equals(color, "#FF0000")) {
+                    comment.setType(CommentType.ERROR);
+                    comment.setCorrected(true);
+                    comment.setCorrectionTask(getOldCorrectionTask(message, process, lang));
+                } else if (Objects.equals(color, "#0033CC")) {
+                    comment.setType(CommentType.INFO);
+                }
+                commentList.add(comment);
+            }
+
+        }
+        if (!commentList.isEmpty()) {
+            saveComments(commentList);
+        }
+    }
+
+    private static void saveComments(List<Comment> commentList) {
+        try {
+            ServiceManager.getCommentService().saveList(commentList);
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /*
+        fullName = surname, name
+     */
+    private static User getUserByFullName(String fullName) {
+        String surname = fullName.split(",")[0].trim();
+        String name = fullName.split(",")[1].trim();
+        List<User> userList = ServiceManager.getUserService().getByQuery("FROM User WHERE name ='" + name
+                + "' AND surname = '" + surname + "'");
+        if (userList.isEmpty()) {
+            return null;
+        }
+        return userList.get(0);
+    }
+
+    private static Document convertStringToDocument(String xmlString) {
+        Document document = null;
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            document = documentBuilder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            logger.error("could not parse XML string '" + xmlString + "'!");
+        }
+        return document;
+    }
+
+    private static Date getCreationDateOld(String message) {
+        int index = message.indexOf("PM") > 0 ? message.indexOf("PM") : message.indexOf("AM");
+        String date = message.substring(0, index + 2);
+        try {
+            return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).parse(date);
+        } catch (ParseException e) {
+            logger.error("could not parse date '" + date + "'!");
+        }
+        return null;
+    }
+
+    private static String getOldComment(String message, String language) {
+        String comment;
+        if ("de".equals(language)) {
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_DE)) + 1, message.lastIndexOf('('));
+        } else if ("en".equals(language)) {
+            comment = message.substring(message.indexOf(':', message.indexOf(CORRECTION_FOR_TASK_EN)) + 1, message.lastIndexOf('('));
+        } else {
+            int index = message.indexOf("PM:") > 0 ? message.indexOf("PM:") : message.indexOf("AM:");
+            comment = message.substring(index + 3, message.lastIndexOf('('));
+        }
+        return comment;
+    }
+
+    private static Task getOldCorrectionTask(String message, Process process, String language) {
+        String correctionTaskName;
+        if ("de".equals(language)) {
+            int index = message.indexOf(CORRECTION_FOR_TASK_DE);
+            correctionTaskName = message.substring(index + 23, message.indexOf(':', index));
+        } else {
+            int index = message.indexOf(CORRECTION_FOR_TASK_EN);
+            correctionTaskName = message.substring(index + 20, message.indexOf(':', index));
+        }
+        for (Task task : process.getTasks()) {
+            if (task.getTitle().equals(correctionTaskName.trim())) {
+                return task;
+            }
+        }
+        return null;
     }
 }

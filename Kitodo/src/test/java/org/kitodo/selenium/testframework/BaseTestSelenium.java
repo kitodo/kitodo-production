@@ -14,6 +14,8 @@ package org.kitodo.selenium.testframework;
 import java.io.File;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -27,6 +29,7 @@ import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
 
 public class BaseTestSelenium {
 
+    private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
     private static final File usersDirectory = new File("src/test/resources/users");
 
     @BeforeClass
@@ -53,7 +56,11 @@ public class BaseTestSelenium {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        Browser.close();
+        try {
+            Browser.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
 
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));

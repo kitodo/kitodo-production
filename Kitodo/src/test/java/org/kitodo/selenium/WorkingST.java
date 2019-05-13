@@ -84,13 +84,14 @@ public class WorkingST extends BaseTestSelenium {
     public void editOwnedTaskTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        tasksPage.goTo().editOwnedTask(12);
+        Task task = ServiceManager.getTaskService().getById(12);
+        tasksPage.goTo().editOwnedTask(task.getTitle(), task.getProcess().getTitle());
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
         currentTasksEditPage.closeTask();
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
-        Task task = ServiceManager.getTaskService().getById(12);
+        task = ServiceManager.getTaskService().getById(12);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatus());
     }
 
@@ -98,15 +99,15 @@ public class WorkingST extends BaseTestSelenium {
     public void editOwnedTaskAndTakeNextForParallelWorkflowTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        tasksPage.editOwnedTask(19);
+        Task task = ServiceManager.getTaskService().getById(19);
+        tasksPage.editOwnedTask(task.getTitle(), task.getProcess().getTitle());
         assertTrue("Redirection after click edit own task was not successful", currentTasksEditPage.isAt());
 
         currentTasksEditPage.closeTask();
         assertTrue("Redirection after click close task was not successful", tasksPage.isAt());
 
-        Task task = ServiceManager.getTaskService().getById(19);
-        assertEquals("Task '" + task.getTitle() + "'  was not closed!", TaskStatus.DONE,
-            task.getProcessingStatus());
+        task = ServiceManager.getTaskService().getById(19);
+        assertEquals("Task '" + task.getTitle() + "'  was not closed!", TaskStatus.DONE, task.getProcessingStatus());
 
         task = ServiceManager.getTaskService().getById(20);
         assertEquals("Task '" + task.getTitle() + "' can not be taken by user!", TaskStatus.OPEN,

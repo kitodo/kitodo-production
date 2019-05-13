@@ -53,7 +53,6 @@ import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
@@ -80,7 +79,6 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> templates;
     private List<Property> workpieces;
     private Property property;
-    private String addToWikiField = "";
     private transient FileService fileService = ServiceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = ServiceManager.getWorkflowControllerService();
     private String doneDirectoryName;
@@ -1039,50 +1037,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
-    }
-
-    /**
-     * Get wiki field.
-     *
-     * @return values for wiki field
-     */
-    public String getWikiField() {
-        return this.process.getWikiField();
-    }
-
-    /**
-     * sets new value for wiki field.
-     *
-     * @param inString
-     *            String
-     */
-    public void setWikiField(String inString) {
-        this.process.setWikiField(inString);
-    }
-
-    public String getAddToWikiField() {
-        return this.addToWikiField;
-    }
-
-    public void setAddToWikiField(String addToWikiField) {
-        this.addToWikiField = addToWikiField;
-    }
-
-    /**
-     * Add to wiki field.
-     */
-    public void addToWikiField() {
-        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
-            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(getUser()) + ")";
-            this.process.setWikiField(
-                WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
-            this.addToWikiField = "";
-            try {
-                ServiceManager.getProcessService().save(process);
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation("wikiField") }, logger, e);
-            }
-        }
     }
 
     /**

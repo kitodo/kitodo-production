@@ -18,6 +18,7 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,14 +31,14 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
-import org.kitodo.production.workflow.Problem;
-import org.kitodo.production.workflow.Solution;
 
 public class WorkflowControllerServiceIT {
 
@@ -353,15 +354,23 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldReportProblem() throws Exception {
-        Problem problem = new Problem();
-        problem.setId(6);
-        problem.setMessage("Fix it!");
-        workflowService.setProblem(problem);
-
         Task currentTask = taskService.getById(8);
-        workflowService.reportProblem(currentTask);
-
         Task correctionTask = taskService.getById(6);
+
+        Comment problem = new Comment();
+        problem.setMessage("Fix it!");
+        problem.setAuthor(ServiceManager.getUserService().getById(1));
+        problem.setCurrentTask(currentTask);
+        problem.setCorrectionTask(correctionTask);
+        problem.setProcess(currentTask.getProcess());
+        problem.setType(CommentType.ERROR);
+        problem.setCorrected(Boolean.FALSE);
+        problem.setCreationDate(new Date());
+
+        ServiceManager.getCommentService().saveToDatabase(problem);
+
+        workflowService.reportProblem(problem);
+
         assertEquals(
             "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not set up to open!",
             TaskStatus.OPEN, correctionTask.getProcessingStatus());
@@ -385,23 +394,37 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldSolveProblem() throws Exception {
-        Problem problem = new Problem();
-        problem.setId(6);
-        problem.setMessage("Fix it!");
-
-        Solution solution = new Solution();
-        solution.setId(8);
-        solution.setMessage("Fixed");
-
-        workflowService.setProblem(problem);
-        workflowService.setSolution(solution);
-
         Task currentTask = taskService.getById(8);
-        workflowService.reportProblem(currentTask);
-        currentTask = taskService.getById(6);
-        workflowService.solveProblem(currentTask);
+        Task correctionTask = taskService.getById(6);
 
-        Task correctionTask = taskService.getById(8);
+        Comment problem = new Comment();
+        problem.setMessage("Fix it!");
+        problem.setAuthor(ServiceManager.getUserService().getById(1));
+        problem.setCurrentTask(currentTask);
+        problem.setCorrectionTask(correctionTask);
+        problem.setProcess(currentTask.getProcess());
+        problem.setType(CommentType.ERROR);
+        problem.setCorrected(Boolean.FALSE);
+        problem.setCreationDate(new Date());
+
+        ServiceManager.getCommentService().saveToDatabase(problem);
+
+        Comment solution = new Comment();
+        solution.setMessage("Fixed");
+        solution.setAuthor(ServiceManager.getUserService().getById(1));
+        solution.setCurrentTask(correctionTask);
+        solution.setCorrectionTask(correctionTask);
+        solution.setProcess(currentTask.getProcess());
+        solution.setType(CommentType.ERROR);
+        solution.setCreationDate(new Date());
+        solution.setCorrectionDate(new Date());
+        solution.setCorrected(Boolean.TRUE);
+
+        ServiceManager.getCommentService().saveToDatabase(solution);
+
+        workflowService.reportProblem(problem);
+        currentTask = taskService.getById(6);
+        workflowService.solveProblem(solution);
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {

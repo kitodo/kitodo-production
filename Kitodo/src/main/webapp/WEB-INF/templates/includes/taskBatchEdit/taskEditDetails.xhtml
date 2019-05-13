@@ -16,7 +16,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
->
+        xmlns:p="http://primefaces.org/ui">
     <table cellpadding="3" cellspacing="0" style="width:100%">
         <tr style="vertical-align:top">
             <td>
@@ -140,7 +140,13 @@
                 <table>
                     <tr>
                         <td style="border: 1px solid lightgray; height: 100px;">
-                            <h:outputText escape="false" value="#{CurrentTaskForm.batchHelper.wikiField}"/>
+                            <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}" var="item">
+                                <p:column style="width: 100%;">
+                                    <h:outputText value="#{item.author.name} #{item.author.surname}: #{item.message}"
+                                                  escape="false"
+                                                  style="width:100%;"/>
+                                </p:column>
+                            </p:dataTable>
                         </td>
                     </tr>
                     <tr>
@@ -149,15 +155,17 @@
                                     rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.loggedUser.id}">
                                 <h:panelGrid>
                                     <h:panelGroup>
-                                        <h:inputText id="addToTextArea"
-                                                     value="#{CurrentTaskForm.batchHelper.addToWikiField}"
-                                                     style="width: 100%"/>
+                                        <p:inputTextarea id="newCommentTextArea"
+                                                         value="#{CommentForm.commentMessage}"
+                                                         styleClass="new-comment-box">
+                                            <p:ajax event="change"/>
+                                        </p:inputTextarea>
                                     </h:panelGroup>
                                     <h:panelGroup>
                                         <h:commandButton value="#{msgs.addMessage}"
-                                                         action="#{CurrentTaskForm.batchHelper.addToWikiField}"/>
+                                                         action="#{CommentForm.addComment()}"/>
                                         <h:commandButton value="#{msgs.addMessageForAll}"
-                                                         action="#{CurrentTaskForm.batchHelper.addToWikiFieldForAll}"/>
+                                                         action="#{CommentForm.addCommentToAllBatchProcesses()}"/>
                                     </h:panelGroup>
                                 </h:panelGrid>
                             </h:form>

@@ -11,6 +11,7 @@
 
 package org.goobi.mq.processors;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.services.ServiceManager;
@@ -64,8 +67,13 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
         if (ticket.hasField("message")) {
-            ServiceManager.getProcessService().addToWikiField(ticket.getString("message"),
-                    dialog.getCurrentTask().getProcess());
+            Comment comment = new Comment();
+            comment.setProcess(dialog.getCurrentTask().getProcess());
+            comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
+            comment.setMessage(ticket.getString("message"));
+            comment.setType(CommentType.INFO);
+            comment.setCreationDate(new Date());
+            ServiceManager.getCommentService().saveToDatabase(comment);
         }
         dialog.closeTaskByUser();
     }

@@ -54,7 +54,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -63,7 +62,6 @@ import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SelectItemList;
-import org.kitodo.production.helper.WikiFieldHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyLogicalDocStructTypeHelper;
@@ -96,7 +94,6 @@ public class ProzesskopieForm extends BaseForm {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore
             .getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
-    private String addToWikiField = "";
     private String atstsl = "";
     private Integer guessedImages = 0;
     private Process processForChoice;
@@ -1297,26 +1294,6 @@ public class ProzesskopieForm extends BaseForm {
      */
     public Integer getImagesGuessed() {
         return this.guessedImages;
-    }
-
-    public String getAddToWikiField() {
-        return this.addToWikiField;
-    }
-
-    /**
-     * Set add to wiki field.
-     *
-     * @param addToWikiField
-     *            String
-     */
-    public void setAddToWikiField(String addToWikiField) {
-        this.addToWikiField = addToWikiField;
-        if (Objects.nonNull(addToWikiField) && !addToWikiField.isEmpty()) {
-            User user = ServiceManager.getUserService().getAuthenticatedUser();
-            String message = this.addToWikiField + " (" + ServiceManager.getUserService().getFullName(user) + ")";
-            this.prozessKopie
-                    .setWikiField(WikiFieldHelper.getWikiMessage(prozessKopie.getWikiField(), "info", message));
-        }
     }
 
     /**

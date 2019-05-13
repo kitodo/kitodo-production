@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Comment;
@@ -39,7 +40,7 @@ public class CommentDAO extends BaseDAO<Comment> {
     }
 
     @Override
-    public List<Comment> getAllNotIndexed(int offset, int size) throws DAOException {
+    public List<Comment> getAllNotIndexed(int offset, int size) {
         throw new UnsupportedOperationException();
     }
 
@@ -48,7 +49,21 @@ public class CommentDAO extends BaseDAO<Comment> {
         removeObject(Comment.class, commentId);
     }
 
-    public List<Comment> getAllByProcess(Process process, int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Comment WHERE process_id = '" + process.getId() + "' ORDER BY id ASC",offset ,size);
+    public List<Comment> getAllByProcess(Process process) {
+        return getByQuery("FROM Comment WHERE process_id = :processId ORDER BY id ASC",
+                Collections.singletonMap("processId", process.getId()));
+    }
+
+    /**
+     * Save list of comments.
+     *
+     * @param list
+     *            of commenss
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying saveList()
+     *             procedure failure.
+     */
+    public void saveList(List<Comment> list) throws DAOException {
+        storeList(list);
     }
 }
