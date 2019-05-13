@@ -74,11 +74,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private final AddMediaUnitDialog addMediaUnitDialog;
 
     /**
-     * Backing bean for the comment panel.
-     */
-    private final CommentPanel commentPanel;
-
-    /**
      * Backing bean for the edit pages dialog.
      */
     private final EditPagesDialog editPagesDialog;
@@ -146,7 +141,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         this.metadataPanel = new MetadataPanel(this);
         this.galleryPanel = new GalleryPanel(this);
         this.paginationPanel = new PaginationPanel(this);
-        this.commentPanel = new CommentPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMediaUnitDialog = new AddMediaUnitDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -227,7 +221,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         metadataPanel.showPhysical(getSelectedMediaUnit());
         galleryPanel.show();
         paginationPanel.show();
-        commentPanel.show();
 
         addDocStrucTypeDialog.prepare();
         addMediaUnitDialog.prepare();
@@ -245,7 +238,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * @return the referring view, to return there
      */
     public String close() {
-        commentPanel.clear();
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -322,10 +314,6 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
 
     public AddMediaUnitDialog getAddMediaUnitDialog() {
         return addMediaUnitDialog;
-    }
-
-    public CommentPanel getCommentPanel() {
-        return commentPanel;
     }
 
     public EditPagesDialog getEditPagesDialog() {

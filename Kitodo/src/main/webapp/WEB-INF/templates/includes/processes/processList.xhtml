@@ -75,7 +75,6 @@
                                actionListener="#{CommentForm.setProcessId(process.id)}"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{LoginForm.loggedUser}" target="#{DataEditorForm.user}"/>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
