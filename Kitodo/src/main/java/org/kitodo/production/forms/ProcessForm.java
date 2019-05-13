@@ -614,10 +614,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Download to home for selected processes.
      */
     public void downloadToHomeForSelection() {
-        WebDav myDav = new WebDav();
-        for (Process selectedProcess : this.selectedProcesses) {
-            download(myDav, selectedProcess);
-        }
+        download(this.selectedProcesses);
         // TODO: fix message
         Helper.setMessage("createdInUserHomeAll");
     }
@@ -625,31 +622,24 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Download to home for all found processes.
      */
-    @SuppressWarnings("unchecked")
     public void downloadToHomeForAll() {
-        WebDav webDav = new WebDav();
-        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null)) {
-            try {
-                Process processForDownload = ServiceManager.getProcessService().getById(processDTO.getId());
-                download(webDav, processForDownload);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processDTO.getId() }, logger, e);
-            }
-        }
+        download(getProcessForActions());
         Helper.setMessage("createdInUserHomeAll");
     }
 
-    private void download(WebDav webDav, Process processForDownload) {
-        if (!ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
-            webDav.downloadToHome(processForDownload, false);
-        } else {
-            Helper.setMessage(
-                Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
-                        + Helper.getTranslation("isInUse"),
-                ServiceManager.getUserService()
-                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
-            webDav.downloadToHome(processForDownload, true);
+    private void download(List<Process> processes) {
+        WebDav webDav = new WebDav();
+        for (Process processForDownload : processes) {
+            if (!ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
+                webDav.downloadToHome(processForDownload, false);
+            } else {
+                Helper.setMessage(
+                        Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
+                                + Helper.getTranslation("isInUse"),
+                        ServiceManager.getUserService()
+                                .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
+                webDav.downloadToHome(processForDownload, true);
+            }
         }
     }
 
