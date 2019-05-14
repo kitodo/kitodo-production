@@ -43,7 +43,6 @@ public class FileManagement implements FileManagementInterface {
     private static final FileMapper fileMapper = new FileMapper();
 
     private static final String IMAGES_DIRECTORY_NAME = "images";
-    private static final String SYSTEM_USER = "System";
 
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
@@ -78,7 +77,6 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    @Deprecated
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return uri.toURL().openStream();

@@ -90,11 +90,8 @@ public class CustomListColumnInitializer {
      * @param prefix
      *              String that is prepend to extracted custom column names before returning them as a list
      * @return List of custom column names prepended with given String 'prefix'.
-     * @throws NoSuchElementException
-     *              thrown when 'configurationKey' could not be found in Kitodo configuration file
      */
-    private String[] loadCustomColumnsFromConfigurationFile(ParameterCore configurationKey, String prefix)
-            throws NoSuchElementException {
+    private String[] loadCustomColumnsFromConfigurationFile(ParameterCore configurationKey, String prefix) {
         return Arrays.stream(ConfigCore.getParameter(configurationKey).split(","))
                 .filter(name -> !name.trim().isEmpty())
                 .map(name -> prefix + name.trim())

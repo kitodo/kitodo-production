@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -217,9 +216,6 @@ public class FileService {
      * @param uri
      *            the URI, to write to.
      * @return an output stream to the file at the given URI or null
-     * @throws AccessDeniedException
-     *             always, because no user cannot have obtained any sufficient
-     *             authorization
      */
     public OutputStream write(URI uri) throws IOException {
         return fileManagementModule.write(uri);
@@ -245,9 +241,6 @@ public class FileService {
      * @param uri
      *            the uri to read
      * @return an InputStream to read from or null
-     * @throws AccessDeniedException
-     *             always, because no user cannot have obtained any sufficient
-     *             authorization
      */
     public InputStream read(URI uri) throws IOException {
         return fileManagementModule.read(uri);
