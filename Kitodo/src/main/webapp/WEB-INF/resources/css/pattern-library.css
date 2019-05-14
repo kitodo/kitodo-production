@@ -764,6 +764,11 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 Popup dialogs
 ----------------------------------------------------------------------*/
 
+.ui-dialog {
+    max-height: calc(100vh - var(--default-double-size));
+    overflow-y: auto;
+}
+
 .ui-dialog,
 .ui-dialog .ui-panelgrid-content,
 .ui-dialog .ui-panelgrid-cell {
