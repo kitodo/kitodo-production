@@ -151,9 +151,16 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         return "";
     }
 
+    int preventNull(Integer value) {
+        if (Objects.isNull(value)) {
+            return 0;
+        }
+        return value;
+    }
+
     String preventNull(String value) {
         if (Objects.isNull(value)) {
-            value = "";
+            return "";
         }
         return value;
     }
