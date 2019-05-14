@@ -1256,7 +1256,7 @@ public class ProzesskopieForm extends BaseForm {
 
         calculateTiffHeader();
 
-        Ajax.update("editForm:processFromTemplateTabView:processDataTab");
+        Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid");
     }
 
     /**
