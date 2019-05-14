@@ -11,12 +11,15 @@
 
 package org.kitodo.production.forms;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +57,7 @@ public class CommentForm extends BaseForm {
             setProcess(ServiceManager.getProcessService().getById(Integer.parseInt(this.processId)));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.processId }, logger, e);
+                    new Object[]{ObjectType.PROCESS.getTranslationSingular(), this.processId}, logger, e);
         }
         try {
             this.process = WikiFieldHelper.transformWikiFieldToComment(this.process);
@@ -85,7 +88,7 @@ public class CommentForm extends BaseForm {
     /**
      * Add a new comment to the process.
      */
-    public void addComment() {
+    public String addComment() {
         Comment comment = new Comment();
         comment.setMessage(getCommentMessage());
         comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
@@ -95,9 +98,9 @@ public class CommentForm extends BaseForm {
             try {
                 comment.setCorrectionTask(ServiceManager.getTaskService().getById(Integer.parseInt(getCorrectionTaskId())));
             } catch (NumberFormatException | DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId() },
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[]{ObjectType.TASK.getTranslationSingular(), getCorrectionTaskId()},
                         logger, e);
-                return;
+                return null;
             }
             comment.setType(CommentType.ERROR);
             comment.setCorrected(Boolean.FALSE);
@@ -110,10 +113,21 @@ public class CommentForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
-        if (isCorrectionComment()) {
-            reportProblem(comment);
-        }
         newComment();
+        if (comment.getType().equals(CommentType.ERROR)) {
+            reportProblem(comment);
+            return redirect();
+        }
+        return null;
+    }
+
+    private String redirect() {
+        HttpServletRequest origRequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        if (origRequest.getRequestURI().contains("metadataEditor")) {
+            return MessageFormat.format(REDIRECT_PATH, "processes");
+        } else {
+            return MessageFormat.format(REDIRECT_PATH, "tasks");
+        }
     }
 
     /**
@@ -244,7 +258,7 @@ public class CommentForm extends BaseForm {
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.processId }, logger, e);
+                    new Object[]{ObjectType.PROCESS.getTranslationSingular(), this.processId}, logger, e);
         }
     }
 
