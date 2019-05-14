@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.faces.model.SelectItem;
-
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
