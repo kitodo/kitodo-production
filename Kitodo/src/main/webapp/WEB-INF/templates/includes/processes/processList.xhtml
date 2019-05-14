@@ -138,30 +138,46 @@
 
         <p:commandButton id="actionsButton" value="#{msgs.possibleActions}" styleClass="secondary" icon="fa fa-sort" iconPos="right"/>
         <p:menu overlay="true" trigger="processesTabView:processesForm:actionsButton" my="left bottom" at="left top">
-            <p:menuitem value="#{msgs.processingStatusUp}"
+            <p:menuitem id="processingStatusUpSelection"
+                        value="#{msgs.processingStatusUp}"
                         action="#{ProcessForm.setTaskStatusUpForSelection}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-arrow-circle-o-up"/>
-            <p:menuitem value="#{msgs.processingStatusDown}"
+            <p:menuitem id="processingStatusDownSelection"
+                        value="#{msgs.processingStatusDown}"
                         action="#{ProcessForm.setTaskStatusDownForSelection}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-arrow-circle-o-down"/>
-            <p:menuitem value="#{msgs.executeKitodoScript}"
+            <p:menuitem id="executeScriptSelection"
+                        value="#{msgs.executeKitodoScript}"
                         onclick="PF('executeScriptSelectedDialog').show();"
                         icon="fa fa-cogs"/>
-            <p:menuitem value="#{msgs.linkHomeDirectory}"
+            <p:menuitem id="downloadSelection"
+                        value="#{msgs.linkHomeDirectory}"
                         action="#{ProcessForm.downloadToHomeForSelection}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-download"/>
-            <p:menuitem value="#{msgs.exportDMS}"
+            <p:menuitem id="uploadAll"
+                        value="#{msgs.deleteLinkHomeDirectory}"
+                        action="#{ProcessForm.uploadFromHomeForAll}"
+                        update="processesTabView:processesForm:processesTable"
+                        icon="fa fa-upload">
+                <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
+                <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                           icon="ui-icon-alert"/>
+            </p:menuitem>
+            <p:menuitem id="exportDmsSelection"
+                        value="#{msgs.exportDMS}"
                         action="#{ProcessForm.exportDMSForSelection}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-file-archive-o"/>
-            <p:menuitem value="#{msgs.createExcel}"
+            <p:menuitem id="createExcel"
+                        value="#{msgs.createExcel}"
                         action="#{ProcessForm.generateResult}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-file-excel-o"/>
-            <p:menuitem value="#{msgs.createPdf}"
+            <p:menuitem id="createPdf"
+                        value="#{msgs.createPdf}"
                         action="#{ProcessForm.generateResultAsPdf}"
                         update="processesTabView:processesForm:processesTable"
                         icon="fa fa-file-pdf-o"/>
