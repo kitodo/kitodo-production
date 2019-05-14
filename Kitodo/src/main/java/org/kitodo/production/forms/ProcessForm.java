@@ -552,7 +552,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Export DMS for all found processes.
      */
     public void exportDMSForAll() {
-        exportDMSForProcesses(getProcessForActions());
+        exportDMSForProcesses(getProcessesForActions());
     }
 
     private void exportDMSForProcesses(List<Process> processes) {
@@ -588,33 +588,10 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home for single process.
-     */
-    public void downloadToHome() {
-        /*
-         * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
-         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
-         * ansonsten Download
-         */
-        if (!ServiceManager.getProcessService().isImageFolderInUse(this.process)) {
-            WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.process, false);
-        } else {
-            Helper.setMessage(
-                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
-                        + Helper.getTranslation("isInUse"),
-                ServiceManager.getUserService()
-                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(this.process)));
-            WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.process, true);
-        }
-    }
-
-    /**
      * Download to home for selected processes.
      */
     public void downloadToHomeForSelection() {
-        download(this.selectedProcesses);
+        downloadToHome(this.selectedProcesses);
         // TODO: fix message
         Helper.setMessage("createdInUserHomeAll");
     }
@@ -623,23 +600,46 @@ public class ProcessForm extends TemplateBaseForm {
      * Download to home for all found processes.
      */
     public void downloadToHomeForAll() {
-        download(getProcessForActions());
+        downloadToHome(getProcessesForActions());
         Helper.setMessage("createdInUserHomeAll");
     }
 
-    private void download(List<Process> processes) {
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome() {
+        downloadToHome(new WebDav(), this.process);
+    }
+
+    private void downloadToHome(List<Process> processes) {
         WebDav webDav = new WebDav();
         for (Process processForDownload : processes) {
-            if (!ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
-                webDav.downloadToHome(processForDownload, false);
-            } else {
-                Helper.setMessage(
-                        Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
-                                + Helper.getTranslation("isInUse"),
-                        ServiceManager.getUserService()
-                                .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
-                webDav.downloadToHome(processForDownload, true);
-            }
+            downloadToHome(webDav, processForDownload);
+        }
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     * 
+     * @param webDav
+     *            for download
+     * @param processForDownload
+     *            process for which download is going to be performed
+     */
+    private void downloadToHome(WebDav webDav, Process processForDownload) {
+        if (ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
+            Helper.setMessage(
+                Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
+                        + Helper.getTranslation("isInUse"),
+                ServiceManager.getUserService()
+                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
+            webDav.downloadToHome(processForDownload, true);
+        } else {
+            webDav.downloadToHome(processForDownload, false);
         }
     }
 
@@ -654,7 +654,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Set up processing status for all found processes.
      */
     public void setTaskStatusUpForAll() {
-        setTaskStatusUpForProcesses(getProcessForActions());
+        setTaskStatusUpForProcesses(getProcessesForActions());
     }
 
     private void setTaskStatusUpForProcesses(List<Process> processes) {
@@ -680,7 +680,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Set down processing status hits.
      */
     public void setTaskStatusDownForAll() {
-        setTaskStatusDownForProcesses(getProcessForActions());
+        setTaskStatusDownForProcesses(getProcessesForActions());
     }
 
     private void setTaskStatusDownForProcesses(List<Process> processes) {
@@ -799,7 +799,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Execute Kitodo script for hits list.
      */
     public void executeKitodoScriptAll() {
-        executeKitodoScriptForProcesses(getProcessForActions(), this.kitodoScriptAll);
+        executeKitodoScriptForProcesses(getProcessesForActions(), this.kitodoScriptAll);
     }
 
     /**
@@ -819,7 +819,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Process> getProcessForActions() {
+    private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
         List<ProcessDTO> filteredProcesses = lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null);
         List<Process> processesForActions = new ArrayList<>();
