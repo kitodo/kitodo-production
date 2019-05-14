@@ -174,12 +174,12 @@
             <p:menuitem id="createExcel"
                         value="#{msgs.createExcel}"
                         action="#{ProcessForm.generateResult}"
-                        update="processesTabView:processesForm:processesTable"
+                        ajax="false"
                         icon="fa fa-file-excel-o"/>
             <p:menuitem id="createPdf"
                         value="#{msgs.createPdf}"
                         action="#{ProcessForm.generateResultAsPdf}"
-                        update="processesTabView:processesForm:processesTable"
+                        ajax="false"
                         icon="fa fa-file-pdf-o"/>
         </p:menu>
     </h:form>
