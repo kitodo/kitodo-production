@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 
 /**
  * The tree-like outline included structural element for digital representation.
@@ -31,6 +32,11 @@ public class IncludedStructuralElement {
      * this level.
      */
     private String label;
+
+    /**
+     * Specifies the link if there is one.
+     */
+    private LinkedMetsResource link;
 
     /**
      * The meta-data for this included structural element. This included
@@ -124,6 +130,25 @@ public class IncludedStructuralElement {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    /**
+     * Returns the link of this included structural element.
+     *
+     * @return the link
+     */
+    public LinkedMetsResource getLink() {
+        return link;
+    }
+
+    /**
+     * Sets the link of this included structural element.
+     *
+     * @param link
+     *            link to set
+     */
+    public void setLink(LinkedMetsResource link) {
+        this.link = link;
     }
 
     /**
