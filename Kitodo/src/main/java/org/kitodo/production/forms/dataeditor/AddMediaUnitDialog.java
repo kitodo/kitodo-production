@@ -66,9 +66,9 @@ public class AddMediaUnitDialog {
     private void preparePossiblePositions() {
         possiblePositions = new ArrayList<>();
         possiblePositions.add(new SelectItem(InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("alsErstesKindDesAktuellenElements")));
+                Helper.getTranslation("asFirstChildOfCurrentElement")));
         possiblePositions.add(new SelectItem(InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("alsLetztesKindDesAktuellenElements")));
+                Helper.getTranslation("asLastChildOfCurrentElement")));
     }
 
     private void preparePossibleTypes() {

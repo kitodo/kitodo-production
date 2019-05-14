@@ -372,11 +372,11 @@ public class AddDocStrucTypeDialog {
                     Helper.getTranslation("hinterDasAktuelleElement")));
         }
         docStructPositionSelectionItems.add(new SelectItem(FIRST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("alsErstesKindDesAktuellenElements")));
+                Helper.getTranslation("asFirstChildOfCurrentElement")));
         docStructPositionSelectionItems.add(new SelectItem(LAST_CHILD_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("alsLetztesKindDesAktuellenElements")));
+                Helper.getTranslation("asLastChildOfCurrentElement")));
         docStructPositionSelectionItems.add(new SelectItem(PARENT_OF_CURRENT_ELEMENT,
-                Helper.getTranslation("alsElternteilDesAktuellenElements")));
+                Helper.getTranslation("asParentOfCurrentElement")));
     }
 
     private void prepareSelectAddableMetadataTypesItems() {
