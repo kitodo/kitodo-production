@@ -164,6 +164,12 @@ public class MetadataEditor {
         }
     }
 
+    /**
+     * Assign views from children of given IncludedStructuralElement 'structure' to the structure itself.
+     *
+     * @param structure
+     *          IncludedStructuralElement to which the views are assigned
+     */
     public static void assignViewsFromChildren(IncludedStructuralElement structure) {
         structure.getViews().addAll(getViewsFromChildrenRecursive(structure));
     }
@@ -245,6 +251,16 @@ public class MetadataEditor {
         return new LinkedList<>();
     }
 
+    /**
+     * Move View 'view' from IncludedStructuralElement 'fromElement' to IncludedStructuralElement 'toElement'.
+     *
+     * @param view
+     *          View that will be moved
+     * @param fromElement
+     *          IncludedStructuralElement from which the View will be moved
+     * @param toElement
+     *          IncludedStructuralElement to which the View will be moved
+     */
     public static void moveView(View view, IncludedStructuralElement fromElement, IncludedStructuralElement toElement) {
         fromElement.getViews().remove(view);
         toElement.getViews().add(view);

@@ -41,7 +41,7 @@ public class MetadataPanel implements Serializable {
     private FieldedMetadataTableRow logicalMetadataTable = FieldedMetadataTableRow.EMPTY;
     private FieldedMetadataTableRow physicalMetadataTable = FieldedMetadataTableRow.EMPTY;
 
-    public MetadataPanel(RulesetSetupInterface rulesetSetup) {
+    MetadataPanel(RulesetSetupInterface rulesetSetup) {
         this.rulesetSetup = rulesetSetup;
     }
 
@@ -117,35 +117,21 @@ public class MetadataPanel implements Serializable {
         addMetadataValue = "";
     }
 
-    public List<SelectItem> getAddLogicalMetadataKeyItems() {
-        return logicalMetadataTable.getAddableMetadata();
-    }
-
-    public List<SelectItem> getAddPhysicalMetadataKeyItems() {
-        return physicalMetadataTable.getAddableMetadata();
-    }
-
-    public String getAddMetadataKeySelectedItem() {
-        return addMetadataKeySelectedItem;
-    }
-
-    public void setAddMetadataKeySelectedItem(String addMetadataKeySelectedItem) {
-        this.addMetadataKeySelectedItem = addMetadataKeySelectedItem;
-    }
-
+    /**
+     * Return addMetadataValue.
+     *
+     * @return addMetadataValue
+     */
     public String getAddLogicalMetadataValue() {
         return addMetadataValue;
     }
 
+    /**
+     * Set addMetadataValue.
+     * @param addMetadataValue
+     *          addMetadataValue
+     */
     public void setAddLogicalMetadataValue(String addMetadataValue) {
-        this.addMetadataValue = addMetadataValue;
-    }
-
-    public String getAddPhysicalMetadataValue() {
-        return addMetadataValue;
-    }
-
-    public void setAddPhysicalMetadataValue(String addMetadataValue) {
         this.addMetadataValue = addMetadataValue;
     }
 
@@ -153,10 +139,20 @@ public class MetadataPanel implements Serializable {
         return clipboard;
     }
 
+    /**
+     * Return logical metadata rows.
+     *
+     * @return logical metadata rows
+     */
     public List<MetadataTableRow> getLogicalMetadataRows() {
         return logicalMetadataTable.getRows();
     }
 
+    /**
+     * Return physical metadata rows.
+     *
+     * @return physical metadata rows
+     */
     public List<MetadataTableRow> getPhysicalMetadataRows() {
         return physicalMetadataTable.getRows();
     }
@@ -183,6 +179,9 @@ public class MetadataPanel implements Serializable {
 
     }
 
+    /**
+     * Callback function 'paste' button in MetadataPanel. (Not yet implemented!)
+     */
     public void pasteClick() {
         logicalMetadataTable.pasteClick();
     }

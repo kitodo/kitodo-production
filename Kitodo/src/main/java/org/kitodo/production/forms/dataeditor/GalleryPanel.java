@@ -236,6 +236,11 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().updateNodeSelection(galleryMediaContent);
     }
 
+    /**
+     * Set selectedStripe.
+     * @param selectedStripe
+     *          selectedStripe
+     */
     public void setSelectedStripe(GalleryStripe selectedStripe) {
         this.selectedStripe = selectedStripe;
     }

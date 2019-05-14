@@ -295,10 +295,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         }
     }
 
+    /**
+     * Callback function for click on 'delete' option in logical structure tree context menu.
+     */
     public void deleteButtonClick() {
         structurePanel.deleteSelectedStructure();
     }
 
+    /**
+     * Callback function for click on 'delete' option in physical structure tree context menu.
+     */
     public void deleteMediaUnit() {
         structurePanel.deleteSelectedMediaUnit();
     }
@@ -308,26 +314,56 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return acquisitionStage;
     }
 
+    /**
+     * Return addDocStrucTypeDialog.
+     *
+     * @return addDocStrucTypeDialog.
+     */
     public AddDocStrucTypeDialog getAddDocStrucTypeDialog() {
         return addDocStrucTypeDialog;
     }
 
+    /**
+     * Return addMediaUnitDialog.
+     *
+     * @return addMediaUnitDialog
+     */
     public AddMediaUnitDialog getAddMediaUnitDialog() {
         return addMediaUnitDialog;
     }
 
+    /**
+     * Return editPagesDialog.
+     *
+     * @return editPagesDialog
+     */
     public EditPagesDialog getEditPagesDialog() {
         return editPagesDialog;
     }
 
+    /**
+     * Return galleryPanel.
+     *
+     * @return galleryPanel
+     */
     public GalleryPanel getGalleryPanel() {
         return galleryPanel;
     }
 
+    /**
+     * Return metadataPanel.
+     *
+     * @return metadataPanel
+     */
     public MetadataPanel getMetadataPanel() {
         return metadataPanel;
     }
 
+    /**
+     * Return paginationPanel.
+     *
+     * @return paginationPanel
+     */
     public PaginationPanel getPaginationPanel() {
         return paginationPanel;
     }
@@ -368,6 +404,11 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         return structurePanel.getSelectedMediaUnit();
     }
 
+    /**
+     * Return structurePanel.
+     *
+     * @return structurePanel
+     */
     public StructurePanel getStructurePanel() {
         return structurePanel;
     }

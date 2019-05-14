@@ -66,7 +66,13 @@ public class EditPagesDialog {
      */
     private List<SelectItem> selectPageItems;
 
-    public EditPagesDialog(DataEditorForm dataEditor) {
+    /**
+     * Constructor.
+     *
+     * @param dataEditor
+     *          DataEditorForm of this EditPagesDialog
+     */
+    EditPagesDialog(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
@@ -82,30 +88,105 @@ public class EditPagesDialog {
         }
     }
 
+    /**
+     * Return paginationSelectionSelectedItems.
+     *
+     * @return paginationSelectionSelectedItems
+     */
     public List<Integer> getPaginationSelectionSelectedItems() {
         return paginationSelectionSelectedItems;
     }
 
+    /**
+     * Set paginationSelectionSelectedItems.
+     *
+     * @param paginationSelectionSelectedItems
+     *          paginationSelectionSelectedItems
+     */
+    public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
+        this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
+    }
+
+    /**
+     * Return paginationSubSelectionSelectedItems.
+     *
+     * @return paginationSubSelectionSelectedItems
+     */
     public List<Integer> getPaginationSubSelectionSelectedItems() {
         return paginationSubSelectionSelectedItems;
     }
 
+    /**
+     * Set paginationSubSelectionSelectedItems.
+     *
+     * @param paginationSubSelectionSelectedItems
+     *          paginationSubSelectionSelectedItems
+     */
+    public void setPaginationSubSelectionSelectedItems(List<Integer> paginationSubSelectionSelectedItems) {
+        this.paginationSubSelectionSelectedItems = paginationSubSelectionSelectedItems;
+    }
+
+    /**
+     * Return selectFirstPageSelectedItem.
+     *
+     * @return selectFirstPageSelectedItem
+     */
     public Integer getSelectFirstPageSelectedItem() {
         return selectFirstPageSelectedItem;
     }
 
+    /**
+     * Set selectFirstPageSelectedItem.
+     *
+     * @param selectFirstPageSelectedItem
+     *          selectFirstPageSelectedItem
+     */
+    public void setSelectFirstPageSelectedItem(Integer selectFirstPageSelectedItem) {
+        this.selectFirstPageSelectedItem = selectFirstPageSelectedItem;
+    }
+
+    /**
+     * Return selectLastPageSelectedItem.
+     *
+     * @return selectLastPageSelectedItem
+     */
     public Integer getSelectLastPageSelectedItem() {
         return selectLastPageSelectedItem;
     }
 
+    /**
+     * Set selectLastPageSelectedItem.
+     *
+     * @param selectLastPageSelectedItem
+     *          selectLastPageSelectedItem
+     */
+    public void setSelectLastPageSelectedItem(Integer selectLastPageSelectedItem) {
+        this.selectLastPageSelectedItem = selectLastPageSelectedItem;
+    }
+
+    /**
+     * Return paginationSelectionItems.
+     *
+     * @return paginationSelectionItems
+     */
     public List<SelectItem> getPaginationSelectionItems() {
         return paginationSelectionItems;
     }
 
+    /**
+     * Return paginationSubSelectionItems.
+     *
+     * @return paginationSubSelectionItems
+     */
     public List<SelectItem> getPaginationSubSelectionItems() {
         return paginationSubSelectionItems;
     }
 
+    /**
+     * Return selectPageItems.
+     *
+     * @return selectPageItems
+     */
     public List<SelectItem> getSelectPageItems() {
         return selectPageItems;
     }
@@ -118,8 +199,21 @@ public class EditPagesDialog {
     }
 
     private List<View> getViewsToAdd(List<Integer> pages) {
-        return pages.parallelStream().map(dataEditor.getWorkpiece().getMediaUnits()::get)
+        return pages.parallelStream().map(dataEditor.getWorkpiece().getMediaUnit().getChildren()::get)
                 .map(MetadataEditor::createUnrestrictedViewOn).collect(Collectors.toList());
+    }
+
+    /**
+     * This method is invoked if the user clicks on the set page start and end
+     * btn command button.
+     */
+    public void setPageStartAndEndBtnClick() {
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            dataEditor.getSelectedStructure().get().getViews()
+                    .addAll(getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem));
+            dataEditor.refreshStructurePanel();
+            prepare();
+        }
     }
 
     void prepare() {
@@ -128,7 +222,7 @@ public class EditPagesDialog {
         paginationSubSelectionItems = new ArrayList<>();
         paginationSelectionItems = new ArrayList<>();
 
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         int capacity = (int) Math.ceil(mediaUnits.size() / .75);
         Set<Integer> assigneds = new HashSet<>(capacity);
         Set<Integer> unassigneds = new HashSet<>(capacity);
@@ -155,35 +249,6 @@ public class EditPagesDialog {
         }
         paginationSubSelectionSelectedItems.retainAll(assigneds);
         paginationSelectionSelectedItems.retainAll(unassigneds);
-    }
-
-    /**
-     * This method is invoked if the user clicks on the set page start and end
-     * btn command button.
-     */
-    public void setPageStartAndEndBtnClick() {
-        if (dataEditor.getSelectedStructure().isPresent()) {
-            dataEditor.getSelectedStructure().get().getViews()
-                    .addAll(getViewsToAdd(selectFirstPageSelectedItem, selectLastPageSelectedItem));
-            dataEditor.refreshStructurePanel();
-            prepare();
-        }
-    }
-
-    public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
-        this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
-    }
-
-    public void setPaginationSubSelectionSelectedItems(List<Integer> paginationSubSelectionSelectedItems) {
-        this.paginationSubSelectionSelectedItems = paginationSubSelectionSelectedItems;
-    }
-
-    public void setSelectFirstPageSelectedItem(Integer selectFirstPageSelectedItem) {
-        this.selectFirstPageSelectedItem = selectFirstPageSelectedItem;
-    }
-
-    public void setSelectLastPageSelectedItem(Integer selectLastPageSelectedItem) {
-        this.selectLastPageSelectedItem = selectLastPageSelectedItem;
     }
 
     /**

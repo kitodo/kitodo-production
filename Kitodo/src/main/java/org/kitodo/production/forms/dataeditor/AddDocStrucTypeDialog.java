@@ -52,7 +52,7 @@ public class AddDocStrucTypeDialog {
     private List<SelectItem> docStructPositionSelectionItems;
     private InsertionPosition docStructPositionSelectionSelectedItem = LAST_CHILD_OF_CURRENT_ELEMENT;
     private int elementsToAddSpinnerValue;
-    private String inputMetaDataValueValue = "";
+    private String inputMetaDataValue = "";
     private LinkedList<IncludedStructuralElement> parents;
     private List<SelectItem> selectAddableMetadataTypesItems;
     private String selectAddableMetadataTypesSelectedItem = "";
@@ -77,7 +77,7 @@ public class AddDocStrucTypeDialog {
             MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                 dataEditor.getWorkpiece(), dataEditor.getSelectedStructure().get(),
                 docStructPositionSelectionSelectedItem, selectAddableMetadataTypesSelectedItem,
-                inputMetaDataValueValue);
+                    inputMetaDataValue);
             dataEditor.refreshStructurePanel();
         }
     }
@@ -115,44 +115,182 @@ public class AddDocStrucTypeDialog {
         }
     }
 
+    /**
+     * Return selected doc struct type.
+     *
+     * @return selected doc struct type
+     */
     public String getDocStructAddTypeSelectionSelectedItem() {
         return docStructAddTypeSelectionSelectedItem;
     }
 
+    /**
+     * Set selected doc struct type.
+     *
+     * @param docStructAddTypeSelectionSelectedItem
+     *          selected doc struct type
+     */
+    public void setDocStructAddTypeSelectionSelectedItem(String docStructAddTypeSelectionSelectedItem) {
+        this.docStructAddTypeSelectionSelectedItem = docStructAddTypeSelectionSelectedItem;
+    }
+
+    /**
+     * Return list of possible positions where to add new doc struct items.
+     *
+     * @return list of possible position where to add new doc struct items
+     */
     public List<SelectItem> getDocStructPositionSelectionItems() {
         return docStructPositionSelectionItems;
     }
 
+    /**
+     * Return selected position where to add new doc struct item.
+     *
+     * @return selected position where to add new doc struct item.
+     */
     public InsertionPosition getDocStructPositionSelectionSelectedItem() {
         return docStructPositionSelectionSelectedItem;
     }
 
+    /**
+     * Set selected position where to add new doc struct item.
+     *
+     * @param docStructPositionSelectionSelectedItem
+     *          selected position where to add new doc struct item
+     */
+    public void setDocStructPositionSelectionSelectedItem(InsertionPosition docStructPositionSelectionSelectedItem) {
+        this.docStructPositionSelectionSelectedItem = docStructPositionSelectionSelectedItem;
+    }
+
+    /**
+     * Return number of elements to add.
+     *
+     * @return number of elements to add
+     */
     public int getElementsToAddSpinnerValue() {
         return elementsToAddSpinnerValue;
     }
 
-    public String getInputMetaDataValueValue() {
-        return inputMetaDataValueValue;
+    /**
+     * Set number of elements to add.
+     *
+     * @param elementsToAddSpinnerValue
+     *          number of elements to add
+     */
+    public void setElementsToAddSpinnerValue(int elementsToAddSpinnerValue) {
+        this.elementsToAddSpinnerValue = elementsToAddSpinnerValue;
     }
 
+    /**
+     * Return value of metadata input field.
+     *
+     * @return value of metadata input field
+     */
+    public String getInputMetaDataValue() {
+        return inputMetaDataValue;
+    }
+
+    /**
+     * Set value of metadata input field.
+     *
+     * @param inputMetaDataValue
+     *          value of metadata input field
+     */
+    public void setInputMetaDataValue(String inputMetaDataValue) {
+        this.inputMetaDataValue = inputMetaDataValue;
+    }
+
+    /**
+     * Return list of addable metadata types.
+     *
+     * @return list of addable metadata types
+     */
     public List<SelectItem> getSelectAddableMetadataTypesItems() {
         return selectAddableMetadataTypesItems;
     }
 
+    /**
+     * Return selected addable metadata type.
+     *
+     * @return selected addable metadata type
+     */
     public String getSelectAddableMetadataTypesSelectedItem() {
         return selectAddableMetadataTypesSelectedItem;
     }
 
+    /**
+     * Set selected addable metadata type.
+     *
+     * @param selectAddableMetadataTypesSelectedItem
+     *          selected addable metadata type.
+     */
+    public void setSelectAddableMetadataTypesSelectedItem(String selectAddableMetadataTypesSelectedItem) {
+        this.selectAddableMetadataTypesSelectedItem = selectAddableMetadataTypesSelectedItem;
+    }
+
+    /**
+     * Return first selected page.
+     *
+     * @return first selected page
+     */
     public String getSelectFirstPageOnAddNodeSelectedItem() {
         return selectFirstPageOnAddNodeSelectedItem;
     }
 
+    /**
+     * Set first selected page.
+     *
+     * @param selectFirstPageOnAddNodeSelectedItem
+     *          first selected page
+     */
+    public void setSelectFirstPageOnAddNodeSelectedItem(String selectFirstPageOnAddNodeSelectedItem) {
+        this.selectFirstPageOnAddNodeSelectedItem = selectFirstPageOnAddNodeSelectedItem;
+    }
+
+    /**
+     * Return last selected page.
+     *
+     * @return last selected page
+     */
     public String getSelectLastPageOnAddNodeSelectedItem() {
         return selectLastPageOnAddNodeSelectedItem;
     }
 
+    /**
+     * Set last selected page.
+     * @param selectLastPageOnAddNodeSelectedItem
+     *          last selected page
+     */
+    public void setSelectLastPageOnAddNodeSelectedItem(String selectLastPageOnAddNodeSelectedItem) {
+        this.selectLastPageOnAddNodeSelectedItem = selectLastPageOnAddNodeSelectedItem;
+    }
+
+    /**
+     * Return list of selectable pages.
+     *
+     * @return list of selectable pages
+     */
     public List<SelectItem> getSelectPageOnAddNodeItems() {
         return selectPageOnAddNodeItems;
+    }
+
+    /**
+     * Return flag indicating whether function to add multiple logical elements at once is visible or not.
+     *
+     * @return flag indicating whether function to add multiple logical elements at once is visible or not
+     */
+    public boolean isShowingAddMultipleLogicalElements() {
+        return showingAddMultipleLogicalElements;
+    }
+
+    /**
+     * Set flag indicating whether function to add multiple logical elements at once is visible or not.
+     *
+     * @param showingAddMultipleLogicalElements
+     *          flag indicating whether function to add multiple logical elements at once is visible or not
+     */
+    public void setShowingAddMultipleLogicalElements(boolean showingAddMultipleLogicalElements) {
+        this.showingAddMultipleLogicalElements = showingAddMultipleLogicalElements;
     }
 
     private List<View> getViewsToAdd() {
@@ -165,10 +303,6 @@ public class AddDocStrucTypeDialog {
             logger.catching(Level.TRACE, e);
             return Collections.emptyList();
         }
-    }
-
-    public boolean isShowingAddMultipleLogicalElements() {
-        return showingAddMultipleLogicalElements;
     }
 
     void prepare() {
@@ -265,37 +399,5 @@ public class AddDocStrucTypeDialog {
                     : mediaUnit.getOrder() + " : " + mediaUnit.getOrderlabel();
             selectPageOnAddNodeItems.add(new SelectItem(Integer.toString(i), label));
         }
-    }
-
-    public void setDocStructAddTypeSelectionSelectedItem(String docStructAddTypeSelectionSelectedItem) {
-        this.docStructAddTypeSelectionSelectedItem = docStructAddTypeSelectionSelectedItem;
-    }
-
-    public void setDocStructPositionSelectionSelectedItem(InsertionPosition docStructPositionSelectionSelectedItem) {
-        this.docStructPositionSelectionSelectedItem = docStructPositionSelectionSelectedItem;
-    }
-
-    public void setElementsToAddSpinnerValue(int elementsToAddSpinnerValue) {
-        this.elementsToAddSpinnerValue = elementsToAddSpinnerValue;
-    }
-
-    public void setInputMetaDataValueValue(String inputMetaDataValueValue) {
-        this.inputMetaDataValueValue = inputMetaDataValueValue;
-    }
-
-    public void setSelectAddableMetadataTypesSelectedItem(String selectAddableMetadataTypesSelectedItem) {
-        this.selectAddableMetadataTypesSelectedItem = selectAddableMetadataTypesSelectedItem;
-    }
-
-    public void setSelectFirstPageOnAddNodeSelectedItem(String selectFirstPageOnAddNodeSelectedItem) {
-        this.selectFirstPageOnAddNodeSelectedItem = selectFirstPageOnAddNodeSelectedItem;
-    }
-
-    public void setSelectLastPageOnAddNodeSelectedItem(String selectLastPageOnAddNodeSelectedItem) {
-        this.selectLastPageOnAddNodeSelectedItem = selectLastPageOnAddNodeSelectedItem;
-    }
-
-    public void setShowingAddMultipleLogicalElements(boolean showingAddMultipleLogicalElements) {
-        this.showingAddMultipleLogicalElements = showingAddMultipleLogicalElements;
     }
 }

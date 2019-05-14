@@ -82,10 +82,21 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
         }
     }
 
+    /**
+     * Return value.
+     *
+     * @return value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Set value.
+     *
+     * @param value
+     *          value
+     */
     public void setValue(String value) {
         this.value = value;
     }

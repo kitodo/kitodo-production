@@ -20,11 +20,26 @@ public class IllustratedSelectItem extends SelectItem {
 
     private String image;
 
-    public IllustratedSelectItem(Object value, String label, String image) {
+    /**
+     * Constructor.
+     *
+     * @param value
+     *          value of IllustratedSelectItem
+     * @param label
+     *          label of IllustratedSelectItem
+     * @param image
+     *          image of IllustratedSelectItem
+     */
+    IllustratedSelectItem(Object value, String label, String image) {
         super(value, label);
         this.image = image;
     }
 
+    /**
+     * Return image.
+     *
+     * @return image
+     */
     public String getImage() {
         return image;
     }

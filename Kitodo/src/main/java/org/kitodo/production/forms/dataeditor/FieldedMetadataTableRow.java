@@ -98,13 +98,14 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * Creates a new root meta-data group representing the meta-data table
      * content in the meta-data panel.
      *
+     * @param panel
+     *            MetadataPanel to which the FieldedMetadataTableRow is added
      * @param structure
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
      */
     FieldedMetadataTableRow(MetadataPanel panel, IncludedStructuralElement structure, StructuralElementViewInterface divisionView) {
-
         this(panel, null, structure, divisionView, structure.getMetadata());
     }
 
@@ -112,19 +113,24 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * Creates a new root meta-data group representing the meta-data table
      * content in the meta-data panel.
      *
+     * @param panel
+     *            MetadataPanel to which the FieldedMetadataTableRow is added
      * @param metadata
      *            content for the metadata table
      * @param divisionView
      *            information about that structure from the rule set
      */
     FieldedMetadataTableRow(MetadataPanel panel, Collection<Metadata> metadata, StructuralElementViewInterface divisionView) {
-
         this(panel, null, null, divisionView, metadata);
     }
 
     /**
      * Creates a sub-panel for a meta-data group.
      *
+     * @param panel
+     *            MetadataPanel to which the FieldedMetadataTableRow is added
+     * @param container
+     *            container
      * @param metadataView
      *            information about that group from the rule set
      * @param metadata
@@ -132,7 +138,6 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-
         this(panel, container, null, metadataView, metadata);
     }
 
@@ -149,7 +154,6 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      */
     private FieldedMetadataTableRow(MetadataPanel panel, FieldedMetadataTableRow container, IncludedStructuralElement structure,
             ComplexMetadataViewInterface metadataView, Collection<Metadata> metadata) {
-
         super(panel, container, metadataView.getId());
         this.structure = structure;
         this.metadata = metadata;
@@ -374,6 +378,11 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
         return Collections.singletonList(result);
     }
 
+    /**
+     * Return rows.
+     *
+     * @return rows
+     */
     public List<MetadataTableRow> getRows() {
         return rows;
     }

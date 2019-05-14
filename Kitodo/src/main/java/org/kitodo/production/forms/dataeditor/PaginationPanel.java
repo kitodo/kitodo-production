@@ -37,7 +37,7 @@ public class PaginationPanel {
     private int newPagesCountValue = 0;
     private List<SelectItem> paginationSelectionItems;
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
-    private String paginationStartValueValue = "1";
+    private String paginationStartValue = "1";
     private List<SelectItem> paginationTypeSelectItems;
     private PaginatorType paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
     private List<IllustratedSelectItem> selectPaginationModeItems;
@@ -50,7 +50,7 @@ public class PaginationPanel {
      *
      * @param dataEditor DataEditorForm instance
      */
-    public PaginationPanel(DataEditorForm dataEditor) {
+    PaginationPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
         preparePaginationTypeSelectItems();
         prepareSelectPaginationModeItems();
@@ -63,7 +63,7 @@ public class PaginationPanel {
     public void createPaginationButtonClick() {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
         Paginator paginator = new Paginator(metsEditorDefaultPagination(1));
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         for (int i = 1; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
             mediaUnit.setOrder(i);
@@ -75,7 +75,7 @@ public class PaginationPanel {
      * This method is invoked if the generate dummy images button is clicked.
      */
     public void generateDummyImagesButtonClick() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         int order = mediaUnits.isEmpty() ? 1 : mediaUnits.get(mediaUnits.size() - 1).getOrder() + 1;
         boolean withAutomaticPagination = ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION);
         Paginator orderlabel = new Paginator(metsEditorDefaultPagination(order));
@@ -102,52 +102,177 @@ public class PaginationPanel {
         }
     }
 
+    /**
+     * Return newPagesCountValue.
+     *
+     * @return newPagesCountValue
+     */
     public int getNewPagesCountValue() {
         return newPagesCountValue;
     }
 
+    /**
+     * Set newPagesCountValue.
+     *
+     * @param newPagesCountValue
+     *          newPagesCountValue
+     */
+    public void setNewPagesCountValue(int newPagesCountValue) {
+        this.newPagesCountValue = newPagesCountValue;
+    }
+
+    /**
+     * Return paginationSelectionSelectedItems.
+     *
+     * @return paginationSelectionSelectedItems
+     */
     public List<Integer> getPaginationSelectionSelectedItems() {
         return paginationSelectionSelectedItems;
     }
 
-    public String getPaginationStartValueValue() {
-        return paginationStartValueValue;
+    /**
+     * Set paginationSelectionSelectedItems.
+     *
+     * @param paginationSelectionSelectedItems
+     *          paginationSelectionSelectedItems
+     */
+    public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
+        this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
     }
 
+    /**
+     * Return paginationStartValue.
+     *
+     * @return paginationStartValue
+     */
+    public String getPaginationStartValue() {
+        return paginationStartValue;
+    }
+
+    /**
+     * Set paginationStartValue.
+     *
+     * @param paginationStartValue
+     *          paginationStartValue
+     */
+    public void setPaginationStartValue(String paginationStartValue) {
+        this.paginationStartValue = paginationStartValue;
+    }
+
+    /**
+     * Return paginationTypeSelectSelectedItem.
+     *
+     * @return paginationTypeSelectSelectedItem
+     */
     public PaginatorType getPaginationTypeSelectSelectedItem() {
         return paginationTypeSelectSelectedItem;
     }
 
+    /**
+     * Set paginationTypeSelectSelectedItem.
+     *
+     * @param paginationTypeSelectSelectedItem
+     *          paginationTypeSelectSelectedItem
+     */
+    public void setPaginationTypeSelectSelectedItem(PaginatorType paginationTypeSelectSelectedItem) {
+        this.paginationTypeSelectSelectedItem = paginationTypeSelectSelectedItem;
+    }
+
+    /**
+     * Return selectPaginationModeSelectedItem.
+     *
+     * @return selectPaginationModeSelectedItem
+     */
     public PaginatorMode getSelectPaginationModeSelectedItem() {
         return selectPaginationModeSelectedItem;
     }
 
+    /**
+     * Set selectPaginationModeSelectedItem.
+     *
+     * @param selectPaginationModeSelectedItem
+     *          selectPaginationModeSelectedItem
+     */
+    public void setSelectPaginationModeSelectedItem(PaginatorMode selectPaginationModeSelectedItem) {
+        this.selectPaginationModeSelectedItem = selectPaginationModeSelectedItem;
+    }
+
+    /**
+     * Return selectPaginationScopeSelectedItem.
+     *
+     * @return selectPaginationScopeSelectedItem
+     */
     public Boolean getSelectPaginationScopeSelectedItem() {
         return selectPaginationScopeSelectedItem;
     }
 
+    /**
+     * Set selectPaginationScopeSelectedItem.
+     *
+     * @param selectPaginationScopeSelectedItem
+     *          selectPaginationScopeSelectedItem
+     */
+    public void setSelectPaginationScopeSelectedItem(Boolean selectPaginationScopeSelectedItem) {
+        this.selectPaginationScopeSelectedItem = selectPaginationScopeSelectedItem;
+    }
+
+    /**
+     * Return paginationSelectionItems.
+     *
+     * @return paginationSelectionItems
+     */
     public List<SelectItem> getPaginationSelectionItems() {
         return paginationSelectionItems;
     }
 
+    /**
+     * Return paginationTypeSelectItems.
+     *
+     * @return paginationTypeSelectItems
+     */
     public List<SelectItem> getPaginationTypeSelectItems() {
         return paginationTypeSelectItems;
     }
 
+    /**
+     * Return selectPaginationModeItems.
+     *
+     * @return selectPaginationModeItems
+     */
     public List<IllustratedSelectItem> getSelectPaginationModeItems() {
         return selectPaginationModeItems;
     }
 
+    /**
+     * Return selectPaginationScopeItems.
+     *
+     * @return selectPaginationScopeItems
+     */
     public List<SelectItem> getSelectPaginationScopeItems() {
         return selectPaginationScopeItems;
     }
 
+    /**
+     * Return fictitiousCheckboxChecked.
+     *
+     * @return fictitiousCheckboxChecked
+     */
     public boolean isFictitiousCheckboxChecked() {
         return fictitiousCheckboxChecked;
     }
 
+    /**
+     * Set fictitiousCheckboxChecked.
+     *
+     * @param fictitiousCheckboxChecked
+     *          fictitiousCheckboxChecked
+     */
+    public void setFictitiousCheckboxChecked(boolean fictitiousCheckboxChecked) {
+        this.fictitiousCheckboxChecked = fictitiousCheckboxChecked;
+    }
+
     private void preparePaginationSelectionItems() {
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         paginationSelectionItems = new ArrayList<>(mediaUnits.size());
         for (int i = 0; i < mediaUnits.size(); i++) {
             MediaUnit mediaUnit = mediaUnits.get(i);
@@ -202,9 +327,9 @@ public class PaginationPanel {
         String selectPaginationSeparatorSelectedItem = ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS)
                 .split(",")[0];
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem,
-            paginationStartValueValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
+                paginationStartValue, fictitiousCheckboxChecked, selectPaginationSeparatorSelectedItem);
         Paginator paginator = new Paginator(initializer);
-        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnits();
+        List<MediaUnit> mediaUnits = dataEditor.getWorkpiece().getMediaUnit().getChildren();
         if (selectPaginationScopeSelectedItem) {
             for (int i = paginationSelectionSelectedItems.get(0); i < mediaUnits.size(); i++) {
                 mediaUnits.get(0).setOrderlabel(paginator.next());
@@ -216,34 +341,9 @@ public class PaginationPanel {
         }
     }
 
-    public void setFictitiousCheckboxChecked(boolean fictitiousCheckboxChecked) {
-        this.fictitiousCheckboxChecked = fictitiousCheckboxChecked;
-    }
-
-    public void setNewPagesCountValue(int newPagesCountValue) {
-        this.newPagesCountValue = newPagesCountValue;
-    }
-
-    public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
-        this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
-    }
-
-    public void setPaginationStartValueValue(String paginationStartValueValue) {
-        this.paginationStartValueValue = paginationStartValueValue;
-    }
-
-    public void setPaginationTypeSelectSelectedItem(PaginatorType paginationTypeSelectSelectedItem) {
-        this.paginationTypeSelectSelectedItem = paginationTypeSelectSelectedItem;
-    }
-
-    public void setSelectPaginationModeSelectedItem(PaginatorMode selectPaginationModeSelectedItem) {
-        this.selectPaginationModeSelectedItem = selectPaginationModeSelectedItem;
-    }
-
-    public void setSelectPaginationScopeSelectedItem(Boolean selectPaginationScopeSelectedItem) {
-        this.selectPaginationScopeSelectedItem = selectPaginationScopeSelectedItem;
-    }
-
+    /**
+     * Show.
+     */
     public void show() {
         preparePaginationSelectionItems();
     }

@@ -34,18 +34,38 @@ public class StructureTreeNode implements Serializable {
         this.dataObject = dataObject;
     }
 
+    /**
+     * Return dataObject.
+     *
+     * @return dataObject
+     */
     public Object getDataObject() {
         return dataObject;
     }
 
+    /**
+     * Return label.
+     *
+     * @return label
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Return linked.
+     *
+     * @return linked
+     */
     public boolean isLinked() {
         return linked;
     }
 
+    /**
+     * Return undefined.
+     *
+     * @return undefined
+     */
     public boolean isUndefined() {
         return undefined;
     }
