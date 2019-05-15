@@ -458,6 +458,37 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     display: none;
 }
 
+.ui-chkbox:not(.switch) .ui-chkbox-box {
+    background: var(--pure-white);
+    border: solid 1px var(--blue);
+    border-radius: 3px;
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box .ui-chkbox-icon {
+    background: none;
+    text-indent: 0;
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-hover {
+    border-color: var(--focused-blue);
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-active .ui-chkbox-icon::before {
+    content: '\f00c';
+    color: var(--green);
+    font-family: "FontAwesome";
+    font-size: 14px;
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled {
+    background: var(--cloudy-gray);
+    border-color: var(--cloudy-gray);
+}
+
+.ui-chkbox:not(.switch) .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon::before {
+    display: none;
+}
+
 .switch.ui-chkbox .ui-chkbox-box,
 .switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
     width: 40px;
@@ -465,11 +496,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     border-radius: 3px;
     background: var(--orange);
     cursor: pointer;
-}
-
-.ui-chkbox-icon {
-    border: 1px solid var(--blue);
-    border-radius: 3px;
 }
 
 .switch.ui-chkbox .ui-chkbox-icon {
