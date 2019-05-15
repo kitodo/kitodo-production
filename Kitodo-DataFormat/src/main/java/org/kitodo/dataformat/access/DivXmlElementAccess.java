@@ -120,6 +120,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                 }
             }
         }
+        super.setLink(MptrXmlElementAccess.getLinkFromDiv(div));
     }
 
     /**
@@ -218,7 +219,9 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
             AmdSecType admSec = optionalAmdSec.get();
             mets.getAmdSec().add(admSec);
         }
-
+        if (Objects.nonNull(super.getLink())) {
+            MptrXmlElementAccess.addMptrToDiv(super.getLink(), div);
+        }
         for (IncludedStructuralElement subincludedStructuralElement : super.getChildren()) {
             div.getDiv().add(new DivXmlElementAccess(subincludedStructuralElement).toDiv(mediaUnitIDs, smLinkData, mets));
         }
