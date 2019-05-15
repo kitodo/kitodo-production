@@ -25,6 +25,10 @@ body {
     background-size: auto 300px;
 }
 
+body .ui-widget {
+    font-family: 'Raleway', sans-serif;
+}
+
 body.first-visit {
     animation-duration: 1s;
     animation-name: slidein;

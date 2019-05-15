@@ -106,6 +106,7 @@ input.ui-state-error {
     box-sizing: border-box;
     color: var(--pure-white);
     height: var(--input-height);
+    margin-right: 0;
 }
 
 .ui-button .ui-icon,
