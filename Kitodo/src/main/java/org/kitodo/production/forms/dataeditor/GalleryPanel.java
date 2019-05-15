@@ -38,7 +38,6 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -179,7 +178,10 @@ public class GalleryPanel {
             GalleryMediaContent mediaContent = fromStripe.getMedias().get(fromStripeMediaIndex);
             GalleryStripe toStripe = stripes.get(toStripeIndex);
 
-            MetadataEditor.moveView(mediaContent.getView(), fromStripe.getStructure(), toStripe.getStructure());
+            // move view
+            View view = mediaContent.getView();
+            fromStripe.getStructure().getViews().remove(view);
+            toStripe.getStructure().getViews().add(view);
 
             // update stripes
             fromStripe.getMedias().clear();
