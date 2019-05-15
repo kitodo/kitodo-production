@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -212,7 +213,7 @@ public class GalleryMediaContent {
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
                     + e.getClass().getSimpleName() + ": " + e.getMessage() + "</p>" + System.lineSeparator() + "</html>"
                     + System.lineSeparator();
-            ByteArrayInputStream errorPage = new ByteArrayInputStream(errorpage.getBytes(Charset.forName("UTF-8")));
+            ByteArrayInputStream errorPage = new ByteArrayInputStream(errorpage.getBytes(StandardCharsets.UTF_8));
             return new DefaultStreamedContent(errorPage, "text/html", "errorpage.html", "UTF-8");
         }
     }

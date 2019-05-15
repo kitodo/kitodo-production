@@ -995,7 +995,7 @@ public class FileService {
      */
     private MediaUnit createMediaUnit(Map<Subfolder, URI> data) {
         MediaUnit result = new MediaUnit();
-        if (data.entrySet().size() > 0) {
+        if (!data.entrySet().isEmpty()) {
             result.setType("page");
         }
         for (Entry<Subfolder, URI> entry : data.entrySet()) {

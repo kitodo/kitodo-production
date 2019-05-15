@@ -102,25 +102,21 @@ public class MetadataEditor {
         LinkedList<IncludedStructuralElement> structuresToAddViews = new LinkedList<>(parents);
         List<IncludedStructuralElement> siblings = parents.getLast().getChildren();
         switch (position) {
-            case AFTER_CURRENT_ELEMENT: {
+            case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure) + 1, newStructure);
                 break;
-            }
-            case BEFOR_CURRENT_ELEMENT: {
+            case BEFOR_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(structure), newStructure);
                 break;
-            }
-            case FIRST_CHILD_OF_CURRENT_ELEMENT: {
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
                 structuresToAddViews.add(structure);
                 structure.getChildren().add(0, newStructure);
                 break;
-            }
-            case LAST_CHILD_OF_CURRENT_ELEMENT: {
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
                 structuresToAddViews.add(structure);
                 structure.getChildren().add(newStructure);
                 break;
-            }
-            case PARENT_OF_CURRENT_ELEMENT: {
+            case PARENT_OF_CURRENT_ELEMENT:
                 structuresToAddViews.removeLast();
                 newStructure.getChildren().add(structure);
                 if (parents.isEmpty()) {
@@ -129,12 +125,11 @@ public class MetadataEditor {
                     siblings.set(siblings.indexOf(structure), newStructure);
                 }
                 break;
-            }
             default:
                 throw new IllegalStateException("complete switch");
         }
-        for (IncludedStructuralElement structuree : structuresToAddViews) {
-            structuree.getViews().addAll(viewsToAdd);
+        for (IncludedStructuralElement structureToAddViews : structuresToAddViews) {
+            structureToAddViews.getViews().addAll(viewsToAdd);
         }
         return newStructure;
     }
@@ -146,19 +141,16 @@ public class MetadataEditor {
      * @param parent parent of the new MediaUnit
      * @param position position relative to the parent element
      */
-    public static void addMediaUnit(String type, MediaUnit parent,
-                                    InsertionPosition position) {
+    public static void addMediaUnit(String type, MediaUnit parent, InsertionPosition position) {
         MediaUnit newMediaUnit = new MediaUnit();
         newMediaUnit.setType(type);
         switch (position) {
-            case FIRST_CHILD_OF_CURRENT_ELEMENT: {
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
                 parent.getChildren().add(0, newMediaUnit);
                 break;
-            }
-            case LAST_CHILD_OF_CURRENT_ELEMENT: {
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
                 parent.getChildren().add(newMediaUnit);
                 break;
-            }
             default:
                 throw new IllegalStateException("Used InsertionPosition not allowed.");
         }

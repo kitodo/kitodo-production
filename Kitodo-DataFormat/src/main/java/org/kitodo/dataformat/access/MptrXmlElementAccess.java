@@ -25,7 +25,7 @@ class MptrXmlElementAccess {
     /**
      * Set of allowed LOCTYPE values.
      */
-    private static enum AllowedLoctypeValues {
+    private enum AllowedLoctypeValues {
         ARK,
         URN,
         URL,
