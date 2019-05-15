@@ -31,7 +31,6 @@
                 <p:inputTextarea id="newCommentTextArea"
                                  value="#{CommentForm.commentMessage}"
                                  styleClass="new-comment-box">
-                    <p:ajax event="change"/>
                 </p:inputTextarea>
 
                 <ui:fragment rendered="#{CommentForm.correctionComment}">
@@ -43,7 +42,6 @@
                                 <f:selectItems value="#{CommentForm.previousStepsForProblemReporting}"
                                                var="step" itemLabel="#{step.titleWithUserName}"
                                                itemValue="#{step.id}"/>
-                                <p:ajax event="change"/>
                             </p:selectOneMenu>
                         </p:column>
                     </p:panelGrid>
@@ -67,7 +65,6 @@
                     <!-- Save normal comment -->
                     <p:commandButton id="save"
                                      value="#{msgs.save}"
-                                     immediate="true"
                                      action="#{CommentForm.addComment()}"
                                      update="#{request.requestURI.contains('metadataEditor') ? 'commentsBox:comments' : 'tasksTabView:commentsBox:commentsGrid'}"
                                      oncomplete="PF('newCommentDialog').hide()"
