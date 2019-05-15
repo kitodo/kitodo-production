@@ -133,11 +133,12 @@ public class CommentForm extends BaseForm {
     /**
      * Add a new comment to all batch processes.
      */
-    public void addCommentToAllBatchProcesses() {
+    public String addCommentToAllBatchProcesses() {
         for (Task task : this.batchHelper.getSteps()) {
             this.process = task.getProcess();
             addComment();
         }
+        return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 
     /**
@@ -204,19 +205,20 @@ public class CommentForm extends BaseForm {
     /**
      * Solve the problem.
      */
-    public void solveProblem(Comment comment) {
+    public String solveProblem(Comment comment) {
         try {
             ServiceManager.getWorkflowControllerService().solveProblem(comment);
         } catch (DataException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
         refreshProcess(this.process);
+        return redirect();
     }
 
     /**
      * Solve the problem to all batch processes.
      */
-    public void solveProblemForAllBatchProcesses(Comment comment) {
+    public String solveProblemForAllBatchProcesses(Comment comment) {
         for (Task task : batchHelper.getSteps()) {
             for (Comment processComment : ServiceManager.getCommentService().getAllCommentsByProcess(task.getProcess())) {
                 if (!processComment.isCorrected()
@@ -225,6 +227,7 @@ public class CommentForm extends BaseForm {
                 }
             }
         }
+        return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 
     /**
