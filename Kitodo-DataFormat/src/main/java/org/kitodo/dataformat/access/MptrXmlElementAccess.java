@@ -76,7 +76,7 @@ class MptrXmlElementAccess {
      *            {@code <mets:div>}, which may contain information about a link
      * @return information to the link, if indicated
      */
-    static LinkedMetsResource readLink(DivType div) {
+    static LinkedMetsResource getLinkFromDiv(DivType div) {
         if (div.getMptr().isEmpty()) {
             return null;
         }

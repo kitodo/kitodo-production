@@ -120,7 +120,7 @@ public class DivXmlElementAccess extends IncludedStructuralElement {
                 }
             }
         }
-        super.setLink(MptrXmlElementAccess.readLink(div));
+        super.setLink(MptrXmlElementAccess.getLinkFromDiv(div));
     }
 
     /**
