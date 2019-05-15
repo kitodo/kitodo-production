@@ -70,8 +70,8 @@ public class ListingST extends BaseTestSelenium {
     public void listDesktopTest() throws Exception {
         desktopPage.goTo();
 
-        int processesInDatabase = ServiceManager.getProcessService().getActiveProcesses().size();
-        int processesDisplayed = desktopPage.countListedProcesses();
+        long processesInDatabase = ServiceManager.getProcessService().countResults(null);
+        long processesDisplayed = desktopPage.countListedProcesses();
         assertEquals("Displayed wrong number of processes", processesInDatabase, processesDisplayed);
 
         int projectsInDatabase = ServiceManager.getProjectService()
@@ -207,8 +207,8 @@ public class ListingST extends BaseTestSelenium {
     @Test
     public void listProcessesTest() throws Exception {
         processesPage.goTo();
-        int processesInDatabase = ServiceManager.getProcessService().getActiveProcesses().size();
-        int processesDisplayed = processesPage.countListedProcesses();
+        long processesInDatabase = ServiceManager.getProcessService().countResults(null);
+        long processesDisplayed = processesPage.countListedProcesses();
         assertEquals("Displayed wrong number of processes", processesInDatabase, processesDisplayed);
 
         int batchesInDatabase = ServiceManager.getBatchService().getAll().size();

@@ -778,11 +778,6 @@ section#content-section {
 }
 
 #filterMenu > div > .ui-button:nth-child(2) {
-    margin-left: -40px;
-    background: transparent;
-}
-
-#filterMenu > div > .ui-button:nth-child(3) {
     border-radius: 0 3px 3px 0;
     margin-left: 3px;
 }

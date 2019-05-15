@@ -64,7 +64,37 @@ public class SearchResultGeneration {
      * @return HSSFWorkbook
      */
     public HSSFWorkbook getResult() {
+        List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
+
+        List<Process> processes = new ArrayList<>();
+        try {
+            processes = ServiceManager.getProcessService().convertDtosToBeans(resultsWithFilter);
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return getWorkbook(processes);
+    }
+
+    private List<ProcessDTO> getResultsWithFilter() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
+
+        try {
+            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(),
+                    ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+        } catch (DataException e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return processDTOS;
+    }
+
+    /**
+     * Gets the query with filters.
+     * 
+     * @return A BoolQueryBuilder
+     */
+    public BoolQueryBuilder getQueryForFilter() {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         try {
@@ -79,22 +109,7 @@ public class SearchResultGeneration {
         if (!this.showInactiveProjects) {
             query.mustNot(ServiceManager.getProcessService().getQueryProjectActive(false));
         }
-
-        try {
-            processDTOS = ServiceManager.getProcessService().findByQuery(query,
-                ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
-        } catch (DataException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        List<Process> processes = new ArrayList<>();
-        try {
-            processes = ServiceManager.getProcessService().convertDtosToBeans(processDTOS);
-        } catch (DAOException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        return getWorkbook(processes);
+        return query;
     }
 
     private HSSFWorkbook getWorkbook(List<Process> processes) {

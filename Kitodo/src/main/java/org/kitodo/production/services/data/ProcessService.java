@@ -151,6 +151,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
+    private String filter = "";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
             .getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
@@ -244,7 +245,9 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     @Override
     public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
-        return findByQuery(createUserProcessesQuery(filters), getSortBuilder(sortField, sortOrder), first, pageSize,
+        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, this.showClosedProcesses,
+                this.showInactiveProjects);
+        return findByQuery(searchResultGeneration.getQueryForFilter(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
     }
 
@@ -262,30 +265,41 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
      * Creates and returns a query to retrieve processes for which the currently
      * logged in user is eligible.
      *
-     * @param filters
-     *            map of applicable filters
      * @return query to retrieve processes for which the user eligible
      */
-    @SuppressWarnings("unchecked")
+    public BoolQueryBuilder createUserProcessesQuery() throws DataException {
+        return createUserProcessesQuery(null);
+    }
+
     private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(filters) && !filters.isEmpty()) {
-            Map<String, String> filterMap = filters;
-            query.must(readFilters(filterMap));
+            query.must(readFilters(filters));
         }
-
-        query.must(getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
+        query.must(createUserProjectQuery());
 
         if (!this.showClosedProcesses) {
-            query.must(getQuerySortHelperStatus(false));
+            query.mustNot(getQuerySortHelperStatus(true));
         }
 
         if (!this.showInactiveProjects) {
-            query.must(getQueryProjectActive(true));
+            query.mustNot(getQueryProjectActive(false));
         }
         return query;
     }
+
+    private QueryBuilder createUserProjectQuery() {
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+
+        if (Objects.nonNull(currentUser)) {
+            List<Project> projects = currentUser.getProjects();
+            return createSetQueryForBeans(ProcessTypeField.PROJECT_ID.getKey(), projects, true);
+        }
+
+        return null;
+    }
+
 
     /**
      * Method saves or removes batches, tasks and project related to modified
@@ -2327,5 +2341,13 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
         return String.format("%sd; %sh", duration.toDays(), duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
+    }
+
+    /**
+     * Set the filter.
+     * @param filter the filter to set
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }

@@ -1321,4 +1321,21 @@ public class ProcessForm extends TemplateBaseForm {
     public String getProcessEditReferer() {
         return this.processEditReferer;
     }
+
+    /**
+     * Changes the filter of the ProcessForm and reloads it.
+     * 
+     * @param filter
+     *            the filter to apply.
+     * @return reloadpath of th page.
+     */
+    public String changeFilter(String filter) {
+        setFilter(filter);
+        return filterList();
+    }
+
+    private String filterList() {
+        ServiceManager.getProcessService().setFilter(filter);
+        return processListPath;
+    }
 }

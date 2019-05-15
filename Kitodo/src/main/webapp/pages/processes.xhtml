@@ -32,8 +32,7 @@
                   outcome="searchProcess"/>
         <h:form id="filterMenu">
             <div class="ui-inputgroup">
-                <p:inputText forceId="true" id="filterfield" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
-                <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="plain"/>
+                <p:inputText forceId="true" id="filterfield" onkeypress="if (event.keyCode == 13){ProcessForm.filterList()}" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
                 <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                 <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                     <ul>
@@ -45,7 +44,7 @@
                         </li>
                         <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
                             <li>
-                                <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
+                                <p:commandLink value="#{filter}" action="#{ProcessForm.changeFilter(filter)}"/>
                                 <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
                                     <i class="fa fa-trash-o fa-lg"/>
                                 </p:commandLink>

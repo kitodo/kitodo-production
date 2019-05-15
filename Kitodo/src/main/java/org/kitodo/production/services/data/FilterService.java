@@ -38,7 +38,6 @@ import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.FilterType;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
@@ -162,7 +161,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         // this is needed if we filter processes
         if (objectType == ObjectType.PROCESS) {
-            query = buildProcessQuery();
+            query = ServiceManager.getProcessService().createUserProcessesQuery();
         }
 
         // this is needed if we filter task
@@ -238,10 +237,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             }
         }
         return query;
-    }
-
-    private BoolQueryBuilder buildProcessQuery() {
-        return limitToUserAccessRights();
     }
 
     private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) throws DataException {
@@ -414,23 +409,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
         return lowerCaseFilterString.startsWith(filterString.getFilterEnglish())
                 || lowerCaseFilterString.startsWith(filterString.getFilterGerman());
-    }
-
-    /**
-     * Limit query to projects assigned to user. Restriction to specific
-     * projects if not with admin rights.
-     *
-     * @return query as {@link BoolQueryBuilder}
-     */
-    private BoolQueryBuilder limitToUserAccessRights() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        User currentUser = ServiceManager.getUserService().getCurrentUser();
-
-        if (Objects.nonNull(currentUser)) {
-            List<Project> projects = currentUser.getProjects();
-            query.must(createSetQueryForBeans(ProcessTypeField.PROJECT_ID.getKey(), projects, true));
-        }
-        return query;
     }
 
     /**

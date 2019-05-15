@@ -13,6 +13,9 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.kitodo.selenium.testframework.Browser.getDriver;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+
+import java.util.List;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -42,11 +45,15 @@ public class SearchResultPage extends Page<SearchResultPage> {
     }
 
     @Override
-    public SearchResultPage goTo() throws Exception {
+    public SearchResultPage goTo() {
         return null;
     }
 
     public int getNumberOfResults() {
+        List<String> tableDataByColumn = getTableDataByColumn(searchResultTable, 0);
+        if (tableDataByColumn.contains("No records found.")) {
+            return 0;
+        }
         return getRowsOfTable(searchResultTable).size();
     }
 
