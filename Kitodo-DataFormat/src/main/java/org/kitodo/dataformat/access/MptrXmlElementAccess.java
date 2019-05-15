@@ -12,10 +12,7 @@
 package org.kitodo.dataformat.access;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -26,16 +23,29 @@ import org.kitodo.dataformat.metskitodo.DivType.Mptr;
  */
 class MptrXmlElementAccess {
     /**
-     * String indicating that the LOCTYPE value is other than one of the allowed
-     * constants and has been placed in the OTHERLOCTYPE element.
-     */
-    private static final String OTHER = "OTHER";
-
-    /**
      * Set of allowed LOCTYPE values.
      */
-    private static final Set<String> ALLOWED_LOCTYPE_VALUES = new HashSet<>(
-            Arrays.asList("ARK", "URN", "URL", "PURL", "HANDLE", "DOI", OTHER));
+    private static enum AllowedLoctypeValues {
+        ARK,
+        URN,
+        URL,
+        PURL,
+        HANDLE,
+        DOI,
+        OTHER;
+
+        static boolean contains(String loctype) {
+            if (Objects.isNull(loctype)) {
+                return false;
+            }
+            try {
+                valueOf(loctype);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
+    }
 
     /**
      * Adds the information about a linked METS resource to a
@@ -49,10 +59,10 @@ class MptrXmlElementAccess {
     static void addMptrToDiv(LinkedMetsResource link, DivType div) {
         div.setORDER(link.getOrder());
         Mptr mptr = new Mptr();
-        if (ALLOWED_LOCTYPE_VALUES.contains(link.getLoctype())) {
+        if (AllowedLoctypeValues.contains(link.getLoctype())) {
             mptr.setLOCTYPE(link.getLoctype());
         } else {
-            mptr.setLOCTYPE(OTHER);
+            mptr.setLOCTYPE(AllowedLoctypeValues.OTHER.toString());
             mptr.setOTHERLOCTYPE(Objects.toString(link.getLoctype()));
         }
         mptr.setHref(link.getUri().toASCIIString());
@@ -72,7 +82,8 @@ class MptrXmlElementAccess {
         }
         LinkedMetsResource result = new LinkedMetsResource();
         Mptr mptr = div.getMptr().get(0);
-        result.setLoctype(OTHER.equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE() : mptr.getLOCTYPE());
+        result.setLoctype(AllowedLoctypeValues.OTHER.toString().equals(mptr.getLOCTYPE()) ? mptr.getOTHERLOCTYPE()
+                : mptr.getLOCTYPE());
         result.setOrder(div.getORDER());
         result.setUri(URI.create(mptr.getHref()));
         return result;
