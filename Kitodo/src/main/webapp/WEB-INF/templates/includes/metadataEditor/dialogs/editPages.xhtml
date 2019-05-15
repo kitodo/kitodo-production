@@ -36,20 +36,20 @@
                             <p:outputLabel for="selectFirstPage"
                                            value="#{msgs.firstPage}:"/>
                             <p:selectOneMenu id="selectFirstPage"
-                                             value="#{MetadataProcessor.allPagesSelectionFirstPage}"
+                                             value="#{DataEditorForm.editPagesDialog.selectFirstPageSelectedItem}"
                                              filter="true"
                                              filterMatchMode="startsWith">
-                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                <f:selectItems value="#{DataEditorForm.editPagesDialog.selectPageItems}"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
                             <p:outputLabel for="selectLastPage"
                                            value="#{msgs.lastPage}:"/>
                             <p:selectOneMenu id="selectLastPage"
-                                             value="#{MetadataProcessor.allPagesSelectionLastPage}"
+                                             value="#{DataEditorForm.editPagesDialog.selectLastPageSelectedItem}"
                                              filter="true"
                                              filterMatchMode="startsWith">
-                                <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                <f:selectItems value="#{DataEditorForm.editPagesDialog.selectPageItems}"/>
                             </p:selectOneMenu>
                         </div>
                     </h:panelGroup>
@@ -58,7 +58,7 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="takePagesFromChildrenBtn"
                                          value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                         action="#{MetadataProcessor.takePagesFromChildren}"
+                                         action="#{DataEditorForm.editPagesDialog.takePagesFromChildrenBtnClick}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
                                          update="structureTreeForm,paginationSubSelection"/>
@@ -66,7 +66,7 @@
                                          value="#{msgs.pageAssign}"
                                          styleClass="secondary"
                                          style="margin-left: var(--default-double-size);"
-                                         action="#{MetadataProcessor.setPageStartAndEnd}"
+                                         action="#{DataEditorForm.editPagesDialog.setPageStartAndEndBtnClick}"
                                          update="structureTreeForm,paginationSubSelection"/>
                     </h:panelGroup>
 
@@ -77,19 +77,19 @@
                                 <h:panelGroup>
                                     <h:outputText value="#{msgs.allPages}"/>
                                     <p:selectManyMenu id="paginationSelection"
-                                                      value="#{MetadataProcessor.allPagesSelection}">
-                                        <f:selectItems value="#{MetadataProcessor.allPages}"/>
+                                                      value="#{DataEditorForm.editPagesDialog.paginationSelectionSelectedItems}">
+                                        <f:selectItems value="#{DataEditorForm.editPagesDialog.paginationSelectionItems}"/>
                                     </p:selectManyMenu>
                                 </h:panelGroup>
 
                                 <h:panelGroup>
                                     <h:panelGrid columns="1">
                                         <p:commandButton id="addPageBtn"
-                                                         action="#{MetadataProcessor.addPages}"
+                                                         action="#{DataEditorForm.editPagesDialog.addPageBtnClick}"
                                                          icon="fa fa-arrow-right"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                         <p:commandButton id="removePageBtn"
-                                                         action="#{MetadataProcessor.removePages}"
+                                                         action="#{DataEditorForm.editPagesDialog.removePageBtnClick}"
                                                          icon="fa fa-arrow-left"
                                                          update="structureTreeForm,paginationSubSelection"/>
                                     </h:panelGrid>
@@ -98,8 +98,8 @@
                                 <h:panelGroup>
                                     <h:outputText value="#{msgs.relatedPages}"/>
                                     <p:selectManyMenu id="paginationSubSelection"
-                                                      value="#{MetadataProcessor.structSeitenAuswahl}">
-                                        <f:selectItems value="#{MetadataProcessor.structSeiten}"/>
+                                                      value="#{DataEditorForm.editPagesDialog.paginationSubSelectionSelectedItems}">
+                                        <f:selectItems value="#{DataEditorForm.editPagesDialog.paginationSubSelectionItems}"/>
                                         <p:ajax update="structureTreeForm"/>
                                     </p:selectManyMenu>
                                 </h:panelGroup>

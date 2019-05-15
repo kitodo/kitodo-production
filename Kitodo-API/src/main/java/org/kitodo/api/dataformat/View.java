@@ -25,7 +25,7 @@ public class View {
 
     /**
      * Returns the media unit in the view.
-     * 
+     *
      * @return the media unit
      */
     public MediaUnit getMediaUnit() {
@@ -34,11 +34,38 @@ public class View {
 
     /**
      * Inserts a media unit into the view.
-     * 
+     *
      * @param mediaUnit
      *            media unit to insert
      */
     public void setMediaUnit(MediaUnit mediaUnit) {
         this.mediaUnit = mediaUnit;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mediaUnit == null) ? 0 : mediaUnit.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        View other = (View) obj;
+        if (mediaUnit == null) {
+            return other.mediaUnit == null;
+        } else {
+            return mediaUnit.equals(other.mediaUnit);
+        }
     }
 }

@@ -71,5 +71,5 @@ public enum Domain {
      * fields specified by the format.
      */
     @XmlEnumValue("mets:div")
-    METS_DIV;
+    METS_DIV
 }

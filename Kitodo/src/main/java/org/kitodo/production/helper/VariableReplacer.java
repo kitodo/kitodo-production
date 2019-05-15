@@ -96,7 +96,6 @@ public class VariableReplacer {
         if (Objects.isNull(inString)) {
             return "";
         }
-
         inString = replaceMetadata(inString);
 
         // replace paths and files

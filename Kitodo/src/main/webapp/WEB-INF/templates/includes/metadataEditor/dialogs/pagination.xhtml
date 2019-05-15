@@ -18,40 +18,43 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
 
-    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData() and not SecurityAccessController.hasAuthorityToEditProcessStructureData()}"/>
-
     <p:dialog id="paginationDialog"
               widgetVar="paginationDialog"
               modal="true"
               resizable="false"
               dynamic="true"
+              appendTo="@(body)"
               width="480px">
         <h3>#{msgs.paginationEdit}</h3>
         <h:form id="paginationForm">
             <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
                 <p:panelGrid columns="1" layout="grid">
                     <p:row>
+
                         <h:panelGroup layout="block"
                                       styleClass="dialogFieldWrapper">
 
                             <div>
                                 <p:commandButton id="createPaginationButton"
-                                                 action="#{MetadataProcessor.createPagination}"
+                                                 action="#{DataEditorForm.paginationPanel.createPaginationButtonClick()}"
                                                  value="#{msgs.paginationRead}"
                                                  icon="fa fa-magic fa-lg"
                                                  iconPos="right"
                                                  styleClass="secondary"
                                                  style="margin: 0;"
-                                                 update="paginationForm:paginationSelection,structureTreeForm,structureTreeForm:structureWrapperPanel,paginationForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                                                 update="paginationForm:paginationSelection,structureTreeForm,paginationForm:paginationWrapperPanel,galleryWrapperPanel"
                                                  immediate="true"/>
                             </div>
 
                             <div>
-                                <p:selectManyMenu id="paginationSelection" value="#{MetadataProcessor.allPagesSelection}" style="height: 100%;"
-                                                  required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
-                                                  filter="true" filterMatchMode="contains">
-                                    <f:selectItems value="#{MetadataProcessor.allPages}"/>
-
+                                <p:selectManyMenu id="paginationSelection"
+                                                  value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
+                                                  style="height: 100%;"
+                                                  required="true"
+                                                  requiredMessage="#{msgs.paginationNoPagesSelected}"
+                                                  filter="true"
+                                                  filterMatchMode="contains">
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
                                 </p:selectManyMenu>
                             </div>
 
@@ -59,8 +62,8 @@
                                 <p:outputLabel for="paginationTypeSelect"
                                                value="#{msgs.pagination}"/>
                                 <p:selectOneMenu id="paginationTypeSelect"
-                                                 value="#{MetadataProcessor.paginator.paginationType}">
-                                    <f:selectItems value="#{MetadataProcessor.paginator.paginationTypes}"
+                                                 value="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem}">
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.paginationTypeSelectItems}"
                                                    var="type"
                                                    itemValue="#{type}"
                                                    itemLabel="#{type.label}"/>
@@ -72,7 +75,7 @@
                                                for="paginationStartValue"/>
                                 <p:inputText id="paginationStartValue"
                                              required="true"
-                                             value="#{MetadataProcessor.paginationValue}"
+                                             value="#{DataEditorForm.paginationPanel.paginationStartValue}"
                                              label="#{msgs.paginationStartValue}"
                                              class="input"
                                              requiredMessage="#{msgs.paginationStartValueNotSpecified}"/>
@@ -82,8 +85,8 @@
                                 <p:outputLabel value="#{msgs.paginationScope}:"
                                                for="selectPaginationScope"/>
                                 <p:selectOneMenu id="selectPaginationScope"
-                                                 value="#{MetadataProcessor.paginator.paginationScope}">
-                                    <f:selectItems value="#{MetadataProcessor.paginator.paginationScopes}"
+                                                 value="#{DataEditorForm.paginationPanel.selectPaginationScopeSelectedItem}">
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationScopeItems}"
                                                    var="scope"
                                                    itemValue="#{scope}"
                                                    itemLabel="#{scope.label}"/>
@@ -93,18 +96,18 @@
                             <div>
                                 <p:outputLabel value="#{msgs.counting}:"
                                                for="selectPaginationMode"/>
-                                <p:selectOneMenu value="#{MetadataProcessor.paginator.paginationMode}"
+                                <p:selectOneMenu value="#{DataEditorForm.paginationPanel.selectPaginationModeSelectedItem}"
                                                  var="mode"
                                                  id="selectPaginationMode">
-                                    <f:selectItems value="#{MetadataProcessor.paginator.paginationModes}"
+                                    <f:selectItems value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"
                                                    var="modeSelection"
                                                    itemValue="#{modeSelection}"
                                                    itemLabel="#{modeSelection.label}"/>
                                     <p:column style="width:10%;">
-                                        <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
+                                        <p:graphicImage value="/pages/images/buttons/#{modeSelection.image}"/>
                                     </p:column>
                                     <p:column>
-                                        <h:outputText value="#{mode.label}"/>
+                                        <h:outputText value="#{modeSelection.label}"/>
                                     </p:column>
                                 </p:selectOneMenu>
                             </div>
@@ -114,7 +117,7 @@
                                         value="#{msgs.insertNewImages}"
                                         for="newPagesCount"/>
                                 <p:inputText id="newPagesCount"
-                                             value="#{MetadataProcessor.numberOfImagesToAdd}"
+                                             value="#{DataEditorForm.paginationPanel.newPagesCountValue}"
                                              class="input"
                                              style="width: 70%;"
                                              label="#{msgs.paginationStartValue}">
@@ -124,7 +127,7 @@
                                 <p:commandButton id="generateDummyImagesButton"
                                                  value="#{msgs.insert}"
                                                  styleClass="secondary"
-                                                 action="#{MetadataProcessor.addNewImagesAndPaginate}"
+                                                 action="#{DataEditorForm.paginationPanel.generateDummyImagesButtonClick()}"
                                                  update="structureTreeForm,galleryWrapperPanel"
                                                  immediate="true"/>
                             </div>
@@ -135,7 +138,7 @@
                                 <p:selectBooleanCheckbox id="fictitiousCheckbox"
                                                          styleClass="input"
                                                          style="margin-bottom: 0;"
-                                                         value="#{MetadataProcessor.fictitious}"/>
+                                                         value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
                             </div>
 
                         </h:panelGroup>
@@ -144,7 +147,7 @@
                                       styleClass="dialogButtonWrapper">
 
                             <p:commandButton id="startPagination"
-                                             action="#{MetadataProcessor.changePagination}"
+                                             action="#{DataEditorForm.paginationPanel.startPaginationClick()}"
                                              styleClass="primary right"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"
@@ -161,7 +164,6 @@
                                              update="structureTreeForm"
                                              immediate="true"/>
                         </h:panelGroup>
-
                     </p:row>
                 </p:panelGrid>
             </p:panel>

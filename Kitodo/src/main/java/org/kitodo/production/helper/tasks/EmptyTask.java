@@ -336,7 +336,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function isStopable() returns wether the stop button shall be shown
+     * The function isStoppable() returns wether the stop button shall be shown
      * as read-only property "stopable". A thread can be stopped if it is
      * working.
      *

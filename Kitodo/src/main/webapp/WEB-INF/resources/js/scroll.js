@@ -46,7 +46,11 @@ function atTop(scrollableContent) {
 }
 
 function atBottom(scrollableContent) {
-    return scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight;
+    if (scrollableContent.length) {
+        return scrollableContent.scrollTop() + scrollableContent.height() >= scrollableContent[0].scrollHeight;
+    } else {
+        return true;
+    }
 }
 
 function disableUpButton() {
@@ -69,7 +73,6 @@ function initialize() {
     checkScrollPosition();
 
     $(document).on('mouseenter.scrollGallery', '.scroll-button', function (e) {
-        console.log("event");
         if (e.target.id === "imagePreviewForm:scroll-up") {
             interval = window.setInterval(scrollUp, 100);
         } else {

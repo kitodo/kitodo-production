@@ -176,7 +176,7 @@ public class MetadataValidationService {
      * @throws DataException
      *             if an error occurs while reading from the search engine
      */
-    private ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
+    public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
             throws DataException {
 
         Collection<ValidationResult> results = new ArrayList<>();

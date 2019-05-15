@@ -28,7 +28,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.metadata.MetadataProcessor;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.RulesetManagementService;
 
@@ -61,7 +60,7 @@ public class LegacyPrefsHelper {
             case "page":
                 return LegacyInnerPhysicalDocStructTypePageHelper.INSTANCE;
             default:
-                User user = new MetadataProcessor().getCurrentUser();
+                User user = ServiceManager.getUserService().getAuthenticatedUser();
                 String metadataLanguage = user != null ? user.getMetadataLanguage()
                         : Helper.getRequestParameter("Accept-Language");
                 List<LanguageRange> priorityList = LanguageRange
@@ -108,7 +107,7 @@ public class LegacyPrefsHelper {
                 List<LanguageRange> priorityList;
 
                 try {
-                    User user = new MetadataProcessor().getCurrentUser();
+                    User user = ServiceManager.getUserService().getAuthenticatedUser();
                     String metadataLanguage = user != null ? user.getMetadataLanguage()
                             : Helper.getRequestParameter("Accept-Language");
                     priorityList = LanguageRange.parse(metadataLanguage != null ? metadataLanguage : "en");

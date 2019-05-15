@@ -68,5 +68,5 @@ public enum InputType {
     /**
      * Instruction to represent the element as a small, one-line text field.
      */
-    ONE_LINE_TEXT;
+    ONE_LINE_TEXT
 }

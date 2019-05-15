@@ -11,7 +11,7 @@
 
 package org.kitodo.production.helper.metadata.legacytypeimplementations;
 
-import org.kitodo.production.helper.metadata.RomanNumeral;
+import org.kitodo.production.helper.metadata.pagination.RomanNumeral;
 
 /**
  * Connects the legacy Roman numeral to a Roman numeral implementation. This is

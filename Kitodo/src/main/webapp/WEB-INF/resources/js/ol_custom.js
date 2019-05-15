@@ -88,9 +88,20 @@ kitodo.RotateRightControl = function(opt_options) {
 ol.inherits(kitodo.RotateLeftControl, ol.control.Rotate);
 ol.inherits(kitodo.RotateRightControl, ol.control.Rotate);
 
+function random(length) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+}
+
 // load image to get correct dimensions
 var image = new Image();
-var imagePath = document.getElementById("imageData").dataset.image;
+var imagePath = document.getElementById("imageData").dataset.image + "&uuid=" + random(8);
 var imageDimensions;
 image.onload = function () {
     imageDimensions = [image.width, image.height];

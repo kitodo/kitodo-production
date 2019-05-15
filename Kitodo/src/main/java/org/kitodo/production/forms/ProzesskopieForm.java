@@ -80,7 +80,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.omnifaces.util.Ajax;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -237,7 +237,7 @@ public class ProzesskopieForm extends BaseForm {
     public void evaluateOpac() {
         long timeout = CataloguePlugin.getTimeout();
         clearValues();
-        RequestContext.getCurrentInstance().update("hitlistForm");
+        PrimeFaces.current().ajax().update("hitlistForm");
         try {
             readProjectConfigs();
             if (pluginAvailableFor(opacKatalog)) {
@@ -261,7 +261,7 @@ public class ProzesskopieForm extends BaseForm {
                     default:
                         hitlistPage = 0; // show first page of hitlist
                         Helper.setMessage(message);
-                        RequestContext.getCurrentInstance().execute("PF('hitlistDialog').show()");
+                        PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
                         break;
                 }
             } else {

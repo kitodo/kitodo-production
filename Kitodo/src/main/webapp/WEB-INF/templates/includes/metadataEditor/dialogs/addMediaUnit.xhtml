@@ -1,0 +1,72 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <!-- edit dialog -->
+    <p:dialog id ="dialogAddMediaUnit"
+              widgetVar="dialogAddMediaUnit"
+              width="480px"
+              modal="true"
+              resizable="false"
+              showHeader="false"
+              styleClass="editDialog"
+              appendTo="@(body)">
+        <h:form id="dialogAddMediaUnitForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h3>#{msgs.addMediaUnit}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <p:outputLabel value="#{msgs.position}"
+                                           for="physicalPosition"/>
+                            <p:selectOneMenu id="physicalPosition"
+                                             value="#{DataEditorForm.addMediaUnitDialog.selectedPosition}">
+                                <f:selectItems value="#{DataEditorForm.addMediaUnitDialog.possiblePositions}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:outputLabel value="#{msgs.typ}:"
+                                           for="physicalType"/>
+                            <p:selectOneMenu id="physicalType"
+                                             value="#{DataEditorForm.addMediaUnitDialog.selectedType}">
+                                <f:selectItems value="#{DataEditorForm.addMediaUnitDialog.possibleTypes}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="addMediaUnitBtn"
+                                         value="#{msgs.apply}"
+                                         action="#{DataEditorForm.addMediaUnitDialog.addMediaUnit}"
+                                         icon="fa fa-check fa-lg"
+                                         iconPos="right"
+                                         styleClass="primary right"
+                                         update="structureTreeForm,metadataAccordion:physicalMetadataWrapperPanel"
+                                         oncomplete="PF('dialogAddMediaUnit').hide();"/>
+                        <p:commandButton value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"
+                                         onclick="PF('dialogAddMediaUnit').hide();"/>
+                    </h:panelGroup>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>

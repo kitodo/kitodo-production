@@ -31,14 +31,14 @@
             <!-- move up -->
             <p:commandLink action="#{LongRunningTasksForm.moveTaskUp}"
                            title="#{msgs.start}">
-                <i class="fa fa-long-arrow-up fa-lg"/>
+                <h:outputText><i class="fa fa-long-arrow-up fa-lg"/></h:outputText>
                 <f:setPropertyActionListener target="#{LongRunningTasksForm.task}"
                                              value="#{item}"/>
             </p:commandLink>
             <!-- move down -->
             <p:commandLink action="#{LongRunningTasksForm.moveTaskDown}"
                            title="#{msgs.start}">
-                <i class="fa fa-long-arrow-down"/>
+                <h:outputText><i class="fa fa-long-arrow-down"/></h:outputText>
                 <f:setPropertyActionListener target="#{LongRunningTasksForm.task}"
                                              value="#{item}"/>
             </p:commandLink>
@@ -46,7 +46,7 @@
             <p:commandLink action="#{LongRunningTasksForm.executeTask}"
                            title="#{msgs.start}"
                            rendered="#{item.startable}">
-                <i class="fa fa-play fa-lg"/>
+                <h:outputText><i class="fa fa-play fa-lg"/></h:outputText>
                 <f:setPropertyActionListener target="#{LongRunningTasksForm.task}"
                                              value="#{item}"/>
             </p:commandLink>
@@ -54,14 +54,14 @@
             <p:commandLink action="#{LongRunningTasksForm.cancelTask}"
                            title="#{msgs.stop}"
                            rendered="#{item.stoppable}">
-                <i class="fa fa-stop fa-lg"/>
+                <h:outputText><i class="fa fa-stop fa-lg"/></h:outputText>
                 <f:setPropertyActionListener target="#{LongRunningTasksForm.task}"
                                              value="#{item}"/>
             </p:commandLink>
             <!-- delete -->
             <p:commandLink action="#{LongRunningTasksForm.removeTask}"
                            title="#{msgs.delete}">
-                <i class="fa fa-trash-o fa-lg"/>
+                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                 <f:setPropertyActionListener target="#{LongRunningTasksForm.task}"
                                              value="#{item}"/>
             </p:commandLink>

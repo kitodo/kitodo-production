@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  ~
+  ~ This file is part of the Kitodo project.
+  ~
+  ~ It is licensed under GNU General Public License version 3 or later.
+  ~
+  ~ For the full copyright and license information, please read the
+  ~ GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="readOnly" type="boolean"-->
+    <ui:param name="readOnly" value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"/>
+    <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">
+        <h:form id="metadata">
+            <p:dataTable id="metadataTable"
+                         rendered="#{!empty DataEditorForm.metadataPanel.logicalMetadataRows}"
+                         styleClass="no-header"
+                         value="#{DataEditorForm.metadataPanel.logicalMetadataRows}"
+                         var="item">
+
+                <p:column style="width: 100%;">
+                    <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
+                    <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
+                                   title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
+
+                    <p:inputText value="#{item.value}"
+                                 disabled="#{not item.editable or readOnly}"
+                                 styleClass="#{not item.editable or readOnly ? 'disabled' : ''}"
+                                 style="width:100%;"
+                                 validator="#{item.validatorQuery}"
+                                 rendered="#{item.input eq 'inputText'}">
+                        <p:ajax event="blur"/>
+                    </p:inputText>
+                    <p:outputLabel value="Not yet implemented: inputTextarea" rendered="#{item.input eq 'inputTextarea'}"/>
+                    <p:outputLabel value="Not yet implemented: spinner" rendered="#{item.input eq 'spinner'}"/>
+                    <p:outputLabel value="Not yet implemented: calendar" rendered="#{item.input eq 'calendar'}"/>
+                    <p:outputLabel value="Not yet implemented: dataTable" rendered="#{item.input eq 'dataTable'}"/>
+                    <p:selectManyMenu value="#{item.selectedItems}" readonly="#{not item.editable}"
+                                      validator="#{item.validatorQuery}"
+                                      rendered="#{item.input eq 'manyMenu'}">
+                        <f:selectItems value="#{item.items}"/>
+                        <p:ajax event="blur"/>
+                    </p:selectManyMenu>
+                    <p:outputLabel value="Not yet implemented: selectOneMenu" rendered="#{item.input eq 'oneMenu'}"/>
+                    <p:outputLabel value="Not yet implemented: selectOneRadio" rendered="#{item.input eq 'oneRadio'}"/>
+                    <p:outputLabel value="Not yet implemented: toggleSwitch" rendered="#{item.input eq 'toggleSwitch'}"/>
+
+                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
+                                     id="deleteMetadata"
+                                     icon="fa fa-trash"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     title="#{msgs.metadataDelete}"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
+                                     onclick="PF('loadingDialog').show();"
+                                     oncomplete="PF('loadingDialog').hide();"
+                                     action="#{item.deleteClick}">
+                    </p:commandButton>
+                    <p:commandButton update="metadataAccordion:metadata:metadataTable"
+                                 id="copyMetadata"
+                                 icon="fa fa-clipboard"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     title="#{msgs.metadataCopy}"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{readOnly}"
+                                     onclick="PF('loadingDialog').show();"
+                                     oncomplete="PF('loadingDialog').hide();"
+                                     action="#{item.copyClick}">
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:panelGrid style="width:100%; margin-top:10px;" styleClass="ui-noborder">
+                <p:row>
+                    <p:commandButton id="addMetadataButton"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     style="vertical-align: top; margin-left: 10px;"
+                                     disabled="#{readOnly}"
+                                     title="#{msgs.neueMetadatenHinzufuegen}"
+                                     onclick="PF('addMetadataDialog').show();"/>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:panel>
+</ui:composition>

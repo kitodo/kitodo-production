@@ -18,14 +18,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.kitodo.api.Metadata;
 
-public class MediaUnit {
+public class MediaUnit implements Parent<MediaUnit> {
     /**
      * The subordinate media units of this media unit, which form the media unit
      * tree. The order of the substructures is subordinate media units by the
@@ -71,6 +70,7 @@ public class MediaUnit {
      *
      * @return the subordinate media units
      */
+    @Override
     public List<MediaUnit> getChildren() {
         return children;
     }
@@ -142,7 +142,7 @@ public class MediaUnit {
     }
 
     /**
-     * Sets the type of this media unti.
+     * Sets the type of this media unit.
      *
      * @param type
      *            type to set
@@ -161,7 +161,7 @@ public class MediaUnit {
         if (Objects.nonNull(type)) {
             fileName = type + ' ' + fileName;
         }
-        return mediaFiles.entrySet().stream().map(Entry::getKey).map(MediaVariant::getUse)
+        return mediaFiles.keySet().stream().map(MediaVariant::getUse)
                 .collect(Collectors.joining(", ", fileName, ")"));
     }
 
@@ -203,12 +203,9 @@ public class MediaUnit {
             return false;
         }
         if (Objects.isNull(type)) {
-            if (Objects.nonNull(other.type)) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
+            return !Objects.nonNull(other.type);
+        } else {
+            return type.equals(other.type);
         }
-        return true;
     }
 }

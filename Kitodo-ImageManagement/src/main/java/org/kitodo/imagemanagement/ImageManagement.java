@@ -83,7 +83,6 @@ public class ImageManagement implements ImageManagementInterface {
     @Override
     public boolean createDerivative(URI sourceUri, double factor, URI resultUri, ImageFileFormat format)
             throws IOException {
-
         validateParameters(sourceUri, factor);
         if (resultUri == null) {
             throw new NullPointerException("resultUri must not be null");
@@ -105,9 +104,7 @@ public class ImageManagement implements ImageManagementInterface {
      */
     @Override
     public Image getScaledWebImage(URI sourceUri, double factor) throws IOException {
-
         validateParameters(sourceUri, factor);
-
         return summarize("scaledWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resize(factor),
             "Generating scaled web image from {} as {}, factor {}%", 100 * factor);
     }

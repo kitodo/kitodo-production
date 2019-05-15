@@ -69,15 +69,12 @@
                     <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
-
-                <h:commandLink id="readXML" action="#{MetadataProcessor.readXml}" title="#{msgs.metadataEdit}"
+                <h:commandLink id="readXML"
+                               action="#{DataEditorForm.open(process.id, 'processes')}"
+                               title="#{msgs.metadataEdit}"
                                actionListener="#{CommentForm.setProcessId(process.id)}"
                                rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                    <f:param name="ProzesseID" value="#{process.id}"/>
-                    <f:param name="BenutzerID" value="#{LoginForm.loggedUser.id}"/>
-                    <f:param name="stayOnCurrentPage" value="processList"/>
-                    <f:setPropertyActionListener value="processes" target="#{MetadataProcessor.referringView}"/>
                 </h:commandLink>
 
                 <p:commandLink id="download" action="#{ProcessForm.downloadToHome}" title="#{msgs.linkHomeDirectory}"
