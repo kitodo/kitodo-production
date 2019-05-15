@@ -438,28 +438,6 @@ public enum ParameterCore implements ParameterInterface {
     BATCHES_LOG_CHANGES(new Parameter<>("batches.logChangesToWikiField", false)),
 
     /*
-     * content server for PDF generation
-     */
-
-    /**
-     * Boolean, defaults to {@code false}.
-     */
-    PDF_AS_DOWNLOAD(new Parameter<>("pdfAsDownload", false)),
-
-    /**
-     * If empty, internal content server will be used.
-     */
-    KITODO_CONTENT_SERVER_URL(new Parameter<UndefinedParameter>("kitodoContentServerUrl")),
-
-    /**
-     * Timeout for content server requests via HTTP in ms. Integer, defaults to
-     * 60000 (60 sec).
-     */
-
-    KITODO_CONTENT_SERVER_TIMEOUT(
-            new Parameter<>("kitodoContentServerTimeOut", (int) TimeUnit.MILLISECONDS.convert(60, TimeUnit.SECONDS))),
-
-    /*
      * Task manager
      */
 

@@ -114,43 +114,12 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet>
-        <description>
-        </description>
-        <display-name>GoobiContentServer</display-name>
-        <servlet-name>GoobiContentServer</servlet-name>
-        <servlet-class>
-            org.goobi.presentation.contentservlet.controller.GoobiContentServer
-        </servlet-class>
-    </servlet>
-
-    <servlet>
-        <description>
-        </description>
-        <display-name>ContentServer</display-name>
-        <servlet-name>ContentServer</servlet-name>
-        <servlet-class>
-            de.unigoettingen.sub.commons.contentlib.servlet.controller.ContentServer
-        </servlet-class>
-    </servlet>
-
     <!-- Faces Servlet Mapping -->
 
     <!-- extension mapping -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.jsf</url-pattern>
-    </servlet-mapping>
-
-    <!-- goobiContentServer -->
-    <servlet-mapping>
-        <servlet-name>GoobiContentServer</servlet-name>
-        <url-pattern>/gcs/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ContentServer</servlet-name>
-        <url-pattern>/cs/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
