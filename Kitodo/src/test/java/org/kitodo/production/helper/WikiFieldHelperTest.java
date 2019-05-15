@@ -43,7 +43,7 @@ public class WikiFieldHelperTest {
     }
 
     @Test
-    public void shouldTransformWikiFieldToComment() throws DAOException, DataException {
+    public void shouldTransformWikiFieldToComment() throws Exception {
         Process process = ServiceManager.getProcessService().getById(1);
         process.setWikiField("<font color=\"#FF0000\">Oct 10, 2016 8:42:55 AM: Korrektur fÃ¼r Schritt Scans kopieren: Bitte Korrekturen "
                 + "vornehmen. (Kowalski, Jan)</font><p>Admin, test: test1</p>");
