@@ -70,7 +70,6 @@ public class ProcessForm extends TemplateBaseForm {
     private Property templateProperty;
     private Property workpieceProperty;
     private String kitodoScriptSelection;
-    private String kitodoScriptPage;
     private String kitodoScriptAll;
     private String newProcessTitle;
     private boolean showClosedProcesses = false;
@@ -550,14 +549,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Export DMS processes on the page.
-     */
-    @SuppressWarnings("unchecked")
-    public void exportDMSForPage() {
-        exportDMSForProcesses(lazyDTOModel.getEntities());
-    }
-
-    /**
      * Export DMS for all found processes.
      */
     @SuppressWarnings("unchecked")
@@ -638,18 +629,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home for all process on the page.
-     */
-    @SuppressWarnings("unchecked")
-    public void downloadToHomeForPage() {
-        WebDav webDav = new WebDav();
-        for (ProcessDTO processForWebDav : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
-            download(webDav, processForWebDav);
-        }
-        Helper.setMessage("createdInUserHome");
-    }
-
-    /**
      * Download to home for all found processes.
      */
     @SuppressWarnings("unchecked")
@@ -680,14 +659,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set up processing status page.
-     */
-    @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForPage() {
-        setTaskStatusUpForProcesses(lazyDTOModel.getEntities());
-    }
-
-    /**
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
@@ -713,14 +684,6 @@ public class ProcessForm extends TemplateBaseForm {
                     new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
         }
-    }
-
-    /**
-     * Set down processing status page.
-     */
-    @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForPage() {
-        setTaskStatusDownForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
@@ -860,14 +823,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Execute Kitodo script for processes displayed on the page.
-     */
-    @SuppressWarnings("unchecked")
-    public void executeKitodoScriptPage() {
-        executeKitodoScriptForProcesses(lazyDTOModel.getEntities(), this.kitodoScriptPage);
-    }
-
-    /**
      * Execute Kitodo script for selected processes.
      */
     public void executeKitodoScriptSelection() {
@@ -900,25 +855,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setKitodoScriptSelection(String kitodoScriptSelection) {
         this.kitodoScriptSelection = kitodoScriptSelection;
-    }
-
-    /**
-     * Get kitodo script for all results.
-     * 
-     * @return kitodo script for all results
-     */
-    public String getKitodoScriptPage() {
-        return this.kitodoScriptPage;
-    }
-
-    /**
-     * Set kitodo script for page results.
-     *
-     * @param kitodoScriptPage
-     *            the kitodoScript
-     */
-    public void setKitodoScriptPage(String kitodoScriptPage) {
-        this.kitodoScriptPage = kitodoScriptPage;
     }
 
     /**

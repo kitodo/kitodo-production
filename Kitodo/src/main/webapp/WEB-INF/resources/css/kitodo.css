@@ -1093,6 +1093,12 @@ h3#headerText {
     white-space: nowrap;
 }
 
+#processesTabView\:processesForm\:actionsButton {
+    float: left;
+    margin-top: calc((var(--input-height) + var(--default-full-size)) * -1);
+    margin-left: var(--default-full-size);
+}
+
 /*----------------------------------------------------------------------
 Metadata Editor
 ----------------------------------------------------------------------*/

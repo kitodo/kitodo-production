@@ -76,6 +76,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement downloadSearchResultAsPdf;
 
     @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_FORM + ":actionsButton")
+    private WebElement actionsButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = BATCH_FORM + ":createBatch")
     private WebElement createBatchLink;
 
@@ -246,6 +250,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void downloadSearchResultAsExcel() {
+        actionsButton.click();
+        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> downloadSearchResultAsExcel.isDisplayed());
         downloadSearchResultAsExcel.click();
 
         await("Wait for search result excel file download").pollDelay(700, TimeUnit.MILLISECONDS)
@@ -254,6 +262,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void downloadSearchResultAsPdf() {
+        actionsButton.click();
+        await("Wait for actions menu to open").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> downloadSearchResultAsPdf.isDisplayed());
         downloadSearchResultAsPdf.click();
 
         await("Wait for search result pdf file download").pollDelay(700, TimeUnit.MILLISECONDS)
