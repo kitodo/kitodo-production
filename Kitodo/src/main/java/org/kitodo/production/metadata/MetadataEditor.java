@@ -165,10 +165,11 @@ public class MetadataEditor {
     }
 
     /**
-     * Assign views from children of given IncludedStructuralElement 'structure' to the structure itself.
+     * Assigns all views of all children to the specified included structural
+     * element.
      *
      * @param structure
-     *          IncludedStructuralElement to which the views are assigned
+     *            structure to add all views of all children to
      */
     public static void assignViewsFromChildren(IncludedStructuralElement structure) {
         structure.getViews().addAll(getViewsFromChildrenRecursive(structure));

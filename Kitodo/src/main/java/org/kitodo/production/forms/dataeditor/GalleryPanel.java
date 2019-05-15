@@ -69,7 +69,7 @@ public class GalleryPanel {
     private GalleryMediaContent selectedMedia;
     private GalleryStripe selectedStripe;
 
-    private ArrayList<GalleryStripe> stripes;
+    private List<GalleryStripe> stripes;
 
     private Subfolder previewFolder;
 
@@ -237,9 +237,10 @@ public class GalleryPanel {
     }
 
     /**
-     * Set selectedStripe.
+     * Sets the strip on which the user has just called the update function.
+     *
      * @param selectedStripe
-     *          selectedStripe
+     *            selected stripe to set
      */
     public void setSelectedStripe(GalleryStripe selectedStripe) {
         this.selectedStripe = selectedStripe;

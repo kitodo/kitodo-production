@@ -21,14 +21,15 @@ public class IllustratedSelectItem extends SelectItem {
     private String image;
 
     /**
-     * Constructor.
+     * Creates a new illustrated select item.
      *
      * @param value
-     *          value of IllustratedSelectItem
+     *            value to be delivered to the model if this item is selected by
+     *            the user
      * @param label
-     *          label of IllustratedSelectItem
+     *            label to be rendered for this item in the response
      * @param image
-     *          image of IllustratedSelectItem
+     *            image to display
      */
     IllustratedSelectItem(Object value, String label, String image) {
         super(value, label);
@@ -36,9 +37,9 @@ public class IllustratedSelectItem extends SelectItem {
     }
 
     /**
-     * Return image.
+     * Returns the image to display.
      *
-     * @return image
+     * @return the image to display
      */
     public String getImage() {
         return image;

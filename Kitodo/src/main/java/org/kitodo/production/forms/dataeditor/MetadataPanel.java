@@ -43,7 +43,7 @@ public class MetadataPanel implements Serializable {
         this.rulesetSetup = rulesetSetup;
     }
 
-    // TODO create similar method for physical metadata entries
+    // TODO create similar method for physical meta-data entries
     /**
      * The method is executed when a user clicks the add meta-data button. A new
      * meta-data entry will be created with the entered type and value. Actually
@@ -116,18 +116,19 @@ public class MetadataPanel implements Serializable {
     }
 
     /**
-     * Return addMetadataValue.
+     * Returns the value of the addLogicalMetadata text box.
      *
-     * @return addMetadataValue
+     * @return the value of the addLogicalMetadata
      */
     public String getAddLogicalMetadataValue() {
         return addMetadataValue;
     }
 
     /**
-     * Set addMetadataValue.
+     * Sets the value of the addMetadata text box.
+     *
      * @param addMetadataValue
-     *          addMetadataValue
+     *            value to set
      */
     public void setAddLogicalMetadataValue(String addMetadataValue) {
         this.addMetadataValue = addMetadataValue;
@@ -138,18 +139,18 @@ public class MetadataPanel implements Serializable {
     }
 
     /**
-     * Return logical metadata rows.
+     * Returns the rows of logical meta-data that JSF has to display.
      *
-     * @return logical metadata rows
+     * @return the rows of logical meta-data
      */
     public List<MetadataTableRow> getLogicalMetadataRows() {
         return logicalMetadataTable.getRows();
     }
 
     /**
-     * Return physical metadata rows.
+     * Returns the rows of physical meta-data that JSF has to display.
      *
-     * @return physical metadata rows
+     * @return the rows of physical meta-data
      */
     public List<MetadataTableRow> getPhysicalMetadataRows() {
         return physicalMetadataTable.getRows();

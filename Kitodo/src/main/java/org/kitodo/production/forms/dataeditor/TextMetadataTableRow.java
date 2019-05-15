@@ -83,19 +83,19 @@ public class TextMetadataTableRow extends SimpleMetadataTableRow implements Seri
     }
 
     /**
-     * Return value.
+     * Returns the contents of the text input field of this meta-data table row.
      *
-     * @return value
+     * @return the contents of the input field
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * Set value.
+     * Sets the contents of the text input field of this meta-data table row.
      *
      * @param value
-     *          value
+     *            value to be set
      */
     public void setValue(String value) {
         this.value = value;

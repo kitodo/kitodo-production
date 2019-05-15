@@ -89,103 +89,104 @@ public class EditPagesDialog {
     }
 
     /**
-     * Return paginationSelectionSelectedItems.
+     * Returns the selected items of the paginationSelection select menu.
      *
-     * @return paginationSelectionSelectedItems
+     * @return the selected items of the paginationSelection
      */
     public List<Integer> getPaginationSelectionSelectedItems() {
         return paginationSelectionSelectedItems;
     }
 
     /**
-     * Set paginationSelectionSelectedItems.
+     * Sets the selected items of the paginationSelection select menu.
      *
      * @param paginationSelectionSelectedItems
-     *          paginationSelectionSelectedItems
+     *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
         this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
     }
 
     /**
-     * Return paginationSubSelectionSelectedItems.
+     * Returns the selected items of the paginationSubSelection select menu.
      *
-     * @return paginationSubSelectionSelectedItems
+     * @return the selected items of the paginationSubSelection
      */
     public List<Integer> getPaginationSubSelectionSelectedItems() {
         return paginationSubSelectionSelectedItems;
     }
 
     /**
-     * Set paginationSubSelectionSelectedItems.
+     * Sets the selected items of the paginationSubSelection select menu.
      *
      * @param paginationSubSelectionSelectedItems
-     *          paginationSubSelectionSelectedItems
+     *            selected items to set
      */
     public void setPaginationSubSelectionSelectedItems(List<Integer> paginationSubSelectionSelectedItems) {
         this.paginationSubSelectionSelectedItems = paginationSubSelectionSelectedItems;
     }
 
     /**
-     * Return selectFirstPageSelectedItem.
+     * Returns the selected item of the selectFirstPage drop-down menu.
      *
-     * @return selectFirstPageSelectedItem
+     * @return the selected item of the selectFirstPage
      */
     public Integer getSelectFirstPageSelectedItem() {
         return selectFirstPageSelectedItem;
     }
 
     /**
-     * Set selectFirstPageSelectedItem.
+     * Sets the selected item of the selectFirstPage drop-down menu.
      *
      * @param selectFirstPageSelectedItem
-     *          selectFirstPageSelectedItem
+     *            selected item to set
      */
     public void setSelectFirstPageSelectedItem(Integer selectFirstPageSelectedItem) {
         this.selectFirstPageSelectedItem = selectFirstPageSelectedItem;
     }
 
     /**
-     * Return selectLastPageSelectedItem.
+     * Returns the selected item of the selectLastPage drop-down menu.
      *
-     * @return selectLastPageSelectedItem
+     * @return the selected item of the selectLastPage
      */
     public Integer getSelectLastPageSelectedItem() {
         return selectLastPageSelectedItem;
     }
 
     /**
-     * Set selectLastPageSelectedItem.
+     * Sets the selected item of the selectLastPage drop-down menu.
      *
      * @param selectLastPageSelectedItem
-     *          selectLastPageSelectedItem
+     *            selected item to set
      */
     public void setSelectLastPageSelectedItem(Integer selectLastPageSelectedItem) {
         this.selectLastPageSelectedItem = selectLastPageSelectedItem;
     }
 
     /**
-     * Return paginationSelectionItems.
+     * Returns the items of the paginationSelection select menu.
      *
-     * @return paginationSelectionItems
+     * @return the items of the paginationSelection
      */
     public List<SelectItem> getPaginationSelectionItems() {
         return paginationSelectionItems;
     }
 
     /**
-     * Return paginationSubSelectionItems.
+     * Returns the items of the paginationSubSelection select menu.
      *
-     * @return paginationSubSelectionItems
+     * @return the items of the paginationSubSelection
      */
     public List<SelectItem> getPaginationSubSelectionItems() {
         return paginationSubSelectionItems;
     }
 
     /**
-     * Return selectPageItems.
+     * Returns the items of the selectFirstPage and selectLastPage drop-down
+     * menus.
      *
-     * @return selectPageItems
+     * @return the items of the selectFirstPage and selectLastPage
      */
     public List<SelectItem> getSelectPageItems() {
         return selectPageItems;

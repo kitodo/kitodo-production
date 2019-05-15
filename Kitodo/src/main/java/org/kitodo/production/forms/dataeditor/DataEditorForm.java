@@ -296,14 +296,20 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Callback function for click on 'delete' option in logical structure tree context menu.
+     * Deletes the selected outline point from the logical outline. This method
+     * is called by PrimeFaces to inform the application that the user has
+     * clicked on the shortcut menu entry to clear the outline point.
      */
     public void deleteButtonClick() {
         structurePanel.deleteSelectedStructure();
     }
 
     /**
-     * Callback function for click on 'delete' option in physical structure tree context menu.
+     * Deletes the selected media unit from the media list. The associated files
+     * on the drive are not deleted. The next time the editor is started, files
+     * that are not yet in the media list will be inserted there again. This
+     * method is called by PrimeFaces to inform the application that the user
+     * clicked on the context menu entry to delete the media unit.
      */
     public void deleteMediaUnit() {
         structurePanel.deleteSelectedMediaUnit();
@@ -315,54 +321,61 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     /**
-     * Return addDocStrucTypeDialog.
+     * Returns the backing bean for the add doc struc type dialog. This function
+     * is used by PrimeFaces to access the elements of the add doc struc type
+     * dialog.
      *
-     * @return addDocStrucTypeDialog.
+     * @return the backing bean for the add doc struc type dialog
      */
     public AddDocStrucTypeDialog getAddDocStrucTypeDialog() {
         return addDocStrucTypeDialog;
     }
 
     /**
-     * Return addMediaUnitDialog.
+     * Returns the backing bean for the add media dialog. This function is used
+     * by PrimeFaces to access the elements of the add media dialog.
      *
-     * @return addMediaUnitDialog
+     * @return the backing bean for the add media dialog
      */
     public AddMediaUnitDialog getAddMediaUnitDialog() {
         return addMediaUnitDialog;
     }
 
     /**
-     * Return editPagesDialog.
+     * Returns the backing bean for the edit pages dialog. This function is used
+     * by PrimeFaces to access the elements of the edit pages dialog.
      *
-     * @return editPagesDialog
+     * @return the backing bean for the edit pages dialog
      */
     public EditPagesDialog getEditPagesDialog() {
         return editPagesDialog;
     }
 
     /**
-     * Return galleryPanel.
+     * Returns the backing bean for the gallery panel. This function is used by
+     * PrimeFaces to access the elements of the gallery panel.
      *
-     * @return galleryPanel
+     * @return the backing bean for the gallery panel
      */
     public GalleryPanel getGalleryPanel() {
         return galleryPanel;
     }
 
     /**
-     * Return metadataPanel.
+     * Returns the backing bean for the meta-data panel. This function is used
+     * by PrimeFaces to access the elements of the meta-data panel.
      *
-     * @return metadataPanel
+     * @return the backing bean for the meta-data panel
      */
     public MetadataPanel getMetadataPanel() {
         return metadataPanel;
     }
 
     /**
-     * Return paginationPanel.
+     * Returns the backing bean for the pagination panel. This function is used
+     * by PrimeFaces to access the elements of the pagination panel.
      *
-     * @return paginationPanel
+     * @return the backing bean for the pagination panel
      */
     public PaginationPanel getPaginationPanel() {
         return paginationPanel;
