@@ -71,8 +71,6 @@ public class MetsService {
      *
      * @param uri
      *            address of the file to be loaded
-     * @param lockingMode
-     *            how to lock the METS file
      * @return loaded file
      * @throws IOException
      *             if reading is not working (disk broken, ...)
