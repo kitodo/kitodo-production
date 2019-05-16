@@ -126,8 +126,7 @@ public class MetadataPathSelector extends MetadataSelector {
      * no such metadata is already available under at the path. Leaves the
      * document structure element unchanged if such a metadata already exists.
      * This works recursively, by calling itself on the subnode, if found, or
-     * returning null otherwise. Metadata creation is, by definition, always
-     * done in a {@link LocalMetadataSelector}.
+     * returning null otherwise.
      *
      * @param data
      *            data to work on
@@ -148,8 +147,7 @@ public class MetadataPathSelector extends MetadataSelector {
 
     /**
      * Sets the metadatum identified by the given path if available, otherwise
-     * creates the path and metadatum. This works recursively. Metadata creation
-     * is done in a {@link LocalMetadataSelector}. If the DocStructType is set
+     * creates the path and metadatum. This works recursively. If the DocStructType is set
      * to "*", no path will be created if no path exists.
      *
      * @param data
