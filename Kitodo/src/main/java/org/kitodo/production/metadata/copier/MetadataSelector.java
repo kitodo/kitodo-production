@@ -37,12 +37,12 @@ public abstract class MetadataSelector extends DataSelector {
     public static MetadataSelector create(String path) throws ConfigurationException {
 
         if (path.startsWith(METADATA_SEPARATOR)) {
-            return new LocalMetadataSelector(path);
+            throw new UnsupportedOperationException("Dead code pending removal");
         }
 
         if (path.startsWith(METADATA_PATH_SEPARATOR)) {
             if (path.indexOf(METADATA_SEPARATOR, 1) > -1) {
-                return new LocalMetadataSelector(path.substring(1));
+                throw new UnsupportedOperationException("Dead code pending removal");
             } else {
                 return new MetadataPathSelector(path);
             }
