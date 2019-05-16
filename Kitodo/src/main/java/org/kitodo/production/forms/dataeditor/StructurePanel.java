@@ -11,10 +11,10 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,18 +24,24 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.IncludedStructuralElement;
 import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 public class StructurePanel implements Serializable {
+    private static final Logger logger = LogManager.getLogger(StructurePanel.class);
 
     private DataEditorForm dataEditor;
 
@@ -289,11 +295,14 @@ public class StructurePanel implements Serializable {
      *         the tree
      */
     private Pair<List<DefaultTreeNode>, Collection<View>> buildStructureTree() {
+        LinkedList<DefaultTreeNode> result = new LinkedList<>();
 
-        DefaultTreeNode result = new DefaultTreeNode();
-        result.setExpanded(true);
-        Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, result);
-        return Pair.of(Collections.singletonList(result), viewsShowingOnAChild);
+        DefaultTreeNode main = new DefaultTreeNode();
+        main.setExpanded(true);
+        Collection<View> viewsShowingOnAChild = buildStructureTreeRecursively(structure, main);
+        result.add(main);
+        addParentLinksRecursive(dataEditor.getProcess(), result);
+        return Pair.of(result, viewsShowingOnAChild);
     }
 
     private Collection<View> buildStructureTreeRecursively(IncludedStructuralElement structure, TreeNode result) {
@@ -328,6 +337,89 @@ public class StructurePanel implements Serializable {
             }
         }
         return viewsShowingOnAChild;
+    }
+
+    /**
+     * Recursively adds the parent processes in the display. For each parent
+     * process, the recursion is run through once, that is for a newspaper issue
+     * twice (annual process, overall process). If this fails (child is not
+     * found in the parent process, or I/O error), instead only a link is added
+     * to the process and the warning sign is activated.
+     *
+     * @param child
+     *            child process, calling recursion
+     * @param result
+     *            list of structure trees, in this list the parent links are
+     *            inserted on top, therefore LinkedList
+     */
+    private void addParentLinksRecursive(Process child, LinkedList<DefaultTreeNode> result) {
+        Process parent = child.getParent();
+        if (Objects.nonNull(parent)) {
+            URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
+            DefaultTreeNode tree = new DefaultTreeNode();
+            tree.setExpanded(true);
+            try {
+                List<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
+                    ServiceManager.getMetsService().loadWorkpiece(uri).getRootElement(), child.getId());
+                DefaultTreeNode parentNode = tree;
+                if (Objects.isNull(includedStructuralElementList)) {
+                    new DefaultTreeNode(new StructureTreeNode(this, parent.getTitle(), true, true, parent), tree);
+                } else {
+                    for (IncludedStructuralElement includedStructuralElement : includedStructuralElementList) {
+                        StructuralElementViewInterface structuralElementView = dataEditor.getRuleset()
+                                .getStructuralElementView(includedStructuralElement.getType(),
+                                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                        parentNode = new DefaultTreeNode(
+                                new StructureTreeNode(this, structuralElementView.getLabel(), false, true, null),
+                                parentNode);
+                        parentNode.setExpanded(true);
+                    }
+                }
+            } catch (IOException e) {
+                Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+                new DefaultTreeNode(new StructureTreeNode(this, parent.getTitle(), true, true, parent), tree);
+            }
+            result.addFirst(tree);
+            addParentLinksRecursive(parent, result);
+        }
+    }
+
+    /**
+     * Recursively determines the path to the included structural element of the
+     * child. For each level of the root element, the recursion is run through
+     * once, that is for a newspaper year process tree times (year, month, day).
+     *
+     * @param includedStructuralElement
+     *            included structural element of the level stage of recursion
+     *            (starting from the top)
+     * @param number
+     *            number of the record of the process of the child
+     *
+     */
+    private LinkedList<IncludedStructuralElement> determineIncludedStructuralElementPathToChildRecursive(
+            IncludedStructuralElement includedStructuralElement, int number) {
+
+        if (!Objects.isNull(includedStructuralElement.getLink())) {
+            try {
+                if (ServiceManager.getProcessService()
+                        .processIdFromUri(includedStructuralElement.getLink().getUri()) == number) {
+                    LinkedList<IncludedStructuralElement> linkedIncludedStructuralElements = new LinkedList<>();
+                    linkedIncludedStructuralElements.add(includedStructuralElement);
+                    return linkedIncludedStructuralElements;
+                }
+            } catch (IllegalArgumentException | ClassCastException | SecurityException e) {
+                logger.catching(Level.TRACE, e);
+            }
+        }
+        for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
+            LinkedList<IncludedStructuralElement> includedStructuralElementList = determineIncludedStructuralElementPathToChildRecursive(
+                includedStructuralElementChild, number);
+            if (Objects.nonNull(includedStructuralElementList)) {
+                includedStructuralElementList.addFirst(includedStructuralElementChild);
+                return includedStructuralElementList;
+            }
+        }
+        return null;
     }
 
     /**
