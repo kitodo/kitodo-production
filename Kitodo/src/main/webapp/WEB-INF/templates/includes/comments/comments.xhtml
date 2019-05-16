@@ -53,7 +53,7 @@
                              update=":newCommentForm">
                 <p:resetInput target=":newCommentForm"/>
             </p:commandButton>
-            <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+            <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
         </h:form>
     </p:panel>
 </ui:composition>
