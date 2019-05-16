@@ -67,7 +67,7 @@ public class WikiFieldHelper {
      * @param process
      *            process as object.
      */
-    public static Process transformWikiFieldToComment(Process process) throws DAOException, DataException {
+    public static Process transformWikiFieldToComment(Process process) throws DAOException, DataException, ParseException {
         String wikiField = process.getWikiField();
         wikiField = wikiField.replaceAll("Ã¼", "ue");
         wikiField = wikiField.replaceAll("&uuml;", "ue");
@@ -83,7 +83,7 @@ public class WikiFieldHelper {
             List<String> list = new ArrayList<>(Arrays.asList(comments));
             list.remove(list.get(0));
             comments = list.toArray(new String[0]);
-            transformNewFormatWikifieldToComments(comments, process);
+            transformNewFormatWikiFieldToComments(comments, process);
             Process processWithoutProperties = deleteProcessCorrectionProperties(process);
             processWithoutProperties.setWikiField("");
             ServiceManager.getProcessService().save(processWithoutProperties);
@@ -188,7 +188,8 @@ public class WikiFieldHelper {
         <p>Orange K  Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla </p>
         <p>Red K Admin, test Korrektur f&uuml;r Schritt Scanning: bla bla</p>
     */
-    private static void transformNewFormatWikifieldToComments(String[] messages, Process process) {
+    private static void transformNewFormatWikiFieldToComments(String[] messages, Process process)
+            throws DAOException, DataException, ParseException {
         List<Comment> newComments = new ArrayList<>();
         for (String message : messages) {
             String lang = getMessageLanguage(message);
@@ -200,14 +201,10 @@ public class WikiFieldHelper {
                 comment.setType(CommentType.ERROR);
                 Property correctionRequiredProperty = getCorrectionRequiredProperty(process, message);
                 if (Objects.nonNull(correctionRequiredProperty)) {
-                    try {
-                        comment.setCreationDate(getCreationDate(correctionRequiredProperty));
-                        comment.setCurrentTask(getCurrentTask(correctionRequiredProperty));
-                        comment.setCorrectionTask(getCorrectionTask(correctionRequiredProperty));
-                        deleteProperty(process, correctionRequiredProperty);
-                    } catch (DAOException | DataException | ParseException e) {
-                        logger.error(e.getMessage(), e);
-                    }
+                    comment.setCreationDate(getCreationDate(correctionRequiredProperty));
+                    comment.setCurrentTask(getCurrentTask(correctionRequiredProperty));
+                    comment.setCorrectionTask(getCorrectionTask(correctionRequiredProperty));
+                    deleteProperty(process, correctionRequiredProperty);
                 }
             } else if (message.contains("Orange K")) {
                 comment.setType(CommentType.ERROR);
@@ -215,12 +212,8 @@ public class WikiFieldHelper {
                 Property correctionPerformed = getCorrectionPerformedProperty(process, message, lang);
                 if (Objects.nonNull(correctionPerformed)) {
                     comment.setCreationDate(correctionPerformed.getCreationDate());
-                    try {
-                        comment.setCorrectionDate(getCreationDate(correctionPerformed));
-                        deleteProperty(process, correctionPerformed);
-                    } catch (ParseException | DAOException | DataException e) {
-                        logger.error(e.getMessage(), e);
-                    }
+                    comment.setCorrectionDate(getCreationDate(correctionPerformed));
+                    deleteProperty(process, correctionPerformed);
                 }
                 comment.setCurrentTask(ServiceManager.getProcessService().getCurrentTask(process));
                 comment.setCorrectionTask(getWikiFieldCorrectionTask(message, process, lang));

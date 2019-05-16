@@ -12,6 +12,7 @@
 package org.kitodo.production.forms;
 
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class CommentForm extends BaseForm {
         }
         try {
             this.process = WikiFieldHelper.transformWikiFieldToComment(this.process);
-        } catch (DAOException | DataException e) {
+        } catch (DAOException | DataException | ParseException e) {
             Helper.setErrorMessage("Error in conversion of Wiki field to comments: ", logger, e);
         }
         return ServiceManager.getCommentService().getAllCommentsByProcess(this.process);
