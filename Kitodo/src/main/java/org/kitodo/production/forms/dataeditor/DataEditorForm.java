@@ -19,10 +19,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.SessionScoped;
@@ -276,13 +280,87 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
+            updateChildLinks();
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
             }
             return close();
-        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException e) {
+        } catch (InvalidMetadataValueException | IOException | NoSuchMetadataFieldException | DAOException
+                | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
+        }
+    }
+
+    /**
+     * Updates the child links in the database.
+     *
+     * @throws DAOException
+     *             if a HibernateException is thrown
+     * @throws DataException
+     *             if an IOException is thrown
+     */
+    private void updateChildLinks() throws DAOException, DataException {
+        Set<Integer> referencedChildren = new TreeSet<>();
+        addAllChildrenRecursive(workpiece.getRootElement(), referencedChildren);
+        TreeSet<Integer> savedChildren = new TreeSet<>();
+        process.getChildren().parallelStream().map(Process::getId).forEachOrdered(savedChildren::add);
+        Iterator<Integer> referencedChildrenIterator = referencedChildren.iterator();
+        Iterator<Integer> savedChildrenIterator = savedChildren.iterator();
+        boolean nextReferencedChild = true;
+        boolean nextSavedChild = true;
+        Integer referencedChildId = null;
+        Integer savedChildId = null;
+        boolean save = false;
+        do {
+            if (nextReferencedChild) {
+                referencedChildId = referencedChildrenIterator.hasNext() ? referencedChildrenIterator.next() : null;
+                nextReferencedChild = false;
+            }
+            if (nextSavedChild) {
+                savedChildId = savedChildrenIterator.hasNext() ? savedChildrenIterator.next() : null;
+                nextSavedChild = false;
+            }
+            if (Objects.nonNull(referencedChildId) && Objects.isNull(savedChildId)
+                    || referencedChildId < savedChildId) {
+                Process childToAdd = ServiceManager.getProcessService().getById(referencedChildId);
+                childToAdd.setParent(process);
+                process.getChildren().add(childToAdd);
+                save = true;
+                nextReferencedChild = true;
+            } else if (Objects.isNull(referencedChildId) && Objects.nonNull(savedChildId)
+                    || referencedChildId > savedChildId) {
+                Process childToRemove = ServiceManager.getProcessService().getById(savedChildId);
+                childToRemove.setParent(null);
+                process.getChildren().remove(childToRemove);
+                save = true;
+                nextSavedChild = true;
+            } else if (Objects.nonNull(referencedChildId) && Objects.nonNull(savedChildId)) {
+                nextReferencedChild = true;
+                nextSavedChild = true;
+            }
+        } while (nextReferencedChild || nextSavedChild);
+        if (save) {
+            ServiceManager.getProcessService().save(process);
+        }
+    }
+
+    /**
+     * Adds the IDs of all linked children to the collection.
+     *
+     * @param includedStructuralElement
+     *            current included structural element
+     * @param collection
+     *            collection to which the IDs are to be added
+     */
+    private void addAllChildrenRecursive(IncludedStructuralElement includedStructuralElement,
+            Collection<Integer> collection) {
+        if (Objects.nonNull(includedStructuralElement.getLink())) {
+            collection.add(
+                ServiceManager.getProcessService().processIdFromUri(includedStructuralElement.getLink().getUri()));
+        }
+        for (IncludedStructuralElement includedStructuralElementChild : includedStructuralElement.getChildren()) {
+            addAllChildrenRecursive(includedStructuralElementChild, collection);
         }
     }
 
