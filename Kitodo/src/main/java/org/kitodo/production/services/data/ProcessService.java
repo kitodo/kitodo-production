@@ -926,7 +926,7 @@ public class ProcessService extends ClientSearchService<Process, ProcessDTO, Pro
     }
 
     /**
-     * Get directory for tig images.
+     * Get directory for TIFF images.
      *
      * @param useFallBack
      *            add description
