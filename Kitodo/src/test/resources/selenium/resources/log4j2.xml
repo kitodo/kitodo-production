@@ -18,6 +18,16 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="org.hibernate.SQL" level="error" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+        <!-- Log cache -->
+        <Logger name="org.hibernate.cache" level="error" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+        <Logger name="org.ehcache" level="error" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
         <Root level="error">
             <AppenderRef ref="STDOUT"/>
         </Root>
