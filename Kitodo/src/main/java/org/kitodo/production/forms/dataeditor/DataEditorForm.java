@@ -166,7 +166,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             this.process = ServiceManager.getProcessService().getById(id);
             this.user = ServiceManager.getUserService().getCurrentUser();
 
-            ruleset = openRulesetFile(process.getTemplate().getRuleset().getFile());
+            ruleset = openRulesetFile(process.getRuleset().getFile());
             if (!openMetsFile()) {
                 return referringView;
             }
