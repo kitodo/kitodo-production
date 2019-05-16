@@ -35,6 +35,7 @@
     --input-height: 36px;
     --input-padding: 10px;
     --input-padding-none: 0;
+    --default-border-radius: 3px;
 }
 
 body {
@@ -461,7 +462,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-chkbox:not(.switch) .ui-chkbox-box {
     background: var(--pure-white);
     border: solid 1px var(--blue);
-    border-radius: 3px;
+    border-radius: var(--default-border-radius);
 }
 
 .ui-chkbox:not(.switch) .ui-chkbox-box .ui-chkbox-icon {
@@ -493,7 +494,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
     width: 40px;
     height: 40px;
-    border-radius: 3px;
+    border-radius: var(--default-border-radius);
     background: var(--orange);
     cursor: pointer;
 }
@@ -1033,7 +1034,7 @@ Popup dialogs
 .ui-growl-item {
     background: var(--green);
     text-shadow: 0 0 0 transparent;
-    border-radius: 3px;
+    border-radius: var(--default-border-radius);
     padding: 16px;
 }
 
