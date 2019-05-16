@@ -310,7 +310,7 @@ public class AddDocStrucTypeDialog {
             this.parents = MetadataEditor.getAncestorsOfStructure(dataEditor.getSelectedStructure().get(),
                 dataEditor.getWorkpiece().getRootElement());
 
-            prepareDocStructPositionSelectionItems(parents.size() == 0);
+            prepareDocStructPositionSelectionItems(parents.isEmpty());
             prepareDocStructAddTypeSelectionItemsForChildren();
             prepareDocStructAddTypeSelectionItemsForParent();
             prepareDocStructAddTypeSelectionItemsForSiblings();

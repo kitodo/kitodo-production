@@ -68,9 +68,6 @@ public class ExportDms extends ExportMets {
         this.exportWithImages = exportImages;
     }
 
-    public void setExportFullText(boolean exportFullText) {
-    }
-
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
