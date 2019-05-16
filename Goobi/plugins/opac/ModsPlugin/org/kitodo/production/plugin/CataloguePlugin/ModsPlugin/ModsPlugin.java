@@ -344,6 +344,7 @@ public class ModsPlugin implements Plugin {
         // initialize custom catalog XPaths
         try {
             parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
+            parentIDXPath.addNamespace("mods", "http://www.loc.gov/mods/v3");
             srwRecordXPath = XPath.newInstance(getRecordXPath(configuration.getTitle()));
         } catch (JDOMException e) {
             logger.error("Error while initializing catalog specific XPath variables: " + e.getMessage());
