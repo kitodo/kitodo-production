@@ -21,6 +21,7 @@ import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
@@ -143,7 +144,7 @@ public class DesktopForm extends BaseForm {
                     return 0L;
             }
 
-        } catch (DAOException | DataException | JsonException e) {
+        } catch (DAOException | DataException | JsonException | ElasticsearchStatusException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;
