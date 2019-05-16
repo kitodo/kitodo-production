@@ -499,11 +499,6 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>de.unigoettingen</groupId>
-            <artifactId>kitodo-contentserver</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
             <version>${saxon.version}</version>
