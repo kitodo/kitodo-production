@@ -306,17 +306,34 @@ public class StructurePanel implements Serializable {
     }
 
     private Collection<View> buildStructureTreeRecursively(IncludedStructuralElement structure, TreeNode result) {
-
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
-            structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        StructureTreeNode node;
+        if (Objects.isNull(structure.getLink())) {
+            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            node = new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure);
+        } else {
+            node = new StructureTreeNode(this, structure.getLink().getUri().toString(), true, true, structure);
+            for (Process child : dataEditor.getProcess().getChildren()) {
+                try {
+                    String type = ServiceManager.getProcessService().getBaseType(child);
+                    if (child.getId() == ServiceManager.getProcessService()
+                            .processIdFromUri(structure.getLink().getUri())) {
+                        StructuralElementViewInterface view = dataEditor.getRuleset().getStructuralElementView(
+                            type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                        node = new StructureTreeNode(this, view.getLabel(), view.isUndefined(), true, structure);
+                    }
+                } catch (IOException e) {
+                    Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+                    node = new StructureTreeNode(this, child.getTitle(), true, true, child);
+                }
+            }
+        }
         /*
          * Creating the tree node by handing over the parent node automatically
          * appends it to the parent as a child. That’s the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode parent = new DefaultTreeNode(
-                new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure),
-                result);
+        DefaultTreeNode parent = new DefaultTreeNode(node, result);
         parent.setExpanded(true);
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
