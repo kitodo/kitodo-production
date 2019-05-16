@@ -44,7 +44,6 @@ public class TaskDTO extends BaseDTO {
     private boolean typeImagesWrite;
     private boolean batchStep;
     private boolean batchAvailable;
-    private boolean selected = false;
 
     /**
      * Get title.
@@ -463,24 +462,5 @@ public class TaskDTO extends BaseDTO {
      */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
-    }
-
-    /**
-     * Get information if task is selected.
-     *
-     * @return true or false
-     */
-    public boolean isSelected() {
-        return this.selected;
-    }
-
-    /**
-     * Set information if task is selected.
-     *
-     * @param selected
-     *            as boolean
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 }

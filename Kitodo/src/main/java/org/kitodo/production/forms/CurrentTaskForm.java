@@ -516,14 +516,6 @@ public class CurrentTaskForm extends BaseForm {
      *            provided by data table
      */
     public void setSelectedTasks(List<TaskDTO> selectedTasks) {
-        if (Objects.nonNull(this.selectedTasks) && !this.selectedTasks.isEmpty()) {
-            for (TaskDTO task : this.selectedTasks) {
-                task.setSelected(false);
-            }
-        }
-        for (TaskDTO task : selectedTasks) {
-            task.setSelected(true);
-        }
         this.selectedTasks = selectedTasks;
     }
 
