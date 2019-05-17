@@ -59,9 +59,9 @@ abstract class MetadataTableRow implements Serializable {
      * Creates a new meta-data panel row.
      *
      * @param panel
-     *            the panel of this row
+     *            meta-data panel on which this row is showing
      * @param container
-     *            the container of this row
+     *            parental meta-data group
      * @param label
      *            the label of this row
      */

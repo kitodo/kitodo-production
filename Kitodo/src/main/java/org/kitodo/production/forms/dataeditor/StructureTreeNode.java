@@ -35,36 +35,37 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
-     * Return dataObject.
+     * Returns the data object this structure tree node is related to.
      *
-     * @return dataObject
+     * @return the data object
      */
     public Object getDataObject() {
         return dataObject;
     }
 
     /**
-     * Return label.
+     * Returns the label of this structure tree node.
      *
-     * @return label
+     * @return the label
      */
     public String getLabel() {
         return label;
     }
 
     /**
-     * Return linked.
+     * Returns whether this structure tree node represents a link.
      *
-     * @return linked
+     * @return whether this structure tree node represents a link
      */
     public boolean isLinked() {
         return linked;
     }
 
     /**
-     * Return undefined.
+     * Returns whether this structure tree node has a type that is undefined in
+     * the rule set.
      *
-     * @return undefined
+     * @return whether this structure tree node has an undefined type
      */
     public boolean isUndefined() {
         return undefined;

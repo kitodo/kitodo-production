@@ -114,9 +114,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * content in the meta-data panel.
      *
      * @param panel
-     *            MetadataPanel to which the FieldedMetadataTableRow is added
+     *            meta-data panel on which this row is showing
      * @param metadata
-     *            content for the metadata table
+     *            content for the meta-data table
      * @param divisionView
      *            information about that structure from the rule set
      */
@@ -128,9 +128,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * Creates a sub-panel for a meta-data group.
      *
      * @param panel
-     *            MetadataPanel to which the FieldedMetadataTableRow is added
+     *            meta-data panel on which this row is showing
      * @param container
-     *            container
+     *            parental meta-data group
      * @param metadataView
      *            information about that group from the rule set
      * @param metadata
@@ -145,6 +145,10 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
      * Creates a new fielded meta-data panel. This constructor is called from
      * one of the above ones and does the work.
      *
+     * @param panel
+     *            meta-data panel on which this row is showing
+     * @param container
+     *            parental meta-data group
      * @param structure
      *            structure selected by the user, null in case of a sub-panel
      * @param metadataView
@@ -379,9 +383,9 @@ public class FieldedMetadataTableRow extends MetadataTableRow implements Seriali
     }
 
     /**
-     * Return rows.
+     * Returns the rows that JSF has to display.
      *
-     * @return rows
+     * @return the rows that JSF has to display
      */
     public List<MetadataTableRow> getRows() {
         return rows;

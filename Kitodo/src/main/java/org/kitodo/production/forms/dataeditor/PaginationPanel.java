@@ -103,169 +103,170 @@ public class PaginationPanel {
     }
 
     /**
-     * Return newPagesCountValue.
+     * Returns the value of the newPagesCount input box.
      *
-     * @return newPagesCountValue
+     * @return the value of the newPagesCount
      */
     public int getNewPagesCountValue() {
         return newPagesCountValue;
     }
 
     /**
-     * Set newPagesCountValue.
+     * Sets the value of the newPagesCount input box.
      *
      * @param newPagesCountValue
-     *          newPagesCountValue
+     *            value to set
      */
     public void setNewPagesCountValue(int newPagesCountValue) {
         this.newPagesCountValue = newPagesCountValue;
     }
 
     /**
-     * Return paginationSelectionSelectedItems.
+     * Returns the selected items of the paginationSelection select menu.
      *
-     * @return paginationSelectionSelectedItems
+     * @return the selected items of the paginationSelection
      */
     public List<Integer> getPaginationSelectionSelectedItems() {
         return paginationSelectionSelectedItems;
     }
 
     /**
-     * Set paginationSelectionSelectedItems.
+     * Sets the selected items of the paginationSelection select menu.
      *
      * @param paginationSelectionSelectedItems
-     *          paginationSelectionSelectedItems
+     *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
         this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
     }
 
     /**
-     * Return paginationStartValue.
+     * Returns the value of the paginationStart input box.
      *
-     * @return paginationStartValue
+     * @return the value of the paginationStart
      */
     public String getPaginationStartValue() {
         return paginationStartValue;
     }
 
     /**
-     * Set paginationStartValue.
+     * Sets the value of the paginationStart input box.
      *
      * @param paginationStartValue
-     *          paginationStartValue
+     *            value to set
      */
     public void setPaginationStartValue(String paginationStartValue) {
         this.paginationStartValue = paginationStartValue;
     }
 
     /**
-     * Return paginationTypeSelectSelectedItem.
+     * Returns the selected item of the paginationTypeSelect drop-down menu.
      *
-     * @return paginationTypeSelectSelectedItem
+     * @return the selected item of the paginationTypeSelect
      */
     public PaginatorType getPaginationTypeSelectSelectedItem() {
         return paginationTypeSelectSelectedItem;
     }
 
     /**
-     * Set paginationTypeSelectSelectedItem.
+     * Sets the selected item of the paginationTypeSelect drop-down menu.
      *
      * @param paginationTypeSelectSelectedItem
-     *          paginationTypeSelectSelectedItem
+     *            selected item to set
      */
     public void setPaginationTypeSelectSelectedItem(PaginatorType paginationTypeSelectSelectedItem) {
         this.paginationTypeSelectSelectedItem = paginationTypeSelectSelectedItem;
     }
 
     /**
-     * Return selectPaginationModeSelectedItem.
+     * Returns the selected item of the selectPaginationMode drop-down menu.
      *
-     * @return selectPaginationModeSelectedItem
+     * @return the selected item of the selectPaginationMode
      */
     public PaginatorMode getSelectPaginationModeSelectedItem() {
         return selectPaginationModeSelectedItem;
     }
 
     /**
-     * Set selectPaginationModeSelectedItem.
+     * Sets the selected item of the paginationModeSelect drop-down menu.
      *
      * @param selectPaginationModeSelectedItem
-     *          selectPaginationModeSelectedItem
+     *            selected item to set
      */
     public void setSelectPaginationModeSelectedItem(PaginatorMode selectPaginationModeSelectedItem) {
         this.selectPaginationModeSelectedItem = selectPaginationModeSelectedItem;
     }
 
     /**
-     * Return selectPaginationScopeSelectedItem.
+     * Returns the selected item of the selectPaginationScope drop-down menu.
      *
-     * @return selectPaginationScopeSelectedItem
+     * @return the selected item of the selectPaginationScope
      */
     public Boolean getSelectPaginationScopeSelectedItem() {
         return selectPaginationScopeSelectedItem;
     }
 
     /**
-     * Set selectPaginationScopeSelectedItem.
+     * Sets the selected item of the paginationScopeSelect drop-down menu.
      *
      * @param selectPaginationScopeSelectedItem
-     *          selectPaginationScopeSelectedItem
+     *            selected item to set
      */
     public void setSelectPaginationScopeSelectedItem(Boolean selectPaginationScopeSelectedItem) {
         this.selectPaginationScopeSelectedItem = selectPaginationScopeSelectedItem;
     }
 
     /**
-     * Return paginationSelectionItems.
+     * Returns the items for the paginationSelection select menu.
      *
-     * @return paginationSelectionItems
+     * @return the items for the paginationSelection
      */
     public List<SelectItem> getPaginationSelectionItems() {
         return paginationSelectionItems;
     }
 
+
     /**
-     * Return paginationTypeSelectItems.
+     * Returns the items for the paginationTypeSelect select menu.
      *
-     * @return paginationTypeSelectItems
+     * @return the items for the paginationTypeSelect
      */
     public List<SelectItem> getPaginationTypeSelectItems() {
         return paginationTypeSelectItems;
     }
 
     /**
-     * Return selectPaginationModeItems.
+     * Returns the items for the paginationMode select menu.
      *
-     * @return selectPaginationModeItems
+     * @return the items for the paginationMode
      */
     public List<IllustratedSelectItem> getSelectPaginationModeItems() {
         return selectPaginationModeItems;
     }
 
     /**
-     * Return selectPaginationScopeItems.
+     * Returns the items for the paginationScope select menu.
      *
-     * @return selectPaginationScopeItems
+     * @return the items for the paginationScope
      */
     public List<SelectItem> getSelectPaginationScopeItems() {
         return selectPaginationScopeItems;
     }
 
     /**
-     * Return fictitiousCheckboxChecked.
+     * Returns whether the fictitiousCheckbox is checked.
      *
-     * @return fictitiousCheckboxChecked
+     * @return whether the fictitiousCheckbox is checked
      */
     public boolean isFictitiousCheckboxChecked() {
         return fictitiousCheckboxChecked;
     }
 
     /**
-     * Set fictitiousCheckboxChecked.
+     * Sets whether the fictitiousCheckbox is checked.
      *
      * @param fictitiousCheckboxChecked
-     *          fictitiousCheckboxChecked
+     *            whether the checkbox is checked
      */
     public void setFictitiousCheckboxChecked(boolean fictitiousCheckboxChecked) {
         this.fictitiousCheckboxChecked = fictitiousCheckboxChecked;

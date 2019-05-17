@@ -62,7 +62,9 @@ public class AddDocStrucTypeDialog {
     private boolean showingAddMultipleLogicalElements;
 
     /**
-     * Adds a new doc struc type dialog.
+     * Backing bean for the add doc struc type dialog of the meta-data editor.
+     *
+     * @see "WEB-INF/templates/includes/metadataEditor/dialogs/addDocStrucType.xhtml"
      */
     AddDocStrucTypeDialog(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -95,10 +97,10 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Returns the doc struct add type selection items of this add doc struc
-     * type dialog.
+     * Returns the selected item of the docStructAddTypeSelection drop-down
+     * menu.
      *
-     * @return the doc struct add type selection items
+     * @return the selected item of the docStructAddTypeSelection
      */
     public List<SelectItem> getDocStructAddTypeSelectionItems() {
         switch (docStructPositionSelectionSelectedItem) {
@@ -125,150 +127,155 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Set selected doc struct type.
+     * Sets the selected item of the docStructAddTypeSelection drop-down menu.
      *
      * @param docStructAddTypeSelectionSelectedItem
-     *          selected doc struct type
+     *            selected item to set
      */
     public void setDocStructAddTypeSelectionSelectedItem(String docStructAddTypeSelectionSelectedItem) {
         this.docStructAddTypeSelectionSelectedItem = docStructAddTypeSelectionSelectedItem;
     }
 
     /**
-     * Return list of possible positions where to add new doc struct items.
+     * Returns the items of the docStructPositionSelection drop-down menu.
      *
-     * @return list of possible position where to add new doc struct items
+     * @return the items of the docStructPositionSelection
      */
     public List<SelectItem> getDocStructPositionSelectionItems() {
         return docStructPositionSelectionItems;
     }
 
     /**
-     * Return selected position where to add new doc struct item.
+     * Returns the selected item of the docStructPositionSelection drop-down
+     * menu.
      *
-     * @return selected position where to add new doc struct item.
+     * @return the selected item of the docStructPositionSelection
      */
     public InsertionPosition getDocStructPositionSelectionSelectedItem() {
         return docStructPositionSelectionSelectedItem;
     }
 
     /**
-     * Set selected position where to add new doc struct item.
+     * Sets the selected item of the docStructPositionSelection drop-down menu.
      *
      * @param docStructPositionSelectionSelectedItem
-     *          selected position where to add new doc struct item
+     *            selected item to set
      */
     public void setDocStructPositionSelectionSelectedItem(InsertionPosition docStructPositionSelectionSelectedItem) {
         this.docStructPositionSelectionSelectedItem = docStructPositionSelectionSelectedItem;
     }
 
     /**
-     * Return number of elements to add.
+     * Returns the value of the elementsToAddSpinner number input box.
      *
-     * @return number of elements to add
+     * @return the value of the elementsToAddSpinner
      */
     public int getElementsToAddSpinnerValue() {
         return elementsToAddSpinnerValue;
     }
 
     /**
-     * Set number of elements to add.
+     * Sets the value of the elementsToAddSpinner number input box.
      *
      * @param elementsToAddSpinnerValue
-     *          number of elements to add
+     *            value to set
      */
     public void setElementsToAddSpinnerValue(int elementsToAddSpinnerValue) {
         this.elementsToAddSpinnerValue = elementsToAddSpinnerValue;
     }
 
     /**
-     * Return value of metadata input field.
+     * Returns the value of the inputMetaData text box.
      *
-     * @return value of metadata input field
+     * @return the value of the inputMetaData
      */
     public String getInputMetaDataValue() {
         return inputMetaDataValue;
     }
 
     /**
-     * Set value of metadata input field.
+     * Sets the value of the inputMetaData text box.
      *
      * @param inputMetaDataValue
-     *          value of metadata input field
+     *            value to set
      */
     public void setInputMetaDataValue(String inputMetaDataValue) {
         this.inputMetaDataValue = inputMetaDataValue;
     }
 
     /**
-     * Return list of addable metadata types.
+     * Returns the items of the selectAddableMetadataTypes drop-down menu.
      *
-     * @return list of addable metadata types
+     * @return the items of the selectAddableMetadataTypes
      */
     public List<SelectItem> getSelectAddableMetadataTypesItems() {
         return selectAddableMetadataTypesItems;
     }
 
     /**
-     * Return selected addable metadata type.
+     * Returns the selected item of the selectAddableMetadataTypes drop-down
+     * menu.
      *
-     * @return selected addable metadata type
+     * @return the selected item of the selectAddableMetadataTypes
      */
     public String getSelectAddableMetadataTypesSelectedItem() {
         return selectAddableMetadataTypesSelectedItem;
     }
 
     /**
-     * Set selected addable metadata type.
+     * Sets the selected item of the selectAddableMetadataTypes drop-down menu.
      *
      * @param selectAddableMetadataTypesSelectedItem
-     *          selected addable metadata type.
+     *            selected item to set
      */
     public void setSelectAddableMetadataTypesSelectedItem(String selectAddableMetadataTypesSelectedItem) {
         this.selectAddableMetadataTypesSelectedItem = selectAddableMetadataTypesSelectedItem;
     }
 
     /**
-     * Return first selected page.
+     * Returns the selected item of the selectFirstPageOnAddNode drop-down menu.
      *
-     * @return first selected page
+     * @return the selected item of the selectFirstPageOnAddNode
      */
     public String getSelectFirstPageOnAddNodeSelectedItem() {
         return selectFirstPageOnAddNodeSelectedItem;
     }
 
     /**
-     * Set first selected page.
+     * Sets the selected item of the selectFirstPageOnAddNode drop-down menu.
      *
      * @param selectFirstPageOnAddNodeSelectedItem
-     *          first selected page
+     *            selected item to set
      */
     public void setSelectFirstPageOnAddNodeSelectedItem(String selectFirstPageOnAddNodeSelectedItem) {
         this.selectFirstPageOnAddNodeSelectedItem = selectFirstPageOnAddNodeSelectedItem;
     }
 
     /**
-     * Return last selected page.
+     * Returns the selected item of the selectLastPageOnAddNode drop-down menu.
      *
-     * @return last selected page
+     * @return the selected item of the selectLastPageOnAddNode
      */
     public String getSelectLastPageOnAddNodeSelectedItem() {
         return selectLastPageOnAddNodeSelectedItem;
     }
 
     /**
-     * Set last selected page.
+     * Sets the selected item of the selectLastPageOnAddNode drop-down menu.
+     *
      * @param selectLastPageOnAddNodeSelectedItem
-     *          last selected page
+     *            selected item to set
      */
     public void setSelectLastPageOnAddNodeSelectedItem(String selectLastPageOnAddNodeSelectedItem) {
         this.selectLastPageOnAddNodeSelectedItem = selectLastPageOnAddNodeSelectedItem;
     }
 
     /**
-     * Return list of selectable pages.
+     * Returns the items of the selectFirstPageOnAddNode and
+     * selectLastPageOnAddNode drop-down menus.
      *
-     * @return list of selectable pages
+     * @return the items of the selectFirstPageOnAddNode and
+     *         selectLastPageOnAddNode
      */
     public List<SelectItem> getSelectPageOnAddNodeItems() {
         return selectPageOnAddNodeItems;
@@ -284,10 +291,12 @@ public class AddDocStrucTypeDialog {
     }
 
     /**
-     * Set flag indicating whether function to add multiple logical elements at once is visible or not.
+     * Sets whether the add doc struc type dialog is showing add multiple
+     * logical elements.
      *
      * @param showingAddMultipleLogicalElements
-     *          flag indicating whether function to add multiple logical elements at once is visible or not
+     *            whether the add doc struc type dialog is showing add multiple
+     *            logical elements
      */
     public void setShowingAddMultipleLogicalElements(boolean showingAddMultipleLogicalElements) {
         this.showingAddMultipleLogicalElements = showingAddMultipleLogicalElements;
