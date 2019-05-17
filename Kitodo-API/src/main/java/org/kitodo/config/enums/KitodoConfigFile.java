@@ -40,11 +40,6 @@ public enum KitodoConfigFile {
     PROJECT_CONFIGURATION("kitodo_projects.xml"),
 
     /**
-     * Configuration file for metadata display rules.
-     */
-    METADATA_DISPLAY_RULES("kitodo_metadataDisplayRules.xml"),
-
-    /**
      * Configuration file for login blacklist.
      */
     LOGIN_BLACKLIST("kitodo_loginBlacklist.txt");

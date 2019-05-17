@@ -208,14 +208,6 @@ public class XMLEditor implements Serializable {
     }
 
     /**
-     * Load the display rules XML configuration file and display its content in the
-     * editor.
-     */
-    public void loadDisplayRulesConfiguration() {
-        loadXMLConfiguration(KitodoConfigFile.METADATA_DISPLAY_RULES.getName());
-    }
-
-    /**
      * Load the digital collections XML configuration file and display its content
      * in the editor.
      */

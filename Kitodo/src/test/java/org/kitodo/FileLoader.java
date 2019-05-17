@@ -28,7 +28,6 @@ public class FileLoader {
     private static String diagramTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
     private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "extended-test.bpmn20.xml";
     private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.DIGITAL_COLLECTIONS;
-    private static String metadataDisplayRulesPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.METADATA_DISPLAY_RULES;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
     private static String errorsCustomBundle = ConfigCore.getParameter(ParameterCore.DIR_LOCAL_MESSAGES) + "errors_en.properties";
@@ -138,44 +137,6 @@ public class FileLoader {
         Files.write(Paths.get(diagramReaderTestPath), content);
     }
 
-    public static void createMetadataDisplayRulesFile() throws IOException {
-        List<String> content = new ArrayList<>();
-        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        content.add("<displayRules xmlns=\"http://meta.goobi.org/displayRules\" xmlns:tns=\"http://meta.goobi.org/displayRules\">");
-        content.add("<ruleSet>");
-        content.add("<context projectName=\"DigiNews\">");
-        content.add("<bind>edit</bind>");
-        content.add("<select1 tns:ref=\"NotePreImport\">");
-        content.add("<item tns:selected=\"false\">");
-        content.add("<label>Hinweistext einfügen</label>");
-        content.add("<value>Hinweis für Nutzer: ...</value>");
-        content.add("</item>");
-        content.add("<item tns:selected=\"false\">");
-        content.add("<label>Hinweistext ausblenden</label>");
-        content.add("<value></value>");
-        content.add("</item>");
-        content.add("</select1>");
-        content.add("<select1 tns:ref=\"AccessLicenseGlobal\">");
-        content.add("<item tns:selected=\"false\">");
-        content.add("<label>DigiNews Abo</label>");
-        content.add("<value>Gesamtabo</value>");
-        content.add("</item>");
-        content.add("<item tns:selected=\"false\">");
-        content.add("<label>Open Access</label>");
-        content.add("<value>free</value>");
-        content.add("</item>");
-        content.add("<item tns:selected=\"false\">");
-        content.add("<label>Gesperrt</label>");
-        content.add("<value>Gesperrt</value>");
-        content.add("</item>");
-        content.add("</select1>");
-        content.add("</context>");
-        content.add("</ruleSet>");
-        content.add("</displayRules>");
-
-        Files.write(Paths.get(metadataDisplayRulesPath), content);
-    }
-
     public static void createMetadataFile() throws IOException {
         Files.write(Paths.get(metadataPath), getMetadataTemplate());
     }
@@ -218,10 +179,6 @@ public class FileLoader {
 
     public static void deleteDigitalCollectionsFile() throws IOException {
         Files.deleteIfExists(Paths.get(digitalCollectionsPath));
-    }
-
-    public static void deleteMetadataDisplayRulesFile() throws IOException {
-        Files.deleteIfExists(Paths.get(metadataDisplayRulesPath));
     }
 
     public static void deleteMetadataFile() throws IOException {
