@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
@@ -74,13 +75,13 @@ public class AddMediaUnitDialog {
     private void preparePossibleTypes() {
         possibleTypes = new ArrayList<>();
         // TODO does this work for MediaUnit?
-        StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
-                dataEditor.getSelectedMediaUnit().orElseThrow(IllegalStateException::new).getType(),
-                dataEditor.getAcquisitionStage(),
-                dataEditor.getPriorityList()
-        );
-        for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
-            possibleTypes.add(new SelectItem(entry.getKey(), entry.getValue()));
+        String mediaUnitType = dataEditor.getSelectedMediaUnit().orElseThrow(IllegalStateException::new).getType();
+        if (Objects.nonNull(mediaUnitType)) {
+            StructuralElementViewInterface divisionView = dataEditor.getRuleset().getStructuralElementView(
+                mediaUnitType, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+            for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
+                possibleTypes.add(new SelectItem(entry.getKey(), entry.getValue()));
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.Metadata;
@@ -168,7 +169,7 @@ public class MetadataPanel implements Serializable {
     }
 
     void showPhysical(Optional<MediaUnit> optionalMediaUnit) {
-        if (optionalMediaUnit.isPresent()) {
+        if (optionalMediaUnit.isPresent() && Objects.nonNull(optionalMediaUnit.get().getType())) {
             StructuralElementViewInterface divisionView = rulesetSetup.getRuleset().getStructuralElementView(
                     optionalMediaUnit.get().getType(), rulesetSetup.getAcquisitionStage(), rulesetSetup.getPriorityList());
             physicalMetadataTable = new FieldedMetadataTableRow(this, optionalMediaUnit.get().getMetadata(), divisionView);

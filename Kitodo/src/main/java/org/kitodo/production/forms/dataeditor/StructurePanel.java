@@ -274,11 +274,30 @@ public class StructurePanel implements Serializable {
     /**
      * Loads the tree(s) into the panel and sets the selected element to the
      * root element of the structure tree.
+     *
+     * @param keepSelection
+     *            if true, keeps the currently selected node(s)
+     */
+    public void show(boolean keepSelection) {
+        if (keepSelection) {
+            TreeNode keepSelectedLogicalNode = selectedLogicalNode;
+            TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
+            show();
+            selectedLogicalNode = keepSelectedLogicalNode;
+            selectedPhysicalNode = keepSelectedPhysicalNode;
+        } else {
+            show();
+        }
+    }
+
+    /**
+     * Loads the tree(s) into the panel and sets the selected element to the
+     * root element of the structure tree.
      */
     public void show() {
         this.structure = dataEditor.getWorkpiece().getRootElement();
         Pair<List<DefaultTreeNode>, Collection<View>> result = buildStructureTree();
-        this.logicalTree = result.getLeft().get(result.getLeft().size() - 1); // TODO size() - 1 might be dangerous
+        this.logicalTree = result.getLeft().get(result.getLeft().size() - 1);
         if (separateMedia != null) {
             this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getMediaUnit());
         }
@@ -314,7 +333,7 @@ public class StructurePanel implements Serializable {
             node = new StructureTreeNode(this, divisionView.getLabel(), divisionView.isUndefined(), false, structure);
         } else {
             node = new StructureTreeNode(this, structure.getLink().getUri().toString(), true, true, structure);
-            for (Process child : dataEditor.getProcess().getChildren()) {
+            for (Process child : dataEditor.getLiveProcessChildren()) {
                 try {
                     String type = ServiceManager.getProcessService().getBaseType(child);
                     if (child.getId() == ServiceManager.getProcessService()

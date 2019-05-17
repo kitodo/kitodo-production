@@ -11,6 +11,8 @@
 
 package org.kitodo.production.metadata;
 
+import java.math.BigInteger;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,13 +27,67 @@ import org.kitodo.api.dataformat.MediaUnit;
 import org.kitodo.api.dataformat.Parent;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * This class contains some methods to handle meta-data (semi) automatically.
  */
 public class MetadataEditor {
+    /**
+     * LOCTYPE used for internal links.
+     */
+    public static final String INTERNAL_LOCTYPE = "Kitodo.Production";
+
+    /**
+     * Connects two processes by means of a link. The link is sorted as a linked
+     * included structural element in a included structural element of the
+     * parent process. The order is based on the order number specified by the
+     * user. This method does not create a link between the two processes in the
+     * database, this must and can only happen when saving.
+     *
+     * @param parentIncludedStructuralElement
+     *            document included structural element of the parent process in
+     *            which the link is to be added
+     * @param order
+     *            at which point the link is to be ordered. The value is
+     *            interpreted relative to the order values of other links in the
+     *            included structural element.
+     * @param childProcessId
+     *            Database ID of the child process to be linked
+     */
+    public static void addLink(IncludedStructuralElement parentIncludedStructuralElement, BigInteger order,
+            int childProcessId) {
+
+        LinkedMetsResource link = new LinkedMetsResource();
+        link.setLoctype(INTERNAL_LOCTYPE);
+        link.setOrder(order);
+        URI uri = ServiceManager.getProcessService().getProcessURI(childProcessId);
+        link.setUri(uri);
+        IncludedStructuralElement includedStructuralElement = new IncludedStructuralElement();
+        includedStructuralElement.setLink(link);
+
+        List<IncludedStructuralElement> children = parentIncludedStructuralElement.getChildren();
+        int position = children.size();
+        for (int i = 0; i < children.size(); i++) {
+            LinkedMetsResource otherLink = children.get(i).getLink();
+            if (Objects.isNull(otherLink)) {
+                continue;
+            }
+            BigInteger otherOrder = otherLink.getOrder();
+            if (Objects.isNull(otherOrder)) {
+                continue;
+            }
+            if (Objects.isNull(order) || otherOrder.compareTo(order) > 0) {
+                position = i;
+                break;
+            }
+        }
+        children.add(position, includedStructuralElement);
+    }
+
     /**
      * Creates a given number of new structures and inserts them into the
      * workpiece. The insertion position is given relative to an existing
