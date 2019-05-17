@@ -53,10 +53,10 @@ import org.kitodo.data.database.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.StringComparator;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.metadata.comparator.MetadataImageComparator;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -877,7 +877,7 @@ public class FileService {
         for (Folder folder : folders) {
             subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
         }
-        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(new StringComparator());
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(new MetadataImageComparator());
         for (Subfolder subfolder : subfolders.values()) {
             for (Entry<String, URI> element : subfolder.listContents().entrySet()) {
                 mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
@@ -972,7 +972,7 @@ public class FileService {
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
             int insertionPoint = 0;
             for (String canonical : canonicals) {
-                if (new StringComparator().compare(entry.getKey(), canonical) > 0) {
+                if (new MetadataImageComparator().compare(entry.getKey(), canonical) > 0) {
                     insertionPoint++;
                 } else {
                     break;
