@@ -11,7 +11,6 @@
 
 package org.kitodo.config;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.joda.time.Duration;
@@ -21,14 +20,6 @@ import org.kitodo.config.enums.ParameterCore;
 import static org.junit.Assert.assertEquals;
 
 public class ConfigCoreTest {
-
-    @Test
-    public void shouldSetTempImagesPathAsCompleteDirectory() {
-        URI path = URI.create("/pages/newImagesTemp/");
-        ConfigCore.setImagesPath(URI.create("/pages/newImagesTemp/"));
-
-        assertEquals("Temp images path was set incorrectly!", path, URI.create("/pages/newImagesTemp/"));
-    }
 
     @Test
     public void shouldGetLongParameter() {

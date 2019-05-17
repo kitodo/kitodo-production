@@ -11,62 +11,20 @@
 
 package org.kitodo.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.ConfigParameterException;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
 
 public class ConfigCore extends KitodoConfig {
-    private static final Logger logger = LogManager.getLogger(ConfigCore.class);
-    private static URI imagesPath = null;
 
     /**
      * Private constructor to hide the implicit public one.
      */
     private ConfigCore() {
 
-    }
-
-    /**
-     * Return the absolute path for the temporary images directory. Method creates
-     * also this folder in case it doesn't exist.
-     *
-     * @return the path for the temporary images directory as URI
-     */
-    public static URI getTempImagesPathAsCompleteDirectory() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        String fileName;
-        URI uri = null;
-        if (Objects.nonNull(imagesPath)) {
-            uri = imagesPath;
-        } else {
-            HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-            fileName = session.getServletContext().getRealPath("/pages") + File.separator;
-            try {
-                uri = ServiceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
-            } catch (IOException | RuntimeException e) {
-                Helper.setErrorMessage(Helper.getTranslation("couldNotCreateImageFolder"), logger, e);
-            }
-        }
-        return uri;
-    }
-
-    static void setImagesPath(URI path) {
-        imagesPath = path;
     }
 
     /**
