@@ -573,7 +573,6 @@ public class Process extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sortHelperImages, sortHelperArticles, sortHelperMetadata, sortHelperDocstructs,
-            processBaseUri, docket, project, ruleset, template, tasks, properties, templates, workpieces);
+        return Objects.hash(this.getId());
     }
 }

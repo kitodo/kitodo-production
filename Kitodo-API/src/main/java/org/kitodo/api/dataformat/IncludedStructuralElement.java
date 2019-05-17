@@ -96,6 +96,7 @@ public class IncludedStructuralElement implements Parent<IncludedStructuralEleme
      */
     protected IncludedStructuralElement(IncludedStructuralElement source) {
         label = source.label;
+        link = source.link;
         metadata = source.metadata;
         orderlabel = source.orderlabel;
         subincludedStructuralElements = source.subincludedStructuralElements;
