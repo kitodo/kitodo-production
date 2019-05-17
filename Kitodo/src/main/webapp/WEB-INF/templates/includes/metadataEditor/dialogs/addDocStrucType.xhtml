@@ -27,9 +27,11 @@
         <h3>#{msgs.neuesStrukturelement}</h3>
         <h:form id="dialogAddDocStrucTypeForm">
 
-            <h:panelGroup layout="block"
+            <h:panelGroup id="dialogAddDocStrucTypeFormContent"
+                             layout="block"
                           styleClass="dialogFieldWrapper">
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="2"
+                             rendered="#{DataEditorForm.addDocStrucTypeDialog.subdialog != 3}">
                     <h:outputLabel value="#{msgs.position}:"
                                    for="docStructPositionSelection"/>
                     <p:selectOneMenu id="docStructPositionSelection"
@@ -49,7 +51,7 @@
                                      style="width: 180px;">
                         <!--TODO check addable types-->
                         <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionItems}"/>
-                        <p:ajax update="selectAddableMetadataTypes"/>
+                        <p:ajax update="dialogAddDocStrucTypeForm"/>
                     </p:selectOneMenu>
                 </h:panelGrid>
 
@@ -59,16 +61,17 @@
                     <h:outputText value="#{msgs.defaults}:"/>
 
                     <h:panelGroup>
-                        <p:selectOneRadio layout="grid" columns="1" value="#{DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
-                            <f:selectItem itemLabel="#{msgs.pageAllocation}" itemValue="#{false}" />
-                            <f:selectItem itemLabel="#{msgs.metadata}" itemValue="#{true}" />
-                            <p:ajax event="click" update="AddDocStrucTypeSpecs" />
+                        <p:selectOneRadio layout="grid" columns="1" value="#{DataEditorForm.addDocStrucTypeDialog.subdialog}">
+                            <f:selectItem itemLabel="#{msgs.pageAllocation}" itemValue="1" />
+                            <f:selectItem itemLabel="#{msgs.metadata}" itemValue="2" />
+                            <f:selectItem itemLabel="#{msgs.link}" itemValue="3" />
+                            <p:ajax event="click" update="dialogAddDocStrucTypeFormContent" />
                         </p:selectOneRadio>
                     </h:panelGroup>
                 </h:panelGrid>
 
                 <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
-                    <h:panelGroup rendered="#{!DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
+                    <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.subdialog == 1}">
                         <p:panelGrid columns="2">
                             <p:row>
                                 <h:outputText value="#{msgs.firstPage}:"/>
@@ -112,7 +115,7 @@
                         </h:panelGroup>
                     </h:panelGroup>
 
-                    <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.showingAddMultipleLogicalElements}">
+                    <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.subdialog == 2}">
                         <h:panelGrid columns="2">
                             <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
                             <p:spinner value="#{DataEditorForm.addDocStrucTypeDialog.elementsToAddSpinnerValue}" id="elementsToAddSpinner" size="5" min="1"/>
@@ -129,6 +132,55 @@
                             <p:commandButton id="addMultiDocStrucSubmitBtn"
                                              value="#{msgs.apply}"
                                              action="#{DataEditorForm.addDocStrucTypeDialog.addMultiDocStrucSubmitBtnClick}"
+                                             update="structureTreeForm"
+                                             icon="fa fa-check fa-lg"
+                                             iconPos="right"
+                                             styleClass="primary right"
+                                             oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                            <p:commandButton value="#{msgs.cancel}"
+                                             icon="fa fa-times fa-lg"
+                                             iconPos="secondary"
+                                             styleClass="secondary right"
+                                             onclick="PF('dialogAddDocStrucType').hide();"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{DataEditorForm.addDocStrucTypeDialog.subdialog == 3}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:inputText value="#{DataEditorForm.addDocStrucTypeDialog.processNumber}"
+                                                 style="margin-top: 8px; overflow-x: hidden; overflow-wrap: break-word; height: 36px;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton id="searchButton" value="#{msgs['dialogAddDocStrucType.searchButton']}"
+                                        action="#{DataEditorForm.addDocStrucTypeDialog.searchButtonClick}"
+                                        styleClass="primary" icon="fa fa-search fa-lg" iconPos="right">
+                                            <p:remoteCommand name="updateProcessSelect" update="processSelect"/>
+                                            <p:ajax update="processSelect" oncomplete="updateProcessSelect()"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3">
+                                    <p:selectOneMenu id="processSelect"
+                                        value="#{DataEditorForm.addDocStrucTypeDialog.processSelectSelectedItem}">
+                                            <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processSelectItems}"/>
+                                            <p:ajax update="docStructAddTypeSelection"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputLabel for="orderSpinner" value="#{msgs['dialogAddDocStrucType.order']}"/></p:column>
+                                <p:column colspan="2">
+                                    <p:spinner id="orderSpinner" value="#{DataEditorForm.addDocStrucTypeDialog.orderSpinnerValue}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <h:panelGroup layout="block">
+                            <p:commandButton id="addLinkButton"
+                                             value="#{msgs.apply}"
+                                             action="#{DataEditorForm.addDocStrucTypeDialog.addLinkButtonClick}"
                                              update="structureTreeForm"
                                              icon="fa fa-check fa-lg"
                                              iconPos="right"

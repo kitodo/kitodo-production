@@ -345,7 +345,9 @@ public class GalleryPanel {
         }
         stripes.add(galleryStripe);
         for (IncludedStructuralElement child : structure.getChildren()) {
-            addStripesRecursive(child);
+            if (Objects.isNull(child.getLink())) {
+                addStripesRecursive(child);
+            }
         }
     }
 
