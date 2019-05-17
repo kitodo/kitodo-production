@@ -26,7 +26,7 @@
                                        styleClass="#{(item.corrected) ? 'correction solved' : 'correction'}"
                                        rendered="#{item.type eq 'ERROR'}"/>
 
-                        <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}: #{item.message}"
+                        <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}: #{item.messageFormatted}"
                                       escape="false"
                                       style="width:100%;"/>
                         <p:commandButton

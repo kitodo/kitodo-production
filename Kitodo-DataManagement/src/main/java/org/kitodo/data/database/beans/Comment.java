@@ -107,6 +107,14 @@ public class Comment extends BaseBean {
     }
 
     /**
+     * Get message with HTML compatible line breaks.
+     * @return value of message with line break tags
+     */
+    public String getMessageFormatted() {
+        return message.replace("\n", "<br/>");
+    }
+
+    /**
      * Get type.
      *
      * @return value of type
