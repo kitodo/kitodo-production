@@ -676,15 +676,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Get Kitodo config directory.
-     *
-     * @return the kitodo config directory
-     */
-    private String getGoobiConfigDirectory() {
-        return configDir;
-    }
-
-    /**
      * Get OPAC address.
      *
      * @return the address of the opac catalogue

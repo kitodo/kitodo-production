@@ -19,12 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
 import org.kitodo.config.ConfigCore;
@@ -38,14 +35,12 @@ import org.kitodo.production.helper.ArrayListMap;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
-    private static final Logger logger = LogManager.getLogger(ExportNewspaperBatchTask.class);
 
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
@@ -461,108 +456,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, LegacyMetsModsDigitalDocumentHelper act,
             LegacyPrefsHelper ruleSet) {
-
-        for (Map.Entry<Integer, String> year : years.entrySet()) {
-            if (year.getKey() != ownYear) {
-                LegacyDocStructHelperInterface child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-                    LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, year.getKey().toString(),
-                    LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
-                throw new UnsupportedOperationException("Dead code pending removal");
-            }
-        }
-    }
-
-    /**
-     * The function getOrCreateChild() returns a child of a DocStruct of the
-     * given type and identified by an identifier in a meta data field of
-     * choice. If no such child exists, it will be created.
-     *
-     * @param parent
-     *            DocStruct to get the child from or create it in.
-     * @param type
-     *            type of the DocStruct to return
-     * @param identifierField
-     *            field whose value identifies the DocStruct to return
-     * @param identifier
-     *            value that identifies the DocStruct to return
-     * @param optionalField
-     *            adds another meta data field with this name and the value used
-     *            as identifier if the metadata type is allowed
-     * @param act
-     *            act to create the child in
-     * @param ruleset
-     *            rule set the act is based on
-     * @return the first child matching the given conditions, if any, or a newly
-     *         created child with these properties otherwise
-     */
-    private static LegacyDocStructHelperInterface getOrCreateChild(LegacyDocStructHelperInterface parent, String type,
-            String identifierField, String identifier, String optionalField, LegacyMetsModsDigitalDocumentHelper act,
-            LegacyPrefsHelper ruleset) {
-
-        try {
-            throw new UnsupportedOperationException("Dead code pending removal");
-        } catch (NoSuchElementException nose) {
-            LegacyDocStructHelperInterface child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
-            throw new UnsupportedOperationException("Dead code pending removal");
-        }
-    }
-
-    /**
-     * Returns the index of the child to insert between its siblings depending
-     * on its rank. A return value of {@code null} will indicate that no
-     * position could be determined which will cause
-     * {@link LegacyDocStructHelperInterface#addChild(Integer, LegacyDocStructHelperInterface)}
-     * to simply append the new child at the end.
-     *
-     * @param siblings
-     *            brothers and sisters of the child to add
-     * @param metadataType
-     *            field indicating the rank value
-     * @param rank
-     *            rank of the child to insert
-     * @return the index position to insert the child
-     */
-    private static Integer positionByRank(List<LegacyDocStructHelperInterface> siblings, String metadataType,
-            Integer rank) {
-        int result = 0;
-
-        if (Objects.isNull(siblings) || Objects.isNull(rank)) {
-            return null;
-        }
-
-        boolean rankTooSmall = false;
-        for (LegacyDocStructHelperInterface aforeborn : siblings) {
-            List<LegacyMetadataHelper> allMetadata = aforeborn.getAllMetadata();
-            if (allMetadata == null) {
-                return null;
-            }
-            for (LegacyMetadataHelper metadataElement : allMetadata) {
-                if (!metadataElement.getMetadataType().getName().equals(metadataType)) {
-                    continue;
-                }
-                int parseInt;
-                try {
-                    parseInt = Integer.parseInt(metadataElement.getValue());
-                } catch (NumberFormatException e) {
-                    String typeName = Objects.nonNull(aforeborn.getDocStructType())
-                            && Objects.nonNull(aforeborn.getDocStructType().getName())
-                                    ? aforeborn.getDocStructType().getName()
-                                    : "cross-reference";
-                    logger.warn(Helper.getTranslation("cannotDeterminePosition"), typeName, metadataElement.getValue());
-                    continue;
-                }
-                if (parseInt >= rank) {
-                    return result;
-                }
-                result++;
-                rankTooSmall = true;
-                break;
-            }
-            if (!rankTooSmall) {
-                return null;
-            }
-        }
-        return result;
+        throw new UnsupportedOperationException("Dead code pending removal");
     }
 
     /**
@@ -605,15 +499,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private void insertIssueReference(LegacyMetsModsDigitalDocumentHelper act, LegacyPrefsHelper ruleset, LocalDate date,
             String metsPointerURL) {
-        LegacyDocStructHelperInterface year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-            LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
-            LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
-        LegacyDocStructHelperInterface month = getOrCreateChild(year, monthLevelName,
-            LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
-            LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-        LegacyDocStructHelperInterface day = getOrCreateChild(month, dayLevelName,
-            LegacyMetsModsDigitalDocumentHelper.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
-            LegacyMetsModsDigitalDocumentHelper.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
         throw new UnsupportedOperationException("Dead code pending removal");
     }
 
