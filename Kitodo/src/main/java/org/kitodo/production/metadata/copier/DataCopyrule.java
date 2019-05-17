@@ -35,14 +35,14 @@ public abstract class DataCopyrule {
      * copyrules are to be added to this implementation, they will have to be
      * listed named here.
      */
-    private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<String, Class<? extends DataCopyrule>>(
-            4) {
-        {
-            put(ComposeFormattedRule.OPERATOR, ComposeFormattedRule.class);
-            put(CopyIfMetadataIsAbsentRule.OPERATOR, CopyIfMetadataIsAbsentRule.class);
-            put(OverwriteOrCreateRule.OPERATOR, OverwriteOrCreateRule.class);
-        }
-    };
+    private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<>(4);
+
+    static {
+        // FIXME: here is possible deadlock!
+        AVAILABLE_RULES.put(ComposeFormattedRule.OPERATOR, ComposeFormattedRule.class);
+        AVAILABLE_RULES.put(CopyIfMetadataIsAbsentRule.OPERATOR, CopyIfMetadataIsAbsentRule.class);
+        AVAILABLE_RULES.put(OverwriteOrCreateRule.OPERATOR, OverwriteOrCreateRule.class);
+    }
 
     /**
      * Factory method to create a class implementing the metadata copy rule
