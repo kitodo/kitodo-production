@@ -83,7 +83,7 @@ public class ProcessForm extends TemplateBaseForm {
     private String doneDirectoryName;
     private static final String ERROR_CREATING = "errorCreating";
     private static final String EXPORT_FINISHED = "exportFinished";
-    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private List<Process> selectedProcesses = new ArrayList<>();
     final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
@@ -551,22 +551,16 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Export DMS for all found processes.
      */
-    @SuppressWarnings("unchecked")
     public void exportDMSForAll() {
-        //TODO: find a way to pass filters
-        exportDMSForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
+        exportDMSForProcesses(getProcessesForActions());
     }
 
-    private void exportDMSForProcesses(List<ProcessDTO> processes) {
+    private void exportDMSForProcesses(List<Process> processes) {
         ExportDms export = new ExportDms();
-        for (ProcessDTO processToExport : processes) {
+        for (Process processToExport : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(processToExport.getId());
-                export.startExport(processBean);
+                export.startExport(processToExport);
                 Helper.setMessage(EXPORT_FINISHED);
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
@@ -594,36 +588,10 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home for single process.
-     */
-    public void downloadToHome() {
-        /*
-         * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
-         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
-         * ansonsten Download
-         */
-        if (!ServiceManager.getProcessService().isImageFolderInUse(this.process)) {
-            WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.process, false);
-        } else {
-            Helper.setMessage(
-                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
-                        + Helper.getTranslation("isInUse"),
-                ServiceManager.getUserService()
-                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(this.process)));
-            WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.process, true);
-        }
-    }
-
-    /**
      * Download to home for selected processes.
      */
     public void downloadToHomeForSelection() {
-        WebDav myDav = new WebDav();
-        for (ProcessDTO processDTO : this.selectedProcesses) {
-            download(myDav, processDTO);
-        }
+        downloadToHome(this.selectedProcesses);
         // TODO: fix message
         Helper.setMessage("createdInUserHomeAll");
     }
@@ -631,30 +599,47 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Download to home for all found processes.
      */
-    @SuppressWarnings("unchecked")
     public void downloadToHomeForAll() {
-        WebDav webDav = new WebDav();
-        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null)) {
-            download(webDav, processDTO);
-        }
+        downloadToHome(getProcessesForActions());
         Helper.setMessage("createdInUserHomeAll");
     }
 
-    private void download(WebDav webDav, ProcessDTO processDTO) {
-        try {
-            Process processForDownload = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (!ServiceManager.getProcessService().isImageFolderInUse(processDTO)) {
-                webDav.downloadToHome(processForDownload, false);
-            } else {
-                Helper.setMessage(
-                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
-                            + Helper.getTranslation("isInUse"),
-                    ServiceManager.getUserService().getFullName(
-                        ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
-                webDav.downloadToHome(processForDownload, true);
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     */
+    public void downloadToHome() {
+        downloadToHome(new WebDav(), this.process);
+    }
+
+    private void downloadToHome(List<Process> processes) {
+        WebDav webDav = new WebDav();
+        for (Process processForDownload : processes) {
+            downloadToHome(webDav, processForDownload);
+        }
+    }
+
+    /**
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
+     * 
+     * @param webDav
+     *            for download
+     * @param processForDownload
+     *            process for which download is going to be performed
+     */
+    private void downloadToHome(WebDav webDav, Process processForDownload) {
+        if (ServiceManager.getProcessService().isImageFolderInUse(processForDownload)) {
+            Helper.setMessage(
+                Helper.getTranslation("directory ") + " " + processForDownload.getTitle() + " "
+                        + Helper.getTranslation("isInUse"),
+                ServiceManager.getUserService()
+                        .getFullName(ServiceManager.getProcessService().getImageFolderInUseUser(processForDownload)));
+            webDav.downloadToHome(processForDownload, true);
+        } else {
+            webDav.downloadToHome(processForDownload, false);
         }
     }
 
@@ -668,18 +653,16 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Set up processing status for all found processes.
      */
-    @SuppressWarnings("unchecked")
     public void setTaskStatusUpForAll() {
-        setTaskStatusUpForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
+        setTaskStatusUpForProcesses(getProcessesForActions());
     }
 
-    private void setTaskStatusUpForProcesses(List<ProcessDTO> processes) {
-        for (ProcessDTO processForStatus : processes) {
+    private void setTaskStatusUpForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(processForStatus.getId());
-                workflowControllerService.setTasksStatusUp(processBean);
-                ServiceManager.getProcessService().save(processBean);
-            } catch (DAOException | DataException | IOException e) {
+                workflowControllerService.setTasksStatusUp(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+            } catch (DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
@@ -696,18 +679,16 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Set down processing status hits.
      */
-    @SuppressWarnings("unchecked")
     public void setTaskStatusDownForAll() {
-        setTaskStatusDownForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null));
+        setTaskStatusDownForProcesses(getProcessesForActions());
     }
 
-    private void setTaskStatusDownForProcesses(List<ProcessDTO> processes) {
-        for (ProcessDTO processForStatus : processes) {
+    private void setTaskStatusDownForProcesses(List<Process> processes) {
+        for (Process processForStatus : processes) {
             try {
-                Process processBean = ServiceManager.getProcessService().getById(processForStatus.getId());
-                workflowControllerService.setTasksStatusDown(processBean);
-                ServiceManager.getProcessService().save(processBean);
-            } catch (DAOException | DataException e) {
+                workflowControllerService.setTasksStatusDown(processForStatus);
+                ServiceManager.getProcessService().save(processForStatus);
+            } catch (DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }
@@ -817,9 +798,8 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Execute Kitodo script for hits list.
      */
-    @SuppressWarnings("unchecked")
     public void executeKitodoScriptAll() {
-        executeKitodoScriptForProcesses(lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null), this.kitodoScriptAll);
+        executeKitodoScriptForProcesses(getProcessesForActions(), this.kitodoScriptAll);
     }
 
     /**
@@ -829,13 +809,29 @@ public class ProcessForm extends TemplateBaseForm {
         executeKitodoScriptForProcesses(this.selectedProcesses, this.kitodoScriptSelection);
     }
 
-    private void executeKitodoScriptForProcesses(List<ProcessDTO> processes, String kitodoScript) {
+    private void executeKitodoScriptForProcesses(List<Process> processes, String kitodoScript) {
         KitodoScriptService service = new KitodoScriptService();
         try {
-            service.execute(ServiceManager.getProcessService().convertDtosToBeans(processes), kitodoScript);
-        } catch (DAOException | DataException e) {
+            service.execute(processes, kitodoScript);
+        } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Process> getProcessesForActions() {
+        // TODO: find a way to pass filters
+        List<ProcessDTO> filteredProcesses = lazyDTOModel.load(0, 100000, "", SortOrder.ASCENDING, null);
+        List<Process> processesForActions = new ArrayList<>();
+
+        try {
+            processesForActions = ServiceManager.getProcessService().convertDtosToBeans(filteredProcesses);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
+                logger, e);
+        }
+
+        return processesForActions;
     }
 
     /**
@@ -1190,21 +1186,21 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Returns selected processDTO.
+     * Returns selected processes.
      *
-     * @return The list of processDTO.
+     * @return the list of Process beans
      */
-    public List<ProcessDTO> getSelectedProcesses() {
+    public List<Process> getSelectedProcesses() {
         return selectedProcesses;
     }
 
     /**
-     * Sets selected processDTOs.
+     * Sets selected processes.
      *
      * @param selectedProcesses
-     *            The list of ProcessDTOs.
+     *            the list of Process beans
      */
-    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
     }
 
